@@ -1,0 +1,795 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\CefSharp.WinForms.51.0.0\build\CefSharp.WinForms.props" Condition="Exists('..\packages\CefSharp.WinForms.51.0.0\build\CefSharp.WinForms.props')" />
+  <Import Project="..\packages\CefSharp.Common.51.0.0\build\CefSharp.Common.props" Condition="Exists('..\packages\CefSharp.Common.51.0.0\build\CefSharp.Common.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E68602BA-8A03-45EC-B1C6-17DF2FBC1DD0}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>IAGrim</RootNamespace>
+    <AssemblyName>IAGrim</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>IAGrim.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>gd.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>B9C05A18CBC9FBF6262B2F06FC7BBB5DDAFD7EC7</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>IAGrim_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>false</SignManifests>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AutoMapper, Version=5.1.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.5.1.1\lib\net45\AutoMapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="AutoUpdater.NET, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Auto updater\AutoUpdater.NET\bin\Release\AutoUpdater.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="Gameloop.Vdf, Version=0.4.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Gameloop.Vdf.0.4.3\lib\net45\Gameloop.Vdf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Iesi.Collections, Version=4.0.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Iesi.Collections.4.0.0.4000\lib\net40\Iesi.Collections.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Ionic.Zip">
+      <HintPath>Required_Bins\Ionic.Zip.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MoreLinq, Version=1.4.18916.0, Culture=neutral, PublicKeyToken=384d532d7e88985d, processorArchitecture=MSIL">
+      <HintPath>..\packages\morelinq.1.4.0\lib\net35\MoreLinq.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NHibernate, Version=4.1.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\packages\NHibernate.4.1.0.4000\lib\net40\NHibernate.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Data.SQLite, Version=1.0.97.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Required_Bins\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UIAutomationClient" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Backup\FileWriter\FileExporter.cs" />
+    <Compile Include="Backup\FileWriter\GDFileExporter.cs" />
+    <Compile Include="Backup\FileWriter\IAFileExporter.cs" />
+    <Compile Include="Backup\ItemSynchronizer.cs" />
+    <Compile Include="Backup\Models\PlayerItemBackupDeleteResponse.cs" />
+    <Compile Include="Backup\Models\PlayerItemBackupDownload.cs" />
+    <Compile Include="Backup\Models\PlayerItemBackupUpload.cs" />
+    <Compile Include="Backup\Models\PlayerItemBackupUploadResponse.cs" />
+    <Compile Include="Backup\Models\PlayerItemLoginResponse.cs" />
+    <Compile Include="Backup\Models\PlayerItemResponseCodes.cs" />
+    <Compile Include="BuddyShare\dto\BuddyUploadResponse.cs" />
+    <Compile Include="BuddyShare\dto\JsonBuddyItem.cs" />
+    <Compile Include="BuddyShare\GzipCompressionHandler.cs" />
+    <Compile Include="Database\DAO\BuddyItemDaoImpl.cs" />
+    <Compile Include="Database\DAO\DatabaseItemStatDaoImpl.cs" />
+    <Compile Include="Database\DAO\Dto\StatFetch.cs" />
+    <Compile Include="Database\DAO\ItemSkillDaoImpl.cs" />
+    <Compile Include="Database\DAO\RecipeItemDaoImpl.cs" />
+    <Compile Include="Database\DAO\Table\BuddyItemRecordTable.cs" />
+    <Compile Include="Database\DAO\Table\BuddyItemsTable.cs" />
+    <Compile Include="Database\DAO\Table\BuddyStashTable.cs" />
+    <Compile Include="Database\DAO\Table\DatabaseItemStatTable.cs" />
+    <Compile Include="Database\DAO\Table\DatabaseItemTable.cs" />
+    <Compile Include="Database\DAO\Table\DeletedPlayerItemTable.cs" />
+    <Compile Include="Database\DAO\Table\ItemQualityTable.cs" />
+    <Compile Include="Database\DAO\Table\ItemTagTable.cs" />
+    <Compile Include="Database\DAO\Table\PlayerItemTable.cs" />
+    <Compile Include="Database\DAO\Table\RecipeItemTable.cs" />
+    <Compile Include="Database\DAO\Table\SkillMappingTable.cs" />
+    <Compile Include="Database\DAO\Table\SkillTable.cs" />
+    <Compile Include="Database\Dto\ModSelection.cs" />
+    <Compile Include="Database\Dto\Search.cs" />
+    <Compile Include="Database\Interfaces\IBuddyItemDao.cs" />
+    <Compile Include="Database\Interfaces\IBuddySubscriptionDao.cs" />
+    <Compile Include="Database\Interfaces\IDatabaseItemDao.cs" />
+    <Compile Include="Database\Interfaces\IDatabaseItemStatDao.cs" />
+    <Compile Include="Database\Interfaces\IDatabaseSettingDao.cs" />
+    <Compile Include="Database\Interfaces\IBaseDao.cs" />
+    <Compile Include="Database\Interfaces\IItemSkillDao.cs" />
+    <Compile Include="Database\Interfaces\IPlayerItemDao.cs" />
+    <Compile Include="Database\Interfaces\IRecipeItemDao.cs" />
+    <Compile Include="Database\Migrations\AddBuddyItemMigrations.cs" />
+    <Compile Include="Database\Migrations\AddSkillTables.cs" />
+    <Compile Include="Database\Migrations\IDatabaseMigration.cs" />
+    <Compile Include="Database\Migrations\MigrationHandler.cs" />
+    <Compile Include="Database\Model\BaseItem.cs" />
+    <Compile Include="Database\Model\DatabaseItemDto.cs" />
+    <Compile Include="Database\Model\DeletedPlayerItem.cs" />
+    <Compile Include="Database\Model\ItemSkill.cs" />
+    <Compile Include="Database\Model\ItemTag.cs" />
+    <Compile Include="Database\Model\PlayerItemRecord.cs" />
+    <Compile Include="Database\Model\PlayerItemSkill.cs" />
+    <Compile Include="Database\Model\PlayerItemStat.cs" />
+    <Compile Include="Database\Model\RecipeDbStatRow.cs" />
+    <Compile Include="Database\Model\SetBonusRecord.cs" />
+    <Compile Include="Database\Model\SkillModifierStat.cs" />
+    <Compile Include="Database\SessionFactoryLoader\SessionFactory.cs" />
+    <Compile Include="Database\SearchResult.cs" />
+    <Compile Include="Database\Synchronizer\BasicSynchronizer.cs" />
+    <Compile Include="Database\Synchronizer\BuddyItemRepo.cs" />
+    <Compile Include="Database\Synchronizer\BuddySubscriptionRepo.cs" />
+    <Compile Include="Database\Synchronizer\Core\ThreadExecuter.cs" />
+    <Compile Include="Database\Synchronizer\DatabaseItemRepo.cs" />
+    <Compile Include="Database\Synchronizer\DatabaseItemStatRepo.cs" />
+    <Compile Include="Database\Synchronizer\DatabaseSettingRepo.cs" />
+    <Compile Include="Database\Synchronizer\ItemSkillRepo.cs" />
+    <Compile Include="Database\Synchronizer\PlayerItemRepo.cs" />
+    <Compile Include="Database\Synchronizer\RecipeItemRepo.cs" />
+    <Compile Include="Parsers\Arz\ArzParser.cs" />
+    <Compile Include="Parsers\Arz\ComplexItemParser.cs" />
+    <Compile Include="Parsers\Arz\dto\ItemGrantedSkill.cs" />
+    <Compile Include="Parsers\Arz\LocalizationLoader.cs" />
+    <Compile Include="Parsers\Arz\StashManager.cs" />
+    <Compile Include="Parsers\Arz\StatUpdateUIBackgroundWorker.cs" />
+    <Compile Include="Parsers\Arz\ParsingUIBackgroundWorker.cs" />
+    <Compile Include="BuddyShare\BuddyBackgroundThread.cs" />
+    <Compile Include="BuddyShare\SerializedPlayerItems.cs" />
+    <Compile Include="BuddyShare\Serializer.cs" />
+    <Compile Include="BuddyShare\Synchronizer.cs" />
+    <Compile Include="Database\DAO\BaseDao.cs" />
+    <Compile Include="Database\Model\BuddyItem.cs" />
+    <Compile Include="Database\Model\BuddyStash.cs" />
+    <Compile Include="Database\Model\BuddySubscription.cs" />
+    <Compile Include="Database\DAO\BuddySubscriptionDaoImpl.cs" />
+    <Compile Include="Database\Model\DatabaseItemStat.cs" />
+    <Compile Include="Database\Interfaces\PlayerHeldItem.cs" />
+    <Compile Include="Database\DAO\PlayerItemDaoImpl.cs" />
+    <Compile Include="Database\DAO\DatabaseSettingDaoImpl.cs" />
+    <Compile Include="Database\Model\DatabaseItem.cs" />
+    <Compile Include="Database\DAO\DatabaseItemDaoImpl.cs" />
+    <Compile Include="Database\Model\DatabaseSetting.cs" />
+    <Compile Include="Database\Model\PlayerItem.cs" />
+    <Compile Include="Database\Model\RecipeItem.cs" />
+    <Compile Include="Database\DAO\SessionFactory.cs" />
+    <Compile Include="Parsers\ItemSizeService.cs" />
+    <Compile Include="Parsers\RecipeParser.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Services\Crafting\CostCalculationService.cs" />
+    <Compile Include="Services\Crafting\dto\ComponentCost.cs" />
+    <Compile Include="Services\Crafting\dto\CraftableRecipes.cs" />
+    <Compile Include="Services\Crafting\dto\ComponentListEntry.cs" />
+    <Compile Include="Services\Crafting\RecipeService.cs" />
+    <Compile Include="Services\Dto\DBSTatRow.cs" />
+    <Compile Include="Services\GrimStateTracker.cs" />
+    <Compile Include="Services\ItemPaginatorService.cs" />
+    <Compile Include="Services\ItemStatService.cs" />
+    <Compile Include="Services\MessageProcessor\CloudDetectorProcessor.cs" />
+    <Compile Include="Services\MessageProcessor\GenericErrorHandler.cs" />
+    <Compile Include="Services\MessageProcessor\LogMessageProcessor.cs" />
+    <Compile Include="Services\MessageProcessor\DebugMessageProcessor.cs" />
+    <Compile Include="Services\MessageProcessor\IMessageProcessor.cs" />
+    <Compile Include="Services\MessageProcessor\ItemInjectCallbackProcessor.cs" />
+    <Compile Include="Services\MessageProcessor\ItemSpawnedProcessor.cs" />
+    <Compile Include="Services\MessageProcessor\ItemPositionFinder.cs" />
+    <Compile Include="Services\MessageProcessor\ItemReceivedProcessor.cs" />
+    <Compile Include="Services\MessageProcessor\PlayerPositionTracker.cs" />
+    <Compile Include="Services\MessageProcessor\StashStatusHandler.cs" />
+    <Compile Include="Theme\ComboBoxItem.cs" />
+    <Compile Include="Theme\ComboBoxItemQuality.cs" />
+    <Compile Include="Theme\Firefox\FirefoxCheckBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Theme\Firefox\FirefoxNumericUpDown.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Theme\PanelBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Theme\ScrollPanelMessageFilter.cs" />
+    <Compile Include="Theme\Theme.cs" />
+    <Compile Include="UI\Misc\HtmlTranslation.cs" />
+    <Compile Include="UI\Misc\RequestRecipeArgument.cs" />
+    <Compile Include="UI\Misc\TextboxHoverFocusHighlight.cs" />
+    <Compile Include="UI\Popups\BackupNagScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Popups\BackupNagScreen.Designer.cs">
+      <DependentUpon>BackupNagScreen.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Popups\ImportExport\ImportExportContainer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Popups\ImportExport\ImportExportContainer.Designer.cs">
+      <DependentUpon>ImportExportContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Popups\ImportExport\Panels\ExportMode.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Popups\ImportExport\Panels\ExportMode.Designer.cs">
+      <DependentUpon>ExportMode.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Popups\ImportExport\Panels\ImportExportModePicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Popups\ImportExport\Panels\ImportExportModePicker.Designer.cs">
+      <DependentUpon>ImportExportModePicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Popups\ImportExport\Panels\ImportMode.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Popups\ImportExport\Panels\ImportMode.Designer.cs">
+      <DependentUpon>ImportMode.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Popups\OnlineBackupLogin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Popups\OnlineBackupLogin.Designer.cs">
+      <DependentUpon>OnlineBackupLogin.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Popups\StashTabPicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Popups\StashTabPicker.Designer.cs">
+      <DependentUpon>StashTabPicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Tabs\BackupSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Tabs\BackupSettings.Designer.cs">
+      <DependentUpon>BackupSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Tabs\BuddySettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Tabs\BuddySettings.Designer.cs">
+      <DependentUpon>BuddySettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ComboBoxItemDisabler.cs" />
+    <Compile Include="UI\Controller\ISettingsController.cs" />
+    <Compile Include="UI\Controller\ISettingsReadController.cs" />
+    <Compile Include="UI\Controller\ItemTransferController.cs" />
+    <Compile Include="UI\Controller\JsonSkill.cs" />
+    <Compile Include="UI\Controller\JsonStat.cs" />
+    <Compile Include="UI\Controller\SearchController.cs" />
+    <Compile Include="UI\Controller\SettingsController.cs" />
+    <Compile Include="UI\Controller\JsonItem.cs" />
+    <Compile Include="UI\DesiredSkills.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\DesiredSkills.Designer.cs">
+      <DependentUpon>DesiredSkills.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Popups\DonateNagScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Popups\DonateNagScreen.Designer.cs">
+      <DependentUpon>DonateNagScreen.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Tabs\HelpTab.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Tabs\HelpTab.Designer.cs">
+      <DependentUpon>HelpTab.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Popups\LanguagePackPicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Popups\LanguagePackPicker.Designer.cs">
+      <DependentUpon>LanguagePackPicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Misc\CefBrowserHandler.cs" />
+    <Compile Include="UI\Misc\ClipboardEventArg.cs" />
+    <Compile Include="UI\Misc\JSWrapper.cs" />
+    <Compile Include="UI\Misc\MessageType.cs" />
+    <Compile Include="UI\Misc\MousewheelMessageFilter.cs" />
+    <Compile Include="UI\Misc\StashTransferEventArgs.cs" />
+    <Compile Include="UI\Tabs\LoggingWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Tabs\LoggingWindow.Designer.cs">
+      <DependentUpon>LoggingWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Tabs\ModsDatabaseConfig.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Tabs\ModsDatabaseConfig.Designer.cs">
+      <DependentUpon>ModsDatabaseConfig.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Popups\ParsingDatabaseScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Popups\ParsingDatabaseScreen.Designer.cs">
+      <DependentUpon>ParsingDatabaseScreen.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Tabs\SearchWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Tabs\SearchWindow.Designer.cs">
+      <DependentUpon>SearchWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Tabs\SettingsWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Tabs\SettingsWindow.Designer.cs">
+      <DependentUpon>SettingsWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Popups\StashPicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Popups\StashPicker.Designer.cs">
+      <DependentUpon>StashPicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Tabs\Util\ModSelectionHandler.cs" />
+    <Compile Include="UI\UIHelper.cs" />
+    <Compile Include="UI\Popups\UpdatingPlayerItemsScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Popups\UpdatingPlayerItemsScreen.Designer.cs">
+      <DependentUpon>UpdatingPlayerItemsScreen.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Utilities\ActionCooldown.cs" />
+    <Compile Include="Utilities\CallerMemberNameAttribute.cs" />
+    <Compile Include="Utilities\ChromiumUrlHook.cs" />
+    <Compile Include="Utilities\Cloud\CloudBackup.cs" />
+    <Compile Include="Utilities\DependencyChecker.cs" />
+    <Compile Include="Utilities\EasterEgg.cs" />
+    <Compile Include="Utilities\GlobalPaths.cs" />
+    <Compile Include="Utilities\GlobalSettings.cs" />
+    <Compile Include="Utilities\GrimDawnDetector.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="UI\MainWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\MainWindow.Designer.cs">
+      <DependentUpon>MainWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Utilities\HelperClasses\GDTransferFile.cs" />
+    <Compile Include="Utilities\HelperClasses\StashAvailability.cs" />
+    <Compile Include="Utilities\ItemHtmlWriter.cs" />
+    <Compile Include="Utilities\Logging\TextBoxAppender.cs" />
+    <Compile Include="Utilities\RectanglePacker\DynamicPacker.cs" />
+    <Compile Include="Utilities\RectanglePacker\Packer.cs" />
+    <Compile Include="Utilities\RectanglePacker\PackerMode.cs" />
+    <Compile Include="Utilities\RectanglePacker\Shape.cs" />
+    <Compile Include="Utilities\Registry\RegistryHelper.cs" />
+    <Compile Include="Utilities\TempFile.cs" />
+    <Compile Include="Utilities\TemporaryCopy.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="app.manifest">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="IAGrim_TemporaryKey.pfx" />
+    <None Include="Log4net.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Resources\vendor\bootstrap-chosen-master\bower.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\vendor\bootstrap-chosen-master\package.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Popups\BackupNagScreen.resx">
+      <DependentUpon>BackupNagScreen.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Popups\ImportExport\ImportExportContainer.resx">
+      <DependentUpon>ImportExportContainer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Popups\ImportExport\Panels\ExportMode.resx">
+      <DependentUpon>ExportMode.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Popups\ImportExport\Panels\ImportExportModePicker.resx">
+      <DependentUpon>ImportExportModePicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Popups\ImportExport\Panels\ImportMode.resx">
+      <DependentUpon>ImportMode.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Popups\OnlineBackupLogin.resx">
+      <DependentUpon>OnlineBackupLogin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Popups\StashTabPicker.resx">
+      <DependentUpon>StashTabPicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Tabs\BackupSettings.resx">
+      <DependentUpon>BackupSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Tabs\BuddySettings.resx">
+      <DependentUpon>BuddySettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\DesiredSkills.resx">
+      <DependentUpon>DesiredSkills.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Popups\DonateNagScreen.resx">
+      <DependentUpon>DonateNagScreen.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Tabs\HelpTab.resx">
+      <DependentUpon>HelpTab.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Popups\LanguagePackPicker.resx">
+      <DependentUpon>LanguagePackPicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\MainWindow.resx">
+      <DependentUpon>MainWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Tabs\LoggingWindow.resx">
+      <DependentUpon>LoggingWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Tabs\ModsDatabaseConfig.resx">
+      <DependentUpon>ModsDatabaseConfig.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Popups\ParsingDatabaseScreen.resx">
+      <DependentUpon>ParsingDatabaseScreen.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Tabs\SearchWindow.resx">
+      <DependentUpon>SearchWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Tabs\SettingsWindow.resx">
+      <DependentUpon>SettingsWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Popups\StashPicker.resx">
+      <DependentUpon>StashPicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Popups\UpdatingPlayerItemsScreen.resx">
+      <DependentUpon>UpdatingPlayerItemsScreen.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\static\languages.png" />
+    <EmbeddedResource Include="Database\Model\DeletedPlayerItem.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Database\Model\PlayerItemRecord.hbm.xml" />
+    <Content Include="Resources\componentAssembler.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\static\edit.png" />
+    <Content Include="Resources\vendor\animate.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\vendor\bootstrap-chosen-master\chosen-sprite%402x.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\vendor\bootstrap-chosen-master\chosen-sprite.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\vendor\bootstrap-chosen-master\chosen.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\vendor\bootstrap-chosen-master\chosen.jquery.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\vendor\bootstrap-chosen-master\chosen.jquery.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\vendor\bootstrap-chosen-master\chosen.min.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\vendor\bootstrap-chosen-master\chosen.proto.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\vendor\bootstrap-chosen-master\chosen.proto.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\vendor\jstree\jstree.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\vendor\jstree\themes\default\32px.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\vendor\jstree\themes\default\40px.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\vendor\jstree\themes\default\style.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\vendor\jstree\themes\default\throbber.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\vendor\pnotify.custom.min.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\vendor\pnotify.custom.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\tabs.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\tabs.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\YES THIS FILE IS SUPPOSED TO BE SMALL.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="Resources\static\chest.png" />
+    <Content Include="Resources\vendor\bootstrap.min.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\vendor\bootstrap.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\static\donate.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\static\dropbox.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\static\error.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\static\flail.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\static\gdrive.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\help.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\item-kjs.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\static\ItemArtifact.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\static\ItemArtifactFormula.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\static\ItemDevotionReset.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\static\ItemFactionBooster.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\static\ItemFactionWarrant.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\static\ItemRelic.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\vendor\jquery-1.10.2.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\vendor\knockout-3.4.0.debug.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\vendor\knockout-3.4.0.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\vendor\knockout.mapping-latest.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\vendor\knockout.simpleGrid.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\vendor\knockout.validation.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\vendor\knockout.validation.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\static\onedrive.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\static\OneShot_PotionHealth.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\static\OneShot_PotionMana.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\static\OneShot_Scroll.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\static\recipe.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\style.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\static\unknown.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <EmbeddedResource Include="Database\Model\DatabaseSetting.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Database\Model\PlayerItem.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Database\Model\DatabaseItemStat.hbm.xml" />
+    <EmbeddedResource Include="Database\Model\BuddyStash.hbm.xml" />
+    <EmbeddedResource Include="Database\Model\BuddySubscription.hbm.xml" />
+    <EmbeddedResource Include="Database\Model\RecipeItem.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Database\Model\ItemTag.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Database\Model\PlayerItemStat.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Content Include="gd.ico" />
+    <Content Include="Required_Bins\SQLite.Interop.dll" />
+    <Content Include="Required_Bins\System.Data.SQLite.dll" />
+    <Content Include="Required_Bins\System.Data.SQLite.xml" />
+    <EmbeddedResource Include="Database\Model\DatabaseItem.hbm.xml" />
+    <Content Include="hibernate.sqlite.cfg.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Listener\" />
+    <Folder Include="UI\Extensions\" />
+    <Folder Include="Utilities\Service\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DataAccess\DataAccess.csproj">
+      <Project>{b7f63b36-55b0-48f9-8b52-54bf4a07df65}</Project>
+      <Name>DataAccess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Evilsoft.Commons\Cloud\Cloud.csproj">
+      <Project>{ddc3793f-4956-42af-886a-42d27cb30261}</Project>
+      <Name>Cloud</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Evilsoft.Commons\DllInjector\DllInjector.csproj">
+      <Project>{2d6c0dc0-2fd0-4c18-9104-4f4689169d88}</Project>
+      <Name>DllInjector</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Evilsoft.Commons\EvilsoftCommons.csproj">
+      <Project>{d3336c7f-0dbc-4342-991d-d2c082d7f168}</Project>
+      <Name>EvilsoftCommons</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Parser\Parser.csproj">
+      <Project>{5e068c56-f5ec-4819-9266-295c7a8ed52d}</Project>
+      <Name>Parser</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\StatTranslator\StatTranslator.csproj">
+      <Project>{09b59c1c-47dc-4650-8299-78ac37796da8}</Project>
+      <Name>StatTranslator</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <Import Project="..\packages\cef.redist.x64.3.2704.1432\build\cef.redist.x64.targets" Condition="Exists('..\packages\cef.redist.x64.3.2704.1432\build\cef.redist.x64.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\cef.redist.x64.3.2704.1432\build\cef.redist.x64.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\cef.redist.x64.3.2704.1432\build\cef.redist.x64.targets'))" />
+    <Error Condition="!Exists('..\packages\cef.redist.x86.3.2704.1432\build\cef.redist.x86.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\cef.redist.x86.3.2704.1432\build\cef.redist.x86.targets'))" />
+    <Error Condition="!Exists('..\packages\CefSharp.Common.51.0.0\build\CefSharp.Common.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Common.51.0.0\build\CefSharp.Common.props'))" />
+    <Error Condition="!Exists('..\packages\CefSharp.Common.51.0.0\build\CefSharp.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Common.51.0.0\build\CefSharp.Common.targets'))" />
+    <Error Condition="!Exists('..\packages\CefSharp.WinForms.51.0.0\build\CefSharp.WinForms.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.WinForms.51.0.0\build\CefSharp.WinForms.props'))" />
+    <Error Condition="!Exists('..\packages\CefSharp.WinForms.51.0.0\build\CefSharp.WinForms.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.WinForms.51.0.0\build\CefSharp.WinForms.targets'))" />
+  </Target>
+  <Import Project="..\packages\cef.redist.x86.3.2704.1432\build\cef.redist.x86.targets" Condition="Exists('..\packages\cef.redist.x86.3.2704.1432\build\cef.redist.x86.targets')" />
+  <Import Project="..\packages\CefSharp.Common.51.0.0\build\CefSharp.Common.targets" Condition="Exists('..\packages\CefSharp.Common.51.0.0\build\CefSharp.Common.targets')" />
+  <Import Project="..\packages\CefSharp.WinForms.51.0.0\build\CefSharp.WinForms.targets" Condition="Exists('..\packages\CefSharp.WinForms.51.0.0\build\CefSharp.WinForms.targets')" />
+  <PropertyGroup>
+    <PreBuildEvent>xcopy /Y "$(SolutionDir)iagrim\Listdlls.exe" "$(TargetDir)"</PreBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

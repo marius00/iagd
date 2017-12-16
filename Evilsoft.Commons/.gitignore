@@ -1,0 +1,9 @@
+/obj
+/bin
+/packages/Common.Logging.3.3.1
+/packages/Common.Logging.Core.3.3.1
+/UnitTests/bin
+/UnitTests/obj
+*.suo
+obj
+bin

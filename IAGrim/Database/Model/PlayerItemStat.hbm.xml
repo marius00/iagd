@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="IAGrim"
+                   namespace="IAGrim.Database">
+
+
+  <class name="PlayerItemStat">
+    <id name="Id" generator="hilo" column="pkid" />
+    <property name="Stat" index="idx_playeritemstat_stat" />
+    <property name="PlayerItemId" column="Id" index="pis_id" />
+    <property name="Value" />
+    <property name="TextValue" length="3900" index="pis_tv" />
+
+  </class>
+</hibernate-mapping>

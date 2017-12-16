@@ -1,0 +1,355 @@
+<!DOCTYPE html> 
+<html lang="en">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" /> 
+    <title>GD Item Assistant</title>
+	<link href="vendor/bootstrap.min.css" rel="stylesheet">
+	<script src="vendor/jquery-1.10.2.min.js"></script>
+	<script src="vendor/bootstrap.min.js"></script>
+	<script type="text/javascript" src="vendor/knockout-3.4.0.js"></script>
+	<style>
+	body {
+		margin-left: 25%;
+		margin-right: 25%;
+		text-align: left;
+	}
+	.panel-body { min-height: 70px; }
+	.panel-heading { font-weight: bold; }
+	.linkbutton { 
+		cursor: pointer; 
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+		-khtml-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+	}
+	</style>
+  </head>
+  <body>
+		<h1 class="logo header">GD Item Assistant</h1>
+		
+		<p class="text-warning">
+			DON'T PANIC! IT WILL BE OKAY.
+		</p>
+      <img src="flail.gif"/>
+
+<br><br>		
+<div data-bind="foreach: questions">
+  <div class="panel panel-default">
+    <div class="panel-heading linkbutton" data-bind="attr: {id: 'qh' + $index(), href: '#qc' + $index()}, aria-controls: 'qc' + $index()" role="tab" class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" aria-expanded="false">
+      <h4 class="panel-title">
+        <a data-bind="text: issue">
+          Question
+        </a>
+      </h4>
+    </div>
+    <div class="panel-collapse collapse" role="tabpanel" data-bind="attr: {aria_labelledby: 'qh' + $index(), id: 'qc' + $index()}">
+      <div class="panel-body" data-bind="html: solution" class="answer-body">
+        Answer
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="questions" style="display: none">
+	<div>
+		<div>
+			Help!? I've lost all my items!?!?!!
+		</div>
+		<div>
+			<p class="text-warning">
+				<b>DON'T PANIC! IT WILL BE OKAY.</b>
+			</p>
+		
+			<b><font color="red">Nobody has ever lost any items using IA, EVER.</font></b></u>
+			
+			<br><br>
+			IA takes daily backups of your items and keeps copies of the the previous 100 stash files.<br>
+			Most likely the wrong mod is selected or you just need to parse the GD database.<br><br>
+			Take a deep breath, relaxe, and then contact the developer at <i>itemassistant@gmail.com</i>
+		</div>
+	</div>
+	<div>
+		<div>
+			My item names are missing
+		</div>
+		<div>
+			<ol>
+				<li>Open IA</li>
+				<li>Click the "Mods" tab</li>
+				<li>Select "Vanilla"</li>
+				<li>Click "Load Database"</li>
+				<li>Click "Update Item Stats"</li>
+			</ol>
+			<i>If this did not resolve your issue, try restarting IA.</i><br>
+		</div>
+	</div>
+<div>
+    <div>
+        My icons are missing!
+    </div>
+    <div>
+        <ol>
+            <li>Open IA</li>
+            <li><b>Close Grim Dawn</b></li>
+            <li>Click the "Mods" tab</li>
+            <li>Select "Vanilla"</li>
+            <li>Click "Load Database"</li>
+        </ol>
+        <br>
+        <br>
+        If this did not resolve your issue, please contact the developer at <i><u>itemassistant@gmail.com</u></i>, please include your log file.
+    </div>
+</div>
+<div>
+    <div>
+        Which version am I running?
+    </div>
+    <div>
+        <ol>
+            <li>Click log</li>
+            <li>Scroll up to the top</li>
+            <li>On roughly the 4th line you'll see:</li>
+            <li>Running version 1.2.6503.41798 from 21.10.2017</li>
+        </ol>
+    </div>
+</div>
+    <div>
+        <div>
+            Will IA give me back exactly the same item, with the same stats?
+        </div>
+        <div>
+            Yes, yes and yes.<br>
+            IA will never modify any of your items, and will always reproduce them <u>exactly</u> as it found them.<br>
+            Even if merging items is enabled, your items will remain unchanged. <br>
+            <b>Always.</b>
+        </div>
+    </div>
+    <div>
+        <div>
+            This is my first time running IA, and I can't find my items!
+        </div>
+        <div>
+            <ol>
+                <li>Restart IA</li>
+                <li>Make sure you've selected the right mod (upper right corner, most likely Vanilla)</li>
+            </ol>
+            IA may not be able to detect mod/etc settings on the very first run, but should get caught up pretty quickly after a restart.
+        </div>
+    </div>
+	<div>
+		<div>
+			IA is not looting any items
+		</div>
+		<div>
+			<ol>
+				<li>Place items in your stash</li>
+				<li>Walk away from your stash area</li>
+				<li>IA should now have looted these items</li>
+				<li>The status bar in IA should indicate it just looted some items</li>
+			</ol>
+			<b>If this did not resolve your issue, please try running IA as administrator.<br></b>
+			In some cases IA requires aditional permissions to run properly.
+			<br><br>
+			If none of the above solved your issue, please contact the developer at <i><u>itemassistant@gmail.com</u></i>, please include your log file.
+		</div>
+	</div>
+	<div>
+		<div>
+			How do I find my log files?
+		</div>
+		<div>
+			<ol>
+				<li>Click the "Settings" tab</li>
+				<li>Click "View Logs"</li>
+				<li>The most recent log is "log.txt"</li>
+			</ol>
+		</div>
+	</div>
+	<div>
+		<div>
+			IA loots items but I can't see find them in IA
+		</div>
+		<div>
+			<b>Most likely you have the wrong <u>mod</u> selected.<br></b>
+			See the Mod selection in the upper right corner (Vanilla, Vanilla (HC), SomeMod, ...)<br>
+			<br>
+			If this is the first time you're using IA and have just looted items, try restarting IA.<br>
+			IA may take a restart to detect mods and stashes after looting its very first item.
+		</div>
+	</div>
+	<div>
+		<div>
+			IA says cloud saving is enabled
+		</div>
+		<div>
+			This is by far the most common issue in IA.<br>
+			<br>
+			Cloud saving have to be disabled in <u>two</u> locations.
+			<br>
+			<ol>
+				<li>In steam</li>
+				<li>Inside Grim Dawn itself, under "Settings"</li>
+			</ol>
+			
+			Grim Dawn uses a different save directory with cloud saving disabled.<br>
+			After disabling cloud saving you still need to copy your characters to the correct directory.<br>
+			<br>
+			For more information on cloud saving, see <b><u>http://www.grimdawn.com/forums/showthread.php?t=20752</u></b>
+		</div>
+	</div>
+	<div>
+		<div>
+			How do I backup my items?
+		</div>
+		<div>
+			<b>IA can automatically backup your items to your favorite cloud provider, or to a custom folder (for example on your desktop or a USB stick)<br></b>
+			<br>
+			To backup your items to a custom folder:<br>
+						
+			<ol>
+				<li>Click the checkbox next to the "Custom" button</li>
+				<li>Click "Custom" button to select the folder</li>
+				<li>Click "Backup Now" to create the backup immediately</li>
+			</ol>
+			The backup will also include your Grim Dawn characters and stash files.
+			
+			<br><br><br>
+			<b>If you just want to quickly move your items to another computer:</b>
+			<ol>
+				<li>Click the "Settings" tab</li>
+				<li>Click "View Backups"</li>
+				<li>Copy "userdata.db"</li>
+			</ol>
+			
+		</div>
+	</div>
+	<div>
+		<div>
+			How do I restore from a backup?
+		</div>
+		<div>
+			<b>There are two ways you may have backed up IA:</b><br>
+			<br>
+			<b>If you backed up IA via cloud backups or to a custom folder:</b><br>
+			
+			<ol>
+				<li>Unzip the <i>userdata.db</i> file from your backup</li>
+				<li>Open IA</li>
+				<li>Click the "Settings" tab</li>
+				<li>Click "View Backups"</li>
+				<li><b>Close IA</b></li>
+				<li>Copy <i>"userdata.db" into the data folder</i></li>
+			</ol>
+			You will also find your Grim Dawn characters under the 'save' directory in the backup file.<br>
+			<br>
+			<b>If you backed up IA manually just copying <i>userdata.db</i></b><br>
+			<ol>
+				<li>Open IA</li>
+				<li>Click the "Settings" tab</li>
+				<li>Click "View Backups"</li>
+				<li><b>Close IA</b></li>
+				<li>Copy <i>"userdata.db" into the data folder</i></li>
+			</ol>
+		</div>
+	</div>
+	<div>
+		<div>
+			Everything is messed up after restoring from a backup!
+		</div>
+		<div>
+			<p class="text-warning">
+				<b>DON'T PANIC! IT WILL BE OKAY.</b>
+			</p>
+			<ol>
+				<li>Open IA</li>
+				<li>Click the "Mods" tab</li>
+				<li>Select "Vanilla"</li>
+				<li>Click "Load Database"</li>
+			</ol>
+			<i>If this did not resolve your issue, try restarting IA.</i><br>
+		</div>
+	</div>
+	<div>
+		<div>
+			Settings: Whare are secure transfers?
+		</div>
+		<div>
+			<b>Disabling the <i>Secure Transfers</i> option lets IA transfer items even when the stash status is open or unknown</b><br>
+			This is an override provided for extreme cases where IA cannot detect the Grim Dawn stash status.<br><br>
+			If secure transfers is disabled, <u>it is up to the user to make sure the stash is closed</u>, or risk losing items during transfer.<br><br>
+			<font color="red">This is an emergency option only.</font>
+		</div>
+	</div>
+	<div>
+		<div>
+			Settings: What is merge duplicates?
+		</div>
+		<div>
+			<b>Merging duplicates lets IA display multiple item duplicates as if it was a single item</b><br>
+			Merging duplicates will still leave your item stats intact, it is merely a visual effect to reduce clutter.<br><br>
+			Your unique item stats will always remain intact.
+		</div>
+	</div>
+	<div>
+		<div>
+			Settings: What is transfer to any mod?
+		</div>
+		<div>
+			<b>Transfer to any mod lets you transfer items between the regular campaign and your mods.</b><br>
+			This is not enabled by default, as it could be considered cheating by some.
+		</div>
+	</div>
+	<div>
+		<div>
+			Settings: What is show recipes as items?
+		</div>
+		<div>
+			<b>Show recipes as items will include your recipes when searching for items</b><br>
+			Some players are more interested in what is available, in both items and what they can make<br>
+			And this option lets them see craftable items as well as their own.
+		</div>
+	</div>
+</div>
+	
+<script>
+
+function _VM() {
+	var self = this;	
+    this.questions = ko.observableArray([{issue: '', solution: ''},]);	
+}
+
+var VM = new _VM();
+
+$(document).ready(function () {
+	ko.applyBindings(VM);
+	var data = []
+	var questions = $('#questions').children();
+	for (var i = 0; i < questions.length; i++) {		
+		var question = $(questions[i]).children(':nth-child(1)').text();
+		var answer = $(questions[i]).children(':nth-child(2)').html();
+		data.push({issue: question, solution: answer});
+	}
+	VM.questions(data);
+	
+});
+
+</script>
+<!--
+  <div class="panel panel-default">
+    <div class="panel-heading linkbutton" role="tab" id="qh01" class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#qc01" aria-expanded="false" aria-controls="qc01">
+      <h4 class="panel-title">
+        <a>
+          My item icons are missing
+        </a>
+      </h4>
+    </div>
+    <div id="qc01" class="panel-collapse collapse" role="tabpanel" aria-labelledby="qh01">
+      <div class="panel-body">
+        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+      </div>
+    </div>
+  </div>-->
+</body>
+</html>

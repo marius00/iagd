@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="IAGrim"
+                   namespace="IAGrim.Database">
+
+
+  <class name="DatabaseItem" table="DatabaseItem_v2">
+    <id name="Id" column="id_databaseitem">
+      <generator class="hilo"/>
+    </id>
+
+    <property name="Record" column="baserecord" unique="true" index="idx_databaseitemv2_record" />
+
+
+    <bag name="Stats" table="DatabaseItemStat_v2" cascade="none" inverse="true">
+      <key column="id_databaseitem"/>
+      <one-to-many class="DatabaseItemStat"/>
+    </bag>
+
+    <property name="Name" column="name"/>
+    
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="IAGrim"
+                   namespace="IAGrim.Database">
+
+
+  <class name="PlayerItem" table="PlayerItem"  lazy="false">
+    <id name="Id">
+      <generator class="hilo"/>
+    </id>
+
+    <property name="OnlineId" not-null="false" />
+    <property name="BaseRecord" column="baserecord" index="idx_playeritem_baserecord" />
+    <property name="PrefixRecord" />
+    <property name="SuffixRecord" />
+    <property name="ModifierRecord" />
+    <property name="TransmuteRecord" />
+    <property name="Seed" />
+    <property name="MateriaRecord" />
+    <property name="RelicCompletionBonusRecord" />
+    <property name="RelicSeed" />
+    <property name="EnchantmentRecord" />
+    <property name="PrefixRarity" />
+    <property name="UNKNOWN" />
+    <property name="EnchantmentSeed" />
+    <property name="MateriaCombines" />
+    <property name="StackCount" />
+    <property name="Name" index="idx_playeritem_name" />
+    <property name="Rarity" index="idx_playeritem_rarity" />
+    <property name="LevelRequirement" index="idx_playeritem_levelreq" />
+    <property name="Mod" />
+    <property name="IsHardcore" />
+    
+
+    <!--  cascade="all-delete-orphan"  -->
+    <!--
+    <set name="Tags" table="PlayerItemStat" cascade="delete-orphan" inverse="true">
+      <key column="Id" foreign-key="none"/>
+      <one-to-many class="PlayerItemStat" />
+    </set>
+-->
+    <!--
+    <many-to-one fetch="join" name="Internal" column="baserecord" class="DatabaseItem" cascade="none" update="false" insert="false"
+                 foreign-key="none"  property-ref="Record"
+                 outer-join="true" not-found="ignore">
+
+    </many-to-one>
+-->
+<!--
+This mapping is correct, but does not work well due to the skill itself not being ready
+    <many-to-one name="Skill" column="id_skill" class="DatabaseItemSkill" cascade="all-delete-orphan" update="true" insert="true"  />
+    -->
+    
+  </class>
+</hibernate-mapping>

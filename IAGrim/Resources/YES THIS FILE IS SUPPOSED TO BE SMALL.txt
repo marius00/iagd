@@ -1,0 +1,8 @@
+﻿Yes, this file is much smaller than your other userdata.db file, THIS IS NORMAL!
+
+The regular userdata.db contains a lot of parsed data from Grim Dawn which the client can rebuild on its own.
+
+Just copy this userdata.db file into data\, start IA, then go to the "Mods" tab, select vanilla and parse the database.
+
+
+Please check the 'help' tab before crying for help, most likely it answere your question ;)
