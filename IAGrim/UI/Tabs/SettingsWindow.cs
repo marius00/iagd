@@ -187,5 +187,9 @@ namespace IAGrim.UI {
         private void buttonAdvancedSettings_Click(object sender, EventArgs e) {
             new StashTabPicker(_stashManager.NumStashTabs).ShowDialog();
         }
+
+        private void linkSourceCode_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            Process.Start("https://github.com/marius00/iagd");
+        }
     }
 }

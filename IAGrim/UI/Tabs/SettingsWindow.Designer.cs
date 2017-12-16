@@ -36,6 +36,7 @@
             this.labelLastUpdated = new System.Windows.Forms.Label();
             this.labelLastPatch = new System.Windows.Forms.Label();
             this.panelBox4 = new PanelBox();
+            this.linkSourceCode = new System.Windows.Forms.LinkLabel();
             this.cbDisplaySkills = new FirefoxCheckBox();
             this.cbAutoUpdateModSettings = new FirefoxCheckBox();
             this.cbAutoSearch = new FirefoxCheckBox();
@@ -58,7 +59,6 @@
             this.buttonLanguageSelect = new FirefoxButton();
             this.buttonViewBackups = new FirefoxButton();
             this.buttonViewLogs = new FirefoxButton();
-            this.linkSourceCode = new System.Windows.Forms.LinkLabel();
             this.contextMenuStrip1.SuspendLayout();
             this.panelBox6.SuspendLayout();
             this.panelBox5.SuspendLayout();
@@ -224,6 +224,19 @@
             this.panelBox4.Tag = "iatag_ui_settings_title";
             this.panelBox4.Text = "Settings";
             this.panelBox4.TextLocation = "8; 5";
+            // 
+            // linkSourceCode
+            // 
+            this.linkSourceCode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.linkSourceCode.AutoSize = true;
+            this.linkSourceCode.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.linkSourceCode.Location = new System.Drawing.Point(5, 363);
+            this.linkSourceCode.Name = "linkSourceCode";
+            this.linkSourceCode.Size = new System.Drawing.Size(68, 13);
+            this.linkSourceCode.TabIndex = 21;
+            this.linkSourceCode.TabStop = true;
+            this.linkSourceCode.Text = "Source code";
+            this.linkSourceCode.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkSourceCode_LinkClicked);
             // 
             // cbDisplaySkills
             // 
@@ -530,18 +543,6 @@
             this.buttonViewLogs.Tag = "iatag_ui_viewlogs";
             this.buttonViewLogs.Text = "View Logs";
             this.buttonViewLogs.Click += new System.EventHandler(this.buttonViewLogs_Click);
-            // 
-            // linkSourceCode
-            // 
-            this.linkSourceCode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.linkSourceCode.AutoSize = true;
-            this.linkSourceCode.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.linkSourceCode.Location = new System.Drawing.Point(5, 363);
-            this.linkSourceCode.Name = "linkSourceCode";
-            this.linkSourceCode.Size = new System.Drawing.Size(68, 13);
-            this.linkSourceCode.TabIndex = 21;
-            this.linkSourceCode.TabStop = true;
-            this.linkSourceCode.Text = "Source code";
             // 
             // SettingsWindow
             // 
