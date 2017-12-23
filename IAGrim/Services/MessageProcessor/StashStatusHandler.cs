@@ -29,13 +29,13 @@ namespace IAGrim.Services.MessageProcessor {
 
         private ILog logger = LogManager.GetLogger(typeof(StashStatusHandler));
 
-        private enum StashStatus {
+        private enum InternalStashStatus {
             Open, Closed, Unknown, Crafting
         };
 
-        private StashStatus TransferStashStatus = StashStatus.Unknown;
-        private StashStatus PrivateStashStatus = StashStatus.Unknown;
-        private bool IsClosed => TransferStashStatus == StashStatus.Closed && PrivateStashStatus == StashStatus.Closed;
+        private InternalStashStatus TransferStashStatus = InternalStashStatus.Unknown;
+        private InternalStashStatus PrivateStashStatus = InternalStashStatus.Unknown;
+        private bool IsClosed => TransferStashStatus == InternalStashStatus.Closed && PrivateStashStatus == InternalStashStatus.Closed;
             
         
 
@@ -54,25 +54,25 @@ namespace IAGrim.Services.MessageProcessor {
 
                 switch (type) {
                     case MessageType.TYPE_OPEN_PRIVATE_STASH:
-                        PrivateStashStatus = StashStatus.Open;
+                        PrivateStashStatus = InternalStashStatus.Open;
                         logger.Debug("Private Stash opened");
                         break;
 
                     case MessageType.TYPE_DISPLAY_CRAFTER:
-                        if (PrivateStashStatus != StashStatus.Open) {
-                            PrivateStashStatus = StashStatus.Crafting;
+                        if (PrivateStashStatus != InternalStashStatus.Open) {
+                            PrivateStashStatus = InternalStashStatus.Crafting;
                             GlobalSettings.StashStatus = StashAvailability.CRAFTING;
                         }
                         break;
 
                     case MessageType.TYPE_OPEN_CLOSE_TRANSFER_STASH:
                         bool isOpen = ((int)data[0]) != 0;
-                        TransferStashStatus = isOpen ? StashStatus.Open : StashStatus.Closed;
+                        TransferStashStatus = isOpen ? InternalStashStatus.Open : InternalStashStatus.Closed;
                         break;
 
                     case MessageType.TYPE_SAVE_TRANSFER_STASH:
-                        PrivateStashStatus = StashStatus.Closed;
-                        TransferStashStatus = StashStatus.Closed;
+                        PrivateStashStatus = InternalStashStatus.Closed;
+                        TransferStashStatus = InternalStashStatus.Closed;
                         break;
                 }
 

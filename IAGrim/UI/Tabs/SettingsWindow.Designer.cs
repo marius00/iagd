@@ -28,6 +28,7 @@
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelBox6 = new PanelBox();
+            this.firefoxCheckBox1 = new FirefoxCheckBox();
             this.cbInstaTransfer = new FirefoxCheckBox();
             this.linkLabel2 = new System.Windows.Forms.LinkLabel();
             this.cbInstalootDisabled = new FirefoxCheckBox();
@@ -74,12 +75,12 @@
             this.linkLabel1.AutoSize = true;
             this.linkLabel1.ContextMenuStrip = this.contextMenuStrip1;
             this.linkLabel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.linkLabel1.Location = new System.Drawing.Point(577, 469);
+            this.linkLabel1.Location = new System.Drawing.Point(853, 469);
             this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(351, 33);
+            this.linkLabel1.Size = new System.Drawing.Size(75, 33);
             this.linkLabel1.TabIndex = 20;
             this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "itemassistant@gmail.com";
+            this.linkLabel1.Text = "Help";
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
             // contextMenuStrip1
@@ -99,6 +100,7 @@
             // 
             // panelBox6
             // 
+            this.panelBox6.Controls.Add(this.firefoxCheckBox1);
             this.panelBox6.Controls.Add(this.cbInstaTransfer);
             this.panelBox6.Controls.Add(this.linkLabel2);
             this.panelBox6.Controls.Add(this.cbInstalootDisabled);
@@ -113,6 +115,20 @@
             this.panelBox6.Text = "Experimental";
             this.panelBox6.TextLocation = "8; 5";
             // 
+            // firefoxCheckBox1
+            // 
+            this.firefoxCheckBox1.Bold = false;
+            this.firefoxCheckBox1.EnabledCalc = true;
+            this.firefoxCheckBox1.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.firefoxCheckBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.firefoxCheckBox1.Location = new System.Drawing.Point(3, 120);
+            this.firefoxCheckBox1.Name = "firefoxCheckBox1";
+            this.firefoxCheckBox1.Size = new System.Drawing.Size(178, 27);
+            this.firefoxCheckBox1.TabIndex = 19;
+            this.firefoxCheckBox1.Tag = "iatag_ui_v1_0_40_0_hotfix";
+            this.firefoxCheckBox1.Text = "v1.0.40.0 hotfix";
+            this.firefoxCheckBox1.CheckedChanged += new System.EventHandler(this.firefoxCheckBox1_CheckedChanged);
+            // 
             // cbInstaTransfer
             // 
             this.cbInstaTransfer.Bold = false;
@@ -125,7 +141,7 @@
             this.cbInstaTransfer.TabIndex = 18;
             this.cbInstaTransfer.Tag = "iatag_ui_instatransfer";
             this.cbInstaTransfer.Text = "InstaTransfer";
-            this.cbInstaTransfer.Visible = false;
+            this.cbInstaTransfer.CheckedChanged += new System.EventHandler(this.cbInstaTransfer_CheckedChanged);
             // 
             // linkLabel2
             // 
@@ -152,6 +168,7 @@
             this.cbInstalootDisabled.TabIndex = 16;
             this.cbInstalootDisabled.Tag = "iatag_ui_instaloot";
             this.cbInstalootDisabled.Text = "Disable Instaloot";
+            this.cbInstalootDisabled.CheckedChanged += new System.EventHandler(this.cbInstalootDisabled_CheckedChanged);
             // 
             // panelBox5
             // 
@@ -616,5 +633,6 @@
         private FirefoxCheckBox cbDisplaySkills;
         private FirefoxButton buttonAdvancedSettings;
         private System.Windows.Forms.LinkLabel linkSourceCode;
+        private FirefoxCheckBox firefoxCheckBox1;
     }
 }

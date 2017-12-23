@@ -37,21 +37,27 @@ namespace Tests_IAGrim.ImportExport {
 
         [TestMethod]
         public void WriteItemsForSillyPeople() {
-            var item = new PlayerItem() {
-                Count = 1,
-                PrefixRecord = "records/items/lootaffixes/prefix/b_class021_shaman19_je_c.dbr",
-                BaseRecord = "records/items/gearrelic/d109_relic.dbr",
-                SuffixRecord = "records/items/lootaffixes/suffix/a031d_off_dmg%lightning_07_we2h.dbr",
-                Seed = 4086693888
-            };
+            Random r = new Random();
+            var items = new List<PlayerItem>();
+
+            for (int i = 0; i < 8; i++) {
+                var item = new PlayerItem() {
+                    Count = 1,
+                    //PrefixRecord = "records/items/lootaffixes/prefix/b_class021_shaman19_je_c.dbr",
+                    BaseRecord = "records/items/gearhead/c034_head.dbr",
+                    //SuffixRecord = "records/items/lootaffixes/suffix/a031d_off_dmg%lightning_07_we2h.dbr",
+                    Seed = r.Next()
+                };
+                items.Add(item);
+            }
 
             var path = @"f:\temp\export.ias";
             var exporter = new IAFileExporter(path);
-            exporter.Write(new List<PlayerItem>( ) {  item });
+            exporter.Write(items);
 
 
             var verifiy = exporter.Read();
-            verifiy.Count.Should().Be.EqualTo(1);
+            verifiy.Count.Should().Be.EqualTo(items.Count);
         }
 
         [TestMethod]

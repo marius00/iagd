@@ -39,6 +39,7 @@ namespace IAGrim.Utilities {
 
         public static StashAvailability PreviousStashStatus => _previousStashStatus;
 
+        public static bool GrimDawnRunning { get; set; } // V1.0.4.0 hotfix
         public static StashAvailability StashStatus {
             get {
                 return _stashStatus;

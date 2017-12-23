@@ -466,5 +466,29 @@ namespace IAGrim.Properties {
                 this["StashToDepositTo"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int InstalootSetting {
+            get {
+                return ((int)(this["InstalootSetting"]));
+            }
+            set {
+                this["InstalootSetting"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Hotfix1_0_4_0_active {
+            get {
+                return ((bool)(this["Hotfix1_0_4_0_active"]));
+            }
+            set {
+                this["Hotfix1_0_4_0_active"] = value;
+            }
+        }
     }
 }

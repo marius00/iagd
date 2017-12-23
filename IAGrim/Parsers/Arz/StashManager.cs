@@ -189,6 +189,19 @@ namespace IAGrim.Parsers.Arz {
             }
         }
 
+        public static int GetNumStashPages(string filename) {
+            if (File.Exists(filename)) {
+                GDCryptoDataBuffer pCrypto = new GDCryptoDataBuffer(DataBuffer.ReadBytesFromDisk(filename));
+
+                Stash stash = new Stash();
+                if (stash.Read(pCrypto)) {
+                    return stash.Tabs.Count;
+                }
+            }
+
+            return 0;
+        }
+
         /// <summary>
         ///     Loot all the items stored on page X, and store them to the local database
         /// </summary>

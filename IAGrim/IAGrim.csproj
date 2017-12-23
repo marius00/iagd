@@ -433,6 +433,7 @@
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Utilities\HelperClasses\GDTransferFile.cs" />
+    <Compile Include="Utilities\HelperClasses\InstalootSettingType.cs" />
     <Compile Include="Utilities\HelperClasses\StashAvailability.cs" />
     <Compile Include="Utilities\ItemHtmlWriter.cs" />
     <Compile Include="Utilities\Logging\TextBoxAppender.cs" />
@@ -454,7 +455,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </None>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

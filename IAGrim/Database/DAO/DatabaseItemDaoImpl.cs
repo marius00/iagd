@@ -477,7 +477,7 @@ namespace IAGrim.Database {
             }
 
             // Add the MAXIMUM level requirement (if any)
-            if (query.MaximumLevel < 85 && query.MaximumLevel > 0) {
+            if (query.MaximumLevel < 120 && query.MaximumLevel > 0) {
                 var subquery = Subqueries.PropertyIn("BaseRecord", DetachedCriteria.For<DatabaseItemStat>()
                     .Add(Restrictions.Eq("Stat", "levelRequirement"))
                     .Add(Restrictions.Le("Value", query.MaximumLevel))

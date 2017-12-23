@@ -111,11 +111,13 @@ namespace IAGrim.UI {
                 else if (e.ProgressPercentage == InjectionHelper.NO_PROCESS_FOUND_ON_STARTUP) {
                     if (GlobalSettings.StashStatus == StashAvailability.UNKNOWN) {
                         GlobalSettings.StashStatus = StashAvailability.CLOSED;
+                        GlobalSettings.GrimDawnRunning = false; // V1.0.4.0 hotfix
                     }
                 }
                 // No grim dawn client, so stash is closed!
                 else if (e.ProgressPercentage == InjectionHelper.NO_PROCESS_FOUND) {
-                     GlobalSettings.StashStatus = StashAvailability.CLOSED;                    
+                    GlobalSettings.StashStatus = StashAvailability.CLOSED;
+                    GlobalSettings.GrimDawnRunning = false;// V1.0.4.0 hotfix
                 }
             }
         }
@@ -272,6 +274,11 @@ namespace IAGrim.UI {
             
             foreach (IMessageProcessor t in _messageProcessors) {
                 t.Process(type, bt.Data);
+            }
+
+            if (!GlobalSettings.GrimDawnRunning) {
+                Logger.Debug("GrimDawnRunning flag has been changed from false to true");
+                GlobalSettings.GrimDawnRunning = true; // V1.0.4.0 hotfix   
             }
 
             int offset;
@@ -624,8 +631,10 @@ namespace IAGrim.UI {
 #if DEBUG
             hasMods = false; // TODO TODO TODO TODO
 #endif
-            string dllname = (hasMods || Settings.Default.InstaLootDisabled) ? "ItemAssistantHook.dll" : "ItemAssistantHook-exp.dll";
-            Logger.Debug($"Using {dllname} as the default hook due to HasMods: {hasMods}, Instaloot disabled: {Settings.Default.InstaLootDisabled}");
+            // CBA dealing with this.
+            InstalootSettingType instaloot = (InstalootSettingType) Settings.Default.InstalootSetting;
+            string dllname = (hasMods || instaloot != InstalootSettingType.Enabled) ? "ItemAssistantHook.dll" : "ItemAssistantHook-exp.dll";
+            Logger.Debug($"Using {dllname} as the default hook due to HasMods: {hasMods}, Instaloot setting: {instaloot}");
 
             _injector = new InjectionHelper(new BackgroundWorker(), _injectorCallbackDelegate, false, "Grim Dawn", string.Empty, dllname);
         }

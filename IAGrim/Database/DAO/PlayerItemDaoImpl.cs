@@ -900,7 +900,7 @@ namespace IAGrim.Database {
             }
 
             // Add the MAXIMUM level requirement (if any)
-            if (query.MaximumLevel < 85 && query.MaximumLevel > 0) {
+            if (query.MaximumLevel < 120 && query.MaximumLevel > 0) {
                 queryFragments.Add("PI.LevelRequirement <= :maxlevel");
                 queryParams.Add("maxlevel", query.MaximumLevel);
             }

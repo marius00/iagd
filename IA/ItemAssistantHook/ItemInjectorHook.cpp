@@ -80,12 +80,14 @@ void ItemInjectorHook::AddItem(char* in_buffer, DWORD in_bufflen) {
 
 	char buffer[240] = { 0 };
 
+	int tab;
 	float positionX;
 	float positionY;
-	memcpy(&positionX, in_buffer, 4);
-	memcpy(&positionY, in_buffer+4, 4);
+	memcpy(&tab, in_buffer + 0, 4);
+	memcpy(&positionX, in_buffer + 4, 4);
+	memcpy(&positionY, in_buffer + 8, 4);
 
-	in_buffer = in_buffer + 8; // Hardcoded values below, so skip the position elements
+	in_buffer = in_buffer + 12; // Hardcoded values below, so skip the position elements
 	in_bufflen -= 8;
 	
 	memcpy(buffer + 76, in_buffer + 0 * 4, 4); // seed

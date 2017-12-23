@@ -20,7 +20,6 @@ using IAGrim.Utilities.HelperClasses;
 // 
 namespace IAGrim.UI {
     partial class SettingsWindow : Form {
-        private readonly ILog logger = LogManager.GetLogger(typeof(SettingsWindow));
         private ISettingsController _controller = new SettingsController();
         private TooltipHelper _tooltipHelper;
 
@@ -93,7 +92,7 @@ namespace IAGrim.UI {
 
             radioBeta.Checked = (bool)Properties.Settings.Default.SubscribeExperimentalUpdates;
             radioRelease.Checked = !(bool)Properties.Settings.Default.SubscribeExperimentalUpdates;
-
+            firefoxCheckBox1.Checked = Properties.Settings.Default.Hotfix1_0_4_0_active;
             //controller.LoadDefaults();
 
         }
@@ -136,11 +135,11 @@ namespace IAGrim.UI {
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
-                System.Diagnostics.Process.Start("mailto:itemassistant@gmail.com");
+                System.Diagnostics.Process.Start("https://discord.gg/PJ87Ewa");
         }
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e) {
-            Clipboard.SetText("itemassistant@gmail.com");
+            Clipboard.SetText("https://discord.gg/PJ87Ewa");
             _tooltipHelper.ShowTooltipForControl("Copied to clipboard", linkLabel1, TooltipHelper.TooltipLocation.TOP);
         }
 
@@ -190,6 +189,19 @@ namespace IAGrim.UI {
 
         private void linkSourceCode_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             Process.Start("https://github.com/marius00/iagd");
+        }
+
+        private void cbInstalootDisabled_CheckedChanged(object sender, EventArgs e) {
+
+        }
+
+        private void cbInstaTransfer_CheckedChanged(object sender, EventArgs e) {
+
+        }
+
+        private void firefoxCheckBox1_CheckedChanged(object sender, EventArgs e) {
+            Properties.Settings.Default.Hotfix1_0_4_0_active = firefoxCheckBox1.Checked;
+            Properties.Settings.Default.Save();
         }
     }
 }

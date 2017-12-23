@@ -20,7 +20,8 @@
     <button class="tablinks active" id="button-items-tab" onclick="openTab(event, 'tab-items')" data-bind="text: $root.iatag_html_tab_header_items">Items</button>
     <button class="tablinks" onclick="openTab(event, 'tab-crafting')" data-bind="text: $root.iatag_html_tab_header_crafting">Crafting</button>
     <button class="tablinks" onclick="data.OpenURL('http://dev.dreamcrash.org/enchantments/')"  data-bind="text: $root.iatag_html_tab_header_components">Components</button>
-    <button class="tablinks" onclick="data.OpenURL('https://discord.gg/PJ87Ewa')"  data-bind="text: $root.iatag_html_tab_header_discord">Discord</button>
+    <button class="tablinks" onclick="VM.hasClosedHotfix10400(false);">v1.0.4.0 Hotfix</button>
+    <button class="tablinks" onclick="data.OpenURL('https://discord.gg/PJ87Ewa')"  data-bind="text: $root.iatag_html_tab_header_discord">Help / Discord</button>
 </div>
 
 <div id="tab-crafting" class="tabcontent">
@@ -89,14 +90,46 @@
         margin-left: 35px;
     }
     
-    #close-magic-sequence {
+    .close-magic-sequence {
         position: absolute;
         top: 4px;
         right: 7px;
         cursor: pointer;
     }
-    #close-magic-sequence:hover {
+    .close-magic-sequence:hover {
         text-decoration: underline;
+    }
+    
+    .close-hotfix10400 {
+        position: absolute;
+        bottom: 4px;
+        right: 7px;
+        cursor: pointer;
+        font-size: 14pt;
+    }
+    .close-hotfix10400:hover {
+        text-decoration: underline;
+    }
+
+    .hotfix10400-popup {
+        z-index: 10000;
+        position: absolute;
+        top: 5%;
+        left: 15%;
+        transform: translate(-15%, 0%);
+        padding: 35px;
+        background: #e8d5b6;
+    
+        border-radius: 15px;
+        border: 1px solid #896947;
+    }
+    
+    .hotfix10400-td {
+        vertical-align: top;
+        border-radius: 5px;
+        border: 1px solid #896947;
+        margin: 2px;
+        padding: 5px;
     }
 </style>
 
@@ -108,11 +141,62 @@
     </div>
     
 
+
+    <div data-bind="visible: !hasClosedHotfix10400()" class="hotfix10400-popup">
+        <div class="ooops">Warning!</div>
+        <div class="bad-state-notice">Update v1.0.4.0 of Grim Dawn broke some functionality</div>
+        <br />
+        <span class="close-magic-sequence" data-bind="click: closehasClosedHotfix10400">Close</span>
+        Zantai/Crate has announced that they are working on a fix for Grim Dawn.<br/>
+        Meanwhile, some extra work is required by <u>you</u> to prevent items being <font color="red">lost or duplicated</font>.<br/><br/>
+        
+        <table>
+            <tr>
+                <td class="hotfix10400-td">
+                    <h1>Preventing item loss:</h1><br />
+                    IA no longer allows you to transfer items while the game is running<br/>
+                    You will need to close Grim Dawn in order to transfer items. (this is temporary)<br/><br/>
+                    An experimental work-around (~95% safe, MAY lose items) is to enable "instatransfer" under settings.<br/>
+                    Instatransfer lets you transfer items into GD <b>while the stash is open</b>.<br/><br />
+                    Enabling/disabling instaloot or instatransfer requires both Grim Dawn and IA to be closed before changes takes effect.<br/>
+                    <br/><br />
+                    Obs: All items appear in tab 3 with Insta-Transfer, regardless of setting.
+                </td>
+
+                <td class="hotfix10400-td">
+                    <h1>Preventing item duplication:</h1><br />
+                    If you are playing Grim Dawn <u>without</u> mods: (like grimarillion etc)
+                    <ol>
+                        <li>Go to settings</li>
+                        <li>Ensure that instaloot is <u>NOT</u> disabled</li>
+                        <li>Close Grim Dawn</li>
+                        <li>Close Item Assistant</li>
+                        <li>You can now loot items normally in Grim dawn without any issues</li>
+                    </ol>
+                    <br />
+                    <br />
+
+                    If you are playing Grim Dawn <u>with</u> mods: (like grimarillion etc)
+                    <ol>
+                        <li>Place items in your stash</li>
+                        <li>Run away</li>
+                        <li>IA loots the items</li>
+                        <li><font color="red">Close Grim Dawn</font></li>
+                        <li>Items have been looted without being duplicated</li>
+                    </ol>
+                </td>
+            </tr>
+        </table>
+
+        <span class="close-hotfix10400" data-bind="click: closehasClosedHotfix10400">Close</span>
+
+</div>
+
     <div data-bind="visible: magicSequenceRequired()" class="magic-sequence-popup">
         <div class="ooops" data-bind="text: $root.iatag_html_badstate_title">Ooops!</div>
         <div class="bad-state-notice" data-bind="text: $root.iatag_html_badstate_subtitle">It seems IA has gotten in a bad state!</div>
         <br />
-        <span id="close-magic-sequence" data-bind="click: closeMagicSequence, text: $root.iatag_html_badstate_close">Close</span>
+        <span class="close-magic-sequence" data-bind="click: closeMagicSequence, text: $root.iatag_html_badstate_close">Close</span>
         This is usually pretty easily resolved, by following this <span class="exact">exact</span> sequence. <br />
         Do not deviate from it, do it exactly, and it should resolve just about any problems you run into.
         <ol>
@@ -273,6 +357,15 @@
         var self = this;
         this.Items = ko.observableArray(items);
         this.Message = ko.observable(message);
+
+
+        this.hasClosedHotfix10400 = ko.observable(false);
+
+        this.closehasClosedHotfix10400 = function () {
+            console.log("closeeee");
+            this.hasClosedHotfix10400(true);
+        }
+
         this.hasClosedMagicSequence = ko.observable(false);
 
         this.closeMagicSequence = function() {

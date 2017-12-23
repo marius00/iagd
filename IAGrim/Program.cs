@@ -277,7 +277,7 @@ namespace IAGrim {
 
             Logger.Info("Transfer to any mod is " + (Properties.Settings.Default.TransferAnyMod ? "enabled" : "disabled"));
             Logger.Info("Experimental updates is " + (Properties.Settings.Default.SubscribeExperimentalUpdates ? "enabled" : "disabled"));
-            Logger.Info("Instaloot is " + (Properties.Settings.Default.InstaLootDisabled ? "disabled" : "enabled"));
+            Logger.Info("Instaloot is set to " + Properties.Settings.Default.InstalootSetting);
 
             if (Properties.Settings.Default.UserNeverWantsBackups)
                 Logger.Warn("You have opted out of backups");

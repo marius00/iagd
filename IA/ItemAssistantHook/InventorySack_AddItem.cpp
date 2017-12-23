@@ -379,13 +379,14 @@ void InventorySack_AddItem::EnableHook() {
 	DetourTransactionCommit();
 #endif
 
-	// Not hooking it
+	
+	/*
 	dll_GameInfo_GetModName = (GameInfo_GetModName)GetProcAddress(::GetModuleHandle("Engine.dll"), "?GetModName@GameInfo@GAME@@QBEABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ");
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
 	DetourAttach((PVOID*)&dll_GameInfo_GetModName, Hooked_GameInfo_GetModName);
 	DetourTransactionCommit();
-
+	*/
 
 	dll_InventorySack_InventorySackParam = (InventorySack_InventorySackParam)GetProcAddress(::GetModuleHandle("Game.dll"), "??0InventorySack@GAME@@QAE@ABV01@@Z");
 	DetourTransactionBegin();

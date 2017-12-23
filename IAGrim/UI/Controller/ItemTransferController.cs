@@ -149,6 +149,12 @@ namespace IAGrim.UI.Controller {
         }
 
         private bool CanTransfer() {
+            if (Properties.Settings.Default.Hotfix1_0_4_0_active && GlobalSettings.GrimDawnRunning) {
+                Logger.Warn("Transfer rejected due to Hotfix v1.0.4.0 safety settings - Please close grim dawn before transferring, or use insta-transfer");
+                _browser.ShowMessage(GlobalSettings.Language.GetTag("iatag_stash_hotfix_1_0_40_0_rejected"), "Warning");
+                return false;
+            }
+
             return GlobalSettings.StashStatus == StashAvailability.CLOSED
                 || !_settingsController.SecureTransfers
                 || (GlobalSettings.StashStatus == StashAvailability.ERROR 
@@ -211,7 +217,7 @@ namespace IAGrim.UI.Controller {
 
             else if (GlobalSettings.StashStatus == StashAvailability.OPEN) {
                 // "InstaTransfer" is an experimental feature
-                if (Properties.Settings.Default.InstaTransfer && false) { // disabled for now
+                if (Properties.Settings.Default.InstaTransfer) { // disabled for now
 
                     
                     List<PlayerItem> items = GetItemsForTransfer(args);
@@ -268,7 +274,11 @@ namespace IAGrim.UI.Controller {
 
         public bool TransferToOpenStash(PlayerItem pi) {
             List<byte> buffer = ItemInjectCallbackProcessor.Serialize(pi);
-
+            var stashTab = Properties.Settings.Default.StashToDepositTo;
+            if (stashTab == 0) {
+                // Find real tab.. Related to hotfix v1.0.4.0
+                stashTab = StashManager.GetNumStashPages(GetTransferFile());
+            }
 
             var position = _dynamicPacker.Insert(pi.BaseRecord, (uint)pi.Seed);
             if (position == null) {
@@ -278,7 +288,8 @@ namespace IAGrim.UI.Controller {
             }
             buffer.InsertRange(0, BitConverter.GetBytes(position.X * 32));
             buffer.InsertRange(4, BitConverter.GetBytes(position.Y * 32));
-            
+            buffer.InsertRange(0, BitConverter.GetBytes(stashTab));
+
 
             using (NamedPipeClientStream pipeStream = new NamedPipeClientStream(".", "gdiahook", PipeDirection.InOut, PipeOptions.Asynchronous)) {
                 // The connect function will indefinitely wait for the pipe to become available
