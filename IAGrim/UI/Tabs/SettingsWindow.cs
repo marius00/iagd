@@ -58,11 +58,13 @@ namespace IAGrim.UI {
             _controller.BindCheckbox(cbSecureTransfers);
             _controller.BindCheckbox(cbShowRecipesAsItems);
             _controller.BindCheckbox(cbAutoUpdateModSettings);
-            _controller.BindCheckbox(cbInstalootDisabled);
+            //_controller.BindCheckbox(cbInstalootDisabled);
             _controller.BindCheckbox(cbInstaTransfer);
             _controller.BindCheckbox(cbAutoSearch);
             _controller.BindCheckbox(cbDisplaySkills);
             _controller.LoadDefaults();
+
+            cbInstalootDisabled.Checked = (InstalootSettingType)Properties.Settings.Default.InstalootSetting != InstalootSettingType.Enabled;
         }
 
         private void SettingsWindow_Load(object sender, EventArgs e) {
@@ -193,6 +195,8 @@ namespace IAGrim.UI {
 
         private void cbInstalootDisabled_CheckedChanged(object sender, EventArgs e) {
 
+            Properties.Settings.Default.InstalootSetting = (int)(cbInstalootDisabled.Checked ? InstalootSettingType.Enabled : InstalootSettingType.Disabled);
+            Properties.Settings.Default.Save();
         }
 
         private void cbInstaTransfer_CheckedChanged(object sender, EventArgs e) {
