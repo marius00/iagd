@@ -74,9 +74,6 @@
     <Setting Name="LocalizationFile" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="InstaLootDisabled" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
     <Setting Name="BackupLogin" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
@@ -117,7 +114,7 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="Hotfix1_0_4_0_active" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

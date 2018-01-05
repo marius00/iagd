@@ -64,7 +64,7 @@ namespace IAGrim.UI {
             _controller.BindCheckbox(cbDisplaySkills);
             _controller.LoadDefaults();
 
-            cbInstalootDisabled.Checked = (InstalootSettingType)Properties.Settings.Default.InstalootSetting != InstalootSettingType.Enabled;
+            cbInstalootEnabled.Checked = (InstalootSettingType)Properties.Settings.Default.InstalootSetting == InstalootSettingType.Enabled;
         }
 
         private void SettingsWindow_Load(object sender, EventArgs e) {
@@ -195,8 +195,12 @@ namespace IAGrim.UI {
 
         private void cbInstalootDisabled_CheckedChanged(object sender, EventArgs e) {
 
-            Properties.Settings.Default.InstalootSetting = (int)(cbInstalootDisabled.Checked ? InstalootSettingType.Enabled : InstalootSettingType.Disabled);
+            Properties.Settings.Default.InstalootSetting = (int)(cbInstalootEnabled.Checked ? InstalootSettingType.Enabled : InstalootSettingType.Disabled);
             Properties.Settings.Default.Save();
+
+            var debuygggy = Properties.Settings.Default.InstalootSetting;
+            var debuygggy2 = (InstalootSettingType)Properties.Settings.Default.InstalootSetting;
+            int x = 9;
         }
 
         private void cbInstaTransfer_CheckedChanged(object sender, EventArgs e) {

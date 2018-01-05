@@ -30,7 +30,7 @@ namespace IAGrim.Parsers.Arz {
         public List<Item> UnlootedItems => _unlootedItems.ToList();
         private ConcurrentBag<Item> _unlootedItems = new ConcurrentBag<Item>();
         public readonly int NumStashTabs;
-        private bool _hasLootedItemsOnceThisSession = false;
+        //private bool _hasLootedItemsOnceThisSession = false;
 
         public event EventHandler StashUpdated;
 
@@ -259,7 +259,7 @@ namespace IAGrim.Parsers.Arz {
                 }
 
                 if (stash.Tabs[lootFromIndex].Items.Count > 0) {
-                    _hasLootedItemsOnceThisSession = true;
+                    //_hasLootedItemsOnceThisSession = true;
 
                     // Grab the items and clear the tab
                     List<Item> items = new List<Item>(stash.Tabs[lootFromIndex].Items);
@@ -679,7 +679,7 @@ namespace IAGrim.Parsers.Arz {
             Logger.DebugFormat("File: {0} renamed to {1}", e.OldFullPath, e.FullPath);
             if (!e.FullPath.EndsWith(".bak")) {
                 if (File.Exists(e.FullPath)) {
-
+                    /*
                     if (GlobalSettings.PreviousStashStatus == StashAvailability.CRAFTING ||
                         GlobalSettings.StashStatus == StashAvailability.CRAFTING) {
                         Logger.Info("Detected an update to stash file, but ignoring due to crafting-safety-check");
@@ -699,7 +699,7 @@ namespace IAGrim.Parsers.Arz {
                             Logger.Info("No items has been looted this session, ignoring safety measures.");
                         }
                     }
-                    else {
+                    else*/ {
                         Logger.Info("Detected an update to stash file, checking for loot..");
 
                         LootStashDelayed(e.FullPath);

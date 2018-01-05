@@ -31,6 +31,7 @@ using IAGrim.Database.DAO;
 using IAGrim.Parser.Arc;
 using IAGrim.Services.Crafting;
 using IAGrim.UI.Popups;
+using IAGrim.Utilities.HelperClasses;
 
 
 namespace IAGrim {
@@ -277,7 +278,7 @@ namespace IAGrim {
 
             Logger.Info("Transfer to any mod is " + (Properties.Settings.Default.TransferAnyMod ? "enabled" : "disabled"));
             Logger.Info("Experimental updates is " + (Properties.Settings.Default.SubscribeExperimentalUpdates ? "enabled" : "disabled"));
-            Logger.Info("Instaloot is set to " + Properties.Settings.Default.InstalootSetting);
+            Logger.Info($"Instaloot is set to {Properties.Settings.Default.InstalootSetting} ({(InstalootSettingType)Properties.Settings.Default.InstalootSetting})");
 
             if (Properties.Settings.Default.UserNeverWantsBackups)
                 Logger.Warn("You have opted out of backups");
@@ -313,6 +314,7 @@ namespace IAGrim {
         private static void Run(ThreadExecuter threadExecuter) {
             var factory = new SessionFactory();
 
+            // Prohibited for now
             Properties.Settings.Default.InstaTransfer = false;
             Properties.Settings.Default.Save();
 

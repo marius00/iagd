@@ -632,8 +632,8 @@ namespace IAGrim.UI {
             hasMods = false; // TODO TODO TODO TODO
 #endif
             // CBA dealing with this.
-            InstalootSettingType instaloot = (InstalootSettingType) Settings.Default.InstalootSetting;
-            string dllname = (hasMods || instaloot != InstalootSettingType.Enabled) ? "ItemAssistantHook.dll" : "ItemAssistantHook-exp.dll";
+            InstalootSettingType instaloot = (InstalootSettingType)Properties.Settings.Default.InstalootSetting;
+            string dllname = (!hasMods && instaloot == InstalootSettingType.Enabled) ? "ItemAssistantHook-exp.dll" : "ItemAssistantHook.dll";
             Logger.Debug($"Using {dllname} as the default hook due to HasMods: {hasMods}, Instaloot setting: {instaloot}");
 
             _injector = new InjectionHelper(new BackgroundWorker(), _injectorCallbackDelegate, false, "Grim Dawn", string.Empty, dllname);

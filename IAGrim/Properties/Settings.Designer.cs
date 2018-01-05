@@ -313,18 +313,6 @@ namespace IAGrim.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool InstaLootDisabled {
-            get {
-                return ((bool)(this["InstaLootDisabled"]));
-            }
-            set {
-                this["InstaLootDisabled"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string BackupLogin {
             get {
@@ -481,7 +469,7 @@ namespace IAGrim.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool Hotfix1_0_4_0_active {
             get {
                 return ((bool)(this["Hotfix1_0_4_0_active"]));

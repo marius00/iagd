@@ -31,7 +31,7 @@
             this.firefoxCheckBox1 = new FirefoxCheckBox();
             this.cbInstaTransfer = new FirefoxCheckBox();
             this.linkLabel2 = new System.Windows.Forms.LinkLabel();
-            this.cbInstalootDisabled = new FirefoxCheckBox();
+            this.cbInstalootEnabled = new FirefoxCheckBox();
             this.panelBox5 = new PanelBox();
             this.labelNumItems = new System.Windows.Forms.Label();
             this.labelLastUpdated = new System.Windows.Forms.Label();
@@ -103,7 +103,7 @@
             this.panelBox6.Controls.Add(this.firefoxCheckBox1);
             this.panelBox6.Controls.Add(this.cbInstaTransfer);
             this.panelBox6.Controls.Add(this.linkLabel2);
-            this.panelBox6.Controls.Add(this.cbInstalootDisabled);
+            this.panelBox6.Controls.Add(this.cbInstalootEnabled);
             this.panelBox6.Font = new System.Drawing.Font("Segoe UI Semibold", 20F);
             this.panelBox6.HeaderHeight = 40;
             this.panelBox6.Location = new System.Drawing.Point(700, 12);
@@ -158,19 +158,19 @@
             this.linkLabel2.Text = "Details..";
             this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
             // 
-            // cbInstalootDisabled
+            // cbInstalootEnabled
             // 
-            this.cbInstalootDisabled.Bold = false;
-            this.cbInstalootDisabled.EnabledCalc = true;
-            this.cbInstalootDisabled.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cbInstalootDisabled.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbInstalootDisabled.Location = new System.Drawing.Point(3, 54);
-            this.cbInstalootDisabled.Name = "cbInstalootDisabled";
-            this.cbInstalootDisabled.Size = new System.Drawing.Size(178, 27);
-            this.cbInstalootDisabled.TabIndex = 16;
-            this.cbInstalootDisabled.Tag = "iatag_ui_instaloot";
-            this.cbInstalootDisabled.Text = "Disable Instaloot";
-            this.cbInstalootDisabled.CheckedChanged += new System.EventHandler(this.cbInstalootDisabled_CheckedChanged);
+            this.cbInstalootEnabled.Bold = false;
+            this.cbInstalootEnabled.EnabledCalc = true;
+            this.cbInstalootEnabled.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbInstalootEnabled.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbInstalootEnabled.Location = new System.Drawing.Point(3, 54);
+            this.cbInstalootEnabled.Name = "cbInstalootEnabled";
+            this.cbInstalootEnabled.Size = new System.Drawing.Size(178, 27);
+            this.cbInstalootEnabled.TabIndex = 16;
+            this.cbInstalootEnabled.Tag = "iatag_ui_instaloot";
+            this.cbInstalootEnabled.Text = "Instaloot";
+            this.cbInstalootEnabled.CheckedChanged += new System.EventHandler(this.cbInstalootDisabled_CheckedChanged);
             // 
             // panelBox5
             // 
@@ -628,7 +628,7 @@
         private PanelBox panelBox6;
         private FirefoxButton buttonMigratePostgres;
         private System.Windows.Forms.LinkLabel linkLabel2;
-        private FirefoxCheckBox cbInstalootDisabled;
+        private FirefoxCheckBox cbInstalootEnabled;
         private FirefoxCheckBox cbInstaTransfer;
         private FirefoxCheckBox cbAutoSearch;
         private FirefoxButton buttonImportExport;

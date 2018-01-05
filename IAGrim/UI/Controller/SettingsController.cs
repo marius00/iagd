@@ -27,7 +27,6 @@ namespace IAGrim.UI.Controller {
             SecureTransfers = (bool)Properties.Settings.Default.SecureTransfers;
             ShowRecipesAsItems = (bool)Properties.Settings.Default.ShowRecipesAsItems;
             AutoUpdateModSettings = (bool)Properties.Settings.Default.AutoUpdateModSettings;
-            InstaLootDisabled = Properties.Settings.Default.InstalootSetting != (int)InstalootSettingType.Enabled;
             InstaTransfer = (bool)Properties.Settings.Default.InstaTransfer;
             AutoSearch = (bool)Properties.Settings.Default.AutoSearch;
             DisplaySkills = Properties.Settings.Default.DisplaySkills;
@@ -141,17 +140,7 @@ namespace IAGrim.UI.Controller {
                 OnPropertyChanged();
             }
         }
-        
-        public bool InstaLootDisabled {
-            get {
-                return Properties.Settings.Default.InstalootSetting != (int)InstalootSettingType.Enabled;
-            }
-            set {
-                Properties.Settings.Default.InstalootSetting = (int)(value ? InstalootSettingType.Enabled : InstalootSettingType.Disabled);
-                Properties.Settings.Default.Save();
-                OnPropertyChanged();
-            }
-        }
+
 
         public bool InstaTransfer {
             get {
