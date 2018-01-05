@@ -313,6 +313,8 @@ namespace IAGrim {
         private static void Run(ThreadExecuter threadExecuter) {
             var factory = new SessionFactory();
 
+            Properties.Settings.Default.InstaTransfer = false;
+            Properties.Settings.Default.Save();
 
             new MigrationHandler(factory).Migrate();
             IDatabaseSettingDao databaseSettingDao = new DatabaseSettingRepo(threadExecuter, factory);

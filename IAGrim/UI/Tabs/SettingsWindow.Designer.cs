@@ -127,6 +127,7 @@
             this.firefoxCheckBox1.TabIndex = 19;
             this.firefoxCheckBox1.Tag = "iatag_ui_v1_0_40_0_hotfix";
             this.firefoxCheckBox1.Text = "v1.0.40.0 hotfix";
+            this.firefoxCheckBox1.Visible = false;
             this.firefoxCheckBox1.CheckedChanged += new System.EventHandler(this.firefoxCheckBox1_CheckedChanged);
             // 
             // cbInstaTransfer
@@ -141,6 +142,7 @@
             this.cbInstaTransfer.TabIndex = 18;
             this.cbInstaTransfer.Tag = "iatag_ui_instatransfer";
             this.cbInstaTransfer.Text = "InstaTransfer";
+            this.cbInstaTransfer.Visible = false;
             this.cbInstaTransfer.CheckedChanged += new System.EventHandler(this.cbInstaTransfer_CheckedChanged);
             // 
             // linkLabel2

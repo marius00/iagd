@@ -149,12 +149,6 @@ namespace IAGrim.UI.Controller {
         }
 
         private bool CanTransfer() {
-            if (Properties.Settings.Default.Hotfix1_0_4_0_active && GlobalSettings.GrimDawnRunning) {
-                Logger.Warn("Transfer rejected due to Hotfix v1.0.4.0 safety settings - Please close grim dawn before transferring, or use insta-transfer");
-                _browser.ShowMessage(GlobalSettings.Language.GetTag("iatag_stash_hotfix_1_0_40_0_rejected"), "Warning");
-                return false;
-            }
-
             return GlobalSettings.StashStatus == StashAvailability.CLOSED
                 || !_settingsController.SecureTransfers
                 || (GlobalSettings.StashStatus == StashAvailability.ERROR 
