@@ -19,7 +19,7 @@ namespace SessionFactoryLoader {
 
 
         private ISessionFactory CreateSessionFactory(string configFile) {
-            // 
+            logger.Debug("Creating session factory");
             var configuration = new Configuration();
             configuration.Configure(configFile);
 
@@ -37,8 +37,10 @@ namespace SessionFactoryLoader {
             configuration.AddAssembly(System.Reflection.Assembly.GetEntryAssembly());
 
             try {
+                logger.Debug("Building session factory");
                 var factory = configuration.BuildSessionFactory();
 
+                logger.Debug("Running schema updates");
                 var updater = new SchemaUpdate(configuration);
                 updater.Execute(true, true);
 

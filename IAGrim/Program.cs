@@ -244,6 +244,7 @@ namespace IAGrim {
             }
         }
 
+        // TODO: This creates another session instance, should be executed inside the ThreadExecuter
         private static void PrintStartupInfo(SessionFactory factory) {
             if (Properties.Settings.Default.StashToLootFrom == 0) {
                 Logger.Info("IA is configured to loot from the last stash page");
@@ -317,8 +318,8 @@ namespace IAGrim {
             // Prohibited for now
             Properties.Settings.Default.InstaTransfer = false;
             Properties.Settings.Default.Save();
-
-            new MigrationHandler(factory).Migrate();
+            threadExecuter.Execute(() => new MigrationHandler(factory).Migrate());
+            
             IDatabaseSettingDao databaseSettingDao = new DatabaseSettingRepo(threadExecuter, factory);
             LoadUuid(databaseSettingDao);
             IPlayerItemDao playerItemDao = new PlayerItemRepo(threadExecuter, factory);

@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.Arz;
 using IAGrim.Services.Crafting.dto;
-using Remotion.Linq.Parsing.ExpressionTreeVisitors.Transformation.PredefinedTransformations;
 
 namespace IAGrim.Services.Crafting {
     class CostCalculationService {
