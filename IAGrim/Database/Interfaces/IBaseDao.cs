@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IAGrim.Parsers.GameDataParsing.Model;
 
 namespace IAGrim.Database.Interfaces {
     public interface IBaseDao<T> {
@@ -11,7 +12,7 @@ namespace IAGrim.Database.Interfaces {
 
         void Save(T obj);
         void Save(IEnumerable<T> objs);
-
+        
         void Update(T obj);
 
         IList<T> ListAll();

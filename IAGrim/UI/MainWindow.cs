@@ -21,6 +21,7 @@ using IAGrim.BuddyShare;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parsers;
 using IAGrim.Parsers.Arz;
+using IAGrim.Parsers.GameDataParsing.Service;
 using IAGrim.Properties;
 using IAGrim.Services;
 using IAGrim.Services.MessageProcessor;
@@ -78,6 +79,7 @@ namespace IAGrim.UI {
         private ItemTransferController _transferController;
         private ItemSynchronizer _itemSynchronizer; // Online backups
 
+        private readonly IItemTagDao _itemTagDao;
         private readonly IDatabaseItemDao _databaseItemDao;
         private readonly IDatabaseItemStatDao _databaseItemStatDao;
         private readonly IPlayerItemDao _playerItemDao;
@@ -87,6 +89,7 @@ namespace IAGrim.UI {
         private readonly ArzParser _arzParser;
         private readonly RecipeParser _recipeParser;
         private readonly IItemSkillDao _itemSkillDao;
+        private readonly ParsingService _parsingService;
 
         public static MainWindow Instance { get; set; }
         private readonly Stopwatch _reportUsageStatistics;
@@ -154,8 +157,8 @@ namespace IAGrim.UI {
              IBuddySubscriptionDao buddySubscriptionDao,
              ArzParser arzParser,
              IRecipeItemDao recipeItemDao,
-             IItemSkillDao itemSkillDao
-        ) {
+             IItemSkillDao itemSkillDao,
+            IItemTagDao itemTagDao, ParsingService parsingService) {
             _cefBrowserHandler = browser;
             InitializeComponent();
             FormClosing += MainWindow_FormClosing;
@@ -174,6 +177,8 @@ namespace IAGrim.UI {
             _arzParser = arzParser;
             _recipeParser = new RecipeParser(recipeItemDao);
             _itemSkillDao = itemSkillDao;
+            _itemTagDao = itemTagDao;
+            _parsingService = parsingService;
         }
 
         /// <summary>
@@ -484,24 +489,27 @@ namespace IAGrim.UI {
                     backupSettings?.BackupSettings_GotFocus();
             });
             addAndShow(backupSettings, backupPanel);
-            addAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, _databaseSettingDao, _arzParser, _playerItemDao), modsPanel);
+            addAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, _databaseSettingDao, _arzParser, _playerItemDao, _parsingService), modsPanel);
             addAndShow(new HelpTab(), panelHelp);            
             addAndShow(new LoggingWindow(), panelLogging);
 
 
-            _searchWindow = new SearchWindow(_cefBrowserHandler.BrowserControl, SetFeedback, _playerItemDao, searchController, _databaseItemDao);
+            _searchWindow = new SearchWindow(_cefBrowserHandler.BrowserControl, SetFeedback, _playerItemDao, searchController, _itemTagDao);
             addAndShow(_searchWindow, searchPanel);
 
 
             addAndShow(
-                new SettingsWindow(_tooltipHelper,
+                new SettingsWindow(
+                    _itemTagDao,
+                    _tooltipHelper,
                     ListviewUpdateTrigger,
                     _databaseSettingDao,
                     _databaseItemDao,
                     _playerItemDao,
                     _arzParser,
                     _searchWindow.ModSelectionHandler.GetAvailableModSelection(),
-                    _stashManager
+                    _stashManager,
+                    _parsingService
                 ),
                 settingsPanel);
 

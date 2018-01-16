@@ -14,35 +14,37 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using IAGrim.Parsers.GameDataParsing.Model;
+using IAGrim.Parsers.GameDataParsing.Service;
 
 namespace IAGrim.UI {
     public partial class LanguagePackPicker : Form {
-        private static ILog logger = LogManager.GetLogger(typeof(LanguagePackPicker));
-        private readonly string path;
-        private List<FirefoxRadioButton> Checkboxes = new List<FirefoxRadioButton>();
-        private readonly IDatabaseItemDao databaseItemDao;
-        private readonly IDatabaseSettingDao databaseSettingDao;
-        private readonly IPlayerItemDao playerItemDao;
-        private readonly ArzParser parser;
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(LanguagePackPicker));
+        private readonly string _path;
+        private List<FirefoxRadioButton> _checkboxes = new List<FirefoxRadioButton>();
+        private readonly IItemTagDao _itemTagDao;
+        private readonly IDatabaseSettingDao _databaseSettingDao;
+        private readonly IPlayerItemDao _playerItemDao;
+        private readonly ArzParser _parser;
+        private readonly ParsingService _parsingService;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="path">Path to Grim Dawn install</param>
         public LanguagePackPicker(
-                IDatabaseItemDao databaseItemDao, 
-                IDatabaseSettingDao databaseSettingDao,
-                IPlayerItemDao playerItemDao,
-                ArzParser parser, 
-                string path
-            
-            ) {
+            IItemTagDao itemTagDao, 
+            IDatabaseSettingDao databaseSettingDao,
+            IPlayerItemDao playerItemDao,
+            ArzParser parser, 
+            string path, ParsingService parsingService) {
             InitializeComponent();
-            this.path = path;
-            this.databaseItemDao = databaseItemDao;
-            this.databaseSettingDao = databaseSettingDao;
-            this.playerItemDao = playerItemDao;
-            this.parser = parser;
+            this._path = path;
+            _parsingService = parsingService;
+            this._itemTagDao = itemTagDao;
+            this._databaseSettingDao = databaseSettingDao;
+            this._playerItemDao = playerItemDao;
+            this._parser = parser;
 
             var buttonTag = GlobalSettings.Language.GetTag("iatag_ui_lang_button_change_language");
             if (!string.IsNullOrEmpty(buttonTag)) {
@@ -65,7 +67,7 @@ namespace IAGrim.UI {
         private void buttonSelect_Click(object sender, EventArgs e) {
             // find selected checkbox
             // if selected != Properties.Settings.Default.LocalizationFile
-            var cb = Checkboxes.Where(m => m.Checked).FirstOrDefault();
+            var cb = _checkboxes.Where(m => m.Checked).FirstOrDefault();
             if (cb != null) {
                 var package = cb.Tag.ToString();
                 if (package != Properties.Settings.Default.LocalizationFile) {
@@ -77,9 +79,9 @@ namespace IAGrim.UI {
                         GlobalSettings.Language = loader.LoadLanguage(package);
 
                         // TODO: Grab tags from loader and save to sql
-                        databaseItemDao.Save(loader.GetItemTags());
+                        _itemTagDao.Save(loader.GetItemTags(), new ProgressTracker());
 
-                        UpdatingPlayerItemsScreen x = new UpdatingPlayerItemsScreen(playerItemDao);
+                        UpdatingPlayerItemsScreen x = new UpdatingPlayerItemsScreen(_playerItemDao);
                         x.ShowDialog();
                     }
                     // Load the GD one
@@ -89,15 +91,14 @@ namespace IAGrim.UI {
 
                         string location = GrimDawnDetector.GetGrimLocation();
                         if (!string.IsNullOrEmpty(location) && Directory.Exists(location)) {
-                            ParsingDatabaseScreen parserUi = new ParsingDatabaseScreen(databaseSettingDao, this.parser, location, string.Empty, true, true);
-                            parserUi.ShowDialog();
+                            _parsingService.Execute();
                         }
                         else {
-                            logger.Warn("Could not find the Grim Dawn install location");
+                            Logger.Warn("Could not find the Grim Dawn install location");
                         }
 
                         // Update item stats as well
-                        UpdatingPlayerItemsScreen x = new UpdatingPlayerItemsScreen(playerItemDao);
+                        UpdatingPlayerItemsScreen x = new UpdatingPlayerItemsScreen(_playerItemDao);
                         x.ShowDialog();
 
                     }
@@ -123,12 +124,12 @@ namespace IAGrim.UI {
                 cb.TabIndex = n;
                 cb.TabStop = true;
                 groupBox1.Controls.Add(cb);
-                Checkboxes.Add(cb);
+                _checkboxes.Add(cb);
                 n++;
             }
 
-            if (Directory.Exists(Path.Combine(path, "localization"))) {
-                foreach (var file in Directory.EnumerateFiles(Path.Combine(path, "localization"), "*.zip")) {
+            if (Directory.Exists(Path.Combine(_path, "localization"))) {
+                foreach (var file in Directory.EnumerateFiles(Path.Combine(_path, "localization"), "*.zip")) {
                     string author;
                     string language;
                     loc.CheckLanguage(file, out author, out language);
@@ -145,7 +146,7 @@ namespace IAGrim.UI {
                     cb.TabIndex = n;
                     cb.TabStop = true;
                     groupBox1.Controls.Add(cb);
-                    Checkboxes.Add(cb);
+                    _checkboxes.Add(cb);
                     n++;
                 }
             }

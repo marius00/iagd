@@ -6,7 +6,7 @@ namespace IAGrim.StashFile {
             return $"Item[{BaseRecord},{PrefixRecord},{SuffixRecord},{ModifierRecord},{TransmuteRecord},{MateriaRecord},{Seed},{RelicCompletionBonusRecord},{RelicSeed},{EnchantmentRecord},{EnchantmentSeed},{MateriaCombines},{StackCount}";
         }
 
-        private static Random Random = new Random();
+        private static Random _random = new Random();
 
         public string BaseRecord = "";
 
@@ -50,11 +50,11 @@ namespace IAGrim.StashFile {
         }
 
         public uint RandomizeSeed() {
-            return this.Seed = (uint)Item.Random.Next();
+            return this.Seed = (uint)Item._random.Next();
         }
 
         public uint RandomizeRelicSeed() {
-            return this.RelicSeed = (uint)Item.Random.Next();
+            return this.RelicSeed = (uint)Item._random.Next();
         }
 
         public bool Read(GDCryptoDataBuffer pCrypto) {

@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using IAGrim.Parsers.GameDataParsing.Service;
 using IAGrim.Utilities;
 
 namespace IAGrim.UI {
@@ -21,13 +22,15 @@ namespace IAGrim.UI {
         private Action _itemViewUpdateTrigger;
         private readonly ArzParser _arzParser;
         private readonly IPlayerItemDao _playerItemDao;
+        private readonly ParsingService _parsingService;
 
-        public ModsDatabaseConfig(Action itemViewUpdateTrigger, IDatabaseSettingDao databaseSettingDao, ArzParser arzParser, IPlayerItemDao playerItemDao) {
+        public ModsDatabaseConfig(Action itemViewUpdateTrigger, IDatabaseSettingDao databaseSettingDao, ArzParser arzParser, IPlayerItemDao playerItemDao, ParsingService parsingService) {
             InitializeComponent();
             this._itemViewUpdateTrigger = itemViewUpdateTrigger;
             this._databaseSettingDao = databaseSettingDao;
             this._arzParser = arzParser;
             this._playerItemDao = playerItemDao;
+            _parsingService = parsingService;
         }
 
         class ListViewEntry {
@@ -110,15 +113,7 @@ namespace IAGrim.UI {
             
             var paths = GrimDawnDetector.GetGrimLocations();
             if (!string.IsNullOrEmpty(location) && Directory.Exists(location) && _arzParser.NeedUpdate(location)) {
-
-                ParsingDatabaseScreen parser = new ParsingDatabaseScreen(
-                    _databaseSettingDao, 
-                    _arzParser,
-                    location, 
-                    Properties.Settings.Default.LocalizationFile, 
-                    false, 
-                    !isVanilla);
-                parser.ShowDialog();
+                _parsingService.Execute();
 
                 //databaseSettingDao.UpdateCurrentDatabase(location);
                 UpdateListview(paths);

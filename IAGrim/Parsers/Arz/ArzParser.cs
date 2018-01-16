@@ -9,6 +9,7 @@ using EvilsoftCommons.Exceptions;
 using IAGrim.Database;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parser.Arc;
+using IAGrim.Parsers.GameDataParsing.Service;
 using IAGrim.Utilities;
 using log4net;
 
@@ -35,7 +36,7 @@ namespace IAGrim.Parsers.Arz {
         }
 
         // LocalizationFile
-
+        /*
         private Dictionary<string, string> LoadTags(string arcTagfile, string localizationFile, bool expansionOnlyMod) {
             // Process and load the _tags Load the _tags
             Dictionary<string, string> mappedTags;
@@ -86,42 +87,13 @@ namespace IAGrim.Parsers.Arz {
 
             return mappedTags;
         }
+        */
 
 
-        /// <summary>
-        ///     Locate the ARZ file for a given mod or GD install
-        /// </summary>
-        /// <param name="parent"></param>
-        /// <returns></returns>
-        private static string FindArzFile(string parent) {
-            if (!Directory.Exists(Path.Combine(parent, "database"))) {
-                Logger.WarnFormat("Could not find the \"database\" directory at \"{0}\"", parent);
-            }
-            else {
-                foreach (var file in Directory.EnumerateFiles(Path.Combine(parent, "database"), "*.arz")) {
-                    return file;
-                }
-            }
-
-            return string.Empty;
-        }
-
-
-        /// <summary>
-        ///     Locate a given Arc file for a given mod or GD install
-        /// </summary>
-        /// <param name="parent"></param>
-        /// <param name="arc"></param>
-        /// <returns></returns>
-        private static string FindArcFile(string parent, string arc) {
-            if (File.Exists(Path.Combine(parent, "resources", arc)))
-                return Path.Combine(parent, "resources", arc);
-            return string.Empty;
-        }
 
 
         public bool NeedUpdate(string grimdawnLocation) {
-            string databaseFile = FindArzFile(grimdawnLocation);
+            string databaseFile = GrimFolderUtility.FindArzFile(grimdawnLocation);
             if (!string.IsNullOrEmpty(databaseFile)) {
                 long lastModified = File.GetLastWriteTime(databaseFile).Ticks;
                 if (_databaseSettingDao.GetLastDatabaseUpdate() < lastModified) {
@@ -139,22 +111,6 @@ namespace IAGrim.Parsers.Arz {
             return false;
         }
 
-        /// <summary>
-        ///     Just reset the _tags
-        ///     Usually after reverting from a language pack
-        /// </summary>
-        /// <param name="grimdawnLocation"></param>
-        /// <param name="expansionOnlyMod"></param>
-        public void LoadArcTags(string grimdawnLocation, bool expansionOnlyMod) {
-            string arcTagfile = FindArcFile(grimdawnLocation, "text_en.arc");
-            if (string.IsNullOrEmpty(arcTagfile)) {
-                Logger.FatalFormat("Unable to parse the Grim Dawn _tags, could not find the relevant files at {0}",
-                    grimdawnLocation);
-                return;
-            }
-
-            LoadTags(arcTagfile, string.Empty, expansionOnlyMod);
-        }
 
         private DatabaseItemStat map(IItemStat stat) {
             return new DatabaseItemStat {
@@ -167,7 +123,7 @@ namespace IAGrim.Parsers.Arz {
         public static void LoadIconsOnly(string grimdawnLocation) {
             Logger.Debug("Icon loading requested");
             {
-                var arcItemsFile = FindArcFile(grimdawnLocation, "items.arc");
+                var arcItemsFile = GrimFolderUtility.FindArcFile(grimdawnLocation, "items.arc");
                 if (!string.IsNullOrEmpty(arcItemsFile)) {
                     Logger.Debug($"Loading vanilla icons from {arcItemsFile}");
                     LoadIcons(arcItemsFile);
@@ -179,7 +135,7 @@ namespace IAGrim.Parsers.Arz {
 
             var expansionFolder = Path.Combine(grimdawnLocation, "gdx1");
             if (Directory.Exists(expansionFolder)) {
-                var arcItemsFile = FindArcFile(expansionFolder, "items.arc");
+                var arcItemsFile = GrimFolderUtility.FindArcFile(expansionFolder, "items.arc");
                 if (!string.IsNullOrEmpty(arcItemsFile)) {
                     Logger.Debug($"Loading expansion icons from {arcItemsFile}");
                     LoadIcons(arcItemsFile);
@@ -191,7 +147,7 @@ namespace IAGrim.Parsers.Arz {
 
             var crucibleFolder = Path.Combine(grimdawnLocation, "mods", "survivalmode");
             if (Directory.Exists(crucibleFolder)) {
-                var arcItemsFile = FindArcFile(crucibleFolder, "items.arc");
+                var arcItemsFile = GrimFolderUtility.FindArcFile(crucibleFolder, "items.arc");
                 if (!string.IsNullOrEmpty(arcItemsFile)) {
                     Logger.Debug($"Loading \"The Crucible\" icons from {arcItemsFile}");
                     LoadIcons(arcItemsFile);
@@ -211,25 +167,17 @@ namespace IAGrim.Parsers.Arz {
         /// <param name="grimdawnLocation"></param>
         /// <param name="localizationFile"></param>
         /// <param name="expansionOnlyMod">Whetever this mod only expands upon EXISTING content</param>
+        /*
         public void LoadArzDb(string grimdawnLocation, string localizationFile, bool expansionOnlyMod) {
             try {
                 // Init & abort if not needed
                 Logger.InfoFormat("Parse Arz/Arc, Location: \"{0}\", Additive: {1}, ClearFix: {2}", grimdawnLocation,
                     expansionOnlyMod, !expansionOnlyMod);
-                string databaseFile = FindArzFile(grimdawnLocation);
+                string databaseFile = GrimFolderUtility.FindArzFile(grimdawnLocation);
                 //string expansionDatabaseFile = FindArzFile(Path.Combine(grimdawnLocation, "gdx1"));
 
-                string arcTagfile = FindArcFile(grimdawnLocation, "text_en.arc");
-                var arcItemsFile = FindArcFile(grimdawnLocation, "items.arc");
-
-
-                if (string.IsNullOrEmpty(arcTagfile) || string.IsNullOrEmpty(arcItemsFile) ||
-                    string.IsNullOrEmpty(databaseFile)) {
-                    Logger.FatalFormat(
-                        "Unable to parse the Grim Dawn database, could not find the relevant files at {0}",
-                        grimdawnLocation);
-                    return;
-                }
+                string arcTagfile = GrimFolderUtility.FindArcFile(grimdawnLocation, "text_en.arc");
+                var arcItemsFile = GrimFolderUtility.FindArcFile(grimdawnLocation, "items.arc");
 
                 //long lastExpansionModified = string.IsNullOrEmpty(expansionDatabaseFile) ? 0 : File.GetLastWriteTime(expansionDatabaseFile).Ticks;
                 long lastModified = File.GetLastWriteTime(databaseFile).Ticks;
@@ -282,6 +230,9 @@ namespace IAGrim.Parsers.Arz {
                     _databaseItemStatDao.Save(specialStats);
                     Logger.Debug("Special stats saved to DB");
 
+                    // TODO: HERE NOW
+                    // TODO: HERE NOW
+                    // TODO: HERE NOW
 
                     // Obs: Do this after storing items as the item IDs changes
                     var skillParser = new ComplexItemParser(_items, mappedTags);
@@ -313,7 +264,7 @@ namespace IAGrim.Parsers.Arz {
 
                 ex.Handle(x => { throw x; });
             }
-        }
+        }*/
 
         private static void LoadIcons(string arcItemsFile) {
             Logger.Info($"Loading item icons from {arcItemsFile}..");
@@ -332,7 +283,7 @@ namespace IAGrim.Parsers.Arz {
 
             DDSImageReader.ExtractItemIcons(arcItemfile, GlobalPaths.StorageFolder);
         }
-
+        /*
         private void RenamePetStats(List<DatabaseItem> items) {
             Logger.Debug("Detecting records with pet bonus stats..");
 
@@ -357,7 +308,7 @@ namespace IAGrim.Parsers.Arz {
             items.AddRange(petItems);
 
             Logger.Debug($"Classified {petItems.Count()} records as pet stats");
-        }
+        }*/
 
 
         public static string ExtractClassFromRecord(string record, IEnumerable<DatabaseItem> items) {
@@ -382,7 +333,7 @@ namespace IAGrim.Parsers.Arz {
         /// </summary>
         /// <param name="result"></param>
         /// <param name="item"></param>
-        private static void GetSpecialMasteryStats(List<DatabaseItemStat> result, DatabaseItem item,
+        public static void GetSpecialMasteryStats(List<DatabaseItemStat> result, DatabaseItem item,
             IEnumerable<DatabaseItem> items) {
             var stats = item.Stats;
 
@@ -464,10 +415,10 @@ namespace IAGrim.Parsers.Arz {
         ///     +1 to Owl Bash
         ///     Or similar
         /// </summary>
-        private static void GetSpecialSkillAugments(
+        public static void GetSpecialSkillAugments(
             List<DatabaseItemStat> result,
             DatabaseItem item,
-            IEnumerable<DatabaseItem> items,
+            List<DatabaseItem> items,
             List<DatabaseItem> skills,
             Dictionary<string, string> tags
         ) {
@@ -520,7 +471,7 @@ namespace IAGrim.Parsers.Arz {
                     break;
             }
         }
-
+        /*
         private IEnumerable<DatabaseItemStat> CreateSpecialRecords(
             IEnumerable<DatabaseItem> items,
             Dictionary<string, string> tags
@@ -532,9 +483,9 @@ namespace IAGrim.Parsers.Arz {
             }
 
             return result;
-        }
+        }*/
 
-
+        /*
         private static void MapItemNames(List<DatabaseItem> items, IDictionary<string, string> tags) {
             for (int i = 0; i < items.Count; i++) {
                 var item = items[i];
@@ -553,7 +504,7 @@ namespace IAGrim.Parsers.Arz {
                     items[i].Name = string.Join(" ", finalTags).Trim();
                 }
             }
-        }
+        }*/
 
         public void Dispose() {
             _skills.Clear();

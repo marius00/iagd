@@ -29,6 +29,7 @@ using Gameloop.Vdf;
 using IAGrim.BuddyShare;
 using IAGrim.Database.DAO;
 using IAGrim.Parser.Arc;
+using IAGrim.Parsers.GameDataParsing.Service;
 using IAGrim.Services.Crafting;
 using IAGrim.UI.Popups;
 using IAGrim.Utilities.HelperClasses;
@@ -44,78 +45,28 @@ namespace IAGrim {
 #if DEBUG
 
         private static void Test() {
-            string bracket = "[";
-            var splitted = bracket.Split('[');
-            List<int> xl = new List<int>();
-            xl.Add(1);
-            xl.Add(5);
-            xl.Add(2);
-            var t = xl.Take(50).ToList();
-
-            int x = 9;
-            /*
-            var json = "hello_world";
-            using (var stream = new MemoryStream()) {
-                using (GZipStream gz = new GZipStream(stream, CompressionMode.Compress, true)) {
-                    var encoding = new ASCIIEncoding();
-                    byte[] data123 = encoding.GetBytes(json);
-                    gz.Write(data123, 0, data123.Length);
-                }
-                var c = Convert.ToBase64String(stream.ToArray());
-                var s = new Synchronizer().UploadBuddyData($"json={c}", "http://grimdawn.dreamcrash.org/buddyitems/v2/test");
-                
-                int x123 = 9;
-            }
-
-            
-
             using (ThreadExecuter threadExecuter = new ThreadExecuter()) {
                 var factory = new SessionFactory();
+                string _grimdawnLocation = new DatabaseSettingRepo(threadExecuter, factory).GetCurrentDatabasePath();
+                IItemTagDao _itemTagDao = new ItemTagRepo(threadExecuter, factory);
+                IDatabaseItemDao _databaseItemDao = new DatabaseItemRepo(threadExecuter, factory);
+                IDatabaseItemStatDao _databaseItemStatDao = new DatabaseItemStatRepo(threadExecuter, factory);
+                IItemSkillDao _itemSkillDao = new ItemSkillRepo(threadExecuter, factory);
                 
-                
-                var repo = new BuddyItemRepo(threadExecuter, factory);
-                var allItems = repo.ListAll();
-                var items = repo.ListItemsWithMissingRarity();
-                repo.UpdateRarity(items);
-                
-                repo.UpdateNames(allItems);
-                repo.UpdateLevelRequirements(allItems);
-                
-            }*/
-            return;
-            
-            using (ThreadExecuter threadExecuter = new ThreadExecuter()) {
-                var factory = new SessionFactory();
-                string arcTagfile = @"D:\SteamLibrary\steamapps\common\Grim Dawn\resources\text_en.arc";
-                var arcItemsFile = @"D:\SteamLibrary\steamapps\common\Grim Dawn\resources\items.arc";
-                var databaseFile = @"D:\SteamLibrary\steamapps\common\Grim Dawn\database\database.arz";
+                ParsingService parsingService = new ParsingService(
+                    _itemTagDao,
+                    _grimdawnLocation,
+                    _databaseItemDao,
+                    _databaseItemStatDao,
+                    _itemSkillDao,
+                    Properties.Settings.Default.LocalizationFile
+                );
 
-                List<IItemTag> _tags = Parser.Arz.ArzParser.ParseArcFile(arcTagfile);
-                var mappedTags = _tags.ToDictionary(item => item.Tag, item => item.Name);
+                parsingService.Execute();
 
-                List<IItem> _items = Parser.Arz.ArzParser.LoadItemRecords(databaseFile, true); // TODO
-
-
-                var skillParser = new ComplexItemParser(_items, mappedTags);
-                skillParser.Generate();
-
-
-                var _itemSkillDao = new ItemSkillRepo(threadExecuter, factory);
-
-                //_itemSkillDao.Save(skillParser.Skills);
-                //_itemSkillDao.Save(skillParser.SkillItemMapping);
-
-
-                IPlayerItemDao playerItemDao = new PlayerItemRepo(threadExecuter, factory);
-                IDatabaseItemDao databaseItemDao = new DatabaseItemRepo(threadExecuter, factory);
-                IDatabaseItemStatDao databaseItemStatDao = new DatabaseItemStatRepo(threadExecuter, factory);
-                /*
-                var xys = databaseItemDao.GetValidClassItemTags();
-                Parser.Arc.Decompress c = new Parser.Arc.Decompress(@"D:\SteamLibrary\steamapps\common\Grim Dawn\resources\Items.arc", true);
-                c.decompress();
-                */
+                int x = 9;
             }
-            
+
         }
 #endif
 
@@ -325,12 +276,16 @@ namespace IAGrim {
             IPlayerItemDao playerItemDao = new PlayerItemRepo(threadExecuter, factory);
             IDatabaseItemDao databaseItemDao = new DatabaseItemRepo(threadExecuter, factory);
             IDatabaseItemStatDao databaseItemStatDao = new DatabaseItemStatRepo(threadExecuter, factory);
+            IItemTagDao itemTagDao = new ItemTagRepo(threadExecuter, factory);
             
             IBuddyItemDao buddyItemDao = new BuddyItemRepo(threadExecuter, factory);
             IBuddySubscriptionDao buddySubscriptionDao = new BuddySubscriptionRepo(threadExecuter, factory);
             IRecipeItemDao recipeItemDao = new RecipeItemRepo(threadExecuter, factory);
             IItemSkillDao itemSkillDao  = new ItemSkillRepo(threadExecuter, factory);
             ArzParser arzParser = new ArzParser(databaseItemDao, databaseItemStatDao, databaseSettingDao, itemSkillDao);
+
+            // TODO: GD Path has to be an input param, as does potentially mods.
+            ParsingService parsingService = new ParsingService(itemTagDao, null, databaseItemDao, databaseItemStatDao, itemSkillDao, Properties.Settings.Default.LocalizationFile);
 
             PrintStartupInfo(factory);
 
@@ -343,7 +298,7 @@ namespace IAGrim {
 
             var language = GlobalSettings.Language as StatTranslator.EnglishLanguage;
             if (language != null) {
-                foreach (var tag in databaseItemDao.GetClassItemTags()) {
+                foreach (var tag in itemTagDao.GetClassItemTags()) {
                     language.SetTagIfMissing(tag.Tag, tag.Name);
                 }
             }
@@ -359,7 +314,9 @@ namespace IAGrim {
                     buddySubscriptionDao, 
                     arzParser,
                     recipeItemDao,
-                    itemSkillDao
+                    itemSkillDao,
+                    itemTagDao,
+                    parsingService
                 );
 
                 Logger.Info("Checking for database updates..");
@@ -376,8 +333,8 @@ namespace IAGrim {
                 }
 
                 if (!string.IsNullOrEmpty(GDPath) && Directory.Exists(GDPath)) {
-                    if (arzParser.NeedUpdate(GDPath)) {
-                        
+                    /*
+                    if (arzParser.NeedUpdate(GDPath)) {                        
                         ParsingDatabaseScreen parserUI = new ParsingDatabaseScreen(
                             databaseSettingDao,
                             arzParser,
@@ -391,9 +348,7 @@ namespace IAGrim {
                     if (playerItemDao.RequiresStatUpdate()) {
                         UpdatingPlayerItemsScreen x = new UpdatingPlayerItemsScreen(playerItemDao);
                         x.ShowDialog();
-                    }
-
-
+                    }*/
 
                     var numFiles = Directory.GetFiles(GlobalPaths.StorageFolder).Length;
                     if (numFiles < 2000) {

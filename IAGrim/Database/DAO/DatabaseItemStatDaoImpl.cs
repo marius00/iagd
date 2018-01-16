@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using IAGrim.Database.DAO.Table;
+using IAGrim.Parsers.GameDataParsing.Model;
 
 namespace IAGrim.Database {
 
@@ -40,6 +41,22 @@ namespace IAGrim.Database {
         };
 
         public DatabaseItemStatDaoImpl(ISessionCreator sessionCreator) : base(sessionCreator) {
+        }
+
+
+        public void Save(IEnumerable<DatabaseItemStat> objs, ProgressTracker progressTracker) {
+            progressTracker.MaxValue = objs.Count();
+            using (ISession session = SessionCreator.OpenSession()) {
+                using (ITransaction transaction = session.BeginTransaction()) {
+                    foreach (var entry in objs) {
+                        session.Save(entry);
+                        progressTracker.Increment();
+                    }
+                    transaction.Commit();
+                }
+            }
+
+            progressTracker.Finalize();
         }
 
         public Dictionary<string, ISet<DBSTatRow>> GetExpacSkillModifierSkills() {

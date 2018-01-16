@@ -2,16 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using DataAccess;
+using IAGrim.Database;
 using IAGrim.Parsers.Arz.dto;
+using IAGrim.Parsers.GameDataParsing.Model;
 using log4net;
 
 namespace IAGrim.Parsers.Arz {
     internal class ComplexItemParser {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ComplexItemParser));
-        private readonly List<IItem> _items;
+        private readonly List<DatabaseItem> _items;
         private readonly Dictionary<string, string> _tags;
 
-        public ComplexItemParser(List<IItem> items, Dictionary<string, string> tags) {
+        public ComplexItemParser(List<DatabaseItem> items, Dictionary<string, string> tags) {
             _items = items;
             _tags = tags;
         }
@@ -19,8 +21,9 @@ namespace IAGrim.Parsers.Arz {
         public Dictionary<string, List<string>> SkillItemMapping { get; } = new Dictionary<string, List<string>>();
         public ISet<ItemGrantedSkill> Skills { get; } = new HashSet<ItemGrantedSkill>();
 
-        public void Generate() {
+        public void Generate(ProgressTracker tracker) {
             Logger.Debug($"Generating skills for {_items.Count} items.");
+            tracker.MaxValue = _items.Count;
             foreach (var item in _items) {
                 var skill = GetSkill(item);
                 if (skill != null) {
@@ -30,6 +33,8 @@ namespace IAGrim.Parsers.Arz {
                     SkillItemMapping[skill.Record].Add(item.Record);
                     Skills.Add(skill);
                 }
+
+                tracker.Increment();
             }
 
 
@@ -37,7 +42,7 @@ namespace IAGrim.Parsers.Arz {
             Logger.Debug($"Generated {Skills.Count} skills for {numItemsWithSkills} items.");
         }
 
-        private ItemGrantedSkill GetSkill(IItem item) {
+        private ItemGrantedSkill GetSkill(DatabaseItem item) {
             try {
                 if (item.Stats.Any(m => m.Stat.Equals("itemSkillName"))) {
                     var record = item.Stats.FirstOrDefault(m => m.Stat.Equals("itemSkillName"))?.TextValue;

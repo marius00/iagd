@@ -15,20 +15,20 @@ using System.Threading.Tasks;
 
 namespace IAGrim.Parsers.Arz {
     class StatUpdateUIBackgroundWorker : IDisposable {
-        private static ILog logger = LogManager.GetLogger(typeof(ParsingUiBackgroundWorker));
-        private BackgroundWorker bw = new BackgroundWorker();
-        private bool disposed = false;
-        private readonly IPlayerItemDao playerItemDao;
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(StatUpdateUIBackgroundWorker));
+        private BackgroundWorker _bw = new BackgroundWorker();
+        private bool _disposed = false;
+        private readonly IPlayerItemDao _playerItemDao;
 
         public StatUpdateUIBackgroundWorker(IPlayerItemDao playerItemDao, RunWorkerCompletedEventHandler completed, ProgressChangedEventHandler progress) {
-            bw.DoWork += new DoWorkEventHandler(bw_DoWork);
-            this.playerItemDao = playerItemDao;
-            bw.WorkerSupportsCancellation = true;
-            bw.WorkerReportsProgress = true;
-            bw.RunWorkerCompleted += completed;
-            bw.ProgressChanged += progress;
+            _bw.DoWork += new DoWorkEventHandler(bw_DoWork);
+            this._playerItemDao = playerItemDao;
+            _bw.WorkerSupportsCancellation = true;
+            _bw.WorkerReportsProgress = true;
+            _bw.RunWorkerCompleted += completed;
+            _bw.ProgressChanged += progress;
 
-            bw.RunWorkerAsync();
+            _bw.RunWorkerAsync();
         }
 
 
@@ -39,26 +39,26 @@ namespace IAGrim.Parsers.Arz {
                 if (Thread.CurrentThread.Name == null)
                     Thread.CurrentThread.Name = "StatParserUI";
 
-                logger.Info("Updating player stats");
+                Logger.Info("Updating player stats");
 
                 BackgroundWorker worker = sender as BackgroundWorker;
 
 
                 // Update all stats
-                playerItemDao.ClearAllItemStats();
-                IList<PlayerItem> items = playerItemDao.ListAll();
+                _playerItemDao.ClearAllItemStats();
+                IList<PlayerItem> items = _playerItemDao.ListAll();
                 worker.ReportProgress(Math.Max(100, items.Count), 1);
 
 
                 int total = 0;
-                playerItemDao.UpdateAllItemStats(items, (p) => {
+                _playerItemDao.UpdateAllItemStats(items, (p) => {
                     worker.ReportProgress(total++, 0);
                 });
-                logger.Info("Updated item stats");
+                Logger.Info("Updated item stats");
             }
             catch (Exception ex) {
-                logger.Fatal(ex.Message);
-                logger.Fatal(ex.StackTrace);
+                Logger.Fatal(ex.Message);
+                Logger.Fatal(ex.StackTrace);
                 ExceptionReporter.ReportException(ex);
                 throw;
             }
@@ -66,14 +66,14 @@ namespace IAGrim.Parsers.Arz {
 
 
         protected virtual void Dispose(bool disposing) {
-            if (!disposed && disposing) {
+            if (!_disposed && disposing) {
 
-                if (bw != null) {
-                    bw.CancelAsync();
-                    bw = null;
+                if (_bw != null) {
+                    _bw.CancelAsync();
+                    _bw = null;
                 }
             }
-            disposed = true;
+            _disposed = true;
         }
 
 

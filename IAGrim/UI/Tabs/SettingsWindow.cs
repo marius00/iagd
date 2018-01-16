@@ -15,6 +15,7 @@ using EvilsoftCommons;
 using IAGrim.UI.Controller;
 using IAGrim.Utilities;
 using IAGrim.Database.Interfaces;
+using IAGrim.Parsers.GameDataParsing.Service;
 using IAGrim.UI.Popups;
 using IAGrim.Utilities.HelperClasses;
 // 
@@ -28,10 +29,13 @@ namespace IAGrim.UI {
         private readonly IDatabaseItemDao _itemDao;
         private readonly ArzParser _parser;
         private readonly IPlayerItemDao _playerItemDao;
+        private readonly IItemTagDao _itemTagDao;
         private readonly GDTransferFile[] _modFilter;
         private readonly StashManager _stashManager;
+        private readonly ParsingService _parsingService;
 
         public SettingsWindow(
+            IItemTagDao itemTagDao,
             TooltipHelper tooltipHelper, 
             Action itemViewUpdateTrigger, 
             IDatabaseSettingDao settingsDao, 
@@ -39,8 +43,7 @@ namespace IAGrim.UI {
             IPlayerItemDao playerItemDao,
             ArzParser parser,
             GDTransferFile[] modFilter,
-            StashManager stashManager
-        ) {            
+            StashManager stashManager, ParsingService parsingService) {            
             InitializeComponent();
             this._tooltipHelper = tooltipHelper;
             this._itemViewUpdateTrigger = itemViewUpdateTrigger;
@@ -50,6 +53,8 @@ namespace IAGrim.UI {
             this._parser = parser;
             this._modFilter = modFilter;
             this._stashManager = stashManager;
+            _parsingService = parsingService;
+            _itemTagDao = itemTagDao;
 
             _controller.BindCheckbox(cbMinimizeToTray);
 
@@ -165,7 +170,7 @@ namespace IAGrim.UI {
         }
 
         private void buttonLanguageSelect_Click(object sender, EventArgs e) {
-            new LanguagePackPicker(_itemDao, _settingsDao, _playerItemDao, _parser, GrimDawnDetector.GetGrimLocation())
+            new LanguagePackPicker(_itemTagDao, _settingsDao, _playerItemDao, _parser, GrimDawnDetector.GetGrimLocation(), _parsingService)
                 .ShowDialog();
 
             _itemViewUpdateTrigger?.Invoke();

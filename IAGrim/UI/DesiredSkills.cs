@@ -11,13 +11,13 @@ using System.Windows.Forms;
 
 namespace IAGrim.UI {
     partial class DesiredSkills : Form {
-        private readonly IDatabaseItemDao databaseItemDao;
-        private readonly Dictionary<String, FirefoxCheckBox> classes;
+        private readonly IItemTagDao _itemTagDao;
+        private readonly Dictionary<string, FirefoxCheckBox> _classes;
 
-        public DesiredSkills(IDatabaseItemDao databaseItemDao) {
+        public DesiredSkills(IItemTagDao itemTagDao) {
             InitializeComponent();
-            this.databaseItemDao = databaseItemDao;
-            this.classes = new Dictionary<string, FirefoxCheckBox>();
+            this._itemTagDao = itemTagDao;
+            this._classes = new Dictionary<string, FirefoxCheckBox>();
         }
 
 
@@ -28,7 +28,7 @@ namespace IAGrim.UI {
             // 3,37
             // 3,70
             int cbNum = 1;
-            var classtags = databaseItemDao.GetValidClassItemTags();
+            var classtags = _itemTagDao.GetValidClassItemTags();
             
             foreach (var tag in classtags) {
                 // Filter out 4 digit classes (combos)
@@ -44,7 +44,7 @@ namespace IAGrim.UI {
                     Location = new Point { X = 3, Y = 3 + cbNum*33 }
                 };
 
-                classes[tag.Tag] = cb;
+                _classes[tag.Tag] = cb;
                 classesPanelBox.Controls.Add(cb);
 
                 cbNum++;
@@ -110,8 +110,8 @@ namespace IAGrim.UI {
         private List<string> DesiredClasses {
             get {
                 var result = new List<string>();
-                foreach (var key in classes.Keys) {
-                    if (classes[key].Checked)
+                foreach (var key in _classes.Keys) {
+                    if (_classes[key].Checked)
                         result.Add(key);
                 }/*
                 if (cbClassSoldier.Checked)

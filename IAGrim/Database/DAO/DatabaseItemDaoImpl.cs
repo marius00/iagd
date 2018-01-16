@@ -14,6 +14,7 @@ using System.Text;
 using DataAccess;
 using IAGrim.Database.DAO.Table;
 using IAGrim.Database.Model;
+using IAGrim.Parsers.GameDataParsing.Model;
 using IAGrim.Services.Dto;
 using log4net.Repository.Hierarchy;
 
@@ -28,74 +29,6 @@ namespace IAGrim.Database {
         public DatabaseItemDaoImpl(ISessionCreator sessionCreator) : base(sessionCreator) {
         }
 
-
-        public IList<ItemTag> GetClassItemTags() {
-
-            Dictionary<string, string> result = new Dictionary<string, string>();
-            using (var session = SessionCreator.OpenStatelessSession()) {
-                using (ITransaction transaction = session.BeginTransaction()) {
-                    return session.CreateCriteria<ItemTag>()
-                        .Add(Restrictions.Like(nameof(ItemTag.Tag), "tagSkillClassName%"))
-                        .List<ItemTag>()
-                        .Select(m => new Database.ItemTag { Name = m.Name, Tag = m.Tag.Replace("tagSkillClassName", "class") })
-                        .ToList();
-                }
-            }
-        }
-        public IList<ItemTag> GetValidClassItemTags() {
-
-            Dictionary<string, string> result = new Dictionary<string, string>();
-            using (var session = SessionCreator.OpenStatelessSession()) {
-                using (ITransaction transaction = session.BeginTransaction()) {
-                    return session.CreateSQLQuery("SELECT * FROM ItemTag WHERE (Tag LIKE 'tagSkillClassName%' OR Tag LIKE 'tag%Class%SkillName00A') AND LENGTH(Name) > 1")
-                        .SetResultTransformer(new AliasToBeanResultTransformer(typeof(ItemTag)))
-                        .List<ItemTag>()                        
-                        .Select(m => new ItemTag {
-                            Name = m.Name,
-                            Tag = m.Tag.Replace("tagSkillClassName", "class")
-                                .Replace("tagGDX1Class07SkillName00A", "class07")
-                                .Replace("tagGDX1Class08SkillName00A", "class08")
-                        })
-                        .ToList();
-                }
-            }
-        }
-
-        public void Save(ICollection<ItemTag> items) {
-
-            using (var session = SessionCreator.OpenStatelessSession()) {
-                using (ITransaction transaction = session.BeginTransaction()) {
-                    session.CreateQuery("DELETE FROM ItemTag").ExecuteUpdate();
-                    foreach (ItemTag item in items) {
-                        session.Insert(item);
-                    }
-                    transaction.Commit();
-                }
-            }
-
-            Logger.InfoFormat("Stored {0} item tags to database..", items.Count);
-        }
-
-
-        public void SaveOrUpdate(ICollection<ItemTag> items) {
-            var table = nameof(ItemTag);
-            var tag = nameof(ItemTag.Tag);
-            var name = nameof(ItemTag.Name);
-
-            using (var session = SessionCreator.OpenSession()) {
-                using (ITransaction transaction = session.BeginTransaction()) {
-                    foreach (ItemTag item in items) {
-                        session.CreateSQLQuery($"INSERT OR IGNORE INTO {table} ({tag}, {name}) VALUES (:tag, :name);")
-                            .SetParameter("tag", item.Tag)
-                            .SetParameter("name", item.Name)
-                            .ExecuteUpdate();
-                    }
-                    transaction.Commit();
-                }
-            }
-
-            Logger.InfoFormat("Stored {0} item tags to database..", items.Count);
-        }
 
         /// <summary>
         /// Get the existing tag dictionary
@@ -120,30 +53,8 @@ namespace IAGrim.Database {
             }
         }
 
-        public void SaveOrUpdate(ICollection<DatabaseItem> items) {
 
-            using (var session = SessionCreator.OpenSession()) {
-                using (ITransaction transaction = session.BeginTransaction()) {
-                    var records = items.Select(m => m.Record).ToList();
-                    foreach (var list in splitList(records, 900)) {
-
-                        session.CreateQuery("DELETE FROM DatabaseItemStat WHERE Parent.Id IN (SELECT Id FROM DatabaseItem WHERE Record IN ( :records ) )")
-                            .SetParameterList("records", list)
-                            .ExecuteUpdate();
-
-                        session.CreateQuery("DELETE FROM DatabaseItem WHERE Record IN ( :records )")
-                            .SetParameterList("records", list)
-                            .ExecuteUpdate();
-
-                    }
-                    transaction.Commit();
-                }
-            }
-            Save(items, false);
-
-        }
-
-        public override void Save(DatabaseItem item) {
+        public void Save(DatabaseItem item) {
 
             using (var session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
@@ -186,11 +97,13 @@ namespace IAGrim.Database {
             
         }
 
-        public void Save(ICollection<DatabaseItem> items) {
-            Save(items, true);
+        public void Save(ICollection<DatabaseItem> items, ProgressTracker progressTracker) {
+            Save(items, progressTracker, true);
         }
-        private void Save(ICollection<DatabaseItem> items, bool reset) {
+        private void Save(ICollection<DatabaseItem> items, ProgressTracker progressTracker, bool reset) {
             long numStats = 0;
+
+            progressTracker.MaxValue = items.Count;
             using (var session = SessionCreator.OpenSession()) {
                 if (reset) {
                     using (ITransaction transaction = session.BeginTransaction()) {
@@ -204,6 +117,7 @@ namespace IAGrim.Database {
                 using (ITransaction transaction = session.BeginTransaction()) {
                     foreach (DatabaseItem item in items) {
                         session.Save(item);
+                        progressTracker.Increment();
                     }
                     transaction.Commit();
                 }

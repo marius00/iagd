@@ -168,6 +168,7 @@
     <Compile Include="Database\DAO\DatabaseItemStatDaoImpl.cs" />
     <Compile Include="Database\DAO\Dto\StatFetch.cs" />
     <Compile Include="Database\DAO\ItemSkillDaoImpl.cs" />
+    <Compile Include="Database\DAO\ItemTagDaoImpl.cs" />
     <Compile Include="Database\DAO\RecipeItemDaoImpl.cs" />
     <Compile Include="Database\DAO\Table\BuddyItemRecordTable.cs" />
     <Compile Include="Database\DAO\Table\BuddyItemsTable.cs" />
@@ -190,6 +191,7 @@
     <Compile Include="Database\Interfaces\IDatabaseSettingDao.cs" />
     <Compile Include="Database\Interfaces\IBaseDao.cs" />
     <Compile Include="Database\Interfaces\IItemSkillDao.cs" />
+    <Compile Include="Database\Interfaces\IItemTagDao.cs" />
     <Compile Include="Database\Interfaces\IPlayerItemDao.cs" />
     <Compile Include="Database\Interfaces\IRecipeItemDao.cs" />
     <Compile Include="Database\Migrations\AddBuddyItemMigrations.cs" />
@@ -213,6 +215,7 @@
     <Compile Include="Database\Synchronizer\BuddyItemRepo.cs" />
     <Compile Include="Database\Synchronizer\BuddySubscriptionRepo.cs" />
     <Compile Include="Database\Synchronizer\Core\ThreadExecuter.cs" />
+    <Compile Include="Database\Synchronizer\ItemTagRepo.cs" />
     <Compile Include="Database\Synchronizer\DatabaseItemRepo.cs" />
     <Compile Include="Database\Synchronizer\DatabaseItemStatRepo.cs" />
     <Compile Include="Database\Synchronizer\DatabaseSettingRepo.cs" />
@@ -225,7 +228,6 @@
     <Compile Include="Parsers\Arz\LocalizationLoader.cs" />
     <Compile Include="Parsers\Arz\StashManager.cs" />
     <Compile Include="Parsers\Arz\StatUpdateUIBackgroundWorker.cs" />
-    <Compile Include="Parsers\Arz\ParsingUIBackgroundWorker.cs" />
     <Compile Include="BuddyShare\BuddyBackgroundThread.cs" />
     <Compile Include="BuddyShare\SerializedPlayerItems.cs" />
     <Compile Include="BuddyShare\Serializer.cs" />
@@ -245,6 +247,19 @@
     <Compile Include="Database\Model\PlayerItem.cs" />
     <Compile Include="Database\Model\RecipeItem.cs" />
     <Compile Include="Database\DAO\SessionFactory.cs" />
+    <Compile Include="Parsers\GameDataParsing\Model\ItemAccumulator.cs" />
+    <Compile Include="Parsers\GameDataParsing\Model\ItemTagAccumulator.cs" />
+    <Compile Include="Parsers\GameDataParsing\Model\ProgressTracker.cs" />
+    <Compile Include="Parsers\GameDataParsing\Model\WinformsProgressBar.cs" />
+    <Compile Include="Parsers\GameDataParsing\Service\ArzParsingWrapper.cs" />
+    <Compile Include="Parsers\GameDataParsing\Service\GrimFolderUtility.cs" />
+    <Compile Include="Parsers\GameDataParsing\Service\ParsingService.cs" />
+    <Compile Include="Parsers\GameDataParsing\UI\ParsingDatabaseProgressView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Parsers\GameDataParsing\UI\ParsingDatabaseProgressView.Designer.cs">
+      <DependentUpon>ParsingDatabaseProgressView.cs</DependentUpon>
+    </Compile>
     <Compile Include="Parsers\ItemSizeService.cs" />
     <Compile Include="Parsers\RecipeParser.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -393,12 +408,6 @@
     <Compile Include="UI\Tabs\ModsDatabaseConfig.Designer.cs">
       <DependentUpon>ModsDatabaseConfig.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Popups\ParsingDatabaseScreen.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Popups\ParsingDatabaseScreen.Designer.cs">
-      <DependentUpon>ParsingDatabaseScreen.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\Tabs\SearchWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -485,6 +494,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Parsers\GameDataParsing\UI\ParsingDatabaseProgressView.resx">
+      <DependentUpon>ParsingDatabaseProgressView.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
@@ -537,9 +549,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Tabs\ModsDatabaseConfig.resx">
       <DependentUpon>ModsDatabaseConfig.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\Popups\ParsingDatabaseScreen.resx">
-      <DependentUpon>ParsingDatabaseScreen.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Tabs\SearchWindow.resx">
       <DependentUpon>SearchWindow.cs</DependentUpon>

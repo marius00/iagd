@@ -26,16 +26,22 @@ namespace IAGrim.UI {
         private ScrollPanelMessageFilter _scrollableFilterView;
         private System.Windows.Forms.Timer _delayedTextChangedTimer;
         private readonly SearchController _searchController;
-        private readonly IDatabaseItemDao _databaseItemDao;
+        private readonly IItemTagDao _itemTagDao;
         private readonly List<TextboxHoverFocusHighlight> _highlights = new List<TextboxHoverFocusHighlight>();
         public readonly ModSelectionHandler ModSelectionHandler;
 
-        public SearchWindow(Control browser, Action<string> setStatus, IPlayerItemDao playerItemDao, SearchController searchController, IDatabaseItemDao databaseItemDao) {
+        public SearchWindow(
+            Control browser, 
+            Action<string> setStatus, 
+            IPlayerItemDao playerItemDao, 
+            SearchController searchController,
+            IItemTagDao itemTagDao
+        ) {
             InitializeComponent();
             toolStripContainer.ContentPanel.Controls.Add(browser);
             this._setStatus = setStatus;
             this._searchController = searchController;
-            this._databaseItemDao = databaseItemDao;
+            this._itemTagDao = itemTagDao;
 
             this.Activated += SearchWindow_Activated;
             this.Deactivate += SearchWindow_Deactivate;
@@ -169,7 +175,7 @@ namespace IAGrim.UI {
 
 
         private void ConfigureAndCreateFilterWindow() {
-            this._filterWindow = new DesiredSkills(_databaseItemDao);
+            this._filterWindow = new DesiredSkills(_itemTagDao);
             _filterWindow.TopLevel = false;
             _filterWindow.OnChanged += filterWindow_OnChanged;
             panelFilter.Controls.Add(_filterWindow);

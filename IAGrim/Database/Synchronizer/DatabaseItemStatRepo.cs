@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using IAGrim.Services.Dto;
 using NHibernate;
 using IAGrim.Database.DAO.Dto;
+using IAGrim.Parsers.GameDataParsing.Model;
 
 namespace IAGrim.Database.Synchronizer {
     class DatabaseItemStatRepo : BasicSynchronizer<DatabaseItemStat>, IDatabaseItemStatDao {
@@ -38,6 +39,12 @@ namespace IAGrim.Database.Synchronizer {
         public Dictionary<string, string> MapItemBitmaps(List<string> records) {
             return ThreadExecuter.Execute(
                 () => repo.MapItemBitmaps(records)
+            );
+        }
+
+        public void Save(IEnumerable<DatabaseItemStat> objs, ProgressTracker progressTracker) {
+            ThreadExecuter.Execute(
+                () => repo.Save(objs, progressTracker)
             );
         }
 
