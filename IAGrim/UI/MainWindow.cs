@@ -387,7 +387,7 @@ namespace IAGrim.UI {
                 foreach (Control c in modsPanel.Controls) {
                     ModsDatabaseConfig config = c as ModsDatabaseConfig;
                     if (config != null) {
-                        config.ForceDatabaseUpdate(gdPath, true);
+                        config.ForceDatabaseUpdate(gdPath, string.Empty);
                         break;
                     }
                 }

@@ -23,6 +23,7 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ParsingDatabaseProgressView));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.progressSavingSpecialStats = new System.Windows.Forms.ProgressBar();
@@ -54,11 +55,12 @@
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.tableLayoutPanel2);
-            this.groupBox1.Location = new System.Drawing.Point(21, 12);
+            this.groupBox1.Location = new System.Drawing.Point(13, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(401, 222);
+            this.groupBox1.Size = new System.Drawing.Size(399, 222);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
+            this.groupBox1.Tag = "iatag_ui_parsing_gd_resources";
             this.groupBox1.Text = "Parsing Grim Dawn resources..";
             this.groupBox1.UseWaitCursor = true;
             // 
@@ -104,7 +106,7 @@
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(389, 197);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(387, 197);
             this.tableLayoutPanel2.TabIndex = 18;
             this.tableLayoutPanel2.UseWaitCursor = true;
             // 
@@ -112,9 +114,9 @@
             // 
             this.progressSavingSpecialStats.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressSavingSpecialStats.Location = new System.Drawing.Point(197, 139);
+            this.progressSavingSpecialStats.Location = new System.Drawing.Point(196, 139);
             this.progressSavingSpecialStats.Name = "progressSavingSpecialStats";
-            this.progressSavingSpecialStats.Size = new System.Drawing.Size(189, 14);
+            this.progressSavingSpecialStats.Size = new System.Drawing.Size(188, 14);
             this.progressSavingSpecialStats.TabIndex = 11;
             this.progressSavingSpecialStats.UseWaitCursor = true;
             // 
@@ -125,6 +127,7 @@
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(101, 13);
             this.label10.TabIndex = 17;
+            this.label10.Tag = "iatag_ui_saving_special_stats";
             this.label10.Text = "Saving special stats";
             this.label10.UseWaitCursor = true;
             // 
@@ -132,9 +135,9 @@
             // 
             this.progressSkillCorrectnessCheck.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressSkillCorrectnessCheck.Location = new System.Drawing.Point(197, 179);
+            this.progressSkillCorrectnessCheck.Location = new System.Drawing.Point(196, 179);
             this.progressSkillCorrectnessCheck.Name = "progressSkillCorrectnessCheck";
-            this.progressSkillCorrectnessCheck.Size = new System.Drawing.Size(189, 14);
+            this.progressSkillCorrectnessCheck.Size = new System.Drawing.Size(188, 14);
             this.progressSkillCorrectnessCheck.TabIndex = 19;
             this.progressSkillCorrectnessCheck.UseWaitCursor = true;
             // 
@@ -142,9 +145,9 @@
             // 
             this.progressGeneratingSkills.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressGeneratingSkills.Location = new System.Drawing.Point(197, 159);
+            this.progressGeneratingSkills.Location = new System.Drawing.Point(196, 159);
             this.progressGeneratingSkills.Name = "progressGeneratingSkills";
-            this.progressGeneratingSkills.Size = new System.Drawing.Size(189, 14);
+            this.progressGeneratingSkills.Size = new System.Drawing.Size(188, 14);
             this.progressGeneratingSkills.TabIndex = 11;
             this.progressGeneratingSkills.UseWaitCursor = true;
             // 
@@ -155,6 +158,7 @@
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(94, 13);
             this.label9.TabIndex = 20;
+            this.label9.Tag = "iatag_ui_skills_sanity";
             this.label9.Text = "Skills sanity check";
             this.label9.UseWaitCursor = true;
             // 
@@ -165,6 +169,7 @@
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(104, 13);
             this.label5.TabIndex = 11;
+            this.label5.Tag = "iatag_ui_mapping_item_names";
             this.label5.Text = "Mapping item names";
             this.label5.UseWaitCursor = true;
             // 
@@ -175,6 +180,7 @@
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(84, 13);
             this.label8.TabIndex = 19;
+            this.label8.Tag = "iatag_ui_generating_skills";
             this.label8.Text = "Generating skills";
             this.label8.UseWaitCursor = true;
             // 
@@ -182,9 +188,9 @@
             // 
             this.progressMappingPetStats.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressMappingPetStats.Location = new System.Drawing.Point(197, 79);
+            this.progressMappingPetStats.Location = new System.Drawing.Point(196, 79);
             this.progressMappingPetStats.Name = "progressMappingPetStats";
-            this.progressMappingPetStats.Size = new System.Drawing.Size(189, 14);
+            this.progressMappingPetStats.Size = new System.Drawing.Size(188, 14);
             this.progressMappingPetStats.TabIndex = 14;
             this.progressMappingPetStats.UseWaitCursor = true;
             // 
@@ -195,6 +201,7 @@
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(67, 13);
             this.label7.TabIndex = 15;
+            this.label7.Tag = "iatag_ui_saving_items";
             this.label7.Text = "Saving items";
             this.label7.UseWaitCursor = true;
             // 
@@ -202,9 +209,9 @@
             // 
             this.progressGeneratingSpecialStats.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressGeneratingSpecialStats.Location = new System.Drawing.Point(197, 119);
+            this.progressGeneratingSpecialStats.Location = new System.Drawing.Point(196, 119);
             this.progressGeneratingSpecialStats.Name = "progressGeneratingSpecialStats";
-            this.progressGeneratingSpecialStats.Size = new System.Drawing.Size(189, 14);
+            this.progressGeneratingSpecialStats.Size = new System.Drawing.Size(188, 14);
             this.progressGeneratingSpecialStats.TabIndex = 10;
             this.progressGeneratingSpecialStats.UseWaitCursor = true;
             // 
@@ -212,9 +219,9 @@
             // 
             this.progressMappingItemNames.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressMappingItemNames.Location = new System.Drawing.Point(197, 59);
+            this.progressMappingItemNames.Location = new System.Drawing.Point(196, 59);
             this.progressMappingItemNames.Name = "progressMappingItemNames";
-            this.progressMappingItemNames.Size = new System.Drawing.Size(189, 14);
+            this.progressMappingItemNames.Size = new System.Drawing.Size(188, 14);
             this.progressMappingItemNames.TabIndex = 12;
             this.progressMappingItemNames.UseWaitCursor = true;
             // 
@@ -225,6 +232,7 @@
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(95, 13);
             this.label6.TabIndex = 13;
+            this.label6.Tag = "iatag_ui_preparing_pet_stats";
             this.label6.Text = "Preparing pet stats";
             this.label6.UseWaitCursor = true;
             // 
@@ -232,9 +240,9 @@
             // 
             this.progressSaveItems.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressSaveItems.Location = new System.Drawing.Point(197, 99);
+            this.progressSaveItems.Location = new System.Drawing.Point(196, 99);
             this.progressSaveItems.Name = "progressSaveItems";
-            this.progressSaveItems.Size = new System.Drawing.Size(189, 14);
+            this.progressSaveItems.Size = new System.Drawing.Size(188, 14);
             this.progressSaveItems.TabIndex = 16;
             this.progressSaveItems.UseWaitCursor = true;
             // 
@@ -242,9 +250,9 @@
             // 
             this.progressLoadingItems.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressLoadingItems.Location = new System.Drawing.Point(197, 39);
+            this.progressLoadingItems.Location = new System.Drawing.Point(196, 39);
             this.progressLoadingItems.Name = "progressLoadingItems";
-            this.progressLoadingItems.Size = new System.Drawing.Size(189, 14);
+            this.progressLoadingItems.Size = new System.Drawing.Size(188, 14);
             this.progressLoadingItems.TabIndex = 6;
             this.progressLoadingItems.UseWaitCursor = true;
             // 
@@ -255,6 +263,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(68, 13);
             this.label1.TabIndex = 3;
+            this.label1.Tag = "iatag_ui_loading_tags";
             this.label1.Text = "Loading tags";
             this.label1.UseWaitCursor = true;
             // 
@@ -262,9 +271,9 @@
             // 
             this.progressSavingTags.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressSavingTags.Location = new System.Drawing.Point(197, 21);
+            this.progressSavingTags.Location = new System.Drawing.Point(196, 21);
             this.progressSavingTags.Name = "progressSavingTags";
-            this.progressSavingTags.Size = new System.Drawing.Size(189, 12);
+            this.progressSavingTags.Size = new System.Drawing.Size(188, 12);
             this.progressSavingTags.TabIndex = 4;
             this.progressSavingTags.UseWaitCursor = true;
             // 
@@ -275,6 +284,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(63, 13);
             this.label2.TabIndex = 5;
+            this.label2.Tag = "iatag_ui_saving_tags";
             this.label2.Text = "Saving tags";
             this.label2.UseWaitCursor = true;
             // 
@@ -282,9 +292,9 @@
             // 
             this.progressLoadingTags.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressLoadingTags.Location = new System.Drawing.Point(197, 3);
+            this.progressLoadingTags.Location = new System.Drawing.Point(196, 3);
             this.progressLoadingTags.Name = "progressLoadingTags";
-            this.progressLoadingTags.Size = new System.Drawing.Size(189, 12);
+            this.progressLoadingTags.Size = new System.Drawing.Size(188, 12);
             this.progressLoadingTags.TabIndex = 0;
             this.progressLoadingTags.UseWaitCursor = true;
             // 
@@ -295,6 +305,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(73, 13);
             this.label3.TabIndex = 7;
+            this.label3.Tag = "iatag_ui_loading_items";
             this.label3.Text = "Loading Items";
             this.label3.UseWaitCursor = true;
             // 
@@ -305,6 +316,7 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(120, 13);
             this.label4.TabIndex = 16;
+            this.label4.Tag = "iatag_ui_generating_special_stats";
             this.label4.Text = "Generating special stats";
             this.label4.UseWaitCursor = true;
             // 
@@ -312,10 +324,12 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(434, 261);
+            this.ClientSize = new System.Drawing.Size(425, 248);
             this.Controls.Add(this.groupBox1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ParsingDatabaseProgressView";
-            this.Text = "ParsingDatabaseProgressView";
+            this.Text = "Parsing database..";
+            this.Load += new System.EventHandler(this.ParsingDatabaseProgressView_Load);
             this.groupBox1.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();

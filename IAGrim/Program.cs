@@ -45,6 +45,7 @@ namespace IAGrim {
 #if DEBUG
 
         private static void Test() {
+            return;
             using (ThreadExecuter threadExecuter = new ThreadExecuter()) {
                 var factory = new SessionFactory();
                 string _grimdawnLocation = new DatabaseSettingRepo(threadExecuter, factory).GetCurrentDatabasePath();

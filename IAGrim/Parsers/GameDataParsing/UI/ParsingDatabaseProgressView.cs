@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using IAGrim.Parsers.Arz;
+using IAGrim.Utilities;
 
 namespace IAGrim.Parsers.GameDataParsing.UI {
     public partial class ParsingDatabaseProgressView : Form {
@@ -39,6 +41,10 @@ namespace IAGrim.Parsers.GameDataParsing.UI {
             } else {
                 formClosingEventArgs.Cancel = closePermitted;
             }
+        }
+
+        private void ParsingDatabaseProgressView_Load(object sender, EventArgs e) {
+            LocalizationLoader.ApplyLanguage(Controls, GlobalSettings.Language);
         }
     }
 }

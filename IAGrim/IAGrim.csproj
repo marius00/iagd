@@ -303,6 +303,7 @@
     <Compile Include="UI\Misc\HtmlTranslation.cs" />
     <Compile Include="UI\Misc\RequestRecipeArgument.cs" />
     <Compile Include="UI\Misc\TextboxHoverFocusHighlight.cs" />
+    <Compile Include="UI\Model\ListViewEntry.cs" />
     <Compile Include="UI\Popups\BackupNagScreen.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -345,6 +346,7 @@
     <Compile Include="UI\Popups\StashTabPicker.Designer.cs">
       <DependentUpon>StashTabPicker.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Service\DatabaseModSelectionService.cs" />
     <Compile Include="UI\Tabs\BackupSettings.cs">
       <SubType>Form</SubType>
     </Compile>

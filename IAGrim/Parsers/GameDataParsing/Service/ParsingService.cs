@@ -8,12 +8,15 @@ using IAGrim.Parsers.GameDataParsing.UI;
 
 namespace IAGrim.Parsers.GameDataParsing.Service {
     public class ParsingService {
-        private readonly string _grimdawnLocation;
+        private string _grimdawnLocation;
+        private string _modLocation;
+
         private readonly IItemTagDao _itemTagDao;
         private readonly IDatabaseItemDao _databaseItemDao;
         private readonly IDatabaseItemStatDao _databaseItemStatDao;
         private readonly IItemSkillDao _itemSkillDao;
         private readonly string _localizationFile;
+
 
         public ParsingService(
             IItemTagDao itemTagDao, 
@@ -31,14 +34,19 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
             _localizationFile = localizationFile;
         }
 
+        public void Update(string install, string mod) {
+            _grimdawnLocation = install;
+            _modLocation = mod;
+        }
+
         public void Execute() {
             var form = new ParsingDatabaseProgressView();
             var parser = new ArzParsingWrapper();
 
-
+            
             string vanillaTags = GrimFolderUtility.FindArcFile(_grimdawnLocation, "text_en.arc");
             string expansion1Tags = GrimFolderUtility.FindArcFile(Path.Combine(_grimdawnLocation, "gdx1"), "text_en.arc");
-            string modTags = string.Empty; // TODO:
+            string modTags = string.IsNullOrEmpty(_modLocation) ? "" : GrimFolderUtility.FindArcFile(_modLocation, "text_en.arc");
 
             List<Action> actions = new List<Action>();
             actions.Add(() => parser.LoadTags(vanillaTags, expansion1Tags, modTags, _localizationFile, new WinformsProgressBar(form.LoadingTags).Tracker));
@@ -46,7 +54,7 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
 
             string vanillaItems = GrimFolderUtility.FindArzFile(_grimdawnLocation);
             string expansion1Items = GrimFolderUtility.FindArzFile(Path.Combine(_grimdawnLocation, "gdx1"));
-            string modItems = string.Empty; // TODO:
+            string modItems = string.IsNullOrEmpty(_modLocation) ? "" : GrimFolderUtility.FindArzFile(_modLocation);
             actions.Add(() => parser.LoadItems(vanillaItems, expansion1Items, modItems, new WinformsProgressBar(form.LoadingItems).Tracker));
             actions.Add(() => parser.MapItemNames(new WinformsProgressBar(form.MappingItemNames).Tracker));
             actions.Add(() => parser.RenamePetStats(new WinformsProgressBar(form.MappingPetStats).Tracker));

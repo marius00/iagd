@@ -13,7 +13,10 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using IAGrim.Parsers.GameDataParsing.Service;
+using IAGrim.UI.Model;
+using IAGrim.UI.Service;
 using IAGrim.Utilities;
+using NHibernate.Util;
 
 namespace IAGrim.UI {
     public partial class ModsDatabaseConfig : Form {
@@ -23,6 +26,7 @@ namespace IAGrim.UI {
         private readonly ArzParser _arzParser;
         private readonly IPlayerItemDao _playerItemDao;
         private readonly ParsingService _parsingService;
+        private readonly DatabaseModSelectionService _databaseModSelectionService;
 
         public ModsDatabaseConfig(Action itemViewUpdateTrigger, IDatabaseSettingDao databaseSettingDao, ArzParser arzParser, IPlayerItemDao playerItemDao, ParsingService parsingService) {
             InitializeComponent();
@@ -31,58 +35,32 @@ namespace IAGrim.UI {
             this._arzParser = arzParser;
             this._playerItemDao = playerItemDao;
             _parsingService = parsingService;
+            _databaseModSelectionService = new DatabaseModSelectionService();
         }
 
-        class ListViewEntry {
-            public string Path { get; set; }
-            public bool IsVanilla { get; set; }
-        }
 
         private void UpdateListview(IEnumerable<string> paths) {
-            listView1.BeginUpdate();
-            listView1.Items.Clear();
-
-            var tagVanilla = GlobalSettings.Language.GetTag("iatag_ui_vanilla");
-            var tagVanillaXpac = GlobalSettings.Language.GetTag("iatag_ui_vanilla_xpac");
-            var tagYes = GlobalSettings.Language.GetTag("iatag_ui_yes");
-            var tagNo = GlobalSettings.Language.GetTag("iatag_ui_no");
-
-            foreach (var gdPath in paths) {
-
-                string currentDatabase = _databaseSettingDao.GetCurrentDatabasePath();
-                if (!string.IsNullOrEmpty(gdPath) && Directory.Exists(gdPath)) {
-                    bool hasExpansion = Directory.Exists(Path.Combine(gdPath, "gdx1"));
-
-                    ListViewItem vanilla = new ListViewItem(hasExpansion ? tagVanillaXpac : tagVanilla);
-                    vanilla.SubItems.Add(currentDatabase.Equals(gdPath) ? tagYes : tagNo);
-                    vanilla.SubItems.Add(gdPath);
-
-                    vanilla.Tag = new ListViewEntry {Path = gdPath, IsVanilla = true};
-
-                    listView1.Items.Add(vanilla);
-                }
-
-                foreach (var modpath in new[] { Path.Combine(gdPath, "mods"), Path.Combine(gdPath, "gdx1", "mods") }) {
-                    if (Directory.Exists(modpath)) {
-                        foreach (var directory in Directory.EnumerateDirectories(modpath)) {
-                            if (Directory.EnumerateFiles(directory, "*.arz", SearchOption.AllDirectories).Any()) {
-
-                                var modName = Path.GetFileName(directory);
-                                if (modName == "survivalmode") {
-                                    modName = GlobalSettings.Language.GetTag("iatag_ui_survivalmode");
-                                }
-
-                                ListViewItem mod = new ListViewItem(modName);
-                                mod.SubItems.Add(currentDatabase.Equals(directory) ? tagYes : tagNo);
-                                mod.SubItems.Add(directory);
-                                mod.Tag = new ListViewEntry {Path = directory, IsVanilla = false};
-                                listView1.Items.Add(mod);
-                            }
-                        }
-                    }
-                }
+            listViewInstalls.BeginUpdate();
+            listViewInstalls.Items.Clear();
+            var installs = _databaseModSelectionService.GetGrimDawnInstalls(paths);
+            foreach (var grimDawnInstall in installs) {
+                listViewInstalls.Items.Add(grimDawnInstall);
             }
-            listView1.EndUpdate();
+            listViewInstalls.EndUpdate();
+            if (listViewInstalls.Items.Count > 0) {
+                listViewInstalls.Items[0].Selected = true;
+            }
+
+
+            listViewMods.BeginUpdate();
+            listViewMods.Items.Clear();
+            foreach (var grimDawnInstall in _databaseModSelectionService.GetInstalledMods(paths)) {
+                listViewMods.Items.Add(grimDawnInstall);
+            }
+            listViewMods.EndUpdate();
+            if (listViewMods.Items.Count > 0) {
+                listViewMods.Items[0].Selected = true;
+            }
 
         }
 
@@ -92,14 +70,14 @@ namespace IAGrim.UI {
 
             var paths = GrimDawnDetector.GetGrimLocations();
             if (paths.Count == 0) {
-                listView1.Enabled = false;
+                listViewInstalls.Enabled = false;
                 buttonForceUpdate.Enabled = false;
             }
             else {
                 UpdateListview(paths);
             }
 
-            buttonForceUpdate.Enabled = listView1.SelectedItems.Count > 0;
+            buttonForceUpdate.Enabled = listViewInstalls.SelectedItems.Count > 0;
         }
 
 
@@ -107,16 +85,10 @@ namespace IAGrim.UI {
         /// Sets the "last database update" timestamp to 0 to force an update
         /// Queues a database update, followed by an item stat update.
         /// </summary>
-        public void ForceDatabaseUpdate(string location, bool isVanilla) {
-            // Override timestamp to force an update
-            _databaseSettingDao.UpdateDatabaseTimestamp(0);
-            
-            var paths = GrimDawnDetector.GetGrimLocations();
-            if (!string.IsNullOrEmpty(location) && Directory.Exists(location) && _arzParser.NeedUpdate(location)) {
+        public void ForceDatabaseUpdate(string location, string modLocation) {
+            if (!string.IsNullOrEmpty(location) && Directory.Exists(location)) {
+                _parsingService.Update(location, modLocation);
                 _parsingService.Execute();
-
-                //databaseSettingDao.UpdateCurrentDatabase(location);
-                UpdateListview(paths);
             }
             else {
                 Logger.Warn("Could not find the Grim Dawn install location");
@@ -132,14 +104,15 @@ namespace IAGrim.UI {
         }
 
         private void buttonForceUpdate_Click(object sender, EventArgs e) {
-            foreach (ListViewItem lvi in listView1.SelectedItems) {
+            foreach (ListViewItem lvi in listViewInstalls.SelectedItems) {
+                ListViewEntry mod = listViewMods.SelectedItems[0].Tag as ListViewEntry;
                 ListViewEntry entry = lvi.Tag as ListViewEntry;
-                ForceDatabaseUpdate(entry.Path, entry.IsVanilla);
+                ForceDatabaseUpdate(entry.Path, mod?.Path);
             }
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e) {
-            buttonForceUpdate.Enabled = listView1.SelectedItems.Count > 0;
+            buttonForceUpdate.Enabled = listViewInstalls.SelectedItems.Count > 0;
         }
 
         private void buttonUpdateItemStats_Click(object sender, EventArgs e) {
