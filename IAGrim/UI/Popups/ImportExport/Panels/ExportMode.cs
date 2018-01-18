@@ -26,7 +26,8 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
         }
 
         private void buttonBrowse_Click(object sender, EventArgs e) {
-
+            const int FilterIndexIas = 1;
+            const int FilterIndexGds = 2;
             var diag = new OpenFileDialog {
                 CheckFileExists = false,
                 CheckPathExists = true,
@@ -39,7 +40,8 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
 
             if (diag.ShowDialog() == DialogResult.OK) {
                 buttonExport.Enabled = true;
-                cbItemSelection.Visible = diag.FileName.EndsWith(".gds");
+                var idx = diag.FilterIndex;
+                cbItemSelection.Visible = diag.FilterIndex == FilterIndexGds;
                 this.IsGdstashFormat = diag.FileName.EndsWith(".gds");
                 this.filename = diag.FileName;
             }

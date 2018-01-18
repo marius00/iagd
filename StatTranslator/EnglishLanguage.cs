@@ -305,6 +305,7 @@ namespace StatTranslator {
             { "iatag_ui_hc", " (HC)" },
             { "iatag_ui_vanilla", "Vanilla" },
             { "iatag_ui_vanilla_xpac", "Vanilla & Expansion" },
+            { "iatag_ui_none", "None" },
             { "iatag_ui_yes", "Yes" },
             { "iatag_ui_no", "No" },
             { "iatag_ui_survivalmode", "The Crucible (DLC)" },
