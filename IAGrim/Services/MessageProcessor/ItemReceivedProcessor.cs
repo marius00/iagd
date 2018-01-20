@@ -17,15 +17,15 @@ namespace IAGrim.Services.MessageProcessor {
     /// Process InventorySack::AddItem
     /// </summary>
     class ItemReceivedProcessor : IMessageProcessor {
-        private static ILog logger = LogManager.GetLogger(typeof(ItemReceivedProcessor));
-        private readonly IPlayerItemDao playerItemDao;
-        private readonly SearchWindow searchWindow;
-        private readonly StashManager stashManager;
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(ItemReceivedProcessor));
+        private readonly IPlayerItemDao _playerItemDao;
+        private readonly SearchWindow _searchWindow;
+        private readonly StashFileMonitor _stashFileMonitor;
 
-        public ItemReceivedProcessor(SearchWindow searchWindow, StashManager stashManager, IPlayerItemDao playerItemDao) {
-            this.searchWindow = searchWindow;
-            this.stashManager = stashManager;
-            this.playerItemDao = playerItemDao;
+        public ItemReceivedProcessor(SearchWindow searchWindow, StashFileMonitor stashFileMonitor, IPlayerItemDao playerItemDao) {
+            this._searchWindow = searchWindow;
+            this._stashFileMonitor = stashFileMonitor;
+            this._playerItemDao = playerItemDao;
         }
 
         public void Process(MessageType type, byte[] data) {
@@ -37,10 +37,10 @@ namespace IAGrim.Services.MessageProcessor {
                     {
                         int pos = 2;
                         var items = GetPlayerItemFromInventorySack(data, pos);
-                        playerItemDao.Save(items);
-                        logger.InfoFormat("A gnome has delivered {0} new items to IA.", items.Count);
-                        searchWindow?.UpdateListviewDelayed();
-                        stashManager.CancelQueuedLoot();
+                        _playerItemDao.Save(items);
+                        Logger.InfoFormat("A gnome has delivered {0} new items to IA.", items.Count);
+                        _searchWindow?.UpdateListviewDelayed();
+                        _stashFileMonitor.CancelQueuedNotify();
                         //logger.Debug("TYPE_InventorySack_AddItem ignored");
                     }
                     break;
@@ -54,10 +54,10 @@ namespace IAGrim.Services.MessageProcessor {
                         bool b = data[pos] > 0; pos++;
 
                         var items = GetPlayerItemFromInventorySack(data, pos);
-                        playerItemDao.Save(items);
-                        logger.InfoFormat("A helpful goblin has delivered {0} new items to IA.", items.Count);
-                        searchWindow?.UpdateListviewDelayed();
-                        stashManager.CancelQueuedLoot();
+                        _playerItemDao.Save(items);
+                        Logger.InfoFormat("A helpful goblin has delivered {0} new items to IA.", items.Count);
+                        _searchWindow?.UpdateListviewDelayed();
+                        _stashFileMonitor.CancelQueuedNotify();
                     }
                     break;
             }
@@ -124,7 +124,7 @@ namespace IAGrim.Services.MessageProcessor {
 
             //logger.Debug($"Ptr: {ptr:X}");
             //logger.Debug($"Replica(seed:{seed}, relic:{relicSeed}, uk:{unknown}, enchant:{enchantSeed}, combines:{materiaCombines}, ?:{item54}, ?:{item56}, ?:{item57}, count:{stackCount}, ?:{item59})");
-            logger.Debug($"HC:{isHardcore}, Mod:{mod}, Replica({seed}, {relicSeed}, {materiaCombines}, {enchantSeed}, {baseRecord}, {prefixRecord}, {suffixRecord}, {modifierRecord}, {materiaRecord}, {stackCount})");
+            Logger.Debug($"HC:{isHardcore}, Mod:{mod}, Replica({seed}, {relicSeed}, {materiaCombines}, {enchantSeed}, {baseRecord}, {prefixRecord}, {suffixRecord}, {modifierRecord}, {materiaRecord}, {stackCount})");
 
 
             List<PlayerItem> result = new List<PlayerItem>();

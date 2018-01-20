@@ -24,7 +24,6 @@ namespace IAGrim.Parsers.Arz {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(StashManager));
         private Action<string> _setFeedback;
         private Action _performedLootCallback;
-        private FileSystemWatcher _watcher = new FileSystemWatcher();
         private readonly IPlayerItemDao _playerItemDao;
         private readonly ItemSizeService _itemSizeService;
         public List<Item> UnlootedItems => _unlootedItems.ToList();
@@ -34,11 +33,18 @@ namespace IAGrim.Parsers.Arz {
 
         public event EventHandler StashUpdated;
 
-        public StashManager(IPlayerItemDao playerItemDao, IDatabaseItemStatDao dbItemStatDao) {
+        public StashManager(
+            IPlayerItemDao playerItemDao, 
+            IDatabaseItemStatDao dbItemStatDao,
+            Action<string> setFeedback,
+            Action performedLootCallback
+            ) {
             _playerItemDao = playerItemDao;
             _itemSizeService = new ItemSizeService(dbItemStatDao);
-            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games",
-                "Grim Dawn", "Save", "transfer.gst");
+            _setFeedback = setFeedback;
+            _performedLootCallback = performedLootCallback;
+
+            string path = GlobalPaths.SavePath;
 
             if (!string.IsNullOrEmpty(path) && File.Exists(path)) {
                 UpdateUnlooted(path);
@@ -57,41 +63,22 @@ namespace IAGrim.Parsers.Arz {
         /// </summary>
         private bool _hasRecentlyUpdatedTimerFeedback;
 
-        private static ulong TranslatePosition(int x, int y) {
-            return 0;
-        }
 
-        #region TimerStuff
 
-        private Timer _delayedLootTimer;
-        private string _filenameTimed;
-
-        private void LootStashDelayed(string filename) {
-            _filenameTimed = filename;
-            _delayedLootTimer?.Stop();
-
-            _delayedLootTimer = new Timer {Enabled = true, Interval = 1500, AutoReset = true};
-            //_delayedLootTimer.Tag = filename;
-            _delayedLootTimer.Elapsed += HandleDelayedTextChangedTimerTick;
-            _delayedLootTimer.Start();
-        }
-
-        private void HandleDelayedTextChangedTimerTick(object sender, EventArgs e) {
+        
+        public bool TryLootStashFile(string filename) {
             bool isValid =
                 (GlobalSettings.StashStatus == StashAvailability.CLOSED && GrimStateTracker.IsFarFromStash) ||
                 !(bool) Settings.Default.SecureTransfers;
 
             if (GlobalSettings.PreviousStashStatus == StashAvailability.CRAFTING) {
-                _delayedLootTimer?.Stop();
-                _delayedLootTimer = null;
                 Logger.Debug("Stash is now available for looting, but the previous state was crafting, no new items should have been added");
-
+                return true;
             }
             else if (!isValid) {
                 if (!GrimStateTracker.IsFarFromStash) {
                     if (!_hasRecentlyUpdatedTimerFeedback) {
-                        Logger.Info(
-                            "Delaying stash loot, too close to stash. (this is to prevent item dupes on quick re-open)");
+                        Logger.Info("Delaying stash loot, too close to stash. (this is to prevent item dupes on quick re-open)");
                         _setFeedback(GlobalSettings.Language.GetTag("iatag_feedback_too_close_to_stash"));
                     }
                     _hasRecentlyUpdatedTimerFeedback = true;
@@ -105,22 +92,15 @@ namespace IAGrim.Parsers.Arz {
                 }
             }
 
-            else if (MainWindow.Instance.InvokeRequired) {
-                MainWindow.Instance.Invoke((MethodInvoker) delegate { HandleDelayedTextChangedTimerTick(sender, e); });
-            }
-
             else {
                 _hasRecentlyUpdatedTimerFeedback = false;
-
-                _delayedLootTimer?.Stop();
-                _delayedLootTimer = null;
 
                 Logger.InfoFormat("Looting stash, IsStashOpen: {0}, IsFarFromStash: {1}",
                     GlobalSettings.StashStatus != StashAvailability.CLOSED, GrimStateTracker.IsFarFromStash);
 
 
                 try {
-                    string message = EmptyPageX(_filenameTimed);
+                    string message = EmptyPageX(filename);
                     _setFeedback(message);
                 }
                 catch (NullReferenceException ex) {
@@ -140,16 +120,14 @@ namespace IAGrim.Parsers.Arz {
                     ExceptionReporter.ReportException(ex, "EmptyPageX??");
                     _setFeedback(GlobalSettings.Language.GetTag("iatag_feedback_unable_to_loot_stash4"));
                 }
+
+                return true;
             }
+
+            return false;
         }
 
-        #endregion TimerStuff
 
-
-        public void CancelQueuedLoot() {
-            _delayedLootTimer?.Stop();
-            _delayedLootTimer = null;
-        }
 
         public void UpdateUnlooted(string filename) {
             GDCryptoDataBuffer pCrypto = new GDCryptoDataBuffer(DataBuffer.ReadBytesFromDisk(filename));
@@ -202,6 +180,16 @@ namespace IAGrim.Parsers.Arz {
             return 0;
         }
 
+        private static int GetStashToLootFrom(Stash stash) {
+            if (Settings.Default.StashToLootFrom == 0) {
+                return stash.Tabs.Count - 1;
+            }
+            else {
+                return Settings.Default.StashToLootFrom - 1;
+            }
+        }
+
+
         /// <summary>
         ///     Loot all the items stored on page X, and store them to the local database
         /// </summary>
@@ -213,13 +201,7 @@ namespace IAGrim.Parsers.Arz {
 
             Stash stash = new Stash();
             if (stash.Read(pCrypto)) {
-                int lootFromIndex;
-                if (Settings.Default.StashToLootFrom == 0) {
-                    lootFromIndex = stash.Tabs.Count - 1;
-                }
-                else {
-                    lootFromIndex = Settings.Default.StashToLootFrom - 1;
-                }
+                int lootFromIndex = GetStashToLootFrom(stash);
 
                 bool isHardcore = GlobalPaths.IsHardcore(filename);
 
@@ -245,15 +227,11 @@ namespace IAGrim.Parsers.Arz {
                 StashUpdated?.Invoke(null, null);
 
                 if (stash.Tabs.Count < 2) {
-                    Logger.WarnFormat(
-                        "File \"{0}\" only contains {1} pages, must have at least 2 pages to function properly.",
-                        filename, stash.Tabs.Count);
-                    return
-                        $"File \"{filename}\" only contains {stash.Tabs.Count} pages, must have at least 2 pages to function properly.";
+                    Logger.WarnFormat("File \"{0}\" only contains {1} pages, must have at least 2 pages to function properly.", filename, stash.Tabs.Count);
+                    return $"File \"{filename}\" only contains {stash.Tabs.Count} pages, must have at least 2 pages to function properly.";
                 }
                 if (stash.Tabs.Count < lootFromIndex + 1) {
-                    var message =
-                        $"You have configured IA to loot from {lootFromIndex + 1} but you only have {stash.Tabs.Count} pages";
+                    var message = $"You have configured IA to loot from {lootFromIndex + 1} but you only have {stash.Tabs.Count} pages";
                     Logger.Warn(message);
                     return message;
                 }
@@ -262,16 +240,18 @@ namespace IAGrim.Parsers.Arz {
                     //_hasLootedItemsOnceThisSession = true;
 
                     // Grab the items and clear the tab
-                    List<Item> items = new List<Item>(stash.Tabs[lootFromIndex].Items);
-                    stash.Tabs[lootFromIndex].Items.Clear();
+                    List<Item> items = stash.Tabs[lootFromIndex].Items
+                        .Where(m => m.StackCount <= 1)
+                        .ToList();
 
-                    List<PlayerItem> storedItems =
-                        StoreItemsToDatabase(items, stash.ModLabel, isHardcore, stash.IsExpansion1);
+
+                    stash.Tabs[lootFromIndex].Items.RemoveAll(e => items.Any(m => m.Equals(e)));
+
+                    List<PlayerItem> storedItems = StoreItemsToDatabase(items, stash.ModLabel, isHardcore, stash.IsExpansion1);
                     if (storedItems != null) {
                         Logger.Info($"Looted {items.Count} items from stash {lootFromIndex + 1}");
 
                         if (!SafelyWriteStash(filename, stash)) {
-                            // TODO: Delete from DB
                             _playerItemDao.Remove(storedItems);
                         }
                     }
@@ -574,8 +554,7 @@ namespace IAGrim.Parsers.Arz {
         /// </summary>
         /// <param name="items"></param>
         /// <returns></returns>
-        private List<PlayerItem> StoreItemsToDatabase(ICollection<Item> items, string mod, bool isHardcore,
-            bool isExpansion1) {
+        private List<PlayerItem> StoreItemsToDatabase(ICollection<Item> items, string mod, bool isHardcore, bool isExpansion1) {
             List<PlayerItem> playerItems = new List<PlayerItem>();
 
             foreach (Item item in items) {
@@ -596,119 +575,10 @@ namespace IAGrim.Parsers.Arz {
             return playerItems;
         }
 
-        /// <summary>
-        ///     Ugly, but it has to be disposed!
-        /// </summary>
-        public void Dispose() {
-            if (_watcher != null) {
-                _watcher.EnableRaisingEvents = false;
-                _watcher.Dispose();
-                _watcher = null;
-            }
-        }
-
-        ~StashManager() {
-            Dispose();
-        }
-
-        [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
-        public bool StartMonitorStashfile(Action<string> feedback, Action performedLootCallback) {
-            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games",
-                "Grim Dawn", "Save");
-            if (!string.IsNullOrEmpty(path) && Directory.Exists(path)) {
-                _setFeedback = feedback;
-                _performedLootCallback = performedLootCallback;
-
-                _watcher = new FileSystemWatcher();
-                _watcher.Path = path;
-                _watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName |
-                                        NotifyFilters.DirectoryName;
-                _watcher.Filter = "transfer.gs?";
-
-                _watcher.IncludeSubdirectories = true;
-                _watcher.Changed += (sender, args) => OnChanged(this, args); //new FileSystemEventHandler(OnChanged);
-                _watcher.Created += (sender, args) => OnChanged(this, args); //new FileSystemEventHandler(OnChanged);
-                _watcher.Deleted += (sender, args) => OnChanged(this, args); //new FileSystemEventHandler(OnChanged);
-                _watcher.Renamed += OnRenamed;
-
-
-                _watcher.Error += Watcher_Error;
-                _watcher.EnableRaisingEvents = true;
-
-                Logger.InfoFormat("Monitoring stashfiles at: {0}", _watcher.Path);
-                return true;
-            }
-
-            return false;
-        }
-
-        private void Watcher_Error(object sender, ErrorEventArgs e) {
-            Logger.Info(e.GetException().Message);
-        }
 
         public string LastSeenModLabel { get; private set; }
 
         public bool LastSeenIsHardcore { get; private set; }
 
-        //private static void OnChanged(object source, FileSystemEventArgs e) {
-        private static void OnChanged(StashManager obj, FileSystemEventArgs e) {
-            Logger.Debug("File: " + e.FullPath + " " + e.ChangeType);
-
-            /*
-                        // Specify what is done when a file is changed, created, or deleted.
-                        if (e.FullPath.EndsWith(".gst") || e.FullPath.EndsWith(".gsh")) {
-                            Logger.Debug("File: " + e.FullPath + " " + e.ChangeType);
-                            using (TemporaryCopy copy = new TemporaryCopy(e.FullPath)) {
-                                obj.LastSeenIsHardcore = GlobalSettings.IsHardcore(copy.Filename);
-
-                                GDCryptoDataBuffer pCrypto = new GDCryptoDataBuffer(DataBuffer.ReadBytesFromDisk(copy.Filename));
-
-                                Stash stash = new Stash();
-                                if (stash.Read(pCrypto)) {
-                                    obj.LastSeenModLabel = stash.ModLabel;
-                                }
-                            }
-                        }
-            */
-
-            // Logger.InfoFormat("Detected a change");
-        }
-
-        private void OnRenamed(object source, RenamedEventArgs e) {
-            // Specify what is done when a file is renamed.
-            Logger.DebugFormat("File: {0} renamed to {1}", e.OldFullPath, e.FullPath);
-            if (!e.FullPath.EndsWith(".bak")) {
-                if (File.Exists(e.FullPath)) {
-                    /*
-                    if (GlobalSettings.PreviousStashStatus == StashAvailability.CRAFTING ||
-                        GlobalSettings.StashStatus == StashAvailability.CRAFTING) {
-                        Logger.Info("Detected an update to stash file, but ignoring due to crafting-safety-check");
-                        // OBS: Can only do this if we've previously looted! CAnnot risk it containing unlooted items
-                        if (_hasLootedItemsOnceThisSession) {
-                            if (_delayedLootTimer == null) {
-                                Logger.Info(
-                                    "Items has already been looted this session, post-crafting safety measures required.");
-
-                                DeleteItemsInPageX(e.FullPath);
-                            }
-                            else {
-                                Logger.Info("Player may have opened devotion screen before running away.. leaving items be..");
-                            }
-                        }
-                        else {
-                            Logger.Info("No items has been looted this session, ignoring safety measures.");
-                        }
-                    }
-                    else*/ {
-                        Logger.Info("Detected an update to stash file, checking for loot..");
-
-                        LootStashDelayed(e.FullPath);
-                    }
-                }
-                else {
-                    Logger.Warn("Detected an update to stash file, but stash file does not appear to exist.");
-                }
-            }
-        }
     }
 }

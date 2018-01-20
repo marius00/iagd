@@ -45,7 +45,7 @@ namespace IAGrim.Utilities {
         /// </summary>
         public static string[] FormulasFiles {
             get {
-                string documents = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "Grim Dawn", "Save");
+                string documents = SavePath;
                 string file_n = Path.Combine(documents, "formulas.gst");
                 string file_hc = Path.Combine(documents, "formulas.gsh");
 
@@ -65,13 +65,14 @@ namespace IAGrim.Utilities {
             return filename.EndsWith(".gsh");
         }
 
+        public static string SavePath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "Grim Dawn", "Save");
 
         /// <summary>
         /// Map of [mod][transfer file]
         /// </summary>
         public static List<GDTransferFile> TransferFiles {
             get {
-                string documents = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "Grim Dawn", "Save");
+                string documents = SavePath;
 
                 if (Directory.Exists(documents)) {
 

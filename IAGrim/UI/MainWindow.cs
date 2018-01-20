@@ -21,6 +21,7 @@ using IAGrim.BuddyShare;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parsers;
 using IAGrim.Parsers.Arz;
+using IAGrim.Parsers.Arz.dto;
 using IAGrim.Parsers.GameDataParsing.Service;
 using IAGrim.Properties;
 using IAGrim.Services;
@@ -67,6 +68,7 @@ namespace IAGrim.UI {
         private SearchWindow _searchWindow;
         private StashManager _stashManager;
         private BuddySettings _buddySettingsWindow;
+        private StashFileMonitor _stashFileMonitor = new StashFileMonitor();
 
         private Action<RegisterWindow.DataAndType> _registerWindowDelegate;
         private RegisterWindow _window;
@@ -91,7 +93,6 @@ namespace IAGrim.UI {
         private readonly IItemSkillDao _itemSkillDao;
         private readonly ParsingService _parsingService;
 
-        public static MainWindow Instance { get; set; }
         private readonly Stopwatch _reportUsageStatistics;
 
 #region Stash Status
@@ -162,7 +163,6 @@ namespace IAGrim.UI {
             _cefBrowserHandler = browser;
             InitializeComponent();
             FormClosing += MainWindow_FormClosing;
-            Instance = this;
 
             _reportUsageStatistics = new Stopwatch();
             _reportUsageStatistics.Start();
@@ -233,7 +233,8 @@ namespace IAGrim.UI {
             FormClosing -= MainWindow_FormClosing;
             SizeChanged -= OnMinimizeWindow;
 
-            _stashManager?.Dispose();
+            _stashFileMonitor?.Dispose();
+            _stashFileMonitor = null;
             _stashManager = null;
 
             _backupBackgroundTask?.Dispose();
@@ -349,12 +350,17 @@ namespace IAGrim.UI {
         }
 
         private void SetFeedback(string feedback) {
-            if (InvokeRequired) {
-                Invoke((MethodInvoker)delegate { SetFeedback(feedback); });
-            } else {
-                statusLabel.Text = feedback.Replace("\\n", " - ");
-
-                _cefBrowserHandler.ShowMessage(feedback, "Info");
+            try {
+                if (InvokeRequired) {
+                    Invoke((MethodInvoker) delegate { SetFeedback(feedback); });
+                }
+                else {
+                    statusLabel.Text = feedback.Replace("\\n", " - ");
+                    _cefBrowserHandler.ShowMessage(feedback, "Info");
+                }
+            }
+            catch (ObjectDisposedException) {
+                Logger.Debug("Attempted to set feedback, but UI already disposed. (Probably shutting down)");
             }
         }
 
@@ -423,9 +429,15 @@ namespace IAGrim.UI {
 
             buttonDevTools.Visible = Debugger.IsAttached;
 
-
-            _stashManager = new StashManager(_playerItemDao, _databaseItemStatDao);
-            if (!_stashManager.StartMonitorStashfile(SetFeedback, ListviewUpdateTrigger)) {
+            _stashManager = new StashManager(_playerItemDao, _databaseItemStatDao, SetFeedback, ListviewUpdateTrigger);
+            _stashFileMonitor.OnStashModified += (_, __) => {
+                StashEventArg args = __ as StashEventArg;
+                if (_stashManager.TryLootStashFile(args?.Filename)) {
+                    // STOP TIMER
+                    _stashFileMonitor.CancelQueuedNotify();
+                }
+            };
+            if (!_stashFileMonitor.StartMonitorStashfile(GlobalPaths.SavePath)) {
                 MessageBox.Show("Ooops!\nIt seems you are synchronizing your saves to steam cloud..\nThis tool is unfortunately not compatible.\n");
                 Process.Start("http://www.grimdawn.com/forums/showthread.php?t=20752");
 
@@ -578,7 +590,7 @@ namespace IAGrim.UI {
             _messageProcessors.Add(new ItemPositionFinder(_dynamicPacker));
             _messageProcessors.Add(new PlayerPositionTracker());
             _messageProcessors.Add(new StashStatusHandler());
-            _messageProcessors.Add(new ItemReceivedProcessor(_searchWindow, _stashManager, _playerItemDao));
+            _messageProcessors.Add(new ItemReceivedProcessor(_searchWindow, _stashFileMonitor, _playerItemDao));
             _messageProcessors.Add(new ItemInjectCallbackProcessor(_searchWindow.UpdateListviewDelayed, _playerItemDao));
             _messageProcessors.Add(new ItemSpawnedProcessor());
             _messageProcessors.Add(new CloudDetectorProcessor(SetFeedback));
@@ -779,7 +791,7 @@ namespace IAGrim.UI {
         /// <param name="e"></param>
         private void BuddyItemsCallback(object sender, ProgressChangedEventArgs e) {
             if (InvokeRequired) {
-                Instance.Invoke((MethodInvoker)delegate {
+                Invoke((MethodInvoker)delegate {
                     BuddyItemsCallback(sender, e);
                 });
             } else {
@@ -808,12 +820,6 @@ namespace IAGrim.UI {
                 if (args != null) Clipboard.SetText(args.Text);
                 _tooltipHelper.ShowTooltipAtMouse(GlobalSettings.Language.GetTag("iatag_copied_clipboard"), _cefBrowserHandler.BrowserControl);
             }
-        }
-        
-        private void buttonTestPipe_Click(object sender, EventArgs e) {
-
-            //PlayerItem pi = new IPlayerItemDao(factory).ListAll().FirstOrDefault();
-            //transferController.TransferToOpenStash(pi);
         }
 
     } // CLASS

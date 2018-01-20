@@ -14,15 +14,15 @@ using System.Windows.Forms;
 
 namespace IAGrim.UI.Popups.ImportExport.Panels {
     public partial class ExportMode : Form {
-        private readonly GDTransferFile[] modSelection;
-        private readonly IPlayerItemDao playerItemDao;
-        private string filename;
-        private bool IsGdstashFormat = false;
+        private readonly GDTransferFile[] _modSelection;
+        private readonly IPlayerItemDao _playerItemDao;
+        private string _filename;
+        private bool _isGdstashFormat = false;
 
         public ExportMode(GDTransferFile[] modSelection, IPlayerItemDao playerItemDao) {
             InitializeComponent();
-            this.modSelection = modSelection;
-            this.playerItemDao = playerItemDao;
+            this._modSelection = modSelection;
+            this._playerItemDao = playerItemDao;
         }
 
         private void buttonBrowse_Click(object sender, EventArgs e) {
@@ -42,14 +42,14 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
                 buttonExport.Enabled = true;
                 var idx = diag.FilterIndex;
                 cbItemSelection.Visible = diag.FilterIndex == FilterIndexGds;
-                this.IsGdstashFormat = diag.FileName.EndsWith(".gds");
-                this.filename = diag.FileName;
+                this._isGdstashFormat = diag.FileName.EndsWith(".gds");
+                this._filename = diag.FileName;
             }
         }
 
         private void ExportMode_Load(object sender, EventArgs e) {
             cbItemSelection.Items.Add("All items");
-            cbItemSelection.Items.AddRange(modSelection);
+            cbItemSelection.Items.AddRange(_modSelection);
             cbItemSelection.SelectedIndex = 0;
             buttonExport.Enabled = false;
             cbItemSelection.Visible = false;
@@ -57,16 +57,16 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
 
         private void buttonExport_Click(object sender, EventArgs e) {
             if (buttonExport.Enabled) {
-                if (IsGdstashFormat) {
-                    var io = new GDFileExporter(filename, false, string.Empty); // Params are not used for writing
+                if (_isGdstashFormat) {
+                    var io = new GDFileExporter(_filename, false, string.Empty); // Params are not used for writing
 
                     GDTransferFile settings = cbItemSelection.SelectedItem as GDTransferFile;
                     if (settings == null) {
-                        var items = playerItemDao.ListAll();
+                        var items = _playerItemDao.ListAll();
                         io.Write(items);
                     }
                     else {
-                        var items = playerItemDao.ListAll()
+                        var items = _playerItemDao.ListAll()
                             .Where(item => item.IsHardcore == settings.IsHardcore/* && item.IsExpansion1 == settings.IsExpansion1*/);
 
                         if (string.IsNullOrEmpty(settings.Mod)) {
@@ -78,8 +78,8 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
                     }
                 }
                 else {
-                    var io = new IAFileExporter(filename);
-                    var items = playerItemDao.ListAll();
+                    var io = new IAFileExporter(_filename);
+                    var items = _playerItemDao.ListAll();
                     io.Write(items);
                 }
 
