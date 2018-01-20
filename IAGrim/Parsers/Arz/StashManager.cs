@@ -189,6 +189,15 @@ namespace IAGrim.Parsers.Arz {
             }
         }
 
+        private static int GetStashToDepositTo(Stash stash) {
+            if (Settings.Default.StashToDepositTo == 0) {
+                return stash.Tabs.Count - 2;
+            }
+            else {
+                return Settings.Default.StashToDepositTo - 1;
+            }
+        }
+
 
         /// <summary>
         ///     Loot all the items stored on page X, and store them to the local database
@@ -242,7 +251,9 @@ namespace IAGrim.Parsers.Arz {
                     // Grab the items and clear the tab
                     List<Item> items = stash.Tabs[lootFromIndex].Items
                         .Where(m => m.StackCount <= 1)
+                        .Where(m => !_playerItemDao.Exists(Map(m, stash.ModLabel, isHardcore, stash.IsExpansion1)))
                         .ToList();
+                    
 
 
                     stash.Tabs[lootFromIndex].Items.RemoveAll(e => items.Any(m => m.Equals(e)));
@@ -361,7 +372,7 @@ namespace IAGrim.Parsers.Arz {
         }
 
 
-        public Item GetItem(PlayerItem item, int itemsRemaining) {
+        private Item GetItem(PlayerItem item, int itemsRemaining) {
             Item stashItem = Map(item);
 
             // Calculate the final stack count (stored stack may be larger than max transfer size)
@@ -395,8 +406,10 @@ namespace IAGrim.Parsers.Arz {
 
             // Add and position any items that fits
             for (int i = 0; i < playerItems.Count; i++) {
-                if (playerItems[i].StackCount == 0)
+                if (playerItems[i].StackCount == 0) {
                     playerItems[i].StackCount = 1;
+                }
+
                 while (playerItems[i].StackCount > 0 && itemsRemaining > 0) {
                     Item stashItem = GetItem(playerItems[i], itemsRemaining);
 
@@ -451,20 +464,13 @@ namespace IAGrim.Parsers.Arz {
         ///     The items deposited, caller responsibility to delete them from DB if stacksize is <= 0, and update if not</param>
         /// <returns></returns>
         public void Deposit(string filename, IList<PlayerItem> playerItems, int maxItemsToTransfer, out string error) {
-            string tempname = string.Format("{0}.ia", filename);
             error = string.Empty;
 
             const int MAX_ITEMS_IN_TAB = 16 * 8;
 
             Stash stash = GetStash(filename);
             if (stash != null) {
-                int depositToIndex;
-                if (Settings.Default.StashToDepositTo == 0) {
-                    depositToIndex = stash.Tabs.Count - 2;
-                }
-                else {
-                    depositToIndex = Settings.Default.StashToDepositTo - 1;
-                }
+                int depositToIndex = GetStashToDepositTo(stash);
 
 
 #if DEBUG
@@ -473,14 +479,11 @@ namespace IAGrim.Parsers.Arz {
                 }
 #endif
                 if (stash.Tabs.Count < 2) {
-                    Logger.WarnFormat(
-                        "File \"{0}\" only contains {1} pages, must have at least 2 pages to function properly.",
-                        filename, stash.Tabs.Count);
+                    Logger.WarnFormat("File \"{0}\" only contains {1} pages, must have at least 2 pages to function properly.", filename, stash.Tabs.Count);
                     error = "Please purchase more stash pages!";
                 }
                 else if (stash.Tabs.Count < depositToIndex + 1) {
-                    var message =
-                        $"You have configured IA to deposit to tab {depositToIndex + 1} but you only have {stash.Tabs.Count} pages";
+                    var message = $"You have configured IA to deposit to tab {depositToIndex + 1} but you only have {stash.Tabs.Count} pages";
                     Logger.Warn(message);
                     error = message;
                 }

@@ -32,5 +32,7 @@ namespace IAGrim.Database.Interfaces {
         void ClearAllItemStats();
 
         IList<ModSelection> GetModSelection();
+
+        bool Exists(PlayerItem item);
     }
 }

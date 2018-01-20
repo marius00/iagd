@@ -68,6 +68,12 @@ namespace IAGrim.Database.Synchronizer {
             );
         }
 
+        public bool Exists(PlayerItem item) {
+            return ThreadExecuter.Execute(
+                () => repo.Exists(item)
+            );
+        }
+
         public long GetNumUnsynchronizedItems() {
             return ThreadExecuter.Execute(
                 () => repo.GetNumUnsynchronizedItems()
