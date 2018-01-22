@@ -10,5 +10,6 @@ namespace IAGrim.Database.DAO.Table {
         public const string Id = "id_databaseitem";
         public const string Record = "baserecord";
         public const string Name = "name";
+        public const string Hash = "hash";
     }
 }

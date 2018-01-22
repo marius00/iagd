@@ -16,81 +16,13 @@ using log4net;
 namespace IAGrim.Parsers.Arz {
     public class ArzParser : IDisposable {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ArzParser));
-        private readonly IDatabaseItemDao _databaseItemDao;
-        private readonly IDatabaseItemStatDao _databaseItemStatDao;
         private readonly IDatabaseSettingDao _databaseSettingDao;
-        private readonly IItemSkillDao _itemSkillDao;
         private readonly List<DatabaseItem> _skills = new List<DatabaseItem>();
         private ISet<ItemTag> _tags;
 
-        public ArzParser(
-            IDatabaseItemDao databaseItemDao,
-            IDatabaseItemStatDao databaseItemStatDao,
-            IDatabaseSettingDao databaseSettingDao,
-            IItemSkillDao itemSkillDao
-        ) {
-            _databaseItemDao = databaseItemDao;
-            _databaseItemStatDao = databaseItemStatDao;
+        public ArzParser(IDatabaseSettingDao databaseSettingDao) {
             _databaseSettingDao = databaseSettingDao;
-            _itemSkillDao = itemSkillDao;
         }
-
-        // LocalizationFile
-        /*
-        private Dictionary<string, string> LoadTags(string arcTagfile, string localizationFile, bool expansionOnlyMod) {
-            // Process and load the _tags Load the _tags
-            Dictionary<string, string> mappedTags;
-
-            bool isTagfileLocked = IOHelper.IsFileLocked(new FileInfo(arcTagfile));
-            TemporaryCopy arcTagTemp = isTagfileLocked ? new TemporaryCopy(arcTagfile) : null;
-
-
-            // Load from user localization
-            var localizationLoader = new LocalizationLoader();
-            if (!string.IsNullOrEmpty(localizationFile) && localizationLoader.Load(localizationFile)) {
-                _tags = localizationLoader.GetItemTags();
-            }
-
-            // Load from GD
-            else {
-                List<IItemTag> _tags =
-                    Parser.Arz.ArzParser.ParseArcFile(isTagfileLocked ? arcTagTemp.Filename : arcTagfile);
-                this._tags = new HashSet<ItemTag>(_tags.Select(m => new ItemTag {
-                        Name = m.Name,
-                        Tag = m.Tag
-                    }).ToArray()
-                );
-            }
-
-            bool saveOrUpdate = expansionOnlyMod;
-            if (saveOrUpdate) {
-                _databaseItemDao.SaveOrUpdate(_tags);
-            }
-            else {
-                _databaseItemDao.Save(_tags);
-            }
-
-            // Fallback: Just use whatever names we got stored in db
-            if (_tags == null || _tags.Count == 0) {
-                Logger.Info(
-                    "Using cached tag dictionary instead, this may or may not be compatible with the supplied mod.");
-                Logger.Info("If this is causing any issues, switch to vanilla then back to the mod.");
-                mappedTags = _databaseItemDao.GetTagDictionary();
-            }
-            else {
-                mappedTags = _tags.ToDictionary(item => item.Tag, item => item.Name);
-                var dbTags = _databaseItemDao.GetTagDictionary();
-                foreach (var key in dbTags.Keys.Where(key => !mappedTags.ContainsKey(key))) {
-                    mappedTags[key] = dbTags[key];
-                }
-            }
-
-            return mappedTags;
-        }
-        */
-
-
-
 
         public bool NeedUpdate(string grimdawnLocation) {
             string databaseFile = GrimFolderUtility.FindArzFile(grimdawnLocation);
@@ -158,114 +90,6 @@ namespace IAGrim.Parsers.Arz {
             }
         }
 
-        /// <summary>
-        ///     Parses the data from Grim Dawn (arz and arc files)
-        ///     If the supplied location is a mod, supply whetever its an addative or a replacement for the original database.
-        ///     Eg, should it clear the existing database upon insert, or add/replace?
-        ///     The prior is faster, but will not work for mods with a partial database.
-        /// </summary>
-        /// <param name="grimdawnLocation"></param>
-        /// <param name="localizationFile"></param>
-        /// <param name="expansionOnlyMod">Whetever this mod only expands upon EXISTING content</param>
-        /*
-        public void LoadArzDb(string grimdawnLocation, string localizationFile, bool expansionOnlyMod) {
-            try {
-                // Init & abort if not needed
-                Logger.InfoFormat("Parse Arz/Arc, Location: \"{0}\", Additive: {1}, ClearFix: {2}", grimdawnLocation,
-                    expansionOnlyMod, !expansionOnlyMod);
-                string databaseFile = GrimFolderUtility.FindArzFile(grimdawnLocation);
-                //string expansionDatabaseFile = FindArzFile(Path.Combine(grimdawnLocation, "gdx1"));
-
-                string arcTagfile = GrimFolderUtility.FindArcFile(grimdawnLocation, "text_en.arc");
-                var arcItemsFile = GrimFolderUtility.FindArcFile(grimdawnLocation, "items.arc");
-
-                //long lastExpansionModified = string.IsNullOrEmpty(expansionDatabaseFile) ? 0 : File.GetLastWriteTime(expansionDatabaseFile).Ticks;
-                long lastModified = File.GetLastWriteTime(databaseFile).Ticks;
-                Logger.Info("Updating...");
-                
-                
-                var mappedTags = LoadTags(arcTagfile, localizationFile, expansionOnlyMod);
-
-
-                // Process the items loaded
-                var skipLots = true;
-                List<IItem> _items = Parser.Arz.ArzParser.LoadItemRecords(databaseFile, skipLots); // TODO
-
-                int x = 9;
-                {
-                    List<DatabaseItem> items = new List<DatabaseItem>();
-
-                    foreach (IItem item in _items) {
-                        items.Add(new DatabaseItem {
-                            Record = item.Record,
-                            Stats = item.Stats.Select(map).ToList()
-                        });
-                    }
-
-
-                    // Map the name using the name _tags
-                    MapItemNames(items, mappedTags);
-                    RenamePetStats(items);
-
-
-                    // Add skill accumulation
-                    _skills.AddRange(items.Where(m => m.Record.Contains("/skills/")));
-
-                    var specialStats = CreateSpecialRecords(items, mappedTags);
-                    Logger.Info($"Mapped {specialStats.Count()} special stats");
-
-
-                    Logger.Info("Storing items to database..");
-
-                    // Store to DB (cache)
-                    if (expansionOnlyMod) {
-                        _databaseItemDao.SaveOrUpdate(items);
-                    }
-                    else {
-                        // Deletes all existing data and saves new
-                        _databaseItemDao.Save(items);
-                        Logger.InfoFormat("Stored {0} items and {1} stats to internal db.", items.Count, -1);
-                    }
-
-                    _databaseItemStatDao.Save(specialStats);
-                    Logger.Debug("Special stats saved to DB");
-
-                    // TODO: HERE NOW
-                    // TODO: HERE NOW
-                    // TODO: HERE NOW
-
-                    // Obs: Do this after storing items as the item IDs changes
-                    var skillParser = new ComplexItemParser(_items, mappedTags);
-                    skillParser.Generate();
-                    _itemSkillDao.Save(skillParser.Skills, expansionOnlyMod);
-                    _itemSkillDao.Save(skillParser.SkillItemMapping, expansionOnlyMod);
-
-
-                    _databaseSettingDao.UpdateDatabaseTimestamp(lastModified);
-
-                    LoadIcons(arcItemsFile);
-
-                    _itemSkillDao.EnsureCorrectSkillRecords();
-                }
-            }
-            catch (AggregateException ex) {
-                Logger.Warn("System.AggregateException waiting for tasks, throwing first exception.");
-                foreach (var inner in ex.InnerExceptions) {
-                    Logger.Warn(inner.Message);
-                    Logger.Warn(inner.StackTrace);
-                    ExceptionReporter.ReportException(inner, "[AggregateException]", true);
-
-                    if (inner.InnerException != null) {
-                        Logger.Warn(inner.InnerException.Message);
-                        Logger.Warn(inner.InnerException.StackTrace);
-                    }
-                }
-
-
-                ex.Handle(x => { throw x; });
-            }
-        }*/
-
         private static void LoadIcons(string arcItemsFile) {
             Logger.Info($"Loading item icons from {arcItemsFile}..");
 
@@ -283,34 +107,6 @@ namespace IAGrim.Parsers.Arz {
 
             DDSImageReader.ExtractItemIcons(arcItemfile, GlobalPaths.StorageFolder);
         }
-        /*
-        private void RenamePetStats(List<DatabaseItem> items) {
-            Logger.Debug("Detecting records with pet bonus stats..");
-
-            var petRecords = items.SelectMany(m => m.Stats.Where(s => s.Stat == "petBonusName")
-                    .Select(s => s.TextValue))
-                .ToList(); // ToList for performance reasons
-
-            var petItems = items.Where(m => petRecords.Contains(m.Record)).ToList();
-            foreach (var petItem in petItems) {
-                var stats = petItem.Stats.Select(s => new DatabaseItemStat {
-                    Stat = "pet" + s.Stat,
-                    TextValue = s.TextValue,
-                    Value = s.Value,
-                    Parent = s.Parent
-                }).ToList();
-
-                petItem.Stats.Clear();
-                petItem.Stats = stats;
-            }
-
-            items.RemoveAll(m => petRecords.Contains(m.Record));
-            items.AddRange(petItems);
-
-            Logger.Debug($"Classified {petItems.Count()} records as pet stats");
-        }*/
-
-
         public static string ExtractClassFromRecord(string record, IEnumerable<DatabaseItem> items) {
             Regex playerClassRx = new Regex(@".*/player(class\d+)/.*");
             // "MasteryEnumeration"	"SkillClass24" => tagSkillClassName24
@@ -471,41 +267,6 @@ namespace IAGrim.Parsers.Arz {
                     break;
             }
         }
-        /*
-        private IEnumerable<DatabaseItemStat> CreateSpecialRecords(
-            IEnumerable<DatabaseItem> items,
-            Dictionary<string, string> tags
-            ) {
-            List<DatabaseItemStat> result = new List<DatabaseItemStat>();
-            foreach (var item in items) {
-                GetSpecialMasteryStats(result, item, items);
-                GetSpecialSkillAugments(result, item, items, _skills, tags);
-            }
-
-            return result;
-        }*/
-
-        /*
-        private static void MapItemNames(List<DatabaseItem> items, IDictionary<string, string> tags) {
-            for (int i = 0; i < items.Count; i++) {
-                var item = items[i];
-                if (!item.Slot.StartsWith("Loot")) {
-                    var keytags = new[] {
-                        item.GetTag("itemStyleTag"), item.GetTag("itemNameTag", "description"),
-                        item.GetTag("itemQualityTag")
-                    };
-                    List<string> finalTags = new List<string>();
-                    foreach (var tag in keytags) {
-                        if (tags.ContainsKey(tag)) {
-                            finalTags.Add(tags[tag]);
-                        }
-                    }
-
-                    items[i].Name = string.Join(" ", finalTags).Trim();
-                }
-            }
-        }*/
-
         public void Dispose() {
             _skills.Clear();
         }

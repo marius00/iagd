@@ -97,19 +97,51 @@ namespace IAGrim.Database {
             
         }
 
-        public void Save(ICollection<DatabaseItem> items, ProgressTracker progressTracker) {
-            Save(items, progressTracker, true);
+        public void Save(List<DatabaseItem> items, ProgressTracker progressTracker) {
+            int idx = 0;
+            const int range = 950;
+
+            List<DatabaseItem> updated;
+            using (var session = SessionCreator.OpenSession()) {
+                var hashes = new HashSet<string>(
+                    session.CreateSQLQuery($"SELECT distinct({DatabaseItemTable.Record} || {DatabaseItemTable.Hash}) from {DatabaseItemTable.Table}")
+                    .List<string>()
+                    );
+
+                // This is absurdly slow
+                updated = items.Where(m => !hashes.Contains(m.Record + m.Hash)).ToList();
+            }
+
+            progressTracker.MaxValue = updated.Count;
+            while (idx < updated.Count) {
+                var numItems = Math.Min(updated.Count - idx, range);
+                var batch = updated.GetRange(idx, numItems);
+                Save(batch, progressTracker, true);
+
+                idx += range;
+            }
         }
-        private void Save(ICollection<DatabaseItem> items, ProgressTracker progressTracker, bool reset) {
+        private void Save(List<DatabaseItem> items, ProgressTracker progressTracker, bool reset) {
             long numStats = 0;
 
-            progressTracker.MaxValue = items.Count;
             using (var session = SessionCreator.OpenSession()) {
                 if (reset) {
                     using (ITransaction transaction = session.BeginTransaction()) {
-                        session.CreateQuery("DELETE FROM DatabaseItemStat").ExecuteUpdate();
-                        session.CreateQuery("DELETE FROM DatabaseItem").ExecuteUpdate();
-                        session.CreateSQLQuery("UPDATE SQLITE_SEQUENCE SET seq = 0 WHERE name = 'DatabaseItemStat_v2'").ExecuteUpdate();
+                        var records = items.Select(m => m.Record).ToList();
+
+                        session.CreateSQLQuery($@"
+                                DELETE FROM {DatabaseItemStatTable.Table} 
+                                WHERE {DatabaseItemStatTable.Item} IN (
+                                    SELECT {DatabaseItemTable.Id} FROM {DatabaseItemTable.Table}
+                                     WHERE {DatabaseItemTable.Record} IN ( :records )
+                                )")
+                            .SetParameterList("records", records)
+                            .ExecuteUpdate();
+
+                        session.CreateSQLQuery($"DELETE FROM {DatabaseItemTable.Table} WHERE {DatabaseItemTable.Record} IN ( :records )")
+                            .SetParameterList("records", records)
+                            .ExecuteUpdate();
+
                         transaction.Commit();
                     }
                 }
@@ -124,12 +156,12 @@ namespace IAGrim.Database {
             }
 
 
-            var createCommands = new string[] {
+            var createCommands = new [] {
                         "create index idx_databaseitemstatv2_parent on DatabaseItemStat_v2 (id_databaseitem)",
                         "create index idx_databaseitemstatv2_stat on DatabaseItemStat_v2 (Stat)",
                         "create index idx_databaseitemstatv2_tv on DatabaseItemStat_v2 (TextValue)"
                     };
-            var dropCommands = new string[] {
+            var dropCommands = new [] {
                         "drop index if exists idx_databaseitemstatv2_parent",
                         "drop index if exists idx_databaseitemstatv2_stat",
                         "drop index if exists idx_databaseitemstatv2_tv"

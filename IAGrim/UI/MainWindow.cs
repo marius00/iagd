@@ -92,6 +92,7 @@ namespace IAGrim.UI {
         private readonly RecipeParser _recipeParser;
         private readonly IItemSkillDao _itemSkillDao;
         private readonly ParsingService _parsingService;
+        private readonly bool _requestedDevtools;
 
         private readonly Stopwatch _reportUsageStatistics;
 
@@ -159,7 +160,10 @@ namespace IAGrim.UI {
              ArzParser arzParser,
              IRecipeItemDao recipeItemDao,
              IItemSkillDao itemSkillDao,
-            IItemTagDao itemTagDao, ParsingService parsingService) {
+            IItemTagDao itemTagDao, 
+            ParsingService parsingService, 
+            bool requestedDevtools
+        ) {
             _cefBrowserHandler = browser;
             InitializeComponent();
             FormClosing += MainWindow_FormClosing;
@@ -179,6 +183,7 @@ namespace IAGrim.UI {
             _itemSkillDao = itemSkillDao;
             _itemTagDao = itemTagDao;
             _parsingService = parsingService;
+            this._requestedDevtools = requestedDevtools;
         }
 
         /// <summary>
@@ -427,7 +432,7 @@ namespace IAGrim.UI {
             ExceptionReporter.EnableLogUnhandledOnThread();
             SizeChanged += OnMinimizeWindow;
 
-            buttonDevTools.Visible = Debugger.IsAttached;
+            buttonDevTools.Visible = Debugger.IsAttached || _requestedDevtools;
 
             _stashManager = new StashManager(_playerItemDao, _databaseItemStatDao, SetFeedback, ListviewUpdateTrigger);
             _stashFileMonitor.OnStashModified += (_, __) => {

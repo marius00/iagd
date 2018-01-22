@@ -14,6 +14,8 @@ namespace IAGrim.Database {
         public virtual string Record { get; set; }
         public virtual IList<DatabaseItemStat> Stats { get; set; }
 
+        public virtual int Hash { get; set; }
+
         public virtual string Name { set; get; }
 
         public virtual string GetTag(string tag) {

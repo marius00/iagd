@@ -56,7 +56,7 @@ namespace IAGrim.Database {
                 }
             }
 
-            progressTracker.Finalize();
+            progressTracker.MaxProgress();
         }
 
         public Dictionary<string, ISet<DBSTatRow>> GetExpacSkillModifierSkills() {

@@ -73,7 +73,7 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
                 var tracker = new WinformsProgressBar(form.SkillCorrectnessCheck).Tracker;
                 tracker.MaxValue = 1;
                 _itemSkillDao.EnsureCorrectSkillRecords();
-                tracker.Finalize();
+                tracker.MaxProgress();
             });
 
             // Invoke the background thread & show progress UI

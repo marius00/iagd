@@ -73,7 +73,7 @@ namespace IAGrim.Database.Synchronizer {
                 ThreadExecuter.ThreadTimeout * 2
             );
         }
-        public void Save(ICollection<DatabaseItem> items, ProgressTracker progressTracker) {
+        public void Save(List<DatabaseItem> items, ProgressTracker progressTracker) {
             ThreadExecuter.Execute(
                 () => _repo.Save(items, progressTracker),
                 ThreadExecuter.ThreadTimeout * 2

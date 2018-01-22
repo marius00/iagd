@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace IAGrim.Parsers.GameDataParsing.Model {
 
         public List<DatabaseItem> Items {
             get {
-                return _items.Values.Select(m => new DatabaseItem {
+                var items = _items.Values.Select(m => new DatabaseItem {
                     Record = m.Record,
                     Stats = m.Stats.Values.Select(s => new DatabaseItemStat {
                         Stat = s.Stat,
@@ -21,7 +22,25 @@ namespace IAGrim.Parsers.GameDataParsing.Model {
                         Value = s.Value
                     }).ToList()
                 }).ToList();
+
+                foreach (var item in items) {
+                    item.Hash = CalculateHash(item);
+                }
+
+                return items;
             }
+        }
+
+        private int CalculateHash(DatabaseItem item) {
+           List<string> source = new List<string>();
+            source.Add(item.Record);
+            foreach (var stat in item.Stats) {
+                source.Add(stat.Stat ?? "-");
+                source.Add((stat?.Value ?? 0).ToString(CultureInfo.CurrentCulture));
+                source.Add(stat.TextValue ?? "-");
+            }
+
+            return string.Join(":", source).GetHashCode();
         }
 
         class InternalItem {

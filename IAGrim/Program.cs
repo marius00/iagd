@@ -140,7 +140,7 @@ namespace IAGrim {
                 if (singleInstance.IsFirstInstance) {
                     Logger.Info("Calling run..");
                     using (ThreadExecuter threadExecuter = new ThreadExecuter()) {
-                        Run(threadExecuter);
+                        Run(args, threadExecuter);
                     }
                 } else {
                     singleInstance_ArgumentsReceived(null, null);
@@ -264,7 +264,7 @@ namespace IAGrim {
             Logger.Info("Startup data dump complete");
         }
 
-        private static void Run(ThreadExecuter threadExecuter) {
+        private static void Run(string[] args, ThreadExecuter threadExecuter) {
             var factory = new SessionFactory();
 
             // Prohibited for now
@@ -283,7 +283,7 @@ namespace IAGrim {
             IBuddySubscriptionDao buddySubscriptionDao = new BuddySubscriptionRepo(threadExecuter, factory);
             IRecipeItemDao recipeItemDao = new RecipeItemRepo(threadExecuter, factory);
             IItemSkillDao itemSkillDao  = new ItemSkillRepo(threadExecuter, factory);
-            ArzParser arzParser = new ArzParser(databaseItemDao, databaseItemStatDao, databaseSettingDao, itemSkillDao);
+            ArzParser arzParser = new ArzParser(databaseSettingDao);
 
             // TODO: GD Path has to be an input param, as does potentially mods.
             ParsingService parsingService = new ParsingService(itemTagDao, null, databaseItemDao, databaseItemStatDao, itemSkillDao, Properties.Settings.Default.LocalizationFile);
@@ -305,6 +305,7 @@ namespace IAGrim {
             }
 
 
+            bool showDevtools = args != null && args.Any(m => m.Contains("-devtools"));
             using (CefBrowserHandler browser = new CefBrowserHandler()) {
                 _mw = new MainWindow(browser, 
                     databaseItemDao, 
@@ -317,7 +318,8 @@ namespace IAGrim {
                     recipeItemDao,
                     itemSkillDao,
                     itemTagDao,
-                    parsingService
+                    parsingService,
+                    showDevtools
                 );
 
                 Logger.Info("Checking for database updates..");

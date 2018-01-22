@@ -93,7 +93,7 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
                 tracker.Increment();
             }
 
-            tracker.Finalize();
+            tracker.MaxProgress();
         }
 
 
@@ -101,7 +101,8 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
             var tags = Tags;
 
             tracker.MaxValue = Items.Count;
-            for (int i = 0; i < Items.Count; i++) {
+
+            Parallel.For(0, Items.Count, i => {
                 var item = Items[i];
                 if (!item.Slot.StartsWith("Loot")) {
                     var keytags = new[] {
@@ -121,9 +122,10 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
                 }
 
                 tracker.Increment();
-            }
 
-            tracker.Finalize();
+            });
+
+            tracker.MaxProgress();
         }
 
 
@@ -152,7 +154,7 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
             Items.RemoveAll(m => petRecords.Contains(m.Record));
             Items.AddRange(petItems);
 
-            tracker.Finalize();
+            tracker.MaxProgress();
             Logger.Debug($"Classified {petItems.Count()} records as pet stats");
         }
 
@@ -166,11 +168,14 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
 
 
         public List<DatabaseItemStat> GenerateSpecialRecords(ProgressTracker tracker) {
-            var skills = Items.Where(m => m.Record.Contains("/skills/")).ToList();
+            var skills = Items
+                .Where(m => m.Record.Contains("/skills/"))
+                .ToList();
             List<DatabaseItemStat> result = new List<DatabaseItemStat>();
 
-            tracker.MaxValue = Items.Count;
-            foreach (var item in Items) {
+            var filtered = Items.Where(m => m.Id != 0).ToList();
+            tracker.MaxValue = filtered.Count;
+            foreach (var item in filtered) {
                 ArzParser.GetSpecialMasteryStats(result, item, Items);
                 ArzParser.GetSpecialSkillAugments(result, item, Items, skills, _tagAccumulator.MappedTags);
                 tracker.Increment();

@@ -18,6 +18,7 @@
     </bag>
 
     <property name="Name" column="name"/>
+    <property name="Hash" column="hash"/>
     
   </class>
 </hibernate-mapping>

@@ -16,12 +16,14 @@ namespace IAGrim.Parsers.GameDataParsing.Model {
             _progressBar.Maximum = 100;
 
             Tracker.OnProgressChanged += (_, __) => {
-                Action action = () => _progressBar.Value = Tracker.Progress;
                 if (_progressBar.InvokeRequired) {
+                    Action action = () => _progressBar.Value = Tracker.Progress;
                     _progressBar.Invoke(action);
                 }
-
-                action.Invoke();
+                else {
+                    Action action = () => _progressBar.Value = Tracker.Progress;
+                    action.Invoke();
+                }
             };
         }
     }
