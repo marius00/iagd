@@ -35,5 +35,8 @@ namespace IAGrim.UI.Misc {
         public string iatag_html_choose_a_relic { get; set; }
         public string iatag_html_choose_a_recipe { get; set; }
         public string iatag_html_choose_a_component { get; set; }
+
+        public string iatag_html_cloud_ok { get; set; }
+        public string iatag_html_cloud_err { get; set; }
     }
 }

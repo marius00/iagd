@@ -271,7 +271,7 @@ namespace StatTranslator {
             { "iatag_html_transfer", "Transfer to Stash" },
             { "iatag_html_items_youcancraftthisitem", "You can craft this item." },
             { "iatag_html_items_buddy_alsohasthisitem1", "also has this item" },
-            { "iatag_html_items_buddy_alsohasthisitem2", "of your Buddies also have this item" },
+            { "iatag_html_items_buddy_alsohasthisitem2", "These buddies also have this item:" },
             { "iatag_html_items_buddy_alsohasthisitem3", "of your Buddies have this item" },
             { "iatag_html_items_buddy_alsohasthisitem4", "has this item" },
             { "iatag_html_levlerequirement", "Level Requirement:" },
@@ -291,6 +291,8 @@ namespace StatTranslator {
             { "iatag_html_items_level", "Level" },
             { "iatag_html_badstate_title", "Ooops!" },
             { "iatag_html_badstate_subtitle", "It seems IA has gotten in a bad state!" },
+            { "iatag_html_onlinesync_ok", "This item has been backed up to the cloud" },
+            { "iatag_html_onlinesync_err", "This item has not been backed up to the cloud" },
             
 
             // UI, IA Only
@@ -344,6 +346,7 @@ namespace StatTranslator {
             {"iatag_rarity_blue", "Blue" },
             {"iatag_rarity_epic", "Epic" },
 
+            {"iatag_feedback_already_logged_in", "You are already logged in" },
             {"iatag_feedback_too_close_to_stash", "Delaying stash loot - Standing too close to stash!" },
             {"iatag_feedback_delaying_stash_loot_status", "Waiting for stash to close.." },
             {"iatag_feedback_no_items_to_loot", "No items to loot in stash"},

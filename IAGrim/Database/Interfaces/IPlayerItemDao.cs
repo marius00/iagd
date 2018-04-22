@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using IAGrim.Backup.Azure.Dto;
 using IAGrim.Database.Dto;
 
 namespace IAGrim.Database.Interfaces {
@@ -8,12 +9,13 @@ namespace IAGrim.Database.Interfaces {
 
         Dictionary<string, int> GetCountByRecord(string mod);
 
-        PlayerItem GetByOnlineId(long onlineId);
-        PlayerItem GetSingleUnsynchronizedItem();
-        long GetNumUnsynchronizedItems();
+        IList<PlayerItem> GetUnsynchronizedItems();
+        void SetAzureIds(List<AzureUploadedItem> mappings);
+
+
         void UpdateHardcoreSettings();
         void UpdateAllItemStats(IList<PlayerItem> items, Action<int> progress);
-        void DeleteAll();
+        void Delete(List<AzureItemDeletionDto> items);
 
         /// <summary>
         ///     Does an additional UNIQUE check on OnlineID

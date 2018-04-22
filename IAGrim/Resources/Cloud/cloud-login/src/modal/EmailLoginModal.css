@@ -1,0 +1,40 @@
+.email-modal {
+  text-align: center;
+}
+
+.modal-btn-close {
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  padding: 4px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+}
+
+.modal-btn-close:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.email-form {
+  text-align: center;
+  margin-top: 60px;
+  margin-left: 25%;
+  margin-right: 25%;
+}
+
+.form-control {
+  margin-top: 3px;
+}
+
+.code-input {
+  margin-top: 60px;
+  margin-left: 25%;
+  margin-right: 25%;
+}
+
+.email-label {
+  text-decoration: underline;
+}

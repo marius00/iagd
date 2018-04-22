@@ -26,6 +26,7 @@ using DataAccess;
 using EvilsoftCommons;
 using EvilsoftCommons.Exceptions.UUIDGenerator;
 using Gameloop.Vdf;
+using IAGrim.Backup.Azure.Constants;
 using IAGrim.BuddyShare;
 using IAGrim.Database.DAO;
 using IAGrim.Parser.Arc;
@@ -101,6 +102,9 @@ namespace IAGrim {
             Logger.Info("Starting exception monitor for bug reports.."); // Phrased this way since people took it as a 'bad' thing.
             Logger.Debug("Crash reports can be seen at http://ribbs.dreamcrash.org/iagd/logs.html");
             ExceptionReporter.EnableLogUnhandledOnThread();
+
+
+            AzureUris.Initialize(AzureUris.EnvAzure);
 
 
             var version = Assembly.GetExecutingAssembly().GetName().Version;
@@ -232,10 +236,7 @@ namespace IAGrim {
             Logger.Info("Transfer to any mod is " + (Properties.Settings.Default.TransferAnyMod ? "enabled" : "disabled"));
             Logger.Info("Experimental updates is " + (Properties.Settings.Default.SubscribeExperimentalUpdates ? "enabled" : "disabled"));
             Logger.Info($"Instaloot is set to {Properties.Settings.Default.InstalootSetting} ({(InstalootSettingType)Properties.Settings.Default.InstalootSetting})");
-
-            if (Properties.Settings.Default.UserNeverWantsBackups)
-                Logger.Warn("You have opted out of backups");
-
+            
 
             var mods = GlobalPaths.TransferFiles;
             if (mods.Count == 0) {
@@ -275,6 +276,7 @@ namespace IAGrim {
             IDatabaseSettingDao databaseSettingDao = new DatabaseSettingRepo(threadExecuter, factory);
             LoadUuid(databaseSettingDao);
             IPlayerItemDao playerItemDao = new PlayerItemRepo(threadExecuter, factory);
+            var azurePartitionDao = new AzurePartitionRepo(threadExecuter, factory);
             IDatabaseItemDao databaseItemDao = new DatabaseItemRepo(threadExecuter, factory);
             IDatabaseItemStatDao databaseItemStatDao = new DatabaseItemStatRepo(threadExecuter, factory);
             IItemTagDao itemTagDao = new ItemTagRepo(threadExecuter, factory);
@@ -310,7 +312,8 @@ namespace IAGrim {
                 _mw = new MainWindow(browser, 
                     databaseItemDao, 
                     databaseItemStatDao, 
-                    playerItemDao, 
+                    playerItemDao,
+                    azurePartitionDao,
                     databaseSettingDao, 
                     buddyItemDao, 
                     buddySubscriptionDao, 
@@ -327,31 +330,11 @@ namespace IAGrim {
 
                 // Load the GD database (or mod, if any)
                 string GDPath = databaseSettingDao.GetCurrentDatabasePath();
-                bool isVanilla;
                 if (string.IsNullOrEmpty(GDPath) || !Directory.Exists(GDPath)) {
                     GDPath = GrimDawnDetector.GetGrimLocation();
-                    isVanilla = true;
-                } else {
-                    isVanilla = GDPath.Equals(GrimDawnDetector.GetGrimLocation());
                 }
 
                 if (!string.IsNullOrEmpty(GDPath) && Directory.Exists(GDPath)) {
-                    /*
-                    if (arzParser.NeedUpdate(GDPath)) {                        
-                        ParsingDatabaseScreen parserUI = new ParsingDatabaseScreen(
-                            databaseSettingDao,
-                            arzParser,
-                            GDPath, 
-                            Properties.Settings.Default.LocalizationFile, 
-                            false, 
-                            !isVanilla);
-                        parserUI.ShowDialog();
-                    }
-
-                    if (playerItemDao.RequiresStatUpdate()) {
-                        UpdatingPlayerItemsScreen x = new UpdatingPlayerItemsScreen(playerItemDao);
-                        x.ShowDialog();
-                    }*/
 
                     var numFiles = Directory.GetFiles(GlobalPaths.StorageFolder).Length;
                     if (numFiles < 2000) {

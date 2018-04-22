@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IAGrim.Backup.Azure.Dto;
 using IAGrim.Database.Dto;
 
 namespace IAGrim.Database.Synchronizer {
@@ -32,21 +33,15 @@ namespace IAGrim.Database.Synchronizer {
             );
         }
 
-        public void DeleteAll() {
+        public void Delete(List<AzureItemDeletionDto> items) {
             ThreadExecuter.Execute(
-                () => repo.DeleteAll()
+                () => repo.Delete(items)
             );
         }
 
         public Dictionary<string, int> GetCountByRecord(string mod) {
             return ThreadExecuter.Execute(
                 () => repo.GetCountByRecord(mod)
-            );
-        }
-
-        public PlayerItem GetByOnlineId(long OID) {
-            return ThreadExecuter.Execute(
-                () => repo.GetByOnlineId(OID)
             );
         }
 
@@ -74,15 +69,15 @@ namespace IAGrim.Database.Synchronizer {
             );
         }
 
-        public long GetNumUnsynchronizedItems() {
+        public IList<PlayerItem> GetUnsynchronizedItems() {
             return ThreadExecuter.Execute(
-                () => repo.GetNumUnsynchronizedItems()
+                () => repo.GetUnsynchronizedItems()
             );
         }
 
-        public PlayerItem GetSingleUnsynchronizedItem() {
-            return ThreadExecuter.Execute(
-                () => repo.GetSingleUnsynchronizedItem()
+        public void SetAzureIds(List<AzureUploadedItem> mappings) {
+            ThreadExecuter.Execute(
+                () => repo.SetAzureIds(mappings)
             );
         }
 

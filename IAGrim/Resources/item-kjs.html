@@ -142,7 +142,7 @@
                     <span>
                         <a data-bind="css: quality, click: function() { data.OpenURL('http://www.grimtools.com/db/search?query=' + name); }, text: name.length > 0 ? name : $root.iatag_html_items_unknown"></a> <span data-bind="text: socket"></span>
                     </span>
-                    
+
                     <span class="cursor-help" data-bind="visible: greenRarity == 3, attr: {title: $root.iatag_html_items_affix3}">(+2)</span>
                     <span class="cursor-help" data-bind="visible: greenRarity == 2, attr: {title: $root.iatag_html_items_affix2}">(+1)</span>
                 </h3>
@@ -192,15 +192,22 @@
                 </div>
 
             </div>
-            <div data-bind="visible: type === 2">
-                <div class="buddy-item-mix" data-bind="visible: buddies.length == 1">&nbsp;&laquo;<span data-bind="text: buddies[0]"></span>&raquo; <span data-bind="text: $root.iatag_html_items_buddy_alsohasthisitem1">also has this item.</span></div>
-                <div class="buddy-item-mix" data-bind="visible: buddies.length > 1, attr: {title: buddies.join()}">&nbsp;&laquo;<span data-bind="text: buddies.length"></span>&raquo; <span data-bind="text: $root.iatag_html_items_buddy_alsohasthisitem2">of your Buddies also have this item.</span></div>
-            </div>
-            <div data-bind="visible: type !== 2">
+            <div data-bind="visible: type === 1">
                 <div class="buddy-item" data-bind="visible: buddies.length == 1">&nbsp;&laquo;<span data-bind="text: buddies[0]"></span>&raquo; <span data-bind="text: $root.iatag_html_items_buddy_alsohasthisitem4">has this item.</span></div>
                 <div class="buddy-item" data-bind="visible: buddies.length > 1, attr: {title: buddies.join()}">&nbsp;&laquo;<span data-bind="text: buddies.length"></span>&raquo; <span data-bind="text: $root.iatag_html_items_buddy_alsohasthisitem3">of your Buddies have this item.</span></div>
             </div>
-            <div class="recipe-item-corner" data-bind="visible: hasRecipe && type !== 0"><img class="cursor-help" data-bind="attr: {title: $root.iatag_html_items_youcancraftthisitem}" src="static\recipe.png"></div>
+            
+            <div class="recipe-item-corner">
+                <img class="cursor-help" data-bind="visible: hasCloudBackup && type === 2, attr: {title: $root.iatag_html_cloud_ok}" src="static\cloud-ok.png">
+                <img class="cursor-help" data-bind="visible: !hasCloudBackup && type === 2, attr: {title: $root.iatag_html_cloud_err}" src="static\cloud-err.png">
+
+                <span data-bind="visible: type !== 1">
+                    <img class="cursor-help" data-bind="visible: buddies.length == 1, attr: {title: buddies[0] + ' ' + $root.iatag_html_items_buddy_alsohasthisitem1}" src="static\buddy.png">
+                    <img class="cursor-help" data-bind="visible: buddies.length > 1, attr: {title: $root.iatag_html_items_buddy_alsohasthisitem2 + '\n' + buddies.join('\n')}" src="static\buddy.png">
+                </span>
+
+                <img class="cursor-help" data-bind="visible: hasRecipe && type !== 0, attr: {title: $root.iatag_html_items_youcancraftthisitem}, click: function(item) { jumpToCraft(item.baseRecord); }" src="static\recipe.png">
+            </div>
 
             <div class="recipe-item" data-bind="visible: hasRecipe && type === 0">
                 <img src="static\recipe.png"><span class="craft-link" data-bind="click: function(item) { jumpToCraft(item.baseRecord); }"> &nbsp;<span data-bind="text: $root.iatag_html_items_youcancraftthisitem"></span></span>
@@ -376,17 +383,17 @@
 
     function showMessage(message, title, type) {
         var stack_bar_bottom = { "dir1": "up", "dir2": "right", "spacing1": 0, "spacing2": 0 };
-        var timeout = (type == 'success') ? 1800 : 2600;
+        var timeout = (type === 'success') ? 1800 : 2600;
         var tip = new PNotify({
             opacity: 0.9,
             title: title,
             text: message,
             animate_speed: 'fast',
-            animate: {
+            /*animate: {
                 animate: true,
                 in_class: 'bounceInLeft',
                 out_class: 'fadeOut'
-            },
+            },*/
 
             stack: stack_bar_bottom,
             width: '70%',

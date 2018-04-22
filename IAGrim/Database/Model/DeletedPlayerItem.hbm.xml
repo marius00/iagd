@@ -4,7 +4,10 @@
                    namespace="IAGrim.Database">
 
 
-  <class name="DeletedPlayerItem">
-    <id name="OID" />
+  <class name="DeletedPlayerItem" table="deletedplayeritem_v2">
+    <composite-id>
+      <key-property name="Id" />
+      <key-property name="Partition" />
+    </composite-id>
   </class>
 </hibernate-mapping>

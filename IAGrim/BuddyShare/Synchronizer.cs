@@ -68,6 +68,7 @@ namespace IAGrim.BuddyShare {
                 }
                 else {
                     Logger.Info("Buddy items not updated, no new changes detected.");
+                    return true;
                 }
             }
             else {

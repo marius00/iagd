@@ -29,10 +29,12 @@ namespace IAGrim.Utilities {
         private static JsonItem GetJsonItem(PlayerHeldItem item) {
             // TODO: Modifiers
 
+            bool isCloudSynced = false;
             object[] id = { item.Id, "", "", "", "" };
             PlayerItem pi = item as PlayerItem;
             if (pi != null) {
                 id = new object[] { pi.Id, pi.BaseRecord, pi.PrefixRecord, pi.SuffixRecord, pi.MateriaRecord };
+                isCloudSynced = !string.IsNullOrWhiteSpace(pi.AzureUuid);
             }
 
 
@@ -46,8 +48,7 @@ namespace IAGrim.Utilities {
 
 
 
-
-
+            
             var json = new JsonItem {
                 BaseRecord = item.BaseRecord,
                 URL = id,
@@ -64,7 +65,8 @@ namespace IAGrim.Utilities {
                 HasRecipe = item.HasRecipe,
                 Buddies = item.Buddies.ToArray(),
                 Skill = item.Skill != null ? GetJsonSkill(item.Skill) : null,
-                GreenRarity = item.PrefixRarity
+                GreenRarity = item.PrefixRarity,
+                HasCloudBackup = isCloudSynced
             };
 
             var modifiedSkills = item.ModifiedSkills;

@@ -10,13 +10,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using IAGrim.Backup.Azure;
+using IAGrim.Backup.Azure.CefSharp;
+
 
 namespace IAGrim.UI.Misc {
-    public class CefBrowserHandler : IDisposable {
+    public class CefBrowserHandler : IDisposable, ICefBackupAuthentication {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(CefBrowserHandler));
         private ChromiumWebBrowser _browser;
 
-        public Control BrowserControl {
+        public ChromiumWebBrowser BrowserControl {
             get {
                 return _browser;
             }
@@ -111,7 +114,12 @@ namespace IAGrim.UI.Misc {
                 _browser.RegisterJsObject("data", bindeable, false);
                 _browser.IsBrowserInitializedChanged += Browser_IsBrowserInitializedChanged;
 
-                //browser.RequestHandler = new TransferUrlHijack { TransferMethod = transferItem };
+                var authHijack = new AzureAuthenticationUriHijack();
+                authHijack.OnAuthentication += (sender, args) => OnSuccess?.Invoke(sender, args);
+                _browser.RequestHandler = authHijack;
+                
+                _browser.LifeSpanHandler = new AzureOnClosePopupHijack();
+
                 Logger.Info("Chromium created..");
             } catch (System.IO.FileNotFoundException ex) {
                 MessageBox.Show("Error \"File Not Found\" loading Chromium, did you forget to install Visual C++ runtimes?\n\nvc_redist86 in the IA folder.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -130,5 +138,13 @@ namespace IAGrim.UI.Misc {
                 throw;
             }
         }
+
+        /* Start CefBackupAuthentication Start */
+        public void Open(string url) {
+            _browser.ExecuteScriptAsync($"window.open('{url}');");
+        }
+
+        public event EventHandler OnSuccess;
+        /* End CefBackupAuthentication End */
     }
 }

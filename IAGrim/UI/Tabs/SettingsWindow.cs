@@ -199,13 +199,8 @@ namespace IAGrim.UI {
         }
 
         private void cbInstalootDisabled_CheckedChanged(object sender, EventArgs e) {
-
             Properties.Settings.Default.InstalootSetting = (int)(cbInstalootEnabled.Checked ? InstalootSettingType.Enabled : InstalootSettingType.Disabled);
             Properties.Settings.Default.Save();
-
-            var debuygggy = Properties.Settings.Default.InstalootSetting;
-            var debuygggy2 = (InstalootSettingType)Properties.Settings.Default.InstalootSetting;
-            int x = 9;
         }
 
         private void cbInstaTransfer_CheckedChanged(object sender, EventArgs e) {

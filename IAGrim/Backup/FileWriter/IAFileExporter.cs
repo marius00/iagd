@@ -3,11 +3,14 @@ using IAGrim.Database;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using log4net;
 
 namespace IAGrim.Backup.FileWriter {
 
     public class IAFileExporter : FileExporter {
-        const short SUPPORTED_FILE_VER = 1;
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(IAFileExporter));
+        readonly List<int> _supportedFileVer = new List<int> { 1, 2 };
         private readonly string filename;
 
         public IAFileExporter(string filename) {
@@ -19,9 +22,17 @@ namespace IAGrim.Backup.FileWriter {
             byte[] bytes = File.ReadAllBytes(filename);
             int pos = 0;
 
-            int file_ver = IOHelper.GetShort(bytes, pos); pos += 2;
-            if (file_ver != SUPPORTED_FILE_VER)
-                throw new InvalidDataException($"This format of IAStash files is not supported, expected {SUPPORTED_FILE_VER}, got {file_ver}");
+            int fileVer = IOHelper.GetShort(bytes, pos); pos += 2;
+
+
+            
+            if (!_supportedFileVer.Contains(fileVer)) {
+                throw new InvalidDataException($"This format of IAStash files is not supported, expected {string.Join(",", _supportedFileVer)}, got {fileVer}");
+            }
+
+            if (_supportedFileVer.Max() != fileVer) {
+                Logger.Warn($"Parsing a legacy IA file of version v{fileVer}, the latest is version v{_supportedFileVer.Max()}");
+            }
 
             Func<string> readString = () => {
                 var s = IOHelper.GetBytePrefixedString(bytes, pos);
@@ -56,11 +67,15 @@ namespace IAGrim.Backup.FileWriter {
 
                 pi.Mod = readString();
 
-                pi.OnlineId = IOHelper.GetLong(bytes, pos);
-                if (pi.OnlineId == 0)
-                    pi.OnlineId = null;
+                if (fileVer == 1) {
+                    // Old OID
+                    pos += 8;
+                }
+                else if (fileVer == 2) {
+                    pi.AzurePartition = readString();
+                    pi.AzureUuid = readString();
+                }
 
-                pos += 8;
 
                 items.Add(pi);
             }
@@ -70,7 +85,7 @@ namespace IAGrim.Backup.FileWriter {
 
         public void Write(IList<PlayerItem> items) {
             using (FileStream fs = new FileStream(filename, FileMode.Create)) {
-                IOHelper.Write(fs, (short)SUPPORTED_FILE_VER);
+                IOHelper.Write(fs, (short)2);
                 IOHelper.Write(fs, (int)items.Count);
 
                 foreach (PlayerItem pi in items) {
@@ -96,7 +111,9 @@ namespace IAGrim.Backup.FileWriter {
 
                     IOHelper.Write(fs, pi.IsExpansion1);
                     IOHelper.WriteBytePrefixed(fs, pi.Mod);
-                    IOHelper.Write(fs, pi.OnlineId ?? 0L);
+
+                    IOHelper.WriteBytePrefixed(fs, pi.AzurePartition);
+                    IOHelper.WriteBytePrefixed(fs, pi.AzureUuid);
                 }
             }
         }

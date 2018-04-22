@@ -34,6 +34,7 @@ namespace IAGrim.UI.Controller {
         public CefBrowserHandler Browser;
 
         public readonly JSWrapper JsBind = new JSWrapper { IsTimeToShowNag = -1 };
+        public event EventHandler OnSearch;
 
         private string _previousRecipe;
         private string _previousCallback;
@@ -107,6 +108,8 @@ namespace IAGrim.UI.Controller {
                     Browser.LoadItems();
                 }
             }
+
+            OnSearch?.Invoke(this, null);
         }
 
         public string Search(Search query, bool duplicatesOnly, bool includeBuddyItems, bool orderByLevel) {
@@ -144,6 +147,7 @@ namespace IAGrim.UI.Controller {
         }
 
         private string Search_(Search query, bool duplicatesOnly, bool includeBuddyItems, bool orderByLevel) {
+            OnSearch?.Invoke(this, null);
             string message;
             long personalCount = 0;
 

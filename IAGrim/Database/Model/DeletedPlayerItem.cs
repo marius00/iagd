@@ -10,10 +10,20 @@ namespace IAGrim.Database {
     /// Used to delete items from the online backup.
     /// </summary>
     public class DeletedPlayerItem {
-        public virtual long OID { get; set; }
+        public virtual string Id { get; set; }
+        public virtual string Partition { get; set; }
 
-        public override string ToString() {
-            return OID.ToString();
+        public override bool Equals(object obj) {
+            if (obj is DeletedPlayerItem that) {
+                return this.Id == that.Id && this.Partition == that.Partition;
+            }
+            else {
+                return base.Equals(obj);
+            }
+        }
+
+        public override int GetHashCode() {
+            return (Id + Partition).GetHashCode();
         }
     }
 }

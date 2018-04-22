@@ -82,6 +82,9 @@ body {
   padding: 10px;
   margin: 0;
 }
+.recipe-item-corner img {
+    margin-left: 4px;
+}
 .items .item .level,
 .items .item .recipe-item,
 .items .item .buddy-item,

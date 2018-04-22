@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using IAGrim.Parsers.Arz.dto;
+using IAGrim.Utilities;
+using IAGrim.Utilities.HelperClasses;
 using log4net;
 using log4net.Repository.Hierarchy;
 
@@ -105,17 +107,16 @@ namespace IAGrim.Parsers.Arz {
             Logger.DebugFormat("File: {0} renamed to {1}", e.OldFullPath, e.FullPath);
             if (!e.FullPath.EndsWith(".bak")) {
                 if (File.Exists(e.FullPath)) {
-                    /*
                     if (GlobalSettings.PreviousStashStatus == StashAvailability.CRAFTING ||
                         GlobalSettings.StashStatus == StashAvailability.CRAFTING) {
                         Logger.Info("Detected an update to stash file, but ignoring due to crafting-safety-check");
                         // OBS: Can only do this if we've previously looted! CAnnot risk it containing unlooted items
-                        if (_hasLootedItemsOnceThisSession) {
+                        if (StashManager._hasLootedItemsOnceThisSession) {
                             if (_delayedLootTimer == null) {
                                 Logger.Info(
                                     "Items has already been looted this session, post-crafting safety measures required.");
 
-                                DeleteItemsInPageX(e.FullPath);
+                                StashManager.DeleteItemsInPageX(e.FullPath);
                             }
                             else {
                                 Logger.Info("Player may have opened devotion screen before running away.. leaving items be..");
@@ -125,8 +126,7 @@ namespace IAGrim.Parsers.Arz {
                             Logger.Info("No items has been looted this session, ignoring safety measures.");
                         }
                     }
-                    else*/
-                    {
+                    else {
                         Logger.Info("Detected an update to stash file, checking for loot..");
 
                         NotifyStashChangeDelayed(e.FullPath);

@@ -27,26 +27,26 @@ namespace IAGrim.Backup.FileWriter {
             if (file_ver != SUPPORTED_FILE_VER)
                 throw new InvalidDataException($"This format of GDStash/Mambastash files is not supported, expected {SUPPORTED_FILE_VER}, got {file_ver}");
 
-            Func<string> readString = () => {
+            string ReadString() {
                 var s = IOHelper.GetBytePrefixedString(bytes, pos);
                 pos += 1 + s?.Length ?? 0;
                 return s;
-            };
+            }
 
             int numItems = IOHelper.GetInt(bytes, pos); pos += 4;
             for (int i = 0; i < numItems; i++) {
                 PlayerItem pi = new PlayerItem();
 
-                pi.BaseRecord = readString();
-                pi.PrefixRecord = readString();
-                pi.SuffixRecord = readString();
-                pi.ModifierRecord = readString();
-                pi.TransmuteRecord = readString();
+                pi.BaseRecord = ReadString();
+                pi.PrefixRecord = ReadString();
+                pi.SuffixRecord = ReadString();
+                pi.ModifierRecord = ReadString();
+                pi.TransmuteRecord = ReadString();
                 pi.Seed = IOHelper.GetUInt(bytes, pos); pos += 4;
-                pi.MateriaRecord = readString();
-                pi.RelicCompletionBonusRecord = readString();
+                pi.MateriaRecord = ReadString();
+                pi.RelicCompletionBonusRecord = ReadString();
                 pi.RelicSeed = IOHelper.GetUInt(bytes, pos); pos += 4;
-                pi.EnchantmentRecord = readString();
+                pi.EnchantmentRecord = ReadString();
 
                 pi.UNKNOWN = IOHelper.GetUInt(bytes, pos); pos += 4;
                 pi.EnchantmentSeed = IOHelper.GetUInt(bytes, pos); pos += 4;
@@ -55,7 +55,7 @@ namespace IAGrim.Backup.FileWriter {
                 pi.IsHardcore = bytes[pos++] == 1;
                 //pi.IsExpansion1 = this.isExpansion1;
                 pi.Mod = this.mod;
-                string charName = readString();
+                string charName = ReadString();
 
                 items.Add(pi);
             }

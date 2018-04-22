@@ -26,8 +26,8 @@ namespace IAGrim.UI.Controller {
         public IList<JsonStat> BodyStats { get; set; }
         public IList<JsonStat> PetStats { get; set; }
 
+        public bool HasCloudBackup { get; set; }
         public int GreenRarity { get; set; }
-
         public JsonSkill Skill { get; set; }
     }
 }

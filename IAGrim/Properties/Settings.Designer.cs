@@ -12,7 +12,7 @@ namespace IAGrim.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "14.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.5.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -349,54 +349,6 @@ namespace IAGrim.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public long LastOnlineBackup {
-            get {
-                return ((long)(this["LastOnlineBackup"]));
-            }
-            set {
-                this["LastOnlineBackup"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string OnlineBackupToken {
-            get {
-                return ((string)(this["OnlineBackupToken"]));
-            }
-            set {
-                this["OnlineBackupToken"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool OnlineBackupVerified {
-            get {
-                return ((bool)(this["OnlineBackupVerified"]));
-            }
-            set {
-                this["OnlineBackupVerified"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool UserNeverWantsBackups {
-            get {
-                return ((bool)(this["UserNeverWantsBackups"]));
-            }
-            set {
-                this["UserNeverWantsBackups"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string OnlineBackupEmail {
             get {
@@ -476,6 +428,18 @@ namespace IAGrim.Properties {
             }
             set {
                 this["Hotfix1_0_4_0_active"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AzureAuthToken {
+            get {
+                return ((string)(this["AzureAuthToken"]));
+            }
+            set {
+                this["AzureAuthToken"] = value;
             }
         }
     }

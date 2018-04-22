@@ -15,40 +15,20 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using IAGrim.Backup.Azure.Service;
 
 namespace IAGrim.UI {
     public partial class BackupSettings : Form {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(BackupSettings));
-        private readonly Action<bool> _enableOnlineBackups;
         private readonly IPlayerItemDao _playerItemDao;
+        private readonly AzureAuthService _authAuthService;
 
 
-        public BackupSettings(Action<bool> enableOnlineBackups, IPlayerItemDao playerItemDao) {
+        public BackupSettings(IPlayerItemDao playerItemDao, AzureAuthService authAuthService) {
             InitializeComponent();
-            this._enableOnlineBackups = enableOnlineBackups;
             this._playerItemDao = playerItemDao;
+            _authAuthService = authAuthService;
         }
-
-        private bool _onlineBackupsActive;
-        private bool OnlineBackupsActive {
-            get {
-                return _onlineBackupsActive;
-            }
-            set {
-                _onlineBackupsActive = value;
-                logoutThisComputer.Visible = value;
-                logoutAllComputers.Visible = value;
-                buttonLogin.Visible = !value;
-                if (!value) {
-                    labelItemSyncFeedback.Text = GlobalSettings.Language.GetTag("iatag_ui_online_backups_disabled");
-                } else {
-                    BackupSettings_GotFocus();
-                    backupEmailLabel.Text = GlobalSettings.Language.GetTag("iatag_ui_online_backup_email")
-                        .Replace("{OnlineBackupEmail}", Properties.Settings.Default.OnlineBackupEmail);
-                }
-            }
-        }
-
 
 
 
@@ -84,43 +64,8 @@ namespace IAGrim.UI {
             cbGoogle.CheckedChanged += cbGoogle_CheckedChanged;
             cbSkydrive.CheckedChanged += cbSkydrive_CheckedChanged;
             cbCustom.CheckedChanged += cbCustom_CheckedChanged;
-
-
-            var b = string.IsNullOrEmpty(Properties.Settings.Default.OnlineBackupToken) || !Properties.Settings.Default.OnlineBackupVerified;
-            buttonLogin.Visible = b;
-            logoutThisComputer.Visible = !b;
-            logoutAllComputers.Visible = !b;
-            OnlineBackupsActive = !b;
-
-            UpdateInformativeLabel(0, 0, 0);
         }
-
-        public void BackupSettings_GotFocus() {
-            var numItems = _playerItemDao.GetNumItems();
-            var numUnsynchronizedItems = _playerItemDao.GetNumUnsynchronizedItems();
-            var numSynchronized = numItems - numUnsynchronizedItems;
-
-            UpdateInformativeLabel(numItems, numSynchronized, numUnsynchronizedItems);
-        }
-
-        private void UpdateInformativeLabel(long numItems, long numSynchronized, long numUnsynchronizedItems) {
-            if (OnlineBackupsActive) {
-                if (numSynchronized == numItems) {
-                    labelItemSyncFeedback.Text = GlobalSettings.Language.GetTag("iatag_ui_all_items_backed_up");
-                }
-                else {
-                    var tag = GlobalSettings.Language.GetTag("iatag_ui_x_items_backed_up")
-                        .Replace("{numSynchronized}", numSynchronized.ToString())
-                        .Replace("{numItems}", numItems.ToString())
-                        .Replace("{numUnsynchronizedItems}", numUnsynchronizedItems.ToString());
-                    labelItemSyncFeedback.Text = tag;
-                }
-            }
-            else {
-                labelItemSyncFeedback.Text = GlobalSettings.Language.GetTag("iatag_ui_online_backups_disabled");
-            }
-        }
-
+        
         private void pictureBox2_Click(object sender, EventArgs e) {
             if (cbGoogle.Enabled)
                 cbGoogle.Checked = !cbGoogle.Checked;
@@ -171,7 +116,7 @@ namespace IAGrim.UI {
         }
 
         private void buttonBackupNow_Click(object sender, EventArgs e) {
-            CloudBackup b = new CloudBackup(_playerItemDao);
+            FileBackup b = new FileBackup(_playerItemDao);
             if (b.Backup(true)) {
                 MessageBox.Show("Backup complete!", "Backup status", MessageBoxButtons.OK, MessageBoxIcon.Information); //  TODO:TRANSLATE
             }
@@ -181,41 +126,19 @@ namespace IAGrim.UI {
         }
 
         private void firefoxButton1_Click(object sender, EventArgs e) {
-            new UI.Popups.OnlineBackupLogin(_playerItemDao).ShowDialog();
 
-
-            var loginFailed = string.IsNullOrEmpty(Properties.Settings.Default.OnlineBackupToken) || !Properties.Settings.Default.OnlineBackupVerified;
-            OnlineBackupsActive = !loginFailed;
-            if (!loginFailed) {
-                _enableOnlineBackups(true);
-                backupEmailLabel.Text = GlobalSettings.Language.GetTag("iatag_ui_online_backup_email")
-                    .Replace("{OnlineBackupEmail}", Properties.Settings.Default.OnlineBackupEmail);
+            if (!_authAuthService.IsAuthenticated()) {
+                _authAuthService.Authenticate();
             }
-        }
-
-        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            var s = new ItemSynchronizer(_playerItemDao, Properties.Settings.Default.OnlineBackupToken, GlobalSettings.RemoteBackupServer, null);
-            s.Logout();
-            backupEmailLabel.Text = "";
-            Properties.Settings.Default.LastOnlineBackup = 0;
-            Properties.Settings.Default.OnlineBackupVerified = false;
-            Properties.Settings.Default.OnlineBackupToken = string.Empty;
-            Properties.Settings.Default.Save();
-            _enableOnlineBackups(false);
-            OnlineBackupsActive = false;
-        }
-
-        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            var s = new ItemSynchronizer(_playerItemDao, Properties.Settings.Default.OnlineBackupToken, GlobalSettings.RemoteBackupServer, null);
-            s.LogoutAll();
-            backupEmailLabel.Text = "";
-
-            Properties.Settings.Default.LastOnlineBackup = 0;
-            Properties.Settings.Default.OnlineBackupVerified = false;
-            Properties.Settings.Default.OnlineBackupToken = string.Empty;
-            Properties.Settings.Default.Save();
-            _enableOnlineBackups(false);
-            OnlineBackupsActive = false;
+            else {
+                var alreadyLoggedIn = GlobalSettings.Language.GetTag("iatag_feedback_already_logged_in");
+                MessageBox.Show(
+                    alreadyLoggedIn,
+                    alreadyLoggedIn,
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
+            }
         }
     }
 }

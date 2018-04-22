@@ -24,11 +24,7 @@
         /// </summary>
         private void InitializeComponent() {
             this.panelBox1 = new PanelBox();
-            this.backupEmailLabel = new System.Windows.Forms.Label();
-            this.labelItemSyncFeedback = new System.Windows.Forms.Label();
             this.buttonLogin = new FirefoxButton();
-            this.logoutThisComputer = new System.Windows.Forms.LinkLabel();
-            this.logoutAllComputers = new System.Windows.Forms.LinkLabel();
             this.panelBox5 = new PanelBox();
             this.buttonBackupNow = new FirefoxButton();
             this.buttonCustom = new System.Windows.Forms.Button();
@@ -48,11 +44,7 @@
             // 
             // panelBox1
             // 
-            this.panelBox1.Controls.Add(this.backupEmailLabel);
-            this.panelBox1.Controls.Add(this.labelItemSyncFeedback);
             this.panelBox1.Controls.Add(this.buttonLogin);
-            this.panelBox1.Controls.Add(this.logoutThisComputer);
-            this.panelBox1.Controls.Add(this.logoutAllComputers);
             this.panelBox1.Font = new System.Drawing.Font("Segoe UI Semibold", 20F);
             this.panelBox1.HeaderHeight = 40;
             this.panelBox1.Location = new System.Drawing.Point(12, 12);
@@ -63,26 +55,6 @@
             this.panelBox1.Tag = "iatag_ui_backup_online";
             this.panelBox1.Text = "Online Backup";
             this.panelBox1.TextLocation = "8; 5";
-            // 
-            // backupEmailLabel
-            // 
-            this.backupEmailLabel.AutoSize = true;
-            this.backupEmailLabel.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.backupEmailLabel.Location = new System.Drawing.Point(3, 43);
-            this.backupEmailLabel.Name = "backupEmailLabel";
-            this.backupEmailLabel.Size = new System.Drawing.Size(15, 19);
-            this.backupEmailLabel.TabIndex = 17;
-            this.backupEmailLabel.Text = "-";
-            // 
-            // labelItemSyncFeedback
-            // 
-            this.labelItemSyncFeedback.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.labelItemSyncFeedback.AutoSize = true;
-            this.labelItemSyncFeedback.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.labelItemSyncFeedback.Location = new System.Drawing.Point(3, 153);
-            this.labelItemSyncFeedback.Name = "labelItemSyncFeedback";
-            this.labelItemSyncFeedback.Size = new System.Drawing.Size(0, 13);
-            this.labelItemSyncFeedback.TabIndex = 16;
             // 
             // buttonLogin
             // 
@@ -96,34 +68,6 @@
             this.buttonLogin.Tag = "iatag_ui_login";
             this.buttonLogin.Text = "Login";
             this.buttonLogin.Click += new System.EventHandler(this.firefoxButton1_Click);
-            // 
-            // logoutThisComputer
-            // 
-            this.logoutThisComputer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.logoutThisComputer.AutoSize = true;
-            this.logoutThisComputer.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.logoutThisComputer.Location = new System.Drawing.Point(250, 129);
-            this.logoutThisComputer.Name = "logoutThisComputer";
-            this.logoutThisComputer.Size = new System.Drawing.Size(106, 13);
-            this.logoutThisComputer.TabIndex = 13;
-            this.logoutThisComputer.TabStop = true;
-            this.logoutThisComputer.Tag = "iatag_ui_logout_all_computers";
-            this.logoutThisComputer.Text = "Logout this computer";
-            this.logoutThisComputer.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
-            // 
-            // logoutAllComputers
-            // 
-            this.logoutAllComputers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.logoutAllComputers.AutoSize = true;
-            this.logoutAllComputers.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.logoutAllComputers.Location = new System.Drawing.Point(250, 148);
-            this.logoutAllComputers.Name = "logoutAllComputers";
-            this.logoutAllComputers.Size = new System.Drawing.Size(105, 13);
-            this.logoutAllComputers.TabIndex = 14;
-            this.logoutAllComputers.TabStop = true;
-            this.logoutAllComputers.Tag = "iatag_ui_logout_all_computers";
-            this.logoutAllComputers.Text = "Logout all computers";
-            this.logoutAllComputers.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
             // 
             // panelBox5
             // 
@@ -265,7 +209,6 @@
             this.Text = "Backup Settings";
             this.Load += new System.EventHandler(this.BackupSettings_Load);
             this.panelBox1.ResumeLayout(false);
-            this.panelBox1.PerformLayout();
             this.panelBox5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pbSkydrive)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbDropbox)).EndInit();
@@ -287,10 +230,6 @@
         private FirefoxCheckBox cbCustom;
         private FirefoxButton buttonBackupNow;
         private PanelBox panelBox1;
-        private System.Windows.Forms.LinkLabel logoutThisComputer;
-        private System.Windows.Forms.LinkLabel logoutAllComputers;
         private FirefoxButton buttonLogin;
-        private System.Windows.Forms.Label labelItemSyncFeedback;
-        private System.Windows.Forms.Label backupEmailLabel;
     }
 }

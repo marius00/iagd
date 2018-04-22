@@ -134,8 +134,10 @@
     </Reference>
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Management" />
     <Reference Include="System.Net" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.ServiceModel" />
@@ -151,19 +153,31 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Backup\Azure\CefSharp\AzureAuthenticationUriHijack.cs" />
+    <Compile Include="Backup\Azure\CefSharp\AzureOnClosePopupHijack.cs" />
+    <Compile Include="Backup\Azure\CefSharp\Events\AuthResultEvent.cs" />
+    <Compile Include="Backup\Azure\Constants\AzureUris.cs" />
+    <Compile Include="Backup\Azure\Dto\AzureItemDeletionDto.cs" />
+    <Compile Include="Backup\Azure\Dto\AzureUploadedItem.cs" />
+    <Compile Include="Backup\Azure\Dto\CommonItem.cs" />
+    <Compile Include="Backup\Azure\Dto\ItemDownloadDto.cs" />
+    <Compile Include="Backup\Azure\Service\AuthenticationProvider.cs" />
+    <Compile Include="Backup\Azure\Service\AzureAuthService.cs" />
+    <Compile Include="Backup\Azure\Service\AzureSyncService.cs" />
+    <Compile Include="Backup\Azure\Dto\AzureItem.cs" />
+    <Compile Include="Backup\Azure\Dto\AzureItemContainer.cs" />
+    <Compile Include="Backup\Azure\Dto\AzureItemPartitionDto.cs" />
+    <Compile Include="Backup\Azure\Dto\AzureUploadItem.cs" />
+    <Compile Include="Backup\Azure\Service\BackupService.cs" />
+    <Compile Include="Backup\Azure\Util\BackupServiceWorker.cs" />
+    <Compile Include="Backup\Azure\Util\ItemConverter.cs" />
     <Compile Include="Backup\FileWriter\FileExporter.cs" />
     <Compile Include="Backup\FileWriter\GDFileExporter.cs" />
     <Compile Include="Backup\FileWriter\IAFileExporter.cs" />
-    <Compile Include="Backup\ItemSynchronizer.cs" />
-    <Compile Include="Backup\Models\PlayerItemBackupDeleteResponse.cs" />
-    <Compile Include="Backup\Models\PlayerItemBackupDownload.cs" />
-    <Compile Include="Backup\Models\PlayerItemBackupUpload.cs" />
-    <Compile Include="Backup\Models\PlayerItemBackupUploadResponse.cs" />
-    <Compile Include="Backup\Models\PlayerItemLoginResponse.cs" />
-    <Compile Include="Backup\Models\PlayerItemResponseCodes.cs" />
     <Compile Include="BuddyShare\dto\BuddyUploadResponse.cs" />
     <Compile Include="BuddyShare\dto\JsonBuddyItem.cs" />
     <Compile Include="BuddyShare\GzipCompressionHandler.cs" />
+    <Compile Include="Database\DAO\AzurePartitionDaoImpl.cs" />
     <Compile Include="Database\DAO\BuddyItemDaoImpl.cs" />
     <Compile Include="Database\DAO\DatabaseItemStatDaoImpl.cs" />
     <Compile Include="Database\DAO\Dto\StatFetch.cs" />
@@ -184,6 +198,7 @@
     <Compile Include="Database\DAO\Table\SkillTable.cs" />
     <Compile Include="Database\Dto\ModSelection.cs" />
     <Compile Include="Database\Dto\Search.cs" />
+    <Compile Include="Database\Interfaces\IAzurePartitionDao.cs" />
     <Compile Include="Database\Interfaces\IBuddyItemDao.cs" />
     <Compile Include="Database\Interfaces\IBuddySubscriptionDao.cs" />
     <Compile Include="Database\Interfaces\IDatabaseItemDao.cs" />
@@ -198,6 +213,7 @@
     <Compile Include="Database\Migrations\AddSkillTables.cs" />
     <Compile Include="Database\Migrations\IDatabaseMigration.cs" />
     <Compile Include="Database\Migrations\MigrationHandler.cs" />
+    <Compile Include="Database\Model\AzurePartition.cs" />
     <Compile Include="Database\Model\BaseItem.cs" />
     <Compile Include="Database\Model\DatabaseItemDto.cs" />
     <Compile Include="Database\Model\DeletedPlayerItem.cs" />
@@ -211,6 +227,7 @@
     <Compile Include="Database\Model\SkillModifierStat.cs" />
     <Compile Include="Database\SessionFactoryLoader\SessionFactory.cs" />
     <Compile Include="Database\SearchResult.cs" />
+    <Compile Include="Database\Synchronizer\AzurePartitionRepo.cs" />
     <Compile Include="Database\Synchronizer\BasicSynchronizer.cs" />
     <Compile Include="Database\Synchronizer\BuddyItemRepo.cs" />
     <Compile Include="Database\Synchronizer\BuddySubscriptionRepo.cs" />
@@ -302,16 +319,11 @@
     </Compile>
     <Compile Include="Theme\ScrollPanelMessageFilter.cs" />
     <Compile Include="Theme\Theme.cs" />
+    <Compile Include="UI\Misc\CefBackupAuthentication.cs" />
     <Compile Include="UI\Misc\HtmlTranslation.cs" />
     <Compile Include="UI\Misc\RequestRecipeArgument.cs" />
     <Compile Include="UI\Misc\TextboxHoverFocusHighlight.cs" />
     <Compile Include="UI\Model\ListViewEntry.cs" />
-    <Compile Include="UI\Popups\BackupNagScreen.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Popups\BackupNagScreen.Designer.cs">
-      <DependentUpon>BackupNagScreen.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\Popups\ImportExport\ImportExportContainer.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -335,12 +347,6 @@
     </Compile>
     <Compile Include="UI\Popups\ImportExport\Panels\ImportMode.Designer.cs">
       <DependentUpon>ImportMode.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Popups\OnlineBackupLogin.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Popups\OnlineBackupLogin.Designer.cs">
-      <DependentUpon>OnlineBackupLogin.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Popups\StashTabPicker.cs">
       <SubType>Form</SubType>
@@ -441,7 +447,7 @@
     <Compile Include="Utilities\ActionCooldown.cs" />
     <Compile Include="Utilities\CallerMemberNameAttribute.cs" />
     <Compile Include="Utilities\ChromiumUrlHook.cs" />
-    <Compile Include="Utilities\Cloud\CloudBackup.cs" />
+    <Compile Include="Utilities\Cloud\FileBackup.cs" />
     <Compile Include="Utilities\DependencyChecker.cs" />
     <Compile Include="Utilities\EasterEgg.cs" />
     <Compile Include="Utilities\GlobalPaths.cs" />
@@ -462,6 +468,7 @@
     </Compile>
     <Compile Include="Utilities\HelperClasses\GDTransferFile.cs" />
     <Compile Include="Utilities\HelperClasses\InstalootSettingType.cs" />
+    <Compile Include="Utilities\HelperClasses\RestService.cs" />
     <Compile Include="Utilities\HelperClasses\StashAvailability.cs" />
     <Compile Include="Utilities\ItemHtmlWriter.cs" />
     <Compile Include="Utilities\Logging\TextBoxAppender.cs" />
@@ -490,6 +497,21 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="Resources\static\assets\fonts\fontawesome-webfont.eot">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\static\assets\fonts\fontawesome-webfont.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\static\assets\fonts\fontawesome-webfont.woff">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\static\assets\fonts\fontawesome-webfont.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\static\assets\fonts\FontAwesome.otf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\vendor\bootstrap-chosen-master\bower.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -506,9 +528,6 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Popups\BackupNagScreen.resx">
-      <DependentUpon>BackupNagScreen.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="UI\Popups\ImportExport\ImportExportContainer.resx">
       <DependentUpon>ImportExportContainer.cs</DependentUpon>
     </EmbeddedResource>
@@ -520,9 +539,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Popups\ImportExport\Panels\ImportMode.resx">
       <DependentUpon>ImportMode.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\Popups\OnlineBackupLogin.resx">
-      <DependentUpon>OnlineBackupLogin.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Popups\StashTabPicker.resx">
       <DependentUpon>StashTabPicker.cs</DependentUpon>
@@ -573,7 +589,29 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Database\Model\PlayerItemRecord.hbm.xml" />
+    <EmbeddedResource Include="Database\Model\AzurePartition.hbm.xml" />
+    <Content Include="Resources\bootstrap-social.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\componentAssembler.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\login.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\static\assets\css\font-awesome.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\static\assets\fonts\fontawesome-webfont.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\static\buddy.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\static\cloud-err.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\static\cloud-ok.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\static\edit.png" />

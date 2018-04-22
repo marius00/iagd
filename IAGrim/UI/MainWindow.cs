@@ -17,6 +17,8 @@ using EvilsoftCommons.Cloud;
 using EvilsoftCommons.DllInjector;
 using EvilsoftCommons.Exceptions;
 using IAGrim.Backup;
+using IAGrim.Backup.Azure.Service;
+using IAGrim.Backup.Azure.Util;
 using IAGrim.BuddyShare;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parsers;
@@ -79,12 +81,12 @@ namespace IAGrim.UI {
         private BuddyBackgroundThread _buddyBackgroundThread;
         private BackgroundTask _backupBackgroundTask;
         private ItemTransferController _transferController;
-        private ItemSynchronizer _itemSynchronizer; // Online backups
 
         private readonly IItemTagDao _itemTagDao;
         private readonly IDatabaseItemDao _databaseItemDao;
         private readonly IDatabaseItemStatDao _databaseItemStatDao;
         private readonly IPlayerItemDao _playerItemDao;
+        private readonly IAzurePartitionDao _azurePartitionDao;
         private readonly IDatabaseSettingDao _databaseSettingDao;
         private readonly IBuddyItemDao _buddyItemDao;
         private readonly IBuddySubscriptionDao _buddySubscriptionDao;
@@ -93,6 +95,8 @@ namespace IAGrim.UI {
         private readonly IItemSkillDao _itemSkillDao;
         private readonly ParsingService _parsingService;
         private readonly bool _requestedDevtools;
+        private AzureAuthService _authAuthService;
+        private BackupServiceWorker _backupServiceWorker;
 
         private readonly Stopwatch _reportUsageStatistics;
 
@@ -151,15 +155,16 @@ namespace IAGrim.UI {
 
         public MainWindow(
             CefBrowserHandler browser,
-             IDatabaseItemDao databaseItemDao,
-             IDatabaseItemStatDao databaseItemStatDao,
-             IPlayerItemDao playerItemDao,
-             IDatabaseSettingDao databaseSettingDao,
-             IBuddyItemDao buddyItemDao,
-             IBuddySubscriptionDao buddySubscriptionDao,
-             ArzParser arzParser,
-             IRecipeItemDao recipeItemDao,
-             IItemSkillDao itemSkillDao,
+            IDatabaseItemDao databaseItemDao,
+            IDatabaseItemStatDao databaseItemStatDao,
+            IPlayerItemDao playerItemDao,
+            IAzurePartitionDao azurePartitionDao,
+            IDatabaseSettingDao databaseSettingDao,
+            IBuddyItemDao buddyItemDao,
+            IBuddySubscriptionDao buddySubscriptionDao,
+            ArzParser arzParser,
+            IRecipeItemDao recipeItemDao,
+            IItemSkillDao itemSkillDao,
             IItemTagDao itemTagDao, 
             ParsingService parsingService, 
             bool requestedDevtools
@@ -175,6 +180,7 @@ namespace IAGrim.UI {
             _databaseItemDao = databaseItemDao;
             _databaseItemStatDao = databaseItemStatDao;
             _playerItemDao = playerItemDao;
+            _azurePartitionDao = azurePartitionDao;
             _databaseSettingDao = databaseSettingDao;
             _buddyItemDao = buddyItemDao;
             _buddySubscriptionDao = buddySubscriptionDao;
@@ -200,27 +206,6 @@ namespace IAGrim.UI {
             }
         }
 
-
-        private void OnlineBackupAuthFailureHandler() {
-            Logger.Warn("Online backup failed due to an authentication failure.");
-            _itemSynchronizer?.Dispose();
-            _itemSynchronizer = null;
-        }
-        private void EnableOnlineBackups(bool enable) {
-            if (enable) {
-                if (_itemSynchronizer == null) {
-                    _itemSynchronizer = new ItemSynchronizer(
-                        _playerItemDao, 
-                        Settings.Default.OnlineBackupToken, 
-                        GlobalSettings.RemoteBackupServer, 
-                        OnlineBackupAuthFailureHandler);
-                    _itemSynchronizer.Start();
-                }
-            } else {
-                _itemSynchronizer?.Dispose();
-                _itemSynchronizer = null;
-            }
-        }
 
 
         private void IterAndCloseForms(Control.ControlCollection controls) {
@@ -253,13 +238,13 @@ namespace IAGrim.UI {
             _buddyBackgroundThread?.Dispose();
             _buddyBackgroundThread = null;
 
-            _itemSynchronizer?.Dispose();
-            _itemSynchronizer = null;
-
             panelHelp.Controls.Clear();
 
             _injector?.Dispose();
             _injector = null;
+
+            _backupServiceWorker?.Dispose();
+            _backupServiceWorker = null;
 
             _window?.Dispose();
             _window = null;
@@ -451,8 +436,6 @@ namespace IAGrim.UI {
 
             }
 
-            //ItemHtmlWriter.Write(new List<PlayerHeldItem>());
-
             // Chicken and the egg..
             SearchController searchController = new SearchController(
                 _databaseItemDao,
@@ -500,15 +483,17 @@ namespace IAGrim.UI {
 
             addAndShow(_buddySettingsWindow, buddyPanel);
 
-            var backupSettings = new BackupSettings(EnableOnlineBackups, _playerItemDao);
-            tabControl1.Selected += ((s, ev) => {
-                if (ev.TabPage == tabPageBackups)
-                    backupSettings?.BackupSettings_GotFocus();
-            });
+
+            _authAuthService = new AzureAuthService(_cefBrowserHandler, new AuthenticationProvider());
+            var backupSettings = new BackupSettings(_playerItemDao, _authAuthService);
             addAndShow(backupSettings, backupPanel);
             addAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, _databaseSettingDao, _arzParser, _playerItemDao, _parsingService), modsPanel);
             addAndShow(new HelpTab(), panelHelp);            
             addAndShow(new LoggingWindow(), panelLogging);
+            var backupService = new BackupService(_authAuthService, _playerItemDao, _azurePartitionDao);
+            _backupServiceWorker = new BackupServiceWorker(backupService);
+            backupService.OnUploadComplete += (o, args) => _searchWindow.UpdateListview();
+            searchController.OnSearch += (o, args) => backupService.OnSearch();
 
 
             _searchWindow = new SearchWindow(_cefBrowserHandler.BrowserControl, SetFeedback, _playerItemDao, searchController, _itemTagDao);
@@ -558,7 +543,7 @@ namespace IAGrim.UI {
             BuddySyncEnabled = (bool)Settings.Default.BuddySyncEnabled;
 
             // Start the backup task
-            _backupBackgroundTask = new BackgroundTask(new CloudBackup(_playerItemDao));
+            _backupBackgroundTask = new BackgroundTask(new FileBackup(_playerItemDao));
 
 
 
@@ -619,31 +604,28 @@ namespace IAGrim.UI {
                 new ItemStatService(_databaseItemStatDao, _itemSkillDao)
                 );
             Application.AddMessageFilter(new MousewheelMessageFilter());
-
-
-            {
-                var b = !string.IsNullOrEmpty(Settings.Default.OnlineBackupToken) && Settings.Default.OnlineBackupVerified;
-                EnableOnlineBackups(b);
-            }
-
-
-
-            if (BackupNagScreen.ShouldNag) {
-                var b = new BackupNagScreen();
-                b.ShowDialog();
-                if (b.UserWantsBackups)
-                    tabControl1.SelectedTab = tabPageBackups;
-            }
+            
 
             var titleTag = GlobalSettings.Language.GetTag("iatag_ui_itemassistant");
             if (!string.IsNullOrEmpty(titleTag)) {
                 this.Text += $" - {titleTag}";
             }
+
+
+            // Popup login diag
+            if (!_authAuthService.IsAuthenticated()) {
+                var t = new System.Windows.Forms.Timer {Interval = 100};
+                t.Tick += (o, args) => {
+                    if (_cefBrowserHandler.BrowserControl.IsBrowserInitialized) {
+                        _authAuthService.Authenticate();
+                        t.Stop();
+                    }
+                };
+                t.Start();
+            }
         }
 
         private void StartInjector() {
-            
-
             // Start looking for GD processes!
             _registerWindowDelegate = CustomWndProc;
             _window = new RegisterWindow("GDIAWindowClass", _registerWindowDelegate);
@@ -732,12 +714,6 @@ namespace IAGrim.UI {
                     } else /*if (this.WindowState == FormWindowState.Normal)*/ {
                         notifyIcon1.Visible = false;
                         _previousWindowState = WindowState;
-                        if (BackupNagScreen.ShouldNag) {
-                            var b = new BackupNagScreen();
-                            b.ShowDialog();
-                            if (b.UserWantsBackups)
-                                tabControl1.SelectedTab = tabPageBackups;
-                        }
                     }
                 }
             } catch (Exception ex) {
@@ -826,7 +802,7 @@ namespace IAGrim.UI {
                 _tooltipHelper.ShowTooltipAtMouse(GlobalSettings.Language.GetTag("iatag_copied_clipboard"), _cefBrowserHandler.BrowserControl);
             }
         }
-
+        
     } // CLASS
 
 

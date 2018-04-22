@@ -1,0 +1,29 @@
+{
+  "name": "cloud-login",
+  "version": "0.1.0",
+  "private": true,
+  "homepage": ".",
+  "dependencies": {
+    "@types/react-icons": "^2.2.5",
+    "@types/react-modal": "^3.1.2",
+    "react": "^16.3.2",
+    "react-code-input": "^3.1.0",
+    "react-dom": "^16.3.2",
+    "react-icons": "^2.2.7",
+    "react-modal": "^3.4.2",
+    "react-scripts-ts": "2.15.1"
+  },
+  "scripts": {
+    "start": "react-scripts-ts start",
+    "build": "react-scripts-ts build",
+    "test": "react-scripts-ts test --env=jsdom",
+    "eject": "react-scripts-ts eject"
+  },
+  "devDependencies": {
+    "@types/jest": "^22.2.3",
+    "@types/node": "^9.6.6",
+    "@types/react": "^16.3.12",
+    "@types/react-dom": "^16.0.5",
+    "typescript": "^2.8.3"
+  }
+}

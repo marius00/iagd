@@ -15,7 +15,9 @@ using IAGrim.Services.Dto;
 namespace IAGrim.Database {
     public class PlayerItem : BaseItem, PlayerHeldItem, IComparable, ICloneable {
         public virtual long Id { get; set; }
-        public virtual long? OnlineId { get; set; }
+
+        public virtual string AzurePartition { get; set; }
+        public virtual string AzureUuid { get; set; }
 
         public virtual bool IsKnown => Tags != null && Tags.Count > 0;
 

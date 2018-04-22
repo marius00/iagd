@@ -58,8 +58,8 @@
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\boost_1_61_0;C:\Users\STAT\Documents\Visual Studio 2012\Projects\IAGrim\IA;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\boost_1_61_0\lib32-msvc-14.0;$(LibraryPath)</LibraryPath>
+    <IncludePath>n:\boost_1_61_0;C:\Users\STAT\Documents\Visual Studio 2012\Projects\IAGrim\IA;$(IncludePath)</IncludePath>
+    <LibraryPath>n:\boost_1_61_0\lib32-msvc-14.0;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>

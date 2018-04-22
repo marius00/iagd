@@ -16,16 +16,16 @@ using System.Windows.Forms;
 
 namespace IAGrim.UI.Popups.ImportExport.Panels {
     partial class ImportMode : Form {
-        private readonly GDTransferFile[] modSelection;
-        private readonly IPlayerItemDao playerItemDao;
-        private string filename;
-        private readonly StashManager sm;
+        private readonly GDTransferFile[] _modSelection;
+        private readonly IPlayerItemDao _playerItemDao;
+        private string _filename;
+        private readonly StashManager _sm;
 
         public ImportMode(GDTransferFile[] modSelection, IPlayerItemDao playerItemDao, StashManager sm) {
             InitializeComponent();
-            this.modSelection = modSelection;
-            this.playerItemDao = playerItemDao;
-            this.sm = sm;
+            this._modSelection = modSelection;
+            this._playerItemDao = playerItemDao;
+            this._sm = sm;
         }
 
         private void ImportMode_Load(object sender, EventArgs e) {
@@ -34,7 +34,7 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
             cbItemSelection.Visible = false;
             cbItemSelection.Enabled = false;
 
-            cbItemSelection.Items.AddRange(modSelection);
+            cbItemSelection.Items.AddRange(_modSelection);
         }
 
         private void radioIAStash_CheckedChanged(object sender, EventArgs e) {
@@ -77,7 +77,7 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
                     radioIAStash.Enabled = false;
                     buttonImport.Enabled = true;
                     cbItemSelection.Enabled = true;
-                    this.filename = diag.FileName;
+                    this._filename = diag.FileName;
                 }
             }
         }
@@ -87,33 +87,27 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
                 FileExporter io;
 
                 if (radioIAStash.Checked) {
-                    io = new IAFileExporter(filename);
+                    io = new IAFileExporter(_filename);
                 }
                 else if (radioGDStash.Checked) {
                     GDTransferFile settings = cbItemSelection.SelectedItem as GDTransferFile;
                     if (settings == null) {
-                        io = new GDFileExporter(filename, false, string.Empty);
+                        io = new GDFileExporter(_filename, false, string.Empty);
                     }
                     else {
-                        io = new GDFileExporter(filename, settings.IsExpansion1, settings.Mod);
+                        io = new GDFileExporter(_filename, settings.IsExpansion1, settings.Mod);
                     }
                 }
                 else {
-                    io = null;
-                    playerItemDao.Save(sm.EmptyStash(filename));
+                    _playerItemDao.Save(_sm.EmptyStash(_filename));
                     MessageBox.Show("Items imported", "Items imported!", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
 
                 var items = io.Read();
-                playerItemDao.Import(items);
+                _playerItemDao.Import(items);
 
-                if (items.Any(m => m.OnlineId.HasValue && m.OnlineId > 0)) {
-                    MessageBox.Show("Items imported\nSome items may have been skipped to avoid duplicating items.", "Items imported!", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                else {
-                    MessageBox.Show("Items imported\nIf you already had items, you may have gotten duplicates.", "Items imported!", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
+                MessageBox.Show("Items imported\nIf you already had items, you may have gotten duplicates.", "Items imported!", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             }
         }

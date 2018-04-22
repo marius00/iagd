@@ -29,7 +29,7 @@ namespace IAGrim.Parsers.Arz {
         public List<Item> UnlootedItems => _unlootedItems.ToList();
         private ConcurrentBag<Item> _unlootedItems = new ConcurrentBag<Item>();
         public readonly int NumStashTabs;
-        //private bool _hasLootedItemsOnceThisSession = false;
+        public static bool _hasLootedItemsOnceThisSession = false;
 
         public event EventHandler StashUpdated;
 
@@ -143,7 +143,7 @@ namespace IAGrim.Parsers.Arz {
             }
         }
 
-        void DeleteItemsInPageX(string filename) {
+        public static void DeleteItemsInPageX(string filename) {
             
             GDCryptoDataBuffer pCrypto = new GDCryptoDataBuffer(DataBuffer.ReadBytesFromDisk(filename));
 
@@ -236,17 +236,17 @@ namespace IAGrim.Parsers.Arz {
                 StashUpdated?.Invoke(null, null);
 
                 if (stash.Tabs.Count < 2) {
-                    Logger.WarnFormat("File \"{0}\" only contains {1} pages, must have at least 2 pages to function properly.", filename, stash.Tabs.Count);
-                    return $"File \"{filename}\" only contains {stash.Tabs.Count} pages, must have at least 2 pages to function properly.";
+                    Logger.WarnFormat("File \"{0}\" only contains {1} pages, must have at least 2 SHARED STASH pages to function properly.", filename, stash.Tabs.Count);
+                    return $"File \"{filename}\" only contains {stash.Tabs.Count} pages, must have at least 2 SHARED STASH pages to function properly.";
                 }
                 if (stash.Tabs.Count < lootFromIndex + 1) {
-                    var message = $"You have configured IA to loot from {lootFromIndex + 1} but you only have {stash.Tabs.Count} pages";
+                    var message = $"You have configured IA to loot from {lootFromIndex + 1} but you only have SHARED STASH {stash.Tabs.Count} pages";
                     Logger.Warn(message);
                     return message;
                 }
 
                 if (stash.Tabs[lootFromIndex].Items.Count > 0) {
-                    //_hasLootedItemsOnceThisSession = true;
+                    _hasLootedItemsOnceThisSession = true;
 
                     // Grab the items and clear the tab
                     List<Item> items = stash.Tabs[lootFromIndex].Items
@@ -372,12 +372,12 @@ namespace IAGrim.Parsers.Arz {
         }
 
 
-        private Item GetItem(PlayerItem item, int itemsRemaining) {
+        private Item GetItem(PlayerItem item) {
             Item stashItem = Map(item);
 
             // Calculate the final stack count (stored stack may be larger than max transfer size)
             if (StashTab.CanStack(item.Slot) || StashTab.HardcodedRecords.Contains(item.BaseRecord)) {
-                var maxStack = Math.Min(itemsRemaining, 100);
+                var maxStack = Math.Min(item.StackCount, 100);
                 stashItem.StackCount = (uint) Math.Max(1, Math.Min(stashItem.StackCount, maxStack));
             }
             else {
@@ -411,7 +411,7 @@ namespace IAGrim.Parsers.Arz {
                 }
 
                 while (playerItems[i].StackCount > 0 && itemsRemaining > 0) {
-                    Item stashItem = GetItem(playerItems[i], itemsRemaining);
+                    Item stashItem = GetItem(playerItems[i]);
 
                     // Map item size and create a shape map
                     if (!PositionItem(packer, stashItem)) {
@@ -461,7 +461,7 @@ namespace IAGrim.Parsers.Arz {
         /// </summary>
         /// <param name="filename"></param>
         /// <param name="playerItems">
-        ///     The items deposited, caller responsibility to delete them from DB if stacksize is <= 0, and update if not</param>
+        ///     The items deposited, caller responsibility to delete them from DB if stacksize is LE 0, and update if not</param>
         /// <returns></returns>
         public void Deposit(string filename, IList<PlayerItem> playerItems, int maxItemsToTransfer, out string error) {
             error = string.Empty;

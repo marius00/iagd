@@ -13,12 +13,12 @@ using IAGrim.Database.Interfaces;
 namespace IAGrim.BuddyShare {
     class BuddyBackgroundThread : IDisposable {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(BuddyBackgroundThread));
-        private BackgroundWorker bw = new BackgroundWorker();
+        private BackgroundWorker _bw = new BackgroundWorker();
         private bool _disposed = false;
         
         public const int ProgressStoreBuddydata = 1;
         public const int ProgressSetUid = 2;
-        private List<long> _subscribers;
+        private readonly List<long> _subscribers;
         private readonly IPlayerItemDao _playerItemDao;
         private readonly IBuddyItemDao _buddyItemDao;
         private readonly ActionCooldown _cooldown;
@@ -35,11 +35,11 @@ namespace IAGrim.BuddyShare {
             this._subscribers = subscribers;
             _cooldown = new ActionCooldown(cooldown);
 
-            bw.DoWork += new DoWorkEventHandler(bw_DoWork);
-            bw.WorkerSupportsCancellation = true;
-            bw.WorkerReportsProgress = true;
-            bw.ProgressChanged += progressCallback;
-            bw.RunWorkerAsync();
+            _bw.DoWork += new DoWorkEventHandler(bw_DoWork);
+            _bw.WorkerSupportsCancellation = true;
+            _bw.WorkerReportsProgress = true;
+            _bw.ProgressChanged += progressCallback;
+            _bw.RunWorkerAsync();
         }
 
 
@@ -107,9 +107,9 @@ namespace IAGrim.BuddyShare {
         void Dispose(bool disposing) {
             if (!_disposed && disposing) {
 
-                if (bw != null) {
-                    bw.CancelAsync();
-                    bw = null;
+                if (_bw != null) {
+                    _bw.CancelAsync();
+                    _bw = null;
                 }
             }
             _disposed = true;

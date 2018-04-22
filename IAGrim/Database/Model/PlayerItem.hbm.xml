@@ -9,7 +9,6 @@
       <generator class="hilo"/>
     </id>
 
-    <property name="OnlineId" not-null="false" />
     <property name="BaseRecord" column="baserecord" index="idx_playeritem_baserecord" />
     <property name="PrefixRecord" />
     <property name="SuffixRecord" />
@@ -31,6 +30,8 @@
     <property name="Mod" />
     <property name="IsHardcore" />
     
+    <property name="AzurePartition" />
+    <property name="AzureUuid" />
 
     <!--  cascade="all-delete-orphan"  -->
     <!--

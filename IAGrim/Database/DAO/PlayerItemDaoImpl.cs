@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using IAGrim.Backup.Azure.Dto;
 using IAGrim.Database.DAO.Table;
 
 namespace IAGrim.Database {
@@ -86,21 +87,6 @@ namespace IAGrim.Database {
             }
 
         }
-
-        /// <summary>
-        /// Find an item based on it's online ID
-        /// </summary>
-        /// <returns></returns>
-        public PlayerItem GetByOnlineId(long oid) {
-            using (ISession session = SessionCreator.OpenSession()) {
-                using (ITransaction transaction = session.BeginTransaction()) {
-                    return session.QueryOver<PlayerItem>()
-                        .Where(m => m.OnlineId == oid)
-                        .SingleOrDefault();
-                }
-            }
-        }
-        
 
         private static float GetMinimumLevelForRecords(Dictionary<string, List<DBSTatRow>> stats, List<string> records) {
 
@@ -226,27 +212,31 @@ namespace IAGrim.Database {
             return null;
         }
 
-        /// <summary>
-        /// Get a single item which has not been synchronized with online backups
-        /// </summary>
-        public PlayerItem GetSingleUnsynchronizedItem() {
+        public IList<PlayerItem> GetUnsynchronizedItems() {
             using (var session = SessionCreator.OpenSession()) {
                 return session.QueryOver<PlayerItem>()
-                    .Where(m => m.OnlineId == null)
-                    .Take(1)
-                    .SingleOrDefault();
+                    .Where(m => m.AzureUuid == null)
+                    //.Where(m => string.IsNullOrEmpty(m.AzureUuid))
+                    .List<PlayerItem>();
             }
         }
 
-
-        public long GetNumUnsynchronizedItems() {
+        public void SetAzureIds(List<AzureUploadedItem> mappings) {
             using (var session = SessionCreator.OpenSession()) {
-                return session.QueryOver<PlayerItem>()
-                    .Where(m => m.OnlineId == null)
-                    .ToRowCountInt64Query()
-                    .SingleOrDefault<long>();
+                using (var transaction = session.BeginTransaction()) {
+                    foreach (var entry in mappings) {
+                        session.CreateQuery("UPDATE PlayerItem SET AzureUuid = :uuid, AzurePartition = :partition WHERE Id = :id")
+                            .SetParameter("uuid", entry.Id)
+                            .SetParameter("partition", entry.Partition)
+                            .SetParameter("id", entry.LocalId)
+                            .ExecuteUpdate();
+                    }
+
+                    transaction.Commit();
+                }
             }
         }
+
 
         private IEnumerable<string> GetPetBonusRecords(Dictionary<String, List<DBSTatRow>> stats, List<string> records) {
             var relevant = stats.Where(m => records.Contains(m.Key));
@@ -298,30 +288,31 @@ namespace IAGrim.Database {
         /// <param name="item"></param>
         public override void Save(PlayerItem item) {
             Save(new List<PlayerItem> { item });
-            if (item.OnlineId.HasValue) {
-                Logger.Info($"Stored player item to database, OID: {item.OnlineId.Value}.");
-            } else {
-                Logger.Info("Stored player item to database.");
-            }
+            Logger.Info("Stored player item to database.");
         }
 
 
 
         public void Import(List<PlayerItem> items) {
             Logger.Debug($"Importing {items.Count} new items");
+            List<PlayerItem> filteredItems;
 
             // Attempt to exclude any items already owned, only applicable for users with online sync enabled
-            IList<long> existingItems;
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
-                    existingItems = session.CreateCriteria<PlayerItem>()
-                        .Add(Restrictions.Gt(nameof(PlayerItem.OnlineId), 0L))
-                        .SetProjection(Projections.Property(nameof(PlayerItem.OnlineId)))
-                        .List<long>();
+                    var existingItems = session.CreateCriteria<PlayerItem>()
+                        .Add(Restrictions.IsNotNull(nameof(PlayerItem.AzureUuid)))
+                        .SetProjection(Projections.Property(nameof(PlayerItem.AzureUuid)))
+                        .List<PlayerItem>();
+
+                    filteredItems = items
+                        .Where(m => string.IsNullOrEmpty(m.AzureUuid) || !existingItems.Any(item => item.AzureUuid == m.AzureUuid))
+                        .Where(m => !Exists(m)) // May be slow, but should prevent duplicates better than anything
+                        .ToList();
                 }
             }
 
-            Save(items.Where(m => !m.OnlineId.HasValue || !existingItems.Contains(m.OnlineId.Value)));
+            Save(filteredItems);
         }
 
         public override void Update(PlayerItem item) {
@@ -336,25 +327,27 @@ namespace IAGrim.Database {
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
                     foreach (var item in items) {
-                        if (clearOnlineId && item.OnlineId.HasValue) {
+                        // This is if an item has been deleted due to a transfer to stash
+                        /*
+                        if (clearOnlineId && !string.IsNullOrEmpty(item.AzureUuid) ) {
                             session.CreateSQLQuery($"INSERT OR IGNORE INTO {DeletedPlayerItemTable.Table} ({DeletedPlayerItemTable.Id}) VALUES (:id)")
                                 .SetParameter("id", item.OnlineId.Value)
                                 .ExecuteUpdate();
 
                             item.OnlineId = null;
-                        }
+                        }*/
 
-                        session.CreateQuery($"UPDATE {table} SET {stack} = :count, {PlayerItemTable.OnlineId} = :oid WHERE {id} = :id")
+                        session.CreateQuery($"UPDATE {table} SET {stack} = :count, {PlayerItemTable.AzureUuid} = :uuid WHERE {id} = :id")
                             .SetParameter("count", item.StackCount)
                             .SetParameter("id", item.Id)
-                            .SetParameter("oid", item.OnlineId)
+                            .SetParameter("uuid", item.AzureUuid)
                             .ExecuteUpdate();
                     }
                     
                     // insert into DeletedPlayerItem(oid) select onlineid from playeritem where onlineid is not null and stackcount <= 0 and id in (1,2,3)
-                    session.CreateSQLQuery($" INSERT OR IGNORE INTO {DeletedPlayerItemTable.Table} ({DeletedPlayerItemTable.Id}) " +
-                                        $" SELECT {PlayerItemTable.OnlineId} FROM {PlayerItemTable.Table} " +
-                                        $" WHERE {PlayerItemTable.OnlineId} IS NOT NULL " +
+                    session.CreateSQLQuery($" INSERT OR IGNORE INTO {DeletedPlayerItemTable.Table} ({DeletedPlayerItemTable.Id}, {DeletedPlayerItemTable.Partition}) " +
+                                        $" SELECT {PlayerItemTable.AzureUuid}, {PlayerItemTable.AzurePartition} FROM {PlayerItemTable.Table} " +
+                                        $" WHERE {PlayerItemTable.AzureUuid} IS NOT NULL " +
                                         $" AND {PlayerItemTable.Stackcount} <= 0 " +
                                         $" AND {PlayerItemTable.Id} IN ( :ids )")
                         .SetParameterList("ids", items.Select(m => m.Id).ToList())
@@ -369,7 +362,7 @@ namespace IAGrim.Database {
                 }
             }
         }
-
+        /*
         private long? GetIfExists(ISession session, PlayerItem item) {
             long? id = session.CreateCriteria<PlayerItem>()
                 .Add(Restrictions.Eq(nameof(PlayerItem.BaseRecord), item.BaseRecord))
@@ -390,30 +383,17 @@ namespace IAGrim.Database {
                 .UniqueResult<long?>();
 
             return id;
-        }
+        }*/
 
-
-        public int IncrementExistingStacksize(ISession session, long id, long stacksize) {
-            string sc = nameof(PlayerItem.StackCount);
-            string oid = nameof(PlayerItem.OnlineId);
-
-            // Delete the online ID for this item (treated as a new one)
-            long? onlineId = session.CreateCriteria<PlayerItem>()
-                .Add(Restrictions.Eq(nameof(PlayerItem.Id), id))
+        private bool Exists(ISession session, string azurePartition, string azureUuid) {
+            long id = session.CreateCriteria<PlayerItem>()
+                .Add(Restrictions.Eq(nameof(PlayerItem.AzurePartition), azurePartition))
+                .Add(Restrictions.Eq(nameof(PlayerItem.AzureUuid), azureUuid))
                 .SetMaxResults(1)
-                .SetProjection(Projections.Property(nameof(PlayerItem.OnlineId)))
-                .UniqueResult<long?>();
+                .SetProjection(Projections.RowCountInt64())
+                .UniqueResult<long>();
 
-            if (onlineId.HasValue) {
-                session.SaveOrUpdate(new DeletedPlayerItem { OID = onlineId.Value });
-            }
-
-
-            var query = $"UPDATE {nameof(PlayerItem)} SET {sc} = {sc} + :stacksize, {oid} = NULL WHERE {nameof(PlayerItem.Id)} = :id";
-            return session.CreateQuery(query)
-                .SetParameter("stacksize", stacksize)
-                .SetParameter("id", id)
-                .ExecuteUpdate();
+            return id > 0;
         }
 
 
@@ -539,12 +519,17 @@ namespace IAGrim.Database {
 
         }
 
-        public void DeleteAll() {
-
+        public void Delete(List<AzureItemDeletionDto> items) {
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
-                    session.CreateSQLQuery("DELETE FROM PlayerItemStat").ExecuteUpdate();
-                    session.CreateSQLQuery("DELETE FROM PlayerItem").ExecuteUpdate();
+                    foreach (var item in items) {
+                        session.CreateQuery("DELETE FROM PlayerItem WHERE AzurePartition = :partition AND AzureUuid = :uuid")
+                            .SetParameter("partition", item.Partition)
+                            .SetParameter("uuid", item.Id)
+                            .ExecuteUpdate();
+                    }
+
+                    session.CreateSQLQuery("DELETE FROM PlayerItemStat WHERE NOT Id IN (SELECT Id FROM PlayerItem)").ExecuteUpdate();
                     transaction.Commit();
                 }
             }
@@ -555,28 +540,21 @@ namespace IAGrim.Database {
         /// Will update the internal item name before storing, taking in account any pre/suffix
         /// </summary>
         public override void Save(IEnumerable<PlayerItem> items_) {
-            var items = new List<PlayerItem>(items_);
+            List<PlayerItem> items;
 
-            Logger.Debug($"Storing {items.Count} new items");
+            Logger.Debug($"Storing {items_.Count()} new items");
 
             List<long> ids = new List<long>();
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
+                    items = items_.Where(m => string.IsNullOrWhiteSpace(m.AzurePartition) || !Exists(session, m.AzurePartition, m.AzureUuid)).ToList();
+
                     for (int i = 0; i < items.Count; i++) {
                         var item = items.ElementAt(i);
 
                         // Stack item if possible
-                        long? existingId = GetIfExists(session, item);
-                        if (existingId.HasValue) {
-                            if (IncrementExistingStacksize(session, existingId.Value, item.StackCount) == 0) {
-                                Logger.Warn("Could not update stacksize, item loss situation detected");
-                                throw new Exception("Could not update item stack, aborting to prevent item loss");
-                            }
-                        }
-                        else {
-                            session.Save(item);
-                            ids.Add(item.Id);
-                        }
+                        session.Save(item);
+                        ids.Add(item.Id);
 
                         if (i > 0 && i % 1000 == 0) {
                             Logger.Debug($"Have now stored {i} / {items.Count} items");
@@ -660,7 +638,8 @@ namespace IAGrim.Database {
         /// Delete a player item and all its stats
         /// </summary>
         public override void Remove(PlayerItem obj) {
-            long? onlineId = obj.OnlineId;
+            var azurePartition = obj.AzurePartition;
+            var azureId = obj.AzureUuid;
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
                     session.CreateQuery($"DELETE FROM {nameof(PlayerItemStat)} WHERE {nameof(PlayerItemStat.PlayerItemId)} = :id")
@@ -678,10 +657,10 @@ namespace IAGrim.Database {
                 }
 
                 // Mark item for deletion from the online backup
-                if (onlineId.HasValue) {
+                if (!string.IsNullOrEmpty(azurePartition)) {
                     try {
                         using (ITransaction transaction = session.BeginTransaction()) {
-                            session.SaveOrUpdate(new DeletedPlayerItem { OID = onlineId.Value });
+                            session.SaveOrUpdate(new DeletedPlayerItem { Partition = azurePartition, Id = azureId });
                             transaction.Commit();
                         }
                     } catch (Exception ex) {
@@ -918,6 +897,8 @@ namespace IAGrim.Database {
                 ModifierRecord as ModifierRecord, 
                 MateriaRecord as MateriaRecord,
                 {PlayerItemTable.PrefixRarity} as PrefixRarity,
+                {PlayerItemTable.AzurePartition} as AzurePartition,
+                {PlayerItemTable.AzureUuid} as AzureUuid,
                 (SELECT Record FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord)) AS PetRecord
                 FROM PlayerItem PI WHERE " + string.Join(" AND ", queryFragments));
 

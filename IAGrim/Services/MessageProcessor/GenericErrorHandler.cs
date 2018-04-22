@@ -15,6 +15,9 @@ namespace IAGrim.Services.MessageProcessor {
             if (type == MessageType.TYPE_ERROR_HOOKING_GENERIC) {
                 int method = IOHelper.GetInt(data, 0);
                 logger.Error($"Error Hooking method \"{method}\"");
+                if (method == 11 || method == 12 || method == 13) { // Steam cloud sync
+                    logger.Info("If you are using the GOG version, this is normal.");
+                }
             }
         }
     }
