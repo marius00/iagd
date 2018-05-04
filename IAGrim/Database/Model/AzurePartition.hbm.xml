@@ -4,7 +4,7 @@
                    namespace="IAGrim.Database">
 
 
-  <class name="AzurePartition">
+  <class name="AzurePartition" table="azurepartition_v2">
     <id name="Id" />
     <property name="IsActive" />    
   </class>

@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using IAGrim.Database.Model;
 using log4net;
+using NHibernate.Dialect.Schema;
 using StatTranslator;
 
 namespace IAGrim.Utilities {
@@ -47,7 +48,6 @@ namespace IAGrim.Utilities {
                 type = 2;
 
 
-
             
             var json = new JsonItem {
                 BaseRecord = item.BaseRecord,
@@ -66,7 +66,8 @@ namespace IAGrim.Utilities {
                 Buddies = item.Buddies.ToArray(),
                 Skill = item.Skill != null ? GetJsonSkill(item.Skill) : null,
                 GreenRarity = item.PrefixRarity,
-                HasCloudBackup = isCloudSynced
+                HasCloudBackup = isCloudSynced,
+                Slot = SlotTranslator.Translate(item.Slot ?? "")
             };
 
             var modifiedSkills = item.ModifiedSkills;

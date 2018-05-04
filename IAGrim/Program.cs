@@ -103,9 +103,12 @@ namespace IAGrim {
             Logger.Debug("Crash reports can be seen at http://ribbs.dreamcrash.org/iagd/logs.html");
             ExceptionReporter.EnableLogUnhandledOnThread();
 
-
+#if DEBUG
             AzureUris.Initialize(AzureUris.EnvAzure);
-
+            //AzureUris.Initialize(AzureUris.EnvDev);
+#else
+            AzureUris.Initialize(AzureUris.EnvAzure);
+#endif
 
             var version = Assembly.GetExecutingAssembly().GetName().Version;
             DateTime buildDate = new DateTime(2000, 1, 1)

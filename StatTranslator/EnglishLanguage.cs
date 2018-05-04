@@ -311,6 +311,7 @@ namespace StatTranslator {
             { "iatag_ui_yes", "Yes" },
             { "iatag_ui_no", "No" },
             { "iatag_ui_survivalmode", "The Crucible (DLC)" },
+            { "iatag_ui_dualcomputer", "Using IA on multiple PCs" },
             { "iatag_no_stash_abort", "No stash chosen, aborting transfer.." },
             { "iatag_stash_status_error", "Could not inject into Grim Dawn, are you sure the bank is CLOSED?" },
             {"iatag_stash3_failure", "Cannot deposit item, please ensure Stash 3 is empty." },

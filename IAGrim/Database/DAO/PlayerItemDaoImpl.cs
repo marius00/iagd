@@ -225,7 +225,7 @@ namespace IAGrim.Database {
             using (var session = SessionCreator.OpenSession()) {
                 using (var transaction = session.BeginTransaction()) {
                     foreach (var entry in mappings) {
-                        session.CreateQuery("UPDATE PlayerItem SET AzureUuid = :uuid, AzurePartition = :partition WHERE Id = :id")
+                        session.CreateQuery($"UPDATE PlayerItem SET {PlayerItemTable.AzureUuid} = :uuid, {PlayerItemTable.AzurePartition} = :partition WHERE Id = :id")
                             .SetParameter("uuid", entry.Id)
                             .SetParameter("partition", entry.Partition)
                             .SetParameter("id", entry.LocalId)
@@ -523,13 +523,12 @@ namespace IAGrim.Database {
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
                     foreach (var item in items) {
-                        session.CreateQuery("DELETE FROM PlayerItem WHERE AzurePartition = :partition AND AzureUuid = :uuid")
+                        session.CreateQuery($"DELETE FROM PlayerItem WHERE {PlayerItemTable.AzurePartition} = :partition AND {PlayerItemTable.AzureUuid} = :uuid")
                             .SetParameter("partition", item.Partition)
                             .SetParameter("uuid", item.Id)
                             .ExecuteUpdate();
                     }
 
-                    session.CreateSQLQuery("DELETE FROM PlayerItemStat WHERE NOT Id IN (SELECT Id FROM PlayerItem)").ExecuteUpdate();
                     transaction.Commit();
                 }
             }
@@ -642,9 +641,6 @@ namespace IAGrim.Database {
             var azureId = obj.AzureUuid;
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
-                    session.CreateQuery($"DELETE FROM {nameof(PlayerItemStat)} WHERE {nameof(PlayerItemStat.PlayerItemId)} = :id")
-                        .SetParameter("id", obj.Id)
-                        .ExecuteUpdate();
 
                     session.CreateQuery($"DELETE FROM {nameof(PlayerItemRecord)} WHERE {nameof(PlayerItemRecord.PlayerItemId)} = :id")
                         .SetParameter("id", obj.Id)
@@ -965,16 +961,6 @@ namespace IAGrim.Database {
 
                     Logger.Debug($"Search returned {items.Count} items");
                     return items;
-                }
-            }
-        }
-
-        public void ClearAllItemStats() {
-            // Clear existing stats
-            using (ISession session = SessionCreator.OpenSession()) {
-                using (ITransaction transaction = session.BeginTransaction()) {
-                    session.CreateQuery("DELETE FROM PlayerItemStat").ExecuteUpdate();
-                    transaction.Commit();
                 }
             }
         }

@@ -15,12 +15,6 @@ namespace IAGrim.Database.Synchronizer {
             this.BaseRepo = repo;
         }
 
-        public void ClearAllItemStats() {
-            ThreadExecuter.Execute(
-                () => repo.ClearAllItemStats()
-            );
-        }
-
         public void Import(List<PlayerItem> items) {
             ThreadExecuter.Execute(
                 () => repo.Import(items)

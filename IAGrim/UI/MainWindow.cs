@@ -490,7 +490,7 @@ namespace IAGrim.UI {
             addAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, _databaseSettingDao, _arzParser, _playerItemDao, _parsingService), modsPanel);
             addAndShow(new HelpTab(), panelHelp);            
             addAndShow(new LoggingWindow(), panelLogging);
-            var backupService = new BackupService(_authAuthService, _playerItemDao, _azurePartitionDao);
+            var backupService = new BackupService(_authAuthService, _playerItemDao, _azurePartitionDao, () => Settings.Default.UsingDualComputer);
             _backupServiceWorker = new BackupServiceWorker(backupService);
             backupService.OnUploadComplete += (o, args) => _searchWindow.UpdateListview();
             searchController.OnSearch += (o, args) => backupService.OnSearch();

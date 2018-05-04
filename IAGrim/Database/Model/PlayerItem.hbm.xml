@@ -30,8 +30,8 @@
     <property name="Mod" />
     <property name="IsHardcore" />
     
-    <property name="AzurePartition" />
-    <property name="AzureUuid" />
+    <property name="AzurePartition" column="azpartition_v2" />
+    <property name="AzureUuid" column="azuuid_v2" />
 
     <!--  cascade="all-delete-orphan"  -->
     <!--

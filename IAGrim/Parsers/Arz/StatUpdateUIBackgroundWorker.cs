@@ -45,7 +45,6 @@ namespace IAGrim.Parsers.Arz {
 
 
                 // Update all stats
-                _playerItemDao.ClearAllItemStats();
                 IList<PlayerItem> items = _playerItemDao.ListAll();
                 worker.ReportProgress(Math.Max(100, items.Count), 1);
 

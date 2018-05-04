@@ -31,14 +31,20 @@ namespace IAGrim.UI.Misc {
             Dispose();
         }
         public void Dispose() {
-            lock (lockObj) {
-                if (_browser != null) {
-                    CefSharpSettings.WcfTimeout = TimeSpan.Zero;
-                    _browser.Dispose();
+            try {
+                lock (lockObj) {
+                    if (_browser != null) {
+                        CefSharpSettings.WcfTimeout = TimeSpan.Zero;
+                        _browser.Dispose();
 
-                    Cef.Shutdown();
-                    _browser = null;
+                        Cef.Shutdown();
+                        _browser = null;
+                    }
                 }
+            }
+            catch (Exception ex) {
+                // We're shutting down, doesn't matter. -- Rather not have these reported online.
+                Logger.Warn(ex.Message, ex);
             }
         }
 

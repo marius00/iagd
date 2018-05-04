@@ -14,6 +14,7 @@ namespace IAGrim.UI.Controller {
 
         public string Name { get; set; }
         public string Socket { get; set; }
+        public string Slot { get; set; }
         public float Level { get; set; }
         public object[] URL { get; set; }
         public uint NumItems { get; set; }

@@ -15,18 +15,18 @@ namespace IAGrim.Backup.Azure.Constants {
             if (env == EnvDev) {
                 AuthenticateUrl = "http://localhost:7071/api/Authenticate";
                 TokenVerificationUri = "http://localhost:7071/api/VerifyToken";
-                FetchPartitionUrl = "http://localhost:7071/api/Partitions";
-                FetchItemsInPartitionUrl = "http://localhost:7071/api/Download";
-                UploadItemsUrl = "http://localhost:7071/api/Upload";
-                DeleteItemsUrl = "http://localhost:7071/api/Remove";
+                FetchPartitionUrl = "http://localhost:7071/api/v2_Partitions";
+                FetchItemsInPartitionUrl = "http://localhost:7071/api/v2_Download";
+                UploadItemsUrl = "http://localhost:7071/api/v2_Upload";
+                DeleteItemsUrl = "http://localhost:7071/api/v2_Remove";
             }
             else if (env == EnvAzure) {
                 AuthenticateUrl = "http://grimdawn.dreamcrash.org/ia/backup/";
                 TokenVerificationUri = "https://iagd.azurewebsites.net/api/VerifyToken";
-                FetchPartitionUrl = "https://iagd.azurewebsites.net/api/Partitions";
-                FetchItemsInPartitionUrl = "https://iagd.azurewebsites.net/api/Download";
-                UploadItemsUrl = "https://iagd.azurewebsites.net/api/Upload";
-                DeleteItemsUrl = "https://iagd.azurewebsites.net/api/Remove";
+                FetchPartitionUrl = "https://iagd.azurewebsites.net/api/v2_Partitions";
+                FetchItemsInPartitionUrl = "https://iagd.azurewebsites.net/api/v2_Download";
+                UploadItemsUrl = "https://iagd.azurewebsites.net/api/v2_Upload";
+                DeleteItemsUrl = "https://iagd.azurewebsites.net/api/v2_Remove";
             }
             else {
                 throw new ArgumentException(env);

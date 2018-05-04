@@ -28,7 +28,7 @@ Source: "..\IAGrim\bin\Release\*"; Excludes: "*.pdb, *.exe.config"; DestDir: "{a
 
 
 [Run]
-Filename: "{app}\NDP461-KB3102438-Web.exe"; Description: "Install .NET 4.6.1"; Flags: postinstall 
+Filename: "{app}\NDP461-KB3102438-Web.exe"; Parameters: "/passive /showfinalerror"; Description: "Install .NET 4.6.1"; Flags: postinstall runascurrentuser
 Filename: "{app}\vcredist_x86.exe"; Parameters: "/install /quiet /norestart"; Description: "Install VC++ Redistributable 2013 (x86)"; Flags: runhidden runascurrentuser
 Filename: "{app}\2010sp1_vcredist_x86.exe"; Parameters: "/install /quiet /norestart"; Description: "Install VC++ Redistributable 2010 SP1 (x86)"; Flags: runhidden runascurrentuser
 Filename: "{app}\IAGrim.exe"; Description: "Launch GD Item Assistant"; Flags: postinstall nowait

@@ -31,7 +31,6 @@ namespace IAGrim.Database.Interfaces {
         bool RequiresStatUpdate();
         IList<string> ListAllRecords();
         List<PlayerItem> SearchForItems(Search query);
-        void ClearAllItemStats();
 
         IList<ModSelection> GetModSelection();
 

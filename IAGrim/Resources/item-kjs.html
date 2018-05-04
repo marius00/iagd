@@ -1,5 +1,7 @@
 
 <script type="text/javascript" src="vendor/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="vendor/jquery-ui-1.10.2.js"></script>
+
 <script type="text/javascript" src="vendor/knockout-3.4.0.js"></script>
 <script type="text/javascript" src="vendor/knockout.validation.min.js"></script>
 <script type="text/javascript" src="vendor/knockout.mapping-latest.js"></script>
@@ -8,6 +10,7 @@
 <script type="text/javascript" src="vendor/bootstrap-chosen-master/chosen.jquery.min.js"></script>
 <script type="text/javascript" src="tabs.js"></script>
 
+<link rel="stylesheet" type="text/css" href="vendor/jquery-ui.css" />
 <link rel="stylesheet" type="text/css" href="style.css" />
 <link rel="stylesheet" type="text/css" href="vendor/pnotify.custom.min.css" />
 <link rel="stylesheet" type="text/css" href="vendor/animate.css" />
@@ -19,17 +22,17 @@
 <div class="tab" id="tabcontrol">
     <button class="tablinks active" id="button-items-tab" onclick="openTab(event, 'tab-items')" data-bind="text: $root.iatag_html_tab_header_items">Items</button>
     <button class="tablinks" onclick="openTab(event, 'tab-crafting')" data-bind="text: $root.iatag_html_tab_header_crafting">Crafting</button>
-    <button class="tablinks" onclick="data.OpenURL('http://dev.dreamcrash.org/enchantments/')"  data-bind="text: $root.iatag_html_tab_header_components">Components</button>
-    <button class="tablinks" onclick="data.OpenURL('https://discord.gg/PJ87Ewa')"  data-bind="text: $root.iatag_html_tab_header_discord">Help / Discord</button>
+    <button class="tablinks" onclick="data.OpenURL('http://dev.dreamcrash.org/enchantments/')" data-bind="text: $root.iatag_html_tab_header_components">Components</button>
+    <button class="tablinks" onclick="data.OpenURL('https://discord.gg/PJ87Ewa')" data-bind="text: $root.iatag_html_tab_header_discord">Help / Discord</button>
 </div>
 
 <div id="tab-crafting" class="tabcontent">
-    
+
     <span id="componentAssemblerPage">&nbsp;</span>
     <div></div>
     <div id="chosen-dropdown-controls">
-        
-        
+
+
         <select data-bind='attr: {"data-placeholder": $root.iatag_html_choose_a_relic}' class="chosen-select" style="width: 200px;" id="relicSelect" autocomplete="off">
             <option></option>
         </select>
@@ -44,7 +47,7 @@
     <script id="formElementNodeTemplate" type="text/html">
         <ul>
             <li data-bind='attr: {"data-num": numRequired, "data-itemname": name, "data-jstree":"{\"selected\": " + (numOwned < numRequired ? "false":"true") + ", \"opened\":" + (isComplete ? "false":"true") + ", \"expanded\":" + (isComplete ? "false":"true") + ", \"icon\":\"" + bitmap + "\"}"}'>
-                
+
                 <span data-bind="text: numOwned"></span>/<span data-bind="text: numRequired" class="padding-right-xs"></span><span data-bind="text: name"></span>
                 <span data-bind="visible: numCraftable > 0">(+<span data-bind="text: numCraftable"></span>)</span>
                 <!-- ko template: { name: 'formElementNodeTemplate',
@@ -77,28 +80,31 @@
     .padding-right-xs {
         padding-right: 3px;
     }
-     div.whatever {
-         display: flex;
-         flex-wrap: wrap;
-     }
-    div.whatever > div {
-        flex-shrink: 1;
-        flex-grow: 0;
+
+    div.whatever {
+        display: flex;
+        flex-wrap: wrap;
     }
+
+        div.whatever > div {
+            flex-shrink: 1;
+            flex-grow: 0;
+        }
+
     #itemSum {
         margin-left: 35px;
     }
-    
+
     .close-magic-sequence {
         position: absolute;
         top: 4px;
         right: 7px;
         cursor: pointer;
     }
-    .close-magic-sequence:hover {
-        text-decoration: underline;
-    }
-    
+
+        .close-magic-sequence:hover {
+            text-decoration: underline;
+        }
 </style>
 
 <div id="tab-items" class="tabcontent">
@@ -107,7 +113,7 @@
     <div data-bind="visible: Items().length === 0" class="fullscreen-popup">
         No items found!
     </div>
-    
+
 
     <div data-bind="visible: magicSequenceRequired()" class="magic-sequence-popup">
         <div class="ooops" data-bind="text: $root.iatag_html_badstate_title">Ooops!</div>
@@ -136,7 +142,7 @@
     </div>
     <div class="items" data-bind="foreach: Items(), afterRender: updateTooltips, visible: !magicSequenceRequired()">
         <div class="item">
-            <img data-bind="attr: {src: name.length > 0 ? icon : 'weapon1h_focus02a.tex.png'}" class="item-icon" />
+            <img data-bind="attr: {title: slot, src: name.length > 0 ? icon : 'weapon1h_focus02a.tex.png'}" class="item-icon" />
             <div class="text">
                 <h3 class="NameTag">
                     <span>
@@ -196,7 +202,7 @@
                 <div class="buddy-item" data-bind="visible: buddies.length == 1">&nbsp;&laquo;<span data-bind="text: buddies[0]"></span>&raquo; <span data-bind="text: $root.iatag_html_items_buddy_alsohasthisitem4">has this item.</span></div>
                 <div class="buddy-item" data-bind="visible: buddies.length > 1, attr: {title: buddies.join()}">&nbsp;&laquo;<span data-bind="text: buddies.length"></span>&raquo; <span data-bind="text: $root.iatag_html_items_buddy_alsohasthisitem3">of your Buddies have this item.</span></div>
             </div>
-            
+
             <div class="recipe-item-corner">
                 <img class="cursor-help" data-bind="visible: hasCloudBackup && type === 2, attr: {title: $root.iatag_html_cloud_ok}" src="static\cloud-ok.png">
                 <img class="cursor-help" data-bind="visible: !hasCloudBackup && type === 2, attr: {title: $root.iatag_html_cloud_err}" src="static\cloud-err.png">
@@ -284,7 +290,7 @@
 
         this.hasClosedMagicSequence = ko.observable(false);
 
-        this.closeMagicSequence = function() {
+        this.closeMagicSequence = function () {
             this.hasClosedMagicSequence(true);
         }
         this.magicSequenceRequired = function () {
@@ -347,6 +353,7 @@
         };
 
         openTab(event, 'tab-items');
+        $(document).tooltip();
     });
     function addData() {
         var items = JSON.parse(data.Items);

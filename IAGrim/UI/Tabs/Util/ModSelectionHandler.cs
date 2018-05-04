@@ -23,7 +23,7 @@ namespace IAGrim.UI.Tabs.Util {
         private string _lastMod;
         private bool _lastHardcoreSetting;
 
-        public GDTransferFile SelectedMod => _cbModFilter.SelectedItem as GDTransferFile;
+        public GDTransferFile SelectedMod { private set; get; }
 
         public ModSelectionHandler(ComboBox cbModFilter, IPlayerItemDao playerItemDao, Action updateView, Action<string> setStatus) {
             this._cbModFilter = cbModFilter;
@@ -32,6 +32,7 @@ namespace IAGrim.UI.Tabs.Util {
             _updateView = updateView;
             _playerItemDao = playerItemDao;
             _setStatus = setStatus;
+            SelectedMod = _cbModFilter.SelectedItem as GDTransferFile;
         }
 
         ~ModSelectionHandler() {
@@ -39,6 +40,7 @@ namespace IAGrim.UI.Tabs.Util {
         }
 
         private void cbModFilter_SelectedIndexChanged(object sender, EventArgs e) {
+            SelectedMod = _cbModFilter.SelectedItem as GDTransferFile;
             if (Properties.Settings.Default.AutoSearch) {
                 _updateView();
             }

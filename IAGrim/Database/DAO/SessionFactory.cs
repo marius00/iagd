@@ -43,7 +43,6 @@ namespace IAGrim.Database {
 
                     using (var session = factory.OpenSession()) {
                         using (var transaction = session.BeginTransaction()) {
-                            session.CreateQuery("DELETE FROM PlayerItemStat").ExecuteUpdate();
                             session.CreateQuery("DELETE FROM PlayerItem").ExecuteUpdate();
 
                             foreach (var item in elements) {

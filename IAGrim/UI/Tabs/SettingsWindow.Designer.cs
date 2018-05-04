@@ -60,6 +60,7 @@
             this.buttonLanguageSelect = new FirefoxButton();
             this.buttonViewBackups = new FirefoxButton();
             this.buttonViewLogs = new FirefoxButton();
+            this.cbDualComputer = new FirefoxCheckBox();
             this.contextMenuStrip1.SuspendLayout();
             this.panelBox6.SuspendLayout();
             this.panelBox5.SuspendLayout();
@@ -224,6 +225,7 @@
             // 
             // panelBox4
             // 
+            this.panelBox4.Controls.Add(this.cbDualComputer);
             this.panelBox4.Controls.Add(this.linkSourceCode);
             this.panelBox4.Controls.Add(this.cbDisplaySkills);
             this.panelBox4.Controls.Add(this.cbAutoUpdateModSettings);
@@ -563,6 +565,20 @@
             this.buttonViewLogs.Text = "View Logs";
             this.buttonViewLogs.Click += new System.EventHandler(this.buttonViewLogs_Click);
             // 
+            // cbDualComputer
+            // 
+            this.cbDualComputer.Bold = false;
+            this.cbDualComputer.EnabledCalc = true;
+            this.cbDualComputer.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbDualComputer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbDualComputer.Location = new System.Drawing.Point(3, 252);
+            this.cbDualComputer.Name = "cbDualComputer";
+            this.cbDualComputer.Size = new System.Drawing.Size(192, 27);
+            this.cbDualComputer.TabIndex = 22;
+            this.cbDualComputer.Tag = "iatag_ui_dualcomputer";
+            this.cbDualComputer.Text = "Using IA on multiple PCs";
+            this.cbDualComputer.CheckedChanged += new System.EventHandler(this.cbDualComputer_CheckedChanged);
+            // 
             // SettingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -636,5 +652,6 @@
         private FirefoxButton buttonAdvancedSettings;
         private System.Windows.Forms.LinkLabel linkSourceCode;
         private FirefoxCheckBox firefoxCheckBox1;
+        private FirefoxCheckBox cbDualComputer;
     }
 }

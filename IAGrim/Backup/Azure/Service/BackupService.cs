@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using EvilsoftCommons.Exceptions;
 using IAGrim.Backup.Azure.Dto;
 using IAGrim.Backup.Azure.Util;
 using IAGrim.Database;
@@ -22,17 +24,25 @@ namespace IAGrim.Backup.Azure.Service {
         private readonly ActionCooldown _deletionCooldown;
         private readonly ActionCooldown _uploadCooldown;
         private readonly ActionCooldown _downloadCooldown;
+        private readonly Func<bool> _isDualComputerInstance;
+        private bool _hasSyncedDownOnce = false;
         private DateTimeOffset _lastSearchDt = DateTimeOffset.UtcNow;
 
         public event EventHandler OnUploadComplete;
 
-        public BackupService(AzureAuthService azureAuthService, IPlayerItemDao playerItemDao, IAzurePartitionDao azurePartitionDao) {
+        public BackupService(
+            AzureAuthService azureAuthService, 
+            IPlayerItemDao playerItemDao, 
+            IAzurePartitionDao azurePartitionDao,
+            Func<bool> isDualComputerInstance
+        ) {
             _azureAuthService = azureAuthService;
             _playerItemDao = playerItemDao;
             _azurePartitionDao = azurePartitionDao;
             _deletionCooldown = new ActionCooldown(1000 * 60); // ~1min
             _uploadCooldown = new ActionCooldown(1000 * 10); // ~10 sec
             _downloadCooldown = new ActionCooldown(1000 * 60 * 15); // ~15min
+            _isDualComputerInstance = isDualComputerInstance;
         }
 
         public void Execute() {
@@ -51,7 +61,8 @@ namespace IAGrim.Backup.Azure.Service {
 
             // Downloads will eventually stop
             const int syncFreezeTime = 31;
-            if ((DateTimeOffset.UtcNow - _lastSearchDt).TotalMinutes < syncFreezeTime) {
+            var canSyncDown = !_hasSyncedDownOnce || _isDualComputerInstance(); // Either first sync since startup, or we're in dual-pc mode.
+            if (canSyncDown && (DateTimeOffset.UtcNow - _lastSearchDt).TotalMinutes < syncFreezeTime) {
                 _downloadCooldown.ExecuteIfReady(SyncDown);
             }
         }
@@ -98,10 +109,33 @@ namespace IAGrim.Backup.Azure.Service {
                         .ToList();
 
                     Logger.Info($"Synchronizing {numTaken} items to azure");
-                    var mapping = _azureSyncService.Save(batch);
-                    _playerItemDao.SetAzureIds(mapping);
+                    try {
+                        var mapping = _azureSyncService.Save(batch);
+                        _playerItemDao.SetAzureIds(mapping.Items);
 
-                    numRemaining -= numTaken;
+                        if (mapping.IsClosed) {
+                            _azurePartitionDao.Save(new AzurePartition {
+                                Id = mapping.Partition,
+                                IsActive = false
+                            });
+
+                            Logger.Debug($"Storing partition {mapping.Partition} as closed.");
+                        }
+
+                        numRemaining -= numTaken;
+                    }
+                    catch (AggregateException ex) {
+                        Logger.Warn(ex.Message, ex);
+                        return;
+                    }
+                    catch (WebException ex) {
+                        Logger.Warn(ex.Message, ex);
+                        return;
+                    }
+                    catch (Exception ex) {
+                        ExceptionReporter.ReportException(ex, "SyncUp");
+                        return;
+                    }
                 }
 
                 Logger.Info("Upload complete");
@@ -110,50 +144,66 @@ namespace IAGrim.Backup.Azure.Service {
         }
 
         private void SyncDown() {
-            // Get my own partitions (db)
-            // Filter downloaded partitions by my COMPLETED ones
-            // for item insert, filter out existing (only for partial partitions?)
+            try {
+                // Get my own partitions (db)
+                // Filter downloaded partitions by my COMPLETED ones
+                // for item insert, filter out existing (only for partial partitions?)
 
-            // Filter out existing "closed" partitions
-            var localPartitions = new HashSet<AzurePartition>(_azurePartitionDao.ListAll());
-            var remotePartitions = _azureSyncService.GetPartitions();
-            var partitions = remotePartitions
-                .Where(p => !localPartitions.Any(m => m.Id == p.Partition && !m.IsActive))
-                .ToList();
-
-            var deletedItems = _playerItemDao.GetItemsMarkedForOnlineDeletion();
-            foreach (var partition in partitions) {
-                var partialPartition = localPartitions.Any(p => p.Id == partition.Partition);
-                var sync = _azureSyncService.GetItems(partition.Partition);
-                var items = sync.Items.Select(ItemConverter.ToPlayerItem)
-                    .Where(m => !deletedItems.Any(d => d.Id == m.AzureUuid && d.Partition == m.AzurePartition))
+                // Filter out existing "closed" partitions
+                var localPartitions = new HashSet<AzurePartition>(_azurePartitionDao.ListAll());
+                var remotePartitions = _azureSyncService.GetPartitions();
+                var partitions = remotePartitions
+                    .Where(p => !localPartitions.Any(m => m.Id == p.Partition && !m.IsActive))
                     .ToList();
 
-                if (items.Count == 0 && sync.Removed.Count == 0) {
-                    Logger.Debug("No remote change to items");
+                var deletedItems = _playerItemDao.GetItemsMarkedForOnlineDeletion();
+                foreach (var partition in partitions) {
+                    var partialPartition = localPartitions.Any(p => p.Id == partition.Partition);
+                    var sync = _azureSyncService.GetItems(partition.Partition);
+                    var items = sync.Items.Select(ItemConverter.ToPlayerItem)
+                        .Where(m => !deletedItems.Any(d => d.Id == m.AzureUuid && d.Partition == m.AzurePartition))
+                        .ToList();
+
+                    if (items.Count == 0 && sync.Removed.Count == 0) {
+                        Logger.Debug("No remote change to items");
+                    }
+                    else if (partialPartition) {
+                        _playerItemDao.Save(items);
+                        _playerItemDao.Delete(sync.Removed);
+
+                        // Update partition
+                        var localPartition = localPartitions.First(p => p.Id == partition.Partition);
+                        localPartition.IsActive = partition.IsActive;
+                        _azurePartitionDao.Update(localPartition);
+
+                        Logger.Debug($"Updated/Merged in {items.Count} items");
+                    }
+                    else {
+                        _playerItemDao.Save(items);
+                        _playerItemDao.Delete(sync.Removed);
+
+                        _azurePartitionDao.Save(new AzurePartition {
+                            Id = partition.Partition,
+                            IsActive = partition.IsActive
+                        });
+
+                        Logger.Debug($"Received {items.Count} new items, and {sync.Removed.Count} removed");
+                    }
                 }
-                else if (partialPartition) {
-                    _playerItemDao.Save(items);
-                    _playerItemDao.Delete(sync.Removed);
 
-                    // Update partition
-                    var localPartition = localPartitions.First(p => p.Id == partition.Partition);
-                    localPartition.IsActive = partition.IsActive;
-                    _azurePartitionDao.Update(localPartition);
-
-                    Logger.Debug($"Updated/Merged in {items.Count} items");
-                }
-                else {
-                    _playerItemDao.Save(items);
-                    _playerItemDao.Delete(sync.Removed);
-
-                    _azurePartitionDao.Save(new AzurePartition {
-                        Id = partition.Partition,
-                        IsActive = partition.IsActive
-                    });
-
-                    Logger.Debug($"Received {items.Count} new items, and {sync.Removed.Count} removed");
-                }
+                _hasSyncedDownOnce = true;
+            }
+            catch (AggregateException ex) {
+                Logger.Warn(ex.Message, ex);
+                return;
+            }
+            catch (WebException ex) {
+                Logger.Warn(ex.Message, ex);
+                return;
+            }
+            catch (Exception ex) {
+                ExceptionReporter.ReportException(ex, "SyncDown");
+                return;
             }
         }
     }

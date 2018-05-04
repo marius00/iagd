@@ -159,6 +159,7 @@
     <Compile Include="Backup\Azure\Constants\AzureUris.cs" />
     <Compile Include="Backup\Azure\Dto\AzureItemDeletionDto.cs" />
     <Compile Include="Backup\Azure\Dto\AzureUploadedItem.cs" />
+    <Compile Include="Backup\Azure\Dto\AzureUploadResult.cs" />
     <Compile Include="Backup\Azure\Dto\CommonItem.cs" />
     <Compile Include="Backup\Azure\Dto\ItemDownloadDto.cs" />
     <Compile Include="Backup\Azure\Service\AuthenticationProvider.cs" />
@@ -211,8 +212,10 @@
     <Compile Include="Database\Interfaces\IRecipeItemDao.cs" />
     <Compile Include="Database\Migrations\AddBuddyItemMigrations.cs" />
     <Compile Include="Database\Migrations\AddSkillTables.cs" />
+    <Compile Include="Database\Migrations\DatabaseItemHashFixMigration.cs" />
     <Compile Include="Database\Migrations\IDatabaseMigration.cs" />
     <Compile Include="Database\Migrations\MigrationHandler.cs" />
+    <Compile Include="Database\Model\AzureIdentifier.cs" />
     <Compile Include="Database\Model\AzurePartition.cs" />
     <Compile Include="Database\Model\BaseItem.cs" />
     <Compile Include="Database\Model\DatabaseItemDto.cs" />
@@ -221,7 +224,6 @@
     <Compile Include="Database\Model\ItemTag.cs" />
     <Compile Include="Database\Model\PlayerItemRecord.cs" />
     <Compile Include="Database\Model\PlayerItemSkill.cs" />
-    <Compile Include="Database\Model\PlayerItemStat.cs" />
     <Compile Include="Database\Model\RecipeDbStatRow.cs" />
     <Compile Include="Database\Model\SetBonusRecord.cs" />
     <Compile Include="Database\Model\SkillModifierStat.cs" />
@@ -642,6 +644,12 @@
     <Content Include="Resources\vendor\bootstrap-chosen-master\chosen.proto.min.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\vendor\jquery-ui-1.10.2.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\vendor\jquery-ui.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\vendor\jstree\jstree.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -773,9 +781,6 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Database\Model\ItemTag.hbm.xml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Database\Model\PlayerItemStat.hbm.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Content Include="gd.ico" />

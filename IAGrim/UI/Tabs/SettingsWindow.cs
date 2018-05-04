@@ -211,5 +211,11 @@ namespace IAGrim.UI {
             Properties.Settings.Default.Hotfix1_0_4_0_active = firefoxCheckBox1.Checked;
             Properties.Settings.Default.Save();
         }
+
+        private void cbDualComputer_CheckedChanged(object sender, EventArgs e) {
+            Properties.Settings.Default.UsingDualComputer = (sender as FirefoxCheckBox).Checked;
+            Properties.Settings.Default.Save();
+            
+        }
     }
 }

@@ -38,16 +38,27 @@ namespace IAGrim.Backup.Azure.Service {
         }
 
         private bool IsTokenValid(string token) {
-            var httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Simple-Auth", token);
-            var result = httpClient.GetAsync(AzureUris.TokenVerificationUri).Result.StatusCode;
+            try {
 
-            if (result == HttpStatusCode.OK) {
-                Logger.Info($"Got Status {result} verifying authentication token");
-                return true;
+                var httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Simple-Auth", token);
+                var result = httpClient.GetAsync(AzureUris.TokenVerificationUri).Result.StatusCode;
+
+                if (result == HttpStatusCode.OK) {
+                    Logger.Info($"Got Status {result} verifying authentication token");
+                    return true;
+                }
+                else {
+                    Logger.Error($"Got Status {result} verifying authentication token");
+                    return false;
+                }
             }
-            else {
-                Logger.Error($"Got Status {result} verifying authentication token");
+            catch (AggregateException ex) {
+                Logger.Warn(ex.Message, ex);
+                return false;
+            }
+            catch (WebException ex) {
+                Logger.Warn(ex.Message, ex);
                 return false;
             }
         }
