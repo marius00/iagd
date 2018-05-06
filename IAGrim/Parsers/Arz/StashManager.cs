@@ -65,68 +65,74 @@ namespace IAGrim.Parsers.Arz {
 
 
 
-        
+        private object _fileLock = new object();
+
         public bool TryLootStashFile(string filename) {
-            bool isValid =
-                (GlobalSettings.StashStatus == StashAvailability.CLOSED && GrimStateTracker.IsFarFromStash) ||
-                !(bool) Settings.Default.SecureTransfers;
+            lock (_fileLock) {
+                bool isValid =
+                    (GlobalSettings.StashStatus == StashAvailability.CLOSED && GrimStateTracker.IsFarFromStash) ||
+                    !(bool) Settings.Default.SecureTransfers;
 
-            if (GlobalSettings.PreviousStashStatus == StashAvailability.CRAFTING) {
-                Logger.Debug("Stash is now available for looting, but the previous state was crafting, no new items should have been added");
-                return true;
-            }
-            else if (!isValid) {
-                if (!GrimStateTracker.IsFarFromStash) {
-                    if (!_hasRecentlyUpdatedTimerFeedback) {
-                        Logger.Info("Delaying stash loot, too close to stash. (this is to prevent item dupes on quick re-open)");
-                        _setFeedback(GlobalSettings.Language.GetTag("iatag_feedback_too_close_to_stash"));
-                    }
-                    _hasRecentlyUpdatedTimerFeedback = true;
+                if (GlobalSettings.PreviousStashStatus == StashAvailability.CRAFTING) {
+                    Logger.Debug(
+                        "Stash is now available for looting, but the previous state was crafting, no new items should have been added");
+                    return true;
                 }
+                else if (!isValid) {
+                    if (!GrimStateTracker.IsFarFromStash) {
+                        if (!_hasRecentlyUpdatedTimerFeedback) {
+                            Logger.Info(
+                                "Delaying stash loot, too close to stash. (this is to prevent item dupes on quick re-open)");
+                            _setFeedback(GlobalSettings.Language.GetTag("iatag_feedback_too_close_to_stash"));
+                        }
+
+                        _hasRecentlyUpdatedTimerFeedback = true;
+                    }
+                    else {
+                        if (!_hasRecentlyUpdatedTimerFeedback) {
+                            _setFeedback(GlobalSettings.Language.GetTag("iatag_feedback_delaying_stash_loot_status"));
+                            Logger.InfoFormat("Delaying stash loot, stash status {0}.", GlobalSettings.StashStatus);
+                        }
+
+                        _hasRecentlyUpdatedTimerFeedback = true;
+                    }
+                }
+
                 else {
-                    if (!_hasRecentlyUpdatedTimerFeedback) {
-                        _setFeedback(GlobalSettings.Language.GetTag("iatag_feedback_delaying_stash_loot_status"));
-                        Logger.InfoFormat("Delaying stash loot, stash status {0}.", GlobalSettings.StashStatus);
+                    _hasRecentlyUpdatedTimerFeedback = false;
+
+                    Logger.InfoFormat("Looting stash, IsStashOpen: {0}, IsFarFromStash: {1}",
+                        GlobalSettings.StashStatus != StashAvailability.CLOSED, GrimStateTracker.IsFarFromStash);
+
+
+                    try {
+                        string message = EmptyPageX(filename);
+                        _setFeedback(message);
                     }
-                    _hasRecentlyUpdatedTimerFeedback = true;
+                    catch (NullReferenceException ex) {
+                        Logger.Warn(ex.Message);
+                        Logger.Warn(ex.StackTrace);
+                        _setFeedback(GlobalSettings.Language.GetTag("iatag_feedback_unable_to_loot_stash4"));
+                    }
+                    catch (IOException ex) {
+                        Logger.Warn(ex.Message);
+                        Logger.Warn(ex.StackTrace);
+                        Logger.Info("Exception not reported, IOExceptions are bound to happen.");
+                        _setFeedback(GlobalSettings.Language.GetTag("iatag_feedback_unable_to_loot_stash4"));
+                    }
+                    catch (Exception ex) {
+                        Logger.Warn(ex.Message);
+                        Logger.Warn(ex.StackTrace);
+                        ExceptionReporter.ReportException(ex, "EmptyPageX??");
+                        _setFeedback(GlobalSettings.Language.GetTag("iatag_feedback_unable_to_loot_stash4"));
+                    }
+
+                    return true;
                 }
+
+                return false;
             }
-
-            else {
-                _hasRecentlyUpdatedTimerFeedback = false;
-
-                Logger.InfoFormat("Looting stash, IsStashOpen: {0}, IsFarFromStash: {1}",
-                    GlobalSettings.StashStatus != StashAvailability.CLOSED, GrimStateTracker.IsFarFromStash);
-
-
-                try {
-                    string message = EmptyPageX(filename);
-                    _setFeedback(message);
-                }
-                catch (NullReferenceException ex) {
-                    Logger.Warn(ex.Message);
-                    Logger.Warn(ex.StackTrace);
-                    _setFeedback(GlobalSettings.Language.GetTag("iatag_feedback_unable_to_loot_stash4"));
-                }
-                catch (IOException ex) {
-                    Logger.Warn(ex.Message);
-                    Logger.Warn(ex.StackTrace);
-                    Logger.Info("Exception not reported, IOExceptions are bound to happen.");
-                    _setFeedback(GlobalSettings.Language.GetTag("iatag_feedback_unable_to_loot_stash4"));
-                }
-                catch (Exception ex) {
-                    Logger.Warn(ex.Message);
-                    Logger.Warn(ex.StackTrace);
-                    ExceptionReporter.ReportException(ex, "EmptyPageX??");
-                    _setFeedback(GlobalSettings.Language.GetTag("iatag_feedback_unable_to_loot_stash4"));
-                }
-
-                return true;
-            }
-
-            return false;
         }
-
 
 
         public void UpdateUnlooted(string filename) {

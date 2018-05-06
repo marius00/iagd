@@ -425,7 +425,7 @@ namespace IAGrim.UI {
                 if (_stashManager.TryLootStashFile(args?.Filename)) {
                     // STOP TIMER
                     _stashFileMonitor.CancelQueuedNotify();
-                }
+                } // TODO: This logic should be changed to 're queue' but only trigger once, if its slow it triggers multiple times.
             };
             if (!_stashFileMonitor.StartMonitorStashfile(GlobalPaths.SavePath)) {
                 MessageBox.Show("Ooops!\nIt seems you are synchronizing your saves to steam cloud..\nThis tool is unfortunately not compatible.\n");
