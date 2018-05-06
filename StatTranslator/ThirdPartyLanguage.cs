@@ -38,7 +38,18 @@ namespace StatTranslator {
                 return _stats[tag];
             else
                 return string.Empty;
+        }
 
+        public string GetTag(string tag, string arg1) {
+            return GetTag(tag).Replace("{0}", arg1);
+        }
+
+        public string GetTag(string tag, string arg1, string arg2) {
+            return GetTag(tag, arg1).Replace("{1}", arg2);
+        }
+
+        public string GetTag(string tag, string arg1, string arg2, string arg3) {
+            return GetTag(tag, arg1, arg2).Replace("{2}", arg3);
         }
     }
 }

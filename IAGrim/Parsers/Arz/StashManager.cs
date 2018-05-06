@@ -22,7 +22,7 @@ using Timer = System.Timers.Timer;
 namespace IAGrim.Parsers.Arz {
     internal class StashManager {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(StashManager));
-        private Action<string> _setFeedback;
+        private Action<string, string> _setFeedback;
         private Action _performedLootCallback;
         private readonly IPlayerItemDao _playerItemDao;
         private readonly ItemSizeService _itemSizeService;
@@ -36,7 +36,7 @@ namespace IAGrim.Parsers.Arz {
         public StashManager(
             IPlayerItemDao playerItemDao, 
             IDatabaseItemStatDao dbItemStatDao,
-            Action<string> setFeedback,
+            Action<string, string> setFeedback,
             Action performedLootCallback
             ) {
             _playerItemDao = playerItemDao;
@@ -83,14 +83,14 @@ namespace IAGrim.Parsers.Arz {
                         if (!_hasRecentlyUpdatedTimerFeedback) {
                             Logger.Info(
                                 "Delaying stash loot, too close to stash. (this is to prevent item dupes on quick re-open)");
-                            _setFeedback(GlobalSettings.Language.GetTag("iatag_feedback_too_close_to_stash"));
+                            _setFeedback("Info", GlobalSettings.Language.GetTag("iatag_feedback_too_close_to_stash"));
                         }
 
                         _hasRecentlyUpdatedTimerFeedback = true;
                     }
                     else {
                         if (!_hasRecentlyUpdatedTimerFeedback) {
-                            _setFeedback(GlobalSettings.Language.GetTag("iatag_feedback_delaying_stash_loot_status"));
+                            _setFeedback("Info", GlobalSettings.Language.GetTag("iatag_feedback_delaying_stash_loot_status"));
                             Logger.InfoFormat("Delaying stash loot, stash status {0}.", GlobalSettings.StashStatus);
                         }
 
@@ -107,24 +107,24 @@ namespace IAGrim.Parsers.Arz {
 
                     try {
                         string message = EmptyPageX(filename);
-                        _setFeedback(message);
+                        _setFeedback("Info", message);
                     }
                     catch (NullReferenceException ex) {
                         Logger.Warn(ex.Message);
                         Logger.Warn(ex.StackTrace);
-                        _setFeedback(GlobalSettings.Language.GetTag("iatag_feedback_unable_to_loot_stash4"));
+                        _setFeedback("Warning", GlobalSettings.Language.GetTag("iatag_feedback_unable_to_loot_stash4"));
                     }
                     catch (IOException ex) {
                         Logger.Warn(ex.Message);
                         Logger.Warn(ex.StackTrace);
                         Logger.Info("Exception not reported, IOExceptions are bound to happen.");
-                        _setFeedback(GlobalSettings.Language.GetTag("iatag_feedback_unable_to_loot_stash4"));
+                        _setFeedback("Warning", GlobalSettings.Language.GetTag("iatag_feedback_unable_to_loot_stash4"));
                     }
                     catch (Exception ex) {
                         Logger.Warn(ex.Message);
                         Logger.Warn(ex.StackTrace);
                         ExceptionReporter.ReportException(ex, "EmptyPageX??");
-                        _setFeedback(GlobalSettings.Language.GetTag("iatag_feedback_unable_to_loot_stash4"));
+                        _setFeedback("Warning", GlobalSettings.Language.GetTag("iatag_feedback_unable_to_loot_stash4"));
                     }
 
                     return true;
@@ -259,7 +259,21 @@ namespace IAGrim.Parsers.Arz {
                         .Where(m => m.StackCount <= 1)
                         .Where(m => !_playerItemDao.Exists(Map(m, stash.ModLabel, isHardcore, stash.IsExpansion1)))
                         .ToList();
-                    
+
+                    var notLootedDueToStackSize = stash.Tabs[lootFromIndex].Items
+                        .Where(m => m.StackCount > 1).ToList();
+
+                    if (notLootedDueToStackSize.Count > 0) {
+                        _setFeedback("Warning", GlobalSettings.Language.GetTag("iatag_feedback_stacked_not_looted", notLootedDueToStackSize.Count.ToString()));
+                    }
+
+                    var notLootedDueToDuplicate = stash.Tabs[lootFromIndex].Items.ToList();
+                    notLootedDueToDuplicate.RemoveAll(m => items.Contains(m) || m.StackCount > 1);
+
+                    if (notLootedDueToDuplicate.Count > 0) {
+                        _setFeedback("Warning", GlobalSettings.Language.GetTag("iatag_feedback_duplicates_not_looted", notLootedDueToDuplicate.Count.ToString()));
+                    }
+                    //_setFeedback()
 
 
                     stash.Tabs[lootFromIndex].Items.RemoveAll(e => items.Any(m => m.Equals(e)));

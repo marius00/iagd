@@ -354,6 +354,8 @@ namespace StatTranslator {
             {"iatag_feedback_unable_to_loot_stash4", "Unable to loot stash page.."},
             {"iatag_feedback_item_does_not_exist", "Cannot deposit item, item does not appear to exist.. (ghost item)"},
             {"iatag_feedback_cloud_save_enabled_ingame", "WARNING - Grim Dawn Cloud saving is active." },
+            {"iatag_feedback_stacked_not_looted", "{0} items were not looted due to being a stack" },
+            {"iatag_feedback_duplicates_not_looted", "{0} items were not looted due to being possible duplicates (bugged items)" },
 
             {"iatag_slot_any", "Any" },
             {"iatag_slot_head", "Head" },
@@ -393,7 +395,18 @@ namespace StatTranslator {
                 return stats[tag];
             else
                 return string.Empty;
+        }
 
+        public string GetTag(string tag, string arg1) {
+            return GetTag(tag).Replace("{0}", arg1);
+        }
+
+        public string GetTag(string tag, string arg1, string arg2) {
+            return GetTag(tag, arg1).Replace("{1}", arg2);
+        }
+
+        public string GetTag(string tag, string arg1, string arg2, string arg3) {
+            return GetTag(tag, arg1, arg2).Replace("{2}", arg3);
         }
     }
 }
