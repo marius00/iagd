@@ -16,6 +16,8 @@ using IAGrim.Database;
 using IAGrim.Database.Synchronizer;
 using IAGrim.Parsers.Arz;
 using IAGrim.Services.Crafting;
+using IAGrim.UI.Controller.dto;
+using IAGrim.UI.Misc.CEF;
 
 namespace IAGrim.UI.Controller {
 
@@ -75,7 +77,7 @@ namespace IAGrim.UI.Controller {
 
                 _previousCallback = recipeArgument?.Callback;
                 _previousRecipe = recipeArgument?.RecipeRecord;
-                Browser.JsCallback(recipeArgument?.Callback, JsBind.Serialize(ingredients));
+                Browser.SetRecipeIngredients(JsBind.Serialize(ingredients));
             };
 
 
@@ -85,9 +87,8 @@ namespace IAGrim.UI.Controller {
 
             // Return the list of recipes
             JsBind.OnRequestRecipeList += (sender, args) => {
-                var recipeArgument = args as RequestRecipeArgument;
                 var recipes = _recipeService.GetRecipeList();
-                Browser.JsCallback(recipeArgument?.Callback, JsBind.Serialize(recipes));
+                Browser.SetRecipes(JsBind.Serialize(recipes));
             };
         }
 
@@ -96,7 +97,7 @@ namespace IAGrim.UI.Controller {
                 var ingredients = _recipeService.GetRecipeIngredients(_previousRecipe);
                 _costCalculationService.Populate(ingredients);
                 _costCalculationService.SetMod(_previousMod);
-                Browser.JsCallback(_previousCallback, JsBind.Serialize(ingredients));
+                Browser.SetRecipeIngredients(JsBind.Serialize(ingredients));
             }
         }
 
@@ -109,7 +110,7 @@ namespace IAGrim.UI.Controller {
 
             if (!JsBind.ItemSourceExhausted) {
                 if (ApplyItems()) {
-                    Browser.LoadItems();
+                    Browser.AddItems();
                 }
             }
 

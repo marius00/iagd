@@ -31,6 +31,8 @@ using IAGrim.Services;
 using IAGrim.Services.MessageProcessor;
 using IAGrim.UI.Controller;
 using IAGrim.UI.Misc;
+using IAGrim.UI.Misc.CEF;
+using IAGrim.UI.Misc.CEF.Dto;
 using IAGrim.UI.Popups;
 using IAGrim.UI.Tabs;
 using IAGrim.Utilities;
@@ -354,7 +356,7 @@ namespace IAGrim.UI {
                 }
                 else {
                     statusLabel.Text = feedback.Replace("\\n", " - ");
-                    _cefBrowserHandler.ShowMessage(feedback, "Info");
+                    _cefBrowserHandler.ShowMessage(feedback, UserFeedbackLevel.Info);
                 }
             }
             catch (ObjectDisposedException) {
@@ -456,7 +458,6 @@ namespace IAGrim.UI {
             );
             _cefBrowserHandler.InitializeChromium(searchController.JsBind, Browser_IsBrowserInitializedChanged);
             searchController.Browser = _cefBrowserHandler;
-            searchController.JsBind.OnTransfer += TransferItem;
             searchController.JsBind.OnClipboard += SetItemsClipboard;
 
             // Load the grim database
@@ -507,6 +508,9 @@ namespace IAGrim.UI {
 
             _searchWindow = new SearchWindow(_cefBrowserHandler.BrowserControl, SetFeedback, _playerItemDao, searchController, _itemTagDao);
             addAndShow(_searchWindow, searchPanel);
+            _stashManager.StashUpdated += (_, __) => {
+                _searchWindow.UpdateListview();
+            };
 
 
             addAndShow(
@@ -631,6 +635,45 @@ namespace IAGrim.UI {
                     }
                 };
                 t.Start();
+            }
+
+
+            _cefBrowserHandler.TransferSingleRequested += TransferSingleItem;
+            _cefBrowserHandler.TransferAllRequested += TransferAllItems;
+        }
+        void TransferSingleItem(object ignored, EventArgs args) {
+
+            if (InvokeRequired) {
+                Invoke((MethodInvoker)delegate {
+                    this.TransferSingleItem(ignored, args);
+                });
+            }
+            else {
+                ItemTransferEvent searchEvent = args as ItemTransferEvent;
+                StashTransferEventArgs transferArgs = new StashTransferEventArgs {
+                    Count = 1,
+                    InternalId = searchEvent.Request.Split(';')
+                };
+
+                _transferController.TransferItem(ignored, transferArgs);
+            }
+        }
+
+        void TransferAllItems(object ignored, EventArgs args) {
+
+            if (InvokeRequired) {
+                Invoke((MethodInvoker)delegate {
+                    this.TransferAllItems(ignored, args);
+                });
+            }
+            else {
+                ItemTransferEvent searchEvent = args as ItemTransferEvent;
+                StashTransferEventArgs transferArgs = new StashTransferEventArgs {
+                    Count = int.MaxValue,
+                    InternalId = searchEvent.Request.Split(';')
+                };
+
+                _transferController.TransferItem(ignored, transferArgs);
             }
         }
 

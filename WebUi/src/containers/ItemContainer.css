@@ -19,6 +19,9 @@
   width: calc(25% - 20px);
 }
 
+.single-item .item {
+  width: 100% !important;
+}
 @media only screen and (min-width: 1921px) {
   .items .item {
     width: calc(20% - 20px);
@@ -46,6 +49,9 @@
   right: 0;
   padding: 10px;
   margin: 0;
+}
+.recipe-item-corner img {
+  margin-left: 4px;
 }
 .items .item .level,
 .items .item .recipe-item,
@@ -170,10 +176,12 @@ a { cursor: pointer; }
   margin-top: 15px;
 }
 .skill-trigger {
-  text-decoration: underline;
+  text-decoration: underline !important;
 }
 .item-name-header {
   margin-bottom: 0px;
+  font-size: 15px;
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"
 }
 
 .bodystats {
@@ -197,6 +205,10 @@ a { cursor: pointer; }
   color: black;
 }
 .items {
-
   background: rgb(85,68,96);
+  width: 100%;
+}
+.item-socket-label {
+  font-size: 10px;
+  margin-top: 0px;
 }

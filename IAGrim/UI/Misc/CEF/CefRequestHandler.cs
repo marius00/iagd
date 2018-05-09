@@ -1,11 +1,14 @@
 ﻿using System;
 using CefSharp;
 using IAGrim.Backup.Azure.CefSharp.Events;
+using IAGrim.UI.Misc.CEF.Dto;
 
-namespace IAGrim.Backup.Azure.CefSharp {
+namespace IAGrim.UI.Misc.CEF {
     // https://github.com/cefsharp/CefSharp/blob/master/CefSharp.Example/RequestHandler.cs
-    public class AzureAuthenticationUriHijack : IRequestHandler {
+    public class CefRequestHandler : IRequestHandler {
 
+        public event EventHandler TransferSingleRequested;
+        public event EventHandler TransferAllRequested;
         public event EventHandler OnAuthentication;
 
         private static string ExtractToken(string url) {
@@ -21,6 +24,25 @@ namespace IAGrim.Backup.Azure.CefSharp {
             if (request.Url.StartsWith("https://auth.iagd.dreamcrash.org/token/")) {
                 var token = ExtractToken(request.Url);
                 OnAuthentication?.Invoke(browser, new AuthResultEvent { Token = token});
+                return true;
+            }
+
+            else if (request.Url.StartsWith("transfer://single/")) {
+                TransferSingleRequested?.Invoke(this, new ItemTransferEvent {
+                    Request = request.Url.Replace("transfer://single/", "")
+                });
+                return true;
+            }
+
+            else if (request.Url.StartsWith("transfer://all/")) {
+                TransferAllRequested?.Invoke(this, new ItemTransferEvent {
+                    Request = request.Url.Replace("transfer://all/", "")
+                });
+                return true;
+            }
+
+            else if (!request.Url.Contains("grimdawn.dreamcrash") && (request.Url.StartsWith("http://") || request.Url.StartsWith("https://"))) {
+                System.Diagnostics.Process.Start(request.Url);
                 return true;
             }
 

@@ -29,7 +29,7 @@ namespace IAGrim.Database.Synchronizer {
 
         private void Run() {
             if (Thread.CurrentThread.Name == null)
-                Thread.CurrentThread.Name = "ThreadExecuter";
+                Thread.CurrentThread.Name = "SQL";
 
             ExceptionReporter.EnableLogUnhandledOnThread();
 

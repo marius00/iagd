@@ -1,12 +1,14 @@
 import * as React from 'react';
 import Item from '../components/Item';
 import IItem from '../interfaces/IItem';
-import { GlobalState } from '../types/index';
 import { connect } from 'react-redux';
 import './ItemContainer.css';
 import * as ReactTooltip from 'react-tooltip';
 import { isEmbedded } from '../constants';
 import Spinner from '../components/Spinner';
+import OnScrollLoader from './InfiniteItemLoader';
+import { GlobalReducerState } from '../types';
+import translate from '../translations/EmbeddedTranslator';
 
 interface Props {
   items: IItem[];
@@ -41,15 +43,17 @@ class ItemContainer extends React.Component<Props, object> {
 
   render() {
     const items = this.props.items;
+    const classes = items.length > 1 ? 'items' : 'items single-item';
 
     if (this.props.isLoading) {
       return <Spinner />;
     }
     else if (items.length > 0) {
       return (
-        <div className="items">
+        <div className={classes}>
 
-          {items.map((item) => <Item
+          {items.map((item) =>
+            <Item
               item={item}
               key={'item-' + item.url.join(':')}
               transferAll={(url) => this.transferAll(url)}
@@ -57,25 +61,41 @@ class ItemContainer extends React.Component<Props, object> {
             />
           )}
 
-          <ReactTooltip id="you-can-craft-this-item-tooltip"><span>You can craft this item</span>
+          <ReactTooltip id="you-can-craft-this-item-tooltip">
+            <span>{translate('items.label.youCanCraftThisItem')}</span>
           </ReactTooltip>
+          <ReactTooltip id="cloud-ok-tooltip">
+            <span>{translate('items.label.cloudOk')}</span>
+          </ReactTooltip>
+          <ReactTooltip id="cloud-err-tooltip">
+            <span>{translate('items.label.cloudError')}</span>
+          </ReactTooltip>
+          <ReactTooltip id="triple-green-tooltip">
+            <span>{translate('items.label.tripleGreen')}</span>
+          </ReactTooltip>
+          <ReactTooltip id="double-green-tooltip">
+            <span>{translate('items.label.doubleGreen')}</span>
+          </ReactTooltip>
+
+
+          <OnScrollLoader />
         </div>
       );
     }
     else {
       return (
         <div className="no-items-found">
-          No items found
+          {translate('items.label.noItemsFound')}
         </div>
       );
     }
   }
 }
 
-export function mapStateToProps({items, isLoading}: GlobalState): Props {
+export function mapStateToProps(state: GlobalReducerState): Props {
   return {
-    items: items,
-    isLoading: isLoading
+    items: state.setItemReducer.items,
+    isLoading: state.setItemReducer.isLoading
   };
 }
 

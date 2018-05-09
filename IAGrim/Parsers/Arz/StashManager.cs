@@ -260,20 +260,17 @@ namespace IAGrim.Parsers.Arz {
                         .Where(m => !_playerItemDao.Exists(Map(m, stash.ModLabel, isHardcore, stash.IsExpansion1)))
                         .ToList();
 
-                    var notLootedDueToStackSize = stash.Tabs[lootFromIndex].Items
-                        .Where(m => m.StackCount > 1).ToList();
 
+                    var notLootedDueToStackSize = stash.Tabs[lootFromIndex].Items.Where(m => m.StackCount > 1).ToList();
                     if (notLootedDueToStackSize.Count > 0) {
                         _setFeedback("Warning", GlobalSettings.Language.GetTag("iatag_feedback_stacked_not_looted", notLootedDueToStackSize.Count.ToString()));
                     }
 
                     var notLootedDueToDuplicate = stash.Tabs[lootFromIndex].Items.ToList();
                     notLootedDueToDuplicate.RemoveAll(m => items.Contains(m) || m.StackCount > 1);
-
                     if (notLootedDueToDuplicate.Count > 0) {
                         _setFeedback("Warning", GlobalSettings.Language.GetTag("iatag_feedback_duplicates_not_looted", notLootedDueToDuplicate.Count.ToString()));
                     }
-                    //_setFeedback()
 
 
                     stash.Tabs[lootFromIndex].Items.RemoveAll(e => items.Any(m => m.Equals(e)));

@@ -153,7 +153,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Backup\Azure\CefSharp\AzureAuthenticationUriHijack.cs" />
+    <Compile Include="UI\Controller\dto\ItemTypeDto.cs" />
+    <Compile Include="UI\Misc\CEF\CefRequestHandler.cs" />
     <Compile Include="Backup\Azure\CefSharp\AzureOnClosePopupHijack.cs" />
     <Compile Include="Backup\Azure\CefSharp\Events\AuthResultEvent.cs" />
     <Compile Include="Backup\Azure\Constants\AzureUris.cs" />
@@ -328,7 +329,10 @@
     </Compile>
     <Compile Include="Theme\ScrollPanelMessageFilter.cs" />
     <Compile Include="Theme\Theme.cs" />
-    <Compile Include="UI\Misc\CefBackupAuthentication.cs" />
+    <Compile Include="UI\Misc\CEF\CefBackupAuthentication.cs" />
+    <Compile Include="UI\Misc\CEF\Dto\ItemTransferEvent.cs" />
+    <Compile Include="UI\Misc\CEF\IUserFeedbackHandler.cs" />
+    <Compile Include="UI\Misc\CEF\UserFeedbackLevel.cs" />
     <Compile Include="UI\Misc\HtmlTranslation.cs" />
     <Compile Include="UI\Misc\RequestRecipeArgument.cs" />
     <Compile Include="UI\Misc\TextboxHoverFocusHighlight.cs" />
@@ -380,11 +384,11 @@
     <Compile Include="UI\Controller\ISettingsController.cs" />
     <Compile Include="UI\Controller\ISettingsReadController.cs" />
     <Compile Include="UI\Controller\ItemTransferController.cs" />
-    <Compile Include="UI\Controller\JsonSkill.cs" />
-    <Compile Include="UI\Controller\JsonStat.cs" />
+    <Compile Include="UI\Controller\dto\JsonSkill.cs" />
+    <Compile Include="UI\Controller\dto\JsonStat.cs" />
     <Compile Include="UI\Controller\SearchController.cs" />
     <Compile Include="UI\Controller\SettingsController.cs" />
-    <Compile Include="UI\Controller\JsonItem.cs" />
+    <Compile Include="UI\Controller\dto\JsonItem.cs" />
     <Compile Include="UI\DesiredSkills.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -409,7 +413,7 @@
     <Compile Include="UI\Popups\LanguagePackPicker.Designer.cs">
       <DependentUpon>LanguagePackPicker.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Misc\CefBrowserHandler.cs" />
+    <Compile Include="UI\Misc\CEF\CefBrowserHandler.cs" />
     <Compile Include="UI\Misc\ClipboardEventArg.cs" />
     <Compile Include="UI\Misc\JSWrapper.cs" />
     <Compile Include="UI\Misc\MessageType.cs" />

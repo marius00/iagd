@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace IAGrim.UI.Misc {
+namespace IAGrim.UI.Misc.CEF {
     public interface ICefBackupAuthentication {
         void Open(string url);
         event EventHandler OnSuccess;

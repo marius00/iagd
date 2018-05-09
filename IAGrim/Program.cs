@@ -32,6 +32,7 @@ using IAGrim.Database.DAO;
 using IAGrim.Parser.Arc;
 using IAGrim.Parsers.GameDataParsing.Service;
 using IAGrim.Services.Crafting;
+using IAGrim.UI.Misc.CEF;
 using IAGrim.UI.Popups;
 using IAGrim.Utilities.HelperClasses;
 
@@ -141,6 +142,8 @@ namespace IAGrim {
             }
 #endif
             //ParsingUIBackgroundWorker tmp = new ParsingUIBackgroundWorker();
+
+            ItemHtmlWriter.CopyMissingFiles();
 
             Guid guid = new Guid("{F3693953-C090-4F93-86A2-B98AB96A9368}");
             using (SingleInstance singleInstance = new SingleInstance(guid)) {

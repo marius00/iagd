@@ -1,6 +1,7 @@
 import * as React from 'react';
 import ItemStat from './ItemStat';
 import { ISkill } from '../interfaces/ISkill';
+import translate from '../translations/EmbeddedTranslator';
 
 interface Props {
   skill: ISkill;
@@ -26,7 +27,10 @@ class Skill extends React.Component<Props, object> {
 
     return (
       <div className="skill">
-        <span className="skill-header">Grants Skill:</span> {skill.name} {skill.level && skill.level > 0 ? `(Level ${skill.level})` : ''}
+        <span className="skill-header">
+          {translate('item.label.grantsSkill')}
+        </span>
+        {skill.name} {skill.level && skill.level > 0 ? `(${translate('item.label.grantsSkillLevel', String(skill.level))})` : ''}
         <div>
           <ul>
             {headerStats}
@@ -38,7 +42,7 @@ class Skill extends React.Component<Props, object> {
 
           {petStats.length > 0 ? (
             <div>
-              <div className="pet-header">Bonus to All Pets:</div>
+              <div className="pet-header">{translate('item.label.bonusToAllPets')}</div>
               {petStats}
             </div>
           ) : ''

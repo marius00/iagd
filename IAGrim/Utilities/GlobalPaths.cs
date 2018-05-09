@@ -24,11 +24,7 @@ namespace IAGrim.Utilities {
         }
 
 
-        public static string ItemsHtmlFile {
-            get {
-                return Path.Combine(StorageFolder, "items.html");
-            }
-        }
+        public static string ItemsHtmlFile => Path.Combine(StorageFolder, "index.html");
 
         public static string BackupLocation {
             get {

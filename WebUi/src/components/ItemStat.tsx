@@ -14,7 +14,7 @@ class ItemStat extends React.Component<Props, object> {
     if (this.props.extras) {
       return (
         <li>
-          <a data-tip="true" data-for={tooltipId}>{this.props.label}</a>
+          <a data-tip="true" data-for={tooltipId} className="skill-trigger">{this.props.label}</a>
           <ReactTooltip id={tooltipId}>
             <span>{this.props.extras}</span>
           </ReactTooltip>

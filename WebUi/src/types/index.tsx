@@ -1,12 +1,15 @@
 import IItem from '../interfaces/IItem';
-import IProfession from '../interfaces/IProfession';
-import IMod from '../interfaces/IMod';
+import { RecipeReducerState } from '../containers/recipes/types';
 
-export interface GlobalState {
-    clickCounter: number;
-    items: IItem[];
-    isLoading: boolean;
-    classes: IProfession[];
-    mods: IMod[];
-    selectedMod: IMod;
+export interface ApplicationState {
+  clickCounter: number;
+  items: IItem[];
+  isLoading: boolean;
+}
+
+
+export interface GlobalReducerState {
+  setItemReducer: ApplicationState;
+  notifications: Notification[];
+  recipes: RecipeReducerState;
 }

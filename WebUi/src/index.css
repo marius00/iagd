@@ -1,5 +1,10 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
+  /* font-family: sans-serif; */
+
+  font-family: "verdana", "geneva", "lucida", "lucida grande", "arial", "helvetica", sans-serif;
+  font-size: 12px;
+  box-sizing: border-box;
+  background: rgb(85,68,96);
 }

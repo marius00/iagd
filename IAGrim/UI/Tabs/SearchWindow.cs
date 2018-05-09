@@ -29,6 +29,8 @@ namespace IAGrim.UI {
         private readonly IItemTagDao _itemTagDao;
         private readonly List<TextboxHoverFocusHighlight> _highlights = new List<TextboxHoverFocusHighlight>();
         public readonly ModSelectionHandler ModSelectionHandler;
+        private ComboBoxItemQuality _selectedItemQuality;
+        private ComboBoxItem _selectedSlot;
 
         public SearchWindow(
             Control browser, 
@@ -98,8 +100,8 @@ namespace IAGrim.UI {
             if (mf == null)
                 return;
 
-            ComboBoxItemQuality rarity = comboBoxItemQuality.SelectedItem as ComboBoxItemQuality;
-            var slot = slotFilter.SelectedItem as ComboBoxItem;
+            ComboBoxItemQuality rarity = _selectedItemQuality;
+            var slot = _selectedSlot;
             var query = new Search {
                 Wildcard = searchField.Text,
                 filters = filters.Filters,
@@ -119,7 +121,10 @@ namespace IAGrim.UI {
             var message = _searchController.Search(query, filters.DuplicatesOnly, includeBuddyItems, checkBoxOrderByLevel.Checked);
 
             Logger.Info("Updating UI..");
-            _setStatus(message);
+
+            if (!string.IsNullOrEmpty(message)) {
+                _setStatus(message);
+            }
             Logger.Info("Done");
         }
 
@@ -192,12 +197,24 @@ namespace IAGrim.UI {
             comboBoxItemQuality.SelectedIndex = 0;
 
             // Fill the slot dropdown
-            slotFilter.Items.AddRange(UIHelper.SlotFilter);
-            slotFilter.SelectedIndex = 0;
+            slotFilterDropdown.Items.AddRange(UIHelper.SlotFilter);
+            slotFilterDropdown.SelectedIndex = 0;
 
             this.FormClosing += SearchWindow_FormClosing;
             searchField.KeyDown += SearchField_KeyDown;
+
+            _selectedItemQuality = comboBoxItemQuality.SelectedItem as ComboBoxItemQuality;
+            comboBoxItemQuality.SelectedIndexChanged += (s, ev) => {
+                _selectedItemQuality = comboBoxItemQuality.SelectedItem as ComboBoxItemQuality;
+            };
+
+            _selectedSlot = slotFilterDropdown.SelectedItem as ComboBoxItem;
+            slotFilterDropdown.SelectedIndexChanged += (s, ev) => {
+                _selectedSlot = slotFilterDropdown.SelectedItem as ComboBoxItem;
+            };
         }
+
+
 
         private void SearchField_KeyDown(object sender, KeyEventArgs e) {
             if (!Properties.Settings.Default.AutoSearch) {
@@ -220,7 +237,7 @@ namespace IAGrim.UI {
             _filterWindow.ClearFilters();
             searchField.Text = string.Empty;
             comboBoxItemQuality.SelectedIndex = 0;
-            slotFilter.SelectedIndex = 0;
+            slotFilterDropdown.SelectedIndex = 0;
             minLevel.Text = "0";
             maxLevel.Text = "110";
 

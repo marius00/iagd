@@ -3,29 +3,28 @@
   align-items: stretch;
 }
 
-#sidebar {
-  min-width: 250px;
-  max-width: 350px;
-  min-height: 95vh;
-  margin: 5px;
+.tab-list {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  text-align: left;
+  z-index: 1001;
+  min-width: 100vw;
+  background-color: white;
 }
-
-#sidebar.active {
-  margin-left: -250px;
+.react-tabs__tab-list {
+  margin-bottom: 2px;
 }
 
 #content {
-  margin: 5px;
   position: relative;
+  margin-top: 35px
 }
 
-#sidebar {
-  background: rgb(240, 240, 240);
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none; /* Safari */
-  -khtml-user-select: none; /* Konqueror HTML */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* Internet Explorer/Edge */
-  user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome and Opera */
+.tab-control {
+  margin: 5px;
+}
+
+.cursor-help {
+  cursor: help !important;
 }

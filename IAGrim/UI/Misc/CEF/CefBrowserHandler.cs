@@ -1,23 +1,19 @@
-﻿using CefSharp;
+﻿using System;
+using System.IO;
+using System.Windows.Forms;
+using CefSharp;
 using CefSharp.WinForms;
-using IAGrim.Database;
+using IAGrim.Backup.Azure.CefSharp;
 using IAGrim.Utilities;
 using log4net;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using IAGrim.Backup.Azure;
-using IAGrim.Backup.Azure.CefSharp;
 
-
-namespace IAGrim.UI.Misc {
-    public class CefBrowserHandler : IDisposable, ICefBackupAuthentication {
+namespace IAGrim.UI.Misc.CEF {
+    public class CefBrowserHandler : IDisposable, ICefBackupAuthentication, IUserFeedbackHandler {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(CefBrowserHandler));
+        private const string Dispatch = "data.globalStore.dispatch";
         private ChromiumWebBrowser _browser;
+        public event EventHandler TransferSingleRequested;
+        public event EventHandler TransferAllRequested;
 
         public ChromiumWebBrowser BrowserControl {
             get {
@@ -53,12 +49,13 @@ namespace IAGrim.UI.Misc {
         }
 
         public void ShowLoadingAnimation() {
-            if (_browser.IsBrowserInitialized)
-                _browser.ExecuteScriptAsync("isLoading(true);");
+            if (_browser.IsBrowserInitialized) {
+                _browser.ExecuteScriptAsync("data.globalStore.dispatch(data.globalSetIsLoading(true));");
+            }
         }
         public void RefreshItems() {
             if (_browser.IsBrowserInitialized) {
-                _browser.ExecuteScriptAsync("refreshData();");
+                _browser.ExecuteScriptAsync("data.globalStore.dispatch(data.globalSetItems(JSON.parse(data.Items)));");
             }
             else {
                 Logger.Warn("Attempted to update items but CEF not yet initialized.");
@@ -73,26 +70,52 @@ namespace IAGrim.UI.Misc {
                 Logger.Warn("Attempted to execute a callback but CEF not yet initialized.");
             }
         }
-        
 
-        public void LoadItems() {
+        public void SetRecipes(string json) {
             if (_browser.IsBrowserInitialized) {
-                _browser.ExecuteScriptAsync("addData();");
+                var command = $"{Dispatch}(data.globalSetRecipes({json}));";
+                _browser.ExecuteScriptAsync(command);
+            }
+            else {
+                Logger.Warn("Attempted a call to JS CEF not yet initialized.");
+            }
+        }
+
+        public void SetRecipeIngredients(string json) {
+            if (_browser.IsBrowserInitialized) {
+                var command = $"{Dispatch}(data.globalSetRecipeIngredients({json}));";
+                _browser.ExecuteScriptAsync(command);
+            }
+            else {
+                Logger.Warn("Attempted a call to JS CEF not yet initialized.");
+            }
+        }
+
+        public void AddItems() {
+            if (_browser.IsBrowserInitialized) {
+                _browser.ExecuteScriptAsync($"{Dispatch}(data.globalAddItems(JSON.parse(data.Items)));");
             }
             else {
                 Logger.Warn("Attempted to update items but CEF not yet initialized.");
             }
         }
-        
-        
-        public void ShowMessage(string message, string level) {
+
+
+        public void ShowMessage(string message, UserFeedbackLevel level) {
+            string levelLowercased = level.ToString().ToLower();
+            var m = message.Replace("\n", "\\n").Replace("'", "\\'");
             if (!string.IsNullOrEmpty(message)) {
                 if (_browser.IsBrowserInitialized)
-                    _browser.ExecuteScriptAsync("showMessage", new[] { message.Replace("\n", "\\n"), level, level.ToLower() });
+                    _browser.ExecuteScriptAsync($"{Dispatch}(data.showMessage('{m}', '{levelLowercased}'));");
                 else
                     Logger.Warn($"Attempted to display message \"{message}\" but browser is not yet initialized");
             }
         }
+
+        public void ShowMessage(string message) {
+            ShowMessage(message, UserFeedbackLevel.Info);
+        }
+
 
         public void InitializeChromium(object bindeable, EventHandler<IsBrowserInitializedChangedEventArgs> Browser_IsBrowserInitializedChanged) {
             try {
@@ -107,22 +130,15 @@ namespace IAGrim.UI.Misc {
                         MessageBoxIcon.Error);
                 }
 
-                try {
-                    string src = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resources", "item-kjs.html");
-                    File.Copy(src, GlobalPaths.ItemsHtmlFile, true);
-                } catch (Exception ex) {
-                    // Probably doesn't matter, only relevant if its been updated
-                    Logger.Warn(ex.Message);
-                    Logger.Warn(ex.StackTrace);
-                }
-
                 _browser = new ChromiumWebBrowser(GlobalPaths.ItemsHtmlFile);
                 _browser.RegisterJsObject("data", bindeable, false);
                 _browser.IsBrowserInitializedChanged += Browser_IsBrowserInitializedChanged;
 
-                var authHijack = new AzureAuthenticationUriHijack();
-                authHijack.OnAuthentication += (sender, args) => OnSuccess?.Invoke(sender, args);
-                _browser.RequestHandler = authHijack;
+                var requestHandler = new CefRequestHandler();
+                requestHandler.TransferSingleRequested += (sender, args) => this.TransferSingleRequested?.Invoke(sender, args);
+                requestHandler.TransferAllRequested += (sender, args) => this.TransferAllRequested?.Invoke(sender, args);
+                requestHandler.OnAuthentication += (sender, args) => OnSuccess?.Invoke(sender, args);
+                _browser.RequestHandler = requestHandler;
                 
                 _browser.LifeSpanHandler = new AzureOnClosePopupHijack();
 

@@ -1,5 +1,6 @@
 import { IStat } from './IStat';
 import { ISkill } from './ISkill';
+import IItemType from './IItemType';
 
 export default interface IItem {
   baseRecord: string;
@@ -10,7 +11,7 @@ export default interface IItem {
   level: number;
   url: Array<number | string>;
   numItems: number;
-  type: number;
+  type: IItemType;
   buddies: string[];
   hasRecipe: boolean;
   greenRarity: number;
@@ -18,5 +19,8 @@ export default interface IItem {
   bodyStats: IStat[];
   petStats: IStat[];
   skill: ISkill | null;
+  hasCloudBackup?: boolean; // TODO: Should be mandatory, optional due to test data not including it
+  slot?: string; // TODO: See above
+  extras?: string | undefined;
 }
 

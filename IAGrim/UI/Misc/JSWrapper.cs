@@ -5,12 +5,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IAGrim.UI.Controller.dto;
 using IAGrim.Utilities;
 
 namespace IAGrim.UI.Misc {
 
     public class JSWrapper {
-        private JsonSerializerSettings _settings;
+        private readonly JsonSerializerSettings _settings;
 
         public event EventHandler OnRequestRecipeList;
         public event EventHandler OnRequestRecipeIngredients;
@@ -36,6 +37,11 @@ namespace IAGrim.UI.Misc {
             };
 
             var lang = GlobalSettings.Language;
+            /*
+            translation = new Dictionary<string, string> {
+                {"items.label.cloudOk", "This 32432423423 has been backed up to the cloud"}
+            };*/
+            
             translation = new HtmlTranslation {
                 iatag_html_any = lang.GetTag("iatag_html_any"),
                 iatag_html_badstate_subtitle = lang.GetTag("iatag_html_badstate_subtitle"),
@@ -88,6 +94,20 @@ namespace IAGrim.UI.Misc {
             }
         }
 
+
+        public void globalRequestRecipeComponents(string recipeRecord) {
+            OnRequestRecipeIngredients?.Invoke(this, new RequestRecipeArgument {
+                RecipeRecord = recipeRecord
+            });
+        }
+
+        public void globalRequestRecipeList() {
+            OnRequestRecipeList?.Invoke(this, null);
+        }
+
+        public void globalRequestInitialItems() {
+            OnRequestItems?.Invoke(this, null);
+        }
         public HtmlTranslation translation { get; private set; }
 
         public string Items { get; set; }
@@ -95,25 +115,11 @@ namespace IAGrim.UI.Misc {
 
         public int IsTimeToShowNag { get; set; }
 
-        public event EventHandler OnTransfer;
         public event EventHandler OnClipboard;
         public event EventHandler OnRequestItems;
 
         public void RequestMoreItems() {
             OnRequestItems?.Invoke(this, null);
-        }
-
-        public void TransferAll(object[] id) {
-            OnTransfer?.Invoke(this, new StashTransferEventArgs { InternalId = id, Count = int.MaxValue });
-        }
-
-        public void TransferItem(object[] id) {
-            OnTransfer?.Invoke(this, new StashTransferEventArgs { InternalId = id, Count = 1 });
-        }
-
-
-        public void OpenURL(string url) {
-            System.Diagnostics.Process.Start(url);
         }
 
         public string Message {

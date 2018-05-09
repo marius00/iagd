@@ -30,7 +30,7 @@
             this.outputLabel = new System.Windows.Forms.Label();
             this.comboBoxItemQuality = new System.Windows.Forms.ComboBox();
             this.panelFilter = new System.Windows.Forms.Panel();
-            this.slotFilter = new System.Windows.Forms.ComboBox();
+            this.slotFilterDropdown = new System.Windows.Forms.ComboBox();
             this.searchField = new System.Windows.Forms.TextBox();
             this.checkBoxOrderByLevel = new System.Windows.Forms.CheckBox();
             this.minLevel = new System.Windows.Forms.TextBox();
@@ -111,17 +111,17 @@
             this.panelFilter.TabIndex = 38;
             this.panelFilter.TabStop = true;
             // 
-            // slotFilter
+            // slotFilterDropdown
             // 
-            this.slotFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.slotFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.slotFilter.FormattingEnabled = true;
-            this.slotFilter.Location = new System.Drawing.Point(651, 14);
-            this.slotFilter.Name = "slotFilter";
-            this.slotFilter.Size = new System.Drawing.Size(118, 21);
-            this.slotFilter.TabIndex = 41;
-            this.tooltipThingie.SetToolTip(this.slotFilter, "Item slot");
-            this.slotFilter.SelectedIndexChanged += new System.EventHandler(this.slotFilter_SelectedIndexChanged);
+            this.slotFilterDropdown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.slotFilterDropdown.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.slotFilterDropdown.FormattingEnabled = true;
+            this.slotFilterDropdown.Location = new System.Drawing.Point(651, 14);
+            this.slotFilterDropdown.Name = "slotFilterDropdown";
+            this.slotFilterDropdown.Size = new System.Drawing.Size(118, 21);
+            this.slotFilterDropdown.TabIndex = 41;
+            this.tooltipThingie.SetToolTip(this.slotFilterDropdown, "Item slot");
+            this.slotFilterDropdown.SelectedIndexChanged += new System.EventHandler(this.slotFilter_SelectedIndexChanged);
             // 
             // searchField
             // 
@@ -185,7 +185,7 @@
             this.Controls.Add(this.toolStripContainer);
             this.Controls.Add(this.comboBoxItemQuality);
             this.Controls.Add(this.panelFilter);
-            this.Controls.Add(this.slotFilter);
+            this.Controls.Add(this.slotFilterDropdown);
             this.Controls.Add(this.searchField);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;
@@ -211,7 +211,7 @@
         private System.Windows.Forms.Label outputLabel;
         private System.Windows.Forms.ComboBox comboBoxItemQuality;
         private System.Windows.Forms.Panel panelFilter;
-        private System.Windows.Forms.ComboBox slotFilter;
+        private System.Windows.Forms.ComboBox slotFilterDropdown;
         private System.Windows.Forms.TextBox searchField;
         private System.Windows.Forms.CheckBox checkBoxOrderByLevel;
         private System.Windows.Forms.TextBox minLevel;

@@ -40,6 +40,7 @@ namespace StatTranslator {
                 SlotMap["ItemRelic"] = "Component";
                 SlotMap["ItemArtifact"] = "Relic";
                 SlotMap["ItemFactionBooster"] = "Scroll";
+                SlotMap["ItemEnchantment"] = "Augmentation";
             }
 
 

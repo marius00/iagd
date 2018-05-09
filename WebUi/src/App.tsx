@@ -1,17 +1,21 @@
 import * as React from 'react';
 import { Provider, Store } from 'react-redux';
-import './App.css';
-import { GlobalState } from './types/index';
+import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
+import { ApplicationState } from './types/index';
 import MagicButton from './containers/MagicButton';
-import FilterView from './containers/FilterView';
 import { MockStore } from 'redux-mock-store';
 import ItemContainer from './containers/ItemContainer';
-import { requestClasses, requestMods } from './actions';
-import CornerMenu from './components/CornerMenu/CornerMenu';
 import { isEmbedded } from './constants/index';
+import 'react-tabs/style/react-tabs.css'; // scss and less also available
+import './App.css';
+import { requestInitialItems } from './actions';
+import CraftingContainer from './containers/recipes/CraftingContainer';
+import NotificationContainer from './containers/NotificationContainer';
+import { getRecipes } from './containers/recipes/actions';
+import translate from './translations/EmbeddedTranslator';
 
 export interface Props {
-  store: Store<GlobalState> | MockStore<GlobalState>;
+  store: Store<ApplicationState> | MockStore<ApplicationState>;
 }
 
 class App extends React.Component<Props, object> {
@@ -20,19 +24,17 @@ class App extends React.Component<Props, object> {
   constructor(props: Props) {
     super(props);
     this.props = props;
-    this.props.store.dispatch(requestClasses());
-    this.props.store.dispatch(requestMods());
+    this.props.store.dispatch(requestInitialItems());
+    this.props.store.dispatch(getRecipes());
   }
 
-  /*
-  [16:11:53] <[nd]> position: absolute;top: 0; right: 0; bottom: 0; left: 0;
-  [16:11:58] <[nd]> should in essence take care of it for you
-  [16:12:08] <evil> and when the div is empty and gets a height of 1px?
-  [16:12:10] <[nd]> but will need tweaking to get it to be right for your situation
-  [16:12:14] <[nd]> exactly
-  [16:12:20] <[nd]> its parent needs to be something sensible
-  [16:12:39] <[nd]> maybe an element with min-width: 100vw; min-height: 100vh;
-   */
+  openUrl(url: string) {
+    if (isEmbedded) {
+      document.location.href = url;
+    } else {
+      window.open(url);
+    }
+  }
 
   render() {
     const { store } = this.props;
@@ -40,19 +42,36 @@ class App extends React.Component<Props, object> {
     return (
       <Provider store={store}>
         <div className="App wrapper">
-          <nav className="row" id="sidebar">
-            <FilterView isEmbedded={isEmbedded} />
-          </nav>
           <div id="content">
-            <CornerMenu />
-            {!isEmbedded ? <MagicButton label="Load mock items" /> : ''}
-            <ItemContainer />
+            <Tabs className="tab-control">
+              <div className="tab-list">
+                <TabList>
+                  <Tab>{translate('app.tab.items')}</Tab>
+                  <Tab>{translate('app.tab.crafting')}</Tab>
+                  <Tab disabled={true}><a onClick={() => this.openUrl('http://dev.dreamcrash.org/enchantments/')}>{translate('app.tab.components')}</a></Tab>
+                  <Tab disabled={true}><a onClick={() => this.openUrl('https://discord.gg/PJ87Ewa')}>{translate('app.tab.discord')}</a></Tab>
+                </TabList>
+              </div>
+
+              <TabPanel>
+                {!isEmbedded ? <MagicButton label="Load mock items" /> : ''}
+                <ItemContainer />
+              </TabPanel>
+
+              <TabPanel>
+                <CraftingContainer />
+              </TabPanel>
+
+              <TabPanel/>
+              <TabPanel/>
+            </Tabs>
+
           </div>
+          <NotificationContainer />
         </div>
       </Provider>
     );
   }
-
 }
 
 export default App;

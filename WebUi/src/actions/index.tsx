@@ -1,23 +1,14 @@
 import {
-  ACTION_INCREMENT,
   ACTION_SET_ITEMS,
   ACTION_ADD_ITEMS,
   SET_MOCK_DATA,
-  SET_CLASSES,
-  REQUEST_CLASSES,
-  SET_MODS,
-  REQUEST_MODS,
-  SET_SELECTED_MOD,
-  SET_LOADING_STATUS
+  SET_LOADING_STATUS,
+  REQUEST_INITIAL_ITEMS
 } from '../constants';
 
-import IProfession from '../interfaces/IProfession';
-import IMod from '../interfaces/IMod';
 import IItem from '../interfaces/IItem';
-
-export interface IncrementCounter {
-  type: ACTION_INCREMENT;
-}
+import { NotificationLevel, show } from 'react-notification-system-redux';
+import { Action } from 'redux';
 
 export interface SetItems {
   type: ACTION_SET_ITEMS;
@@ -34,34 +25,16 @@ export interface SetMockItems {
   items: string;
 }
 
-export interface SetClasses {
-  type: SET_CLASSES;
-  classes: IProfession[];
-}
-
-export interface SetMods {
-  type: SET_MODS;
-  mods: IMod[];
-}
-
-export interface RequestClasses {
-  type: REQUEST_CLASSES;
-}
-
-export interface RequestMods {
-  type: REQUEST_MODS;
-}
-export interface SetSelectedMod {
-  type: SET_SELECTED_MOD;
-  mod: IMod;
-}
-
 export interface SetLoadingStatus {
-  type: SET_LOADING_STATUS,
-  status: boolean
+  type: SET_LOADING_STATUS;
+  status: boolean;
 }
 
-export type AnyAction = IncrementCounter | SetItems | AddItems | SetMockItems | SetClasses | RequestClasses | SetMods | RequestMods | SetSelectedMod | SetLoadingStatus;
+export interface RequestInitialItems {
+  type: REQUEST_INITIAL_ITEMS;
+}
+
+export type AnyAction = SetItems | AddItems | SetMockItems | SetLoadingStatus | RequestInitialItems;
 
 export function setItems(items: IItem[]): SetItems {
   console.log('Dispatching a request for setting items');
@@ -88,44 +61,6 @@ export function setMockItems(items: string): SetMockItems {
   };
 }
 
-export function setClasses(classes: IProfession[]): SetClasses {
-  console.log('Dispatching a request for setting classes');
-  return {
-    type: SET_CLASSES,
-    classes: classes
-  };
-}
-
-export function setMods(mods: IMod[]): SetMods {
-  console.log('Dispatching a request for setting mods');
-  return {
-    type: SET_MODS,
-    mods: mods
-  };
-}
-
-export function requestClasses(): RequestClasses {
-  console.log('Dispatching a request for class updates');
-  return {
-    type: REQUEST_CLASSES
-  };
-}
-
-export function requestMods(): RequestMods {
-  console.log('Dispatching a request for mod updates');
-  return {
-    type: REQUEST_MODS
-  };
-}
-
-export function setSelectedMod(mod: IMod): SetSelectedMod {
-  console.log('Dispatching a request to set the selected mod');
-  return {
-    type: SET_SELECTED_MOD,
-    mod: mod
-  };
-}
-
 export function setLoadingStatus(status: boolean): SetLoadingStatus {
   console.log('Dispatching a request to set the loading status to', status);
   return {
@@ -134,3 +69,21 @@ export function setLoadingStatus(status: boolean): SetLoadingStatus {
   };
 }
 
+export function requestInitialItems(): RequestInitialItems {
+  console.log('Dispatching a request to load initial items');
+  return {
+    type: REQUEST_INITIAL_ITEMS
+  };
+}
+
+export function showMessage(message: string, level: NotificationLevel): Action {
+  return show(
+    {
+      message: message,
+      autoDismiss: 3.5,
+      dismissible: false,
+      position: 'bc'
+    },
+    level
+  );
+}

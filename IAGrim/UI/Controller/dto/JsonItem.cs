@@ -1,11 +1,6 @@
-﻿using StatTranslator;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace IAGrim.UI.Controller {
+namespace IAGrim.UI.Controller.dto {
 
     public class JsonItem {
         public string BaseRecord { get; set; }
@@ -19,7 +14,7 @@ namespace IAGrim.UI.Controller {
         public object[] URL { get; set; }
         public uint NumItems { get; set; }
 
-        public int Type { get; set; }
+        public ItemTypeDto Type { get; set; }
         public string[] Buddies { get; set; }
         public bool HasRecipe { get; set; }
 

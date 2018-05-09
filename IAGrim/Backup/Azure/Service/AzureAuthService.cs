@@ -11,6 +11,7 @@ using CefSharp;
 using IAGrim.Backup.Azure.CefSharp.Events;
 using IAGrim.Backup.Azure.Constants;
 using IAGrim.UI.Misc;
+using IAGrim.UI.Misc.CEF;
 using IAGrim.Utilities.HelperClasses;
 using log4net;
 

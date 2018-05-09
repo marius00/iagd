@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using IAGrim.Database.Interfaces;
 using IAGrim.Services;
+using IAGrim.UI.Misc.CEF;
 
 namespace IAGrim.UI.Controller {
     class ItemTransferController {
@@ -82,7 +83,7 @@ namespace IAGrim.UI.Controller {
                 _setFeedback(GlobalSettings.Language.GetTag("iatag_feedback_item_does_not_exist"));
                 // 
                 // 
-                _browser.ShowMessage(message, "Error");
+                _browser.ShowMessage(message, UserFeedbackLevel.Error);
 
                 return null;
             }
@@ -116,7 +117,7 @@ namespace IAGrim.UI.Controller {
 
             if (!string.IsNullOrEmpty(error)) {
                 Logger.Warn(error);
-                _browser.ShowMessage(error, "Error");
+                _browser.ShowMessage(error, UserFeedbackLevel.Error);
             }
 
             return new TransferStatus {
@@ -138,7 +139,7 @@ namespace IAGrim.UI.Controller {
                 else {
                     Logger.Info(GlobalSettings.Language.GetTag("iatag_no_stash_abort"));
                     _setFeedback(GlobalSettings.Language.GetTag("iatag_no_stash_abort"));
-                    _browser.ShowMessage(GlobalSettings.Language.GetTag("iatag_no_stash_abort"), "Error");
+                    _browser.ShowMessage(GlobalSettings.Language.GetTag("iatag_no_stash_abort"), UserFeedbackLevel.Error);
 
                     return string.Empty;
                 }
@@ -188,7 +189,7 @@ namespace IAGrim.UI.Controller {
                         var message = string.Format(GlobalSettings.Language.GetTag("iatag_stash3_success"),
                             result.NumItemsTransferred, result.NumItemsRequested);
                         _setFeedback(message);
-                        _browser.ShowMessage(message, "Success");
+                        _browser.ShowMessage(message, UserFeedbackLevel.Success);
                     }
                     catch (FormatException ex) {
                         Logger.Warn(ex.Message);
@@ -197,7 +198,7 @@ namespace IAGrim.UI.Controller {
                     }
                     if (result.NumItemsTransferred == 0) {
                         _setTooltip(GlobalSettings.Language.GetTag("iatag_stash3_failure"));
-                        _browser.ShowMessage(GlobalSettings.Language.GetTag("iatag_stash3_failure"), "Warning");
+                        _browser.ShowMessage(GlobalSettings.Language.GetTag("iatag_stash3_failure"), UserFeedbackLevel.Warning);
                     }
 
                     // Lets do this last, to make sure feedback reaches the user as fast as possible
@@ -220,7 +221,7 @@ namespace IAGrim.UI.Controller {
 
                     if (items == null) {
                         Logger.Info("Item previously deposited (ghost item)");
-                        _browser.ShowMessage("Item previously deposited (ghost item)", "Warning");
+                        _browser.ShowMessage("Item previously deposited (ghost item)", UserFeedbackLevel.Warning);
                         _searchWindow.UpdateListviewDelayed();
 
                     }
@@ -234,7 +235,7 @@ namespace IAGrim.UI.Controller {
 
                         var message = string.Format(GlobalSettings.Language.GetTag("iatag_stash3_success"), numDepositedItems, numItemsToTransfer);
                         _setFeedback(message);
-                        _browser.ShowMessage(message, "Success");
+                        _browser.ShowMessage(message, UserFeedbackLevel.Success);
 
                         Logger.InfoFormat("Successfully deposited {0} out of {1} items", numDepositedItems, numItemsToTransfer);
                         if (numDepositedItems > 0) {
@@ -249,18 +250,18 @@ namespace IAGrim.UI.Controller {
                     var message = GlobalSettings.Language.GetTag("iatag_deposit_stash_open");
                     _setFeedback(message);
                     _setTooltip(message);
-                    _browser.ShowMessage(message, "Warning");
+                    _browser.ShowMessage(message, UserFeedbackLevel.Warning);
                 }
             }
             else if (GlobalSettings.StashStatus == StashAvailability.SORTED) {
                 _setFeedback(GlobalSettings.Language.GetTag("iatag_deposit_stash_sorted"));
-                _browser.ShowMessage(GlobalSettings.Language.GetTag("iatag_deposit_stash_sorted"), "Warning");
+                _browser.ShowMessage(GlobalSettings.Language.GetTag("iatag_deposit_stash_sorted"), UserFeedbackLevel.Warning);
             }
 
             else if (GlobalSettings.StashStatus == StashAvailability.UNKNOWN) {
                 _setFeedback(GlobalSettings.Language.GetTag("iatag_deposit_stash_unknown_feedback"));
                 _setTooltip(GlobalSettings.Language.GetTag("iatag_deposit_stash_unknown_tooltip"));
-                _browser.ShowMessage(GlobalSettings.Language.GetTag("iatag_deposit_stash_unknown_feedback"), "Warning");
+                _browser.ShowMessage(GlobalSettings.Language.GetTag("iatag_deposit_stash_unknown_feedback"), UserFeedbackLevel.Warning);
             }
         }
 

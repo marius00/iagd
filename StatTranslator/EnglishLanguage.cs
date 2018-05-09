@@ -271,10 +271,10 @@ namespace StatTranslator {
             { "iatag_html_transfer", "Transfer to Stash" },
             { "iatag_html_items_youcancraftthisitem", "You can craft this item." },
             { "iatag_html_items_buddy_alsohasthisitem1", "also has this item" },
-            { "iatag_html_items_buddy_alsohasthisitem2", "These buddies also have this item:" },
+            { "iatag_html_items_buddy_alsohasthisitem2", "These buddies also have this item: {0}" },
             { "iatag_html_items_buddy_alsohasthisitem3", "of your Buddies have this item" },
             { "iatag_html_items_buddy_alsohasthisitem4", "has this item" },
-            { "iatag_html_levlerequirement", "Level Requirement:" },
+            { "iatag_html_levlerequirement", "Level Requirement: {0}" },
             { "iatag_html_any", "Any" },
             { "iatag_html_items_affix2", "This item has two green affixes" },
             { "iatag_html_items_affix3", "This item has three green affixes! (Rare!)" },
@@ -287,13 +287,13 @@ namespace StatTranslator {
             { "iatag_html_tab_header_discord", "Discord" },
             { "iatag_html_crafting_lacking", "You are currently lacking:" },
             { "iatag_html_items_no_items", "No items found!" },
-            { "iatag_html_items_grantsskill", "Grants Skill:" },
+            { "iatag_html_items_grantsskill", "Grants Skill: " },
             { "iatag_html_items_level", "Level" },
             { "iatag_html_badstate_title", "Ooops!" },
             { "iatag_html_badstate_subtitle", "It seems IA has gotten in a bad state!" },
             { "iatag_html_onlinesync_ok", "This item has been backed up to the cloud" },
             { "iatag_html_onlinesync_err", "This item has not been backed up to the cloud" },
-            { "iatag_html_augmentation_item", "You may be able to purchase this augment from " },
+            { "iatag_html_augmentation_item", "You may be able to purchase this augment from {0}" },
             
 
             // UI, IA Only
