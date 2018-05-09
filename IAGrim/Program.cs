@@ -238,8 +238,7 @@ namespace IAGrim {
 
             Logger.Info("Transfer to any mod is " + (Properties.Settings.Default.TransferAnyMod ? "enabled" : "disabled"));
             Logger.Info("Experimental updates is " + (Properties.Settings.Default.SubscribeExperimentalUpdates ? "enabled" : "disabled"));
-            Logger.Info($"Instaloot is set to {Properties.Settings.Default.InstalootSetting} ({(InstalootSettingType)Properties.Settings.Default.InstalootSetting})");
-            
+          
 
             var mods = GlobalPaths.TransferFiles;
             if (mods.Count == 0) {
