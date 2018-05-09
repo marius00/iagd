@@ -178,10 +178,13 @@
     <Compile Include="BuddyShare\dto\BuddyUploadResponse.cs" />
     <Compile Include="BuddyShare\dto\JsonBuddyItem.cs" />
     <Compile Include="BuddyShare\GzipCompressionHandler.cs" />
+    <Compile Include="Database\DAO\AugmentationItemDaoImpl.cs" />
     <Compile Include="Database\DAO\AzurePartitionDaoImpl.cs" />
     <Compile Include="Database\DAO\BuddyItemDaoImpl.cs" />
     <Compile Include="Database\DAO\DatabaseItemStatDaoImpl.cs" />
     <Compile Include="Database\DAO\Dto\StatFetch.cs" />
+    <Compile Include="Database\DAO\Table\AugmentationItemTable.cs" />
+    <Compile Include="Database\DAO\Util\ItemOperationsUtility.cs" />
     <Compile Include="Database\DAO\ItemSkillDaoImpl.cs" />
     <Compile Include="Database\DAO\ItemTagDaoImpl.cs" />
     <Compile Include="Database\DAO\RecipeItemDaoImpl.cs" />
@@ -199,6 +202,7 @@
     <Compile Include="Database\DAO\Table\SkillTable.cs" />
     <Compile Include="Database\Dto\ModSelection.cs" />
     <Compile Include="Database\Dto\Search.cs" />
+    <Compile Include="Database\Interfaces\IAugmentationItemDao.cs" />
     <Compile Include="Database\Interfaces\IAzurePartitionDao.cs" />
     <Compile Include="Database\Interfaces\IBuddyItemDao.cs" />
     <Compile Include="Database\Interfaces\IBuddySubscriptionDao.cs" />
@@ -215,6 +219,7 @@
     <Compile Include="Database\Migrations\DatabaseItemHashFixMigration.cs" />
     <Compile Include="Database\Migrations\IDatabaseMigration.cs" />
     <Compile Include="Database\Migrations\MigrationHandler.cs" />
+    <Compile Include="Database\Model\AugmentationItem.cs" />
     <Compile Include="Database\Model\AzureIdentifier.cs" />
     <Compile Include="Database\Model\AzurePartition.cs" />
     <Compile Include="Database\Model\BaseItem.cs" />
@@ -225,12 +230,14 @@
     <Compile Include="Database\Model\PlayerItemRecord.cs" />
     <Compile Include="Database\Model\PlayerItemSkill.cs" />
     <Compile Include="Database\Model\RecipeDbStatRow.cs" />
+    <Compile Include="Database\Model\RecordCollection.cs" />
     <Compile Include="Database\Model\SetBonusRecord.cs" />
     <Compile Include="Database\Model\SkillModifierStat.cs" />
     <Compile Include="Database\SessionFactoryLoader\SessionFactory.cs" />
     <Compile Include="Database\SearchResult.cs" />
     <Compile Include="Database\Synchronizer\AzurePartitionRepo.cs" />
     <Compile Include="Database\Synchronizer\BasicSynchronizer.cs" />
+    <Compile Include="Database\Synchronizer\AugmentationItemRepo.cs" />
     <Compile Include="Database\Synchronizer\BuddyItemRepo.cs" />
     <Compile Include="Database\Synchronizer\BuddySubscriptionRepo.cs" />
     <Compile Include="Database\Synchronizer\Core\ThreadExecuter.cs" />
@@ -593,6 +600,9 @@
     <EmbeddedResource Include="Database\Model\PlayerItemRecord.hbm.xml" />
     <EmbeddedResource Include="Database\Model\AzurePartition.hbm.xml" />
     <None Include="FodyWeavers.xml" />
+    <EmbeddedResource Include="Database\Model\AugmentationItem.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <Content Include="Resources\bootstrap-social.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -618,6 +628,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\static\edit.png" />
+    <Content Include="Resources\static\gold-coins-sm.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\vendor\animate.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

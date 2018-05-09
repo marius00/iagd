@@ -204,6 +204,8 @@
             </div>
 
             <div class="recipe-item-corner">
+                <img class="cursor-help" data-bind="visible: type === 3, attr: {title: $root.iatag_html_augmentation_item + extras}" src="static\gold-coins-sm.png">
+
                 <img class="cursor-help" data-bind="visible: hasCloudBackup && type === 2, attr: {title: $root.iatag_html_cloud_ok}" src="static\cloud-ok.png">
                 <img class="cursor-help" data-bind="visible: !hasCloudBackup && type === 2, attr: {title: $root.iatag_html_cloud_err}" src="static\cloud-err.png">
 

@@ -383,7 +383,7 @@ namespace IAGrim.Database {
             }
         }
 
-        private void AddItemSearchCriterias(ICriteria criterias, Search query) {
+        public static void AddItemSearchCriterias(ICriteria criterias, Search query) {
             if (!string.IsNullOrEmpty(query.Wildcard)) {
                 criterias.Add(Subqueries.PropertyIn("BaseRecord", DetachedCriteria.For<DatabaseItem>()
                     .Add(Restrictions.InsensitiveLike("Name", string.Format("%{0}%", query.Wildcard.Replace(' ', '%'))))

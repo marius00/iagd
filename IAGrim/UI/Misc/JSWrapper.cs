@@ -66,7 +66,8 @@ namespace IAGrim.UI.Misc {
                 iatag_html_choose_a_component = lang.GetTag("iatag_html_choose_a_component"),
                 iatag_html_choose_a_recipe = lang.GetTag("iatag_html_choose_a_recipe"),
                 iatag_html_cloud_ok = lang.GetTag("iatag_html_onlinesync_ok"),
-                iatag_html_cloud_err = lang.GetTag("iatag_html_onlinesync_err")
+                iatag_html_cloud_err = lang.GetTag("iatag_html_onlinesync_err"),
+                iatag_html_augmentation_item = lang.GetTag("iatag_html_augmentation_item")
             };
         }
 

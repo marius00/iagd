@@ -74,7 +74,9 @@ namespace IAGrim.Services {
         private List<PlayerItem> GetPlayerItems(List<PlayerHeldItem> items) {
             var result = new List<PlayerItem>();
             foreach (PlayerHeldItem item in items.Where(IsPlayerItem)) {
-                result.Add(item as PlayerItem);
+                if (item is PlayerItem pi) {
+                    result.Add(pi);
+                }
             }
 
             return result;
@@ -86,10 +88,18 @@ namespace IAGrim.Services {
             return result;
         }
 
+        private void ApplyStatsToAugmentations(List<PlayerHeldItem> items) {
+            ApplyStatsToDbItems(items, StatFetch.AugmentItems);
+        }
+
         private void ApplyStatsToRecipeItems(List<PlayerHeldItem> items) {
+            ApplyStatsToDbItems(items, StatFetch.RecipeItems);
+        }
+
+        private void ApplyStatsToDbItems(List<PlayerHeldItem> items, StatFetch type) {
 
             var records = GetRecordsForItems(items);
-            Dictionary<string, List<DBSTatRow>> statMap = _databaseItemStatDao.GetStats(records, StatFetch.RecipeItems);
+            Dictionary<string, List<DBSTatRow>> statMap = _databaseItemStatDao.GetStats(records, type);
 
             foreach (PlayerHeldItem phi in items) {
                 List<DBSTatRow> stats = new List<DBSTatRow>();
@@ -153,9 +163,14 @@ namespace IAGrim.Services {
                     ApplyStatsToBuddyItems(buddyItems);
                 }
 
-                var remaining = items.Where(m => !IsPlayerItem(m) && !IsBuddyItem(m)).ToList();
-                if (remaining.Count > 0)
-                {
+                // Augments sold by vendors, which the player doesn't necessarily own
+                var augmentItems = items.Where(m => (m as AugmentationItem) != null).ToList();
+                if (augmentItems.Count > 0) {
+                    ApplyStatsToAugmentations(augmentItems);
+                }
+
+                var remaining = items.Where(m => !IsPlayerItem(m) && !IsBuddyItem(m) && !augmentItems.Contains(m)).ToList();
+                if (remaining.Count > 0) {
                     ApplyStatsToRecipeItems(remaining);
                 }
 

@@ -100,7 +100,8 @@ namespace IAGrim.UI {
             radioBeta.Checked = (bool)Properties.Settings.Default.SubscribeExperimentalUpdates;
             radioRelease.Checked = !(bool)Properties.Settings.Default.SubscribeExperimentalUpdates;
             firefoxCheckBox1.Checked = Properties.Settings.Default.Hotfix1_0_4_0_active;
-            //controller.LoadDefaults();
+            cbDualComputer.Checked = Properties.Settings.Default.UsingDualComputer;
+            cbShowAugments.Checked = Properties.Settings.Default.ShowAugmentsAsItems;
 
         }
 
@@ -216,6 +217,11 @@ namespace IAGrim.UI {
             Properties.Settings.Default.UsingDualComputer = (sender as FirefoxCheckBox).Checked;
             Properties.Settings.Default.Save();
             
+        }
+
+        private void cbShowAugments_CheckedChanged(object sender, EventArgs e) {
+            Properties.Settings.Default.ShowAugmentsAsItems = (sender as FirefoxCheckBox).Checked;
+            Properties.Settings.Default.Save();
         }
     }
 }

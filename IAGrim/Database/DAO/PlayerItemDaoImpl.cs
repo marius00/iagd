@@ -16,7 +16,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using IAGrim.Backup.Azure.Dto;
+using IAGrim.Database.DAO;
 using IAGrim.Database.DAO.Table;
+using IAGrim.Database.DAO.Util;
 
 namespace IAGrim.Database {
 
@@ -88,48 +90,7 @@ namespace IAGrim.Database {
 
         }
 
-        private static float GetMinimumLevelForRecords(Dictionary<string, List<DBSTatRow>> stats, List<string> records) {
 
-            var levels = stats.Where(m => records.Contains(m.Key))
-                .SelectMany(m => m.Value.Where(v => v.Stat == "levelRequirement"))
-                .Select(m => m.Value)
-                .ToList();
-            
-
-            if (levels.Count == 0)
-                return 0;
-            else
-                return (float)levels.Max<double>();
-        }
-
-        /// <summary>
-        /// Calculate the item rarity for a given set of records (suffix, prefix, etc)
-        /// </summary>
-        /// <param name="records"></param>
-        /// <returns></returns>
-        private string GetRarityForRecords(Dictionary<string, List<DBSTatRow>> stats, List<string> records) {
-            var classifications = stats.Where(m => records.Contains(m.Key))
-                .SelectMany(m => m.Value.Where(v => v.Stat == "itemClassification"))
-                .Select(m => m.TextValue);
-
-            return TranslateClassification(classifications);
-        }
-
-        private string TranslateClassification(IEnumerable<string> classifications) {
-            var enumerable = classifications as string[] ?? classifications.ToArray();
-            if (enumerable.Contains("Legendary"))
-                return "Epic";
-            else if (enumerable.Contains("Epic"))
-                return "Blue";
-            else if (enumerable.Contains("Rare"))
-                return "Green";
-            else if (enumerable.Contains("Magical"))
-                return "Yellow";
-            else if (enumerable.Contains("Common"))
-                return "White";
-            else
-                return "Unknown";
-        }
 
         /// <summary>
         /// Get the "level of green" for a set of records
@@ -179,39 +140,7 @@ namespace IAGrim.Database {
 
             return records;
         }
-
-
-        [Obsolete]
-        private string GetSkillDisplayName(ISession session, string skillRecord) {
-
-            var subquery = Subqueries.PropertyEq("P.Id", DetachedCriteria.For<DatabaseItem>()
-                .Add(Restrictions.Eq("Record", skillRecord))
-                .SetProjection(Projections.Property("Id"))
-                );
-
-            IList<DatabaseItemStat> skill = session.CreateCriteria<DatabaseItemStat>()
-                .Add(subquery)
-                .CreateAlias("Parent", "P")
-                .List<DatabaseItemStat>();
-
-            // Get the tag-name from the skill
-            var skillNameEntry = skill.FirstOrDefault(m => m.Stat.Equals("skillDisplayName"));
-            if (skillNameEntry?.TextValue != null)
-                return skillNameEntry.TextValue;
-
-            // It may be without a name, but reference a pet skill
-            var petSkillName = skill.Where(m => m.Stat.Equals("petSkillName"));
-            if (petSkillName.Any())
-                return GetSkillDisplayName(session, petSkillName.FirstOrDefault().TextValue);
-
-            // The pet skill may in turn reference a buff skill, or the original skill might.
-            var buffSkillName = skill.Where(m => m.Stat.Equals("buffSkillName"));
-            if (buffSkillName.Any())
-                return GetSkillDisplayName(session, buffSkillName.FirstOrDefault().TextValue);
-
-            return null;
-        }
-
+        
         public IList<PlayerItem> GetUnsynchronizedItems() {
             using (var session = SessionCreator.OpenSession()) {
                 return session.QueryOver<PlayerItem>()
@@ -465,10 +394,10 @@ namespace IAGrim.Database {
                     SET {name} = :name, {rarity} = :rarity, {levelReq} = :levelreq, {prefixRarity} = :prefixrarity 
                     WHERE {id} = :id"
                 )
-                .SetParameter("name", GetItemName(session, stats, item))
+                .SetParameter("name", ItemOperationsUtility.GetItemName(session, stats, item))
                 .SetParameter("prefixrarity", GetGreenQualityLevelForRecords(stats, records))
-                .SetParameter("rarity", GetRarityForRecords(stats, records))
-                .SetParameter("levelreq", GetMinimumLevelForRecords(stats, records))
+                .SetParameter("rarity", ItemOperationsUtility.GetRarityForRecords(stats, records))
+                .SetParameter("levelreq", ItemOperationsUtility.GetMinimumLevelForRecords(stats, records))
                 .SetParameter("id", item.Id)
                 .ExecuteUpdate();
         }
@@ -706,87 +635,6 @@ namespace IAGrim.Database {
                     return false;
                 }
             }
-        }
-
-        /// <summary>
-        /// Update the item name to include suffix/affix/etc
-        /// </summary>
-        private static string GetItemName(ISession session, Dictionary<String, List<DBSTatRow>> stats, PlayerItem item) {
-            // Grab tags
-
-            var records = new string[] { item.PrefixRecord, item.BaseRecord, item.SuffixRecord, item.MateriaRecord };
-            var desiredTagsNames = new string[] { "lootRandomizerName", "itemNameTag", "itemQualityTag", "itemStyleTag", "description" };
-            var relevants = stats.Where(m => records.Contains(m.Key));
-            var tagEntries = relevants.SelectMany(m => m.Value.Where(v => desiredTagsNames.Contains(v.Stat)));
-            
-
-            // Grab tag values
-            ICriteria tagCrit = session.CreateCriteria<ItemTag>();
-            tagCrit.Add(Restrictions.In("Tag", tagEntries.Select(m => m.TextValue).ToArray()));
-            var tags = tagCrit.List<ItemTag>();
-
-
-            string prefix = string.Empty;
-            {
-                var prefixEntry = tagEntries.FirstOrDefault(m => m.Record == item.PrefixRecord && m.Stat == "lootRandomizerName");
-                if (prefixEntry != null) {
-                    var tag = tags.FirstOrDefault(m => m.Tag == prefixEntry.TextValue);
-                    prefix = tag?.Name ?? prefixEntry.TextValue;
-                }
-            }
-
-            string suffix = string.Empty;
-            {
-                var suffixEntry = tagEntries.FirstOrDefault(m => m.Record == item.SuffixRecord && m.Stat == "lootRandomizerName");
-                if (suffixEntry != null) {
-                    suffix = tags.FirstOrDefault(m => m.Tag == suffixEntry.TextValue)?.Name ?? suffixEntry.TextValue;
-                }
-            }
-
-            string core = string.Empty;
-            {
-                var coreEntry = tagEntries.FirstOrDefault(m => m.Record == item.BaseRecord && m.Stat == "itemNameTag");
-                if (coreEntry == null) // Potions
-                    coreEntry = tagEntries.FirstOrDefault(m => m.Record == item.BaseRecord && m.Stat == "description");
-
-                if (coreEntry != null) {
-                    var tag = tags.FirstOrDefault(m => m.Tag == coreEntry.TextValue);
-                    core = tag?.Name ?? coreEntry.TextValue;
-                }
-            }
-
-            string quality = string.Empty;
-            {
-                var coreEntry = tagEntries.FirstOrDefault(m => m.Record == item.BaseRecord && m.Stat == "itemQualityTag");
-                if (coreEntry != null) {
-                    var tag = tags.FirstOrDefault(m => m.Tag == coreEntry.TextValue);
-                    quality = tag?.Name ?? coreEntry.TextValue;
-                }
-            }
-
-            string style = string.Empty;
-            {
-                var coreEntry = tagEntries.FirstOrDefault(m => m.Record == item.BaseRecord && m.Stat == "itemStyleTag");
-                if (coreEntry != null) {
-                    var tag = tags.FirstOrDefault(m => m.Tag == coreEntry.TextValue);
-                    style = tag?.Name ?? coreEntry.TextValue;
-                }
-            }
-
-            string materia = string.Empty;
-            {
-                var entry = tagEntries.FirstOrDefault(m => m.Record == item.MateriaRecord && m.Stat == "description");
-                if (entry != null) {
-                    var tag = tags.FirstOrDefault(m => m.Tag == entry.TextValue);
-                    materia = tag?.Name ?? entry.TextValue;
-
-                    materia = $" [{materia}]";
-                }
-            }
-
-
-            string localizedName = GlobalSettings.Language.TranslateName(prefix, quality, style, core, suffix);
-            return localizedName + materia;
         }
 
 

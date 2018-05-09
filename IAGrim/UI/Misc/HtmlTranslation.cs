@@ -38,5 +38,6 @@ namespace IAGrim.UI.Misc {
 
         public string iatag_html_cloud_ok { get; set; }
         public string iatag_html_cloud_err { get; set; }
+        public string iatag_html_augmentation_item { get; set; }
     }
 }

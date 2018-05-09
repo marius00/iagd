@@ -289,6 +289,10 @@ namespace IAGrim {
             IRecipeItemDao recipeItemDao = new RecipeItemRepo(threadExecuter, factory);
             IItemSkillDao itemSkillDao  = new ItemSkillRepo(threadExecuter, factory);
             ArzParser arzParser = new ArzParser(databaseSettingDao);
+            AugmentationItemRepo augmentationItemRepo = new AugmentationItemRepo(threadExecuter, factory, new DatabaseItemStatDaoImpl(factory));
+            
+            Logger.Debug("Updating augment state..");
+            augmentationItemRepo.UpdateState();
 
             // TODO: GD Path has to be an input param, as does potentially mods.
             ParsingService parsingService = new ParsingService(itemTagDao, null, databaseItemDao, databaseItemStatDao, itemSkillDao, Properties.Settings.Default.LocalizationFile);
@@ -311,6 +315,8 @@ namespace IAGrim {
 
 
             bool showDevtools = args != null && args.Any(m => m.Contains("-devtools"));
+
+            // TODO: Urgent, introduce DI and have MainWindow receive premade objects, not create them itself.
             using (CefBrowserHandler browser = new CefBrowserHandler()) {
                 _mw = new MainWindow(browser, 
                     databaseItemDao, 
@@ -325,7 +331,8 @@ namespace IAGrim {
                     itemSkillDao,
                     itemTagDao,
                     parsingService,
-                    showDevtools
+                    showDevtools,
+                    augmentationItemRepo
                 );
 
                 Logger.Info("Checking for database updates..");

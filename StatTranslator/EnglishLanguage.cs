@@ -293,6 +293,7 @@ namespace StatTranslator {
             { "iatag_html_badstate_subtitle", "It seems IA has gotten in a bad state!" },
             { "iatag_html_onlinesync_ok", "This item has been backed up to the cloud" },
             { "iatag_html_onlinesync_err", "This item has not been backed up to the cloud" },
+            { "iatag_html_augmentation_item", "You may be able to purchase this augment from " },
             
 
             // UI, IA Only

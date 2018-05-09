@@ -29,7 +29,7 @@ namespace IAGrim.Database {
             "augmentSkillLevel1", "augmentSkillLevel2", "augmentSkillName1", "augmentSkillName2",
             "augmentMasteryLevel4", "augmentMasteryLevel3", "augmentMasteryName4", "augmentMasteryName3",
             "augmentSkillLevel4", "augmentSkillLevel3", "augmentSkillName4", "augmentSkillName3",
-            "augmentAllLevel",
+            "augmentAllLevel", "factionSource",
 
             "skillDownBitmapName","skillUpBitmapName","bitmap","noteBitmap","artifactFormulaBitmapName","artifactBitmap",
             "bitmapButtonDown","bitmapButtonUp","relicBitmap","shardBitmap","emptyBitmap","fullBitmap",
@@ -185,6 +185,7 @@ namespace IAGrim.Database {
                 "AND (val1 > 0 or stat in ( :whitelist ))",
                 //"AND (val1 > 0 or NOT stat IN ( :blacklist ))",
                     fetchMode == StatFetch.PlayerItems ? $"AND baserecord IN (SELECT record FROM playeritemrecord)" : "",
+                    fetchMode == StatFetch.AugmentItems ? $"AND db.{DatabaseItemTable.Id} IN (SELECT a.{AugmentationItemTable.Id} FROM {AugmentationItemTable.Table} a)" : "",
                     fetchMode == StatFetch.BuddyItems ? $"AND {DatabaseItemTable.Record} IN (SELECT {BuddyItemRecordTable.Record} FROM {BuddyItemRecordTable.Table})" : "",
                 fetchMode == StatFetch.RecipeItems ? $"AND baserecord in (SELECT {RecipeItemTable.Record} FROM {RecipeItemTable.Table})" : "",
                 fetchMode == StatFetch.Skills ? $"AND db.{DatabaseItemTable.Id} IN (SELECT map.{SkillMappingTable.Item} FROM {SkillMappingTable.Table} map)" : "", // Redundant? Either doesn't cover enough, or completely redundant

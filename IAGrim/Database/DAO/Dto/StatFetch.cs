@@ -9,6 +9,7 @@ namespace IAGrim.Database.DAO.Dto {
         PlayerItems,
         BuddyItems,
         RecipeItems,
+        AugmentItems,
         Skills,
         All
     }

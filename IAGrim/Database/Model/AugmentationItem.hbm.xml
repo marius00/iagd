@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="IAGrim"
+                   namespace="IAGrim.Database.Model">
+
+
+  <class name="AugmentationItem" table="AugmentationItem">
+    <id name="Id" column="id_databaseitem" />
+    <property name="BaseRecord" />
+    <property name="Name" />
+    <property name="Rarity" />
+    <property name="MinimumLevel" />
+
+    <many-to-one 
+      fetch="join" 
+      name="Internal" 
+      column="baserecord" 
+      class="IAGrim.Database.DatabaseItem" 
+      cascade="none" 
+      update="false" 
+      insert="false"
+      foreign-key="none" 
+      property-ref="Record" 
+      outer-join="true" 
+      not-found="ignore" 
+    />
+  </class>
+</hibernate-mapping>

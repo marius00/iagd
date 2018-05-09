@@ -454,5 +454,17 @@ namespace IAGrim.Properties {
                 this["UsingDualComputer"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ShowAugmentsAsItems {
+            get {
+                return ((bool)(this["ShowAugmentsAsItems"]));
+            }
+            set {
+                this["ShowAugmentsAsItems"] = value;
+            }
+        }
     }
 }

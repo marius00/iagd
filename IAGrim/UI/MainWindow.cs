@@ -21,6 +21,7 @@ using IAGrim.Backup.Azure.Service;
 using IAGrim.Backup.Azure.Util;
 using IAGrim.BuddyShare;
 using IAGrim.Database.Interfaces;
+using IAGrim.Database.Synchronizer;
 using IAGrim.Parsers;
 using IAGrim.Parsers.Arz;
 using IAGrim.Parsers.Arz.dto;
@@ -94,6 +95,7 @@ namespace IAGrim.UI {
         private readonly RecipeParser _recipeParser;
         private readonly IItemSkillDao _itemSkillDao;
         private readonly ParsingService _parsingService;
+        private readonly AugmentationItemRepo _augmentationItemRepo;
         private readonly bool _requestedDevtools;
         private AzureAuthService _authAuthService;
         private BackupServiceWorker _backupServiceWorker;
@@ -167,7 +169,8 @@ namespace IAGrim.UI {
             IItemSkillDao itemSkillDao,
             IItemTagDao itemTagDao, 
             ParsingService parsingService, 
-            bool requestedDevtools
+            bool requestedDevtools,
+            AugmentationItemRepo augmentationItemRepo
         ) {
             _cefBrowserHandler = browser;
             InitializeComponent();
@@ -190,6 +193,7 @@ namespace IAGrim.UI {
             _itemTagDao = itemTagDao;
             _parsingService = parsingService;
             this._requestedDevtools = requestedDevtools;
+            _augmentationItemRepo = augmentationItemRepo;
         }
 
         /// <summary>
@@ -339,6 +343,10 @@ namespace IAGrim.UI {
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
+        private void SetFeedback(string level, string feedback) {
+            SetFeedback(feedback);
+        }
+
         private void SetFeedback(string feedback) {
             try {
                 if (InvokeRequired) {
@@ -443,8 +451,9 @@ namespace IAGrim.UI {
                 _databaseItemStatDao, 
                 _itemSkillDao, 
                 _buddyItemDao,
-                _stashManager
-                );
+                _stashManager,
+                _augmentationItemRepo
+            );
             _cefBrowserHandler.InitializeChromium(searchController.JsBind, Browser_IsBrowserInitializedChanged);
             searchController.Browser = _cefBrowserHandler;
             searchController.JsBind.OnTransfer += TransferItem;

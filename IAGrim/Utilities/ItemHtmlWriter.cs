@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Model;
 using log4net;
 using NHibernate.Dialect.Schema;
@@ -39,13 +40,21 @@ namespace IAGrim.Utilities {
             }
 
 
+            string extras = string.Empty;
             int type;
             if (item.IsRecipe)
                 type = 0;
             else if (!string.IsNullOrEmpty(item.Stash))
                 type = 1;
-            else
+            else if (pi != null)
                 type = 2;
+            else if (item is AugmentationItem) {
+                type = 3;
+                
+                extras = ItemOperationsUtility.TranslateFaction(((AugmentationItem) item).Tags.FirstOrDefault(m => m.Stat == "factionSource")?.TextValue ?? string.Empty);
+            }
+            else
+                type = -1; // Unknown
 
 
             
@@ -67,7 +76,8 @@ namespace IAGrim.Utilities {
                 Skill = item.Skill != null ? GetJsonSkill(item.Skill) : null,
                 GreenRarity = item.PrefixRarity,
                 HasCloudBackup = isCloudSynced,
-                Slot = SlotTranslator.Translate(item.Slot ?? "")
+                Slot = SlotTranslator.Translate(item.Slot ?? ""),
+                Extras = extras
             };
 
             var modifiedSkills = item.ModifiedSkills;
