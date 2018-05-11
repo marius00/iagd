@@ -43,14 +43,13 @@ class ItemContainer extends React.Component<Props, object> {
 
   render() {
     const items = this.props.items;
-    const classes = items.length > 1 ? 'items' : 'items single-item';
 
     if (this.props.isLoading) {
       return <Spinner />;
     }
     else if (items.length > 0) {
       return (
-        <div className={classes}>
+        <div className="items">
 
           {items.map((item) =>
             <Item

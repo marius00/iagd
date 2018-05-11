@@ -18,7 +18,8 @@
 
 #content {
   position: relative;
-  margin-top: 35px
+  margin-top: 35px;
+  width: 100%;
 }
 
 .tab-control {

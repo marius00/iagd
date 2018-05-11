@@ -67,14 +67,14 @@
             this.tsStashStatus});
             this.statusStrip.Location = new System.Drawing.Point(0, 590);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(937, 22);
+            this.statusStrip.Size = new System.Drawing.Size(1106, 22);
             this.statusStrip.TabIndex = 25;
             this.statusStrip.Text = "statusStrip1";
             // 
             // statusLabel
             // 
             this.statusLabel.Name = "statusLabel";
-            this.statusLabel.Size = new System.Drawing.Size(830, 17);
+            this.statusLabel.Size = new System.Drawing.Size(999, 17);
             this.statusLabel.Spring = true;
             this.statusLabel.Text = "GD Item Assistant";
             this.statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -102,7 +102,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 1);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(937, 586);
+            this.tabControl1.Size = new System.Drawing.Size(1106, 586);
             this.tabControl1.TabIndex = 34;
             // 
             // tabPageItems
@@ -112,7 +112,7 @@
             this.tabPageItems.Location = new System.Drawing.Point(4, 22);
             this.tabPageItems.Name = "tabPageItems";
             this.tabPageItems.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageItems.Size = new System.Drawing.Size(929, 560);
+            this.tabPageItems.Size = new System.Drawing.Size(1098, 560);
             this.tabPageItems.TabIndex = 0;
             this.tabPageItems.Tag = "iatag_ui_tab_items";
             this.tabPageItems.Text = "Items";
@@ -126,13 +126,13 @@
             this.searchPanel.Controls.Add(this.buttonDevTools);
             this.searchPanel.Location = new System.Drawing.Point(-4, 0);
             this.searchPanel.Name = "searchPanel";
-            this.searchPanel.Size = new System.Drawing.Size(937, 560);
+            this.searchPanel.Size = new System.Drawing.Size(1106, 560);
             this.searchPanel.TabIndex = 1;
             // 
             // buttonDevTools
             // 
             this.buttonDevTools.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonDevTools.Location = new System.Drawing.Point(862, 0);
+            this.buttonDevTools.Location = new System.Drawing.Point(1031, 0);
             this.buttonDevTools.Name = "buttonDevTools";
             this.buttonDevTools.Size = new System.Drawing.Size(75, 23);
             this.buttonDevTools.TabIndex = 0;
@@ -300,7 +300,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(937, 612);
+            this.ClientSize = new System.Drawing.Size(1106, 612);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.statusStrip);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));

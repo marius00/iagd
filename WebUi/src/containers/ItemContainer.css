@@ -19,17 +19,9 @@
   width: calc(25% - 20px);
 }
 
-.single-item .item {
-  width: 100% !important;
-}
 @media only screen and (min-width: 1921px) {
   .items .item {
-    width: calc(20% - 20px);
-  }
-}
-@media only screen and (min-width: 1px) and (max-width: 1450px) {
-  .items .item {
-    width: calc(33% - 20px);
+    width: calc(25% - 20px);
   }
 }
 @media only screen and (min-width: 1px) and (max-width: 1200px) {

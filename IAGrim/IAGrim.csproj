@@ -153,6 +153,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Database\Model\UnlootedStashItem.cs" />
     <Compile Include="UI\Controller\dto\ItemTypeDto.cs" />
     <Compile Include="UI\Misc\CEF\CefRequestHandler.cs" />
     <Compile Include="Backup\Azure\CefSharp\AzureOnClosePopupHijack.cs" />
@@ -605,6 +606,9 @@
     <EmbeddedResource Include="Database\Model\AzurePartition.hbm.xml" />
     <None Include="FodyWeavers.xml" />
     <EmbeddedResource Include="Database\Model\AugmentationItem.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Database\Model\UnlootedStashItem.h_b_m.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Content Include="Resources\bootstrap-social.css">

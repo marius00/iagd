@@ -1,4 +1,5 @@
 #define ApplicationVersion GetFileVersion('..\installer\IAGrim_beta.exe')
+#define ProductVersion GetStringFileInfo('..\installer\IAGrim_beta.exe', 'ProductVersion')
 
 [Setup]
 AppVerName=Grim Dawn Item Assistant
@@ -39,6 +40,7 @@ UseSetupLdr=yes
 DisableProgramGroupPage=yes
 DiskSpanning=no
 AppVersion={#ApplicationVersion}
+VersionInfoProductTextVersion={#ProductVersion}
 PrivilegesRequired=admin
 DisableWelcomePage=Yes
 ArchitecturesInstallIn64BitMode=x64
