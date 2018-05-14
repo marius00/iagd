@@ -150,26 +150,31 @@ namespace IAGrim.Parsers.Arz {
         }
 
         public static void DeleteItemsInPageX(string filename) {
-            
-            GDCryptoDataBuffer pCrypto = new GDCryptoDataBuffer(DataBuffer.ReadBytesFromDisk(filename));
+            try {
+                GDCryptoDataBuffer pCrypto = new GDCryptoDataBuffer(DataBuffer.ReadBytesFromDisk(filename));
 
-            Stash stash = new Stash();
-            if (stash.Read(pCrypto)) {
-                int lootFromIndex;
-                if (Settings.Default.StashToLootFrom == 0) {
-                    lootFromIndex = stash.Tabs.Count - 1;
-                }
-                else {
-                    lootFromIndex = Settings.Default.StashToLootFrom - 1;
-                }
+                Stash stash = new Stash();
+                if (stash.Read(pCrypto)) {
+                    int lootFromIndex;
+                    if (Settings.Default.StashToLootFrom == 0) {
+                        lootFromIndex = stash.Tabs.Count - 1;
+                    }
+                    else {
+                        lootFromIndex = Settings.Default.StashToLootFrom - 1;
+                    }
 
-                Logger.Debug($"Deleting all items in stash #{lootFromIndex}");
-                if (stash.Tabs.Count >= lootFromIndex + 1) {
-                    if (stash.Tabs[lootFromIndex].Items.Count > 0) {
-                        stash.Tabs[lootFromIndex].Items.Clear();
-                        SafelyWriteStash(filename, stash);
+                    Logger.Debug($"Deleting all items in stash #{lootFromIndex}");
+                    if (stash.Tabs.Count >= lootFromIndex + 1) {
+                        if (stash.Tabs[lootFromIndex].Items.Count > 0) {
+                            stash.Tabs[lootFromIndex].Items.Clear();
+                            SafelyWriteStash(filename, stash);
+                        }
                     }
                 }
+            }
+            catch (IOException ex) {
+                // Unfortunate, but not the end of the world.
+                Logger.Warn(ex); 
             }
         }
 

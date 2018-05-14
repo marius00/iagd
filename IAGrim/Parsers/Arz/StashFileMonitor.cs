@@ -116,6 +116,7 @@ namespace IAGrim.Parsers.Arz {
                                 Logger.Info(
                                     "Items has already been looted this session, post-crafting safety measures required.");
 
+
                                 StashManager.DeleteItemsInPageX(e.FullPath);
                             }
                             else {

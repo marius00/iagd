@@ -136,25 +136,25 @@ namespace IAGrim.StashFile {
             if (!File.Exists(pPath)) {
                 return null;
             }
-            using (FileStream fs = File.OpenRead(pPath)) {
-                using (BinaryReader reader = new BinaryReader(fs)) {
-                    int length = (int)reader.BaseStream.Length;
-                    int index = 0;
-                    byte[] buffer = new byte[length];
-                    while (length > 0) {
-                        int count = (length < 0x7fff) ? length : 0x7fff;
-                        while (count > 0) {
-                            int num4 = reader.Read(buffer, index, count);
-                            if (num4 == 0) {
-                                break;
-                            }
-                            index += num4;
-                            count -= num4;
-                            length -= num4;
+
+            byte[] data = File.ReadAllBytes(pPath);
+            using (var reader = new MemoryStream(data)) {
+                int length = (int)reader.Length;
+                int index = 0;
+                byte[] buffer = new byte[length];
+                while (length > 0) {
+                    int count = (length < 0x7fff) ? length : 0x7fff;
+                    while (count > 0) {
+                        int num4 = reader.Read(buffer, index, count);
+                        if (num4 == 0) {
+                            break;
                         }
+                        index += num4;
+                        count -= num4;
+                        length -= num4;
                     }
-                    return buffer;
                 }
+                return buffer;
             }
         }
 

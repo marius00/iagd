@@ -27,10 +27,6 @@
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.panelBox5 = new PanelBox();
-            this.labelNumItems = new System.Windows.Forms.Label();
-            this.labelLastUpdated = new System.Windows.Forms.Label();
-            this.labelLastPatch = new System.Windows.Forms.Label();
             this.panelBox4 = new PanelBox();
             this.cbShowAugments = new FirefoxCheckBox();
             this.cbDualComputer = new FirefoxCheckBox();
@@ -58,7 +54,6 @@
             this.buttonViewBackups = new FirefoxButton();
             this.buttonViewLogs = new FirefoxButton();
             this.contextMenuStrip1.SuspendLayout();
-            this.panelBox5.SuspendLayout();
             this.panelBox4.SuspendLayout();
             this.panelBox3.SuspendLayout();
             this.panelBox2.SuspendLayout();
@@ -93,56 +88,6 @@
             this.copyToolStripMenuItem.Size = new System.Drawing.Size(102, 22);
             this.copyToolStripMenuItem.Text = "Copy";
             this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
-            // 
-            // panelBox5
-            // 
-            this.panelBox5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.panelBox5.Controls.Add(this.labelNumItems);
-            this.panelBox5.Controls.Add(this.labelLastUpdated);
-            this.panelBox5.Controls.Add(this.labelLastPatch);
-            this.panelBox5.Font = new System.Drawing.Font("Segoe UI Semibold", 20F);
-            this.panelBox5.HeaderHeight = 40;
-            this.panelBox5.Location = new System.Drawing.Point(12, 407);
-            this.panelBox5.Name = "panelBox5";
-            this.panelBox5.NoRounding = false;
-            this.panelBox5.Size = new System.Drawing.Size(478, 95);
-            this.panelBox5.TabIndex = 9;
-            this.panelBox5.Tag = "iatag_ui_gddb_title";
-            this.panelBox5.Text = "Grim Dawn Database";
-            this.panelBox5.TextLocation = "8; 5";
-            // 
-            // labelNumItems
-            // 
-            this.labelNumItems.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.labelNumItems.AutoSize = true;
-            this.labelNumItems.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.labelNumItems.Location = new System.Drawing.Point(3, 48);
-            this.labelNumItems.Name = "labelNumItems";
-            this.labelNumItems.Size = new System.Drawing.Size(35, 13);
-            this.labelNumItems.TabIndex = 4;
-            this.labelNumItems.Text = "label2";
-            // 
-            // labelLastUpdated
-            // 
-            this.labelLastUpdated.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.labelLastUpdated.AutoSize = true;
-            this.labelLastUpdated.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.labelLastUpdated.Location = new System.Drawing.Point(3, 61);
-            this.labelLastUpdated.Name = "labelLastUpdated";
-            this.labelLastUpdated.Size = new System.Drawing.Size(35, 13);
-            this.labelLastUpdated.TabIndex = 3;
-            this.labelLastUpdated.Text = "label1";
-            // 
-            // labelLastPatch
-            // 
-            this.labelLastPatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.labelLastPatch.AutoSize = true;
-            this.labelLastPatch.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.labelLastPatch.Location = new System.Drawing.Point(3, 74);
-            this.labelLastPatch.Name = "labelLastPatch";
-            this.labelLastPatch.Size = new System.Drawing.Size(35, 13);
-            this.labelLastPatch.TabIndex = 5;
-            this.labelLastPatch.Text = "label1";
             // 
             // panelBox4
             // 
@@ -521,7 +466,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(876, 511);
             this.Controls.Add(this.linkLabel1);
-            this.Controls.Add(this.panelBox5);
             this.Controls.Add(this.panelBox4);
             this.Controls.Add(this.panelBox3);
             this.Controls.Add(this.panelBox2);
@@ -535,8 +479,6 @@
             this.Text = "Settings";
             this.Load += new System.EventHandler(this.SettingsWindow_Load);
             this.contextMenuStrip1.ResumeLayout(false);
-            this.panelBox5.ResumeLayout(false);
-            this.panelBox5.PerformLayout();
             this.panelBox4.ResumeLayout(false);
             this.panelBox4.PerformLayout();
             this.panelBox3.ResumeLayout(false);
@@ -555,13 +497,9 @@
         private FirefoxButton buttonViewBackups;
         private FirefoxButton buttonViewLogs;
         private FirefoxButton buttonForum;
-        private System.Windows.Forms.Label labelLastUpdated;
-        private System.Windows.Forms.Label labelNumItems;
-        private System.Windows.Forms.Label labelLastPatch;
         private PanelBox panelBox3;
         private FirefoxRadioButton radioBeta;
         private FirefoxRadioButton radioRelease;
-        private PanelBox panelBox5;
         private FirefoxButton buttonDonate;
         private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;

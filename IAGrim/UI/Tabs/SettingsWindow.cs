@@ -63,7 +63,6 @@ namespace IAGrim.UI {
             _controller.BindCheckbox(cbSecureTransfers);
             _controller.BindCheckbox(cbShowRecipesAsItems);
             _controller.BindCheckbox(cbAutoUpdateModSettings);
-            //_controller.BindCheckbox(cbInstalootDisabled);
             _controller.BindCheckbox(cbAutoSearch);
             _controller.BindCheckbox(cbDisplaySkills);
             _controller.LoadDefaults();
@@ -71,28 +70,6 @@ namespace IAGrim.UI {
 
         private void SettingsWindow_Load(object sender, EventArgs e) {
             this.Dock = DockStyle.Fill;
-
-            
-
-            this.labelNumItems.Text = string.Format("Number of items parsed from Grim Dawn database: {0}", _itemDao.GetRowCount());
-            
-            // TODO:
-            string filename = GrimDawnDetector.GetGrimLocation();
-            string databaseFile = Path.Combine(filename, "database", "database.arz");
-            DateTime lastPatch = default(DateTime);
-            if (File.Exists(databaseFile)) {
-                lastPatch = System.IO.File.GetLastWriteTime(databaseFile);
-                this.labelLastPatch.Text = string.Format("Last Grim Dawn patch: {0}", lastPatch.ToString("dd/MM/yyyy"));
-            }
-            else {
-                this.labelLastPatch.Text = "Could not find Grim Dawn install folder";
-            }
-
-            DateTime lastUpdate = new DateTime(_settingsDao.GetLastDatabaseUpdate());
-            this.labelLastUpdated.Text = string.Format("Grim Dawn database last updated: {0}", lastUpdate.ToString("dd/MM/yyyy"));
-            if (lastUpdate < lastPatch)
-                this.labelLastUpdated.ForeColor = Color.Red;
-
 
             radioBeta.Checked = (bool)Properties.Settings.Default.SubscribeExperimentalUpdates;
             radioRelease.Checked = !(bool)Properties.Settings.Default.SubscribeExperimentalUpdates;
