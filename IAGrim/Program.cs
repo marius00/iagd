@@ -150,14 +150,22 @@ namespace IAGrim {
             using (SingleInstance singleInstance = new SingleInstance(guid)) {
                 if (singleInstance.IsFirstInstance) {
                     Logger.Info("Calling run..");
+                    singleInstance.ArgumentsReceived += singleInstance_ArgumentsReceived;
+                    singleInstance.ListenForArgumentsFromSuccessiveInstances();
                     using (ThreadExecuter threadExecuter = new ThreadExecuter()) {
                         Run(args, threadExecuter);
                     }
                 } else {
-                    singleInstance_ArgumentsReceived(null, null);
+                    if (args != null && args.Length > 0) {
+                        singleInstance.PassArgumentsToFirstInstance(args);
+                    }
+                    else {
+                        singleInstance.PassArgumentsToFirstInstance(new string[] {"--ignore"});
+                    }
                 }
             }
         }
+
 
         /// <summary>
         /// Upgrade any settings if required
@@ -195,12 +203,8 @@ namespace IAGrim {
         private static void singleInstance_ArgumentsReceived(object _, ArgumentsReceivedEventArgs e) {
             try {
                 if (_mw != null) {
-                    Action<string[]> restoreWindow = arguments => {
-                        _mw.WindowState = FormWindowState.Normal;
-                        _mw.Activate();
-                    };
-
-                    _mw.Invoke(restoreWindow);
+                    _mw.Invoke((MethodInvoker)delegate { _mw.notifyIcon1_MouseDoubleClick(null, null); });
+                    _mw.Invoke((MethodInvoker) delegate { _mw.Activate(); });
                 }
             } catch (Exception ex) {
                 ExceptionReporter.ReportException(ex, "singleInstance_ArgumentsReceived");
