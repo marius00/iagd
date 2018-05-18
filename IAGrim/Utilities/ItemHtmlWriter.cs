@@ -69,13 +69,13 @@ namespace IAGrim.Utilities {
 
 
             var json = new JsonItem {
-                BaseRecord = item.BaseRecord,
+                BaseRecord = item.BaseRecord ?? string.Empty,
                 URL = id,
-                Icon = item.Bitmap,
-                Name = PureItemName(item.Name),
-                Quality = item.Rarity,
+                Icon = item.Bitmap ?? string.Empty,
+                Name = PureItemName(item.Name) ?? string.Empty,
+                Quality = item.Rarity ?? string.Empty,
                 Level = item.MinimumLevel,
-                Socket = GetSocketFromItem(item?.Name),
+                Socket = GetSocketFromItem(item?.Name) ?? string.Empty,
                 NumItems = item.Count,
                 PetStats = item.PetStats.Select(m => new JsonStat { Label = m.ToString(), Extras = m.Extra?.ToString() }).ToList(),
                 BodyStats = item.BodyStats.Select(m => new JsonStat { Label = m.ToString(), Extras = m.Extra?.ToString() }).ToList(),

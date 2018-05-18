@@ -18,7 +18,7 @@ export default interface IItem {
   headerStats: IStat[];
   bodyStats: IStat[];
   petStats: IStat[];
-  skill: ISkill | null;
+  skill?: ISkill | null;
   hasCloudBackup?: boolean; // TODO: Should be mandatory, optional due to test data not including it
   slot?: string; // TODO: See above
   extras?: string | undefined;

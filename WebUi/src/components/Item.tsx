@@ -37,7 +37,7 @@ class Item extends React.Component<Props, object> {
       if (item.buddies.length === 1) {
         return (
           <div className="buddy-item-mix">
-            &nbsp;&laquo; {translate('item.buddies.singular', item.buddies[0])}
+            &nbsp;{translate('item.buddies.singularOnly', item.buddies[0])}
           </div>
         );
       } else {
@@ -151,7 +151,7 @@ class Item extends React.Component<Props, object> {
 
   render() {
     const item = this.props.item;
-    const icon = item.name.length > 0 ? item.icon : 'weapon1h_focus02a.tex.png';
+    const icon = (item.icon && item.icon.length) > 0 ? item.icon : 'weapon1h_focus02a.tex.png';
     const name = item.name.length > 0 ? item.name : 'Unknown';
 
     const headerStats = item.headerStats.map((stat) =>

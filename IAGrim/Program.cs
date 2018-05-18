@@ -35,6 +35,7 @@ using IAGrim.Services.Crafting;
 using IAGrim.UI.Misc.CEF;
 using IAGrim.UI.Popups;
 using IAGrim.Utilities.HelperClasses;
+using StatTranslator;
 
 
 namespace IAGrim {
@@ -308,8 +309,7 @@ namespace IAGrim {
             Logger.Info("Visual styles enabled..");
             UpgradeSettings(playerItemDao);
 
-            var language = GlobalSettings.Language as StatTranslator.EnglishLanguage;
-            if (language != null) {
+            if (GlobalSettings.Language is EnglishLanguage language) {
                 foreach (var tag in itemTagDao.GetClassItemTags()) {
                     language.SetTagIfMissing(tag.Tag, tag.Name);
                 }

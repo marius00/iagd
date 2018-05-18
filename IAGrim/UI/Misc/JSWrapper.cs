@@ -33,7 +33,8 @@ namespace IAGrim.UI.Misc {
             _settings = new JsonSerializerSettings {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                 Culture = System.Globalization.CultureInfo.InvariantCulture,
-                ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver()
+                ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver(),
+                NullValueHandling = NullValueHandling.Ignore
             };
 
             var lang = GlobalSettings.Language;
