@@ -21,9 +21,7 @@ namespace IAGrim.Backup.Azure.Service {
         private readonly AzureAuthService _azureAuthService;
         private readonly IPlayerItemDao _playerItemDao;
         private readonly IAzurePartitionDao _azurePartitionDao;
-        private readonly ActionCooldown _deletionCooldown;
-        private readonly ActionCooldown _uploadCooldown;
-        private readonly ActionCooldown _downloadCooldown;
+        private Limitations _cooldowns;
         private readonly Func<bool> _isDualComputerInstance;
         private bool _hasSyncedDownOnce = false;
         private DateTimeOffset _lastSearchDt = DateTimeOffset.UtcNow;
@@ -39,14 +37,11 @@ namespace IAGrim.Backup.Azure.Service {
             _azureAuthService = azureAuthService;
             _playerItemDao = playerItemDao;
             _azurePartitionDao = azurePartitionDao;
-            _deletionCooldown = new ActionCooldown(1000 * 60); // ~1min
-            _uploadCooldown = new ActionCooldown(1000 * 10); // ~10 sec
-            _downloadCooldown = new ActionCooldown(1000 * 60 * 15); // ~15min
             _isDualComputerInstance = isDualComputerInstance;
         }
 
         public void Execute() {
-            if (!_azureAuthService.IsAuthenticated()) {
+            if (_azureAuthService.CheckAuthentication() != AzureAuthService.AccessStatus.Authorized) {
                 return;
             }
 
@@ -54,16 +49,24 @@ namespace IAGrim.Backup.Azure.Service {
                 _azureSyncService = new AzureSyncService(_azureAuthService.GetRestService());
             }
 
-            
-            _deletionCooldown.ExecuteIfReady(SyncDeletions);
-            _uploadCooldown.ExecuteIfReady(SyncUp);
+            if (_cooldowns == null) {
+                var limits = _azureSyncService.GetLimitations();
+                var regular = new LimitationSet(cooldownDeletion: limits.Regular.Delete, cooldownUpload: limits.Regular.Upload, cooldownDownload: limits.Regular.Download);
+                var multi = new LimitationSet(cooldownDeletion: limits.MultiUsage.Delete, cooldownUpload: limits.MultiUsage.Upload, cooldownDownload: limits.MultiUsage.Download);
+                _cooldowns = new Limitations(regular: regular, multiUsage: multi);
+            }
 
+            var limitations = _isDualComputerInstance() ? _cooldowns.MultiUsage : _cooldowns.Regular;
 
+            limitations.DeletionCooldown.ExecuteIfReady(SyncDeletions);
+            limitations.UploadCooldown.ExecuteIfReady(SyncUp);
+
+            // TODO:
             // Downloads will eventually stop
             const int syncFreezeTime = 31;
             var canSyncDown = !_hasSyncedDownOnce || _isDualComputerInstance(); // Either first sync since startup, or we're in dual-pc mode.
             if (canSyncDown && (DateTimeOffset.UtcNow - _lastSearchDt).TotalMinutes < syncFreezeTime) {
-                _downloadCooldown.ExecuteIfReady(SyncDown);
+                limitations.DownloadCooldown.ExecuteIfReady(SyncDown);
             }
         }
 
@@ -206,5 +209,29 @@ namespace IAGrim.Backup.Azure.Service {
                 return;
             }
         }
+
+        private class LimitationSet {
+            public ActionCooldown DeletionCooldown { get; }
+            public ActionCooldown UploadCooldown { get; }
+            public ActionCooldown DownloadCooldown { get; }
+
+            public LimitationSet(long cooldownDeletion, long cooldownUpload, long cooldownDownload) {
+                DeletionCooldown = new ActionCooldown(cooldownDeletion);
+                UploadCooldown = new ActionCooldown(cooldownUpload);
+                DownloadCooldown = new ActionCooldown(cooldownDownload);
+            }
+        }
+
+        private class Limitations {
+            public LimitationSet Regular { get; }
+            public LimitationSet MultiUsage { get; }
+
+            public Limitations(LimitationSet regular, LimitationSet multiUsage) {
+                Regular = regular;
+                MultiUsage = multiUsage;
+            }
+        }
     }
+
+
 }

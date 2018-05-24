@@ -153,6 +153,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Backup\Azure\Dto\AzureLimitEntry.cs" />
+    <Compile Include="Backup\Azure\Dto\AzureLimitsDto.cs" />
     <Compile Include="Database\Model\UnlootedStashItem.cs" />
     <Compile Include="UI\Controller\dto\ItemTypeDto.cs" />
     <Compile Include="UI\Misc\CEF\CefRequestHandler.cs" />

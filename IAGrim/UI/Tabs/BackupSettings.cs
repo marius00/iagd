@@ -126,9 +126,12 @@ namespace IAGrim.UI {
         }
 
         private void firefoxButton1_Click(object sender, EventArgs e) {
-
-            if (!_authAuthService.IsAuthenticated()) {
+            var access = _authAuthService.CheckAuthentication();
+            if (access == AzureAuthService.AccessStatus.Unauthorized) {
                 _authAuthService.Authenticate();
+            }
+            else if (access == AzureAuthService.AccessStatus.Unknown) {
+                MessageBox.Show("The backup service is currently experiencing technical difficulties.\nPlease try again later.");
             }
             else {
                 var alreadyLoggedIn = GlobalSettings.Language.GetTag("iatag_feedback_already_logged_in");

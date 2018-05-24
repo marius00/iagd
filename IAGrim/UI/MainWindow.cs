@@ -626,7 +626,7 @@ namespace IAGrim.UI {
 
 
             // Popup login diag
-            if (!_authAuthService.IsAuthenticated()) {
+            if (_authAuthService.CheckAuthentication() == AzureAuthService.AccessStatus.Unauthorized) {
                 var t = new System.Windows.Forms.Timer {Interval = 100};
                 t.Tick += (o, args) => {
                     if (_cefBrowserHandler.BrowserControl.IsBrowserInitialized) {

@@ -41,8 +41,8 @@ class EmailStage extends React.Component<Props> {
         })
         .then((response) => response.json())
         .then((json) => {
-          if (json.token !== undefined) {
-            this.props.onCompletion(email, json.token);
+          if (json.Token !== undefined) {
+            this.props.onCompletion(email, json.Token);
           }
           else {
             console.warn('Attempted to fetch token for email, but token was undefined.');

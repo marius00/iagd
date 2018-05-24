@@ -39,7 +39,6 @@ using StatTranslator;
 
 
 namespace IAGrim {
-
     internal class 
         Program {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(Program));

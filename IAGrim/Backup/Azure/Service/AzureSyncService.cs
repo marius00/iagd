@@ -52,5 +52,10 @@ namespace IAGrim.Backup.Azure.Service {
             var json = JsonConvert.SerializeObject(items);
             return _restService.Post<AzureUploadResult>(AzureUris.UploadItemsUrl, json);
         }
+
+        public AzureLimitsDto GetLimitations() {
+            var url = AzureUris.FetchLimitationsUrl;
+            return _restService.Get<AzureLimitsDto>(url);
+        }
     }
 }

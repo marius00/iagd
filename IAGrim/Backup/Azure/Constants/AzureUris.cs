@@ -19,6 +19,7 @@ namespace IAGrim.Backup.Azure.Constants {
                 FetchItemsInPartitionUrl = "http://localhost:7071/api/v2_Download";
                 UploadItemsUrl = "http://localhost:7071/api/v2_Upload";
                 DeleteItemsUrl = "http://localhost:7071/api/v2_Remove";
+                FetchLimitationsUrl = "http://localhost:7071/api/v2_Limits";
             }
             else if (env == EnvAzure) {
                 AuthenticateUrl = "http://grimdawn.dreamcrash.org/ia/backup/";
@@ -27,6 +28,7 @@ namespace IAGrim.Backup.Azure.Constants {
                 FetchItemsInPartitionUrl = "https://iagd.azurewebsites.net/api/v2_Download";
                 UploadItemsUrl = "https://iagd.azurewebsites.net/api/v2_Upload";
                 DeleteItemsUrl = "https://iagd.azurewebsites.net/api/v2_Remove";
+                FetchLimitationsUrl = "https://iagd.azurewebsites.net/api/v2_Limits";
             }
             else {
                 throw new ArgumentException(env);
@@ -39,5 +41,6 @@ namespace IAGrim.Backup.Azure.Constants {
         public static string FetchItemsInPartitionUrl { get; private set; }
         public static string UploadItemsUrl { get; private set; }
         public static string DeleteItemsUrl { get; private set; }
+        public static string FetchLimitationsUrl { get; private set; }
     }
 }

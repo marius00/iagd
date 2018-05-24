@@ -8,6 +8,7 @@ using System.Runtime.Caching;
 using System.Text;
 using System.Threading.Tasks;
 using CefSharp;
+using EvilsoftCommons.Exceptions;
 using IAGrim.Backup.Azure.CefSharp.Events;
 using IAGrim.Backup.Azure.Constants;
 using IAGrim.UI.Misc;
@@ -22,6 +23,12 @@ namespace IAGrim.Backup.Azure.Service {
         private readonly ICefBackupAuthentication _authentication;
         private readonly AuthenticationProvider _authenticationProvider;
 
+        public enum AccessStatus {
+            Authorized,
+            Unauthorized,
+            Unknown
+        }
+
         public AzureAuthService(ICefBackupAuthentication authentication, AuthenticationProvider authenticationProvider) {
             _authentication = authentication;
             _authenticationProvider = authenticationProvider;
@@ -32,13 +39,13 @@ namespace IAGrim.Backup.Azure.Service {
             var args = eventArgs as AuthResultEvent;
             (sender as IBrowser)?.CloseBrowser(true);
 
-            if (IsTokenValid(args.Token)) {
+            if (IsTokenValid(args.Token) == AccessStatus.Authorized) {
                 _authenticationProvider.SetToken(args.Token);
                 MemoryCache.Default.Set(CacheKey, true, DateTimeOffset.Now.AddDays(1));
             }
         }
 
-        private bool IsTokenValid(string token) {
+        private AccessStatus IsTokenValid(string token) {
             try {
 
                 var httpClient = new HttpClient();
@@ -47,33 +54,41 @@ namespace IAGrim.Backup.Azure.Service {
 
                 if (result == HttpStatusCode.OK) {
                     Logger.Info($"Got Status {result} verifying authentication token");
-                    return true;
+                    return AccessStatus.Authorized;
+                }
+                else if (result == HttpStatusCode.Unauthorized || result == HttpStatusCode.Forbidden) {
+                    return AccessStatus.Unauthorized;
+                }
+                else if (result == HttpStatusCode.InternalServerError) {
+                    ExceptionReporter.ReportIssue("Server response 500 verifying access token");
+                    return AccessStatus.Unknown;
                 }
                 else {
                     Logger.Error($"Got Status {result} verifying authentication token");
-                    return false;
+                    ExceptionReporter.ReportIssue($"Server response {result} verifying access token");
+                    return AccessStatus.Unknown;
                 }
             }
             catch (AggregateException ex) {
                 Logger.Warn(ex.Message, ex);
-                return false;
+                return AccessStatus.Unknown;
             }
             catch (WebException ex) {
                 Logger.Warn(ex.Message, ex);
-                return false;
+                return AccessStatus.Unknown;
             }
         }
 
-        public bool IsAuthenticated() {
-            var cached = MemoryCache.Default[CacheKey] as bool?;
-            if (cached.HasValue)
-                return cached.Value;
+        public AccessStatus CheckAuthentication() {
+            if (MemoryCache.Default[CacheKey] is bool cached) {
+                return cached ? AccessStatus.Authorized : AccessStatus.Unauthorized;
+            }
 
             if (_authenticationProvider.HasToken()) {
                 var result = IsTokenValid(_authenticationProvider.GetToken());
                 MemoryCache.Default.Set(CacheKey, result, DateTimeOffset.Now.AddDays(1));
 
-                if (!result) {
+                if (result == AccessStatus.Unauthorized) {
                     Logger.Warn("Existing authentication token is invalid, clearing authentication provider");
                     _authenticationProvider.SetToken(string.Empty);
                 }
@@ -84,7 +99,7 @@ namespace IAGrim.Backup.Azure.Service {
                 MemoryCache.Default.Set(CacheKey, false, DateTimeOffset.Now.AddDays(1));
             }
 
-            return false;
+            return AccessStatus.Unknown;
         }
 
         public void Authenticate() {
@@ -108,7 +123,7 @@ namespace IAGrim.Backup.Azure.Service {
         }
 
         public RestService GetRestService() {
-            if (IsAuthenticated()) {
+            if (CheckAuthentication() == AccessStatus.Authorized) {
                 var token = _authenticationProvider.GetToken();
 
                 var httpClient = new HttpClient();
