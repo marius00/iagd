@@ -47,7 +47,7 @@ namespace IAGrim.Backup.Azure.Service {
 
         private AccessStatus IsTokenValid(string token) {
             try {
-
+                // TODO : This is being spammed to holy hell, probably incurring vast costs.
                 var httpClient = new HttpClient();
                 httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Simple-Auth", token);
                 var result = httpClient.GetAsync(AzureUris.TokenVerificationUri).Result.StatusCode;
@@ -80,8 +80,8 @@ namespace IAGrim.Backup.Azure.Service {
         }
 
         public AccessStatus CheckAuthentication() {
-            if (MemoryCache.Default[CacheKey] is bool cached) {
-                return cached ? AccessStatus.Authorized : AccessStatus.Unauthorized;
+            if (MemoryCache.Default[CacheKey] is AccessStatus cached) {
+                return cached;
             }
 
             if (_authenticationProvider.HasToken()) {
