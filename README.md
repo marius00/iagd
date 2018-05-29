@@ -32,8 +32,9 @@ HowTo:
 
 
 ## Building a release of IAGrim
-When building in "Release mode" the compilation will fail on the first attempt due to an issue with Stamp.Fody
-Running the release mode again should be successful. [Stamp.Fody embeds the git branch/hash into the iagrim.exe file]
+When building in "Release mode" the compilation will fail on the first attempt due to an issue with Stamp.Fody.
+
+Running the release mode again should result in a successful build. [Stamp.Fody embeds the git branch/hash into the iagrim.exe file]
 
 
 
@@ -93,6 +94,8 @@ IAGrim uses a DLL Proxy which it injects into the game process for the purposes 
 Such as: If the stash is open, the player position, if cloud saving is enabled.
 The goal is to ensure that it is indeed safe to transfer items, before any item transfers are attempted by IA.
 
+Messages are passed from the C++ dll via WINAPI SendMessage, IA is listening for these messages using a window created with a specific class name.
+
 
 ## Item Searches
 Item searches are done for owned items, recipe items*, buddy items* and augments*.
@@ -108,4 +111,11 @@ IA will parse the database and "cache" the results in the IA database for lookup
 If a player item does not match any known template (different mod, not loaded AoM, other..), the item will simply be displayed as "Unknown Item"
 Loading items is only done for **visual purposes** and to **enable search**.
 Even if an item is unknown, the item will be replicated in-game with its original stats.
+
+
+## Translations
+Translations are handled in two ways:
+For the web ui, they are passed in via the JSWrapper object.
+For the C# Forms user interface, the "tag" property is used to detect the appropriate translation string.
+Default language is located in EnglishLanguage.cs, IA looks for tags_ia.txt in GD translation files.
 

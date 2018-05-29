@@ -461,7 +461,6 @@
       <DependentUpon>UpdatingPlayerItemsScreen.cs</DependentUpon>
     </Compile>
     <Compile Include="Utilities\ActionCooldown.cs" />
-    <Compile Include="Utilities\CallerMemberNameAttribute.cs" />
     <Compile Include="Utilities\ChromiumUrlHook.cs" />
     <Compile Include="Utilities\Cloud\FileBackup.cs" />
     <Compile Include="Utilities\DependencyChecker.cs" />
