@@ -423,6 +423,8 @@ namespace IAGrim.UI {
             if (Thread.CurrentThread.Name == null)
                 Thread.CurrentThread.Name = "UI";
 
+            tsStashStatus.Text = GlobalSettings.Language.GetTag("iatag_stash_unknown");
+
 
             ExceptionReporter.EnableLogUnhandledOnThread();
             SizeChanged += OnMinimizeWindow;

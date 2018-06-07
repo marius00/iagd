@@ -833,6 +833,7 @@ namespace IAGrim.Database {
                 AND {PlayerItemTable.Prefix} = :prefix
                 AND {PlayerItemTable.Suffix} = :suffix
                 AND {PlayerItemTable.Seed} = :seed
+                LIMIT 1
             ";
 
             var result = session.CreateSQLQuery(sql)
@@ -851,28 +852,9 @@ namespace IAGrim.Database {
 
 
         public bool Exists(PlayerItem item) {
-            string sql = $@"
-                SELECT 1 FROM {PlayerItemTable.Table}
-                WHERE {PlayerItemTable.Record} = :base
-                AND {PlayerItemTable.Prefix} = :prefix
-                AND {PlayerItemTable.Suffix} = :suffix
-                AND {PlayerItemTable.Seed} = :seed
-            ";
-
             using (ISession session = SessionCreator.OpenSession()) {
                 using (session.BeginTransaction()) {
-                    var result = session.CreateSQLQuery(sql)
-                        .SetParameter("base", item.BaseRecord)
-                        .SetParameter("prefix", item.PrefixRecord)
-                        .SetParameter("suffix", item.SuffixRecord)
-                        .SetParameter("seed", item.Seed)
-                        .UniqueResult();
-
-                    if (result != null) {
-                        return true;
-                    }
-
-                    return false;
+                    return Exists(session, item);
                 }
             }
 

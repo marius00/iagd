@@ -47,7 +47,7 @@ class EmbeddedTranslator {
     'items.label.tripleGreen': 'This item has three green affixes! (Rare!)',
     'item.label.bonusToAllPets': 'Bonus to All Pets:',
     'item.label.grantsSkill': 'Grants Skill: ',
-    'item.label.grantsSkillLevel': 'Level {0}:',
+    'item.label.grantsSkillLevel': 'Level {0}',
     'item.label.levelRequirement': 'Level Requirement: {0}',
     'item.label.levelRequirementAny': 'Any',
     'item.label.transferSingle': 'Transfer',

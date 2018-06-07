@@ -387,8 +387,8 @@ export const addTodo3 = (text: string): IItem[] => {
       {
         baseRecord: 'records\/items\/gearweapons\/melee2h\/c011_blunt2h.dbr',
         icon: 'c011_blunt2h.tex.png',
-        quality: 'Blue',
-        name: 'Alvarick\'s Rebuke',
+        quality: 'Green',
+        name: 'Alvarick\'s Rebuke with an incredibly long name maybe its a green?',
         socket: '',
         level: 40,
         url: [

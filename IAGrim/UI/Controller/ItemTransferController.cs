@@ -101,7 +101,8 @@ namespace IAGrim.UI.Controller {
         }
 
         private TransferStatus TransferItems(string transferFile, List<PlayerItem> items, int maxItemsToTransfer) {
-        
+            var numReceived = items.Sum(item => Math.Max(1, item.StackCount));
+
             // Remove all items deposited (may or may not be less than the requested amount, if no inventory space is available)
             string error;
             int numItemsReceived = (int)items.Sum(item => Math.Max(1, item.StackCount));
@@ -113,7 +114,8 @@ namespace IAGrim.UI.Controller {
             _dao.Update(items, true);
 
 
-            int NumItemsTransferred = numItemsRequested - (numItemsRequested - (int)items.Sum(item => Math.Max(1, item.StackCount)));
+            var numItemsAfterTransfer = items.Sum(item => Math.Max(1, item.StackCount));
+            long numItemsTransferred = numReceived - numItemsAfterTransfer;
 
             if (!string.IsNullOrEmpty(error)) {
                 Logger.Warn(error);
@@ -121,7 +123,7 @@ namespace IAGrim.UI.Controller {
             }
 
             return new TransferStatus {
-                NumItemsTransferred = NumItemsTransferred,
+                NumItemsTransferred = (int)numItemsTransferred,
                 NumItemsRequested = numItemsRequested
             };
         }
@@ -186,10 +188,10 @@ namespace IAGrim.UI.Controller {
                     Logger.InfoFormat("Successfully deposited {0} out of {1} items", result.NumItemsTransferred,
                         result.NumItemsRequested);
                     try {
-                        var message = string.Format(GlobalSettings.Language.GetTag("iatag_stash3_success"),
+                        /*var message = string.Format(GlobalSettings.Language.GetTag("iatag_stash3_success"),
                             result.NumItemsTransferred, result.NumItemsRequested);
                         _setFeedback(message);
-                        _browser.ShowMessage(message, UserFeedbackLevel.Success);
+                        _browser.ShowMessage(message, UserFeedbackLevel.Success);*/
                     }
                     catch (FormatException ex) {
                         Logger.Warn(ex.Message);

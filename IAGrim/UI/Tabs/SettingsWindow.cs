@@ -144,7 +144,7 @@ namespace IAGrim.UI {
         }
 
         private void buttonLanguageSelect_Click(object sender, EventArgs e) {
-            new LanguagePackPicker(_itemTagDao, _settingsDao, _playerItemDao, _parser, GrimDawnDetector.GetGrimLocation(), _parsingService)
+            new LanguagePackPicker(_itemTagDao, _settingsDao, _playerItemDao, _parser, GrimDawnDetector.GetGrimLocations(), _parsingService)
                 .ShowDialog();
 
             _itemViewUpdateTrigger?.Invoke();

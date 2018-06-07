@@ -56,12 +56,14 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
             string expansion1Items = GrimFolderUtility.FindArzFile(Path.Combine(_grimdawnLocation, "gdx1"));
             string modItems = string.IsNullOrEmpty(_modLocation) ? "" : GrimFolderUtility.FindArzFile(_modLocation);
             actions.Add(() => parser.LoadItems(vanillaItems, expansion1Items, modItems, new WinformsProgressBar(form.LoadingItems).Tracker));
+
+            // TODO: 
             actions.Add(() => parser.MapItemNames(new WinformsProgressBar(form.MappingItemNames).Tracker));
             actions.Add(() => parser.RenamePetStats(new WinformsProgressBar(form.MappingPetStats).Tracker));
 
             actions.Add(() => _databaseItemDao.Save(parser.Items, new WinformsProgressBar(form.SavingItems).Tracker));
 
-
+            // TODO: This depends on the DB item name.. which is in english, not localized
             actions.Add(() => {
                 var records = parser.GenerateSpecialRecords(new WinformsProgressBar(form.GeneratingSpecialStats).Tracker);
                 _databaseItemStatDao.Save(records, new WinformsProgressBar(form.SavingSpecialStats).Tracker);

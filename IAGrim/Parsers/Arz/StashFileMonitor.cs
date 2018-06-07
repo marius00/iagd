@@ -34,9 +34,9 @@ namespace IAGrim.Parsers.Arz {
                 _watcher.Filter = "transfer.gs?";
 
                 _watcher.IncludeSubdirectories = true;
-                _watcher.Changed += (sender, args) => OnChanged(args); //new FileSystemEventHandler(OnChanged);
-                _watcher.Created += (sender, args) => OnChanged(args); //new FileSystemEventHandler(OnChanged);
-                _watcher.Deleted += (sender, args) => OnChanged(args); //new FileSystemEventHandler(OnChanged);
+                _watcher.Changed += (sender, args) => OnChanged(args); 
+                _watcher.Created += (sender, args) => OnChanged(args);
+                _watcher.Deleted += (sender, args) => OnChanged(args);
                 _watcher.Renamed += OnRenamed;
 
 

@@ -163,6 +163,8 @@ namespace IAGrim {
                     }
                 }
             }
+
+            Logger.Info("IA Exited");
         }
 
 
@@ -277,6 +279,10 @@ namespace IAGrim {
         private static void Run(string[] args, ThreadExecuter threadExecuter) {
             var factory = new SessionFactory();
 
+            // Settings should be upgraded early, it contains the language pack etc and some services depends on settings.
+            IPlayerItemDao playerItemDao = new PlayerItemRepo(threadExecuter, factory);
+            UpgradeSettings(playerItemDao);
+
             // Prohibited for now
             Properties.Settings.Default.InstaTransfer = false;
             Properties.Settings.Default.Save();
@@ -284,7 +290,6 @@ namespace IAGrim {
             
             IDatabaseSettingDao databaseSettingDao = new DatabaseSettingRepo(threadExecuter, factory);
             LoadUuid(databaseSettingDao);
-            IPlayerItemDao playerItemDao = new PlayerItemRepo(threadExecuter, factory);
             var azurePartitionDao = new AzurePartitionRepo(threadExecuter, factory);
             IDatabaseItemDao databaseItemDao = new DatabaseItemRepo(threadExecuter, factory);
             IDatabaseItemStatDao databaseItemStatDao = new DatabaseItemStatRepo(threadExecuter, factory);
@@ -310,7 +315,6 @@ namespace IAGrim {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Logger.Info("Visual styles enabled..");
-            UpgradeSettings(playerItemDao);
 
             if (GlobalSettings.Language is EnglishLanguage language) {
                 foreach (var tag in itemTagDao.GetClassItemTags()) {

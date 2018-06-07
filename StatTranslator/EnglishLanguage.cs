@@ -288,7 +288,7 @@ namespace StatTranslator {
             { "iatag_html_crafting_lacking", "You are currently lacking:" },
             { "iatag_html_items_no_items", "No items found!" },
             { "iatag_html_items_grantsskill", "Grants Skill: " },
-            { "iatag_html_items_level", "Level" },
+            { "iatag_html_items_level", "Level {0}" },
             { "iatag_html_badstate_title", "Ooops!" },
             { "iatag_html_badstate_subtitle", "It seems IA has gotten in a bad state!" },
             { "iatag_html_onlinesync_ok", "This item has been backed up to the cloud" },
@@ -377,6 +377,21 @@ namespace StatTranslator {
             {"iatag_slot_component", "Component" },
             {"iatag_slot_relic", "Relic" },
             {"iatag_slot_other", "Other" },
+
+
+            {"iatag_slot_dagger1h", "Dagger (1h)" },
+            {"iatag_slot_mace1h", "Mace (1h)" },
+            {"iatag_slot_axe1h", "Axe (1h)" },
+            {"iatag_slot_scepter1h", "Scepter (1h)" },
+            {"iatag_slot_sword1h", "Sword (1h)" },
+            {"iatag_slot_sword2h", "Sword (2h)" },
+            {"iatag_slot_mace2h", "Mace (2h)" },
+            {"iatag_slot_axe2h", "Axe (2h)" },
+            {"iatag_slot_ranged1h", "Ranged (1h)" },
+            {"iatag_slot_ranged2h", "Ranged (2h)" },
+            {"iatag_slot_scroll", "Scroll" },
+            {"iatag_slot_augmentation", "Augmentation" },
+
         };
 
         private const string english = "{%_s0}{%_s1}{%_s2}{%_s3}{%_s4}";

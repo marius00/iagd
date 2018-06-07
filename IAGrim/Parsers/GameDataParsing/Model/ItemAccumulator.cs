@@ -10,7 +10,7 @@ using NHibernate.Util;
 
 namespace IAGrim.Parsers.GameDataParsing.Model {
     class ItemAccumulator {
-        private Dictionary<string, InternalItem> _items = new Dictionary<string, InternalItem>();
+        private readonly Dictionary<string, InternalItem> _items = new Dictionary<string, InternalItem>();
 
         public List<DatabaseItem> Items {
             get {
@@ -32,12 +32,12 @@ namespace IAGrim.Parsers.GameDataParsing.Model {
         }
 
         private int CalculateHash(DatabaseItem item) {
-           List<string> source = new List<string>();
-            source.Add(item.Record);
+            List<string> source = new List<string> {item.Record};
             foreach (var stat in item.Stats) {
                 source.Add(stat.Stat ?? "-");
                 source.Add((stat?.Value ?? 0).ToString(CultureInfo.CurrentCulture));
                 source.Add(stat.TextValue ?? "-");
+                source.Add(item.Name ?? "-"); // Useful for re-parsing with language packs
             }
 
             return string.Join(":", source).GetHashCode();

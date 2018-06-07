@@ -20,8 +20,8 @@ using IAGrim.Parsers.GameDataParsing.Service;
 namespace IAGrim.UI {
     public partial class LanguagePackPicker : Form {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(LanguagePackPicker));
-        private readonly string _path;
-        private List<FirefoxRadioButton> _checkboxes = new List<FirefoxRadioButton>();
+        private readonly IEnumerable<string> _paths;
+        private readonly List<FirefoxRadioButton> _checkboxes = new List<FirefoxRadioButton>();
         private readonly IItemTagDao _itemTagDao;
         private readonly IDatabaseSettingDao _databaseSettingDao;
         private readonly IPlayerItemDao _playerItemDao;
@@ -36,10 +36,12 @@ namespace IAGrim.UI {
             IItemTagDao itemTagDao, 
             IDatabaseSettingDao databaseSettingDao,
             IPlayerItemDao playerItemDao,
-            ArzParser parser, 
-            string path, ParsingService parsingService) {
+            ArzParser parser,
+            IEnumerable<string> paths, 
+            ParsingService parsingService
+        ) {
             InitializeComponent();
-            this._path = path;
+            this._paths = paths;
             _parsingService = parsingService;
             this._itemTagDao = itemTagDao;
             this._databaseSettingDao = databaseSettingDao;
@@ -67,7 +69,7 @@ namespace IAGrim.UI {
         private void buttonSelect_Click(object sender, EventArgs e) {
             // find selected checkbox
             // if selected != Properties.Settings.Default.LocalizationFile
-            var cb = _checkboxes.Where(m => m.Checked).FirstOrDefault();
+            var cb = _checkboxes.FirstOrDefault(m => m.Checked);
             if (cb != null) {
                 var package = cb.Tag.ToString();
                 if (package != Properties.Settings.Default.LocalizationFile) {
@@ -128,29 +130,30 @@ namespace IAGrim.UI {
                 n++;
             }
 
-            if (Directory.Exists(Path.Combine(_path, "localization"))) {
-                foreach (var file in Directory.EnumerateFiles(Path.Combine(_path, "localization"), "*.zip")) {
-                    string author;
-                    string language;
-                    loc.CheckLanguage(file, out author, out language);
+            foreach (var path in _paths) {
+                if (Directory.Exists(Path.Combine(path, "localization"))) {
+                    foreach (var file in Directory.EnumerateFiles(Path.Combine(path, "localization"), "*.zip")) {
+                        string author;
+                        string language;
+                        loc.CheckLanguage(file, out author, out language);
 
-                    FirefoxRadioButton cb = new FirefoxRadioButton {
-                        Location = new Point(10, 25 + n * 33),
-                        Text = string.Format("{0} by {1}", language, author),
-                        Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top,
-                        Width = groupBox1.Width - pictureBox1.Width,
-                        Tag = file,
-                        Checked = file == Properties.Settings.Default.LocalizationFile
-                    };
+                        FirefoxRadioButton cb = new FirefoxRadioButton {
+                            Location = new Point(10, 25 + n * 33),
+                            Text = string.Format("{0} by {1}", language, author),
+                            Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top,
+                            Width = groupBox1.Width - pictureBox1.Width,
+                            Tag = file,
+                            Checked = file == Properties.Settings.Default.LocalizationFile
+                        };
 
-                    cb.TabIndex = n;
-                    cb.TabStop = true;
-                    groupBox1.Controls.Add(cb);
-                    _checkboxes.Add(cb);
-                    n++;
+                        cb.TabIndex = n;
+                        cb.TabStop = true;
+                        groupBox1.Controls.Add(cb);
+                        _checkboxes.Add(cb);
+                        n++;
+                    }
                 }
             }
-            
 
             this.Height += n * 33;
         }

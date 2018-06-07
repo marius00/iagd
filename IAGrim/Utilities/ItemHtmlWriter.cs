@@ -86,7 +86,7 @@ namespace IAGrim.Utilities {
                 Skill = item.Skill != null ? GetJsonSkill(item.Skill) : null,
                 GreenRarity = item.PrefixRarity,
                 HasCloudBackup = isCloudSynced,
-                Slot = SlotTranslator.Translate(item.Slot ?? ""),
+                Slot = SlotTranslator.Translate(GlobalSettings.Language, item.Slot ?? ""),
                 Extras = extras
             };
 

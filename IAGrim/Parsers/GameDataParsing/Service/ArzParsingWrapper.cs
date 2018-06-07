@@ -158,6 +158,11 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
             Logger.Debug($"Classified {petItems.Count()} records as pet stats");
         }
 
+        /// <summary>
+        /// Primarily parses skills and maps item-skill
+        /// </summary>
+        /// <param name="itemSkillDao"></param>
+        /// <param name="tracker"></param>
         public void ParseComplexItems(IItemSkillDao itemSkillDao, ProgressTracker tracker) {
             var mappedTags = _tagAccumulator.MappedTags;
             var skillParser = new ComplexItemParser(Items, mappedTags);

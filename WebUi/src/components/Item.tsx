@@ -6,6 +6,7 @@ import Skill from './Skill';
 import * as ReactTooltip from 'react-tooltip';
 import { isEmbedded } from '../constants/index';
 import * as Guid from 'guid';
+import { Textfit } from 'react-textfit';
 import translate from '../translations/EmbeddedTranslator';
 import IItemType from '../interfaces/IItemType';
 
@@ -175,13 +176,13 @@ class Item extends React.Component<Props, object> {
           </ReactTooltip>
         </span>
         <div className="text">
-          <h3 className="item-name-header">
+          <Textfit mode="multi" max="15" min="10">
             <span>
               <a onClick={() => this.openItemSite()} className={this.translateQualityToClass(item.quality)}>{name}</a>
             </span>
-            {item.greenRarity === 3 ? <span className="cursor-help" data-tip="true" data-for="triple-green-tooltip">(+2)</span> : ''}
-            {item.greenRarity === 2 ? <span className="cursor-help" data-tip="true" data-for="double-green-tooltip">(+1)</span> : ''}
-          </h3>
+              {item.greenRarity === 3 ? <span className="cursor-help" data-tip="true" data-for="triple-green-tooltip">(+2)</span> : ''}
+              {item.greenRarity === 2 ? <span className="cursor-help" data-tip="true" data-for="double-green-tooltip">(+1)</span> : ''}
+          </Textfit>
           {item.socket && item.socket.length > 0 &&
           <span className="item-socket-label">{item.socket}</span>
           }

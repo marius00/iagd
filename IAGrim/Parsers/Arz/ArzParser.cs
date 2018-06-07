@@ -114,7 +114,7 @@ namespace IAGrim.Parsers.Arz {
             if (rExSkillClass.Success && rExSkillClass.Groups.Count == 2)
                 return rExSkillClass.Groups[1].Value;
 
-            var viaRecord = items.Where(m => m.Record == record).FirstOrDefault();
+            var viaRecord = items.FirstOrDefault(m => m.Record == record);
             var stat = viaRecord?.Stats.Where(m => m.Stat == "MasteryEnumeration").FirstOrDefault()?.TextValue;
             if (stat != null && stat.Length >= 2) {
                 return stat.Substring(stat.Length - 2);
@@ -138,9 +138,8 @@ namespace IAGrim.Parsers.Arz {
                 bool hasLevel = stats.Any(m => m.Stat.Equals("augmentMasteryLevel" + i));
                 bool hasClass = stats.Any(m => m.Stat.Equals("augmentMasteryName" + i));
                 if (hasLevel && hasClass) {
-                    float amount = stats.Where(m => m.Stat.Equals("augmentMasteryLevel" + i)).FirstOrDefault().Value;
-                    string profession = stats.Where(m => m.Stat.Equals("augmentMasteryName" + i)).FirstOrDefault()
-                        .TextValue;
+                    float amount = stats.First(m => m.Stat.Equals("augmentMasteryLevel" + i)).Value;
+                    string profession = stats.First(m => m.Stat.Equals("augmentMasteryName" + i)).TextValue;
 
 
                     var professionTag = ExtractClassFromRecord(profession, items);
@@ -162,7 +161,7 @@ namespace IAGrim.Parsers.Arz {
             var skill = items?.Where(m => m.Record == skillRecord).FirstOrDefault()?.Stats;
             if (skill != null) {
                 // Get the tag-name from the skill
-                var skillNameEntry = skill.Where(m => m.Stat.Equals("skillDisplayName")).FirstOrDefault();
+                var skillNameEntry = skill.FirstOrDefault(m => m.Stat.Equals("skillDisplayName"));
                 if (skillNameEntry?.TextValue != null)
                     return skillNameEntry.TextValue;
 
@@ -224,9 +223,8 @@ namespace IAGrim.Parsers.Arz {
                 bool hasLevel = stats.Any(m => m.Stat.Equals("augmentSkillLevel" + i));
                 bool hasClass = stats.Any(m => m.Stat.Equals("augmentSkillName" + i));
                 if (hasLevel && hasClass) {
-                    float amount = stats.FirstOrDefault(m => m.Stat.Equals("augmentSkillLevel" + i)).Value;
-                    string skillRecord = stats.FirstOrDefault(m => m.Stat.Equals("augmentSkillName" + i))
-                        .TextValue;
+                    float amount = stats.First(m => m.Stat.Equals("augmentSkillLevel" + i)).Value;
+                    string skillRecord = stats.First(m => m.Stat.Equals("augmentSkillName" + i)).TextValue;
 
                     // Get the tag-name from the skill
                     string skillNameEntry = GetSkillDisplayName(skills, skillRecord);
