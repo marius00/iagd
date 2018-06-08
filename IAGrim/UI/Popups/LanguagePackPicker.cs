@@ -91,12 +91,16 @@ namespace IAGrim.UI {
                         // Override timestamp to force an update
                         GlobalSettings.Language = new EnglishLanguage();
 
-                        string location = GrimDawnDetector.GetGrimLocation();
-                        if (!string.IsNullOrEmpty(location) && Directory.Exists(location)) {
-                            _parsingService.Execute();
-                        }
-                        else {
-                            Logger.Warn("Could not find the Grim Dawn install location");
+                        foreach (var location in _paths) {
+                            if (!string.IsNullOrEmpty(location) && Directory.Exists(location)) {
+                                _parsingService.Update(location, string.Empty);
+                                _parsingService.Execute();
+                                break;
+                            }
+                            else {
+                                Logger.Warn("Could not find the Grim Dawn install location");
+                            }
+
                         }
 
                         // Update item stats as well
