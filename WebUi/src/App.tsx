@@ -37,7 +37,7 @@ class App extends React.Component<Props, object> {
   }
 
   render() {
-    const { store } = this.props;
+    const {store} = this.props;
 
     return (
       <Provider store={store}>
@@ -54,20 +54,21 @@ class App extends React.Component<Props, object> {
               </div>
 
               <TabPanel>
-                {!isEmbedded ? <MagicButton label="Load mock items" /> : ''}
-                <ItemContainer />
+                {!isEmbedded ? <MagicButton label="Load mock items"/> : ''}
+                <ItemContainer/>
               </TabPanel>
 
               <TabPanel>
-                <CraftingContainer />
+                <CraftingContainer/>
               </TabPanel>
 
               <TabPanel/>
               <TabPanel/>
             </Tabs>
 
+
           </div>
-          <NotificationContainer />
+          <NotificationContainer/>
         </div>
       </Provider>
     );

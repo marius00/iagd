@@ -29,3 +29,11 @@
 .cursor-help {
   cursor: help !important;
 }
+.clipboard-link {
+  position: fixed;
+  right: 14px;
+  top: 7px;
+  text-decoration: underline;
+  cursor: pointer;
+  z-index: 100000;
+}

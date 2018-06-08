@@ -9,6 +9,7 @@ import Spinner from '../components/Spinner';
 import OnScrollLoader from './InfiniteItemLoader';
 import { GlobalReducerState } from '../types';
 import translate from '../translations/EmbeddedTranslator';
+import { copyToClipboard } from '../logic/CopyToClipboard';
 
 interface Props {
   items: IItem[];
@@ -38,18 +39,31 @@ class ItemContainer extends React.Component<Props, object> {
     } else {
       console.log('Transfer All', id);
     }
+  }
 
+  getClipboardContent() {
+    const colors = { Epic: 'DarkOrchid', Blue: 'RoyalBlue', Green: 'SeaGreen', Unknown: '', Yellow: 'Yellow' };
+    const entries = this.props.items.map(item => {
+      const name = item.name.replace('"', '');
+      const entry = `[URL="http://www.grimtools.com/db/search?query=${name}"][COLOR="${colors[item.quality]}"]${item.name}[/COLOR][/URL]`;
+      return entry;
+    });
+
+    return entries.join('\n');
   }
 
   render() {
     const items = this.props.items;
 
     if (this.props.isLoading) {
-      return <Spinner />;
+      return <Spinner/>;
     }
     else if (items.length > 0) {
       return (
         <div className="items">
+          <span className="clipboard-link" onClick={() => copyToClipboard(this.getClipboardContent())}>
+            {translate('app.copyToClipboard')}
+          </span>
 
           {items.map((item) =>
             <Item
@@ -77,7 +91,7 @@ class ItemContainer extends React.Component<Props, object> {
           </ReactTooltip>
 
 
-          <OnScrollLoader />
+          <OnScrollLoader/>
         </div>
       );
     }
