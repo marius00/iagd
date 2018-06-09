@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using StatTranslator;
 using SharpTestsEx;
@@ -32,7 +33,7 @@ namespace StatTranslatorTests {
                 "records/controllers/itemskills/cast_@selfat15_abc_22"
             };
             foreach (var trigger in triggers) {
-                StatManager sm = new StatManager(new EnglishLanguage());
+                StatManager sm = new StatManager(new EnglishLanguage(new Dictionary<string, string>()));
                 var result = sm.TranslateSkillAutoController(trigger);
                 result.Should().Not.Be.Null();
                 result.Text.Should().Not.Be.Null();

@@ -423,6 +423,8 @@ namespace IAGrim.UI {
             if (Thread.CurrentThread.Name == null)
                 Thread.CurrentThread.Name = "UI";
 
+            //Controls.SetChildIndex(buttonDevTools, 0);
+            buttonDevTools.BringToFront();
             tsStashStatus.Text = GlobalSettings.Language.GetTag("iatag_stash_unknown");
 
 

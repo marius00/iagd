@@ -78,7 +78,7 @@ namespace IAGrim.UI {
 
                     if (!string.IsNullOrEmpty(Properties.Settings.Default.LocalizationFile)) {
                         var loader = new LocalizationLoader();
-                        GlobalSettings.Language = loader.LoadLanguage(package);
+                        GlobalSettings.Language = loader.LoadLanguage(package, new EnglishLanguage(new Dictionary<string, string>()));
 
                         // TODO: Grab tags from loader and save to sql
                         _itemTagDao.Save(loader.GetItemTags(), new ProgressTracker());
@@ -89,7 +89,7 @@ namespace IAGrim.UI {
                     // Load the GD one
                     else {
                         // Override timestamp to force an update
-                        GlobalSettings.Language = new EnglishLanguage();
+                        GlobalSettings.InitializeLanguage(string.Empty, new Dictionary<string, string>()); // TODO: Not ideal, will need a restart
 
                         foreach (var location in _paths) {
                             if (!string.IsNullOrEmpty(location) && Directory.Exists(location)) {

@@ -12,15 +12,14 @@ namespace StatTranslator {
         private ItemNameCombinator _itemCombinator;
         public bool WarnIfMissing => true;
 
-        public ThirdPartyLanguage(Dictionary<string, string> dataset) {
+        public ThirdPartyLanguage(Dictionary<string, string> dataset, EnglishLanguage fallback) {
             _stats = dataset;
 
             // Make sure the loaded language has all the necessary keys
-            var english = new EnglishLanguage();
-            foreach (var key in english.Serialize()) {
+            foreach (var key in fallback.Serialize()) {
                 if (!_stats.ContainsKey(key)) {
-                    logger.WarnFormat("Could not find tag {0}, using default {0}={1}", key, english.GetTag(key));
-                    _stats[key] = english.GetTag(key);
+                    logger.WarnFormat("Could not find tag {0}, using default {0}={1}", key, fallback.GetTag(key));
+                    _stats[key] = fallback.GetTag(key);
                 }
             }
 

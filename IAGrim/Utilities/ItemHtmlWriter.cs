@@ -60,7 +60,10 @@ namespace IAGrim.Utilities {
             }
             else if (item is AugmentationItem) {
                 type = ItemTypeDto.Augmentation;
-                extras = ItemOperationsUtility.TranslateFaction(((AugmentationItem) item).Tags.FirstOrDefault(m => m.Stat == "factionSource")?.TextValue ?? string.Empty);
+                extras = ItemOperationsUtility.TranslateFaction(
+                    GlobalSettings.Language,
+                    ((AugmentationItem) item).Tags.FirstOrDefault(m => m.Stat == "factionSource")?.TextValue ?? string.Empty
+                );
             }
             else {
                 type = ItemTypeDto.Unknown;

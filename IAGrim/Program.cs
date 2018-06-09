@@ -283,6 +283,10 @@ namespace IAGrim {
             IPlayerItemDao playerItemDao = new PlayerItemRepo(threadExecuter, factory);
             UpgradeSettings(playerItemDao);
 
+            // X
+            IDatabaseItemDao databaseItemDao = new DatabaseItemRepo(threadExecuter, factory);
+            GlobalSettings.InitializeLanguage(Properties.Settings.Default.LocalizationFile, databaseItemDao.GetTagDictionary());
+
             // Prohibited for now
             Properties.Settings.Default.InstaTransfer = false;
             Properties.Settings.Default.Save();
@@ -291,10 +295,11 @@ namespace IAGrim {
             IDatabaseSettingDao databaseSettingDao = new DatabaseSettingRepo(threadExecuter, factory);
             LoadUuid(databaseSettingDao);
             var azurePartitionDao = new AzurePartitionRepo(threadExecuter, factory);
-            IDatabaseItemDao databaseItemDao = new DatabaseItemRepo(threadExecuter, factory);
             IDatabaseItemStatDao databaseItemStatDao = new DatabaseItemStatRepo(threadExecuter, factory);
             IItemTagDao itemTagDao = new ItemTagRepo(threadExecuter, factory);
+
             
+
             IBuddyItemDao buddyItemDao = new BuddyItemRepo(threadExecuter, factory);
             IBuddySubscriptionDao buddySubscriptionDao = new BuddySubscriptionRepo(threadExecuter, factory);
             IRecipeItemDao recipeItemDao = new RecipeItemRepo(threadExecuter, factory);
@@ -309,7 +314,6 @@ namespace IAGrim {
             ParsingService parsingService = new ParsingService(itemTagDao, null, databaseItemDao, databaseItemStatDao, itemSkillDao, Properties.Settings.Default.LocalizationFile);
 
             PrintStartupInfo(factory);
-
 
 
             Application.EnableVisualStyles();

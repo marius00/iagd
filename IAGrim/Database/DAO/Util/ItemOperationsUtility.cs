@@ -6,6 +6,7 @@ using IAGrim.Services.Dto;
 using IAGrim.Utilities;
 using NHibernate;
 using NHibernate.Criterion;
+using StatTranslator;
 
 namespace IAGrim.Database.DAO.Util {
     static class ItemOperationsUtility {
@@ -47,28 +48,29 @@ namespace IAGrim.Database.DAO.Util {
                 return "Unknown";
         }
 
-        public static string TranslateFaction(string faction) {
+        public static string TranslateFaction(ILocalizedLanguage language, string faction) {
+            
             switch (faction) {
                 case "Survivors":
-                    return "Devil's Crossing";
+                    return language.GetTag("tagFactionSurvivors");
                 case "User0":
-                    return "Rovers";
+                    return language.GetTag("tagFactionUser0");
                 case "User2":
-                    return "Homestead";
+                    return language.GetTag("tagFactionUser2");
                 case "User4":
-                    return "Outcasts";
+                    return language.GetTag("tagFactionUser4");
                 case "User5":
-                    return "Death's Vigil";
+                    return language.GetTag("tagFactionUser5");
                 case "User7":
-                    return "The Black Legion";
+                    return language.GetTag("tagFactionUser7");
                 case "User8":
-                    return "Kymon's Chosen";
+                    return language.GetTag("tagFactionUser8");
                 case "User9":
-                    return "The Outcast";
+                    return language.GetTag("tagFactionUser9_ia");
                 case "User10":
-                    return "Barrowholm";
+                    return language.GetTag("tagFactionUser10_ia");
                 case "User11":
-                    return "Malmouth Resistance";
+                    return language.GetTag("tagFactionUser11_ia");
                 default:
                     return faction;
             }

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import App from './App';
-import registerServiceWorker from './registerServiceWorker';
 import './index.css';
 import IItem from './interfaces/IItem';
 import { setItems, addItems, setLoadingStatus, showMessage } from './actions';
@@ -39,4 +38,3 @@ ReactDOM.render(
   <App store={store} />,
   document.getElementById('root') as HTMLElement
 );
-registerServiceWorker();

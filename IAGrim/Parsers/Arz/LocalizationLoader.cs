@@ -80,15 +80,15 @@ namespace IAGrim.Parsers.Arz {
             }
         }
 
-        public ILocalizedLanguage LoadLanguage(string filename) {
+        public ILocalizedLanguage LoadLanguage(string filename, EnglishLanguage fallback) {
             if (_tagsItems == null || _tagsItems.Count == 0) {
                 Load(filename);
             }
             var dataset = new Dictionary<string, string>(_tagsItems);
-            if (_tagsIa != null)
+            if (_tagsIa != null) {
                 dataset = dataset.Concat(_tagsIa).ToDictionary(m => m.Key, m => m.Value);
-
-            var language = new ThirdPartyLanguage(dataset);
+            }
+            var language = new ThirdPartyLanguage(dataset, fallback);
             return language;
         }
 

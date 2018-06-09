@@ -9,12 +9,18 @@ namespace StatTranslator {
     public class EnglishLanguage : ILocalizedLanguage {
         public bool WarnIfMissing { get; } = false;
 
+        public EnglishLanguage(Dictionary<string, string> existingTags) {
+            foreach (var tag in existingTags.Keys) {
+                SetTagIfMissing(tag, existingTags[tag]);
+            }
+        }
+
         public void SetTagIfMissing(string tag, string value) {
             if (!stats.ContainsKey(tag))
                 stats[tag] = value;
         }
 
-        private Dictionary<string, string> stats = new Dictionary<string, string> {
+        private readonly Dictionary<string, string> stats = new Dictionary<string, string> {
             {"tagItemNameOrder", "{%_s0}{%_s1}{%_s2}{%_s3}{%_s4}" },
 
 
@@ -392,13 +398,18 @@ namespace StatTranslator {
             {"iatag_slot_scroll", "Scroll" },
             {"iatag_slot_augmentation", "Augmentation" },
 
+
+            {"tagFactionUser9_ia", "The Outcast" },
+            {"tagFactionUser10_ia", "Barrowholm" },
+            {"tagFactionUser11_ia", "Malmouth Resistance" },
+
         };
 
-        private const string english = "{%_s0}{%_s1}{%_s2}{%_s3}{%_s4}";
-        ItemNameCombinator ItemCombinator = new ItemNameCombinator(english);
+        private const string English = "{%_s0}{%_s1}{%_s2}{%_s3}{%_s4}";
+        private readonly ItemNameCombinator _itemCombinator = new ItemNameCombinator(English);
 
         public string TranslateName(string prefix, string quality, string style, string name, string suffix) {
-            return ItemCombinator.TranslateName(prefix, quality, style, name, suffix);
+            return _itemCombinator.TranslateName(prefix, quality, style, name, suffix);
         }
 
         public string[] Serialize() {

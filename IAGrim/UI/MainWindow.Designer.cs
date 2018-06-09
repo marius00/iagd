@@ -132,9 +132,10 @@
             // buttonDevTools
             // 
             this.buttonDevTools.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonDevTools.Location = new System.Drawing.Point(1031, 0);
+            this.buttonDevTools.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonDevTools.Location = new System.Drawing.Point(1031, -5);
             this.buttonDevTools.Name = "buttonDevTools";
-            this.buttonDevTools.Size = new System.Drawing.Size(75, 23);
+            this.buttonDevTools.Size = new System.Drawing.Size(75, 18);
             this.buttonDevTools.TabIndex = 0;
             this.buttonDevTools.Text = "DevTools";
             this.buttonDevTools.UseVisualStyleBackColor = true;
@@ -147,7 +148,7 @@
             this.tabPageSettings.Location = new System.Drawing.Point(4, 22);
             this.tabPageSettings.Name = "tabPageSettings";
             this.tabPageSettings.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageSettings.Size = new System.Drawing.Size(929, 560);
+            this.tabPageSettings.Size = new System.Drawing.Size(1098, 560);
             this.tabPageSettings.TabIndex = 1;
             this.tabPageSettings.Tag = "iatag_ui_tab_settings";
             this.tabPageSettings.Text = "Settings";
@@ -169,7 +170,7 @@
             this.tabPageMods.Location = new System.Drawing.Point(4, 22);
             this.tabPageMods.Name = "tabPageMods";
             this.tabPageMods.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageMods.Size = new System.Drawing.Size(929, 560);
+            this.tabPageMods.Size = new System.Drawing.Size(1098, 560);
             this.tabPageMods.TabIndex = 4;
             this.tabPageMods.Tag = "iatag_ui_tab_mods";
             this.tabPageMods.Text = "Database/Mods";
@@ -191,7 +192,7 @@
             this.tabPageBackups.Location = new System.Drawing.Point(4, 22);
             this.tabPageBackups.Name = "tabPageBackups";
             this.tabPageBackups.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageBackups.Size = new System.Drawing.Size(929, 560);
+            this.tabPageBackups.Size = new System.Drawing.Size(1098, 560);
             this.tabPageBackups.TabIndex = 3;
             this.tabPageBackups.Tag = "iatag_ui_tab_backups";
             this.tabPageBackups.Text = "Backups";
@@ -213,7 +214,7 @@
             this.tabPageBuddy.Controls.Add(this.buddyPanel);
             this.tabPageBuddy.Location = new System.Drawing.Point(4, 22);
             this.tabPageBuddy.Name = "tabPageBuddy";
-            this.tabPageBuddy.Size = new System.Drawing.Size(929, 560);
+            this.tabPageBuddy.Size = new System.Drawing.Size(1098, 560);
             this.tabPageBuddy.TabIndex = 2;
             this.tabPageBuddy.Tag = "iatag_ui_tab_buddy";
             this.tabPageBuddy.Text = "Buddy";
@@ -234,7 +235,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(929, 560);
+            this.tabPage1.Size = new System.Drawing.Size(1098, 560);
             this.tabPage1.TabIndex = 6;
             this.tabPage1.Tag = "iatag_ui_tab_log";
             this.tabPage1.Text = "Log";
@@ -256,7 +257,7 @@
             this.tabPageHelp.Controls.Add(this.panelHelp);
             this.tabPageHelp.Location = new System.Drawing.Point(4, 22);
             this.tabPageHelp.Name = "tabPageHelp";
-            this.tabPageHelp.Size = new System.Drawing.Size(929, 560);
+            this.tabPageHelp.Size = new System.Drawing.Size(1098, 560);
             this.tabPageHelp.TabIndex = 5;
             this.tabPageHelp.Tag = "iatag_ui_tab_help";
             this.tabPageHelp.Text = "Help";
@@ -327,6 +328,7 @@
 
         #endregion
 
+        private System.Windows.Forms.Button buttonDevTools;
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
         private System.Windows.Forms.ToolStripStatusLabel tsStashStatus;
@@ -344,7 +346,6 @@
         private System.Windows.Forms.TabPage tabPageMods;
         private System.Windows.Forms.Panel modsPanel;
         private System.Windows.Forms.Panel searchPanel;
-        private System.Windows.Forms.Button buttonDevTools;
         private System.Windows.Forms.TabPage tabPageHelp;
         private System.Windows.Forms.Panel panelHelp;
         private System.Windows.Forms.TabPage tabPage1;

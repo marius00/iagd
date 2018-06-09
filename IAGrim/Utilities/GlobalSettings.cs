@@ -7,14 +7,22 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using log4net;
 
 namespace IAGrim.Utilities {
     static class GlobalSettings {
-        static GlobalSettings() {
-            if (string.IsNullOrEmpty(Properties.Settings.Default.LocalizationFile) || !File.Exists(Properties.Settings.Default.LocalizationFile))
-                Language = new EnglishLanguage();
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(GlobalSettings));
+
+        public static void InitializeLanguage(string localizationFile, Dictionary<string, string> dbTags) {
+            var english = new EnglishLanguage(dbTags);
+            if (string.IsNullOrEmpty(localizationFile)) {
+                Language = english;
+            } else if (!File.Exists(localizationFile)) {
+                Language = english;
+                Logger.Warn($"Could not locate {localizationFile}, defaulting to English.");
+            }
             else {
-                Language = new LocalizationLoader().LoadLanguage(Properties.Settings.Default.LocalizationFile);
+                Language = new LocalizationLoader().LoadLanguage(Properties.Settings.Default.LocalizationFile, english);
             }
         }
 
