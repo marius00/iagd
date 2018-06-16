@@ -77,12 +77,21 @@ function translate(id: string, arg1?: string, arg2?: string, arg3?: string): str
   let translation = t.translate(id);
 
   if (arg1) {
+    if (translation.indexOf('{0}') === -1) {
+      console.warn(`Could not find {0} in tag ${id}`);
+    }
     translation = translation.replace('{0}', arg1);
   }
   if (arg2) {
+    if (translation.indexOf('{1}') === -1) {
+      console.warn(`Could not find {1} in tag ${id}`);
+    }
     translation = translation.replace('{1}', arg2);
   }
   if (arg3) {
+    if (translation.indexOf('{2}') === -1) {
+      console.warn(`Could not find {2} in tag ${id}`);
+    }
     translation = translation.replace('{2}', arg3);
   }
 

@@ -152,6 +152,9 @@ namespace IAGrim {
                     singleInstance.ArgumentsReceived += singleInstance_ArgumentsReceived;
                     singleInstance.ListenForArgumentsFromSuccessiveInstances();
                     using (ThreadExecuter threadExecuter = new ThreadExecuter()) {
+                        Application.EnableVisualStyles();
+                        Application.SetCompatibleTextRenderingDefault(false);
+                        Logger.Info("Visual styles enabled..");
                         Run(args, threadExecuter);
                     }
                 } else {
@@ -316,9 +319,6 @@ namespace IAGrim {
             PrintStartupInfo(factory);
 
 
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Logger.Info("Visual styles enabled..");
 
             if (GlobalSettings.Language is EnglishLanguage language) {
                 foreach (var tag in itemTagDao.GetClassItemTags()) {

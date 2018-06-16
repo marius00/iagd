@@ -436,18 +436,18 @@ namespace IAGrim.UI {
             _stashManager = new StashManager(_playerItemDao, _databaseItemStatDao, SetFeedback, ListviewUpdateTrigger);
             _stashFileMonitor.OnStashModified += (_, __) => {
                 StashEventArg args = __ as StashEventArg;
-                if (_stashManager.TryLootStashFile(args?.Filename)) {
+                if (_stashManager != null && _stashManager.TryLootStashFile(args?.Filename)) {
                     // STOP TIMER
                     _stashFileMonitor.CancelQueuedNotify();
                 } // TODO: This logic should be changed to 're queue' but only trigger once, if its slow it triggers multiple times.
             };
+
             if (!_stashFileMonitor.StartMonitorStashfile(GlobalPaths.SavePath)) {
                 MessageBox.Show("Ooops!\nIt seems you are synchronizing your saves to steam cloud..\nThis tool is unfortunately not compatible.\n");
                 Process.Start("http://www.grimdawn.com/forums/showthread.php?t=20752");
 
                 if (!Debugger.IsAttached)
                     Close();
-
             }
 
             // Chicken and the egg..

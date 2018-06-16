@@ -104,7 +104,7 @@ namespace IAGrim.Database.DAO.Util {
             var records = new string[] { item.PrefixRecord, item.BaseRecord, item.SuffixRecord, item.MateriaRecord };
             var desiredTagsNames = new string[] { "lootRandomizerName", "itemNameTag", "itemQualityTag", "itemStyleTag", "description" };
             var relevants = stats.Where(m => records.Contains(m.Key));
-            var tagEntries = relevants.SelectMany(m => m.Value.Where(v => desiredTagsNames.Contains(v.Stat)));
+            var tagEntries = relevants.SelectMany(m => m.Value.Where(v => desiredTagsNames.Contains(v.Stat))).ToList();
 
 
             // Grab tag values
