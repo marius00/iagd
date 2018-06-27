@@ -55,7 +55,7 @@ namespace IAGrim.UI.Misc.CEF {
         }
         public void RefreshItems() {
             if (_browser.IsBrowserInitialized) {
-                _browser.ExecuteScriptAsync("data.globalStore.dispatch(data.globalSetItems(JSON.parse(data.Items)));");
+                _browser.ExecuteScriptAsync("setItemsFromGlobalItems();");
             }
             else {
                 Logger.Warn("Attempted to update items but CEF not yet initialized.");
@@ -93,7 +93,7 @@ namespace IAGrim.UI.Misc.CEF {
 
         public void AddItems() {
             if (_browser.IsBrowserInitialized) {
-                _browser.ExecuteScriptAsync($"{Dispatch}(data.globalAddItems(JSON.parse(data.Items)));");
+                _browser.ExecuteScriptAsync($"addItemsFromGlobalItems();");
             }
             else {
                 Logger.Warn("Attempted to update items but CEF not yet initialized.");
@@ -131,7 +131,10 @@ namespace IAGrim.UI.Misc.CEF {
                 }
 
                 _browser = new ChromiumWebBrowser(GlobalPaths.ItemsHtmlFile);
-                _browser.RegisterJsObject("data", bindeable, false);
+
+                // TODO: Read and analyze https://github.com/cefsharp/CefSharp/issues/2246 -- Is this the correct way to do things in the future?
+                CefSharpSettings.LegacyJavascriptBindingEnabled = true;
+                _browser.RegisterJsObject("data", bindeable, BindingOptions.DefaultBinder);
                 _browser.IsBrowserInitializedChanged += Browser_IsBrowserInitializedChanged;
 
                 var requestHandler = new CefRequestHandler();

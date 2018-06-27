@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Cryptography.X509Certificates;
 using CefSharp;
 using IAGrim.Backup.Azure.CefSharp.Events;
 using IAGrim.UI.Misc.CEF.Dto;
@@ -72,6 +73,11 @@ namespace IAGrim.UI.Misc.CEF {
             return false;
         }
 
+        public bool OnSelectClientCertificate(IWebBrowser browserControl, IBrowser browser, bool isProxy, string host, int port,
+            X509Certificate2Collection certificates, ISelectClientCertificateCallback callback) {
+            return false;
+        }
+
         public void OnRenderProcessTerminated(IWebBrowser browserControl, IBrowser browser, CefTerminationStatus status) {
 
         }
@@ -79,6 +85,11 @@ namespace IAGrim.UI.Misc.CEF {
         public bool OnQuotaRequest(IWebBrowser browserControl, IBrowser browser, string originUrl, long newSize,
             IRequestCallback callback) {
             return false;
+        }
+
+        public void OnResourceRedirect(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request,
+            IResponse response, ref string newUrl) {
+
         }
 
         public void OnResourceRedirect(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request,
