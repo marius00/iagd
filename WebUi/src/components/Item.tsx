@@ -3,9 +3,7 @@ import 'react-select/dist/react-select.css';
 import ItemStat from './ItemStat';
 import IItem from '../interfaces/IItem';
 import Skill from './Skill';
-import * as ReactTooltip from 'react-tooltip';
 import { isEmbedded } from '../constants/index';
-import * as Guid from 'guid';
 import { Textfit } from 'react-textfit';
 import translate from '../translations/EmbeddedTranslator';
 import IItemType from '../interfaces/IItemType';
@@ -22,7 +20,7 @@ interface Props {
   transferAll: (x: any) => void;
 }
 
-class Item extends React.Component<Props, object> {
+class Item extends React.PureComponent<Props, object> {
 
   openItemSite() {
     if (isEmbedded) {
@@ -33,7 +31,6 @@ class Item extends React.Component<Props, object> {
   }
 
   renderBuddyItem(item: IItem) {
-    const tooltipId = Guid.raw();
     if (item.type === IItemType.Buddy) {
       if (item.buddies.length === 1) {
         return (
@@ -44,12 +41,7 @@ class Item extends React.Component<Props, object> {
       } else {
         return (
           <div className="buddy-item-mix" data-bind="attr: {title: buddies.join()}">
-            <a data-tip="true" data-for={tooltipId}>
-              &laquo;{item.buddies.length}&raquo; of your Buddies also have this item.
-            </a>
-
-            <ReactTooltip id={tooltipId}><span>{translate('item.buddies.plural', item.buddies.join('\n'))}</span>
-            </ReactTooltip>
+            <a data-tip={'&laquo;' + item.buddies.length + '&raquo; of your Buddies also have this item.'} />
           </div>
         );
       }
@@ -63,18 +55,12 @@ class Item extends React.Component<Props, object> {
   }
 
   renderCornerContainer(item: IItem) {
-    const buddyTooltip = Guid.raw();
-
-    // purchaseableItem
-
     const showCloudOkIcon = item.type === IItemType.Player && item.hasCloudBackup;
     const showCloudErrorIcon = item.type === IItemType.Player && !item.hasCloudBackup;
     const showSingularBuddyItemIcon = item.type !== IItemType.Buddy && item.buddies.length === 1;
     const showPluralBuddyItemIcon = item.type !== IItemType.Buddy && item.buddies.length > 1;
     const showRecipeIcon = item.hasRecipe && item.type !== 0;
     const showAugmentationIcon = item.type === IItemType.Augmentation;
-
-    let augmentationTooltip = Guid.raw();
 
     return (
       <div className="recipe-item-corner">
@@ -83,11 +69,9 @@ class Item extends React.Component<Props, object> {
           <img
             className="cursor-help"
             src={purchaseableItem}
-            data-tip="true"
-            data-for={augmentationTooltip}
+            data-tip={translate('item.augmentPurchasable', item.extras)}
           />
 
-          <ReactTooltip id={augmentationTooltip}><span>{translate('item.augmentPurchasable', item.extras)}</span></ReactTooltip>
         </span>
         }
 
@@ -95,8 +79,7 @@ class Item extends React.Component<Props, object> {
           <img
             className="cursor-help"
             src={cloudOkIcon}
-            data-tip="true"
-            data-for="cloud-ok-tooltip"
+            data-tip={translate('items.label.cloudOk')}
           />
         }
 
@@ -104,8 +87,7 @@ class Item extends React.Component<Props, object> {
         <img
           className="cursor-help"
           src={cloudErrIcon}
-          data-tip="true"
-          data-for="cloud-err-tooltip"
+          data-tip={translate('items.label.cloudError')}
         />
         }
 
@@ -114,12 +96,9 @@ class Item extends React.Component<Props, object> {
             <img
               className="cursor-help"
               src={buddyIcon}
-              data-tip="true"
-              data-for={buddyTooltip}
+              data-tip={translate('item.buddies.singular', item.buddies[0])}
             />
-            <ReactTooltip id={buddyTooltip}>
-              <span>{translate('item.buddies.singular', item.buddies[0])}</span>
-            </ReactTooltip>
+
           </span>
         }
 
@@ -128,17 +107,14 @@ class Item extends React.Component<Props, object> {
             <img
               className="cursor-help"
               src={buddyIcon}
-              data-tip="true"
-              data-for={buddyTooltip}
+              data-tip={translate('item.buddies.plural', item.buddies.join('\n'))}
             />
-            <ReactTooltip id={buddyTooltip}>
-              <span>{translate('item.buddies.plural', item.buddies.join('\n'))}</span>
-            </ReactTooltip>
+
             </span>
         }
 
         {showRecipeIcon &&
-        <span data-tip="true" data-for="you-can-craft-this-item-tooltip">
+        <span data-tip={translate('items.label.youCanCraftThisItem')}>
           <img
             className="cursor-help"
             data-bind="click: function(item) { jumpToCraft(item.baseRecord); }"
@@ -167,21 +143,18 @@ class Item extends React.Component<Props, object> {
       <ItemStat label={stat.label} extras={stat.extras} key={'stat-pets-' + item.url.join(':') + stat.label}/>
     );
 
-    const itemLogoSlotTooltip = Guid.raw();
     return (
       <div className="item">
         <span>
-          <img src={icon} className="item-icon" data-tip="true" data-for={itemLogoSlotTooltip}/>
-          <ReactTooltip id={itemLogoSlotTooltip}><span>{item.slot}</span>
-          </ReactTooltip>
+          <img src={icon} className="item-icon" data-tip={item.slot}/>
         </span>
         <div className="text">
-          <Textfit mode="multi" max="15" min="10">
+          <Textfit mode="multi" max={15} min={10}>
             <span>
               <a onClick={() => this.openItemSite()} className={this.translateQualityToClass(item.quality)}>{name}</a>
             </span>
-              {item.greenRarity === 3 ? <span className="cursor-help" data-tip="true" data-for="triple-green-tooltip">(+2)</span> : ''}
-              {item.greenRarity === 2 ? <span className="cursor-help" data-tip="true" data-for="double-green-tooltip">(+1)</span> : ''}
+              {item.greenRarity === 3 ? <span className="cursor-help" data-tip={translate('items.label.tripleGreen')}>(+2)</span> : ''}
+              {item.greenRarity === 2 ? <span className="cursor-help" data-tip={translate('items.label.doubleGreen')}>(+1)</span> : ''}
           </Textfit>
           {item.socket && item.socket.length > 0 &&
           <span className="item-socket-label">{item.socket}</span>
@@ -210,7 +183,7 @@ class Item extends React.Component<Props, object> {
 
         {item.hasRecipe && item.type !== IItemType.Recipe ?
           <span>
-            <a data-tip="true" data-for="you-can-craft-this-item-tooltip">
+            <a data-tip={translate('items.label.youCanCraftThisItem')}>
               <div className="recipe-item-corner">
                 <img className="cursor-help" src={recipeIcon}/>
               </div>

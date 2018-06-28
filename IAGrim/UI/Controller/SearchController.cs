@@ -27,7 +27,7 @@ namespace IAGrim.UI.Controller {
         private readonly IPlayerItemDao _playerItemDao;
         private readonly ItemStatService _itemStatService;
         private readonly IBuddyItemDao _buddyItemDao;
-        private const int TakeSize = 100;
+        private const int TakeSize = 44;
         private readonly ItemPaginatorService _itemPaginatorService;
         private readonly RecipeService _recipeService;
         private readonly CostCalculationService _costCalculationService;

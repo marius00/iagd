@@ -36,7 +36,6 @@
             this.minLevel = new System.Windows.Forms.TextBox();
             this.maxLevel = new System.Windows.Forms.TextBox();
             this.tooltipThingie = new System.Windows.Forms.ToolTip(this.components);
-            this.linkVideoGuide = new System.Windows.Forms.LinkLabel();
             this.toolStripContainer.ContentPanel.SuspendLayout();
             this.toolStripContainer.SuspendLayout();
             this.SuspendLayout();
@@ -174,22 +173,11 @@
             this.tooltipThingie.SetToolTip(this.maxLevel, "Maximum Level");
             this.maxLevel.WordWrap = false;
             // 
-            // linkVideoGuide
-            // 
-            this.linkVideoGuide.AutoSize = true;
-            this.linkVideoGuide.Location = new System.Drawing.Point(884, 5);
-            this.linkVideoGuide.Name = "linkVideoGuide";
-            this.linkVideoGuide.Size = new System.Drawing.Size(65, 13);
-            this.linkVideoGuide.TabIndex = 48;
-            this.linkVideoGuide.TabStop = true;
-            this.linkVideoGuide.Text = "Video Guide";
-            // 
             // SearchWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(956, 650);
-            this.Controls.Add(this.linkVideoGuide);
             this.Controls.Add(this.maxLevel);
             this.Controls.Add(this.minLevel);
             this.Controls.Add(this.checkBoxOrderByLevel);
@@ -229,6 +217,5 @@
         private System.Windows.Forms.TextBox minLevel;
         private System.Windows.Forms.TextBox maxLevel;
         private System.Windows.Forms.ToolTip tooltipThingie;
-        private System.Windows.Forms.LinkLabel linkVideoGuide;
     }
 }

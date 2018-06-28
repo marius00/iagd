@@ -4,7 +4,7 @@ interface Props {
   onTrigger: () => void;
 }
 
-class OnScrollLoader extends React.Component<Props, {}> {
+class OnScrollLoader extends React.PureComponent<Props, {}> {
 
   constructor(props: Props) {
     super(props);

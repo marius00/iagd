@@ -7,7 +7,7 @@ interface Props {
   notifications: object[];
 }
 
-class NotificationContainer extends React.Component<Props, {}> {
+class NotificationContainer extends React.PureComponent<Props, {}> {
 
   render() {
     const {notifications} = this.props;

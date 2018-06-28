@@ -16,7 +16,7 @@ interface Props {
   isLoading: boolean;
 }
 
-class ItemContainer extends React.Component<Props, object> {
+class ItemContainer extends React.PureComponent<Props, object> {
 
   constructor(props: Props) {
     super(props);
@@ -73,23 +73,7 @@ class ItemContainer extends React.Component<Props, object> {
               transferSingle={(url) => this.transferSingle(url)}
             />
           )}
-
-          <ReactTooltip id="you-can-craft-this-item-tooltip">
-            <span>{translate('items.label.youCanCraftThisItem')}</span>
-          </ReactTooltip>
-          <ReactTooltip id="cloud-ok-tooltip">
-            <span>{translate('items.label.cloudOk')}</span>
-          </ReactTooltip>
-          <ReactTooltip id="cloud-err-tooltip">
-            <span>{translate('items.label.cloudError')}</span>
-          </ReactTooltip>
-          <ReactTooltip id="triple-green-tooltip">
-            <span>{translate('items.label.tripleGreen')}</span>
-          </ReactTooltip>
-          <ReactTooltip id="double-green-tooltip">
-            <span>{translate('items.label.doubleGreen')}</span>
-          </ReactTooltip>
-
+          <ReactTooltip />
 
           <OnScrollLoader/>
         </div>
@@ -103,6 +87,7 @@ class ItemContainer extends React.Component<Props, object> {
       );
     }
   }
+
 }
 
 export function mapStateToProps(state: GlobalReducerState): Props {

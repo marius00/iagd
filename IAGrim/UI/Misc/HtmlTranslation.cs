@@ -23,6 +23,8 @@ namespace IAGrim.UI.Misc {
         public string iatag_html_tab_header_items { get; set; }
         public string iatag_html_tab_header_crafting { get; set; }
         public string iatag_html_tab_header_components { get; set; }
+        public string iatag_html_tab_header_videoguide { get; set; }
+        public string iatag_html_tab_header_videoguide_url { get; set; }
         public string iatag_html_tab_header_discord { get; set; }
         public string iatag_html_crafting_lacking { get; set; }
         public string iatag_html_items_no_items { get; set; }

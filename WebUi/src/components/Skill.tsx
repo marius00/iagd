@@ -7,7 +7,7 @@ interface Props {
   skill: ISkill;
   keyPrefix: string;
 }
-class Skill extends React.Component<Props, object> {
+class Skill extends React.PureComponent<Props, object> {
 
   render() {
     const skill = this.props.skill;

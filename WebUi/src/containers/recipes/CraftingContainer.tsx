@@ -20,7 +20,7 @@ export interface DispatchProps {
   onChanged: (record: string) => void;
 }
 
-class CraftingContainer extends React.Component<StateProps & DispatchProps, {}> {
+class CraftingContainer extends React.PureComponent<StateProps & DispatchProps, {}> {
   state = {
     selectedRelicOption: '',
     selectedMiscOption: '',

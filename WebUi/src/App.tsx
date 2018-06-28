@@ -18,7 +18,7 @@ export interface Props {
   store: Store<ApplicationState> | MockStore<ApplicationState>;
 }
 
-class App extends React.Component<Props, object> {
+class App extends React.PureComponent<Props, object> {
   loading: boolean = false;
 
   constructor(props: Props) {
@@ -49,6 +49,9 @@ class App extends React.Component<Props, object> {
                   <Tab>{translate('app.tab.items')}</Tab>
                   <Tab>{translate('app.tab.crafting')}</Tab>
                   <Tab disabled={true}><a onClick={() => this.openUrl('http://dev.dreamcrash.org/enchantments/')}>{translate('app.tab.components')}</a></Tab>
+                  {translate('app.tab.videoGuide').length > 0 &&
+                    <Tab disabled={true}><a onClick={() => this.openUrl(translate('app.tab.videoGuideUrl'))}>{translate('app.tab.videoGuide')}</a></Tab>
+                  }
                   <Tab disabled={true}><a onClick={() => this.openUrl('https://discord.gg/PJ87Ewa')}>{translate('app.tab.discord')}</a></Tab>
                 </TabList>
               </div>

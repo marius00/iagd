@@ -1,23 +1,17 @@
 import * as React from 'react';
 import 'react-select/dist/react-select.css';
-import * as ReactTooltip from 'react-tooltip';
-import * as Guid from 'guid';
 
 interface Props {
   label: string;
   extras?: string;
 }
 
-class ItemStat extends React.Component<Props, object> {
+class ItemStat extends React.PureComponent<Props, object> {
   render() {
-    const tooltipId = Guid.raw();
     if (this.props.extras) {
       return (
         <li>
-          <a data-tip="true" data-for={tooltipId} className="skill-trigger">{this.props.label}</a>
-          <ReactTooltip id={tooltipId}>
-            <span>{this.props.extras}</span>
-          </ReactTooltip>
+          <a data-tip={this.props.extras} className="skill-trigger">{this.props.label}</a>
         </li>
       );
     } else {

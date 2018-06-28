@@ -63,6 +63,8 @@ namespace IAGrim.UI.Misc {
                 iatag_html_items_youcancraftthisitem = lang.GetTag("iatag_html_items_youcancraftthisitem"),
                 iatag_html_levlerequirement = lang.GetTag("iatag_html_levlerequirement"),
                 iatag_html_tab_header_components = lang.GetTag("iatag_html_tab_header_components"),
+                iatag_html_tab_header_videoguide = lang.GetTag("iatag_html_tab_header_videoguide"),
+                iatag_html_tab_header_videoguide_url = lang.GetTag("iatag_html_tab_header_videoguide_url"),
                 iatag_html_tab_header_crafting = lang.GetTag("iatag_html_tab_header_crafting"),
                 iatag_html_tab_header_discord = lang.GetTag("iatag_html_tab_header_discord"),
                 iatag_html_tab_header_items = lang.GetTag("iatag_html_tab_header_items"),
