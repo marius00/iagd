@@ -175,21 +175,14 @@ namespace IAGrim {
         /// Upgrade any settings if required
         /// This happens for just about every compile
         /// </summary>
-        private static void UpgradeSettings(IPlayerItemDao playerItemDao) {
+        private static bool UpgradeSettings() {
             try {
                 if (Properties.Settings.Default.CallUpgrade) {
                     Properties.Settings.Default.Upgrade();
                     Properties.Settings.Default.CallUpgrade = false;
                     Logger.Info("Settings upgraded..");
 
-#if !DEBUG
-
-                    // If we don't also update item stats, a lot of whining will ensue.
-                    // This accounts for most database updates (new fields added that needs to get populated etc)
-                    UpdatingPlayerItemsScreen x = new UpdatingPlayerItemsScreen(playerItemDao);
-                    x.ShowDialog();
-#endif
-
+                    return true;
                 }
             } catch (Exception ex) {
                 Logger.Warn(ex.Message);
@@ -197,6 +190,7 @@ namespace IAGrim {
                 ExceptionReporter.ReportException(ex);
             }
 
+            return false;
         }
 
         /// <summary>
@@ -284,7 +278,7 @@ namespace IAGrim {
 
             // Settings should be upgraded early, it contains the language pack etc and some services depends on settings.
             IPlayerItemDao playerItemDao = new PlayerItemRepo(threadExecuter, factory);
-            UpgradeSettings(playerItemDao);
+            var statUpgradeNeeded = UpgradeSettings();
 
             // X
             IDatabaseItemDao databaseItemDao = new DatabaseItemRepo(threadExecuter, factory);
@@ -301,7 +295,17 @@ namespace IAGrim {
             IDatabaseItemStatDao databaseItemStatDao = new DatabaseItemStatRepo(threadExecuter, factory);
             IItemTagDao itemTagDao = new ItemTagRepo(threadExecuter, factory);
 
-            
+
+#if !DEBUGX
+            if (statUpgradeNeeded) {
+
+                // If we don't also update item stats, a lot of whining will ensue.
+                // This accounts for most database updates (new fields added that needs to get populated etc)
+                UpdatingPlayerItemsScreen x = new UpdatingPlayerItemsScreen(playerItemDao);
+                x.ShowDialog();
+            }
+#endif
+
 
             IBuddyItemDao buddyItemDao = new BuddyItemRepo(threadExecuter, factory);
             IBuddySubscriptionDao buddySubscriptionDao = new BuddySubscriptionRepo(threadExecuter, factory);
