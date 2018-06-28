@@ -161,7 +161,7 @@
             this.settingsPanel.BackColor = System.Drawing.Color.Transparent;
             this.settingsPanel.Location = new System.Drawing.Point(-4, 0);
             this.settingsPanel.Name = "settingsPanel";
-            this.settingsPanel.Size = new System.Drawing.Size(937, 560);
+            this.settingsPanel.Size = new System.Drawing.Size(1102, 560);
             this.settingsPanel.TabIndex = 0;
             // 
             // tabPageMods
@@ -183,7 +183,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.modsPanel.Location = new System.Drawing.Point(-4, 0);
             this.modsPanel.Name = "modsPanel";
-            this.modsPanel.Size = new System.Drawing.Size(937, 557);
+            this.modsPanel.Size = new System.Drawing.Size(1102, 557);
             this.modsPanel.TabIndex = 1;
             // 
             // tabPageBackups
@@ -205,7 +205,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.backupPanel.Location = new System.Drawing.Point(-4, 0);
             this.backupPanel.Name = "backupPanel";
-            this.backupPanel.Size = new System.Drawing.Size(933, 560);
+            this.backupPanel.Size = new System.Drawing.Size(1102, 560);
             this.backupPanel.TabIndex = 0;
             // 
             // tabPageBuddy
@@ -226,7 +226,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.buddyPanel.Location = new System.Drawing.Point(-4, 0);
             this.buddyPanel.Name = "buddyPanel";
-            this.buddyPanel.Size = new System.Drawing.Size(933, 564);
+            this.buddyPanel.Size = new System.Drawing.Size(1106, 564);
             this.buddyPanel.TabIndex = 0;
             // 
             // tabPage1
@@ -249,7 +249,7 @@
             this.panelLogging.ForeColor = System.Drawing.SystemColors.Control;
             this.panelLogging.Location = new System.Drawing.Point(-4, 0);
             this.panelLogging.Name = "panelLogging";
-            this.panelLogging.Size = new System.Drawing.Size(933, 564);
+            this.panelLogging.Size = new System.Drawing.Size(1102, 564);
             this.panelLogging.TabIndex = 1;
             // 
             // tabPageHelp
@@ -270,7 +270,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelHelp.Location = new System.Drawing.Point(-2, 0);
             this.panelHelp.Name = "panelHelp";
-            this.panelHelp.Size = new System.Drawing.Size(933, 560);
+            this.panelHelp.Size = new System.Drawing.Size(1100, 560);
             this.panelHelp.TabIndex = 1;
             // 
             // notifyIcon1
