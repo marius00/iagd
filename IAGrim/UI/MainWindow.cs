@@ -519,11 +519,11 @@ namespace IAGrim.UI {
 
             addAndShow(
                 new SettingsWindow(
+                    _cefBrowserHandler,
                     _itemTagDao,
                     _tooltipHelper,
                     ListviewUpdateTrigger,
                     _databaseSettingDao,
-                    _databaseItemDao,
                     _playerItemDao,
                     _arzParser,
                     _searchWindow.ModSelectionHandler.GetAvailableModSelection(),

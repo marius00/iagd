@@ -33,7 +33,7 @@ Filename: "{app}\NDP461-KB3102438-Web.exe"; Parameters: "/passive /showfinalerro
 Filename: "{app}\vcredist_x86.exe"; Parameters: "/install /quiet /norestart"; Description: "Install VC++ Redistributable 2013 (x86)"; Flags: runhidden runascurrentuser
 Filename: "{app}\2010sp1_vcredist_x86.exe"; Parameters: "/install /quiet /norestart"; Description: "Install VC++ Redistributable 2010 SP1 (x86)"; Flags: runhidden runascurrentuser
 Filename: "{app}\IAGrim.exe"; Description: "Launch GD Item Assistant"; Flags: postinstall nowait
-Filename: "https://www.twitch.tv/videos/210592694"; Description: "Open video tutorial"; Flags: shellexec
+Filename: "https://www.twitch.tv/videos/210592694"; Description: "Open video tutorial"; Flags: postinstall shellexec
 
 
 

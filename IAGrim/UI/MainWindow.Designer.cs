@@ -137,6 +137,7 @@
             this.buttonDevTools.Name = "buttonDevTools";
             this.buttonDevTools.Size = new System.Drawing.Size(75, 18);
             this.buttonDevTools.TabIndex = 0;
+            this.buttonDevTools.Tag = "iatag_ui_devtools";
             this.buttonDevTools.Text = "DevTools";
             this.buttonDevTools.UseVisualStyleBackColor = true;
             this.buttonDevTools.Click += new System.EventHandler(this.button1_Click);

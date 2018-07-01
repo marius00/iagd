@@ -144,16 +144,14 @@ namespace IAGrim {
         /// <returns></returns>
         private static string FindSteamUserdata() {
             using (RegistryKey registryKey = Registry.LocalMachine.OpenSubKey(@"Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 219990")) {
-                if (registryKey != null) {
-                    string location = (string)registryKey.GetValue("InstallLocation");
-                    if (!string.IsNullOrEmpty(location)) {
+                string location = (string) registryKey?.GetValue("InstallLocation");
+                if (!string.IsNullOrEmpty(location)) {
 
 
-                        location = Path.Combine(Directory.GetParent(location).Parent.Parent.FullName, "userdata");
-                        if (Directory.Exists(location)) {
-                            Logger.Info("Grim Dawn userdata location located using App Id");
-                            return location;
-                        }
+                    location = Path.Combine(Directory.GetParent(location).Parent.Parent.FullName, "userdata");
+                    if (Directory.Exists(location)) {
+                        Logger.Info("Grim Dawn userdata location located using App Id");
+                        return location;
                     }
                 }
             }
@@ -269,7 +267,9 @@ namespace IAGrim {
 
             try {
                 var steamPath = GetSteamDirectory();
-                GetGrimFolderFromSteamLibrary(ExtractSteamLibraryPaths(Path.Combine(steamPath, "config", "config.vdf")))
+                var steamInstallPaths = ExtractSteamLibraryPaths(Path.Combine(steamPath, "config", "config.vdf"));
+                steamInstallPaths.Add(steamPath); // May not be included in the VDF
+                GetGrimFolderFromSteamLibrary(steamInstallPaths)
                     .ForEach(loc => locations.Add(loc));
             }
             catch (Exception ex) {

@@ -53,6 +53,7 @@
             this.buttonLanguageSelect = new FirefoxButton();
             this.buttonViewBackups = new FirefoxButton();
             this.buttonViewLogs = new FirefoxButton();
+            this.buttonDevTools = new FirefoxButton();
             this.contextMenuStrip1.SuspendLayout();
             this.panelBox4.SuspendLayout();
             this.panelBox3.SuspendLayout();
@@ -314,6 +315,7 @@
             // 
             // panelBox2
             // 
+            this.panelBox2.Controls.Add(this.buttonDevTools);
             this.panelBox2.Controls.Add(this.buttonDonate);
             this.panelBox2.Controls.Add(this.buttonForum);
             this.panelBox2.Controls.Add(this.buttonDeveloper);
@@ -460,6 +462,19 @@
             this.buttonViewLogs.Text = "View Logs";
             this.buttonViewLogs.Click += new System.EventHandler(this.buttonViewLogs_Click);
             // 
+            // buttonDevTools
+            // 
+            this.buttonDevTools.EnabledCalc = true;
+            this.buttonDevTools.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.buttonDevTools.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
+            this.buttonDevTools.Location = new System.Drawing.Point(14, 165);
+            this.buttonDevTools.Name = "buttonDevTools";
+            this.buttonDevTools.Size = new System.Drawing.Size(192, 32);
+            this.buttonDevTools.TabIndex = 6;
+            this.buttonDevTools.Tag = "iatag_ui_devtools";
+            this.buttonDevTools.Text = "Devtools";
+            this.buttonDevTools.Click += new System.EventHandler(this.buttonDevTools_Click);
+            // 
             // SettingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -520,5 +535,6 @@
         private System.Windows.Forms.LinkLabel linkSourceCode;
         private FirefoxCheckBox cbDualComputer;
         private FirefoxCheckBox cbShowAugments;
+        private FirefoxButton buttonDevTools;
     }
 }

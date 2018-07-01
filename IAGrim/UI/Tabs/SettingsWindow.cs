@@ -16,6 +16,7 @@ using IAGrim.UI.Controller;
 using IAGrim.Utilities;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.GameDataParsing.Service;
+using IAGrim.UI.Misc.CEF;
 using IAGrim.UI.Popups;
 using IAGrim.Utilities.HelperClasses;
 // 
@@ -26,29 +27,29 @@ namespace IAGrim.UI {
 
         private readonly Action _itemViewUpdateTrigger;
         private readonly IDatabaseSettingDao _settingsDao;
-        private readonly IDatabaseItemDao _itemDao;
         private readonly ArzParser _parser;
         private readonly IPlayerItemDao _playerItemDao;
         private readonly IItemTagDao _itemTagDao;
         private readonly GDTransferFile[] _modFilter;
         private readonly StashManager _stashManager;
         private readonly ParsingService _parsingService;
+        private readonly CefBrowserHandler _cefBrowserHandler;
 
         public SettingsWindow(
+            CefBrowserHandler cefBrowserHandler,
             IItemTagDao itemTagDao,
             TooltipHelper tooltipHelper, 
             Action itemViewUpdateTrigger, 
-            IDatabaseSettingDao settingsDao, 
-            IDatabaseItemDao itemDao,
+            IDatabaseSettingDao settingsDao,
             IPlayerItemDao playerItemDao,
             ArzParser parser,
             GDTransferFile[] modFilter,
             StashManager stashManager, ParsingService parsingService) {            
             InitializeComponent();
+            this._cefBrowserHandler = cefBrowserHandler;
             this._tooltipHelper = tooltipHelper;
             this._itemViewUpdateTrigger = itemViewUpdateTrigger;
             this._settingsDao = settingsDao;
-            this._itemDao = itemDao;
             this._playerItemDao = playerItemDao;
             this._parser = parser;
             this._modFilter = modFilter;
@@ -176,6 +177,10 @@ namespace IAGrim.UI {
         private void cbShowAugments_CheckedChanged(object sender, EventArgs e) {
             Properties.Settings.Default.ShowAugmentsAsItems = (sender as FirefoxCheckBox).Checked;
             Properties.Settings.Default.Save();
+        }
+
+        private void buttonDevTools_Click(object sender, EventArgs e) {
+            _cefBrowserHandler.ShowDevTools();
         }
     }
 }

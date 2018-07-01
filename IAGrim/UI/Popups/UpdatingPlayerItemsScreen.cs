@@ -51,7 +51,7 @@ namespace IAGrim.UI {
 
 
         void bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
-            if (e?.Error != null)
+            if (e.Error != null)
                 throw e.Error;
 
             this.CanClose = true;
