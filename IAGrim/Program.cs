@@ -296,7 +296,7 @@ namespace IAGrim {
             IItemTagDao itemTagDao = new ItemTagRepo(threadExecuter, factory);
 
 
-#if !DEBUGX
+#if !DEBUG
             if (statUpgradeNeeded) {
 
                 // If we don't also update item stats, a lot of whining will ensue.

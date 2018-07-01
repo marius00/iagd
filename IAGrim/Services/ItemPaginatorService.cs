@@ -14,7 +14,7 @@ namespace IAGrim.Services {
         private List<PlayerHeldItem> _items;
 
 
-        private int Remaining => Math.Min(_limit, _items.Count - _skip);
+        private int Remaining => Math.Min(_limit, (_items?.Count ?? 0) - _skip);
 
 
         public ItemPaginatorService(int limit) {
@@ -56,9 +56,9 @@ namespace IAGrim.Services {
 
         public List<PlayerHeldItem> Fetch() {
             var remaining = Remaining;
-            var batch = _items.Skip(_skip).Take(remaining);
+            var batch = _items?.Skip(_skip).Take(remaining);
             this._skip += remaining;
-            return batch.ToList();
+            return batch?.ToList() ?? new List<PlayerHeldItem>();
         }
     }
 }
