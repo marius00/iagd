@@ -52,7 +52,7 @@ namespace IAGrim.Database.Synchronizer {
             );
         }
 
-        public IList<BuddyItem> FindBy(Search query) {
+        public IList<BuddyItem> FindBy(ItemSearchRequest query) {
             return ThreadExecuter.Execute(
                 () => _repo.FindBy(query)
             );

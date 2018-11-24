@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using EvilsoftCommons;
 using IAGrim.Backup.Azure.Dto;
 using IAGrim.Database.DAO;
 using IAGrim.Database.DAO.Table;
@@ -642,12 +643,13 @@ namespace IAGrim.Database {
             public String SQL;
             public Dictionary<string, string[]> Parameters;
         }
-        private static DatabaseItemStatQuery CreateDatabaseStatQueryParams(Search query) {
+
+        private static DatabaseItemStatQuery CreateDatabaseStatQueryParams(ItemSearchRequest query) {
             List<string> queryFragments = new List<string>();
             Dictionary<string, string[]> queryParamsList = new Dictionary<string, string[]>();
 
             // Add the damage/resist filter
-            foreach (string[] filter in query.filters) {
+            foreach (string[] filter in query.Filters) {
                 queryFragments.Add($"exists (select id_databaseitem from databaseitemstat_v2 dbs where stat in ( :filter_{filter.GetHashCode()} ) and db.id_databaseitem = dbs.id_databaseitem)");
                 queryParamsList.Add($"filter_{filter.GetHashCode()}", filter);
             }
@@ -664,7 +666,7 @@ namespace IAGrim.Database {
             }
 
 
-            
+
             if (queryFragments.Count > 0) {
                 string sql = $@"
                 SELECT Playeritemid FROM PlayerItemRecord WHERE record IN (
@@ -687,7 +689,7 @@ namespace IAGrim.Database {
 
         }
 
-        public List<PlayerItem> SearchForItems(Search query) {
+        public List<PlayerItem> SearchForItems(ItemSearchRequest query) {
             Logger.Debug($"Searching for items with query {query}");
             List<string> queryFragments = new List<string>();
             Dictionary<string, object> queryParams = new Dictionary<string, object>();
@@ -728,6 +730,11 @@ namespace IAGrim.Database {
                 queryParams.Add("maxlevel", query.MaximumLevel);
             }
 
+            // Show only items from the past 12 hours
+            if (query.RecentOnly) {
+                queryFragments.Add("created_at > :filter_recentOnly");
+                queryParams.Add("filter_recentOnly", DateTime.UtcNow.AddHours(-12).ToTimestamp());
+            }
 
 
             List<string> sql = new List<string>();

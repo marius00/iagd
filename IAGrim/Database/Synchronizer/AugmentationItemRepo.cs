@@ -23,7 +23,7 @@ namespace IAGrim.Database.Synchronizer {
             );
         }
 
-        public IList<AugmentationItem> Search(Search query) {
+        public IList<AugmentationItem> Search(ItemSearchRequest query) {
             return ThreadExecuter.Execute(
                 () => _repo.Search(query)
             );

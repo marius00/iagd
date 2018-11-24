@@ -27,7 +27,7 @@ namespace IAGrim.UI.Controller {
         private readonly IPlayerItemDao _playerItemDao;
         private readonly ItemStatService _itemStatService;
         private readonly IBuddyItemDao _buddyItemDao;
-        private const int TakeSize = 84;
+        private const int TakeSize = 64;
         private readonly ItemPaginatorService _itemPaginatorService;
         private readonly RecipeService _recipeService;
         private readonly CostCalculationService _costCalculationService;
@@ -117,7 +117,7 @@ namespace IAGrim.UI.Controller {
             OnSearch?.Invoke(this, null);
         }
 
-        public string Search(Search query, bool duplicatesOnly, bool includeBuddyItems, bool orderByLevel) {
+        public string Search(ItemSearchRequest query, bool duplicatesOnly, bool includeBuddyItems, bool orderByLevel) {
             JsBind.ItemSourceExhausted = false;
 
             // Signal that we are loading items
@@ -151,7 +151,7 @@ namespace IAGrim.UI.Controller {
             }
         }
 
-        private string Search_(Search query, bool duplicatesOnly, bool includeBuddyItems, bool orderByLevel) {
+        private string Search_(ItemSearchRequest query, bool duplicatesOnly, bool includeBuddyItems, bool orderByLevel) {
             OnSearch?.Invoke(this, null);
             string message;
             long personalCount = 0;
@@ -205,7 +205,7 @@ namespace IAGrim.UI.Controller {
             return message;
         }
 
-        private void AddBuddyItems(List<PlayerHeldItem> items, Search query, out string message) {
+        private void AddBuddyItems(List<PlayerHeldItem> items, ItemSearchRequest query, out string message) {
             List<BuddyItem> buddyItems = new List<BuddyItem>(_buddyItemDao.FindBy(query));
             List<PlayerHeldItem> itemsWithBuddy = items.FindAll(item => buddyItems.Any(buddy => buddy.BaseRecord == item.BaseRecord));
 
@@ -249,13 +249,13 @@ namespace IAGrim.UI.Controller {
             }
         }
 
-        private void AddAugmentItems(List<PlayerHeldItem> items, Search query) {
+        private void AddAugmentItems(List<PlayerHeldItem> items, ItemSearchRequest query) {
             var augments = _augmentationItemRepo.Search(query);
             var remainingRecipes = augments.Where(recipe => items.All(item => item.BaseRecord != recipe.BaseRecord));
             items.AddRange(remainingRecipes);
         }
 
-        private void AddRecipeItems(List<PlayerHeldItem> items, Search query) {
+        private void AddRecipeItems(List<PlayerHeldItem> items, ItemSearchRequest query) {
             var recipes = _dbItemDao.SearchForRecipeItems(query);
 
             List<PlayerHeldItem> itemsWithRecipe = items.FindAll(item => recipes.Any(recipe => recipe.BaseRecord == item.BaseRecord));

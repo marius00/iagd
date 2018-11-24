@@ -160,12 +160,12 @@ namespace Tests_IAGrim.Dao {
 
         [TestMethod]
         public void CanFindItemWithSpecificName() {
-            Search query = new Search {
+            ItemSearchRequest query = new ItemSearchRequest {
                 IsHardcore = false,
                 Mod = string.Empty,
                 Wildcard = "specific name",
                 Classes = new List<string>(),
-                filters = new List<string[]>()
+                Filters = new List<string[]>()
             };
 
             List<PlayerItem> result = DoSearch(query);
@@ -177,10 +177,10 @@ namespace Tests_IAGrim.Dao {
 
         [TestMethod]
         public void CanFindItemBasedOnSlot() {
-            Search query = new Search {
+            ItemSearchRequest query = new ItemSearchRequest {
                 IsHardcore = false,
                 Mod = string.Empty,
-                filters = new List<string[]>(),
+                Filters = new List<string[]>(),
                 Classes = new List<string>(),
                 Slot = new string[] { "some-slot" }
             };
@@ -191,14 +191,14 @@ namespace Tests_IAGrim.Dao {
         }
         [TestMethod]
         public void CanFindItemBasedOnStat() {
-            Search query = new Search {
+            ItemSearchRequest query = new ItemSearchRequest {
                 IsHardcore = false,
                 Mod = string.Empty,
-                filters = new List<string[]>(),
+                Filters = new List<string[]>(),
                 Classes = new List<string>()
             };
 
-            query.filters.Add(new string[] { "some-imaginary-stat" });
+            query.Filters.Add(new string[] { "some-imaginary-stat" });
 
             List<PlayerItem> result = DoSearch(query);
             result.Count.Should().Be.EqualTo(1);
@@ -206,10 +206,10 @@ namespace Tests_IAGrim.Dao {
 
         [TestMethod]
         public void CanFindItemBasedOnSocketed() {
-            Search query = new Search {
+            ItemSearchRequest query = new ItemSearchRequest {
                 IsHardcore = false,
                 Mod = string.Empty,
-                filters = new List<string[]>(),
+                Filters = new List<string[]>(),
                 Classes = new List<string>(),
                 SocketedOnly = true
             };
@@ -220,10 +220,10 @@ namespace Tests_IAGrim.Dao {
 
         [TestMethod]
         public void CanFindRetliationItems() {
-            Search query = new Search {
+            ItemSearchRequest query = new ItemSearchRequest {
                 IsHardcore = false,
                 Mod = string.Empty,
-                filters = new List<string[]>(),
+                Filters = new List<string[]>(),
                 Classes = new List<string>(),
                 IsRetaliation = true
             };
@@ -235,10 +235,10 @@ namespace Tests_IAGrim.Dao {
 
         [TestMethod]
         public void CanFindItemWithMinLevel() {
-            Search query = new Search {
+            ItemSearchRequest query = new ItemSearchRequest {
                 IsHardcore = false,
                 Mod = string.Empty,
-                filters = new List<string[]>(),
+                Filters = new List<string[]>(),
                 Classes = new List<string>(),
                 MinimumLevel = 200
             };
@@ -255,12 +255,12 @@ namespace Tests_IAGrim.Dao {
 
         [TestMethod]
         public void CanFindItemWithSpecificRarity() {
-            Search query = new Search {
+            ItemSearchRequest query = new ItemSearchRequest {
                 IsHardcore = false,
                 Mod = string.Empty,
                 Rarity = "Green",
                 Classes = new List<string>(),
-                filters = new List<string[]>()
+                Filters = new List<string[]>()
             };
 
             var result = DoSearch(query);
@@ -270,11 +270,11 @@ namespace Tests_IAGrim.Dao {
 
         [TestMethod]
         public void CanFindItemWhichIsHardcore() {
-            Search query = new Search {
+            ItemSearchRequest query = new ItemSearchRequest {
                 IsHardcore = true,
                 Mod = string.Empty,
                 Classes = new List<string>(),
-                filters = new List<string[]>()
+                Filters = new List<string[]>()
             };
 
             var result = DoSearch(query);
@@ -283,18 +283,18 @@ namespace Tests_IAGrim.Dao {
 
         [TestMethod]
         public void CanFindItemWithSpecificMod() {
-            Search query = new Search {
+            ItemSearchRequest query = new ItemSearchRequest {
                 IsHardcore = false,
                 Mod = "some mod",
                 Classes = new List<string>(),
-                filters = new List<string[]>()
+                Filters = new List<string[]>()
             };
 
             var result = DoSearch(query);
             result.Count.Should().Be.EqualTo(1);
         }
 
-        private List<PlayerItem> DoSearch(Search query) {
+        private List<PlayerItem> DoSearch(ItemSearchRequest query) {
             return dao.SearchForItems(query);
         }
     }

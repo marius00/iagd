@@ -72,6 +72,7 @@
             this.dmgVitality = new FirefoxCheckBox();
             this.dmgChaos = new FirefoxCheckBox();
             this.classesPanelBox = new PanelBox();
+            this.cbRecentOnly = new FirefoxCheckBox();
             this.panelBox1.SuspendLayout();
             this.panelBox2.SuspendLayout();
             this.panelBox3.SuspendLayout();
@@ -80,6 +81,7 @@
             // 
             // panelBox1
             // 
+            this.panelBox1.Controls.Add(this.cbRecentOnly);
             this.panelBox1.Controls.Add(this.cbSocketed);
             this.panelBox1.Controls.Add(this.cbDuplicates);
             this.panelBox1.Controls.Add(this.cbReflect);
@@ -99,7 +101,7 @@
             this.panelBox1.Location = new System.Drawing.Point(12, 723);
             this.panelBox1.Name = "panelBox1";
             this.panelBox1.NoRounding = false;
-            this.panelBox1.Size = new System.Drawing.Size(163, 521);
+            this.panelBox1.Size = new System.Drawing.Size(163, 546);
             this.panelBox1.TabIndex = 39;
             this.panelBox1.Tag = "iatag_ui_misc";
             this.panelBox1.Text = "Misc";
@@ -304,7 +306,7 @@
             this.panelBox2.Controls.Add(this.resistAether);
             this.panelBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.panelBox2.HeaderHeight = 29;
-            this.panelBox2.Location = new System.Drawing.Point(12, 1250);
+            this.panelBox2.Location = new System.Drawing.Point(12, 1275);
             this.panelBox2.Name = "panelBox2";
             this.panelBox2.NoRounding = false;
             this.panelBox2.Size = new System.Drawing.Size(163, 411);
@@ -752,7 +754,7 @@
             // 
             this.classesPanelBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.classesPanelBox.HeaderHeight = 29;
-            this.classesPanelBox.Location = new System.Drawing.Point(12, 1667);
+            this.classesPanelBox.Location = new System.Drawing.Point(12, 1692);
             this.classesPanelBox.Name = "classesPanelBox";
             this.classesPanelBox.NoRounding = false;
             this.classesPanelBox.Size = new System.Drawing.Size(163, 244);
@@ -760,6 +762,20 @@
             this.classesPanelBox.Tag = "iatag_ui_classes";
             this.classesPanelBox.Text = "Classes";
             this.classesPanelBox.TextLocation = "8; 5";
+            // 
+            // cbRecentOnly
+            // 
+            this.cbRecentOnly.Bold = false;
+            this.cbRecentOnly.EnabledCalc = true;
+            this.cbRecentOnly.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbRecentOnly.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbRecentOnly.Location = new System.Drawing.Point(3, 505);
+            this.cbRecentOnly.Name = "cbRecentOnly";
+            this.cbRecentOnly.Size = new System.Drawing.Size(132, 27);
+            this.cbRecentOnly.TabIndex = 45;
+            this.cbRecentOnly.Tag = "iatag_ui_recentonly";
+            this.cbRecentOnly.Text = "Recent Only";
+            this.cbRecentOnly.UseVisualStyleBackColor = true;
             // 
             // DesiredSkills
             // 
@@ -839,5 +855,6 @@
         private FirefoxCheckBox totalDamage;
         private PanelBox classesPanelBox;
         private FirefoxCheckBox cbSocketed;
+        private FirefoxCheckBox cbRecentOnly;
     }
 }

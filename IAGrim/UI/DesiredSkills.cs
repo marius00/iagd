@@ -102,7 +102,9 @@ namespace IAGrim.UI {
                     IsRetaliation = dmgRetaliation.Checked,
                     DuplicatesOnly = cbDuplicates.Checked,
                     SocketedOnly = cbSocketed.Checked,
-                    DesiredClass = DesiredClasses
+                    RecentOnly = cbRecentOnly.Checked,
+                    DesiredClass = DesiredClasses,
+                    
                 };
             }
         }
@@ -338,6 +340,7 @@ namespace IAGrim.UI {
         public bool DuplicatesOnly { get; set; }
 
         public bool SocketedOnly { get; set; }
+        public bool RecentOnly { get; set; }
 
         public List<string> DesiredClass { get; set; }
     }

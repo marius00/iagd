@@ -102,9 +102,9 @@ namespace IAGrim.UI {
 
             ComboBoxItemQuality rarity = _selectedItemQuality;
             var slot = _selectedSlot;
-            var query = new Search {
+            var query = new ItemSearchRequest {
                 Wildcard = searchField.Text,
-                filters = filters.Filters,
+                Filters = filters.Filters,
                 MinimumLevel = ParseNumeric(minLevel),
                 MaximumLevel = ParseNumeric(maxLevel),
                 Rarity = rarity?.Rarity,
@@ -115,6 +115,7 @@ namespace IAGrim.UI {
                 IsHardcore = mf.IsHardcore,
                 Classes = filters.DesiredClass,
                 SocketedOnly = filters.SocketedOnly,
+                RecentOnly = filters.RecentOnly
             };
 
             bool includeBuddyItems = (bool)Properties.Settings.Default.BuddySyncEnabled;

@@ -87,7 +87,7 @@ namespace IAGrim.Database.Synchronizer {
             );
         }
 
-        public IList<RecipeItem> SearchForRecipeItems(Search query) {
+        public IList<RecipeItem> SearchForRecipeItems(ItemSearchRequest query) {
             return ThreadExecuter.Execute(
                 () => _repo.SearchForRecipeItems(query)
             );

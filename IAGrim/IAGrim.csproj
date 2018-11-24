@@ -209,7 +209,7 @@
     <Compile Include="Database\DAO\Table\SkillMappingTable.cs" />
     <Compile Include="Database\DAO\Table\SkillTable.cs" />
     <Compile Include="Database\Dto\ModSelection.cs" />
-    <Compile Include="Database\Dto\Search.cs" />
+    <Compile Include="Database\Dto\ItemSearchRequest.cs" />
     <Compile Include="Database\Interfaces\IAugmentationItemDao.cs" />
     <Compile Include="Database\Interfaces\IAzurePartitionDao.cs" />
     <Compile Include="Database\Interfaces\IBuddyItemDao.cs" />
@@ -569,6 +569,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\DesiredSkills.resx">
       <DependentUpon>DesiredSkills.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Popups\DonateNagScreen.resx">
       <DependentUpon>DonateNagScreen.cs</DependentUpon>

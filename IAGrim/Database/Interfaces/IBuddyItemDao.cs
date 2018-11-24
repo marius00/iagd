@@ -17,6 +17,6 @@ namespace IAGrim.Database.Interfaces {
         void UpdateLevelRequirements(IList<BuddyItem> items);
         void UpdateRarity(IList<BuddyItem> items);
         void UpdateNames(IList<BuddyItem> items);
-        IList<BuddyItem> FindBy(Search query);
+        IList<BuddyItem> FindBy(ItemSearchRequest query);
     }
 }

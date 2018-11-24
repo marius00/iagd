@@ -3,9 +3,11 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Security.Permissions;
 using System.Threading;
 using System.Windows.Forms;
+using EvilsoftCommons;
 using EvilsoftCommons.Exceptions;
 using IAGrim.Database;
 using IAGrim.Database.Interfaces;
@@ -550,6 +552,7 @@ namespace IAGrim.Parsers.Arz {
                 UNKNOWN = item.UNKNOWN,
                 Mod = mod,
                 IsHardcore = isHardcore,
+                CreationDate = DateTime.UtcNow.ToTimestamp()
                 //IsExpansion1 = isExpansion1
             };
         }

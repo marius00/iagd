@@ -106,7 +106,7 @@ namespace IAGrim.Database.Synchronizer {
             );
         }
 
-        public List<PlayerItem> SearchForItems(Search query) {
+        public List<PlayerItem> SearchForItems(ItemSearchRequest query) {
             return ThreadExecuter.Execute(
                 () => repo.SearchForItems(query)
             );

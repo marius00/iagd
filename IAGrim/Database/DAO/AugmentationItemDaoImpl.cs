@@ -47,7 +47,11 @@ namespace IAGrim.Database.DAO {
             }
         }
 
-        public IList<AugmentationItem> Search(Search query) {
+        public IList<AugmentationItem> Search(ItemSearchRequest query) {
+            // User only wants recent items, so definitely not buyable.
+            if (query.RecentOnly) {
+                return new List<AugmentationItem>();
+            }
 
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {

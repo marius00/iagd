@@ -361,7 +361,11 @@ namespace IAGrim.Database {
         }
         
 
-        public IList<RecipeItem> SearchForRecipeItems(Search query) {
+        public IList<RecipeItem> SearchForRecipeItems(ItemSearchRequest query) {
+            // No idea when recipes were added, the user probably wants owned items only.
+            if (query.RecentOnly) {
+                return new List<RecipeItem>();
+            }
 
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
@@ -383,7 +387,7 @@ namespace IAGrim.Database {
             }
         }
 
-        public static void AddItemSearchCriterias(ICriteria criterias, Search query) {
+        public static void AddItemSearchCriterias(ICriteria criterias, ItemSearchRequest query) {
             if (!string.IsNullOrEmpty(query.Wildcard)) {
                 criterias.Add(Subqueries.PropertyIn("BaseRecord", DetachedCriteria.For<DatabaseItem>()
                     .Add(Restrictions.InsensitiveLike("Name", string.Format("%{0}%", query.Wildcard.Replace(' ', '%'))))
@@ -400,7 +404,7 @@ namespace IAGrim.Database {
 
 
             // Add the damage/resist filter
-            foreach (string[] filter in query.filters) {
+            foreach (string[] filter in query.Filters) {
                 var subquery = Subqueries.PropertyIn("BaseRecord", DetachedCriteria.For<DatabaseItemStat>()
                     .Add(Restrictions.In("Stat", filter))
                     .CreateAlias("Parent", "P")

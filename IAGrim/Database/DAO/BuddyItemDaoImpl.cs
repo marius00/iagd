@@ -428,12 +428,12 @@ namespace IAGrim.Database {
             public String SQL;
             public Dictionary<string, string[]> Parameters;
         }
-        private static DatabaseItemStatQuery CreateDatabaseStatQueryParams(Search query) {
+        private static DatabaseItemStatQuery CreateDatabaseStatQueryParams(ItemSearchRequest query) {
             List<string> queryFragments = new List<string>();
             Dictionary<string, string[]> queryParamsList = new Dictionary<string, string[]>();
 
             // Add the damage/resist filter
-            foreach (string[] filter in query.filters) {
+            foreach (string[] filter in query.Filters) {
                 queryFragments.Add(
                     $@"EXISTS (SELECT {DatabaseItemStatTable.Item} FROM {DatabaseItemStatTable.Table} dbs 
                     WHERE {DatabaseItemStatTable.Stat} in ( :filter_{filter.GetHashCode()} ) 
@@ -509,7 +509,7 @@ namespace IAGrim.Database {
             public uint Count { get; set; }
         }
 
-        public IList<BuddyItem> FindBy(Search query) {
+        public IList<BuddyItem> FindBy(ItemSearchRequest query) {
             List<string> queryFragments = new List<string>();
             Dictionary<string, object> queryParams = new Dictionary<string, object>();
 
