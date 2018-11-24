@@ -22,12 +22,12 @@ using IAGrim.UI.Misc.CEF;
 namespace IAGrim.UI.Controller {
 
     internal class SearchController {
-        private static ILog _logger = LogManager.GetLogger(typeof(SearchController));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(SearchController));
         private readonly IDatabaseItemDao _dbItemDao;
         private readonly IPlayerItemDao _playerItemDao;
         private readonly ItemStatService _itemStatService;
         private readonly IBuddyItemDao _buddyItemDao;
-        private const int TakeSize = 44;
+        private const int TakeSize = 84;
         private readonly ItemPaginatorService _itemPaginatorService;
         private readonly RecipeService _recipeService;
         private readonly CostCalculationService _costCalculationService;
@@ -162,7 +162,7 @@ namespace IAGrim.UI.Controller {
                 StashManagerOnStashUpdated(null, null);
             }
 
-            _logger.Info("Searching for items..");
+            Logger.Info("Searching for items..");
 
             List<PlayerHeldItem> items = new List<PlayerHeldItem>();
             items.AddRange(_playerItemDao.SearchForItems(query));
@@ -199,6 +199,7 @@ namespace IAGrim.UI.Controller {
             
 
             _itemPaginatorService.Update(items, orderByLevel);
+            JsBind.ItemSourceExhausted = items.Count == 0;
             
 
             return message;
@@ -215,7 +216,7 @@ namespace IAGrim.UI.Controller {
                             item.Buddies.Add(buddyName);
                 }
             }
-            _logger.Debug($"Merged {itemsWithBuddy.Count} buddy items into player items");
+            Logger.Debug($"Merged {itemsWithBuddy.Count} buddy items into player items");
 
 
             // TODO: This should use .Except(), find out why its not working with .Except()

@@ -42,12 +42,16 @@
   </body>
 <script>
     function setItemsFromGlobalItems() {
-        const event = data.globalSetItems(JSON.parse(data.items));
-        data.globalStore.dispatch(event);
+        if (typeof data !== 'undefined' && typeof data.globalStore !== 'undefined') {
+          const event = data.globalSetItems(JSON.parse(data.items));
+          data.globalStore.dispatch(event);
+        }
     }
     function addItemsFromGlobalItems() {
-        const event = data.globalAddItems(JSON.parse(data.items));
-        data.globalStore.dispatch(event);
+        if (typeof data !== 'undefined' && typeof data.globalStore !== 'undefined') {
+          const event = data.globalAddItems(JSON.parse(data.items));
+          data.globalStore.dispatch(event);
+        }
     }
 </script>
 </html>

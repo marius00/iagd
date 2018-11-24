@@ -114,7 +114,7 @@ namespace IAGrim.UI.Controller {
             _dao.Update(items, true);
 
 
-            var numItemsAfterTransfer = items.Sum(item => Math.Max(1, item.StackCount));
+            var numItemsAfterTransfer = items.Sum(item => item.StackCount);
             long numItemsTransferred = numReceived - numItemsAfterTransfer;
 
             if (!string.IsNullOrEmpty(error)) {
@@ -201,6 +201,9 @@ namespace IAGrim.UI.Controller {
                     if (result.NumItemsTransferred == 0) {
                         _setTooltip(GlobalSettings.Language.GetTag("iatag_stash3_failure"));
                         _browser.ShowMessage(GlobalSettings.Language.GetTag("iatag_stash3_failure"), UserFeedbackLevel.Warning);
+                    }
+                    else {
+                        //_setTooltip(GlobalSettings.Language.GetTag("iatag_stash3_success")); <- argsable
                     }
 
                     // Lets do this last, to make sure feedback reaches the user as fast as possible

@@ -11,10 +11,10 @@ namespace IAGrim.Services {
         private readonly Comparison<PlayerHeldItem> _comparer;
 
         private int _skip;
-        private List<PlayerHeldItem> _items;
+        private List<PlayerHeldItem> _items = new List<PlayerHeldItem>();
 
-
-        private int Remaining => Math.Min(_limit, (_items?.Count ?? 0) - _skip);
+        private int NumItems => _items?.Count ?? 0;
+        private int Remaining => Math.Min(_limit, NumItems - _skip);
 
 
         public ItemPaginatorService(int limit) {
@@ -47,11 +47,7 @@ namespace IAGrim.Services {
         public void Update(List<PlayerHeldItem> items, bool orderByLevel) {
             this._skip = 0;
             this._items = items;
-            if (orderByLevel) {
-                _items.Sort(CompareToMinimumLevel);
-            } else {
-                _items.Sort(_comparer);
-            }
+            _items.Sort(orderByLevel ? CompareToMinimumLevel : _comparer);
         }
 
         public List<PlayerHeldItem> Fetch() {
