@@ -232,7 +232,6 @@ namespace IAGrim.Database {
                 using (ITransaction transaction = session.BeginTransaction()) {
                     var existingItems = session.CreateCriteria<PlayerItem>()
                         .Add(Restrictions.IsNotNull(nameof(PlayerItem.AzureUuid)))
-                        .SetProjection(Projections.Property(nameof(PlayerItem.AzureUuid)))
                         .List<PlayerItem>();
 
                     filteredItems = items
