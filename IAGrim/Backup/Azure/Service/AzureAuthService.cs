@@ -99,7 +99,7 @@ namespace IAGrim.Backup.Azure.Service {
                 MemoryCache.Default.Set(CacheKey, false, DateTimeOffset.Now.AddDays(1));
             }
 
-            return AccessStatus.Unknown;
+            return AccessStatus.Unauthorized;
         }
 
         public void Authenticate() {

@@ -18,6 +18,6 @@ namespace IAGrim.Backup.Azure.Service {
         public void SetToken(string token) {
             Settings.Default.AzureAuthToken = token;
             Settings.Default.Save();
-        }
+        } 
     }
 }

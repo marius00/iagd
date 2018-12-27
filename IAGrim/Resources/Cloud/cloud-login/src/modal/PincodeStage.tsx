@@ -49,8 +49,8 @@ class PincodeStage extends React.Component<Props> {
       })
       .then((response) => response.json())
       .then((json) => {
-        if (json.Success !== undefined) {
-          this.props.onCompletion(json.Success, json.Token);
+        if (json.Success !== undefined || json.success !== undefined) {
+          this.props.onCompletion(json.Success || json.success, json.Token || json.token);
         }
         else {
           console.warn('Attempted to authenticate code, but the result status was undefined.');

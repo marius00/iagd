@@ -31,6 +31,7 @@ using IAGrim.BuddyShare;
 using IAGrim.Database.DAO;
 using IAGrim.Parser.Arc;
 using IAGrim.Parsers.GameDataParsing.Service;
+using IAGrim.Properties;
 using IAGrim.Services.Crafting;
 using IAGrim.UI.Misc.CEF;
 using IAGrim.UI.Popups;
@@ -328,6 +329,12 @@ namespace IAGrim {
                 foreach (var tag in itemTagDao.GetClassItemTags()) {
                     language.SetTagIfMissing(tag.Tag, tag.Name);
                 }
+            }
+
+            if (args != null && args.Any(m => m.Contains("-logout"))) {
+                Logger.Info("Started with -logout specified, logging out of online backups.");
+                Settings.Default.AzureAuthToken = null;
+                Settings.Default.Save();
             }
 
 
