@@ -644,6 +644,7 @@ namespace IAGrim.UI {
 
             _cefBrowserHandler.TransferSingleRequested += TransferSingleItem;
             _cefBrowserHandler.TransferAllRequested += TransferAllItems;
+            new WindowSizeManager(this);
         }
         void TransferSingleItem(object ignored, EventArgs args) {
 
@@ -850,8 +851,10 @@ namespace IAGrim.UI {
             if (InvokeRequired) {
                 Invoke((MethodInvoker)delegate { SetItemsClipboard(ignored, _args); });
             } else {
-                ClipboardEventArg args = _args as ClipboardEventArg;
-                if (args != null) Clipboard.SetText(args.Text);
+                if (_args is ClipboardEventArg args) {
+                    Clipboard.SetText(args.Text);
+                }
+
                 _tooltipHelper.ShowTooltipAtMouse(GlobalSettings.Language.GetTag("iatag_copied_clipboard"), _cefBrowserHandler.BrowserControl);
             }
         }

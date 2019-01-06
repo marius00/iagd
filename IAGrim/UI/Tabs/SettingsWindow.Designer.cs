@@ -43,6 +43,7 @@
             this.radioBeta = new FirefoxRadioButton();
             this.radioRelease = new FirefoxRadioButton();
             this.panelBox2 = new PanelBox();
+            this.buttonDevTools = new FirefoxButton();
             this.buttonDonate = new FirefoxButton();
             this.buttonForum = new FirefoxButton();
             this.buttonDeveloper = new FirefoxButton();
@@ -53,7 +54,6 @@
             this.buttonLanguageSelect = new FirefoxButton();
             this.buttonViewBackups = new FirefoxButton();
             this.buttonViewLogs = new FirefoxButton();
-            this.buttonDevTools = new FirefoxButton();
             this.contextMenuStrip1.SuspendLayout();
             this.panelBox4.SuspendLayout();
             this.panelBox3.SuspendLayout();
@@ -136,7 +136,7 @@
             this.cbDualComputer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.cbDualComputer.Location = new System.Drawing.Point(3, 285);
             this.cbDualComputer.Name = "cbDualComputer";
-            this.cbDualComputer.Size = new System.Drawing.Size(236, 27);
+            this.cbDualComputer.Size = new System.Drawing.Size(268, 27);
             this.cbDualComputer.TabIndex = 22;
             this.cbDualComputer.Tag = "iatag_ui_dualcomputer";
             this.cbDualComputer.Text = "Using IA on multiple PCs";
@@ -163,7 +163,7 @@
             this.cbDisplaySkills.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.cbDisplaySkills.Location = new System.Drawing.Point(3, 219);
             this.cbDisplaySkills.Name = "cbDisplaySkills";
-            this.cbDisplaySkills.Size = new System.Drawing.Size(160, 27);
+            this.cbDisplaySkills.Size = new System.Drawing.Size(268, 27);
             this.cbDisplaySkills.TabIndex = 17;
             this.cbDisplaySkills.Tag = "iatag_ui_showskills";
             this.cbDisplaySkills.Text = "Show Skills";
@@ -178,7 +178,7 @@
             this.cbAutoUpdateModSettings.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.cbAutoUpdateModSettings.Location = new System.Drawing.Point(3, 436);
             this.cbAutoUpdateModSettings.Name = "cbAutoUpdateModSettings";
-            this.cbAutoUpdateModSettings.Size = new System.Drawing.Size(132, 27);
+            this.cbAutoUpdateModSettings.Size = new System.Drawing.Size(268, 27);
             this.cbAutoUpdateModSettings.TabIndex = 15;
             this.cbAutoUpdateModSettings.Tag = "iatag_ui_autoselectmod";
             this.cbAutoUpdateModSettings.Text = "Auto Select Mod";
@@ -194,7 +194,7 @@
             this.cbAutoSearch.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.cbAutoSearch.Location = new System.Drawing.Point(3, 186);
             this.cbAutoSearch.Name = "cbAutoSearch";
-            this.cbAutoSearch.Size = new System.Drawing.Size(178, 27);
+            this.cbAutoSearch.Size = new System.Drawing.Size(268, 27);
             this.cbAutoSearch.TabIndex = 16;
             this.cbAutoSearch.Tag = "iatag_ui_autosearch";
             this.cbAutoSearch.Text = "Auto Search";
@@ -208,7 +208,7 @@
             this.cbTransferAnyMod.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.cbTransferAnyMod.Location = new System.Drawing.Point(3, 120);
             this.cbTransferAnyMod.Name = "cbTransferAnyMod";
-            this.cbTransferAnyMod.Size = new System.Drawing.Size(178, 27);
+            this.cbTransferAnyMod.Size = new System.Drawing.Size(268, 27);
             this.cbTransferAnyMod.TabIndex = 14;
             this.cbTransferAnyMod.Tag = "iatag_ui_transferanymod";
             this.cbTransferAnyMod.Text = "Transfer to any mod";
@@ -221,7 +221,7 @@
             this.cbShowRecipesAsItems.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.cbShowRecipesAsItems.Location = new System.Drawing.Point(3, 54);
             this.cbShowRecipesAsItems.Name = "cbShowRecipesAsItems";
-            this.cbShowRecipesAsItems.Size = new System.Drawing.Size(178, 27);
+            this.cbShowRecipesAsItems.Size = new System.Drawing.Size(268, 27);
             this.cbShowRecipesAsItems.TabIndex = 7;
             this.cbShowRecipesAsItems.Tag = "iatag_ui_showrecipesasitems";
             this.cbShowRecipesAsItems.Text = "Show recipes as items";
@@ -235,7 +235,7 @@
             this.cbSecureTransfers.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.cbSecureTransfers.Location = new System.Drawing.Point(3, 153);
             this.cbSecureTransfers.Name = "cbSecureTransfers";
-            this.cbSecureTransfers.Size = new System.Drawing.Size(147, 27);
+            this.cbSecureTransfers.Size = new System.Drawing.Size(268, 27);
             this.cbSecureTransfers.TabIndex = 12;
             this.cbSecureTransfers.Tag = "iatag_ui_securetransfers";
             this.cbSecureTransfers.Text = "Secure Transfers";
@@ -248,7 +248,7 @@
             this.cbMergeDuplicates.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.cbMergeDuplicates.Location = new System.Drawing.Point(3, 403);
             this.cbMergeDuplicates.Name = "cbMergeDuplicates";
-            this.cbMergeDuplicates.Size = new System.Drawing.Size(160, 27);
+            this.cbMergeDuplicates.Size = new System.Drawing.Size(268, 27);
             this.cbMergeDuplicates.TabIndex = 9;
             this.cbMergeDuplicates.Tag = "iatag_ui_mergeduplicates";
             this.cbMergeDuplicates.Text = "Merge Duplicates";
@@ -263,7 +263,7 @@
             this.cbMinimizeToTray.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.cbMinimizeToTray.Location = new System.Drawing.Point(3, 87);
             this.cbMinimizeToTray.Name = "cbMinimizeToTray";
-            this.cbMinimizeToTray.Size = new System.Drawing.Size(160, 27);
+            this.cbMinimizeToTray.Size = new System.Drawing.Size(268, 27);
             this.cbMinimizeToTray.TabIndex = 8;
             this.cbMinimizeToTray.Tag = "iatag_ui_minimizetotray";
             this.cbMinimizeToTray.Text = "Minimize to Tray";
@@ -292,7 +292,7 @@
             this.radioBeta.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.radioBeta.Location = new System.Drawing.Point(9, 87);
             this.radioBeta.Name = "radioBeta";
-            this.radioBeta.Size = new System.Drawing.Size(188, 27);
+            this.radioBeta.Size = new System.Drawing.Size(454, 27);
             this.radioBeta.TabIndex = 1;
             this.radioBeta.Tag = "iatag_ui_experimentalupdates";
             this.radioBeta.Text = "Experimental Features";
@@ -307,7 +307,7 @@
             this.radioRelease.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.radioRelease.Location = new System.Drawing.Point(9, 54);
             this.radioRelease.Name = "radioRelease";
-            this.radioRelease.Size = new System.Drawing.Size(188, 27);
+            this.radioRelease.Size = new System.Drawing.Size(454, 27);
             this.radioRelease.TabIndex = 0;
             this.radioRelease.Tag = "iatag_ui_regularupdates";
             this.radioRelease.Text = "Regular Updates";
@@ -329,6 +329,19 @@
             this.panelBox2.Tag = "iatag_ui_misc_title";
             this.panelBox2.Text = "Misc";
             this.panelBox2.TextLocation = "8; 5";
+            // 
+            // buttonDevTools
+            // 
+            this.buttonDevTools.EnabledCalc = true;
+            this.buttonDevTools.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.buttonDevTools.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
+            this.buttonDevTools.Location = new System.Drawing.Point(14, 165);
+            this.buttonDevTools.Name = "buttonDevTools";
+            this.buttonDevTools.Size = new System.Drawing.Size(192, 32);
+            this.buttonDevTools.TabIndex = 6;
+            this.buttonDevTools.Tag = "iatag_ui_devtools";
+            this.buttonDevTools.Text = "Devtools";
+            this.buttonDevTools.Click += new System.EventHandler(this.buttonDevTools_Click);
             // 
             // buttonDonate
             // 
@@ -461,19 +474,6 @@
             this.buttonViewLogs.Tag = "iatag_ui_viewlogs";
             this.buttonViewLogs.Text = "View Logs";
             this.buttonViewLogs.Click += new System.EventHandler(this.buttonViewLogs_Click);
-            // 
-            // buttonDevTools
-            // 
-            this.buttonDevTools.EnabledCalc = true;
-            this.buttonDevTools.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.buttonDevTools.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
-            this.buttonDevTools.Location = new System.Drawing.Point(14, 165);
-            this.buttonDevTools.Name = "buttonDevTools";
-            this.buttonDevTools.Size = new System.Drawing.Size(192, 32);
-            this.buttonDevTools.TabIndex = 6;
-            this.buttonDevTools.Tag = "iatag_ui_devtools";
-            this.buttonDevTools.Text = "Devtools";
-            this.buttonDevTools.Click += new System.EventHandler(this.buttonDevTools_Click);
             // 
             // SettingsWindow
             // 

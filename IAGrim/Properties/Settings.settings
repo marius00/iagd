@@ -107,5 +107,8 @@
     <Setting Name="ShowAugmentsAsItems" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="WindowPositionSettings" Type="System.String" Scope="User">
+      <Value Profile="(Default)">{}</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

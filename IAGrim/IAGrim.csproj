@@ -343,6 +343,7 @@
     <Compile Include="UI\Misc\HtmlTranslation.cs" />
     <Compile Include="UI\Misc\RequestRecipeArgument.cs" />
     <Compile Include="UI\Misc\TextboxHoverFocusHighlight.cs" />
+    <Compile Include="UI\Misc\WindowSizeManager.cs" />
     <Compile Include="UI\Model\ListViewEntry.cs" />
     <Compile Include="UI\Popups\ImportExport\ImportExportContainer.cs">
       <SubType>Form</SubType>

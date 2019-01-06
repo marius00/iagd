@@ -197,8 +197,6 @@ namespace IAGrim {
         /// <summary>
         /// Attempting to run a second copy of the program
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private static void singleInstance_ArgumentsReceived(object _, ArgumentsReceivedEventArgs e) {
             try {
                 if (_mw != null) {

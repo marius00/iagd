@@ -349,6 +349,7 @@ namespace StatTranslator {
             {"iatag_postgres_backup", "Invalid backup file. This backup format has been deprecated. Contact me on itemassistant@gmail.com and I'll send you a manual restore." },
 
             {"iatag_not_imlpemented", "Functionality not implemented" },
+            {"iatag_open_logfile", "Open the full log file" },
 
 
             {"iatag_rarity_any", "Any" },
