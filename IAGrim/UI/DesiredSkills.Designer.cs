@@ -24,6 +24,7 @@
         /// </summary>
         private void InitializeComponent() {
             this.panelBox1 = new PanelBox();
+            this.cbRecentOnly = new FirefoxCheckBox();
             this.cbSocketed = new FirefoxCheckBox();
             this.cbDuplicates = new FirefoxCheckBox();
             this.cbReflect = new FirefoxCheckBox();
@@ -72,7 +73,6 @@
             this.dmgVitality = new FirefoxCheckBox();
             this.dmgChaos = new FirefoxCheckBox();
             this.classesPanelBox = new PanelBox();
-            this.cbRecentOnly = new FirefoxCheckBox();
             this.panelBox1.SuspendLayout();
             this.panelBox2.SuspendLayout();
             this.panelBox3.SuspendLayout();
@@ -106,6 +106,20 @@
             this.panelBox1.Tag = "iatag_ui_misc";
             this.panelBox1.Text = "Misc";
             this.panelBox1.TextLocation = "8; 5";
+            // 
+            // cbRecentOnly
+            // 
+            this.cbRecentOnly.Bold = false;
+            this.cbRecentOnly.EnabledCalc = true;
+            this.cbRecentOnly.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbRecentOnly.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbRecentOnly.Location = new System.Drawing.Point(3, 505);
+            this.cbRecentOnly.Name = "cbRecentOnly";
+            this.cbRecentOnly.Size = new System.Drawing.Size(132, 27);
+            this.cbRecentOnly.TabIndex = 45;
+            this.cbRecentOnly.Tag = "iatag_ui_recentonly";
+            this.cbRecentOnly.Text = "Recent Only";
+            this.cbRecentOnly.UseVisualStyleBackColor = true;
             // 
             // cbSocketed
             // 
@@ -596,156 +610,180 @@
             // 
             // totalDamage
             // 
+            this.totalDamage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.totalDamage.Bold = false;
             this.totalDamage.EnabledCalc = true;
             this.totalDamage.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.totalDamage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.totalDamage.Location = new System.Drawing.Point(3, 396);
             this.totalDamage.Name = "totalDamage";
-            this.totalDamage.Size = new System.Drawing.Size(141, 27);
+            this.totalDamage.Size = new System.Drawing.Size(150, 27);
             this.totalDamage.TabIndex = 43;
             this.totalDamage.Tag = "iatag_ui_totaldmg";
             this.totalDamage.Text = "Total Damage";
             // 
             // dmgRetaliation
             // 
+            this.dmgRetaliation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dmgRetaliation.Bold = false;
             this.dmgRetaliation.EnabledCalc = true;
             this.dmgRetaliation.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.dmgRetaliation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.dmgRetaliation.Location = new System.Drawing.Point(3, 363);
             this.dmgRetaliation.Name = "dmgRetaliation";
-            this.dmgRetaliation.Size = new System.Drawing.Size(141, 27);
+            this.dmgRetaliation.Size = new System.Drawing.Size(150, 27);
             this.dmgRetaliation.TabIndex = 42;
             this.dmgRetaliation.Tag = "iatag_ui_retaliation";
             this.dmgRetaliation.Text = "Retaliation";
             // 
             // dmgElemental
             // 
+            this.dmgElemental.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dmgElemental.Bold = false;
             this.dmgElemental.EnabledCalc = true;
             this.dmgElemental.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.dmgElemental.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.dmgElemental.Location = new System.Drawing.Point(3, 330);
             this.dmgElemental.Name = "dmgElemental";
-            this.dmgElemental.Size = new System.Drawing.Size(141, 27);
+            this.dmgElemental.Size = new System.Drawing.Size(150, 27);
             this.dmgElemental.TabIndex = 37;
             this.dmgElemental.Tag = "iatag_ui_elemental";
             this.dmgElemental.Text = "Elemental";
             // 
             // dmgPhysical
             // 
+            this.dmgPhysical.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dmgPhysical.Bold = false;
             this.dmgPhysical.EnabledCalc = true;
             this.dmgPhysical.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.dmgPhysical.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.dmgPhysical.Location = new System.Drawing.Point(3, 33);
             this.dmgPhysical.Name = "dmgPhysical";
-            this.dmgPhysical.Size = new System.Drawing.Size(132, 27);
+            this.dmgPhysical.Size = new System.Drawing.Size(150, 27);
             this.dmgPhysical.TabIndex = 8;
             this.dmgPhysical.Tag = "iatag_ui_physical";
             this.dmgPhysical.Text = "Physical";
             // 
             // dmgPiercing
             // 
+            this.dmgPiercing.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dmgPiercing.Bold = false;
             this.dmgPiercing.EnabledCalc = true;
             this.dmgPiercing.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.dmgPiercing.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.dmgPiercing.Location = new System.Drawing.Point(3, 66);
             this.dmgPiercing.Name = "dmgPiercing";
-            this.dmgPiercing.Size = new System.Drawing.Size(132, 27);
+            this.dmgPiercing.Size = new System.Drawing.Size(150, 27);
             this.dmgPiercing.TabIndex = 5;
             this.dmgPiercing.Tag = "iatag_ui_piercing";
             this.dmgPiercing.Text = "Piercing";
             // 
             // dmgFire
             // 
+            this.dmgFire.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dmgFire.Bold = false;
             this.dmgFire.EnabledCalc = true;
             this.dmgFire.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.dmgFire.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.dmgFire.Location = new System.Drawing.Point(3, 99);
             this.dmgFire.Name = "dmgFire";
-            this.dmgFire.Size = new System.Drawing.Size(132, 27);
+            this.dmgFire.Size = new System.Drawing.Size(150, 27);
             this.dmgFire.TabIndex = 13;
             this.dmgFire.Tag = "iatag_ui_fire";
             this.dmgFire.Text = "Fire";
             // 
             // dmgAether
             // 
+            this.dmgAether.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dmgAether.Bold = false;
             this.dmgAether.EnabledCalc = true;
             this.dmgAether.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.dmgAether.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.dmgAether.Location = new System.Drawing.Point(3, 198);
             this.dmgAether.Name = "dmgAether";
-            this.dmgAether.Size = new System.Drawing.Size(132, 27);
+            this.dmgAether.Size = new System.Drawing.Size(150, 27);
             this.dmgAether.TabIndex = 6;
             this.dmgAether.Tag = "iatag_ui_aether";
             this.dmgAether.Text = "Aether";
             // 
             // dmgCold
             // 
+            this.dmgCold.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dmgCold.Bold = false;
             this.dmgCold.EnabledCalc = true;
             this.dmgCold.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.dmgCold.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.dmgCold.Location = new System.Drawing.Point(3, 132);
             this.dmgCold.Name = "dmgCold";
-            this.dmgCold.Size = new System.Drawing.Size(132, 27);
+            this.dmgCold.Size = new System.Drawing.Size(150, 27);
             this.dmgCold.TabIndex = 12;
             this.dmgCold.Tag = "iatag_ui_cold";
             this.dmgCold.Text = "Cold";
             // 
             // dmgPoison
             // 
+            this.dmgPoison.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dmgPoison.Bold = false;
             this.dmgPoison.EnabledCalc = true;
             this.dmgPoison.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.dmgPoison.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.dmgPoison.Location = new System.Drawing.Point(3, 297);
             this.dmgPoison.Name = "dmgPoison";
-            this.dmgPoison.Size = new System.Drawing.Size(132, 27);
+            this.dmgPoison.Size = new System.Drawing.Size(150, 27);
             this.dmgPoison.TabIndex = 7;
             this.dmgPoison.Tag = "iatag_ui_poison";
             this.dmgPoison.Text = "Poison";
             // 
             // dmgLightning
             // 
+            this.dmgLightning.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dmgLightning.Bold = false;
             this.dmgLightning.EnabledCalc = true;
             this.dmgLightning.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.dmgLightning.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.dmgLightning.Location = new System.Drawing.Point(3, 165);
             this.dmgLightning.Name = "dmgLightning";
-            this.dmgLightning.Size = new System.Drawing.Size(132, 27);
+            this.dmgLightning.Size = new System.Drawing.Size(150, 27);
             this.dmgLightning.TabIndex = 11;
             this.dmgLightning.Tag = "iatag_ui_lightning";
             this.dmgLightning.Text = "Lightning";
             // 
             // dmgVitality
             // 
+            this.dmgVitality.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dmgVitality.Bold = false;
             this.dmgVitality.EnabledCalc = true;
             this.dmgVitality.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.dmgVitality.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.dmgVitality.Location = new System.Drawing.Point(3, 231);
             this.dmgVitality.Name = "dmgVitality";
-            this.dmgVitality.Size = new System.Drawing.Size(132, 27);
+            this.dmgVitality.Size = new System.Drawing.Size(150, 27);
             this.dmgVitality.TabIndex = 9;
             this.dmgVitality.Tag = "iatag_ui_vitality";
             this.dmgVitality.Text = "Vitality";
             // 
             // dmgChaos
             // 
+            this.dmgChaos.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dmgChaos.Bold = false;
             this.dmgChaos.EnabledCalc = true;
             this.dmgChaos.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.dmgChaos.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.dmgChaos.Location = new System.Drawing.Point(3, 264);
             this.dmgChaos.Name = "dmgChaos";
-            this.dmgChaos.Size = new System.Drawing.Size(132, 27);
+            this.dmgChaos.Size = new System.Drawing.Size(150, 27);
             this.dmgChaos.TabIndex = 10;
             this.dmgChaos.Tag = "iatag_ui_chaos";
             this.dmgChaos.Text = "Chaos";
@@ -762,20 +800,6 @@
             this.classesPanelBox.Tag = "iatag_ui_classes";
             this.classesPanelBox.Text = "Classes";
             this.classesPanelBox.TextLocation = "8; 5";
-            // 
-            // cbRecentOnly
-            // 
-            this.cbRecentOnly.Bold = false;
-            this.cbRecentOnly.EnabledCalc = true;
-            this.cbRecentOnly.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cbRecentOnly.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbRecentOnly.Location = new System.Drawing.Point(3, 505);
-            this.cbRecentOnly.Name = "cbRecentOnly";
-            this.cbRecentOnly.Size = new System.Drawing.Size(132, 27);
-            this.cbRecentOnly.TabIndex = 45;
-            this.cbRecentOnly.Tag = "iatag_ui_recentonly";
-            this.cbRecentOnly.Text = "Recent Only";
-            this.cbRecentOnly.UseVisualStyleBackColor = true;
             // 
             // DesiredSkills
             // 

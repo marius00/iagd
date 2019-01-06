@@ -24,8 +24,6 @@ namespace IAGrim.UI.Misc {
             _form = form;
             _form.FormClosing += _form_FormClosing;
 
-            Properties.Settings.Default.WindowPositionSettings = "{}";
-            Properties.Settings.Default.Save();
             var obj = JsonConvert.DeserializeObject< Dictionary<string, int>>(Properties.Settings.Default.WindowPositionSettings, _settings);
             if (obj.ContainsKey("state")) {
                 _form.WindowState = (FormWindowState)obj["state"];
@@ -33,11 +31,16 @@ namespace IAGrim.UI.Misc {
             if (obj.ContainsKey("width") && obj.ContainsKey("height")) {
                 _form.Size = new Size(obj["width"], obj["height"]);
             }
+
+
             if (obj.ContainsKey("top")) {
-                _form.Top = obj["top"];
+                var top = Math.Max(0, Math.Min(obj["top"], Screen.FromControl(_form).Bounds.Height - 100));
+                _form.Top = top;
             }
+
             if (obj.ContainsKey("left")) {
-                _form.Left = obj["left"];
+                var left = Math.Max(0, Math.Min(obj["left"], Screen.FromControl(_form).Bounds.Width - 100));
+                _form.Left = left;
             }
         }
 

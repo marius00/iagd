@@ -107,7 +107,7 @@
             this.panelFilter.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.panelFilter.Location = new System.Drawing.Point(4, 5);
             this.panelFilter.Name = "panelFilter";
-            this.panelFilter.Size = new System.Drawing.Size(209, 641);
+            this.panelFilter.Size = new System.Drawing.Size(206, 641);
             this.panelFilter.TabIndex = 38;
             this.panelFilter.TabStop = true;
             // 
