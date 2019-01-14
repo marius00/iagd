@@ -1,9 +1,10 @@
-﻿using CefSharp.WinForms;
-using CefSharp;
-using IAGrim.Database;
+﻿using IAGrim.Database;
+using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.Arz;
+using IAGrim.Services;
 using IAGrim.Services.MessageProcessor;
 using IAGrim.UI.Misc;
+using IAGrim.UI.Misc.CEF;
 using IAGrim.Utilities;
 using IAGrim.Utilities.HelperClasses;
 using IAGrim.Utilities.RectanglePacker;
@@ -13,16 +14,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Pipes;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using IAGrim.Database.Interfaces;
-using IAGrim.Services;
-using IAGrim.UI.Misc.CEF;
 
-namespace IAGrim.UI.Controller {
-    class ItemTransferController {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(ItemTransferController));
+namespace IAGrim.UI.Controller
+{
+    internal class ItemTransferController {
+        private static readonly ILog _logger = LogManager.GetLogger(typeof(ItemTransferController));
         private readonly IPlayerItemDao _dao;
         private readonly Action<string> _setFeedback;
         private readonly Action<string> _setTooltip;
@@ -44,18 +41,16 @@ namespace IAGrim.UI.Controller {
                 StashManager stashManager,
                 ItemStatService itemStatService
             ) {
-            this._browser = browser;
-            this._setFeedback = feedback;
-            this._setTooltip = setTooltip;
-            this._settingsController = settingsController;
-            this._searchWindow = searchWindow;
-            this._dynamicPacker = dynamicPacker;
-            this._dao = playerItemDao;
-            this._stashManager = stashManager;
-            this._itemStatService = itemStatService;
+            _browser = browser;
+            _setFeedback = feedback;
+            _setTooltip = setTooltip;
+            _settingsController = settingsController;
+            _searchWindow = searchWindow;
+            _dynamicPacker = dynamicPacker;
+            _dao = playerItemDao;
+            _stashManager = stashManager;
+            _itemStatService = itemStatService;
         }
-
-
 
         List<PlayerItem> GetItemsForTransfer(StashTransferEventArgs args) {
             List<PlayerItem> items = new List<PlayerItem>();
@@ -75,14 +70,11 @@ namespace IAGrim.UI.Controller {
                 }
             }
 
-
             if (items.Contains(null)) {
-                Logger.Warn("Attempted to transfer NULL item.");
+                _logger.Warn("Attempted to transfer NULL item.");
 
                 var message = GlobalSettings.Language.GetTag("iatag_feedback_item_does_not_exist");
-                _setFeedback(GlobalSettings.Language.GetTag("iatag_feedback_item_does_not_exist"));
-                // 
-                // 
+                _setFeedback(message);
                 _browser.ShowMessage(message, UserFeedbackLevel.Error);
 
                 return null;
@@ -90,10 +82,6 @@ namespace IAGrim.UI.Controller {
 
             return items;
         }
-
-
-
-
 
         struct TransferStatus {
             public int NumItemsRequested;
@@ -107,18 +95,16 @@ namespace IAGrim.UI.Controller {
             string error;
             int numItemsReceived = (int)items.Sum(item => Math.Max(1, item.StackCount));
             int numItemsRequested = Math.Min(maxItemsToTransfer, numItemsReceived);
-            
 
             _itemStatService.ApplyStatsToPlayerItems(items); // For item class? 'IsStackable' maybe?
             _stashManager.Deposit(transferFile, items, maxItemsToTransfer, out error);
             _dao.Update(items, true);
 
-
             var numItemsAfterTransfer = items.Sum(item => item.StackCount);
             long numItemsTransferred = numReceived - numItemsAfterTransfer;
 
             if (!string.IsNullOrEmpty(error)) {
-                Logger.Warn(error);
+                _logger.Warn(error);
                 _browser.ShowMessage(error, UserFeedbackLevel.Error);
             }
 
@@ -127,7 +113,6 @@ namespace IAGrim.UI.Controller {
                 NumItemsRequested = numItemsRequested
             };
         }
-
 
         private string GetTransferFile() {
             GDTransferFile mfi = _searchWindow.ModSelectionHandler.SelectedMod;
@@ -138,17 +123,15 @@ namespace IAGrim.UI.Controller {
                 if (picker.ShowDialog() == DialogResult.OK) {
                     return picker.Result;
                 }
-                else {
-                    Logger.Info(GlobalSettings.Language.GetTag("iatag_no_stash_abort"));
-                    _setFeedback(GlobalSettings.Language.GetTag("iatag_no_stash_abort"));
-                    _browser.ShowMessage(GlobalSettings.Language.GetTag("iatag_no_stash_abort"), UserFeedbackLevel.Error);
 
-                    return string.Empty;
-                }
+                _logger.Info(GlobalSettings.Language.GetTag("iatag_no_stash_abort"));
+                _setFeedback(GlobalSettings.Language.GetTag("iatag_no_stash_abort"));
+                _browser.ShowMessage(GlobalSettings.Language.GetTag("iatag_no_stash_abort"), UserFeedbackLevel.Error);
+
+                return string.Empty;
             }
-            else {
-                return mfi.Filename;
-            }
+
+            return mfi.Filename;
         }
 
         private bool CanTransfer() {
@@ -160,7 +143,6 @@ namespace IAGrim.UI.Controller {
                         "Warning",
                         MessageBoxButtons.YesNo,
                         MessageBoxIcon.Warning) == DialogResult.Yes);
-
         }
 
         /// <summary>
@@ -169,7 +151,7 @@ namespace IAGrim.UI.Controller {
         /// </summary>
         public void TransferItem(object ignored, EventArgs _args) {
             StashTransferEventArgs args = _args as StashTransferEventArgs;
-            Logger.Debug($"Item transfer requested, arguments: {args}");
+            _logger.Debug($"Item transfer requested, arguments: {args}");
 
             if (CanTransfer()) {
                 List<PlayerItem> items = GetItemsForTransfer(args);
@@ -177,15 +159,14 @@ namespace IAGrim.UI.Controller {
                 if (items?.Count > 0) {
                     string file = GetTransferFile();
                     if (string.IsNullOrEmpty(file)) {
-                        Logger.Warn("Could not find transfer file, transfer aborted.");
+                        _logger.Warn("Could not find transfer file, transfer aborted.");
                         return;
                     }
 
-                    Logger.Debug($"Found {items.Count} items to transfer");
+                    _logger.Debug($"Found {items.Count} items to transfer");
                     var result = TransferItems(file, items, (int) args.Count);
 
-
-                    Logger.InfoFormat("Successfully deposited {0} out of {1} items", result.NumItemsTransferred,
+                    _logger.InfoFormat("Successfully deposited {0} out of {1} items", result.NumItemsTransferred,
                         result.NumItemsRequested);
                     try {
                         /*var message = string.Format(GlobalSettings.Language.GetTag("iatag_stash3_success"),
@@ -194,41 +175,33 @@ namespace IAGrim.UI.Controller {
                         _browser.ShowMessage(message, UserFeedbackLevel.Success);*/
                     }
                     catch (FormatException ex) {
-                        Logger.Warn(ex.Message);
-                        Logger.Warn(ex.StackTrace);
-                        Logger.Warn("Language pack error, iatag_stash3_success is of invalid format.");
+                        _logger.Warn(ex.Message);
+                        _logger.Warn(ex.StackTrace);
+                        _logger.Warn("Language pack error, iatag_stash3_success is of invalid format.");
                     }
                     if (result.NumItemsTransferred == 0) {
                         _setTooltip(GlobalSettings.Language.GetTag("iatag_stash3_failure"));
                         _browser.ShowMessage(GlobalSettings.Language.GetTag("iatag_stash3_failure"), UserFeedbackLevel.Warning);
                     }
-                    else {
-                        //_setTooltip(GlobalSettings.Language.GetTag("iatag_stash3_success")); <- argsable
-                    }
 
                     // Lets do this last, to make sure feedback reaches the user as fast as possible
                     _searchWindow.UpdateListview();
-
                 }
                 else {
-                    Logger.Warn("Could not find any items for the requested transfer");
+                    _logger.Warn("Could not find any items for the requested transfer");
                 }
             }
-
             else if (GlobalSettings.StashStatus == StashAvailability.OPEN) {
                 // "InstaTransfer" is an experimental feature
                 if (Properties.Settings.Default.InstaTransfer) { // disabled for now
-
-                    
                     List<PlayerItem> items = GetItemsForTransfer(args);
                     int numDepositedItems = 0;
                     int numItemsToTransfer = items?.Count ?? 0;
 
                     if (items == null) {
-                        Logger.Info("Item previously deposited (ghost item)");
+                        _logger.Info("Item previously deposited (ghost item)");
                         _browser.ShowMessage("Item previously deposited (ghost item)", UserFeedbackLevel.Warning);
                         _searchWindow.UpdateListviewDelayed();
-
                     }
                     else {
                         foreach (var item in items) {
@@ -242,15 +215,12 @@ namespace IAGrim.UI.Controller {
                         _setFeedback(message);
                         _browser.ShowMessage(message, UserFeedbackLevel.Success);
 
-                        Logger.InfoFormat("Successfully deposited {0} out of {1} items", numDepositedItems, numItemsToTransfer);
+                        _logger.InfoFormat("Successfully deposited {0} out of {1} items", numDepositedItems, numItemsToTransfer);
                         if (numDepositedItems > 0) {
                             _searchWindow.UpdateListviewDelayed();
                         }
-
                     }
                 }
-
-
                 else {
                     var message = GlobalSettings.Language.GetTag("iatag_deposit_stash_open");
                     _setFeedback(message);
@@ -270,8 +240,6 @@ namespace IAGrim.UI.Controller {
             }
         }
 
-
-
         public bool TransferToOpenStash(PlayerItem pi) {
             List<byte> buffer = ItemInjectCallbackProcessor.Serialize(pi);
             var stashTab = Properties.Settings.Default.StashToDepositTo;
@@ -282,14 +250,13 @@ namespace IAGrim.UI.Controller {
 
             var position = _dynamicPacker.Insert(pi.BaseRecord, (uint)pi.Seed);
             if (position == null) {
-                Logger.Warn("Item insert canceled, no valid position found.");
+                _logger.Warn("Item insert canceled, no valid position found.");
                 _setFeedback(GlobalSettings.Language.GetTag("iatag_deposit_stash_full"));
                 return false;
             }
             buffer.InsertRange(0, BitConverter.GetBytes(position.X * 32));
             buffer.InsertRange(4, BitConverter.GetBytes(position.Y * 32));
             buffer.InsertRange(0, BitConverter.GetBytes(stashTab));
-
 
             using (NamedPipeClientStream pipeStream = new NamedPipeClientStream(".", "gdiahook", PipeDirection.InOut, PipeOptions.Asynchronous)) {
                 // The connect function will indefinitely wait for the pipe to become available
@@ -301,7 +268,7 @@ namespace IAGrim.UI.Controller {
                 }
 
                 pipeStream.Write(buffer.ToArray(), 0, buffer.Count);
-                Logger.Debug("Wrote item to pipe");
+                _logger.Debug("Wrote item to pipe");
                 _setFeedback(GlobalSettings.Language.GetTag("iatag_deposit_pipe_success"));
             }
 
