@@ -457,6 +457,9 @@
     <Compile Include="UI\Popups\StashPicker.Designer.cs">
       <DependentUpon>StashPicker.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Tabs\SplitSearchWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\Tabs\Util\ModSelectionHandler.cs" />
     <Compile Include="UI\UIHelper.cs" />
     <Compile Include="UI\Popups\UpdatingPlayerItemsScreen.cs">
@@ -601,6 +604,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Popups\UpdatingPlayerItemsScreen.resx">
       <DependentUpon>UpdatingPlayerItemsScreen.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Tabs\SplitSearchWindow.resx">
+      <DependentUpon>SplitSearchWindow.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

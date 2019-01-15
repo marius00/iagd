@@ -1,23 +1,16 @@
-﻿using IAGrim.Database;
-using IAGrim.Database.Dto;
+﻿using IAGrim.Database.Dto;
 using IAGrim.Database.Interfaces;
 using IAGrim.Theme;
 using IAGrim.UI.Controller;
-using IAGrim.Utilities;
+using IAGrim.UI.Tabs.Util;
 using IAGrim.Utilities.HelperClasses;
 using log4net;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using IAGrim.UI.Tabs.Util;
 
-namespace IAGrim.UI {
+namespace IAGrim.UI
+{
 
     partial class SearchWindow : Form {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(SearchWindow));
@@ -55,7 +48,7 @@ namespace IAGrim.UI {
             maxLevel.MouseWheel += MaxLevel_MouseWheel;
             _highlights.Add(new TextboxHoverFocusHighlight(maxLevel));
 
-            ModSelectionHandler = new ModSelectionHandler(cbModFilter, playerItemDao, UpdateListviewDelayed, setStatus);
+            ModSelectionHandler = new ModSelectionHandler(cbModFilter, playerItemDao, UpdateListViewDelayed, setStatus);
         }
 
         public void UpdateInterface() {
@@ -78,11 +71,11 @@ namespace IAGrim.UI {
 
             if (InvokeRequired) {
                 Invoke((MethodInvoker)delegate {
-                    UpdateListview(_filterWindow.Filters);
+                    UpdateListView(_filterWindow.Filters);
                 });
             }
             else {
-                UpdateListview(_filterWindow.Filters);
+                UpdateListView(_filterWindow.Filters);
             }
         }
 
@@ -91,11 +84,11 @@ namespace IAGrim.UI {
             Application.AddMessageFilter(_scrollableFilterView);
         }
         
-        public void UpdateListview() {
-            UpdateListview(_filterWindow.Filters);
+        public void UpdateListView() {
+            UpdateListView(_filterWindow.Filters);
         }
 
-        private void UpdateListview(FilterEventArgs filters) {
+        private void UpdateListView(FilterEventArgs filters) {
             GDTransferFile mf = ModSelectionHandler.SelectedMod;
             if (mf == null)
                 return;
@@ -145,7 +138,7 @@ namespace IAGrim.UI {
                 }
             }
 
-            UpdateListviewDelayed(1200);
+            UpdateListViewDelayed(1200);
         }
 
         private void MinLevel_MouseWheel(object sender, MouseEventArgs e) {
@@ -163,12 +156,12 @@ namespace IAGrim.UI {
                 }
             }
 
-            UpdateListviewDelayed(1200);
+            UpdateListViewDelayed(1200);
         }
 
         private void MinLevel_KeyPress(object sender, KeyPressEventArgs e) {
             e.Handled = !(char.IsDigit(e.KeyChar) || ParseNumeric(minLevel) > 105 || e.KeyChar == '\b');
-            UpdateListviewDelayed(1200);
+            UpdateListViewDelayed(1200);
         }
 
         private int ParseNumeric(Control tb) {
@@ -220,7 +213,7 @@ namespace IAGrim.UI {
         private void SearchField_KeyDown(object sender, KeyEventArgs e) {
             if (!Properties.Settings.Default.AutoSearch) {
                 if (e.KeyCode == Keys.Enter) {
-                    UpdateListview();
+                    UpdateListView();
                     e.Handled = true;
                 }
             }
@@ -242,16 +235,14 @@ namespace IAGrim.UI {
             minLevel.Text = "0";
             maxLevel.Text = "110";
 
-            UpdateListviewDelayed();
+            UpdateListViewDelayed();
         }
 
-
-
-        public void UpdateListviewDelayed() {
-            UpdateListviewDelayed(200);
+        public void UpdateListViewDelayed() {
+            UpdateListViewDelayed(200);
         }
 
-        private void UpdateListviewDelayed(int delay) {
+        private void UpdateListViewDelayed(int delay) {
             if (_delayedTextChangedTimer != null) {
                 _delayedTextChangedTimer.Stop();
             }
@@ -268,18 +259,18 @@ namespace IAGrim.UI {
         private void searchField_TextChanged(object sender, EventArgs e) {
             if (Properties.Settings.Default.AutoSearch) {
                 //if (searchField.Text.Length >= 1 || searchField.Text.Length == 0)
-                UpdateListviewDelayed(600);
+                UpdateListViewDelayed(600);
             }
         }
 
         private void comboBoxItemQuality_SelectedIndexChanged(object sender, EventArgs e) {
             if (Properties.Settings.Default.AutoSearch)
-                UpdateListviewDelayed();
+                UpdateListViewDelayed();
         }
 
         private void slotFilter_SelectedIndexChanged(object sender, EventArgs e) {
             if (Properties.Settings.Default.AutoSearch)
-                UpdateListviewDelayed();
+                UpdateListViewDelayed();
         }
 
 
@@ -290,14 +281,14 @@ namespace IAGrim.UI {
         /// <param name="e"></param>
         private void filterWindow_OnChanged(object sender, FilterEventArgs args) {
             if (Properties.Settings.Default.AutoSearch)
-                UpdateListviewDelayed();
+                UpdateListViewDelayed();
         }
         
         #endregion Click Listeners
 
         private void checkBoxOrderByLevel_CheckedChanged(object sender, EventArgs e)
         {
-            UpdateListviewDelayed();
+            UpdateListViewDelayed();
         }
     }
 }
