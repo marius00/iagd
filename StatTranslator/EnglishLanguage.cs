@@ -1,28 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace StatTranslator {
+namespace StatTranslator
+{
 
-    public class EnglishLanguage : ILocalizedLanguage {
+    public class EnglishLanguage : ILocalizedLanguage
+    {
         public bool WarnIfMissing { get; } = false;
 
-        public EnglishLanguage(Dictionary<string, string> existingTags) {
-            foreach (var tag in existingTags.Keys) {
+        public EnglishLanguage(Dictionary<string, string> existingTags)
+        {
+            foreach (var tag in existingTags.Keys)
+            {
                 SetTagIfMissing(tag, existingTags[tag]);
             }
         }
 
-        public void SetTagIfMissing(string tag, string value) {
+        public void SetTagIfMissing(string tag, string value)
+        {
             if (!stats.ContainsKey(tag))
+            {
                 stats[tag] = value;
+            }
         }
 
         private readonly Dictionary<string, string> stats = new Dictionary<string, string> {
-            {"tagItemNameOrder", "{%_s0}{%_s1}{%_s2}{%_s3}{%_s4}" },
-
+            { "tagItemNameOrder", "{%_s0}{%_s1}{%_s2}{%_s3}{%_s4}" },
 
             // Simply Header stats
             { "offensivePierceRatioMin", "{0}% Armor Piercing"},
@@ -210,15 +213,15 @@ namespace StatTranslator {
             { "Race009", "Human" },
             { "Race012", "Beastkin" },
 
-            {"class00", "abcccc" },
-            {"class01", "Soldier" },
-            {"class02", "Demolitionist" },
-            {"class03", "Occultist" },
-            {"class04", "Nightblade" },
-            {"class05", "Arcanist" },
-            {"class06", "Shaman" },
-            {"class07", "Inquisitor" },
-            {"class08", "Necromancer" },
+            { "class00", "abcccc" },
+            { "class01", "Soldier" },
+            { "class02", "Demolitionist" },
+            { "class03", "Occultist" },
+            { "class04", "Nightblade" },
+            { "class05", "Arcanist" },
+            { "class06", "Shaman" },
+            { "class07", "Inquisitor" },
+            { "class08", "Necromancer" },
 
             // Attack speeds
             {"tagAttackSpeedVeryFast", "Very Fast"},
@@ -323,121 +326,123 @@ namespace StatTranslator {
             { "iatag_ui_dualcomputer", "Using IA on multiple PCs" },
             { "iatag_no_stash_abort", "No stash chosen, aborting transfer.." },
             { "iatag_stash_status_error", "Could not inject into Grim Dawn, are you sure the bank is CLOSED?" },
-            {"iatag_ui_recentonly", "Recent Only" },
-            {"iatag_stash3_failure", "Cannot deposit item, please ensure Stash 3 is empty." },
-            {"iatag_stash3_success", "Successfully deposited {0} out of {1} items" },
-            {"iatag_deposit_stash_open", "Cannot deposit item, please close your stash in-game" },
-            {"iatag_deposit_stash_full", "Could not insert item, stash full" },
-            {"iatag_deposit_stash_sorted", "Cannot deposit item, please open or close your stash in-game (stash was sorted)" },
-            {"iatag_deposit_stash_unknown_tooltip", "Stash status is unknown, open & close stash in-game to resolve." },
-            {"iatag_deposit_stash_unknown_feedback", "Cannot deposit item, please open and close your stash in-game" },
-            {"iatag_stash_hotfix_1_0_40_0_rejected", "Transfer rejected due to v1.0.40.0 hotfix - Either use instatransfer or close GrimDawn first" },
-            {"iatag_deposit_pipe_success", "Item sent to GD" },
-            {"iatag_file_does_not_exist", "The specified file does not exist" },
-            {"iatag_file_not_zip", "Specified file is not a zip file!?" },
-            {"iatag_pg_restore_error", "Error restoring from backup, see log file for more details" },
-            {"iatag_stash_open", "Stash: Open" },
-            {"iatag_stash_crafting", "Stash: Crafting" },
-            {"iatag_stash_closed", "Stash: Closed" },
-            {"iatag_stash_error", "Stash: ERROR" },
-            {"iatag_stash_unknown", "Stash: Unknown" },
-            {"iatag_stash_sorted", "Stash: Open/Restricted" },
-            {"iatag_stash_", "Stash: " },
-            {"iatag_copied_clipboard", "Items copied to clipboard" },
-            {"iatag_stash_not_found", "Could not locate and stash files.." },
-            {"iatag_legacy_backup", "Invalid backup file. If this is a really old backup, please see the instructions on restoring from a legacy backup." },
-            {"iatag_postgres_backup", "Invalid backup file. This backup format has been deprecated. Contact me on itemassistant@gmail.com and I'll send you a manual restore." },
+            { "iatag_ui_recentonly", "Recent Only" },
+            { "iatag_stash3_failure", "Cannot deposit item, please ensure Stash 3 is empty." },
+            { "iatag_stash3_success", "Successfully deposited {0} out of {1} items" },
+            { "iatag_deposit_stash_open", "Cannot deposit item, please close your stash in-game" },
+            { "iatag_deposit_stash_full", "Could not insert item, stash full" },
+            { "iatag_deposit_stash_sorted", "Cannot deposit item, please open or close your stash in-game (stash was sorted)" },
+            { "iatag_deposit_stash_unknown_tooltip", "Stash status is unknown, open & close stash in-game to resolve." },
+            { "iatag_deposit_stash_unknown_feedback", "Cannot deposit item, please open and close your stash in-game" },
+            { "iatag_stash_hotfix_1_0_40_0_rejected", "Transfer rejected due to v1.0.40.0 hotfix - Either use instatransfer or close GrimDawn first" },
+            { "iatag_deposit_pipe_success", "Item sent to GD" },
+            { "iatag_file_does_not_exist", "The specified file does not exist" },
+            { "iatag_file_not_zip", "Specified file is not a zip file!?" },
+            { "iatag_pg_restore_error", "Error restoring from backup, see log file for more details" },
+            { "iatag_stash_open", "Stash: Open" },
+            { "iatag_stash_crafting", "Stash: Crafting" },
+            { "iatag_stash_closed", "Stash: Closed" },
+            { "iatag_stash_error", "Stash: ERROR" },
+            { "iatag_stash_unknown", "Stash: Unknown" },
+            { "iatag_stash_sorted", "Stash: Open/Restricted" },
+            { "iatag_stash_", "Stash: " },
+            { "iatag_copied_clipboard", "Items copied to clipboard" },
+            { "iatag_stash_not_found", "Could not locate and stash files.." },
+            { "iatag_legacy_backup", "Invalid backup file. If this is a really old backup, please see the instructions on restoring from a legacy backup." },
+            { "iatag_postgres_backup", "Invalid backup file. This backup format has been deprecated. Contact me on itemassistant@gmail.com and I'll send you a manual restore." },
 
-            {"iatag_not_imlpemented", "Functionality not implemented" },
-            {"iatag_open_logfile", "Open the full log file" },
+            { "iatag_not_implemented", "Functionality not implemented" },
+            { "iatag_open_logfile", "Open the full log file" },
 
+            { "iatag_rarity_any", "Any" },
+            { "iatag_rarity_yellow", "Yellow" },
+            { "iatag_rarity_green", "Green" },
+            { "iatag_rarity_blue", "Blue" },
+            { "iatag_rarity_epic", "Epic" },
 
-            {"iatag_rarity_any", "Any" },
-            {"iatag_rarity_yellow", "Yellow" },
-            {"iatag_rarity_green", "Green" },
-            {"iatag_rarity_blue", "Blue" },
-            {"iatag_rarity_epic", "Epic" },
+            { "iatag_feedback_already_logged_in", "You are already logged in" },
+            { "iatag_feedback_too_close_to_stash", "Delaying stash loot - Standing too close to stash!" },
+            { "iatag_feedback_delaying_stash_loot_status", "Waiting for stash to close.." },
+            { "iatag_feedback_no_items_to_loot", "No items to loot in stash"},
+            { "iatag_feedback_unable_to_loot_stash4", "Unable to loot stash page.."},
+            { "iatag_feedback_item_does_not_exist", "Cannot deposit item, item does not appear to exist.. (ghost item)"},
+            { "iatag_feedback_cloud_save_enabled_ingame", "WARNING - Grim Dawn Cloud saving is active." },
+            { "iatag_feedback_stacked_not_looted", "{0} items were not looted due to being a stack" },
+            { "iatag_feedback_duplicates_not_looted", "{0} items were not looted due to being possible duplicates (bugged items)" },
 
-            {"iatag_feedback_already_logged_in", "You are already logged in" },
-            {"iatag_feedback_too_close_to_stash", "Delaying stash loot - Standing too close to stash!" },
-            {"iatag_feedback_delaying_stash_loot_status", "Waiting for stash to close.." },
-            {"iatag_feedback_no_items_to_loot", "No items to loot in stash"},
-            {"iatag_feedback_unable_to_loot_stash4", "Unable to loot stash page.."},
-            {"iatag_feedback_item_does_not_exist", "Cannot deposit item, item does not appear to exist.. (ghost item)"},
-            {"iatag_feedback_cloud_save_enabled_ingame", "WARNING - Grim Dawn Cloud saving is active." },
-            {"iatag_feedback_stacked_not_looted", "{0} items were not looted due to being a stack" },
-            {"iatag_feedback_duplicates_not_looted", "{0} items were not looted due to being possible duplicates (bugged items)" },
+            { "iatag_slot_any", "Any" },
+            { "iatag_slot_head", "Head" },
+            { "iatag_slot_hands", "Hands" },
+            { "iatag_slot_feet", "Feet" },
+            { "iatag_slot_legs", "Legs" },
+            { "iatag_slot_chest", "Chest" },
+            { "iatag_slot_belt", "Belt" },
+            { "iatag_slot_medal", "Medal" },
+            { "iatag_slot_ring", "Ring" },
+            { "iatag_slot_shoulder", "Shoulder" },
+            { "iatag_slot_neck", "Amulet/Neck" },
+            { "iatag_slot_weapon1h", "Weapon (1h)" },
+            { "iatag_slot_weapon2h", "Weapon (2h)" },
+            { "iatag_slot_weaponranged", "Weapon (Ranged)" },
+            { "iatag_slot_offhand", "Offhand" },
+            { "iatag_slot_shield", "Shield" },
+            { "iatag_slot_component", "Component" },
+            { "iatag_slot_relic", "Relic" },
+            { "iatag_slot_other", "Other" },
 
-            {"iatag_slot_any", "Any" },
-            {"iatag_slot_head", "Head" },
-            {"iatag_slot_hands", "Hands" },
-            {"iatag_slot_feet", "Feet" },
-            {"iatag_slot_legs", "Legs" },
-            {"iatag_slot_chest", "Chest" },
-            {"iatag_slot_belt", "Belt" },
-            {"iatag_slot_medal", "Medal" },
-            {"iatag_slot_ring", "Ring" },
-            {"iatag_slot_shoulder", "Shoulder" },
-            {"iatag_slot_neck", "Amulet/Neck" },
-            {"iatag_slot_weapon1h", "Weapon (1h)" },
-            {"iatag_slot_weapon2h", "Weapon (2h)" },
-            {"iatag_slot_weaponranged", "Weapon (Ranged)" },
-            {"iatag_slot_offhand", "Offhand" },
-            {"iatag_slot_shield", "Shield" },
-            {"iatag_slot_component", "Component" },
-            {"iatag_slot_relic", "Relic" },
-            {"iatag_slot_other", "Other" },
+            { "iatag_slot_dagger1h", "Dagger (1h)" },
+            { "iatag_slot_mace1h", "Mace (1h)" },
+            { "iatag_slot_axe1h", "Axe (1h)" },
+            { "iatag_slot_scepter1h", "Scepter (1h)" },
+            { "iatag_slot_sword1h", "Sword (1h)" },
+            { "iatag_slot_sword2h", "Sword (2h)" },
+            { "iatag_slot_mace2h", "Mace (2h)" },
+            { "iatag_slot_axe2h", "Axe (2h)" },
+            { "iatag_slot_ranged1h", "Ranged (1h)" },
+            { "iatag_slot_ranged2h", "Ranged (2h)" },
+            { "iatag_slot_scroll", "Scroll" },
+            { "iatag_slot_augmentation", "Augmentation" },
 
-
-            {"iatag_slot_dagger1h", "Dagger (1h)" },
-            {"iatag_slot_mace1h", "Mace (1h)" },
-            {"iatag_slot_axe1h", "Axe (1h)" },
-            {"iatag_slot_scepter1h", "Scepter (1h)" },
-            {"iatag_slot_sword1h", "Sword (1h)" },
-            {"iatag_slot_sword2h", "Sword (2h)" },
-            {"iatag_slot_mace2h", "Mace (2h)" },
-            {"iatag_slot_axe2h", "Axe (2h)" },
-            {"iatag_slot_ranged1h", "Ranged (1h)" },
-            {"iatag_slot_ranged2h", "Ranged (2h)" },
-            {"iatag_slot_scroll", "Scroll" },
-            {"iatag_slot_augmentation", "Augmentation" },
-
-
-            {"tagFactionUser9_ia", "The Outcast" },
-            {"tagFactionUser10_ia", "Barrowholm" },
-            {"tagFactionUser11_ia", "Malmouth Resistance" },
-
+            { "tagFactionUser9_ia", "The Outcast" },
+            { "tagFactionUser10_ia", "Barrowholm" },
+            { "tagFactionUser11_ia", "Malmouth Resistance" }
         };
 
         private const string English = "{%_s0}{%_s1}{%_s2}{%_s3}{%_s4}";
         private readonly ItemNameCombinator _itemCombinator = new ItemNameCombinator(English);
 
-        public string TranslateName(string prefix, string quality, string style, string name, string suffix) {
+        public string TranslateName(string prefix, string quality, string style, string name, string suffix)
+        {
             return _itemCombinator.TranslateName(prefix, quality, style, name, suffix);
         }
 
-        public string[] Serialize() {
+        public string[] Serialize()
+        {
             return stats.Keys.ToArray();
         }
 
-
-        public string GetTag(string tag) {
+        public string GetTag(string tag)
+        {
             if (stats.ContainsKey(tag))
+            {
                 return stats[tag];
-            else
-                return string.Empty;
+            }
+
+            return string.Empty;
         }
 
-        public string GetTag(string tag, string arg1) {
-            return GetTag(tag).Replace("{0}", arg1);
+        public string GetTag(string tag, string arg)
+        {
+            return GetTag(tag, new[]
+            {
+                arg
+            });
         }
 
-        public string GetTag(string tag, string arg1, string arg2) {
-            return GetTag(tag, arg1).Replace("{1}", arg2);
-        }
-
-        public string GetTag(string tag, string arg1, string arg2, string arg3) {
-            return GetTag(tag, arg1, arg2).Replace("{2}", arg3);
+        public string GetTag(string tag, string[] args)
+        {
+            return args.Select((t, i) => i)
+                .Aggregate(GetTag(tag), (current, index) => current.Replace($"{{{index}}}", args[index]));
         }
     }
 }

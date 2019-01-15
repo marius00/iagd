@@ -46,7 +46,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="EnglishLanguage.cs" />
     <Compile Include="ILocalizedLanguage.cs" />
     <Compile Include="ItemNameCombinator.cs" />

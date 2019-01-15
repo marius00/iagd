@@ -1,11 +1,8 @@
 ﻿using DataAccess;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace StatTranslator {
+namespace StatTranslator
+{
     public static class StatScaler {
         public static void Scale(IItemStat stat, int seed) {
             var NoScale = new List<string>() {
@@ -32,12 +29,9 @@ namespace StatTranslator {
                 "characterManaRegenModifier",
             };
 
-
-
             if (NoScale.Contains(stat.Stat)) {
-                stat.Value = new Randomizer(seed).IGenerate((int)stat.Value - 20, (int)stat.Value + 20);
+                stat.Value = new Randomizer(seed).GenerateInt((int)stat.Value - 20, (int)stat.Value + 20);
             }
-
         }
     }
 }
