@@ -403,7 +403,7 @@ namespace IAGrim.UI.Tabs
             this.toolStripContainer.Name = "toolStripContainer";
             this.toolStripContainer.RightToolStripPanelVisible = false;
             this.toolStripContainer.Size = new System.Drawing.Size(1105, 601);
-            this.toolStripContainer.TabIndex = 53;
+            this.toolStripContainer.TabIndex = 48;
             this.toolStripContainer.Text = "toolStripContainer1";
             // 
             // flowPanelFilter
@@ -438,7 +438,7 @@ namespace IAGrim.UI.Tabs
             this.orderByLevel.Margin = new System.Windows.Forms.Padding(3, 19, 3, 3);
             this.orderByLevel.Name = "orderByLevel";
             this.orderByLevel.Size = new System.Drawing.Size(96, 17);
-            this.orderByLevel.TabIndex = 46;
+            this.orderByLevel.TabIndex = 42;
             this.orderByLevel.Tag = "iatag_ui_orderbylevel";
             this.orderByLevel.Text = "Order By Level";
             this.orderByLevel.UseVisualStyleBackColor = true;
@@ -452,7 +452,7 @@ namespace IAGrim.UI.Tabs
             this.itemQuality.Margin = new System.Windows.Forms.Padding(3, 17, 3, 3);
             this.itemQuality.Name = "itemQuality";
             this.itemQuality.Size = new System.Drawing.Size(59, 21);
-            this.itemQuality.TabIndex = 49;
+            this.itemQuality.TabIndex = 43;
             // 
             // slotFilter
             // 
@@ -463,7 +463,7 @@ namespace IAGrim.UI.Tabs
             this.slotFilter.Margin = new System.Windows.Forms.Padding(3, 17, 3, 3);
             this.slotFilter.Name = "slotFilter";
             this.slotFilter.Size = new System.Drawing.Size(120, 21);
-            this.slotFilter.TabIndex = 48;
+            this.slotFilter.TabIndex = 44;
             // 
             // modFilter
             // 
@@ -474,7 +474,7 @@ namespace IAGrim.UI.Tabs
             this.modFilter.Margin = new System.Windows.Forms.Padding(3, 17, 3, 3);
             this.modFilter.Name = "modFilter";
             this.modFilter.Size = new System.Drawing.Size(102, 21);
-            this.modFilter.TabIndex = 47;
+            this.modFilter.TabIndex = 45;
             // 
             // levelRequirementGroup
             // 
@@ -493,7 +493,7 @@ namespace IAGrim.UI.Tabs
             this.minLevel.MaxLength = 3;
             this.minLevel.Name = "minLevel";
             this.minLevel.Size = new System.Drawing.Size(30, 20);
-            this.minLevel.TabIndex = 50;
+            this.minLevel.TabIndex = 46;
             this.minLevel.Text = "0";
             this.minLevel.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.minLevel.WordWrap = false;
@@ -504,7 +504,7 @@ namespace IAGrim.UI.Tabs
             this.maxLevel.MaxLength = 3;
             this.maxLevel.Name = "maxLevel";
             this.maxLevel.Size = new System.Drawing.Size(30, 20);
-            this.maxLevel.TabIndex = 51;
+            this.maxLevel.TabIndex = 47;
             this.maxLevel.Text = "110";
             this.maxLevel.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.maxLevel.WordWrap = false;
