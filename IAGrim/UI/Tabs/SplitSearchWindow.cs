@@ -5,6 +5,7 @@ using IAGrim.UI.Controller;
 using IAGrim.UI.Tabs.Util;
 using log4net;
 using System;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace IAGrim.UI.Tabs
@@ -158,7 +159,7 @@ namespace IAGrim.UI.Tabs
             UpdateListViewDelayed(200);
         }
 
-        private void FilterWindow_OnChanged(object sender, FilterEventArgs e)
+        private void BeginSearchOnAutoSearch(object sender, EventArgs e)
         {
             if (Properties.Settings.Default.AutoSearch)
             {
@@ -186,11 +187,12 @@ namespace IAGrim.UI.Tabs
                 UpdateListView(_filterWindow.Filters);
             }
         }
+
         private void InitializeFilterPanel()
         {
             if (_filterWindow != null)
             {
-                _filterWindow.OnChanged -= FilterWindow_OnChanged;
+                _filterWindow.OnChanged -= BeginSearchOnAutoSearch;
                 _filterWindow.Close();
                 mainSplitter.Panel1.Controls.Remove(_filterWindow);
             }
@@ -199,7 +201,7 @@ namespace IAGrim.UI.Tabs
             {
                 TopLevel = false
             };
-            _filterWindow.OnChanged += FilterWindow_OnChanged;
+            _filterWindow.OnChanged += BeginSearchOnAutoSearch;
             mainSplitter.Panel1.Controls.Add(_filterWindow);
             _filterWindow.Show();
         }
@@ -261,6 +263,7 @@ namespace IAGrim.UI.Tabs
             e.Handled = !(char.IsDigit(e.KeyChar) || ParseNumeric(minLevel) > 105 || e.KeyChar == '\b');
             UpdateListViewDelayed(1200);
         }
+
         private int ParseNumeric(Control tb)
         {
             return int.TryParse(tb.Text, out var val) ? val : 0;
@@ -276,36 +279,49 @@ namespace IAGrim.UI.Tabs
             maxLevel.KeyPress += MinLevel_KeyPress;
             maxLevel.MouseWheel += MaxLevel_MouseWheel;
 
-            itemQuality.Items.AddRange(UIHelper.QualityFilter);
+            itemQuality.Items.AddRange(UIHelper.QualityFilter.ToArray<object>());
             itemQuality.SelectedIndex = 0;
             _selectedItemQuality = itemQuality.SelectedItem as ComboBoxItemQuality;
             itemQuality.SelectedIndexChanged += (s, ev) =>
             {
                 _selectedItemQuality = itemQuality.SelectedItem as ComboBoxItemQuality;
             };
+            itemQuality.SelectedIndexChanged += BeginSearchOnAutoSearch;
 
-            slotFilter.Items.AddRange(UIHelper.SlotFilter);
+            slotFilter.Items.AddRange(UIHelper.SlotFilter.ToArray<object>());
             slotFilter.SelectedIndex = 0;
             _selectedSlot = slotFilter.SelectedItem as ComboBoxItem;
             slotFilter.SelectedIndexChanged += (s, ev) =>
             {
                 _selectedSlot = slotFilter.SelectedItem as ComboBoxItem;
             };
+            slotFilter.SelectedIndexChanged += BeginSearchOnAutoSearch;
 
             FormClosing += SplitSearchWindow_FormClosing;
 
             searchBox.KeyDown += SearchBox_KeyDown;
+            searchBox.TextChanged += SearchBox_TextChanged;
+
+            orderByLevel.CheckStateChanged += delegate
+            {
+                UpdateListViewDelayed();
+            };
         }
 
         private void SearchBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if (!Properties.Settings.Default.AutoSearch)
+            if (!Properties.Settings.Default.AutoSearch && e.KeyCode == Keys.Enter)
             {
-                if (e.KeyCode == Keys.Enter)
-                {
-                    UpdateListView();
-                    e.Handled = true;
-                }
+                UpdateListView();
+                e.Handled = true;
+            }
+        }
+
+        private void SearchBox_TextChanged(object sender, EventArgs e)
+        {
+            if (Properties.Settings.Default.AutoSearch)
+            {
+                UpdateListViewDelayed(600);
             }
         }
 
@@ -322,7 +338,7 @@ namespace IAGrim.UI.Tabs
 
         private void SplitSearchWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
-            _filterWindow.OnChanged -= FilterWindow_OnChanged;
+            _filterWindow.OnChanged -= BeginSearchOnAutoSearch;
             Activated -= SplitSearchWindow_Activated;
             Deactivate -= SplitSearchWindow_Deactivate;
 
@@ -509,7 +525,6 @@ namespace IAGrim.UI.Tabs
             this.levelRequirementGroup.ResumeLayout(false);
             this.levelRequirementGroup.PerformLayout();
             this.ResumeLayout(false);
-
         }
     }
 }
