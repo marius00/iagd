@@ -424,7 +424,8 @@ namespace IAGrim.UI.Tabs
             // 
             // searchBox
             // 
-            this.searchBox.Location = new System.Drawing.Point(3, 3);
+            this.searchBox.Location = new System.Drawing.Point(3, 17);
+            this.searchBox.Margin = new System.Windows.Forms.Padding(3, 17, 3, 3);
             this.searchBox.Name = "searchBox";
             this.searchBox.Size = new System.Drawing.Size(250, 20);
             this.searchBox.TabIndex = 41;
@@ -433,7 +434,8 @@ namespace IAGrim.UI.Tabs
             // 
             this.orderByLevel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.orderByLevel.AutoSize = true;
-            this.orderByLevel.Location = new System.Drawing.Point(259, 3);
+            this.orderByLevel.Location = new System.Drawing.Point(259, 19);
+            this.orderByLevel.Margin = new System.Windows.Forms.Padding(3, 19, 3, 3);
             this.orderByLevel.Name = "orderByLevel";
             this.orderByLevel.Size = new System.Drawing.Size(96, 17);
             this.orderByLevel.TabIndex = 46;
@@ -446,7 +448,8 @@ namespace IAGrim.UI.Tabs
             this.itemQuality.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.itemQuality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.itemQuality.FormattingEnabled = true;
-            this.itemQuality.Location = new System.Drawing.Point(361, 3);
+            this.itemQuality.Location = new System.Drawing.Point(361, 17);
+            this.itemQuality.Margin = new System.Windows.Forms.Padding(3, 17, 3, 3);
             this.itemQuality.Name = "itemQuality";
             this.itemQuality.Size = new System.Drawing.Size(59, 21);
             this.itemQuality.TabIndex = 49;
@@ -456,7 +459,8 @@ namespace IAGrim.UI.Tabs
             this.slotFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.slotFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.slotFilter.FormattingEnabled = true;
-            this.slotFilter.Location = new System.Drawing.Point(426, 3);
+            this.slotFilter.Location = new System.Drawing.Point(426, 17);
+            this.slotFilter.Margin = new System.Windows.Forms.Padding(3, 17, 3, 3);
             this.slotFilter.Name = "slotFilter";
             this.slotFilter.Size = new System.Drawing.Size(120, 21);
             this.slotFilter.TabIndex = 48;
@@ -466,7 +470,8 @@ namespace IAGrim.UI.Tabs
             this.modFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.modFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.modFilter.FormattingEnabled = true;
-            this.modFilter.Location = new System.Drawing.Point(552, 3);
+            this.modFilter.Location = new System.Drawing.Point(552, 17);
+            this.modFilter.Margin = new System.Windows.Forms.Padding(3, 17, 3, 3);
             this.modFilter.Name = "modFilter";
             this.modFilter.Size = new System.Drawing.Size(102, 21);
             this.modFilter.TabIndex = 47;
@@ -525,6 +530,7 @@ namespace IAGrim.UI.Tabs
             this.levelRequirementGroup.ResumeLayout(false);
             this.levelRequirementGroup.PerformLayout();
             this.ResumeLayout(false);
+
         }
     }
 }
