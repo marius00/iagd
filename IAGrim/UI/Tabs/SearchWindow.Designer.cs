@@ -36,6 +36,7 @@
             this.minLevel = new System.Windows.Forms.TextBox();
             this.maxLevel = new System.Windows.Forms.TextBox();
             this.tooltipThingie = new System.Windows.Forms.ToolTip(this.components);
+            this.splitter1 = new System.Windows.Forms.Splitter();
             this.toolStripContainer.ContentPanel.SuspendLayout();
             this.toolStripContainer.SuspendLayout();
             this.SuspendLayout();
@@ -173,11 +174,22 @@
             this.tooltipThingie.SetToolTip(this.maxLevel, "Maximum Level");
             this.maxLevel.WordWrap = false;
             // 
+            // splitter1
+            // 
+            this.splitter1.BackColor = System.Drawing.SystemColors.Control;
+            this.splitter1.Location = new System.Drawing.Point(0, 0);
+            this.splitter1.MinimumSize = new System.Drawing.Size(210, 0);
+            this.splitter1.Name = "splitter1";
+            this.splitter1.Size = new System.Drawing.Size(210, 650);
+            this.splitter1.TabIndex = 48;
+            this.splitter1.TabStop = false;
+            // 
             // SearchWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(956, 650);
+            this.Controls.Add(this.splitter1);
             this.Controls.Add(this.maxLevel);
             this.Controls.Add(this.minLevel);
             this.Controls.Add(this.checkBoxOrderByLevel);
@@ -217,5 +229,6 @@
         private System.Windows.Forms.TextBox minLevel;
         private System.Windows.Forms.TextBox maxLevel;
         private System.Windows.Forms.ToolTip tooltipThingie;
+        private System.Windows.Forms.Splitter splitter1;
     }
 }

@@ -806,7 +806,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(305, 1030);
+            this.ClientSize = new System.Drawing.Size(322, 1030);
             this.Controls.Add(this.classesPanelBox);
             this.Controls.Add(this.panelBox1);
             this.Controls.Add(this.panelBox2);
@@ -820,6 +820,7 @@
             this.ShowInTaskbar = false;
             this.Text = "DesiredSkills";
             this.Load += new System.EventHandler(this.DesiredSkills_Load);
+            this.Resize += new System.EventHandler(this.DesiredSkills_Resize);
             this.panelBox1.ResumeLayout(false);
             this.panelBox2.ResumeLayout(false);
             this.panelBox3.ResumeLayout(false);

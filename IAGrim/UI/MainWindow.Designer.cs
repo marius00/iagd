@@ -306,6 +306,7 @@
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.statusStrip);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MinimumSize = new System.Drawing.Size(800, 600);
             this.Name = "MainWindow";
             this.Tag = "iatag_ui_itemassistant";
             this.Text = "Grim Dawn Item Assistant";
