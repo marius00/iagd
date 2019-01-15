@@ -117,11 +117,11 @@ namespace IAGrim.UI {
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
-                System.Diagnostics.Process.Start("https://discord.gg/PJ87Ewa");
+                System.Diagnostics.Process.Start("https://discord.gg/bKWuaG7");
         }
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e) {
-            Clipboard.SetText("https://discord.gg/PJ87Ewa");
+            Clipboard.SetText("https://discord.gg/bKWuaG7");
             _tooltipHelper.ShowTooltipForControl("Copied to clipboard", linkLabel1, TooltipHelper.TooltipLocation.TOP);
         }
 

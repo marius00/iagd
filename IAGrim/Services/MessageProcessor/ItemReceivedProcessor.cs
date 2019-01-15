@@ -1,37 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using IAGrim.UI.Misc;
+﻿using EvilsoftCommons;
 using IAGrim.Database;
-using EvilsoftCommons;
-using log4net;
-using IAGrim.UI;
-using IAGrim.Parsers.Arz;
 using IAGrim.Database.Interfaces;
+using IAGrim.Parsers.Arz;
+using IAGrim.UI.Misc;
+using IAGrim.UI.Tabs;
+using log4net;
+using System;
+using System.Collections.Generic;
 
-namespace IAGrim.Services.MessageProcessor {
-
+namespace IAGrim.Services.MessageProcessor
+{
     /// <summary>
     /// Process InventorySack::AddItem
     /// </summary>
     class ItemReceivedProcessor : IMessageProcessor {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ItemReceivedProcessor));
         private readonly IPlayerItemDao _playerItemDao;
-        private readonly SearchWindow _searchWindow;
+        private readonly SplitSearchWindow _searchWindow;
         private readonly StashFileMonitor _stashFileMonitor;
 
-        public ItemReceivedProcessor(SearchWindow searchWindow, StashFileMonitor stashFileMonitor, IPlayerItemDao playerItemDao) {
-            this._searchWindow = searchWindow;
-            this._stashFileMonitor = stashFileMonitor;
-            this._playerItemDao = playerItemDao;
+        public ItemReceivedProcessor(SplitSearchWindow searchWindow, StashFileMonitor stashFileMonitor, IPlayerItemDao playerItemDao) {
+            _searchWindow = searchWindow;
+            _stashFileMonitor = stashFileMonitor;
+            _playerItemDao = playerItemDao;
         }
 
         public void Process(MessageType type, byte[] data) {
             switch (type) {
-
-
                 // This is generally called when adding an item by clicking on the stash tab
                 case MessageType.TYPE_InventorySack_AddItem: 
                     {
@@ -39,7 +34,7 @@ namespace IAGrim.Services.MessageProcessor {
                         var items = GetPlayerItemFromInventorySack(data, pos);
                         _playerItemDao.Save(items);
                         Logger.InfoFormat("A gnome has delivered {0} new items to IA.", items.Count);
-                        _searchWindow?.UpdateListviewDelayed();
+                        _searchWindow?.UpdateListViewDelayed();
                         _stashFileMonitor.CancelQueuedNotify();
                         //logger.Debug("TYPE_InventorySack_AddItem ignored");
                     }
@@ -56,14 +51,12 @@ namespace IAGrim.Services.MessageProcessor {
                         var items = GetPlayerItemFromInventorySack(data, pos);
                         _playerItemDao.Save(items);
                         Logger.InfoFormat("A helpful goblin has delivered {0} new items to IA.", items.Count);
-                        _searchWindow?.UpdateListviewDelayed();
+                        _searchWindow?.UpdateListViewDelayed();
                         _stashFileMonitor.CancelQueuedNotify();
                     }
                     break;
             }
         }
-
-
 
         private static List<PlayerItem> GetPlayerItemFromInventorySack(byte[] data, int pos) {
 
@@ -125,7 +118,6 @@ namespace IAGrim.Services.MessageProcessor {
             //logger.Debug($"Ptr: {ptr:X}");
             //logger.Debug($"Replica(seed:{seed}, relic:{relicSeed}, uk:{unknown}, enchant:{enchantSeed}, combines:{materiaCombines}, ?:{item54}, ?:{item56}, ?:{item57}, count:{stackCount}, ?:{item59})");
             Logger.Debug($"HC:{isHardcore}, Mod:{mod}, Replica({seed}, {relicSeed}, {materiaCombines}, {enchantSeed}, {baseRecord}, {prefixRecord}, {suffixRecord}, {modifierRecord}, {materiaRecord}, {stackCount})");
-
 
             List<PlayerItem> result = new List<PlayerItem>();
             for (int i = 0; i < Math.Max(1, stackCount); i++) {

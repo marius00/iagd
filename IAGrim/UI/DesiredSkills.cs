@@ -1,28 +1,24 @@
 ﻿using IAGrim.Database.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
-namespace IAGrim.UI {
+namespace IAGrim.UI
+{
     partial class DesiredSkills : Form {
         private readonly IItemTagDao _itemTagDao;
         private readonly Dictionary<string, FirefoxCheckBox> _classes;
 
         public DesiredSkills(IItemTagDao itemTagDao) {
             InitializeComponent();
-            this._itemTagDao = itemTagDao;
-            this._classes = new Dictionary<string, FirefoxCheckBox>();
+            _itemTagDao = itemTagDao;
+            _classes = new Dictionary<string, FirefoxCheckBox>();
         }
 
-
         private void DesiredSkills_Load(object sender, EventArgs e) {
-            this.Dock = DockStyle.Fill;
+            Dock = DockStyle.Fill;
 
             // 3,4+n*33
             // 3,37
@@ -35,7 +31,6 @@ namespace IAGrim.UI {
                 var cleanTag = Regex.Replace(tag.Tag, @"[^\d]", "");
                 if (cleanTag.Length > 3)
                     continue;
-                
                 
                 var cb = new FirefoxCheckBox {
                     Size = new Size { Height = 27, Width = 121 },
@@ -55,17 +50,26 @@ namespace IAGrim.UI {
                 Width = 163
             };
 
+            InitControlsRecursive(Controls);
 
-            initControlsRecursive(this.Controls);
+            ResizeChildren();
+        }
+
+        private void ResizeChildren()
+        {
+            var fullWidth = Width - 36;
+            panelBox1.Width = fullWidth;
+            panelBox2.Width = fullWidth;
+            panelBox3.Width = fullWidth;
+            panelBox4.Width = fullWidth;
+            classesPanelBox.Width = fullWidth;
         }
 
         public event EventHandler<FilterEventArgs> OnChanged;
 
-
-        void initControlsRecursive(System.Windows.Forms.Control.ControlCollection coll) {
+        void InitControlsRecursive(Control.ControlCollection coll) {
             foreach (Control c in coll) {
-                FirefoxCheckBox cb = c as FirefoxCheckBox;
-                if (cb != null) {
+                if (c is FirefoxCheckBox cb) {
                     cb.CheckedChanged += (sender, e) => {
                         var handler = OnChanged;
                         
@@ -74,7 +78,7 @@ namespace IAGrim.UI {
                             handler(this, Filters);
                     };
                 }
-                initControlsRecursive(c.Controls);
+                InitControlsRecursive(c.Controls);
             }
         }
         
@@ -84,30 +88,26 @@ namespace IAGrim.UI {
         public void ClearFilters() {
             ClearFilters(Controls);
         }
+
         private void ClearFilters(System.Windows.Forms.Control.ControlCollection coll) {
             foreach (Control c in coll) {
-                FirefoxCheckBox cb = c as FirefoxCheckBox;
-                if (cb != null) {
+                if (c is FirefoxCheckBox cb) {
                     cb.Checked = false;
                 }
                 ClearFilters(c.Controls);
             }
         }
 
-        public FilterEventArgs Filters {
-            get {
-                return new FilterEventArgs {
-                    Filters = OrFilters,
-                    PetBonuses = cbPetBonuses.Checked,
-                    IsRetaliation = dmgRetaliation.Checked,
-                    DuplicatesOnly = cbDuplicates.Checked,
-                    SocketedOnly = cbSocketed.Checked,
-                    RecentOnly = cbRecentOnly.Checked,
-                    DesiredClass = DesiredClasses,
-                    
-                };
-            }
-        }
+        public FilterEventArgs Filters =>
+            new FilterEventArgs {
+                Filters = OrFilters,
+                PetBonuses = cbPetBonuses.Checked,
+                IsRetaliation = dmgRetaliation.Checked,
+                DuplicatesOnly = cbDuplicates.Checked,
+                SocketedOnly = cbSocketed.Checked,
+                RecentOnly = cbRecentOnly.Checked,
+                DesiredClass = DesiredClasses
+            };
 
         private List<string> DesiredClasses {
             get {
@@ -115,20 +115,7 @@ namespace IAGrim.UI {
                 foreach (var key in _classes.Keys) {
                     if (_classes[key].Checked)
                         result.Add(key);
-                }/*
-                if (cbClassSoldier.Checked)
-                    result.Add("class01");
-                if (cbClassDemo.Checked)
-                    result.Add("class02");
-                if (cbClassOccultist.Checked)
-                    result.Add("class03");
-                if (cbClassNightblade.Checked)
-                    result.Add("class04");
-                if (cbClassArcanist.Checked)
-                    result.Add("class05");
-                if (cbClassShaman.Checked)
-                    result.Add("class06");
-*/
+                }
 
                 return result;
             }
@@ -143,10 +130,10 @@ namespace IAGrim.UI {
                 List<string[]> filters = new List<string[]>();
 
                 if (setbonus.Checked)
-                    filters.Add(new string[] { "setName", "itemSetName" });
+                    filters.Add(new[] { "setName", "itemSetName" });
 
                 if (shieldStuff.Checked)
-                    filters.Add(new string[] { "blockAbsorption", "defensiveBlock", "defensiveBlockChance", "defensiveBlockModifier", "defensiveBlockAmountModifier" });
+                    filters.Add(new[] { "blockAbsorption", "defensiveBlock", "defensiveBlockChance", "defensiveBlockModifier", "defensiveBlockAmountModifier" });
 
                 // +Damage
                 List<string> dmgTypes = new List<string>();
@@ -175,32 +162,30 @@ namespace IAGrim.UI {
                     dmgTypes.Add("Elemental");
 
                 if (totalDamage.Checked)
-                    filters.Add(new string[] { "offensiveTotalDamageModifier" });
-
+                    filters.Add(new[] { "offensiveTotalDamageModifier" });
 
                 foreach (string damageType in dmgTypes) {
                     bool isElemental = damageType.Equals("Fire") || damageType.Equals("Cold") || damageType.Equals("Lightning");
 
                     if (isElemental) {
-                        filters.Add(new string[]{
-                            string.Format("offensive{0}", damageType), 
-                            string.Format("offensive{0}Modifier", damageType),
+                        filters.Add(new[]{
+                            $"offensive{damageType}",
+                            $"offensive{damageType}Modifier",
                             string.Format("offensiveElemental", damageType), 
-                            string.Format("offensiveElementalModifier", damageType),                           
-                            string.Format("offensiveSlow{0}", damageType), 
-                            string.Format("offensiveSlow{0}Modifier", damageType)
+                            string.Format("offensiveElementalModifier", damageType),
+                            $"offensiveSlow{damageType}",
+                            $"offensiveSlow{damageType}Modifier"
                         });
                     }
                     else {
-                        filters.Add(new string[]{
-                            string.Format("offensive{0}", damageType), 
-                            string.Format("offensive{0}Modifier", damageType),
-                            string.Format("offensiveSlow{0}", damageType), 
-                            string.Format("offensiveSlow{0}Modifier", damageType)
+                        filters.Add(new[]{
+                            $"offensive{damageType}",
+                            $"offensive{damageType}Modifier",
+                            $"offensiveSlow{damageType}",
+                            $"offensiveSlow{damageType}Modifier"
                         });
                     }
                 }
-
 
                 // DoT damage types
                 {
@@ -219,21 +204,18 @@ namespace IAGrim.UI {
                         dotTypes.Add("Cold");
 
                     foreach (string dot in dotTypes) {
-                        filters.Add(new string[]{
-                            string.Format("offensiveSlow{0}", dot), 
-                            string.Format("offensiveSlow{0}Modifier", dot),
-                            string.Format("offensiveSlow{0}ModifierChance", dot),
-                            string.Format("offensiveSlow{0}DurationModifier", dot),
-                            string.Format("retaliationSlow{0}Min", dot),
-                            string.Format("retaliationSlow{0}Chance", dot),
-                            string.Format("retaliationSlow{0}Duration", dot),
-                            string.Format("retaliationSlow{0}DurationMin", dot)
-                            
+                        filters.Add(new[]{
+                            $"offensiveSlow{dot}",
+                            $"offensiveSlow{dot}Modifier",
+                            $"offensiveSlow{dot}ModifierChance",
+                            $"offensiveSlow{dot}DurationModifier",
+                            $"retaliationSlow{dot}Min",
+                            $"retaliationSlow{dot}Chance",
+                            $"retaliationSlow{dot}Duration",
+                            $"retaliationSlow{dot}DurationMin"
                         });                        
                     }
                 }
-
-
 
                 // Resist
                 List<string> resistTypes = new List<string>();
@@ -259,77 +241,65 @@ namespace IAGrim.UI {
                 if (resistBleeding.Checked)
                     resistTypes.Add("Bleeding");
                 if (resistElemental.Checked)
-                    filters.Add(new string[] { "defensiveElementalResistance" });
+                    filters.Add(new[] { "defensiveElementalResistance" });
 
                 foreach (string damageType in resistTypes) {
-                    filters.Add(new string[]{
-                        string.Format("defensive{0}", damageType),
-                        string.Format("defensive{0}Modifier", damageType),
-                        string.Format("defensiveSlow{0}", damageType),
-                        string.Format("defensiveSlow{0}Modifier", damageType)
+                    filters.Add(new[]{
+                        $"defensive{damageType}",
+                        $"defensive{damageType}Modifier",
+                        $"defensiveSlow{damageType}",
+                        $"defensiveSlow{damageType}Modifier"
                     });
-                    
                 }
-
 
                 // Misc
                 if (cbAttackSpeed.Checked) {
-                    filters.Add(new string[] { "characterAttackSpeedModifier", "characterAttackSpeed", "characterTotalSpeedModifier" });
+                    filters.Add(new[] { "characterAttackSpeedModifier", "characterAttackSpeed", "characterTotalSpeedModifier" });
                 }
 
                 if (cbCastspeed.Checked)
-                    filters.Add(new string[] { "characterSpellCastSpeedModifier", "characterTotalSpeedModifier" });
+                    filters.Add(new[] { "characterSpellCastSpeedModifier", "characterTotalSpeedModifier" });
 
                 if (cbRunspeed.Checked)
-                    filters.Add(new string[] { "characterRunSpeedModifier", "characterTotalSpeedModifier" });
+                    filters.Add(new[] { "characterRunSpeedModifier", "characterTotalSpeedModifier" });
 
                 if (exp.Checked)
-                    filters.Add(new string[] { "characterIncreasedExperience" });
+                    filters.Add(new[] { "characterIncreasedExperience" });
 
                 if (cbReflect.Checked)
-                    filters.Add(new string[] { "defensiveReflect" });
+                    filters.Add(new[] { "defensiveReflect" });
 
                 if (cbLifeLeech.Checked)
-                    filters.Add(new string[] { "offensiveLifeLeechMin", "offensiveSlowLifeLeachMin" });
+                    filters.Add(new[] { "offensiveLifeLeechMin", "offensiveSlowLifeLeachMin" });
 
                 if (health.Checked) {
-                    filters.Add(new string[]{"characterLifeModifier", "characterLife"});
+                    filters.Add(new[]{"characterLifeModifier", "characterLife"});
                 }
 
                 if (cbDefense.Checked) {
-                    filters.Add(new string[]{"characterDefensiveAbilityModifier", "characterDefensiveAbility"});
+                    filters.Add(new[]{"characterDefensiveAbilityModifier", "characterDefensiveAbility"});
                 }
 
                 if (cbOffensive.Checked) {
-                    filters.Add(new string[] { "characterOffensiveAbility", "characterOffensiveAbilityModifier" });
+                    filters.Add(new[] { "characterOffensiveAbility", "characterOffensiveAbilityModifier" });
                 }
 
                 if (cbMasterySkills.Checked) {
-                    filters.Add(new string[] { "augmentMastery1", "augmentMastery2" });
+                    filters.Add(new[] { "augmentMastery1", "augmentMastery2" });
                 }
 
                 if (cbPetBonuses.Checked) {
-                    filters.Add(new string[] { "petBonusName" });
+                    filters.Add(new[] { "petBonusName" });
                 }
-
-
 
                 return filters;
             }
         }
 
-        private void panelBox2_Click(object sender, EventArgs e) {
-
+        private void DesiredSkills_Resize(object sender, EventArgs e)
+        {
+            ResizeChildren();
         }
-
-        private void dmgBleeding_CheckedChanged(object sender, EventArgs e) {
-
-        }
-
-        private void dmgFrost_CheckedChanged(object sender, EventArgs e) {
-
-        }
-
     }
 
     class FilterEventArgs : EventArgs {
@@ -340,6 +310,7 @@ namespace IAGrim.UI {
         public bool DuplicatesOnly { get; set; }
 
         public bool SocketedOnly { get; set; }
+
         public bool RecentOnly { get; set; }
 
         public List<string> DesiredClass { get; set; }
