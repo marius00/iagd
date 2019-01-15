@@ -1,22 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Threading;
-using System.Timers;
-using System.Windows.Forms;
-using AutoUpdaterDotNET;
+﻿using AutoUpdaterDotNET;
 using CefSharp;
 using EvilsoftCommons;
 using EvilsoftCommons.Cloud;
 using EvilsoftCommons.DllInjector;
 using EvilsoftCommons.Exceptions;
-using IAGrim.Backup;
 using IAGrim.Backup.Azure.Service;
 using IAGrim.Backup.Azure.Util;
 using IAGrim.BuddyShare;
@@ -41,10 +28,21 @@ using IAGrim.Utilities.HelperClasses;
 using IAGrim.Utilities.RectanglePacker;
 using log4net;
 using MoreLinq;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Threading;
+using System.Windows.Forms;
 using Timer = System.Timers.Timer;
 
-namespace IAGrim.UI {
-
+namespace IAGrim.UI
+{
     public partial class MainWindow : Form {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(MainWindow));
         readonly CefBrowserHandler _cefBrowserHandler;
@@ -70,7 +68,7 @@ namespace IAGrim.UI {
         private readonly DynamicPacker _dynamicPacker;
         private readonly List<IMessageProcessor> _messageProcessors = new List<IMessageProcessor>();
 
-        private SearchWindow _searchWindow;
+        private SplitSearchWindow _searchWindow;
         private StashManager _stashManager;
         private BuddySettings _buddySettingsWindow;
         private StashFileMonitor _stashFileMonitor = new StashFileMonitor();
@@ -106,7 +104,6 @@ namespace IAGrim.UI {
 
 #region Stash Status
         
-
         /// <summary>
         /// Toolstrip callback for GDInjector
         /// </summary>
@@ -135,7 +132,6 @@ namespace IAGrim.UI {
             }
         }
 
-
 #endregion Stash Status
 
         [DllImport("kernel32")]
@@ -150,9 +146,9 @@ namespace IAGrim.UI {
             if (e.IsBrowserInitialized) {
 
                 if (InvokeRequired) {
-                    Invoke((MethodInvoker)delegate { _searchWindow?.UpdateListviewDelayed(); });
+                    Invoke((MethodInvoker)delegate { _searchWindow?.UpdateListViewDelayed(); });
                 } else {
-                    _searchWindow?.UpdateListviewDelayed();
+                    _searchWindow?.UpdateListViewDelayed();
                 }
             }
         }
@@ -409,15 +405,13 @@ namespace IAGrim.UI {
         /// The first ~1700 users did not notice at all, but past that seems its the end of days if items don't appear immediately.
         /// </summary>
         private void ListviewUpdateTrigger() {
-            _searchWindow?.UpdateListviewDelayed();
+            _searchWindow?.UpdateListViewDelayed();
         }
 
         private void DatabaseLoadedTrigger() {
             _searchWindow.UpdateInterface();
-            _searchWindow?.UpdateListviewDelayed(); 
+            _searchWindow?.UpdateListViewDelayed(); 
         }
-
-
 
         private void MainWindow_Load(object sender, EventArgs e) {
             if (Thread.CurrentThread.Name == null)
@@ -488,7 +482,6 @@ namespace IAGrim.UI {
 
             var addAndShow = UIHelper.AddAndShow;
 
-
             // Create the tab contents
             _buddySettingsWindow = new BuddySettings(delegate (bool b) { BuddySyncEnabled = b; }, 
                 _buddyItemDao, 
@@ -496,7 +489,6 @@ namespace IAGrim.UI {
                 );
 
             addAndShow(_buddySettingsWindow, buddyPanel);
-
 
             _authAuthService = new AzureAuthService(_cefBrowserHandler, new AuthenticationProvider());
             var backupSettings = new BackupSettings(_playerItemDao, _authAuthService);
@@ -506,16 +498,14 @@ namespace IAGrim.UI {
             addAndShow(new LoggingWindow(), panelLogging);
             var backupService = new BackupService(_authAuthService, _playerItemDao, _azurePartitionDao, () => Settings.Default.UsingDualComputer);
             _backupServiceWorker = new BackupServiceWorker(backupService);
-            backupService.OnUploadComplete += (o, args) => _searchWindow.UpdateListview();
+            backupService.OnUploadComplete += (o, args) => _searchWindow.UpdateListView();
             searchController.OnSearch += (o, args) => backupService.OnSearch();
 
-
-            _searchWindow = new SearchWindow(_cefBrowserHandler.BrowserControl, SetFeedback, _playerItemDao, searchController, _itemTagDao);
+            _searchWindow = new SplitSearchWindow(_cefBrowserHandler.BrowserControl, SetFeedback, _playerItemDao, searchController, _itemTagDao);
             addAndShow(_searchWindow, searchPanel);
             _stashManager.StashUpdated += (_, __) => {
-                _searchWindow.UpdateListview();
+                _searchWindow.UpdateListView();
             };
-
 
             addAndShow(
                 new SettingsWindow(
@@ -531,7 +521,6 @@ namespace IAGrim.UI {
                     _parsingService
                 ),
                 settingsPanel);
-
 
             new StashTabPicker(_stashManager.NumStashTabs).SaveStashSettingsToRegistry();
 
@@ -553,7 +542,6 @@ namespace IAGrim.UI {
             _timerReportUsage.AutoReset = true;
             _timerReportUsage.Start();
 
-
             Shown += (_, __) => { StartInjector(); };
 
             //settingsController.Data.budd
@@ -562,11 +550,8 @@ namespace IAGrim.UI {
             // Start the backup task
             _backupBackgroundTask = new BackgroundTask(new FileBackup(_playerItemDao));
 
-
-
             LocalizationLoader.ApplyLanguage(Controls, GlobalSettings.Language);
             EasterEgg.Activate(this);
-
 
             // Initialize the "stash packer" used to find item positions for transferring items ingame while the stash is open
             {
@@ -598,7 +583,7 @@ namespace IAGrim.UI {
             _messageProcessors.Add(new PlayerPositionTracker());
             _messageProcessors.Add(new StashStatusHandler());
             _messageProcessors.Add(new ItemReceivedProcessor(_searchWindow, _stashFileMonitor, _playerItemDao));
-            _messageProcessors.Add(new ItemInjectCallbackProcessor(_searchWindow.UpdateListviewDelayed, _playerItemDao));
+            _messageProcessors.Add(new ItemInjectCallbackProcessor(_searchWindow.UpdateListViewDelayed, _playerItemDao));
             _messageProcessors.Add(new ItemSpawnedProcessor());
             _messageProcessors.Add(new CloudDetectorProcessor(SetFeedback));
             _messageProcessors.Add(new GenericErrorHandler());
@@ -665,7 +650,6 @@ namespace IAGrim.UI {
         }
 
         void TransferAllItems(object ignored, EventArgs args) {
-
             if (InvokeRequired) {
                 Invoke((MethodInvoker)delegate {
                     this.TransferAllItems(ignored, args);
@@ -701,7 +685,6 @@ namespace IAGrim.UI {
         }
 
         void TransferItem(object ignored, EventArgs args) {
-
             if (InvokeRequired) {
                 Invoke((MethodInvoker)delegate {
                     _transferController.TransferItem(ignored, args);
@@ -713,7 +696,6 @@ namespace IAGrim.UI {
         }
 
         private void GlobalSettings_StashStatusChanged(object sender, EventArgs e) {
-
             if (InvokeRequired) {
                 Invoke((MethodInvoker)delegate { GlobalSettings_StashStatusChanged(sender, e); });
                 return;
@@ -748,7 +730,6 @@ namespace IAGrim.UI {
                     tsStashStatus.ForeColor = Color.FromArgb(255, 192, 0, 0);
                     tsStashStatus.Text = GlobalSettings.Language.GetTag("iatag_stash_") + GlobalSettings.StashStatus;
                     break;
-
             }
         }
 
@@ -841,8 +822,6 @@ namespace IAGrim.UI {
 
 #endregion BuddySync
 
-        
-        
         private void button1_Click(object sender, EventArgs e) {
             _cefBrowserHandler.ShowDevTools();
         }
@@ -860,7 +839,4 @@ namespace IAGrim.UI {
         }
         
     } // CLASS
-
-
-
 }

@@ -1,25 +1,21 @@
-﻿using System;
-using CefSharp;
-using CefSharp.WinForms;
+﻿using IAGrim.Database;
 using IAGrim.Database.Dto;
 using IAGrim.Database.Interfaces;
-using IAGrim.Services;
-using IAGrim.UI.Misc;
-using IAGrim.Utilities;
-using IAGrim.Utilities.HelperClasses;
-using log4net;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using IAGrim.Database;
 using IAGrim.Database.Synchronizer;
 using IAGrim.Parsers.Arz;
+using IAGrim.Services;
 using IAGrim.Services.Crafting;
 using IAGrim.UI.Controller.dto;
+using IAGrim.UI.Misc;
 using IAGrim.UI.Misc.CEF;
+using IAGrim.Utilities;
+using log4net;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace IAGrim.UI.Controller {
+namespace IAGrim.UI.Controller
+{
 
     internal class SearchController {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(SearchController));
@@ -52,16 +48,15 @@ namespace IAGrim.UI.Controller {
             StashManager stashManager, 
             AugmentationItemRepo augmentationItemRepo
         ) {
-            this._dbItemDao = databaseItemDao;
-            this._playerItemDao = playerItemDao;
-            this._itemStatService = new ItemStatService(databaseItemStatDao, itemSkillDao);
-            this._itemPaginatorService = new ItemPaginatorService(TakeSize);
-            this._recipeService = new RecipeService(databaseItemDao);
-            this._costCalculationService = new CostCalculationService(playerItemDao, stashManager);
-            this._buddyItemDao = buddyItemDao;
-            this._stashManager = stashManager;
-            this._augmentationItemRepo = augmentationItemRepo;
-
+            _dbItemDao = databaseItemDao;
+            _playerItemDao = playerItemDao;
+            _itemStatService = new ItemStatService(databaseItemStatDao, itemSkillDao);
+            _itemPaginatorService = new ItemPaginatorService(TakeSize);
+            _recipeService = new RecipeService(databaseItemDao);
+            _costCalculationService = new CostCalculationService(playerItemDao, stashManager);
+            _buddyItemDao = buddyItemDao;
+            _stashManager = stashManager;
+            _augmentationItemRepo = augmentationItemRepo;
 
             // Just make sure it writes .css/.html files before displaying anything to the browser
             // 
@@ -80,10 +75,8 @@ namespace IAGrim.UI.Controller {
                 Browser.SetRecipeIngredients(JsBind.Serialize(ingredients));
             };
 
-
             // Update the recipe when the stash has changed
             stashManager.StashUpdated += StashManagerOnStashUpdated;
-
 
             // Return the list of recipes
             JsBind.OnRequestRecipeList += (sender, args) => {
@@ -105,9 +98,7 @@ namespace IAGrim.UI.Controller {
             _stashManager.StashUpdated -= StashManagerOnStashUpdated;
         }
 
-
-        private void JsBind_OnRequestItems(object sender, System.EventArgs e) {
-
+        private void JsBind_OnRequestItems(object sender, EventArgs e) {
             if (!JsBind.ItemSourceExhausted) {
                 if (ApplyItems()) {
                     Browser.AddItems();
@@ -142,13 +133,12 @@ namespace IAGrim.UI.Controller {
                 JsBind.ItemSourceExhausted = true;
                 return false;
             }
-            else {
-                _itemStatService.ApplyStats(items);
 
-                List<JsonItem> convertedItems = ItemHtmlWriter.ToJsonSerializeable(items);
-                JsBind.UpdateItems(convertedItems);
-                return true;
-            }
+            _itemStatService.ApplyStats(items);
+
+            List<JsonItem> convertedItems = ItemHtmlWriter.ToJsonSerializeable(items);
+            JsBind.UpdateItems(convertedItems);
+            return true;
         }
 
         private string Search_(ItemSearchRequest query, bool duplicatesOnly, bool includeBuddyItems, bool orderByLevel) {
@@ -166,41 +156,34 @@ namespace IAGrim.UI.Controller {
 
             List<PlayerHeldItem> items = new List<PlayerHeldItem>();
             items.AddRange(_playerItemDao.SearchForItems(query));
-           
 
             // This specific filter was easiest to add after the actual search
             // Obs: the "duplicates only" search only works when merging duplicates
             if (duplicatesOnly) {
                 items = items.Where(m => m.Count > 1).ToList();
             }
-
             
             personalCount = items.Sum(i => i.Count);
 
             if (includeBuddyItems && !query.SocketedOnly) {
                 AddBuddyItems(items, query, out message);
             }
-            else {
-                if (personalCount == 0)
-                    message = "No matching items found";
-                else {
-                    message = string.Empty;
-                }
+            else
+            {
+                // TODO: Translation
+                message = personalCount == 0 ? "No matching items found" : string.Empty;
             }
 
-            if ((bool)Properties.Settings.Default.ShowRecipesAsItems && !query.SocketedOnly) {
+            if (Properties.Settings.Default.ShowRecipesAsItems && !query.SocketedOnly) {
                 AddRecipeItems(items, query);
             }
 
-            if ((bool)Properties.Settings.Default.ShowAugmentsAsItems && !query.SocketedOnly) {
+            if (Properties.Settings.Default.ShowAugmentsAsItems && !query.SocketedOnly) {
                 AddAugmentItems(items, query);
             }
 
-            
-
             _itemPaginatorService.Update(items, orderByLevel);
             JsBind.ItemSourceExhausted = items.Count == 0;
-            
 
             return message;
         }
@@ -218,9 +201,8 @@ namespace IAGrim.UI.Controller {
             }
             Logger.Debug($"Merged {itemsWithBuddy.Count} buddy items into player items");
 
-
             // TODO: This should use .Except(), find out why its not working with .Except()
-            List<BuddyItem> remainingBuddyItems = buddyItems.FindAll(buddy => !itemsWithBuddy.Any(item => item.BaseRecord == buddy.BaseRecord));
+            List<BuddyItem> remainingBuddyItems = buddyItems.FindAll(buddy => itemsWithBuddy.All(item => item.BaseRecord != buddy.BaseRecord));
             
             //We add the Owner name from pure BuddyItems from Stash to BuddyNames
             foreach (PlayerHeldItem remainingBuddyItem in remainingBuddyItems) {
@@ -266,7 +248,7 @@ namespace IAGrim.UI.Controller {
             }
 
             // TODO: This should use .Except(), find out why its not working with .Except()
-            var remainingRecipes = recipes.Where(recipe => !itemsWithRecipe.Any(item => item.BaseRecord == recipe.BaseRecord));
+            var remainingRecipes = recipes.Where(recipe => itemsWithRecipe.All(item => item.BaseRecord != recipe.BaseRecord));
             items.AddRange(remainingRecipes);
         }
 
@@ -276,7 +258,7 @@ namespace IAGrim.UI.Controller {
         /// </summary>
         /// <param name="items"></param>
         private void MergeDuplicates(List<PlayerHeldItem> items) {
-            if ((bool)Properties.Settings.Default.MergeDuplicates) {
+            if (Properties.Settings.Default.MergeDuplicates) {
                 Dictionary<string, PlayerHeldItem> itemMap = new Dictionary<string, PlayerHeldItem>();
 
                 foreach (PlayerHeldItem item in items) {
