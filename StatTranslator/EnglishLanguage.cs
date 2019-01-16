@@ -181,7 +181,6 @@ namespace StatTranslator
             { "customtag_xpac_modif_retaliationTotalDamageModifier", "+{0}% to All Retaliation Damage to {3}" },
             { "offensiveXDurationModifier", "+{1}% {5} Damage with +{0}% Increased Duration to {3}" },
 
-
             { "racialBonusPercentDefense", "+{0}% Less Damage From {3}" },
             { "racialBonusPercentDefense02", "+{0}% Less Damage From {3} & {5}" },
 
@@ -305,7 +304,6 @@ namespace StatTranslator
             { "iatag_html_onlinesync_ok", "This item has been backed up to the cloud" },
             { "iatag_html_onlinesync_err", "This item has not been backed up to the cloud" },
             { "iatag_html_augmentation_item", "You may be able to purchase this augment from {0}" },
-            
 
             // UI, IA Only
             { "iatag_ui_buddy_userid", "User ID: " },
@@ -347,9 +345,15 @@ namespace StatTranslator
             { "iatag_stash_sorted", "Stash: Open/Restricted" },
             { "iatag_stash_", "Stash: " },
             { "iatag_copied_clipboard", "Items copied to clipboard" },
-            { "iatag_stash_not_found", "Could not locate and stash files.." },
+            { "iatag_stash_not_found", "Could not locate and stash files." },
             { "iatag_legacy_backup", "Invalid backup file. If this is a really old backup, please see the instructions on restoring from a legacy backup." },
             { "iatag_postgres_backup", "Invalid backup file. This backup format has been deprecated. Contact me on itemassistant@gmail.com and I'll send you a manual restore." },
+            { "iatag_looted_from_stash", "Looted {0} items from stash {1}" },
+            { "iatag_purchase_stash", "Please purchase more stash pages!" },
+            { "iatag_invalid_deposit_stash_number", "You have configured IA to deposit to stash {0} but you only have {1} pages" },
+            { "iatag_invalid_loot_stash_number", "You have configured IA to loot from stash {0} but you only have {1} pages" },
+            { "iatag_stash_might_be_full", "Some items not deposited, stash {0} might be full." },
+            { "iatag_not_enough_stash", "File \"{0}\" only contains {1} pages. IA requires at least 2 pages to function properly." },
 
             { "iatag_not_implemented", "Functionality not implemented" },
             { "iatag_open_logfile", "Open the full log file" },
@@ -364,7 +368,7 @@ namespace StatTranslator
             { "iatag_feedback_too_close_to_stash", "Delaying stash loot - Standing too close to stash!" },
             { "iatag_feedback_delaying_stash_loot_status", "Waiting for stash to close.." },
             { "iatag_feedback_no_items_to_loot", "No items to loot in stash"},
-            { "iatag_feedback_unable_to_loot_stash4", "Unable to loot stash page.."},
+            { "iatag_feedback_unable_to_loot_stash", "Unable to loot stash page."},
             { "iatag_feedback_item_does_not_exist", "Cannot deposit item, item does not appear to exist.. (ghost item)"},
             { "iatag_feedback_cloud_save_enabled_ingame", "WARNING - Grim Dawn Cloud saving is active." },
             { "iatag_feedback_stacked_not_looted", "{0} items were not looted due to being a stack" },
@@ -431,18 +435,10 @@ namespace StatTranslator
             return string.Empty;
         }
 
-        public string GetTag(string tag, string arg)
-        {
-            return GetTag(tag, new[]
-            {
-                arg
-            });
-        }
-
-        public string GetTag(string tag, string[] args)
+        public string GetTag(string tag, object[] args)
         {
             return args.Select((t, i) => i)
-                .Aggregate(GetTag(tag), (current, index) => current.Replace($"{{{index}}}", args[index]));
+                .Aggregate(GetTag(tag), (current, index) => current.Replace($"{{{index}}}", args[index]?.ToString()));
         }
     }
 }
