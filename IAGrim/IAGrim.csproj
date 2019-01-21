@@ -161,6 +161,8 @@
     <Compile Include="Backup\Azure\Dto\AzureLimitsDto.cs" />
     <Compile Include="Database\Model\UnlootedStashItem.cs" />
     <Compile Include="UI\Controller\dto\ItemTypeDto.cs" />
+    <Compile Include="UI\FilterEventArgs.cs" />
+    <Compile Include="Utilities\HelperClasses\IComboBoxItemToggle.cs" />
     <Compile Include="UI\Misc\CEF\CefRequestHandler.cs" />
     <Compile Include="Backup\Azure\CefSharp\AzureOnClosePopupHijack.cs" />
     <Compile Include="Backup\Azure\CefSharp\Events\AuthResultEvent.cs" />

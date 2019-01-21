@@ -211,7 +211,7 @@
             // 
             this.columnHeader2.Tag = "iatag_ui_buddy_header_items";
             this.columnHeader2.Text = "Items";
-            this.columnHeader2.Width = 89;
+            this.columnHeader2.Width = 123;
             // 
             // tbDescription
             // 

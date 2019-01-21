@@ -17,37 +17,40 @@ using System.Linq;
 namespace IAGrim.UI.Controller
 {
 
-    internal class SearchController {
+    internal class SearchController
+    {
+        private const int TakeSize = 64;
+
         private static readonly ILog Logger = LogManager.GetLogger(typeof(SearchController));
+
         private readonly IDatabaseItemDao _dbItemDao;
         private readonly IPlayerItemDao _playerItemDao;
         private readonly ItemStatService _itemStatService;
         private readonly IBuddyItemDao _buddyItemDao;
-        private const int TakeSize = 64;
         private readonly ItemPaginatorService _itemPaginatorService;
         private readonly RecipeService _recipeService;
         private readonly CostCalculationService _costCalculationService;
-        private string _previousMod = string.Empty;
         private readonly StashManager _stashManager;
         private readonly AugmentationItemRepo _augmentationItemRepo;
 
-        public CefBrowserHandler Browser;
-
-        public readonly JSWrapper JsBind = new JSWrapper { IsTimeToShowNag = -1 };
-        public event EventHandler OnSearch;
-
+        private string _previousMod = string.Empty;
         private string _previousRecipe;
         private string _previousCallback;
 
+        public CefBrowserHandler Browser;
+        public readonly JSWrapper JsBind = new JSWrapper { IsTimeToShowNag = -1 };
+        public event EventHandler OnSearch;
+
         public SearchController(
-            IDatabaseItemDao databaseItemDao, 
-            IPlayerItemDao playerItemDao, 
+            IDatabaseItemDao databaseItemDao,
+            IPlayerItemDao playerItemDao,
             IDatabaseItemStatDao databaseItemStatDao,
             IItemSkillDao itemSkillDao,
             IBuddyItemDao buddyItemDao,
-            StashManager stashManager, 
+            StashManager stashManager,
             AugmentationItemRepo augmentationItemRepo
-        ) {
+        )
+        {
             _dbItemDao = databaseItemDao;
             _playerItemDao = playerItemDao;
             _itemStatService = new ItemStatService(databaseItemStatDao, itemSkillDao);
@@ -64,7 +67,8 @@ namespace IAGrim.UI.Controller
             JsBind.OnRequestItems += JsBind_OnRequestItems;
 
             // Return the ingredients for a given recipe
-            JsBind.OnRequestRecipeIngredients += (sender, args) => {
+            JsBind.OnRequestRecipeIngredients += (sender, args) =>
+            {
                 var recipeArgument = args as RequestRecipeArgument;
                 var ingredients = _recipeService.GetRecipeIngredients(recipeArgument?.RecipeRecord);
                 _costCalculationService.Populate(ingredients);
@@ -79,14 +83,17 @@ namespace IAGrim.UI.Controller
             stashManager.StashUpdated += StashManagerOnStashUpdated;
 
             // Return the list of recipes
-            JsBind.OnRequestRecipeList += (sender, args) => {
+            JsBind.OnRequestRecipeList += (sender, args) =>
+            {
                 var recipes = _recipeService.GetRecipeList();
                 Browser.SetRecipes(JsBind.Serialize(recipes));
             };
         }
 
-        private void StashManagerOnStashUpdated(object o, EventArgs eventArgs) {
-            if (!string.IsNullOrEmpty(_previousRecipe)) {
+        private void StashManagerOnStashUpdated(object o, EventArgs eventArgs)
+        {
+            if (!string.IsNullOrEmpty(_previousRecipe))
+            {
                 var ingredients = _recipeService.GetRecipeIngredients(_previousRecipe);
                 _costCalculationService.Populate(ingredients);
                 _costCalculationService.SetMod(_previousMod);
@@ -94,13 +101,17 @@ namespace IAGrim.UI.Controller
             }
         }
 
-        ~SearchController() {
+        ~SearchController()
+        {
             _stashManager.StashUpdated -= StashManagerOnStashUpdated;
         }
 
-        private void JsBind_OnRequestItems(object sender, EventArgs e) {
-            if (!JsBind.ItemSourceExhausted) {
-                if (ApplyItems()) {
+        private void JsBind_OnRequestItems(object sender, EventArgs e)
+        {
+            if (!JsBind.ItemSourceExhausted)
+            {
+                if (ApplyItems())
+                {
                     Browser.AddItems();
                 }
             }
@@ -108,7 +119,8 @@ namespace IAGrim.UI.Controller
             OnSearch?.Invoke(this, null);
         }
 
-        public string Search(ItemSearchRequest query, bool duplicatesOnly, bool includeBuddyItems, bool orderByLevel) {
+        public string Search(ItemSearchRequest query, bool duplicatesOnly, bool includeBuddyItems, bool orderByLevel)
+        {
             JsBind.ItemSourceExhausted = false;
 
             // Signal that we are loading items
@@ -116,10 +128,12 @@ namespace IAGrim.UI.Controller
 
             var message = Search_(query, duplicatesOnly, includeBuddyItems, orderByLevel);
 
-            if (ApplyItems()) {
+            if (ApplyItems())
+            {
                 Browser.RefreshItems();
             }
-            else {
+            else
+            {
                 JsBind.UpdateItems(new List<JsonItem>());
                 Browser.RefreshItems();
             }
@@ -127,58 +141,68 @@ namespace IAGrim.UI.Controller
             return message;
         }
 
-        private bool ApplyItems() {
+        private bool ApplyItems()
+        {
             var items = _itemPaginatorService.Fetch();
-            if (items.Count == 0) {
+            if (items.Count == 0)
+            {
                 JsBind.ItemSourceExhausted = true;
                 return false;
             }
 
             _itemStatService.ApplyStats(items);
 
-            List<JsonItem> convertedItems = ItemHtmlWriter.ToJsonSerializeable(items);
+            var convertedItems = ItemHtmlWriter.ToJsonSerializeable(items);
             JsBind.UpdateItems(convertedItems);
             return true;
         }
 
-        private string Search_(ItemSearchRequest query, bool duplicatesOnly, bool includeBuddyItems, bool orderByLevel) {
+        private string Search_(ItemSearchRequest query, bool duplicatesOnly, bool includeBuddyItems, bool orderByLevel)
+        {
             OnSearch?.Invoke(this, null);
             string message;
             long personalCount = 0;
 
             // If we've changed the mod, we'll need to update any recipes. (data source changes)
-            if (_previousCallback != query?.Mod) {
+            if (_previousCallback != query?.Mod)
+            {
                 _previousMod = query?.Mod;
                 StashManagerOnStashUpdated(null, null);
             }
 
             Logger.Info("Searching for items..");
 
-            List<PlayerHeldItem> items = new List<PlayerHeldItem>();
+            var items = new List<PlayerHeldItem>();
+
             items.AddRange(_playerItemDao.SearchForItems(query));
 
             // This specific filter was easiest to add after the actual search
             // Obs: the "duplicates only" search only works when merging duplicates
-            if (duplicatesOnly) {
+            if (duplicatesOnly)
+            {
                 items = items.Where(m => m.Count > 1).ToList();
             }
-            
+
             personalCount = items.Sum(i => i.Count);
 
-            if (includeBuddyItems && !query.SocketedOnly) {
+            if (includeBuddyItems && !query.SocketedOnly)
+            {
                 AddBuddyItems(items, query, out message);
             }
             else
             {
-                // TODO: Translation
-                message = personalCount == 0 ? "No matching items found" : string.Empty;
+                message = personalCount == 0
+                    ? GlobalSettings.Language.GetTag("iatag_no_matching_items_found")
+                    : string.Empty;
             }
 
-            if (Properties.Settings.Default.ShowRecipesAsItems && !query.SocketedOnly) {
+            if (Properties.Settings.Default.ShowRecipesAsItems && !query.SocketedOnly)
+            {
                 AddRecipeItems(items, query);
             }
 
-            if (Properties.Settings.Default.ShowAugmentsAsItems && !query.SocketedOnly) {
+            if (Properties.Settings.Default.ShowAugmentsAsItems && !query.SocketedOnly)
+            {
                 AddAugmentItems(items, query);
             }
 
@@ -188,61 +212,79 @@ namespace IAGrim.UI.Controller
             return message;
         }
 
-        private void AddBuddyItems(List<PlayerHeldItem> items, ItemSearchRequest query, out string message) {
-            List<BuddyItem> buddyItems = new List<BuddyItem>(_buddyItemDao.FindBy(query));
-            List<PlayerHeldItem> itemsWithBuddy = items.FindAll(item => buddyItems.Any(buddy => buddy.BaseRecord == item.BaseRecord));
+        private void AddBuddyItems(List<PlayerHeldItem> items, ItemSearchRequest query, out string message)
+        {
+            var buddyItems = new List<BuddyItem>(_buddyItemDao.FindBy(query));
+            var itemsWithBuddy = items.FindAll(item => buddyItems.Any(buddy => buddy.BaseRecord == item.BaseRecord));
 
-            foreach (PlayerHeldItem item in items.FindAll(item => buddyItems.Any(buddy => buddy.BaseRecord == item.BaseRecord))) {
-                foreach (PlayerHeldItem buddyItem in buddyItems.FindAll(buddy => buddy.BaseRecord == item.BaseRecord)) {
-                        var buddyName = System.Web.HttpUtility.HtmlEncode(buddyItem.Stash);
-                        if(!item.Buddies.Exists(name => name == buddyName))
-                            item.Buddies.Add(buddyName);
+            foreach (var item in items.FindAll(item => buddyItems.Any(buddy => buddy.BaseRecord == item.BaseRecord)))
+            {
+                foreach (PlayerHeldItem buddyItem in buddyItems.FindAll(buddy => buddy.BaseRecord == item.BaseRecord))
+                {
+                    var buddyName = System.Web.HttpUtility.HtmlEncode(buddyItem.Stash);
+                    if (!item.Buddies.Exists(name => name == buddyName))
+                    {
+                        item.Buddies.Add(buddyName);
+                    }
                 }
             }
             Logger.Debug($"Merged {itemsWithBuddy.Count} buddy items into player items");
 
             // TODO: This should use .Except(), find out why its not working with .Except()
-            List<BuddyItem> remainingBuddyItems = buddyItems.FindAll(buddy => itemsWithBuddy.All(item => item.BaseRecord != buddy.BaseRecord));
-            
+            var remainingBuddyItems = buddyItems
+                .FindAll(buddy => itemsWithBuddy.All(item => item.BaseRecord != buddy.BaseRecord));
+
             //We add the Owner name from pure BuddyItems from Stash to BuddyNames
-            foreach (PlayerHeldItem remainingBuddyItem in remainingBuddyItems) {
+            foreach (PlayerHeldItem remainingBuddyItem in remainingBuddyItems)
+            {
                 var buddyName = System.Web.HttpUtility.HtmlEncode(remainingBuddyItem.Stash);
                 remainingBuddyItem.Buddies.Add(buddyName);
             }
 
             //We see if of the remaining Items there are any items with more than one Buddy and merge them
-            List<BuddyItem> multiBuddyItems = remainingBuddyItems.FindAll(item => remainingBuddyItems.FindAll(buddy => buddy.BaseRecord == item.BaseRecord).Count() > 1);
-            foreach (PlayerHeldItem multiBuddyItem in multiBuddyItems) {
-                foreach (PlayerHeldItem item in remainingBuddyItems.FindAll(item => multiBuddyItem.BaseRecord == item.BaseRecord)) {
+            var multiBuddyItems = remainingBuddyItems
+                .FindAll(item => remainingBuddyItems.FindAll(buddy => buddy.BaseRecord == item.BaseRecord).Count() > 1);
+            foreach (PlayerHeldItem multiBuddyItem in multiBuddyItems)
+            {
+                foreach (PlayerHeldItem item in remainingBuddyItems.FindAll(item => multiBuddyItem.BaseRecord == item.BaseRecord))
+                {
                     var buddyName = System.Web.HttpUtility.HtmlEncode(item.Stash);
                     if (!multiBuddyItem.Buddies.Exists(name => name == buddyName))
+                    {
                         multiBuddyItem.Buddies.Add(buddyName);
+                    }
                 }
             }
 
             var buddyPlayerHeldItems = new List<PlayerHeldItem>(remainingBuddyItems);
-            if (buddyPlayerHeldItems.Count > 0) {
+            if (buddyPlayerHeldItems.Count > 0)
+            {
                 MergeDuplicates(buddyPlayerHeldItems);
                 items.AddRange(buddyPlayerHeldItems);
-                message = $"An additional {buddyPlayerHeldItems.Count} items found from your friends";
+                message = GlobalSettings.Language.GetTag("iatag_additional_items_found", buddyPlayerHeldItems.Count);
             }
-            else {
+            else
+            {
                 message = string.Empty;
             }
         }
 
-        private void AddAugmentItems(List<PlayerHeldItem> items, ItemSearchRequest query) {
+        private void AddAugmentItems(List<PlayerHeldItem> items, ItemSearchRequest query)
+        {
             var augments = _augmentationItemRepo.Search(query);
             var remainingRecipes = augments.Where(recipe => items.All(item => item.BaseRecord != recipe.BaseRecord));
             items.AddRange(remainingRecipes);
         }
 
-        private void AddRecipeItems(List<PlayerHeldItem> items, ItemSearchRequest query) {
+        private void AddRecipeItems(List<PlayerHeldItem> items, ItemSearchRequest query)
+        {
             var recipes = _dbItemDao.SearchForRecipeItems(query);
 
-            List<PlayerHeldItem> itemsWithRecipe = items.FindAll(item => recipes.Any(recipe => recipe.BaseRecord == item.BaseRecord));
-            foreach (PlayerHeldItem item in items) {
-                if (itemsWithRecipe.Any(recipe => recipe.BaseRecord == item.BaseRecord)) {
+            var itemsWithRecipe = items.FindAll(item => recipes.Any(recipe => recipe.BaseRecord == item.BaseRecord));
+            foreach (var item in items)
+            {
+                if (itemsWithRecipe.Any(recipe => recipe.BaseRecord == item.BaseRecord))
+                {
                     item.HasRecipe = true;
                 }
             }
@@ -257,26 +299,36 @@ namespace IAGrim.UI.Controller
         /// IFF MergeDuplicates is enabled in the settings
         /// </summary>
         /// <param name="items"></param>
-        private void MergeDuplicates(List<PlayerHeldItem> items) {
-            if (Properties.Settings.Default.MergeDuplicates) {
-                Dictionary<string, PlayerHeldItem> itemMap = new Dictionary<string, PlayerHeldItem>();
+        private void MergeDuplicates(List<PlayerHeldItem> items)
+        {
+            if (!Properties.Settings.Default.MergeDuplicates)
+            {
+                return;
+            }
 
-                foreach (PlayerHeldItem item in items) {
-                    if (!item.IsKnown)
-                        continue;
+            var itemMap = new Dictionary<string, PlayerHeldItem>();
 
-                    var key = item.Name + item.Stash;
-
-                    if (itemMap.ContainsKey(key)) {
-                        itemMap[key].Count += item.Count;
-                    } else {
-                        itemMap[key] = item;
-                    }
+            foreach (var item in items)
+            {
+                if (!item.IsKnown)
+                {
+                    continue;
                 }
 
-                items.RemoveAll(m => m.IsKnown);
-                items.AddRange(itemMap.Values);
+                var key = item.Name + item.Stash;
+
+                if (itemMap.ContainsKey(key))
+                {
+                    itemMap[key].Count += item.Count;
+                }
+                else
+                {
+                    itemMap[key] = item;
+                }
             }
+
+            items.RemoveAll(m => m.IsKnown);
+            items.AddRange(itemMap.Values);
         }
 
     }

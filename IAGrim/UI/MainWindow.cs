@@ -195,6 +195,20 @@ namespace IAGrim.UI
         }
 
         /// <summary>
+        /// Update the UI's language
+        /// </summary>
+        public void UpdateLanguage()
+        {
+            LocalizationLoader.ApplyLanguage(Controls, GlobalSettings.Language);
+            Text = GlobalSettings.Language.GetTag(Tag.ToString());
+            if (tsStashStatus.Tag is string)
+            {
+                tsStashStatus.Text = GlobalSettings.Language.GetTag(tsStashStatus.Tag.ToString());
+            }
+            Refresh();
+        }
+
+        /// <summary>
         /// Report usage once every 12 hours, in case the user runs it 'for ever'
         /// Will halt if not opened for 38 hours
         /// </summary>
@@ -419,8 +433,6 @@ namespace IAGrim.UI
 
             //Controls.SetChildIndex(buttonDevTools, 0);
             buttonDevTools.BringToFront();
-            tsStashStatus.Text = GlobalSettings.Language.GetTag("iatag_stash_unknown");
-
 
             ExceptionReporter.EnableLogUnhandledOnThread();
             SizeChanged += OnMinimizeWindow;
@@ -493,7 +505,7 @@ namespace IAGrim.UI
             _authAuthService = new AzureAuthService(_cefBrowserHandler, new AuthenticationProvider());
             var backupSettings = new BackupSettings(_playerItemDao, _authAuthService);
             addAndShow(backupSettings, backupPanel);
-            addAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, _databaseSettingDao, _arzParser, _playerItemDao, _parsingService), modsPanel);
+            addAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, _playerItemDao, _parsingService), modsPanel);
             addAndShow(new HelpTab(), panelHelp);            
             addAndShow(new LoggingWindow(), panelLogging);
             var backupService = new BackupService(_authAuthService, _playerItemDao, _azurePartitionDao, () => Settings.Default.UsingDualComputer);
@@ -704,30 +716,37 @@ namespace IAGrim.UI
             switch (GlobalSettings.StashStatus) {
                 case StashAvailability.OPEN:
                     tsStashStatus.ForeColor = Color.FromArgb(255, 192, 0, 0);
-                    tsStashStatus.Text = GlobalSettings.Language.GetTag("iatag_stash_open");
+                    tsStashStatus.Tag = "iatag_stash_open";
+                    tsStashStatus.Text = GlobalSettings.Language.GetTag(tsStashStatus.Tag.ToString());
                     break;
                 case StashAvailability.CRAFTING:
                     tsStashStatus.ForeColor = Color.FromArgb(255, 192, 0, 0);
-                    tsStashStatus.Text = GlobalSettings.Language.GetTag("iatag_stash_crafting");
+                    tsStashStatus.Tag = "iatag_stash_crafting";
+                    tsStashStatus.Text = GlobalSettings.Language.GetTag(tsStashStatus.Tag.ToString());
                     break;
                 case StashAvailability.CLOSED:
                     tsStashStatus.ForeColor = Color.FromArgb(255, 0, 142, 0);
-                    tsStashStatus.Text = GlobalSettings.Language.GetTag("iatag_stash_closed");
+                    tsStashStatus.Tag = "iatag_stash_closed";
+                    tsStashStatus.Text = GlobalSettings.Language.GetTag(tsStashStatus.Tag.ToString());
                     break;
                 case StashAvailability.ERROR:
                     tsStashStatus.ForeColor = Color.FromArgb(255, 192, 0, 0);
-                    tsStashStatus.Text = GlobalSettings.Language.GetTag("iatag_stash_error");
+                    tsStashStatus.Tag = "iatag_stash_error";
+                    tsStashStatus.Text = GlobalSettings.Language.GetTag(tsStashStatus.Tag.ToString());
                     break;
                 case StashAvailability.UNKNOWN:
                     tsStashStatus.ForeColor = Color.FromArgb(255, 192, 0, 0);
-                    tsStashStatus.Text = GlobalSettings.Language.GetTag("iatag_stash_unknown");
+                    tsStashStatus.Tag = "iatag_stash_unknown";
+                    tsStashStatus.Text = GlobalSettings.Language.GetTag(tsStashStatus.Tag.ToString());
                     break;
                 case StashAvailability.SORTED:
                     tsStashStatus.ForeColor = Color.FromArgb(255, 192, 0, 0);
-                    tsStashStatus.Text = GlobalSettings.Language.GetTag("iatag_stash_sorted");
+                    tsStashStatus.Tag = "iatag_stash_sorted";
+                    tsStashStatus.Text = GlobalSettings.Language.GetTag(tsStashStatus.Tag.ToString());
                     break;
                 default:
                     tsStashStatus.ForeColor = Color.FromArgb(255, 192, 0, 0);
+                    tsStashStatus.Tag = null;
                     tsStashStatus.Text = GlobalSettings.Language.GetTag("iatag_stash_") + GlobalSettings.StashStatus;
                     break;
             }

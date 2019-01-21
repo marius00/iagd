@@ -1,4 +1,5 @@
-﻿namespace IAGrim.UI {
+﻿namespace IAGrim.UI
+{
     partial class MainWindow {
         /// <summary>
         /// Required designer variable.
@@ -85,6 +86,7 @@
             this.tsStashStatus.Name = "tsStashStatus";
             this.tsStashStatus.Size = new System.Drawing.Size(92, 17);
             this.tsStashStatus.Text = "Stash: Unknown";
+            this.tsStashStatus.Tag = "iatag_stash_unknown";
             this.tsStashStatus.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // tabControl1

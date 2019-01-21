@@ -11,8 +11,6 @@ namespace IAGrim.UI.Tabs
 
         public LoggingWindow() {
             InitializeComponent();
-
-            linkLabel1.Text = GlobalSettings.Language.GetTag("iatag_ui_open_full_log_file");
         }
 
         private void LoggingWindow_Load(object sender, EventArgs e) {

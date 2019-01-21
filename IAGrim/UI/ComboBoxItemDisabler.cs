@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using IAGrim.Utilities.HelperClasses;
+using System;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
-namespace IAGrim.UI {
-
-    interface ComboBoxItemToggle {
-        bool Enabled { get; }
-    }
+namespace IAGrim.UI
+{
     class ComboBoxItemDisabler {
 
         private int LastSelection = 0;
@@ -23,7 +18,7 @@ namespace IAGrim.UI {
 
         void cb_SelectionChangeCommitted(object sender, EventArgs e) {
             ComboBox cb = sender as ComboBox;
-            ComboBoxItemToggle item = cb.SelectedItem as ComboBoxItemToggle;
+            IComboBoxItemToggle item = cb.SelectedItem as IComboBoxItemToggle;
             if (item != null) {
                 if (!item.Enabled)
                     cb.SelectedIndex = LastSelection;
@@ -38,7 +33,7 @@ namespace IAGrim.UI {
         private void comboBox_DrawItem(object sender, DrawItemEventArgs e) {
             ComboBox comboBox = (ComboBox)sender;
             if (e.Index >= 0) {
-                ComboBoxItemToggle item = comboBox.Items[e.Index] as ComboBoxItemToggle;
+                IComboBoxItemToggle item = comboBox.Items[e.Index] as IComboBoxItemToggle;
                 if (!item.Enabled) {
                     e.Graphics.FillRectangle(SystemBrushes.Window, e.Bounds);
                     e.Graphics.DrawString(comboBox.Items[e.Index].ToString(), comboBox.Font, Brushes.LightSlateGray, e.Bounds);
