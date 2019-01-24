@@ -307,7 +307,8 @@ namespace IAGrim.UI.Tabs
                 UpdateListViewDelayed();
             };
 
-            flowPanelFilter.Resize += FlowPanelFilter_Resize;
+            flowPanelFilter.SizeChanged += FlowPanelFilter_Resize;
+            mainSplitter.SizeChanged += FlowPanelFilter_Resize;
         }
 
         private void SearchBox_KeyDown(object sender, KeyEventArgs e)
@@ -541,7 +542,9 @@ namespace IAGrim.UI.Tabs
         }
 
         private void FlowPanelFilter_Resize(object sender, EventArgs e) {
-            searchBox.Width = Math.Max(300, (sender as Control).Width - 500);
+            searchBox.Width = Math.Max(300, flowPanelFilter.Width - 500);
+            searchBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+
         }
     }
 }
