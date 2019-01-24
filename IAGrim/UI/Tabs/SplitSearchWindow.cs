@@ -63,7 +63,7 @@ namespace IAGrim.UI.Tabs
 
             mainSplitter.SplitterDistance = FilterPanelMinSize;
             mainSplitter.SplitterWidth = 5;
-            mainSplitter.BorderStyle = BorderStyle.Fixed3D;
+            mainSplitter.BorderStyle = BorderStyle.None;
             mainSplitter.SplitterMoved += MainSplitterOnSplitterMoved;
 
             ModSelectionHandler = new ModSelectionHandler(modFilter, playerItemDao, UpdateListViewDelayed, setStatus);
@@ -306,6 +306,8 @@ namespace IAGrim.UI.Tabs
             {
                 UpdateListViewDelayed();
             };
+
+            flowPanelFilter.Resize += FlowPanelFilter_Resize;
         }
 
         private void SearchBox_KeyDown(object sender, KeyEventArgs e)
@@ -388,7 +390,9 @@ namespace IAGrim.UI.Tabs
             this.mainSplitter.Panel2.Controls.Add(this.flowPanelFilter);
             this.mainSplitter.Size = new System.Drawing.Size(1313, 650);
             this.mainSplitter.SplitterDistance = 204;
+            this.mainSplitter.SplitterWidth = 3;
             this.mainSplitter.TabIndex = 0;
+            this.mainSplitter.TabStop = false;
             // 
             // toolStripContainer
             // 
@@ -396,13 +400,13 @@ namespace IAGrim.UI.Tabs
             // 
             // toolStripContainer.ContentPanel
             // 
-            this.toolStripContainer.ContentPanel.Size = new System.Drawing.Size(1105, 576);
+            this.toolStripContainer.ContentPanel.Size = new System.Drawing.Size(1106, 576);
             this.toolStripContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.toolStripContainer.LeftToolStripPanelVisible = false;
             this.toolStripContainer.Location = new System.Drawing.Point(0, 49);
             this.toolStripContainer.Name = "toolStripContainer";
             this.toolStripContainer.RightToolStripPanelVisible = false;
-            this.toolStripContainer.Size = new System.Drawing.Size(1105, 601);
+            this.toolStripContainer.Size = new System.Drawing.Size(1106, 601);
             this.toolStripContainer.TabIndex = 48;
             this.toolStripContainer.Text = "toolStripContainer1";
             // 
@@ -419,22 +423,24 @@ namespace IAGrim.UI.Tabs
             this.flowPanelFilter.Dock = System.Windows.Forms.DockStyle.Top;
             this.flowPanelFilter.Location = new System.Drawing.Point(0, 0);
             this.flowPanelFilter.Name = "flowPanelFilter";
-            this.flowPanelFilter.Size = new System.Drawing.Size(1105, 49);
+            this.flowPanelFilter.Size = new System.Drawing.Size(1106, 49);
             this.flowPanelFilter.TabIndex = 52;
             // 
             // searchBox
             // 
+            this.searchBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.searchBox.Location = new System.Drawing.Point(3, 17);
             this.searchBox.Margin = new System.Windows.Forms.Padding(3, 17, 3, 3);
             this.searchBox.Name = "searchBox";
-            this.searchBox.Size = new System.Drawing.Size(250, 20);
+            this.searchBox.Size = new System.Drawing.Size(304, 20);
             this.searchBox.TabIndex = 41;
             // 
             // orderByLevel
             // 
             this.orderByLevel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.orderByLevel.AutoSize = true;
-            this.orderByLevel.Location = new System.Drawing.Point(259, 19);
+            this.orderByLevel.Location = new System.Drawing.Point(313, 19);
             this.orderByLevel.Margin = new System.Windows.Forms.Padding(3, 19, 3, 3);
             this.orderByLevel.Name = "orderByLevel";
             this.orderByLevel.Size = new System.Drawing.Size(96, 17);
@@ -448,7 +454,7 @@ namespace IAGrim.UI.Tabs
             this.itemQuality.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.itemQuality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.itemQuality.FormattingEnabled = true;
-            this.itemQuality.Location = new System.Drawing.Point(361, 17);
+            this.itemQuality.Location = new System.Drawing.Point(415, 17);
             this.itemQuality.Margin = new System.Windows.Forms.Padding(3, 17, 3, 3);
             this.itemQuality.Name = "itemQuality";
             this.itemQuality.Size = new System.Drawing.Size(59, 21);
@@ -459,7 +465,7 @@ namespace IAGrim.UI.Tabs
             this.slotFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.slotFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.slotFilter.FormattingEnabled = true;
-            this.slotFilter.Location = new System.Drawing.Point(426, 17);
+            this.slotFilter.Location = new System.Drawing.Point(480, 17);
             this.slotFilter.Margin = new System.Windows.Forms.Padding(3, 17, 3, 3);
             this.slotFilter.Name = "slotFilter";
             this.slotFilter.Size = new System.Drawing.Size(120, 21);
@@ -470,7 +476,7 @@ namespace IAGrim.UI.Tabs
             this.modFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.modFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.modFilter.FormattingEnabled = true;
-            this.modFilter.Location = new System.Drawing.Point(552, 17);
+            this.modFilter.Location = new System.Drawing.Point(606, 17);
             this.modFilter.Margin = new System.Windows.Forms.Padding(3, 17, 3, 3);
             this.modFilter.Name = "modFilter";
             this.modFilter.Size = new System.Drawing.Size(102, 21);
@@ -480,7 +486,7 @@ namespace IAGrim.UI.Tabs
             // 
             this.levelRequirementGroup.Controls.Add(this.minLevel);
             this.levelRequirementGroup.Controls.Add(this.maxLevel);
-            this.levelRequirementGroup.Location = new System.Drawing.Point(660, 3);
+            this.levelRequirementGroup.Location = new System.Drawing.Point(714, 3);
             this.levelRequirementGroup.Name = "levelRequirementGroup";
             this.levelRequirementGroup.Size = new System.Drawing.Size(78, 43);
             this.levelRequirementGroup.TabIndex = 50;
@@ -532,6 +538,10 @@ namespace IAGrim.UI.Tabs
             this.levelRequirementGroup.PerformLayout();
             this.ResumeLayout(false);
 
+        }
+
+        private void FlowPanelFilter_Resize(object sender, EventArgs e) {
+            searchBox.Width = Math.Max(300, (sender as Control).Width - 500);
         }
     }
 }

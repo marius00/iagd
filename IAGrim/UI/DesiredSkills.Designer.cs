@@ -104,7 +104,7 @@
             this.panelBox1.Location = new System.Drawing.Point(12, 723);
             this.panelBox1.Name = "panelBox1";
             this.panelBox1.NoRounding = false;
-            this.panelBox1.Size = new System.Drawing.Size(764, 546);
+            this.panelBox1.Size = new System.Drawing.Size(801, 546);
             this.panelBox1.TabIndex = 39;
             this.panelBox1.Tag = "iatag_ui_misc";
             this.panelBox1.Text = "Misc";
@@ -328,7 +328,7 @@
             this.panelBox2.Location = new System.Drawing.Point(12, 1275);
             this.panelBox2.Name = "panelBox2";
             this.panelBox2.NoRounding = false;
-            this.panelBox2.Size = new System.Drawing.Size(764, 411);
+            this.panelBox2.Size = new System.Drawing.Size(801, 411);
             this.panelBox2.TabIndex = 40;
             this.panelBox2.Tag = "iatag_ui_resistances";
             this.panelBox2.Text = "Resistances";
@@ -493,7 +493,7 @@
             this.panelBox3.Location = new System.Drawing.Point(12, 451);
             this.panelBox3.Name = "panelBox3";
             this.panelBox3.NoRounding = false;
-            this.panelBox3.Size = new System.Drawing.Size(764, 266);
+            this.panelBox3.Size = new System.Drawing.Size(801, 266);
             this.panelBox3.TabIndex = 41;
             this.panelBox3.Tag = "iatag_ui_dot";
             this.panelBox3.Text = "Damage over Time";
@@ -611,7 +611,7 @@
             this.panelBox4.Location = new System.Drawing.Point(12, 9);
             this.panelBox4.Name = "panelBox4";
             this.panelBox4.NoRounding = false;
-            this.panelBox4.Size = new System.Drawing.Size(764, 436);
+            this.panelBox4.Size = new System.Drawing.Size(801, 436);
             this.panelBox4.TabIndex = 38;
             this.panelBox4.Tag = "iatag_ui_damage";
             this.panelBox4.Text = "Damage";
@@ -627,7 +627,7 @@
             this.totalDamage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.totalDamage.Location = new System.Drawing.Point(3, 396);
             this.totalDamage.Name = "totalDamage";
-            this.totalDamage.Size = new System.Drawing.Size(751, 27);
+            this.totalDamage.Size = new System.Drawing.Size(788, 27);
             this.totalDamage.TabIndex = 43;
             this.totalDamage.Tag = "iatag_ui_totaldmg";
             this.totalDamage.Text = "Total Damage";
@@ -642,7 +642,7 @@
             this.dmgRetaliation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.dmgRetaliation.Location = new System.Drawing.Point(3, 363);
             this.dmgRetaliation.Name = "dmgRetaliation";
-            this.dmgRetaliation.Size = new System.Drawing.Size(751, 27);
+            this.dmgRetaliation.Size = new System.Drawing.Size(788, 27);
             this.dmgRetaliation.TabIndex = 42;
             this.dmgRetaliation.Tag = "iatag_ui_retaliation";
             this.dmgRetaliation.Text = "Retaliation";
@@ -657,7 +657,7 @@
             this.dmgElemental.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.dmgElemental.Location = new System.Drawing.Point(3, 330);
             this.dmgElemental.Name = "dmgElemental";
-            this.dmgElemental.Size = new System.Drawing.Size(751, 27);
+            this.dmgElemental.Size = new System.Drawing.Size(788, 27);
             this.dmgElemental.TabIndex = 37;
             this.dmgElemental.Tag = "iatag_ui_elemental";
             this.dmgElemental.Text = "Elemental";
@@ -672,7 +672,7 @@
             this.dmgPhysical.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.dmgPhysical.Location = new System.Drawing.Point(3, 33);
             this.dmgPhysical.Name = "dmgPhysical";
-            this.dmgPhysical.Size = new System.Drawing.Size(751, 27);
+            this.dmgPhysical.Size = new System.Drawing.Size(788, 27);
             this.dmgPhysical.TabIndex = 8;
             this.dmgPhysical.Tag = "iatag_ui_physical";
             this.dmgPhysical.Text = "Physical";
@@ -687,7 +687,7 @@
             this.dmgPiercing.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.dmgPiercing.Location = new System.Drawing.Point(3, 66);
             this.dmgPiercing.Name = "dmgPiercing";
-            this.dmgPiercing.Size = new System.Drawing.Size(751, 27);
+            this.dmgPiercing.Size = new System.Drawing.Size(788, 27);
             this.dmgPiercing.TabIndex = 5;
             this.dmgPiercing.Tag = "iatag_ui_piercing";
             this.dmgPiercing.Text = "Piercing";
@@ -702,7 +702,7 @@
             this.dmgFire.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.dmgFire.Location = new System.Drawing.Point(3, 99);
             this.dmgFire.Name = "dmgFire";
-            this.dmgFire.Size = new System.Drawing.Size(751, 27);
+            this.dmgFire.Size = new System.Drawing.Size(788, 27);
             this.dmgFire.TabIndex = 13;
             this.dmgFire.Tag = "iatag_ui_fire";
             this.dmgFire.Text = "Fire";
@@ -717,7 +717,7 @@
             this.dmgAether.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.dmgAether.Location = new System.Drawing.Point(3, 198);
             this.dmgAether.Name = "dmgAether";
-            this.dmgAether.Size = new System.Drawing.Size(751, 27);
+            this.dmgAether.Size = new System.Drawing.Size(788, 27);
             this.dmgAether.TabIndex = 6;
             this.dmgAether.Tag = "iatag_ui_aether";
             this.dmgAether.Text = "Aether";
@@ -732,7 +732,7 @@
             this.dmgCold.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.dmgCold.Location = new System.Drawing.Point(3, 132);
             this.dmgCold.Name = "dmgCold";
-            this.dmgCold.Size = new System.Drawing.Size(751, 27);
+            this.dmgCold.Size = new System.Drawing.Size(788, 27);
             this.dmgCold.TabIndex = 12;
             this.dmgCold.Tag = "iatag_ui_cold";
             this.dmgCold.Text = "Cold";
@@ -747,7 +747,7 @@
             this.dmgPoison.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.dmgPoison.Location = new System.Drawing.Point(3, 297);
             this.dmgPoison.Name = "dmgPoison";
-            this.dmgPoison.Size = new System.Drawing.Size(751, 27);
+            this.dmgPoison.Size = new System.Drawing.Size(788, 27);
             this.dmgPoison.TabIndex = 7;
             this.dmgPoison.Tag = "iatag_ui_poison";
             this.dmgPoison.Text = "Poison";
@@ -762,7 +762,7 @@
             this.dmgLightning.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.dmgLightning.Location = new System.Drawing.Point(3, 165);
             this.dmgLightning.Name = "dmgLightning";
-            this.dmgLightning.Size = new System.Drawing.Size(751, 27);
+            this.dmgLightning.Size = new System.Drawing.Size(788, 27);
             this.dmgLightning.TabIndex = 11;
             this.dmgLightning.Tag = "iatag_ui_lightning";
             this.dmgLightning.Text = "Lightning";
@@ -777,7 +777,7 @@
             this.dmgVitality.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.dmgVitality.Location = new System.Drawing.Point(3, 231);
             this.dmgVitality.Name = "dmgVitality";
-            this.dmgVitality.Size = new System.Drawing.Size(751, 27);
+            this.dmgVitality.Size = new System.Drawing.Size(788, 27);
             this.dmgVitality.TabIndex = 9;
             this.dmgVitality.Tag = "iatag_ui_vitality";
             this.dmgVitality.Text = "Vitality";
@@ -792,7 +792,7 @@
             this.dmgChaos.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.dmgChaos.Location = new System.Drawing.Point(3, 264);
             this.dmgChaos.Name = "dmgChaos";
-            this.dmgChaos.Size = new System.Drawing.Size(751, 27);
+            this.dmgChaos.Size = new System.Drawing.Size(788, 27);
             this.dmgChaos.TabIndex = 10;
             this.dmgChaos.Tag = "iatag_ui_chaos";
             this.dmgChaos.Text = "Chaos";
@@ -806,7 +806,7 @@
             this.classesPanelBox.Location = new System.Drawing.Point(12, 1692);
             this.classesPanelBox.Name = "classesPanelBox";
             this.classesPanelBox.NoRounding = false;
-            this.classesPanelBox.Size = new System.Drawing.Size(764, 222);
+            this.classesPanelBox.Size = new System.Drawing.Size(801, 222);
             this.classesPanelBox.TabIndex = 41;
             this.classesPanelBox.Tag = "iatag_ui_classes";
             this.classesPanelBox.Text = "Classes";
@@ -817,7 +817,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(839, 920);
+            this.ClientSize = new System.Drawing.Size(825, 920);
             this.Controls.Add(this.classesPanelBox);
             this.Controls.Add(this.panelBox1);
             this.Controls.Add(this.panelBox2);
