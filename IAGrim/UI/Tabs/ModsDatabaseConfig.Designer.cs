@@ -65,7 +65,7 @@
             this.buttonUpdateItemStats.Name = "buttonUpdateItemStats";
             this.buttonUpdateItemStats.Size = new System.Drawing.Size(192, 32);
             this.buttonUpdateItemStats.TabIndex = 5;
-            this.buttonUpdateItemStats.Tag = "iatag_ui_updateitemstats";
+            this.buttonUpdateItemStats.Tag = "iatag_ui_update_item_stats";
             this.buttonUpdateItemStats.Text = "Update Item Stats";
             this.buttonUpdateItemStats.Click += new System.EventHandler(this.buttonUpdateItemStats_Click);
             // 

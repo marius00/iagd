@@ -1,4 +1,5 @@
-﻿namespace IAGrim.UI {
+﻿namespace IAGrim.UI
+{
     partial class SettingsWindow {
         /// <summary>
         /// Required designer variable.
@@ -72,6 +73,7 @@
             this.linkLabel1.Size = new System.Drawing.Size(75, 33);
             this.linkLabel1.TabIndex = 20;
             this.linkLabel1.TabStop = true;
+            this.linkLabel1.Tag = "iatag_ui_help";
             this.linkLabel1.Text = "Help";
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
@@ -152,6 +154,7 @@
             this.linkSourceCode.Size = new System.Drawing.Size(68, 13);
             this.linkSourceCode.TabIndex = 21;
             this.linkSourceCode.TabStop = true;
+            this.linkSourceCode.Tag = "iatag_ui_source_code";
             this.linkSourceCode.Text = "Source code";
             this.linkSourceCode.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkSourceCode_LinkClicked);
             // 
@@ -447,6 +450,7 @@
             this.buttonLanguageSelect.Size = new System.Drawing.Size(192, 32);
             this.buttonLanguageSelect.TabIndex = 6;
             this.buttonLanguageSelect.Text = "Language Select";
+            this.buttonLanguageSelect.Tag = "iatag_ui_language_select";
             this.buttonLanguageSelect.Click += new System.EventHandler(this.buttonLanguageSelect_Click);
             // 
             // buttonViewBackups

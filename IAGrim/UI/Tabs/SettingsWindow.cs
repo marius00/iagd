@@ -1,26 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using IAGrim.Database;
-using IAGrim.Parsers.Arz;
-using log4net;
-using EvilsoftCommons;
-using IAGrim.UI.Controller;
-using IAGrim.Utilities;
+﻿using EvilsoftCommons;
 using IAGrim.Database.Interfaces;
+using IAGrim.Parsers.Arz;
 using IAGrim.Parsers.GameDataParsing.Service;
+using IAGrim.UI.Controller;
 using IAGrim.UI.Misc.CEF;
 using IAGrim.UI.Popups;
 using IAGrim.Utilities.HelperClasses;
+using System;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Windows.Forms;
 // 
-namespace IAGrim.UI {
+namespace IAGrim.UI
+{
     partial class SettingsWindow : Form {
         private ISettingsController _controller = new SettingsController();
         private TooltipHelper _tooltipHelper;
@@ -145,7 +137,7 @@ namespace IAGrim.UI {
         }
 
         private void buttonLanguageSelect_Click(object sender, EventArgs e) {
-            new LanguagePackPicker(_itemTagDao, _settingsDao, _playerItemDao, _parser, GrimDawnDetector.GetGrimLocations(), _parsingService)
+            new LanguagePackPicker(_itemTagDao, _playerItemDao, GrimDawnDetector.GetGrimLocations(), _parsingService)
                 .ShowDialog();
 
             _itemViewUpdateTrigger?.Invoke();

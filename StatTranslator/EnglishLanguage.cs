@@ -1,28 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace StatTranslator {
+namespace StatTranslator
+{
 
-    public class EnglishLanguage : ILocalizedLanguage {
-        public bool WarnIfMissing { get; } = false;
+    public class EnglishLanguage : ILocalizedLanguage
+    {
+        public bool WarnIfMissing { get; } = true;
 
-        public EnglishLanguage(Dictionary<string, string> existingTags) {
-            foreach (var tag in existingTags.Keys) {
+        public EnglishLanguage(Dictionary<string, string> existingTags)
+        {
+            foreach (var tag in existingTags.Keys)
+            {
                 SetTagIfMissing(tag, existingTags[tag]);
             }
         }
 
-        public void SetTagIfMissing(string tag, string value) {
+        public void SetTagIfMissing(string tag, string value)
+        {
             if (!stats.ContainsKey(tag))
+            {
                 stats[tag] = value;
+            }
         }
 
         private readonly Dictionary<string, string> stats = new Dictionary<string, string> {
-            {"tagItemNameOrder", "{%_s0}{%_s1}{%_s2}{%_s3}{%_s4}" },
-
+            { "tagItemNameOrder", "{%_s0}{%_s1}{%_s2}{%_s3}{%_s4}" },
 
             // Simply Header stats
             { "offensivePierceRatioMin", "{0}% Armor Piercing"},
@@ -107,28 +110,27 @@ namespace StatTranslator {
             { "sparkChance", "{0}% Chance of affecting up to {1} targets within {2} Meters" },
 
             // Skill triggers
-            
-            {"cast_@allyonattack", " " },
-            {"cast_@allyonlowhealth", " " },
-            {"cast_@enemylocationonkill", " " },
-            {"cast_@enemyonanyhit", " " },
-            {"cast_@enemyonattack", "{0}% Chance on attack" },
-            {"cast_@enemyonattackcrit", "{0}% Chance on a critical attack (target enemy)" },
-            {"cast_@enemyonblock", "{0}% Chance when blocked" },
-            {"cast_@enemyonhitcritical", "{0}% Chance when hit by a critical" },
-            {"cast_@enemyonkill", "{0}% Chance on Enemy Death" },  //C
-            {"cast_@enemyonmeleehit", "{0}% Chance when hit by a melee attack" },
-            {"cast_@enemyonprojectilehit", "{0}% NPSkill Proc" },
-            {"cast_@selfonanyhit", "{0}% Chance when hit" }, //C
-            {"cast_@selfonattack", "{0}% Chance on attacking" },
-            {"cast_@selfonattackcrit", "{0}% Chance on a critical attack" },
-            {"cast_@selfonblock", "{0}% Chance when blocking" },
-            {"cast_@selfonhitcritica", "{0}% Chance when Hit by a Critical" },//C
-            {"cast_@selfonkill", "{0}% Chance on Enemy Death" }, //C
-            {"cast_@selfonlowhealth", "{0}% Chance at 25% health" },
-            {"cast_@selfonmeleehit", "{0}% Chance when Hit by Melee Attacks" },
-            {"cast_@selfonprojectilehit", "{0}% Chance when Hit by Ranged Attacks" },
-            {"cast_@selfat", "{0}% Chance at {1}% Health" },
+            { "cast_@allyonattack", " " },
+            { "cast_@allyonlowhealth", " " },
+            { "cast_@enemylocationonkill", " " },
+            { "cast_@enemyonanyhit", " " },
+            { "cast_@enemyonattack", "{0}% Chance on attack" },
+            { "cast_@enemyonattackcrit", "{0}% Chance on a critical attack (target enemy)" },
+            { "cast_@enemyonblock", "{0}% Chance when blocked" },
+            { "cast_@enemyonhitcritical", "{0}% Chance when hit by a critical" },
+            { "cast_@enemyonkill", "{0}% Chance on Enemy Death" },  //C
+            { "cast_@enemyonmeleehit", "{0}% Chance when hit by a melee attack" },
+            { "cast_@enemyonprojectilehit", "{0}% NPSkill Proc" },
+            { "cast_@selfonanyhit", "{0}% Chance when hit" }, //C
+            { "cast_@selfonattack", "{0}% Chance on attacking" },
+            { "cast_@selfonattackcrit", "{0}% Chance on a critical attack" },
+            { "cast_@selfonblock", "{0}% Chance when blocking" },
+            { "cast_@selfonhitcritica", "{0}% Chance when Hit by a Critical" },//C
+            { "cast_@selfonkill", "{0}% Chance on Enemy Death" }, //C
+            { "cast_@selfonlowhealth", "{0}% Chance at 25% health" },
+            { "cast_@selfonmeleehit", "{0}% Chance when Hit by Melee Attacks" },
+            { "cast_@selfonprojectilehit", "{0}% Chance when Hit by Ranged Attacks" },
+            { "cast_@selfat", "{0}% Chance at {1}% Health" },
 
             // Retaliation
             { "customtag_013_retaliation", "{0}-{1} {3} Retaliation"},
@@ -178,7 +180,6 @@ namespace StatTranslator {
             { "customtag_xpac_modif_retaliationTotalDamageModifier", "+{0}% to All Retaliation Damage to {3}" },
             { "offensiveXDurationModifier", "+{1}% {5} Damage with +{0}% Increased Duration to {3}" },
 
-
             { "racialBonusPercentDefense", "+{0}% Less Damage From {3}" },
             { "racialBonusPercentDefense02", "+{0}% Less Damage From {3} & {5}" },
 
@@ -209,16 +210,6 @@ namespace StatTranslator {
             { "Race005", "Aether Corruption" },
             { "Race009", "Human" },
             { "Race012", "Beastkin" },
-
-            {"class00", "abcccc" },
-            {"class01", "Soldier" },
-            {"class02", "Demolitionist" },
-            {"class03", "Occultist" },
-            {"class04", "Nightblade" },
-            {"class05", "Arcanist" },
-            {"class06", "Shaman" },
-            {"class07", "Inquisitor" },
-            {"class08", "Necromancer" },
 
             // Attack speeds
             {"tagAttackSpeedVeryFast", "Very Fast"},
@@ -302,8 +293,9 @@ namespace StatTranslator {
             { "iatag_html_onlinesync_ok", "This item has been backed up to the cloud" },
             { "iatag_html_onlinesync_err", "This item has not been backed up to the cloud" },
             { "iatag_html_augmentation_item", "You may be able to purchase this augment from {0}" },
-            
 
+            // TODO: Merge duplicates, regroup similar to a single one (ie. Language select/change/selection),
+            //       and regroup/reorder tags in blocks
             // UI, IA Only
             { "iatag_ui_buddy_userid", "User ID: " },
             { "iatag_ui_buddy_userid_none", "None" },
@@ -321,123 +313,267 @@ namespace StatTranslator {
             { "iatag_ui_no", "No" },
             { "iatag_ui_survivalmode", "The Crucible (DLC)" },
             { "iatag_ui_dualcomputer", "Using IA on multiple PCs" },
-            { "iatag_no_stash_abort", "No stash chosen, aborting transfer.." },
+            { "iatag_ui_backup_service_error", "The backup service is currently experiencing technical difficulties.\nPlease try again later." },
+            { "iatag_ui_backup_status", "Backup status" },
+            { "iatag_ui_backup_complete", "Backup complete!" },
+            { "iatag_ui_backup_failed", "Backup failed, see the log file for more detailed information." },
+            { "iatag_ui_load_database", "Load Database" },
+            { "iatag_ui_update_item_stats", "Update Item Stats" },
+            { "iatag_ui_open_logfile", "Open the full log file" },
+            { "iatag_ui_help", "Help" },
+            { "iatag_ui_source_code", "Source code" },
+            { "iatag_ui_online_backup", "Online Backup" },
+            { "iatag_ui_language_select", "Language Select" },
+            { "iatag_ui_change_language", "Change Language" },
+            { "iatag_ui_language_selection", "Language Selection" },
+            { "iatag_ui_language_by_author", "{0} by {0}" },
+            { "iatag_ui_classes", "Classes" },
+            { "iatag_ui_tab_items", "Items" },
+            { "iatag_ui_devtools", "Devtools" },
+            { "iatag_ui_misc", "Misc" },
+            { "iatag_ui_socketedonly", "Socketed" },
+            { "iatag_ui_duplicatesonly", "Duplicates Only" },
+            { "iatag_ui_reflect", "Reflect" },
+            { "iatag_ui_block", "Block" },
+            { "iatag_ui_setbonus", "Set Bonus" },
+            { "iatag_ui_petbonuses", "Pet Bonuses" },
+            { "iatag_ui_mastery", "Mastery Skills" },
+            { "iatag_ui_castspeed", "Cast Speed" },
+            { "iatag_ui_attackspeed", "Attack Speed" },
+            { "iatag_ui_health", "Health" },
+            { "iatag_ui_offensive", "Offensive" },
+            { "iatag_ui_runspeed", "Runspeed" },
+            { "iatag_ui_defensive", "Defensive" },
+            { "iatag_ui_experience", "Experience" },
+            { "iatag_ui_resistances", "Resistances" },
+            { "iatag_ui_resistance_bleeding", "Bleeding" },
+            { "iatag_ui_resistance_elemental", "Elemental" },
+            { "iatag_ui_resistance_fire", "Fire" },
+            { "iatag_ui_resistance_piercing", "Piercing" },
+            { "iatag_ui_resistance_physical", "Physical" },
+            { "iatag_ui_resistance_poison", "Poison" },
+            { "iatag_ui_resistance_cold", "Cold" },
+            { "iatag_ui_resistance_chaos", "Chaos" },
+            { "iatag_ui_resistance_lightning", "Lightning" },
+            { "iatag_ui_resistance_vitality", "Vitality" },
+            { "iatag_ui_resistance_aether", "Aether" },
+            { "iatag_ui_dot", "Damage over Time" },
+            { "iatag_ui_lifeleech", "Life Leech" },
+            { "iatag_ui_decay", "Decay" },
+            { "iatag_ui_frost", "Frost/freeze" },
+            { "iatag_ui_trauma", "Trauma" },
+            { "iatag_ui_burn", "Burn" },
+            { "iatag_ui_electrocute", "Electrocute" },
+            { "iatag_ui_bleeding", "Bleeding" },
+            { "iatag_ui_damage", "Damage" },
+            { "iatag_ui_totaldmg", "Total Damage" },
+            { "iatag_ui_retaliation", "Retaliation" },
+            { "iatag_ui_elemental", "Elemental" },
+            { "iatag_ui_piercing", "Piercing" },
+            { "iatag_ui_fire", "Fire" },
+            { "iatag_ui_aether", "Aether" },
+            { "iatag_ui_cold", "Cold" },
+            { "iatag_ui_poison", "Poison" },
+            { "iatag_ui_lightning", "Lightning" },
+            { "iatag_ui_vitality", "Vitality" },
+            { "iatag_ui_chaos", "Chaos" },
+            { "iatag_ui_orderbylevel", "Order By Level" },
+            { "iatag_ui_tab_settings", "Settings" },
+            { "iatag_ui_settings_title", "Settings" },
+            { "iatag_ui_showaugments", "Show augments as Items" },
+            { "iatag_ui_showskills", "Show Skills" },
+            { "iatag_ui_autoselectmod", "Auto Select Mod" },
+            { "iatag_ui_autosearch", "Auto Search" },
+            { "iatag_ui_transferanymod", "Transfer to any mod" },
+            { "iatag_ui_showrecipesasitems", "Show recipes as items" },
+            { "iatag_ui_securetransfers", "Secure Transfers" },
+            { "iatag_ui_mergeduplicates", "Merge Duplicates" },
+            { "iatag_ui_minimizetotray", "Minimize to Tray" },
+            { "iatag_ui_update_title", "Automatic Updates" },
+            { "iatag_ui_experimentalupdates", "Experimental Features" },
+            { "iatag_ui_regularupdates", "Regular Updates" },
+            { "iatag_ui_misc_title", "Misc" },
+            { "iatag_ui_donatenow", "Donate Now!" },
+            { "iatag_ui_openforum", "Open Forum" },
+            { "iatag_ui_contactdev", "Contact Developer" },
+            { "iatag_ui_actions_title", "Actions" },
+            { "iatag_ui_advancedsettings", "Advanced" },
+            { "iatag_ui_importexport", "Import/Export" },
+            { "iatag_ui_viewbackups", "View Backups" },
+            { "iatag_ui_viewlogs", "View Logs" },
+            { "iatag_ui_tab_mods", "Database/Mods" },
+            { "iatag_ui_mods_header", "Grim Dawn Database" },
+            { "iatag_ui_mod_database_mods_header", "Install" },
+            { "iatag_ui_mod_path", "Path" },
+            { "iatag_ui_tab_backups", "Backups" },
+            { "iatag_ui_login", "Login" },
+            { "iatag_ui_backup_location", "Local Backup" },
+            { "iatag_ui_backupnow", "Backup Now" },
+            { "iatag_ui_custom", "Custom" },
+            { "iatag_ui_tab_buddy", "Buddy" },
+            { "iatag_ui_buddies", "Buddies" },
+            { "iatag_ui_buddy_descriptive_help_text", "Enabling buddy items lets your friends see which items you have." },
+            { "iatag_ui_add", "Add" },
+            { "iatag_ui_buddy_header_buddy", "Buddy" },
+            { "iatag_ui_buddy_header_items", "Items" },
+            { "iatag_ui_configuration", "Configuration" },
+            { "iatag_ui_syncnow", "Sync Now" },
+            { "iatag_ui_enabled", "Enabled"},
+            { "iatag_ui_tab_log", "Log" },
+            { "iatag_ui_tab_help", "Help" },
+            { "iatag_ui_parsing_gd_resources", "Parsing Grim Dawn resources..." },
+            { "iatag_ui_saving_special_stats", "Saving special stats" },
+            { "iatag_ui_skills_sanity", "Skills sanity check" },
+            { "iatag_ui_mapping_item_names", "Mapping item names" },
+            { "iatag_ui_generating_skills", "Generating skills" },
+            { "iatag_ui_saving_items", "Saving items" },
+            { "iatag_ui_preparing_pet_stats", "Preparing pet stats" },
+            { "iatag_ui_loading_tags", "Loading tags" },
+            { "iatag_ui_saving_tags", "Saving tags" },
+            { "iatag_ui_loading_items", "Loading Items" },
+            { "iatag_ui_generating_special_stats", "Generating special stats" },
+            { "iatag_ui_language_change_warning", "WARNING: Some controls might not appear correctly upon changing the display language. It is suggested to close and reopen GDIA." },
+            { "iatag_ui_level_requirement", "Level" },
+
+            //Classes
+            { "iatag_ui_soldier", "Soldier" },
+            { "iatag_ui_demolitionist", "Demolitionist" },
+            { "iatag_ui_occultist", "Occultist" },
+            { "iatag_ui_nightblade", "Nightblade" },
+            { "iatag_ui_arcanist", "Arcanist" },
+            { "iatag_ui_shaman", "Shaman" },
+            { "iatag_ui_inquisitor", "Inquisitor" },
+            { "iatag_ui_necromancer", "Necromancer" },
+
+            //TODO: Are those used?
+            { "class00", "abcccc" },
+            { "class01", "Soldier" },
+            { "class02", "Demolitionist" },
+            { "class03", "Occultist" },
+            { "class04", "Nightblade" },
+            { "class05", "Arcanist" },
+            { "class06", "Shaman" },
+            { "class07", "Inquisitor" },
+            { "class08", "Necromancer" },
+
+            { "iatag_no_stash_abort", "No stash chosen. Aborting transfer." },
             { "iatag_stash_status_error", "Could not inject into Grim Dawn, are you sure the bank is CLOSED?" },
-            {"iatag_ui_recentonly", "Recent Only" },
-            {"iatag_stash3_failure", "Cannot deposit item, please ensure Stash 3 is empty." },
-            {"iatag_stash3_success", "Successfully deposited {0} out of {1} items" },
-            {"iatag_deposit_stash_open", "Cannot deposit item, please close your stash in-game" },
-            {"iatag_deposit_stash_full", "Could not insert item, stash full" },
-            {"iatag_deposit_stash_sorted", "Cannot deposit item, please open or close your stash in-game (stash was sorted)" },
-            {"iatag_deposit_stash_unknown_tooltip", "Stash status is unknown, open & close stash in-game to resolve." },
-            {"iatag_deposit_stash_unknown_feedback", "Cannot deposit item, please open and close your stash in-game" },
-            {"iatag_stash_hotfix_1_0_40_0_rejected", "Transfer rejected due to v1.0.40.0 hotfix - Either use instatransfer or close GrimDawn first" },
-            {"iatag_deposit_pipe_success", "Item sent to GD" },
-            {"iatag_file_does_not_exist", "The specified file does not exist" },
-            {"iatag_file_not_zip", "Specified file is not a zip file!?" },
-            {"iatag_pg_restore_error", "Error restoring from backup, see log file for more details" },
-            {"iatag_stash_open", "Stash: Open" },
-            {"iatag_stash_crafting", "Stash: Crafting" },
-            {"iatag_stash_closed", "Stash: Closed" },
-            {"iatag_stash_error", "Stash: ERROR" },
-            {"iatag_stash_unknown", "Stash: Unknown" },
-            {"iatag_stash_sorted", "Stash: Open/Restricted" },
-            {"iatag_stash_", "Stash: " },
-            {"iatag_copied_clipboard", "Items copied to clipboard" },
-            {"iatag_stash_not_found", "Could not locate and stash files.." },
-            {"iatag_legacy_backup", "Invalid backup file. If this is a really old backup, please see the instructions on restoring from a legacy backup." },
-            {"iatag_postgres_backup", "Invalid backup file. This backup format has been deprecated. Contact me on itemassistant@gmail.com and I'll send you a manual restore." },
+            { "iatag_ui_recentonly", "Recent Only" },
+            { "iatag_stash3_failure", "Cannot deposit item, please ensure Stash 3 is empty." },
+            { "iatag_stash3_success", "Successfully deposited {0} out of {1} items" },
+            { "iatag_deposit_stash_open", "Cannot deposit item, please close your stash in-game" },
+            { "iatag_deposit_stash_full", "Could not insert item, stash full" },
+            { "iatag_deposit_stash_sorted", "Cannot deposit item, please open or close your stash in-game (stash was sorted)" },
+            { "iatag_deposit_stash_unknown_tooltip", "Stash status is unknown, open & close stash in-game to resolve." },
+            { "iatag_deposit_stash_unknown_feedback", "Cannot deposit item, please open and close your stash in-game" },
+            { "iatag_stash_hotfix_1_0_40_0_rejected", "Transfer rejected due to v1.0.40.0 hotfix - Either use instatransfer or close GrimDawn first" },
+            { "iatag_deposit_pipe_success", "Item sent to GD" },
+            { "iatag_file_does_not_exist", "The specified file does not exist" },
+            { "iatag_file_not_zip", "Specified file is not a zip file!?" },
+            { "iatag_pg_restore_error", "Error restoring from backup, see log file for more details" },
+            { "iatag_stash_open", "Stash: Open" },
+            { "iatag_stash_crafting", "Stash: Crafting" },
+            { "iatag_stash_closed", "Stash: Closed" },
+            { "iatag_stash_error", "Stash: ERROR" },
+            { "iatag_stash_unknown", "Stash: Unknown" },
+            { "iatag_stash_sorted", "Stash: Open/Restricted" },
+            { "iatag_stash_", "Stash: " },
+            { "iatag_copied_clipboard", "Items copied to clipboard" },
+            { "iatag_stash_not_found", "Could not locate and stash files." },
+            { "iatag_legacy_backup", "Invalid backup file. If this is a really old backup, please see the instructions on restoring from a legacy backup." },
+            { "iatag_postgres_backup", "Invalid backup file. This backup format has been deprecated. Contact me on itemassistant@gmail.com and I'll send you a manual restore." },
+            { "iatag_looted_from_stash", "Looted {0} items from stash {1}" },
+            { "iatag_purchase_stash", "Please purchase more stash pages!" },
+            { "iatag_invalid_deposit_stash_number", "You have configured IA to deposit to stash {0} but you only have {1} pages" },
+            { "iatag_invalid_loot_stash_number", "You have configured IA to loot from stash {0} but you only have {1} pages" },
+            { "iatag_stash_might_be_full", "Some items not deposited, stash {0} might be full." },
+            { "iatag_not_enough_stash", "File \"{0}\" only contains {1} pages. IA requires at least 2 pages to function properly." },
+            { "iatag_no_matching_items_found", "No matching items found" },
+            { "iatag_additional_items_found", "An additional {0} items found from your friends" },
 
-            {"iatag_not_imlpemented", "Functionality not implemented" },
-            {"iatag_open_logfile", "Open the full log file" },
+            { "iatag_not_implemented", "Functionality not implemented" },
 
+            { "iatag_rarity_any", "Any" },
+            { "iatag_rarity_yellow", "Yellow" },
+            { "iatag_rarity_green", "Green" },
+            { "iatag_rarity_blue", "Blue" },
+            { "iatag_rarity_epic", "Epic" },
 
-            {"iatag_rarity_any", "Any" },
-            {"iatag_rarity_yellow", "Yellow" },
-            {"iatag_rarity_green", "Green" },
-            {"iatag_rarity_blue", "Blue" },
-            {"iatag_rarity_epic", "Epic" },
+            { "iatag_feedback_already_logged_in", "You are already logged in" },
+            { "iatag_feedback_too_close_to_stash", "Delaying stash loot - Standing too close to stash!" },
+            { "iatag_feedback_delaying_stash_loot_status", "Waiting for stash to close.." },
+            { "iatag_feedback_no_items_to_loot", "No items to loot in stash"},
+            { "iatag_feedback_unable_to_loot_stash", "Unable to loot stash page."},
+            { "iatag_feedback_item_does_not_exist", "Cannot deposit item, item does not appear to exist.. (ghost item)"},
+            { "iatag_feedback_cloud_save_enabled_ingame", "WARNING - Grim Dawn Cloud saving is active." },
+            { "iatag_feedback_stacked_not_looted", "{0} items were not looted due to being a stack" },
+            { "iatag_feedback_duplicates_not_looted", "{0} items were not looted due to being possible duplicates (bugged items)" },
 
-            {"iatag_feedback_already_logged_in", "You are already logged in" },
-            {"iatag_feedback_too_close_to_stash", "Delaying stash loot - Standing too close to stash!" },
-            {"iatag_feedback_delaying_stash_loot_status", "Waiting for stash to close.." },
-            {"iatag_feedback_no_items_to_loot", "No items to loot in stash"},
-            {"iatag_feedback_unable_to_loot_stash4", "Unable to loot stash page.."},
-            {"iatag_feedback_item_does_not_exist", "Cannot deposit item, item does not appear to exist.. (ghost item)"},
-            {"iatag_feedback_cloud_save_enabled_ingame", "WARNING - Grim Dawn Cloud saving is active." },
-            {"iatag_feedback_stacked_not_looted", "{0} items were not looted due to being a stack" },
-            {"iatag_feedback_duplicates_not_looted", "{0} items were not looted due to being possible duplicates (bugged items)" },
+            { "iatag_slot_any", "Any" },
+            { "iatag_slot_head", "Head" },
+            { "iatag_slot_hands", "Hands" },
+            { "iatag_slot_feet", "Feet" },
+            { "iatag_slot_legs", "Legs" },
+            { "iatag_slot_chest", "Chest" },
+            { "iatag_slot_belt", "Belt" },
+            { "iatag_slot_medal", "Medal" },
+            { "iatag_slot_ring", "Ring" },
+            { "iatag_slot_shoulder", "Shoulder" },
+            { "iatag_slot_neck", "Amulet/Neck" },
+            { "iatag_slot_weapon1h", "Weapon (1h)" },
+            { "iatag_slot_weapon2h", "Weapon (2h)" },
+            { "iatag_slot_weaponranged", "Weapon (Ranged)" },
+            { "iatag_slot_offhand", "Offhand" },
+            { "iatag_slot_shield", "Shield" },
+            { "iatag_slot_component", "Component" },
+            { "iatag_slot_relic", "Relic" },
+            { "iatag_slot_other", "Other" },
 
-            {"iatag_slot_any", "Any" },
-            {"iatag_slot_head", "Head" },
-            {"iatag_slot_hands", "Hands" },
-            {"iatag_slot_feet", "Feet" },
-            {"iatag_slot_legs", "Legs" },
-            {"iatag_slot_chest", "Chest" },
-            {"iatag_slot_belt", "Belt" },
-            {"iatag_slot_medal", "Medal" },
-            {"iatag_slot_ring", "Ring" },
-            {"iatag_slot_shoulder", "Shoulder" },
-            {"iatag_slot_neck", "Amulet/Neck" },
-            {"iatag_slot_weapon1h", "Weapon (1h)" },
-            {"iatag_slot_weapon2h", "Weapon (2h)" },
-            {"iatag_slot_weaponranged", "Weapon (Ranged)" },
-            {"iatag_slot_offhand", "Offhand" },
-            {"iatag_slot_shield", "Shield" },
-            {"iatag_slot_component", "Component" },
-            {"iatag_slot_relic", "Relic" },
-            {"iatag_slot_other", "Other" },
+            { "iatag_slot_dagger1h", "Dagger (1h)" },
+            { "iatag_slot_mace1h", "Mace (1h)" },
+            { "iatag_slot_axe1h", "Axe (1h)" },
+            { "iatag_slot_scepter1h", "Scepter (1h)" },
+            { "iatag_slot_sword1h", "Sword (1h)" },
+            { "iatag_slot_sword2h", "Sword (2h)" },
+            { "iatag_slot_mace2h", "Mace (2h)" },
+            { "iatag_slot_axe2h", "Axe (2h)" },
+            { "iatag_slot_ranged1h", "Ranged (1h)" },
+            { "iatag_slot_ranged2h", "Ranged (2h)" },
+            { "iatag_slot_scroll", "Scroll" },
+            { "iatag_slot_augmentation", "Augmentation" },
 
-
-            {"iatag_slot_dagger1h", "Dagger (1h)" },
-            {"iatag_slot_mace1h", "Mace (1h)" },
-            {"iatag_slot_axe1h", "Axe (1h)" },
-            {"iatag_slot_scepter1h", "Scepter (1h)" },
-            {"iatag_slot_sword1h", "Sword (1h)" },
-            {"iatag_slot_sword2h", "Sword (2h)" },
-            {"iatag_slot_mace2h", "Mace (2h)" },
-            {"iatag_slot_axe2h", "Axe (2h)" },
-            {"iatag_slot_ranged1h", "Ranged (1h)" },
-            {"iatag_slot_ranged2h", "Ranged (2h)" },
-            {"iatag_slot_scroll", "Scroll" },
-            {"iatag_slot_augmentation", "Augmentation" },
-
-
-            {"tagFactionUser9_ia", "The Outcast" },
-            {"tagFactionUser10_ia", "Barrowholm" },
-            {"tagFactionUser11_ia", "Malmouth Resistance" },
-
+            { "tagFactionUser9_ia", "The Outcast" },
+            { "tagFactionUser10_ia", "Barrowholm" },
+            { "tagFactionUser11_ia", "Malmouth Resistance" }
         };
 
         private const string English = "{%_s0}{%_s1}{%_s2}{%_s3}{%_s4}";
         private readonly ItemNameCombinator _itemCombinator = new ItemNameCombinator(English);
 
-        public string TranslateName(string prefix, string quality, string style, string name, string suffix) {
+        public string TranslateName(string prefix, string quality, string style, string name, string suffix)
+        {
             return _itemCombinator.TranslateName(prefix, quality, style, name, suffix);
         }
 
-        public string[] Serialize() {
+        public string[] Serialize()
+        {
             return stats.Keys.ToArray();
         }
 
-
-        public string GetTag(string tag) {
+        public string GetTag(string tag)
+        {
             if (stats.ContainsKey(tag))
+            {
                 return stats[tag];
-            else
-                return string.Empty;
+            }
+
+            return string.Empty;
         }
 
-        public string GetTag(string tag, string arg1) {
-            return GetTag(tag).Replace("{0}", arg1);
-        }
-
-        public string GetTag(string tag, string arg1, string arg2) {
-            return GetTag(tag, arg1).Replace("{1}", arg2);
-        }
-
-        public string GetTag(string tag, string arg1, string arg2, string arg3) {
-            return GetTag(tag, arg1, arg2).Replace("{2}", arg3);
+        public string GetTag(string tag, object[] args)
+        {
+            return args.Select((t, i) => i)
+                .Aggregate(GetTag(tag), (current, index) => current.Replace($"{{{index}}}", args[index]?.ToString()));
         }
     }
 }

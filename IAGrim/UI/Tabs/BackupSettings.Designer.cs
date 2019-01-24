@@ -23,7 +23,7 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            this.panelBox1 = new PanelBox();
+            this.onlineBackup = new PanelBox();
             this.buttonLogin = new FirefoxButton();
             this.panelBox5 = new PanelBox();
             this.buttonBackupNow = new FirefoxButton();
@@ -35,26 +35,28 @@
             this.pbDropbox = new System.Windows.Forms.PictureBox();
             this.pbGoogle = new System.Windows.Forms.PictureBox();
             this.cbGoogle = new FirefoxCheckBox();
-            this.panelBox1.SuspendLayout();
+            this.onlineBackup.SuspendLayout();
             this.panelBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbSkydrive)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbDropbox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbGoogle)).BeginInit();
             this.SuspendLayout();
             // 
-            // panelBox1
+            // onlineBackup
             // 
-            this.panelBox1.Controls.Add(this.buttonLogin);
-            this.panelBox1.Font = new System.Drawing.Font("Segoe UI Semibold", 20F);
-            this.panelBox1.HeaderHeight = 40;
-            this.panelBox1.Location = new System.Drawing.Point(12, 12);
-            this.panelBox1.Name = "panelBox1";
-            this.panelBox1.NoRounding = false;
-            this.panelBox1.Size = new System.Drawing.Size(359, 174);
-            this.panelBox1.TabIndex = 12;
-            this.panelBox1.Tag = "iatag_ui_backup_online";
-            this.panelBox1.Text = "Online Backup";
-            this.panelBox1.TextLocation = "8; 5";
+            this.onlineBackup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.onlineBackup.Controls.Add(this.buttonLogin);
+            this.onlineBackup.Font = new System.Drawing.Font("Segoe UI Semibold", 20F);
+            this.onlineBackup.HeaderHeight = 40;
+            this.onlineBackup.Location = new System.Drawing.Point(12, 12);
+            this.onlineBackup.Name = "onlineBackup";
+            this.onlineBackup.NoRounding = false;
+            this.onlineBackup.Size = new System.Drawing.Size(329, 174);
+            this.onlineBackup.TabIndex = 12;
+            this.onlineBackup.Tag = "iatag_ui_online_backup";
+            this.onlineBackup.Text = "Online Backup";
+            this.onlineBackup.TextLocation = "8; 5";
             // 
             // buttonLogin
             // 
@@ -71,6 +73,8 @@
             // 
             // panelBox5
             // 
+            this.panelBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.panelBox5.Controls.Add(this.buttonBackupNow);
             this.panelBox5.Controls.Add(this.buttonCustom);
             this.panelBox5.Controls.Add(this.cbCustom);
@@ -85,7 +89,7 @@
             this.panelBox5.Location = new System.Drawing.Point(12, 192);
             this.panelBox5.Name = "panelBox5";
             this.panelBox5.NoRounding = false;
-            this.panelBox5.Size = new System.Drawing.Size(359, 363);
+            this.panelBox5.Size = new System.Drawing.Size(329, 363);
             this.panelBox5.TabIndex = 10;
             this.panelBox5.Tag = "iatag_ui_backup_location";
             this.panelBox5.Text = "Local Backup";
@@ -197,8 +201,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(706, 564);
-            this.Controls.Add(this.panelBox1);
+            this.ClientSize = new System.Drawing.Size(353, 564);
+            this.Controls.Add(this.onlineBackup);
             this.Controls.Add(this.panelBox5);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;
@@ -208,7 +212,7 @@
             this.ShowInTaskbar = false;
             this.Text = "Backup Settings";
             this.Load += new System.EventHandler(this.BackupSettings_Load);
-            this.panelBox1.ResumeLayout(false);
+            this.onlineBackup.ResumeLayout(false);
             this.panelBox5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pbSkydrive)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbDropbox)).EndInit();
@@ -229,7 +233,7 @@
         private System.Windows.Forms.Button buttonCustom;
         private FirefoxCheckBox cbCustom;
         private FirefoxButton buttonBackupNow;
-        private PanelBox panelBox1;
+        private PanelBox onlineBackup;
         private FirefoxButton buttonLogin;
     }
 }

@@ -1,18 +1,17 @@
-﻿using System;
-using IAGrim.Database.Interfaces;
-using log4net;
-using NHibernate;
-using NHibernate.Criterion;
-using System.Collections.Generic;
-using System.Linq;
-using IAGrim.BuddyShare.dto;
+﻿using IAGrim.BuddyShare.dto;
 using IAGrim.Database.DAO.Table;
 using IAGrim.Database.Dto;
+using IAGrim.Database.Interfaces;
 using IAGrim.Utilities;
-using NHibernate.Linq;
+using log4net;
+using NHibernate;
 using NHibernate.Transform;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace IAGrim.Database {
+namespace IAGrim.Database
+{
     public class BuddyItemDaoImpl : BaseDao<BuddyItem>, IBuddyItemDao {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(BuddyItemDaoImpl));
 
@@ -79,8 +78,8 @@ namespace IAGrim.Database {
                 AND {DatabaseItemStatTable.TextValue} = {ItemTagTable.Id}
                 AND {DatabaseItemStatTable.Stat} IN ('lootRandomizerName', 'itemNameTag', 'itemQualityTag', 'itemStyleTag', 'description')
                 AND ({DatabaseItemTable.Record} IN (SELECT {BuddyItemsTable.BaseRecord} FROM {BuddyItemsTable.Table} WHERE {BuddyItemsTable.Name} IS NULL OR {BuddyItemsTable.Name} = '')
-		            OR {DatabaseItemTable.Record} IN (SELECT {BuddyItemsTable.PrefixRecord} FROM {BuddyItemsTable.Table} WHERE {BuddyItemsTable.Name} IS NULL OR {BuddyItemsTable.Name} = '')
-		            OR {DatabaseItemTable.Record} IN (SELECT {BuddyItemsTable.SuffixRecord} FROM {BuddyItemsTable.Table} WHERE {BuddyItemsTable.Name} IS NULL OR {BuddyItemsTable.Name} = '')
+                    OR {DatabaseItemTable.Record} IN (SELECT {BuddyItemsTable.PrefixRecord} FROM {BuddyItemsTable.Table} WHERE {BuddyItemsTable.Name} IS NULL OR {BuddyItemsTable.Name} = '')
+                    OR {DatabaseItemTable.Record} IN (SELECT {BuddyItemsTable.SuffixRecord} FROM {BuddyItemsTable.Table} WHERE {BuddyItemsTable.Name} IS NULL OR {BuddyItemsTable.Name} = '')
                 )";
 
 
@@ -131,8 +130,8 @@ namespace IAGrim.Database {
                 WHERE item.{DatabaseItemTable.Id} = stat.{DatabaseItemStatTable.Item}
                 AND {DatabaseItemStatTable.Stat} = 'levelRequirement'
                 AND ({DatabaseItemTable.Record} IN (SELECT {BuddyItemsTable.BaseRecord} FROM {BuddyItemsTable.Table})
-		            OR {DatabaseItemTable.Record} IN (SELECT {BuddyItemsTable.PrefixRecord} FROM {BuddyItemsTable.Table})
-		            OR {DatabaseItemTable.Record} IN (SELECT {BuddyItemsTable.SuffixRecord} FROM {BuddyItemsTable.Table})
+                    OR {DatabaseItemTable.Record} IN (SELECT {BuddyItemsTable.PrefixRecord} FROM {BuddyItemsTable.Table})
+                    OR {DatabaseItemTable.Record} IN (SELECT {BuddyItemsTable.SuffixRecord} FROM {BuddyItemsTable.Table})
                 )";
 
             IList<LevelRequirementRow> rows;
@@ -227,8 +226,8 @@ namespace IAGrim.Database {
                 WHERE item.{DatabaseItemTable.Id} = stat.{DatabaseItemStatTable.Item}
                 AND {DatabaseItemStatTable.Stat} = 'itemClassification'
                 AND ({DatabaseItemTable.Record} IN (SELECT {BuddyItemsTable.BaseRecord} FROM {BuddyItemsTable.Table} WHERE {BuddyItemsTable.Rarity} IS NULL)
-		            OR {DatabaseItemTable.Record} IN (SELECT {BuddyItemsTable.PrefixRecord} FROM {BuddyItemsTable.Table} WHERE {BuddyItemsTable.Rarity} IS NULL)
-		            OR {DatabaseItemTable.Record} IN (SELECT {BuddyItemsTable.SuffixRecord} FROM {BuddyItemsTable.Table} WHERE {BuddyItemsTable.Rarity} IS NULL)
+                    OR {DatabaseItemTable.Record} IN (SELECT {BuddyItemsTable.PrefixRecord} FROM {BuddyItemsTable.Table} WHERE {BuddyItemsTable.Rarity} IS NULL)
+                    OR {DatabaseItemTable.Record} IN (SELECT {BuddyItemsTable.SuffixRecord} FROM {BuddyItemsTable.Table} WHERE {BuddyItemsTable.Rarity} IS NULL)
                 )";
 
             IList<RarityRow> rows;

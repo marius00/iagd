@@ -1,10 +1,9 @@
-﻿using IAGrim.UI;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 
 namespace IAGrim.Utilities.HelperClasses
 {
-    public class GDTransferFile : ComboBoxItemToggle, IEquatable<GDTransferFile> {
+    public class GDTransferFile : IComboBoxItemToggle, IEquatable<GDTransferFile> {
         public string Filename { get; set; }
 
         public bool IsHardcore { get; set; }
@@ -19,7 +18,9 @@ namespace IAGrim.Utilities.HelperClasses
         public virtual DateTime LastAccess { get; set; }
         
         public override string ToString() {
-            string text = string.IsNullOrEmpty(Mod) ? GlobalSettings.Language.GetTag("iatag_ui_vanilla") : Mod;
+            var text = string.IsNullOrEmpty(Mod) 
+                ? GlobalSettings.Language.GetTag("iatag_ui_vanilla") 
+                : Mod;
 
             if (IsHardcore)
             {

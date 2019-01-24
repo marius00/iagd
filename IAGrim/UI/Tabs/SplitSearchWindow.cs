@@ -485,7 +485,8 @@ namespace IAGrim.UI.Tabs
             this.levelRequirementGroup.Size = new System.Drawing.Size(78, 43);
             this.levelRequirementGroup.TabIndex = 50;
             this.levelRequirementGroup.TabStop = false;
-            this.levelRequirementGroup.Text = "Level reqs.";
+            this.levelRequirementGroup.Tag = "iatag_ui_level_requirement";
+            this.levelRequirementGroup.Text = "Level";
             // 
             // minLevel
             // 

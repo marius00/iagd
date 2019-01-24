@@ -1,62 +1,48 @@
 ﻿using EvilsoftCommons.Exceptions;
+using EvilsoftCommons.Exceptions.UUIDGenerator;
 using EvilsoftCommons.SingleInstance;
+using IAGrim.Backup.Azure.Constants;
 using IAGrim.Database;
 using IAGrim.Database.Interfaces;
 using IAGrim.Database.Migrations;
 using IAGrim.Database.Synchronizer;
 using IAGrim.Parsers.Arz;
-using IAGrim.UI;
-using IAGrim.UI.Misc;
-using IAGrim.Utilities;
-using log4net;
-using NHibernate;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.Globalization;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading;
-using System.Windows.Forms;
-using DataAccess;
-using EvilsoftCommons;
-using EvilsoftCommons.Exceptions.UUIDGenerator;
-using Gameloop.Vdf;
-using IAGrim.Backup.Azure.Constants;
-using IAGrim.BuddyShare;
-using IAGrim.Database.DAO;
-using IAGrim.Parser.Arc;
 using IAGrim.Parsers.GameDataParsing.Service;
 using IAGrim.Properties;
-using IAGrim.Services.Crafting;
+using IAGrim.UI;
 using IAGrim.UI.Misc.CEF;
-using IAGrim.UI.Popups;
-using IAGrim.Utilities.HelperClasses;
+using IAGrim.Utilities;
+using log4net;
 using StatTranslator;
+using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
+using System.Windows.Forms;
 
 
-namespace IAGrim {
-    internal class 
-        Program {
+namespace IAGrim
+{
+    internal class Program
+    {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(Program));
         private static MainWindow _mw;
 
 #if DEBUG
 
-        private static void Test() {
+        private static void Test()
+        {
             return;
-            using (ThreadExecuter threadExecuter = new ThreadExecuter()) {
+            using (ThreadExecuter threadExecuter = new ThreadExecuter())
+            {
                 var factory = new SessionFactory();
                 string _grimdawnLocation = new DatabaseSettingRepo(threadExecuter, factory).GetCurrentDatabasePath();
                 IItemTagDao _itemTagDao = new ItemTagRepo(threadExecuter, factory);
                 IDatabaseItemDao _databaseItemDao = new DatabaseItemRepo(threadExecuter, factory);
                 IDatabaseItemStatDao _databaseItemStatDao = new DatabaseItemStatRepo(threadExecuter, factory);
                 IItemSkillDao _itemSkillDao = new ItemSkillRepo(threadExecuter, factory);
-                
+
                 ParsingService parsingService = new ParsingService(
                     _itemTagDao,
                     _grimdawnLocation,
@@ -74,10 +60,11 @@ namespace IAGrim {
         }
 #endif
 
-
-        private static void LoadUuid(IDatabaseSettingDao dao) {
+        private static void LoadUuid(IDatabaseSettingDao dao)
+        {
             string uuid = dao.GetUuid();
-            if (string.IsNullOrEmpty(uuid)) {
+            if (string.IsNullOrEmpty(uuid))
+            {
                 UuidGenerator g = Guid.NewGuid();
                 uuid = g.ToString().Replace("-", "");
                 dao.SetUuid(uuid);
@@ -88,14 +75,16 @@ namespace IAGrim {
             Logger.InfoFormat("Your user id is {0}, use this for any bug reports", GlobalSettings.Uuid);
         }
 
+        public static MainWindow MainWindow => _mw;
 
         [STAThread]
-        private static void Main(string[] args) {
+        private static void Main(string[] args)
+        {
             if (Thread.CurrentThread.Name == null)
                 Thread.CurrentThread.Name = "Main";
 
             Logger.Info("Starting IA:GD..");
-            ExceptionReporter.UrlCrashreport = "http://ribbs.dreamcrash.org/iagd/crashreport.php"; 
+            ExceptionReporter.UrlCrashreport = "http://ribbs.dreamcrash.org/iagd/crashreport.php";
             ExceptionReporter.UrlStats = "http://ribbs.dreamcrash.org/iagd/stats.php";
 #if !DEBUG
             ExceptionReporter.LogExceptions = true;
@@ -120,13 +109,16 @@ namespace IAGrim {
             Logger.InfoFormat("Running version {0}.{1}.{2}.{3} from {4}", version.Major, version.Minor, version.Build, version.Revision, buildDate.ToString("dd/MM/yyyy"));
 
 
-            if (!DependencyChecker.CheckNet452Installed()) {
+            if (!DependencyChecker.CheckNet452Installed())
+            {
                 MessageBox.Show("It appears .Net Framework 4.5.2 is not installed.\nIA May not function correctly", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-            if (!DependencyChecker.CheckVS2013Installed()) {
+            if (!DependencyChecker.CheckVS2013Installed())
+            {
                 MessageBox.Show("It appears VS 2013 (x86) redistributable is not installed.\nPlease install it to continue using IA", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-            if (!DependencyChecker.CheckVS2010Installed()) {
+            if (!DependencyChecker.CheckVS2010Installed())
+            {
                 MessageBox.Show("It appears VS 2010 (x86) redistributable is not installed.\nPlease install it to continue using IA", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
@@ -147,23 +139,30 @@ namespace IAGrim {
             ItemHtmlWriter.CopyMissingFiles();
 
             Guid guid = new Guid("{F3693953-C090-4F93-86A2-B98AB96A9368}");
-            using (SingleInstance singleInstance = new SingleInstance(guid)) {
-                if (singleInstance.IsFirstInstance) {
+            using (SingleInstance singleInstance = new SingleInstance(guid))
+            {
+                if (singleInstance.IsFirstInstance)
+                {
                     Logger.Info("Calling run..");
                     singleInstance.ArgumentsReceived += singleInstance_ArgumentsReceived;
                     singleInstance.ListenForArgumentsFromSuccessiveInstances();
-                    using (ThreadExecuter threadExecuter = new ThreadExecuter()) {
+                    using (ThreadExecuter threadExecuter = new ThreadExecuter())
+                    {
                         Application.EnableVisualStyles();
                         Application.SetCompatibleTextRenderingDefault(false);
                         Logger.Info("Visual styles enabled..");
                         Run(args, threadExecuter);
                     }
-                } else {
-                    if (args != null && args.Length > 0) {
+                }
+                else
+                {
+                    if (args != null && args.Length > 0)
+                    {
                         singleInstance.PassArgumentsToFirstInstance(args);
                     }
-                    else {
-                        singleInstance.PassArgumentsToFirstInstance(new string[] {"--ignore"});
+                    else
+                    {
+                        singleInstance.PassArgumentsToFirstInstance(new string[] { "--ignore" });
                     }
                 }
             }
@@ -176,16 +175,21 @@ namespace IAGrim {
         /// Upgrade any settings if required
         /// This happens for just about every compile
         /// </summary>
-        private static bool UpgradeSettings() {
-            try {
-                if (Properties.Settings.Default.CallUpgrade) {
+        private static bool UpgradeSettings()
+        {
+            try
+            {
+                if (Properties.Settings.Default.CallUpgrade)
+                {
                     Properties.Settings.Default.Upgrade();
                     Properties.Settings.Default.CallUpgrade = false;
                     Logger.Info("Settings upgraded..");
 
                     return true;
                 }
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 Logger.Warn(ex.Message);
                 Logger.Warn(ex.StackTrace);
                 ExceptionReporter.ReportException(ex);
@@ -197,33 +201,44 @@ namespace IAGrim {
         /// <summary>
         /// Attempting to run a second copy of the program
         /// </summary>
-        private static void singleInstance_ArgumentsReceived(object _, ArgumentsReceivedEventArgs e) {
-            try {
-                if (_mw != null) {
+        private static void singleInstance_ArgumentsReceived(object _, ArgumentsReceivedEventArgs e)
+        {
+            try
+            {
+                if (_mw != null)
+                {
                     _mw.Invoke((MethodInvoker)delegate { _mw.notifyIcon1_MouseDoubleClick(null, null); });
-                    _mw.Invoke((MethodInvoker) delegate { _mw.Activate(); });
+                    _mw.Invoke((MethodInvoker)delegate { _mw.Activate(); });
                 }
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 ExceptionReporter.ReportException(ex, "singleInstance_ArgumentsReceived");
             }
         }
 
         // TODO: This creates another session instance, should be executed inside the ThreadExecuter
-        private static void PrintStartupInfo(SessionFactory factory) {
-            if (Properties.Settings.Default.StashToLootFrom == 0) {
+        private static void PrintStartupInfo(SessionFactory factory)
+        {
+            if (Properties.Settings.Default.StashToLootFrom == 0)
+            {
                 Logger.Info("IA is configured to loot from the last stash page");
             }
-            else {
+            else
+            {
                 Logger.Info($"IA is configured to loot from stash page #{Properties.Settings.Default.StashToLootFrom}");
             }
-            if (Properties.Settings.Default.StashToDepositTo == 0) {
+            if (Properties.Settings.Default.StashToDepositTo == 0)
+            {
                 Logger.Info("IA is configured to deposit to the second-to-last stash page");
             }
-            else {
+            else
+            {
                 Logger.Info($"IA is configured to deposit to stash page #{Properties.Settings.Default.StashToDepositTo}");
             }
 
-            using (var session = factory.OpenSession()) {
+            using (var session = factory.OpenSession())
+            {
                 var numItemsStored = session.CreateCriteria<PlayerItem>()
                     .SetProjection(NHibernate.Criterion.Projections.RowCountInt64())
                     .UniqueResult<long>();
@@ -243,36 +258,43 @@ namespace IAGrim {
 
             Logger.Info("Transfer to any mod is " + (Properties.Settings.Default.TransferAnyMod ? "enabled" : "disabled"));
             Logger.Info("Experimental updates is " + (Properties.Settings.Default.SubscribeExperimentalUpdates ? "enabled" : "disabled"));
-          
+
 
             var mods = GlobalPaths.TransferFiles;
-            if (mods.Count == 0) {
+            if (mods.Count == 0)
+            {
                 Logger.Warn("No transfer files has been found");
             }
-            else {
+            else
+            {
                 Logger.Info("The following transfer files has been found:");
-                foreach (var mod in mods) {
+                foreach (var mod in mods)
+                {
                     Logger.Info($"\"{mod.Filename}\": Mod: \"{mod.Mod}\", HC: {mod.IsHardcore}");
                 }
             }
 
             Logger.Info("There are items stored for the following mods:");
-            foreach (var entry in new PlayerItemDaoImpl(factory, new DatabaseItemStatDaoImpl(factory)).GetModSelection()) {
+            foreach (var entry in new PlayerItemDaoImpl(factory, new DatabaseItemStatDaoImpl(factory)).GetModSelection())
+            {
                 Logger.Info($"Mod: \"{entry.Mod}\", HC: {entry.IsHardcore}");
             }
 
             var gdPath = new DatabaseSettingDaoImpl(factory).GetCurrentDatabasePath();
-            if (string.IsNullOrEmpty(gdPath)) {
+            if (string.IsNullOrEmpty(gdPath))
+            {
                 Logger.Info("The path to Grim Dawn is unknown (not great)");
             }
-            else {
+            else
+            {
                 Logger.Info($"The path to Grim Dawn is \"{gdPath}\"");
             }
 
             Logger.Info("Startup data dump complete");
         }
 
-        private static void Run(string[] args, ThreadExecuter threadExecuter) {
+        private static void Run(string[] args, ThreadExecuter threadExecuter)
+        {
             var factory = new SessionFactory();
 
             // Settings should be upgraded early, it contains the language pack etc and some services depends on settings.
@@ -287,7 +309,7 @@ namespace IAGrim {
             Properties.Settings.Default.InstaTransfer = false;
             Properties.Settings.Default.Save();
             threadExecuter.Execute(() => new MigrationHandler(factory).Migrate());
-            
+
             IDatabaseSettingDao databaseSettingDao = new DatabaseSettingRepo(threadExecuter, factory);
             LoadUuid(databaseSettingDao);
             var azurePartitionDao = new AzurePartitionRepo(threadExecuter, factory);
@@ -309,10 +331,10 @@ namespace IAGrim {
             IBuddyItemDao buddyItemDao = new BuddyItemRepo(threadExecuter, factory);
             IBuddySubscriptionDao buddySubscriptionDao = new BuddySubscriptionRepo(threadExecuter, factory);
             IRecipeItemDao recipeItemDao = new RecipeItemRepo(threadExecuter, factory);
-            IItemSkillDao itemSkillDao  = new ItemSkillRepo(threadExecuter, factory);
+            IItemSkillDao itemSkillDao = new ItemSkillRepo(threadExecuter, factory);
             ArzParser arzParser = new ArzParser(databaseSettingDao);
             AugmentationItemRepo augmentationItemRepo = new AugmentationItemRepo(threadExecuter, factory, new DatabaseItemStatDaoImpl(factory));
-            
+
             Logger.Debug("Updating augment state..");
             augmentationItemRepo.UpdateState();
 
@@ -323,13 +345,16 @@ namespace IAGrim {
 
 
 
-            if (GlobalSettings.Language is EnglishLanguage language) {
-                foreach (var tag in itemTagDao.GetClassItemTags()) {
+            if (GlobalSettings.Language is EnglishLanguage language)
+            {
+                foreach (var tag in itemTagDao.GetClassItemTags())
+                {
                     language.SetTagIfMissing(tag.Tag, tag.Name);
                 }
             }
 
-            if (args != null && args.Any(m => m.Contains("-logout"))) {
+            if (args != null && args.Any(m => m.Contains("-logout")))
+            {
                 Logger.Info("Started with -logout specified, logging out of online backups.");
                 Settings.Default.AzureAuthToken = null;
                 Settings.Default.Save();
@@ -339,15 +364,16 @@ namespace IAGrim {
             bool showDevtools = args != null && args.Any(m => m.Contains("-devtools"));
 
             // TODO: Urgent, introduce DI and have MainWindow receive premade objects, not create them itself.
-            using (CefBrowserHandler browser = new CefBrowserHandler()) {
-                _mw = new MainWindow(browser, 
-                    databaseItemDao, 
-                    databaseItemStatDao, 
+            using (CefBrowserHandler browser = new CefBrowserHandler())
+            {
+                _mw = new MainWindow(browser,
+                    databaseItemDao,
+                    databaseItemStatDao,
                     playerItemDao,
                     azurePartitionDao,
-                    databaseSettingDao, 
-                    buddyItemDao, 
-                    buddySubscriptionDao, 
+                    databaseSettingDao,
+                    buddyItemDao,
+                    buddySubscriptionDao,
                     arzParser,
                     recipeItemDao,
                     itemSkillDao,
@@ -358,23 +384,28 @@ namespace IAGrim {
                 );
 
                 Logger.Info("Checking for database updates..");
-            
+
 
                 // Load the GD database (or mod, if any)
                 string GDPath = databaseSettingDao.GetCurrentDatabasePath();
-                if (string.IsNullOrEmpty(GDPath) || !Directory.Exists(GDPath)) {
+                if (string.IsNullOrEmpty(GDPath) || !Directory.Exists(GDPath))
+                {
                     GDPath = GrimDawnDetector.GetGrimLocation();
                 }
 
-                if (!string.IsNullOrEmpty(GDPath) && Directory.Exists(GDPath)) {
+                if (!string.IsNullOrEmpty(GDPath) && Directory.Exists(GDPath))
+                {
 
                     var numFiles = Directory.GetFiles(GlobalPaths.StorageFolder).Length;
-                    if (numFiles < 2000) {
+                    if (numFiles < 2000)
+                    {
                         Logger.Debug($"Only found {numFiles} in storage, expected ~3200+, parsing item icons.");
                         ThreadPool.QueueUserWorkItem((m) => ArzParser.LoadIconsOnly(GDPath));
                     }
 
-                } else {
+                }
+                else
+                {
                     Logger.Warn("Could not find the Grim Dawn install location");
                 }
 
@@ -393,4 +424,4 @@ namespace IAGrim {
             Logger.Info("Application ended.");
         }
     }
-} 
+}
