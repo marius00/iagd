@@ -360,9 +360,6 @@ namespace IAGrim
                 Settings.Default.Save();
             }
 
-
-            bool showDevtools = args != null && args.Any(m => m.Contains("-devtools"));
-
             // TODO: Urgent, introduce DI and have MainWindow receive premade objects, not create them itself.
             using (CefBrowserHandler browser = new CefBrowserHandler())
             {
@@ -379,7 +376,6 @@ namespace IAGrim
                     itemSkillDao,
                     itemTagDao,
                     parsingService,
-                    showDevtools,
                     augmentationItemRepo
                 );
 

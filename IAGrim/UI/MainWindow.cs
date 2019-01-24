@@ -96,7 +96,6 @@ namespace IAGrim.UI
         private readonly IItemSkillDao _itemSkillDao;
         private readonly ParsingService _parsingService;
         private readonly AugmentationItemRepo _augmentationItemRepo;
-        private readonly bool _requestedDevtools;
         private AzureAuthService _authAuthService;
         private BackupServiceWorker _backupServiceWorker;
 
@@ -167,7 +166,6 @@ namespace IAGrim.UI
             IItemSkillDao itemSkillDao,
             IItemTagDao itemTagDao, 
             ParsingService parsingService, 
-            bool requestedDevtools,
             AugmentationItemRepo augmentationItemRepo
         ) {
             _cefBrowserHandler = browser;
@@ -190,7 +188,6 @@ namespace IAGrim.UI
             _itemSkillDao = itemSkillDao;
             _itemTagDao = itemTagDao;
             _parsingService = parsingService;
-            this._requestedDevtools = requestedDevtools;
             _augmentationItemRepo = augmentationItemRepo;
         }
 
@@ -431,13 +428,8 @@ namespace IAGrim.UI
             if (Thread.CurrentThread.Name == null)
                 Thread.CurrentThread.Name = "UI";
 
-            //Controls.SetChildIndex(buttonDevTools, 0);
-            buttonDevTools.BringToFront();
-
             ExceptionReporter.EnableLogUnhandledOnThread();
             SizeChanged += OnMinimizeWindow;
-
-            buttonDevTools.Visible = Debugger.IsAttached || _requestedDevtools;
 
             _stashManager = new StashManager(_playerItemDao, _databaseItemStatDao, SetFeedback, ListviewUpdateTrigger);
             _stashFileMonitor.OnStashModified += (_, __) => {
@@ -840,10 +832,6 @@ namespace IAGrim.UI
         }
 
 #endregion BuddySync
-
-        private void button1_Click(object sender, EventArgs e) {
-            _cefBrowserHandler.ShowDevTools();
-        }
 
         private void SetItemsClipboard(object ignored, EventArgs _args) {
             if (InvokeRequired) {

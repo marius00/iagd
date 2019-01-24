@@ -32,7 +32,6 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPageItems = new System.Windows.Forms.TabPage();
             this.searchPanel = new System.Windows.Forms.Panel();
-            this.buttonDevTools = new System.Windows.Forms.Button();
             this.tabPageSettings = new System.Windows.Forms.TabPage();
             this.settingsPanel = new System.Windows.Forms.Panel();
             this.tabPageMods = new System.Windows.Forms.TabPage();
@@ -51,7 +50,6 @@
             this.statusStrip.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPageItems.SuspendLayout();
-            this.searchPanel.SuspendLayout();
             this.tabPageSettings.SuspendLayout();
             this.tabPageMods.SuspendLayout();
             this.tabPageBackups.SuspendLayout();
@@ -85,8 +83,8 @@
             this.tsStashStatus.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.tsStashStatus.Name = "tsStashStatus";
             this.tsStashStatus.Size = new System.Drawing.Size(92, 17);
-            this.tsStashStatus.Text = "Stash: Unknown";
             this.tsStashStatus.Tag = "iatag_stash_unknown";
+            this.tsStashStatus.Text = "Stash: Unknown";
             this.tsStashStatus.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // tabControl1
@@ -125,24 +123,10 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.searchPanel.BackColor = System.Drawing.Color.Transparent;
-            this.searchPanel.Controls.Add(this.buttonDevTools);
             this.searchPanel.Location = new System.Drawing.Point(-4, 0);
             this.searchPanel.Name = "searchPanel";
             this.searchPanel.Size = new System.Drawing.Size(1106, 560);
             this.searchPanel.TabIndex = 1;
-            // 
-            // buttonDevTools
-            // 
-            this.buttonDevTools.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonDevTools.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonDevTools.Location = new System.Drawing.Point(1031, -5);
-            this.buttonDevTools.Name = "buttonDevTools";
-            this.buttonDevTools.Size = new System.Drawing.Size(75, 18);
-            this.buttonDevTools.TabIndex = 0;
-            this.buttonDevTools.Tag = "iatag_ui_devtools";
-            this.buttonDevTools.Text = "DevTools";
-            this.buttonDevTools.UseVisualStyleBackColor = true;
-            this.buttonDevTools.Click += new System.EventHandler(this.button1_Click);
             // 
             // tabPageSettings
             // 
@@ -317,7 +301,6 @@
             this.statusStrip.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.tabPageItems.ResumeLayout(false);
-            this.searchPanel.ResumeLayout(false);
             this.tabPageSettings.ResumeLayout(false);
             this.tabPageMods.ResumeLayout(false);
             this.tabPageBackups.ResumeLayout(false);
@@ -331,8 +314,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.Button buttonDevTools;
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
         private System.Windows.Forms.ToolStripStatusLabel tsStashStatus;
