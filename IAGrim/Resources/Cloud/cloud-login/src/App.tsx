@@ -1,7 +1,5 @@
 import * as React from 'react';
 import FaEnvelope from 'react-icons/lib/fa/envelope';
-import FaGoogle from 'react-icons/lib/fa/google';
-import FaWindows from 'react-icons/lib/fa/windows';
 
 import './App.css';
 import EmailLoginModal from './modal/EmailLoginModal';
@@ -28,18 +26,6 @@ class App extends React.Component {
         <i>Keeping your items safe.</i>
 
         <div className="login-container">
-          <a
-            className="btn btn-block btn-social btn-microsoft"
-            href="https://iagd.azurewebsites.net/.auth/login/microsoftaccount?post_login_redirect_url=https://iagd.azurewebsites.net/api/Authenticate?code=sESR0M8If9qylF6EAMTQF3zt1pBK44snGsy0sir0L5iX1e6B33Kxmg=="
-          >
-            <FaWindows className="fa"/> Sign in with Microsoft
-          </a>
-          <a
-            className="btn btn-block btn-social btn-google"
-            href="https://iagd.azurewebsites.net/.auth/login/google?post_login_redirect_url=https://iagd.azurewebsites.net/api/Authenticate?code=sESR0M8If9qylF6EAMTQF3zt1pBK44snGsy0sir0L5iX1e6B33Kxmg=="
-          >
-            <FaGoogle className="fa"/> Sign in with Google
-          </a>
           <a className="btn btn-block btn-social btn-email" href="#" onClick={() => this.setState({modalVisible: true})} >
             <FaEnvelope className="fa"/> Sign in with E-Mail
           </a>
