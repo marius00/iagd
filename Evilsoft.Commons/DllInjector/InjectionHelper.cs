@@ -12,12 +12,12 @@ using System.Threading;
 namespace EvilsoftCommons.DllInjector {
     public class InjectionHelper : IDisposable {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(InjectionHelper));
-        private BackgroundWorker bw;
-        private HashSet<uint> _previouslyInjected = new HashSet<uint>();
-        private HashSet<uint> _dontLog = new HashSet<uint>();
-        private Dictionary<uint, IntPtr> _pidModuleHandleMap = new Dictionary<uint, IntPtr>();
-        private bool _unloadOnExit;
-        private RunArguments _exitArguments;
+        private BackgroundWorker _bw;
+        private readonly HashSet<uint> _previouslyInjected = new HashSet<uint>();
+        private readonly HashSet<uint> _dontLog = new HashSet<uint>();
+        private readonly Dictionary<uint, IntPtr> _pidModuleHandleMap = new Dictionary<uint, IntPtr>();
+        private readonly bool _unloadOnExit;
+        private readonly RunArguments _exitArguments;
 
         public const int INJECTION_ERROR = 0;
         public const int NO_PROCESS_FOUND_ON_STARTUP = 1;
@@ -69,9 +69,9 @@ namespace EvilsoftCommons.DllInjector {
         }
 
         public void Cancel() {
-            if (bw != null) {
-                bw.CancelAsync();
-                bw = null;
+            if (_bw != null) {
+                _bw.CancelAsync();
+                _bw = null;
             }
         }
 
@@ -96,10 +96,10 @@ namespace EvilsoftCommons.DllInjector {
         }
 
         public void Dispose() {
-            if (bw != null) {
-                bw.ProgressChanged -= _registeredProgressCallback;
-                bw.CancelAsync();
-                bw = null;
+            if (_bw != null) {
+                _bw.ProgressChanged -= _registeredProgressCallback;
+                _bw.CancelAsync();
+                _bw = null;
             }
 
             if (_unloadOnExit) {

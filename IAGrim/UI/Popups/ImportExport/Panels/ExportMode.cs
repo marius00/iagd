@@ -11,6 +11,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using IAGrim.Parsers.Arz;
+using IAGrim.Utilities;
 
 namespace IAGrim.UI.Popups.ImportExport.Panels {
     public partial class ExportMode : Form {
@@ -56,6 +58,7 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
             cbItemSelection.SelectedIndex = 0;
             buttonExport.Enabled = false;
             cbItemSelection.Visible = false;
+            LocalizationLoader.ApplyLanguage(Controls, GlobalSettings.Language);
         }
 
         private void buttonExport_Click(object sender, EventArgs e) {

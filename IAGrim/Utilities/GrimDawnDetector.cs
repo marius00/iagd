@@ -256,12 +256,20 @@ namespace IAGrim {
 
             return string.Empty;
         }
+
+        private static string CleanInvertedSlashes(string input) {
+            if (string.IsNullOrEmpty(input))
+                return input;
+            else
+                return input.Replace("/", @"\");
+        }
+
         public static ISet<string> GetGrimLocations() {
             var locations = new HashSet<string>();
 
             string location = Properties.Settings.Default.GrimDawnLocation as string;
             if (!string.IsNullOrEmpty(location) && Directory.Exists(location) && !location.Contains(".arz")) {
-                locations.Add(location);
+                locations.Add(CleanInvertedSlashes(location));
             }
 
 
@@ -270,7 +278,7 @@ namespace IAGrim {
                 var steamInstallPaths = ExtractSteamLibraryPaths(Path.Combine(steamPath, "config", "config.vdf"));
                 steamInstallPaths.Add(steamPath); // May not be included in the VDF
                 GetGrimFolderFromSteamLibrary(steamInstallPaths)
-                    .ForEach(loc => locations.Add(loc));
+                    .ForEach(loc => locations.Add(CleanInvertedSlashes(loc)));
             }
             catch (Exception ex) {
                 Logger.Warn(ex.Message);
@@ -279,12 +287,12 @@ namespace IAGrim {
 
             location = FindGogByRegistry();
             if (!string.IsNullOrEmpty(location)) {
-                locations.Add(location);
+                locations.Add(CleanInvertedSlashes(location));
             }
 
             location = FindByWindow();
             if (!string.IsNullOrEmpty(location)) {
-                locations.Add(location);
+                locations.Add(CleanInvertedSlashes(location));
             }
 
             return locations;

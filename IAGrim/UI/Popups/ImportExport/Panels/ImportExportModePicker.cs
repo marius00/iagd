@@ -3,6 +3,7 @@ using IAGrim.Parsers.Arz;
 using IAGrim.Utilities.HelperClasses;
 using System;
 using System.Windows.Forms;
+using IAGrim.Utilities;
 
 namespace IAGrim.UI.Popups.ImportExport.Panels {
 
@@ -38,6 +39,7 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
 
         private void ImportExportModePicker_Load(object sender, EventArgs e) {
             this.Dock = DockStyle.Fill;
+            LocalizationLoader.ApplyLanguage(Controls, GlobalSettings.Language);
         }
     }
 }

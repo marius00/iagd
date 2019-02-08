@@ -531,3 +531,5 @@ iatag_ui_devtools=Devtools
 
 # 24/11/2018
 iatag_ui_recentonly=Recent Only
+iatag_ui_help=Help
+iatag_ui_source_code=Source Code

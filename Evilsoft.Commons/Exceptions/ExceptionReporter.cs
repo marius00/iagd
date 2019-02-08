@@ -79,8 +79,6 @@ namespace EvilsoftCommons.Exceptions {
 
         private static void MyHandler(object sender, UnhandledExceptionEventArgs args) {
             Exception e = (Exception)args.ExceptionObject;
-            //logger.FatalFormat("{0}: {1}", Thread.CurrentThread.Name, e.Message);
-            //logger.FatalFormat("{0}: {1}", Thread.CurrentThread.Name, e.StackTrace);
             Logger.Fatal(e.Message);
             Logger.Fatal(e.StackTrace);
             ReportException(e);

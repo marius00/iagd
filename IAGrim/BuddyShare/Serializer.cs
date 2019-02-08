@@ -67,8 +67,6 @@ namespace IAGrim.BuddyShare {
             if (buddyItems.Count != preFilteredBuddyItems.Count) {
                 Logger.Warn($"{preFilteredBuddyItems.Count - buddyItems.Count} items were filtered out due to a version missmatch");
             }
-
-            
             
             Logger.Debug($"Storing {buddyItems.Count} items for {data.UserId}");
             _buddyItemDao.SetItems(data.UserId, data.Description, buddyItems);

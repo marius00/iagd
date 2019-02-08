@@ -13,6 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using IAGrim.Utilities;
 
 namespace IAGrim.UI.Popups.ImportExport.Panels {
     partial class ImportMode : Form {
@@ -35,6 +36,7 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
             cbItemSelection.Enabled = false;
 
             cbItemSelection.Items.AddRange(_modSelection);
+            LocalizationLoader.ApplyLanguage(Controls, GlobalSettings.Language);
         }
 
         private void radioIAStash_CheckedChanged(object sender, EventArgs e) {

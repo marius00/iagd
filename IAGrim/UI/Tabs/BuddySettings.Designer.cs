@@ -205,13 +205,13 @@
             // 
             this.columnHeader1.Tag = "iatag_ui_buddy_header_buddy";
             this.columnHeader1.Text = "Buddy";
-            this.columnHeader1.Width = 361;
+            this.columnHeader1.Width = 308;
             // 
             // columnHeader2
             // 
             this.columnHeader2.Tag = "iatag_ui_buddy_header_items";
             this.columnHeader2.Text = "Items";
-            this.columnHeader2.Width = 123;
+            this.columnHeader2.Width = 161;
             // 
             // tbDescription
             // 
