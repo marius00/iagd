@@ -23,7 +23,6 @@ class App extends React.PureComponent<Props, object> {
 
   constructor(props: Props) {
     super(props);
-    this.props = props;
     this.props.store.dispatch(requestInitialItems());
     this.props.store.dispatch(getRecipes());
   }
@@ -65,6 +64,7 @@ class App extends React.PureComponent<Props, object> {
                 <CraftingContainer/>
               </TabPanel>
 
+              <TabPanel/>
               <TabPanel/>
               <TabPanel/>
             </Tabs>

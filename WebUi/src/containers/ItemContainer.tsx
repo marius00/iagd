@@ -20,7 +20,6 @@ class ItemContainer extends React.PureComponent<Props, object> {
 
   constructor(props: Props) {
     super(props);
-    this.props = props;
   }
 
   transferSingle(url: object[]) {

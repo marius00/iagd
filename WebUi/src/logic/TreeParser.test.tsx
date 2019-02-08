@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { flatMap, GetTotalSum } from './TreeParser';
 
 
@@ -6,13 +7,13 @@ it('Flatmap works', () => {
     label: '',
     value: '123',
     icon: {} as JSX.Element,
-    checked: true,
+    showCheckbox: true,
     children: [
       {
         label: '',
         value: '456',
         icon: {} as JSX.Element,
-        checked: true,
+        showCheckbox: true,
         children: []
       }
     ]
@@ -27,18 +28,18 @@ it('Flatmap works', () => {
 
 it('GetTotalSum can filter out parent nodes when all children are checked', () => {
   const data = {
-    label: '',
+    label: <span/>,
     value: '-implicitly-checked-',
     icon: {} as JSX.Element,
-    checked: true,
+    showCheckbox: true,
     pureLabel: '',
     missing: 0,
     children: [
       {
-        label: '',
+        label: <span/>,
         value: '-explicitly-checked-',
         icon: {} as JSX.Element,
-        checked: true,
+        showCheckbox: true,
         pureLabel: '',
         missing: 0,
         children: []
@@ -51,27 +52,27 @@ it('GetTotalSum can filter out parent nodes when all children are checked', () =
 
 it('GetTotalSum will return both parent and child if neither are checked', () => {
   const data = {
-    label: 'a',
+    label: <span>a</span>,
     value: '-not-checked-a-',
     icon: {} as JSX.Element,
-    checked: true,
+    showCheckbox: true,
     pureLabel: 'a',
     missing: 1,
     children: [
       {
-        label: 'b',
+        label: <span>b</span>,
         value: '-checked-b-',
         icon: {} as JSX.Element,
-        checked: true,
+        showCheckbox: true,
         pureLabel: 'b',
         missing: 1,
         children: []
       },
       {
-        label: 'c',
+        label: <span>c</span>,
         value: '-not-checked-c-',
         icon: {} as JSX.Element,
-        checked: true,
+        showCheckbox: true,
         pureLabel: 'c',
         missing: 1,
         children: []
@@ -87,18 +88,18 @@ it('GetTotalSum will return both parent and child if neither are checked', () =>
 
 it('GetTotalSum will return only the child if neither are checked', () => {
   const data = {
-    label: 'a',
+    label: <span>a</span>,
     value: '-not-checked-',
     icon: {} as JSX.Element,
-    checked: true,
+    showCheckbox: true,
     pureLabel: 'a',
     missing: 1,
     children: [
       {
-        label: 'b',
+        label: <span>b</span>,
         value: '-not-checked-2-',
         icon: {} as JSX.Element,
-        checked: true,
+        showCheckbox: true,
         pureLabel: 'b',
         missing: 1,
         children: []

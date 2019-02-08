@@ -13,7 +13,6 @@
     "@types/react-select": "^1.2.6",
     "@types/react-tabs": "^1.0.4",
     "@types/react-tooltip": "^3.3.4",
-    "eslint": "^4.19.1",
     "guid": "0.0.12",
     "jest-cli": "^22.4.3",
     "lodash": "^4.17.10",
@@ -24,7 +23,7 @@
     "react-notification-system": "^0.2.17",
     "react-notification-system-redux": "^1.2.0",
     "react-redux": "^5.0.7",
-    "react-scripts-ts": "2.15.1",
+    "react-scripts-ts": "^4.0.8",
     "react-select": "^1.2.1",
     "react-tabs": "^2.2.2",
     "react-textfit": "^1.1.0",
@@ -46,9 +45,14 @@
     "@types/react-dom": "^16.0.5",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
-    "jest": "^22.4.3",
     "react-addons-test-utils": "^15.6.2",
     "redux-mock-store": "^1.5.1",
     "typescript": "^2.8.3"
-  }
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }

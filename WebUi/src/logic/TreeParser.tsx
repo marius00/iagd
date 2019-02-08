@@ -15,11 +15,11 @@ interface TreeDataNode {
 }
 
 export interface JsTreeNode {
-  label: string;
+  label: JSX.Element;
   value: string;
   children: JsTreeNode[];
   icon: JSX.Element;
-  checked: boolean;
+  showCheckbox?: boolean;
   pureLabel: string; // This is just code smell at this point. Need to make a separate tree for the 'missing items' list. -- perhaps generated IDs via a function?
   missing: number; // TODO: This really doesn't belong here.
 }
@@ -37,17 +37,17 @@ interface RequiredItemList {
 }
 
 function gatherChecked(list: string[], node: JsTreeNode, parentChecked: boolean) {
-  if (node.checked || parentChecked) {
+  if (node.showCheckbox || parentChecked) {
     list.push(node.value);
   }
 
   for (let i = 0; i < node.children.length; i++) {
-    gatherChecked(list, node.children[i], node.checked || parentChecked);
+    gatherChecked(list, node.children[i], node.showCheckbox || parentChecked);
   }
 }
 
 function gatherExpanded(list: string[], node: JsTreeNode) {
-  const isExpanded = !node.checked;
+  const isExpanded = !node.showCheckbox;
 
   if (isExpanded) {
     list.push(node.value);
@@ -59,11 +59,12 @@ function gatherExpanded(list: string[], node: JsTreeNode) {
 }
 
 function parseNode(node: TreeDataNode): JsTreeNode {
+  let label = `${node.numOwned}/${node.numRequired} ${node.name}`;
   return {
-    label: `${node.numOwned}/${node.numRequired} ${node.name}`,
+    label: <span>{label}</span>,
     icon: <img src={node.bitmap} />,
     children: node.cost.map(parseNode),
-    checked: node.numOwned >= node.numRequired,
+    showCheckbox: node.numOwned >= node.numRequired,
     missing: Math.max(0, node.numRequired - node.numOwned),
     pureLabel: node.name,
     value: Guid.raw() // TODO: Make this a representation of where it is in the tree instead?

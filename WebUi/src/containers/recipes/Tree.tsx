@@ -15,6 +15,7 @@ interface InternalState {
   expanded: string[];
   nodes: JsTreeNode[];
 }
+
 export class Tree extends React.PureComponent<Props, {}> {
   state: InternalState;
 
