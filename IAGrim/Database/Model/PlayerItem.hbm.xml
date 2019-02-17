@@ -24,7 +24,9 @@
     <property name="EnchantmentSeed" />
     <property name="MateriaCombines" />
     <property name="StackCount" />
-    <property name="Name" index="idx_playeritem_name" />
+    <property name="Name" />
+    <property name="NameLowercase" column="namelowercase" index="idx_playeritem_lowercasename" />
+    
     <property name="Rarity" index="idx_playeritem_rarity" />
     <property name="LevelRequirement" index="idx_playeritem_levelreq" />
     <property name="Mod" />

@@ -356,31 +356,6 @@ namespace IAGrim.Database {
 
         }
 
-        /*
-        private void Save_Or_Update(ISession session, PlayerItem item, Dictionary<String, List<DBSTatRow>> stats, bool isUpdate){
-            long? existingId = isUpdate ? null : GetIfExists(session, item);
-            if (existingId.HasValue) {
-                if (IncrementExistingStacksize(session, existingId.Value, item.StackCount) == 0) {
-                    logger.Warn("Could not update stacksize, item loss detected");
-                    throw new Exception("Could not update item stack, aborting to prevent item loss");
-                }
-            }
-            else {
-                var records = GetRecordsForItem(item);
-                item.Rarity = GetRarityForRecords(stats, records);
-                item.MinimumLevel = GetMinimumLevelForRecords(stats, records);
-                //if (string.IsNullOrEmpty(item.Name))
-                    UpdateItemName(session, stats, item);
-
-                item.Mod = item.Mod?.ToLower();
-
-                if (!isUpdate)
-                    session.Save(item);
-                else
-                    session.Update(item);
-            }
-        }
-        */
         private void UpdateItemDetails(ISession session, PlayerItem item, Dictionary<String, List<DBSTatRow>> stats) {
             var table = nameof(PlayerItem);
             var rarity = nameof(PlayerItem.Rarity);
@@ -388,13 +363,17 @@ namespace IAGrim.Database {
             var name = nameof(PlayerItem.Name);
             var id = nameof(PlayerItem.Id);
             var prefixRarity = PlayerItemTable.PrefixRarity;
+            var nameLowercase = nameof(PlayerItem.NameLowercase);
 
+
+            var itemName = ItemOperationsUtility.GetItemName(session, stats, item);
             var records = GetRecordsForItem(item);
             session.CreateQuery($@"UPDATE {table} 
-                    SET {name} = :name, {rarity} = :rarity, {levelReq} = :levelreq, {prefixRarity} = :prefixrarity 
+                    SET {name} = :name, {nameLowercase} = :namelowercase, {rarity} = :rarity, {levelReq} = :levelreq, {prefixRarity} = :prefixrarity 
                     WHERE {id} = :id"
                 )
-                .SetParameter("name", ItemOperationsUtility.GetItemName(session, stats, item))
+                .SetParameter("name", itemName)
+                .SetParameter("namelowercase", itemName.ToLowerInvariant())
                 .SetParameter("prefixrarity", GetGreenQualityLevelForRecords(stats, records))
                 .SetParameter("rarity", ItemOperationsUtility.GetRarityForRecords(stats, records))
                 .SetParameter("levelreq", ItemOperationsUtility.GetMinimumLevelForRecords(stats, records))
@@ -694,7 +673,7 @@ namespace IAGrim.Database {
             Dictionary<string, object> queryParams = new Dictionary<string, object>();
             
             if (!string.IsNullOrEmpty(query.Wildcard)) {
-                queryFragments.Add("LOWER(PI.Name) LIKE :name");
+                queryFragments.Add("LOWER(PI.namelowercase) LIKE :name");
                 queryParams.Add("name", string.Format("%{0}%", query.Wildcard.Replace(' ', '%').ToLower()));
             }
 
@@ -785,7 +764,7 @@ namespace IAGrim.Database {
                 }
             }
 
-            sql.Add(" GROUP BY Name, LevelRequirement");
+            sql.Add(" GROUP BY Name, LevelRequirement COLLATE NOCASE");
 
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
