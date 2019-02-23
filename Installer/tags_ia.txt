@@ -533,3 +533,9 @@ iatag_ui_devtools=Devtools
 iatag_ui_recentonly=Recent Only
 iatag_ui_help=Help
 iatag_ui_source_code=Source Code
+
+# 23/02/2019 - This is a placeholder for text to come
+# This will allow translators to notify users that IA is available in their local language.
+# If IA is in English and they have a translation with tags_ia.txt in it, IA will notify the user that a full translation is available.
+# So.. Write whatever makes sense in your language, so not necessarily a literal translation.
+iatag_ui_translation=Item Assistant is available in your language! Go to settings and click "Language" to change to English.
