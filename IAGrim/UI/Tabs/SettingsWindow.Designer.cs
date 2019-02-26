@@ -65,16 +65,16 @@
             // linkLabel1
             // 
             this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.linkLabel1.AutoSize = true;
             this.linkLabel1.ContextMenuStrip = this.contextMenuStrip1;
             this.linkLabel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.linkLabel1.Location = new System.Drawing.Point(789, 469);
+            this.linkLabel1.Location = new System.Drawing.Point(595, 469);
             this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(75, 33);
+            this.linkLabel1.Size = new System.Drawing.Size(269, 33);
             this.linkLabel1.TabIndex = 20;
             this.linkLabel1.TabStop = true;
             this.linkLabel1.Tag = "iatag_ui_help";
             this.linkLabel1.Text = "Help";
+            this.linkLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
             // contextMenuStrip1
@@ -449,8 +449,8 @@
             this.buttonLanguageSelect.Name = "buttonLanguageSelect";
             this.buttonLanguageSelect.Size = new System.Drawing.Size(192, 32);
             this.buttonLanguageSelect.TabIndex = 6;
-            this.buttonLanguageSelect.Text = "Language Select";
             this.buttonLanguageSelect.Tag = "iatag_ui_language_select";
+            this.buttonLanguageSelect.Text = "Language Select";
             this.buttonLanguageSelect.Click += new System.EventHandler(this.buttonLanguageSelect_Click);
             // 
             // buttonViewBackups
@@ -484,11 +484,11 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(876, 511);
-            this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.panelBox4);
             this.Controls.Add(this.panelBox3);
             this.Controls.Add(this.panelBox2);
             this.Controls.Add(this.panelBox1);
+            this.Controls.Add(this.linkLabel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -504,7 +504,6 @@
             this.panelBox2.ResumeLayout(false);
             this.panelBox1.ResumeLayout(false);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
