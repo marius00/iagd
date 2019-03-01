@@ -204,3 +204,7 @@ a { cursor: pointer; }
   font-size: 10px;
   margin-top: 0px;
 }
+.set-name {
+  text-decoration: underline;
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"
+}

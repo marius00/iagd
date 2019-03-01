@@ -458,6 +458,8 @@ namespace IAGrim.UI
                 _stashManager,
                 _augmentationItemRepo
             );
+
+            searchController.JsBind.SetItemSetAssociations(_databaseItemDao.GetItemSetAssociations());
             _cefBrowserHandler.InitializeChromium(searchController.JsBind, Browser_IsBrowserInitializedChanged);
             searchController.Browser = _cefBrowserHandler;
             searchController.JsBind.OnClipboard += SetItemsClipboard;

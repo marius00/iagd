@@ -121,6 +121,7 @@ namespace IAGrim.Database {
                 idx += range;
             }
         }
+
         private void Save(List<DatabaseItem> items, ProgressTracker progressTracker, bool reset) {
             long numStats = 0;
 
@@ -228,6 +229,28 @@ namespace IAGrim.Database {
             public string Name { get; set; }
         }
 
+
+        public IList<ItemSetAssociation> GetItemSetAssociations() {
+            const string sql = @"SELECT BaseRecord, 
+                (
+	                SELECT T.name FROM DatabaseItemStat_v2 ST, ItemTag T WHERE id_databaseitem IN (SELECT id_databaseitem FROM DatabaseItem_v2 db WHERE db.baserecord = S.TextValue)
+	                AND ST.stat = 'setName' AND T.tag = ST.TextValue
+                ) as SetName
+
+                FROM DatabaseItemStat_v2 S, DatabaseItem_v2 I
+                WHERE Stat = 'itemSetName' 
+                AND S.id_databaseitem = I.id_databaseitem
+                AND SetName IS NOT NULL";
+
+
+            using (ISession session = SessionCreator.OpenSession()) {
+                using (session.BeginTransaction()) {
+                    return session.CreateSQLQuery(sql)
+                        .SetResultTransformer(Transformers.AliasToBean<ItemSetAssociation>())
+                        .List<ItemSetAssociation>();
+                }
+            }
+        }
 
         public List<DatabaseItemDto> GetByClass(string itemClass) {
 

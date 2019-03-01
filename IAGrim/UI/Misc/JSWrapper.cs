@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IAGrim.Database.Model;
 using IAGrim.UI.Controller.dto;
 using IAGrim.Utilities;
 
@@ -16,12 +17,21 @@ namespace IAGrim.UI.Misc {
         public event EventHandler OnRequestRecipeList;
         public event EventHandler OnRequestRecipeIngredients;
 
+        public string ItemSetAssociations { get; private set; }
+
+        public void SetItemSetAssociations(IList<ItemSetAssociation> elems) {
+            this.ItemSetAssociations = JsonConvert.SerializeObject(elems, _settings);
+        }
+
+
+
         public void requestRecipeIngredients(string recipeRecord, string callback) {
             OnRequestRecipeIngredients?.Invoke(this, new RequestRecipeArgument {
                 RecipeRecord = recipeRecord,
                 Callback = callback
             });
         }
+
         public void requestRecipeList(string callback) {
             OnRequestRecipeList?.Invoke(this, new RequestRecipeArgument {
                 Callback = callback
@@ -29,7 +39,6 @@ namespace IAGrim.UI.Misc {
         }
 
         public JSWrapper() {
-
             _settings = new JsonSerializerSettings {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                 Culture = System.Globalization.CultureInfo.InvariantCulture,
@@ -125,10 +134,6 @@ namespace IAGrim.UI.Misc {
             OnRequestItems?.Invoke(this, null);
         }
 
-        public string Message {
-            get {
-                return string.Empty;
-            }
-        }
+        public string Message => string.Empty;
     }
 }

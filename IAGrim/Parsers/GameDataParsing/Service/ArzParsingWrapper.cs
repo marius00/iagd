@@ -32,17 +32,21 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
             int numFiles = GrimFolderUtility.CountExisting(itemsfileVanilla, itemsfileExpansion1, itemsfileMod);
             tracker.MaxValue = numFiles;
 
+            // Developers can flip this switch to get a full dump of the GD database. 
+            // Setting it to true will cause the parsing to skip a lot of data that IA does not need.
+            const bool skipIrrelevantStats = false; 
+
             ItemAccumulator accumulator = new ItemAccumulator();
             if (File.Exists(itemsfileVanilla)) {
-                Parser.Arz.ArzParser.LoadItemRecords(itemsfileVanilla, true).ForEach(accumulator.Add);
+                Parser.Arz.ArzParser.LoadItemRecords(itemsfileVanilla, skipIrrelevantStats).ForEach(accumulator.Add);
                 tracker.Increment();
             }
             if (File.Exists(itemsfileExpansion1)) {
-                Parser.Arz.ArzParser.LoadItemRecords(itemsfileExpansion1, true).ForEach(accumulator.Add);
+                Parser.Arz.ArzParser.LoadItemRecords(itemsfileExpansion1, skipIrrelevantStats).ForEach(accumulator.Add);
                 tracker.Increment();
             }
             if (File.Exists(itemsfileMod)) {
-                Parser.Arz.ArzParser.LoadItemRecords(itemsfileMod, true).ForEach(accumulator.Add);
+                Parser.Arz.ArzParser.LoadItemRecords(itemsfileMod, skipIrrelevantStats).ForEach(accumulator.Add);
                 tracker.Increment();
             }
 

@@ -29,7 +29,13 @@ namespace IAGrim.Database.Synchronizer {
                 () => _repo.GetRowCount()
             );
         }
-        
+
+        public IList<ItemSetAssociation> GetItemSetAssociations() {
+            return ThreadExecuter.Execute(
+                () => _repo.GetItemSetAssociations()
+            );
+        }
+
 
         public DatabaseItemDto FindDtoByRecord(string record) {
             return ThreadExecuter.Execute(

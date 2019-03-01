@@ -159,6 +159,7 @@
   <ItemGroup>
     <Compile Include="Backup\Azure\Dto\AzureLimitEntry.cs" />
     <Compile Include="Backup\Azure\Dto\AzureLimitsDto.cs" />
+    <Compile Include="Database\Model\ItemSetAssociation.cs" />
     <Compile Include="Database\Model\UnlootedStashItem.cs" />
     <Compile Include="UI\Controller\dto\ItemTypeDto.cs" />
     <Compile Include="UI\FilterEventArgs.cs" />

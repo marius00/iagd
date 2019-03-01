@@ -7,6 +7,7 @@ import { isEmbedded } from '../constants/index';
 import { Textfit } from 'react-textfit';
 import translate from '../translations/EmbeddedTranslator';
 import IItemType from '../interfaces/IItemType';
+import GetSetName from '../logic/ItemSetLookupService';
 
 const buddyIcon = require('./img/buddy.png');
 const recipeIcon = require('./img/recipe.png');
@@ -143,6 +144,8 @@ class Item extends React.PureComponent<Props, object> {
       <ItemStat label={stat.label} extras={stat.extras} key={'stat-pets-' + item.url.join(':') + stat.label}/>
     );
 
+    const setName = GetSetName(item.baseRecord);
+
     return (
       <div className="item">
         <span>
@@ -175,6 +178,8 @@ class Item extends React.PureComponent<Props, object> {
             </div>
           ) : ''
           }
+
+          {setName !== undefined && <div><br />Set: <span className="set-name">{setName}</span></div>}
 
           {item.skill ? <Skill skill={item.skill} keyPrefix={item.url.join(':')}/> : ''}
 

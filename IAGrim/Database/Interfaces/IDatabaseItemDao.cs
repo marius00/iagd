@@ -16,5 +16,6 @@ namespace IAGrim.Database.Interfaces {
         DatabaseItemDto FindDtoByRecord(string record);
         List<DatabaseItemDto> GetCraftableItems();
         List<DatabaseItemDto> GetByClass(string itemClass);
+        IList<ItemSetAssociation> GetItemSetAssociations();
     }
 }
