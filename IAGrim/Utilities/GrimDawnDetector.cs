@@ -261,7 +261,7 @@ namespace IAGrim {
             if (string.IsNullOrEmpty(input))
                 return input;
             else
-                return input.Replace("/", @"\");
+                return input.Replace("/", @"\").ToLowerInvariant();
         }
 
         public static ISet<string> GetGrimLocations() {

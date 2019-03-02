@@ -18,13 +18,17 @@ namespace StatTranslator
 
         public void SetTagIfMissing(string tag, string value)
         {
-            if (!stats.ContainsKey(tag))
+            if (!_stats.ContainsKey(tag))
             {
-                stats[tag] = value;
+                _stats[tag] = value;
             }
         }
 
-        private readonly Dictionary<string, string> stats = new Dictionary<string, string> {
+        public string Export() {
+            return string.Join("\r\n", _stats.Select((entry, idx) => $"{entry.Key}={entry.Value}"));
+        }
+
+        private readonly Dictionary<string, string> _stats = new Dictionary<string, string> {
             { "tagItemNameOrder", "{%_s0}{%_s1}{%_s2}{%_s3}{%_s4}" },
 
             // Simply Header stats
@@ -544,7 +548,31 @@ namespace StatTranslator
 
             { "tagFactionUser9_ia", "The Outcast" },
             { "tagFactionUser10_ia", "Barrowholm" },
-            { "tagFactionUser11_ia", "Malmouth Resistance" }
+            { "tagFactionUser11_ia", "Malmouth Resistance" },
+            { "iatag_ui_dontwantbackups", "I don't want backups, stop asking me!" },
+
+            { "iatag_ui_tab_secondtolast", "Second to last tab" },
+            { "iatag_ui_tab_1", "Tab 1" },
+            { "iatag_ui_tab_2", "Tab 2" },
+            { "iatag_ui_tab_3", "Tab 3" },
+            { "iatag_ui_tab_4", "Tab 4" },
+            { "iatag_ui_tab_5", "Tab 5" },
+            { "iatag_ui_group_move_items_to", "Move items to" },
+            { "iatag_ui_tab_lasttab", "Last tab" },
+            { "iatag_ui_group_loot_items_from", "Loot items from" },
+            { "iatag_ui_button_close", "Close" },
+            { "iatag_ui_export", "Export" },
+            { "iatag_ui_import", "Import" },
+            { "iatag_ui_export_export", "Export" },
+            { "iatag_ui_export_stashfile", "Stash File" },
+            { "iatag_ui_browse", "Browse.." },
+            { "iatag_ui_import_import", "Import" },
+            { "iatag_ui_import_stashfile", "Stash File" },
+            { "iatag_ui_import_filetype", "File Type" },
+            { "iatag_ui_gamestash", "Game Stash" },
+            { "iatag_ui_gdstash", "GD Stash" },
+            { "iatag_ui_iastash", "IA Stash" },
+            { "iatag_ui_translation", "Item Assistant is available in your language! Go to settings and click \"Language\" to change to English." }
         };
 
         private const string English = "{%_s0}{%_s1}{%_s2}{%_s3}{%_s4}";
@@ -557,14 +585,14 @@ namespace StatTranslator
 
         public string[] Serialize()
         {
-            return stats.Keys.ToArray();
+            return _stats.Keys.ToArray();
         }
 
         public string GetTag(string tag)
         {
-            if (stats.ContainsKey(tag))
+            if (_stats.ContainsKey(tag))
             {
-                return stats[tag];
+                return _stats[tag];
             }
 
             return string.Empty;

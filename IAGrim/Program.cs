@@ -15,6 +15,7 @@ using IAGrim.Utilities;
 using log4net;
 using StatTranslator;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -294,6 +295,15 @@ namespace IAGrim
             Logger.Info("Startup data dump complete");
         }
 
+        private static void DumpTranslationTemplate() {
+            try {
+                File.WriteAllText(Path.Combine(GlobalPaths.CoreFolder, "tags_ia.template.txt"), new EnglishLanguage(new Dictionary<string, string>()).Export());
+            }
+            catch (Exception ex) {
+                Logger.Debug("Error dumping translation template", ex);
+            }
+        }
+
         private static void Run(string[] args, ThreadExecuter threadExecuter)
         {
             var factory = new SessionFactory();
@@ -305,6 +315,7 @@ namespace IAGrim
             // X
             IDatabaseItemDao databaseItemDao = new DatabaseItemRepo(threadExecuter, factory);
             GlobalSettings.InitializeLanguage(Properties.Settings.Default.LocalizationFile, databaseItemDao.GetTagDictionary());
+            DumpTranslationTemplate();
 
             // Prohibited for now
             Properties.Settings.Default.InstaTransfer = false;
@@ -354,8 +365,7 @@ namespace IAGrim
                 }
             }
 
-            if (args != null && args.Any(m => m.Contains("-logout")))
-            {
+            if (args != null && args.Any(m => m.Contains("-logout"))) {
                 Logger.Info("Started with -logout specified, logging out of online backups.");
                 Settings.Default.AzureAuthToken = null;
                 Settings.Default.Save();

@@ -35,6 +35,7 @@
             this.pbDropbox = new System.Windows.Forms.PictureBox();
             this.pbGoogle = new System.Windows.Forms.PictureBox();
             this.cbGoogle = new FirefoxCheckBox();
+            this.cbDontWantBackups = new FirefoxCheckBox();
             this.onlineBackup.SuspendLayout();
             this.panelBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbSkydrive)).BeginInit();
@@ -46,6 +47,7 @@
             // 
             this.onlineBackup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.onlineBackup.Controls.Add(this.cbDontWantBackups);
             this.onlineBackup.Controls.Add(this.buttonLogin);
             this.onlineBackup.Font = new System.Drawing.Font("Segoe UI Semibold", 20F);
             this.onlineBackup.HeaderHeight = 40;
@@ -197,6 +199,22 @@
             this.cbGoogle.Size = new System.Drawing.Size(29, 27);
             this.cbGoogle.TabIndex = 0;
             // 
+            // cbDontWantBackups
+            // 
+            this.cbDontWantBackups.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbDontWantBackups.Bold = false;
+            this.cbDontWantBackups.EnabledCalc = true;
+            this.cbDontWantBackups.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbDontWantBackups.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbDontWantBackups.Location = new System.Drawing.Point(41, 100);
+            this.cbDontWantBackups.Name = "cbDontWantBackups";
+            this.cbDontWantBackups.Size = new System.Drawing.Size(285, 27);
+            this.cbDontWantBackups.TabIndex = 16;
+            this.cbDontWantBackups.Tag = "iatag_ui_dontwantbackups";
+            this.cbDontWantBackups.Text = "I don\'t want backups, stop asking me!";
+            this.cbDontWantBackups.UseVisualStyleBackColor = true;
+            // 
             // BackupSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -235,5 +253,6 @@
         private FirefoxButton buttonBackupNow;
         private PanelBox onlineBackup;
         private FirefoxButton buttonLogin;
+        private FirefoxCheckBox cbDontWantBackups;
     }
 }
