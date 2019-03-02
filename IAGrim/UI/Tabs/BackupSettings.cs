@@ -57,6 +57,8 @@ namespace IAGrim.UI
             cbGoogle.Checked = Properties.Settings.Default.BackupGoogle;
             cbSkydrive.Checked = Properties.Settings.Default.BackupOnedrive;
             cbCustom.Checked = Properties.Settings.Default.BackupCustom;
+            cbDontWantBackups.Checked = Properties.Settings.Default.OptOutOfBackups;
+            buttonLogin.Enabled = !Properties.Settings.Default.OptOutOfBackups;
 
             cbDropbox.CheckedChanged += cbDropbox_CheckedChanged;
             cbGoogle.CheckedChanged += cbGoogle_CheckedChanged;
@@ -154,31 +156,36 @@ namespace IAGrim.UI
             }
         }
 
-        private void firefoxButton1_Click(object sender, EventArgs e)
-        {
-            var access = _authAuthService.CheckAuthentication();
+        private void firefoxButton1_Click(object sender, EventArgs e) {
+            if ((sender as FirefoxButton).EnabledCalc) {
+                var access = _authAuthService.CheckAuthentication();
 
-            switch (access)
-            {
-                case AzureAuthService.AccessStatus.Unauthorized:
-                    _authAuthService.Authenticate();
-                    break;
-                case AzureAuthService.AccessStatus.Unknown:
-                    MessageBox.Show(GlobalSettings.Language.GetTag("iatag_ui_backup_service_error"));
-                    break;
-                default:
-                {
-                    var alreadyLoggedIn = GlobalSettings.Language.GetTag("iatag_feedback_already_logged_in");
+                switch (access) {
+                    case AzureAuthService.AccessStatus.Unauthorized:
+                        _authAuthService.Authenticate();
+                        break;
+                    case AzureAuthService.AccessStatus.Unknown:
+                        MessageBox.Show(GlobalSettings.Language.GetTag("iatag_ui_backup_service_error"));
+                        break;
+                    default: {
+                        var alreadyLoggedIn = GlobalSettings.Language.GetTag("iatag_feedback_already_logged_in");
 
-                    MessageBox.Show(
-                        alreadyLoggedIn,
-                        alreadyLoggedIn,
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information
-                    );
-                    break;
+                        MessageBox.Show(
+                            alreadyLoggedIn,
+                            alreadyLoggedIn,
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information
+                        );
+                        break;
+                    }
                 }
             }
+        }
+
+        private void cbDontWantBackups_CheckedChanged(object sender, EventArgs e) {
+            buttonLogin.Enabled = !cbDontWantBackups.Checked;
+            Properties.Settings.Default.OptOutOfBackups = cbDontWantBackups.Checked;
+            Properties.Settings.Default.Save();
         }
     }
 }

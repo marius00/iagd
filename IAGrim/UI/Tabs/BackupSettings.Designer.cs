@@ -24,6 +24,7 @@
         /// </summary>
         private void InitializeComponent() {
             this.onlineBackup = new PanelBox();
+            this.cbDontWantBackups = new FirefoxCheckBox();
             this.buttonLogin = new FirefoxButton();
             this.panelBox5 = new PanelBox();
             this.buttonBackupNow = new FirefoxButton();
@@ -35,7 +36,6 @@
             this.pbDropbox = new System.Windows.Forms.PictureBox();
             this.pbGoogle = new System.Windows.Forms.PictureBox();
             this.cbGoogle = new FirefoxCheckBox();
-            this.cbDontWantBackups = new FirefoxCheckBox();
             this.onlineBackup.SuspendLayout();
             this.panelBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbSkydrive)).BeginInit();
@@ -59,6 +59,23 @@
             this.onlineBackup.Tag = "iatag_ui_online_backup";
             this.onlineBackup.Text = "Online Backup";
             this.onlineBackup.TextLocation = "8; 5";
+            // 
+            // cbDontWantBackups
+            // 
+            this.cbDontWantBackups.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbDontWantBackups.Bold = false;
+            this.cbDontWantBackups.EnabledCalc = true;
+            this.cbDontWantBackups.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbDontWantBackups.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbDontWantBackups.Location = new System.Drawing.Point(41, 100);
+            this.cbDontWantBackups.Name = "cbDontWantBackups";
+            this.cbDontWantBackups.Size = new System.Drawing.Size(285, 27);
+            this.cbDontWantBackups.TabIndex = 16;
+            this.cbDontWantBackups.Tag = "iatag_ui_dontwantbackups";
+            this.cbDontWantBackups.Text = "I don\'t want backups, stop asking me!";
+            this.cbDontWantBackups.UseVisualStyleBackColor = true;
+            this.cbDontWantBackups.CheckedChanged += new System.EventHandler(this.cbDontWantBackups_CheckedChanged);
             // 
             // buttonLogin
             // 
@@ -198,22 +215,6 @@
             this.cbGoogle.Name = "cbGoogle";
             this.cbGoogle.Size = new System.Drawing.Size(29, 27);
             this.cbGoogle.TabIndex = 0;
-            // 
-            // cbDontWantBackups
-            // 
-            this.cbDontWantBackups.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbDontWantBackups.Bold = false;
-            this.cbDontWantBackups.EnabledCalc = true;
-            this.cbDontWantBackups.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cbDontWantBackups.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbDontWantBackups.Location = new System.Drawing.Point(41, 100);
-            this.cbDontWantBackups.Name = "cbDontWantBackups";
-            this.cbDontWantBackups.Size = new System.Drawing.Size(285, 27);
-            this.cbDontWantBackups.TabIndex = 16;
-            this.cbDontWantBackups.Tag = "iatag_ui_dontwantbackups";
-            this.cbDontWantBackups.Text = "I don\'t want backups, stop asking me!";
-            this.cbDontWantBackups.UseVisualStyleBackColor = true;
             // 
             // BackupSettings
             // 
