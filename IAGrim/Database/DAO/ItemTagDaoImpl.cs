@@ -7,6 +7,7 @@ using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.GameDataParsing.Model;
 using log4net;
 using log4net.Repository.Hierarchy;
+using MoreLinq;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Transform;
@@ -54,11 +55,9 @@ namespace IAGrim.Database.DAO {
                 }
             }
         }
-        public IList<ItemTag> GetValidClassItemTags() {
-
-            Dictionary<string, string> result = new Dictionary<string, string>();
+        public ISet<ItemTag> GetValidClassItemTags() {
             using (var session = SessionCreator.OpenStatelessSession()) {
-                using (ITransaction transaction = session.BeginTransaction()) {
+                using (session.BeginTransaction()) {
                     return session.CreateSQLQuery("SELECT * FROM ItemTag WHERE (Tag LIKE 'tagSkillClassName%' OR Tag LIKE 'tag%Class%SkillName00A') AND LENGTH(Name) > 1")
                         .SetResultTransformer(new AliasToBeanResultTransformer(typeof(ItemTag)))
                         .List<ItemTag>()
@@ -68,7 +67,7 @@ namespace IAGrim.Database.DAO {
                                 .Replace("tagGDX1Class07SkillName00A", "class07")
                                 .Replace("tagGDX1Class08SkillName00A", "class08")
                         })
-                        .ToList();
+                        .ToHashSet();
                 }
             }
         }

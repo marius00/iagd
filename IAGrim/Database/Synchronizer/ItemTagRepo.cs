@@ -31,7 +31,7 @@ namespace IAGrim.Database.Synchronizer {
             );
 
         }
-        public IList<ItemTag> GetValidClassItemTags() {
+        public ISet<ItemTag> GetValidClassItemTags() {
             return ThreadExecuter.Execute(
                 () => repo.GetValidClassItemTags()
             );

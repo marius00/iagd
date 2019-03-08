@@ -9,6 +9,6 @@ namespace IAGrim.Database.Interfaces {
     public interface IItemTagDao : IBaseDao<ItemTag> {
         void Save(ICollection<ItemTag> items, ProgressTracker tracker);
         IList<ItemTag> GetClassItemTags();
-        IList<ItemTag> GetValidClassItemTags();
+        ISet<ItemTag> GetValidClassItemTags();
     }
 }

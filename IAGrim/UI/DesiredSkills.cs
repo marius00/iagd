@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -355,19 +356,13 @@ namespace IAGrim.UI
             // 3,37
             // 3,70
             var cbNum = 1;
-            var classTags = _itemTagDao.GetValidClassItemTags();
+            var classTags = _itemTagDao.GetValidClassItemTags()
+                .Where(entry => Regex.Replace(entry.Tag, @"[^\d]", "").Length <= 3) // Filter out 4 digit classes (combo classes)
+                .ToList();
 
-            foreach (var tag in classTags)
-            {
-                // Filter out 4 digit classes (combos)
-                var cleanTag = Regex.Replace(tag.Tag, @"[^\d]", "");
-                if (cleanTag.Length > 3)
-                {
-                    continue;
-                }
+            foreach (var tag in classTags) {
 
-                var cb = new FirefoxCheckBox
-                {
+                var cb = new FirefoxCheckBox {
                     Size = new Size {Height = 27, Width = 121},
                     Tag = $"iatag_ui_{tag.Name.ToLower()}",
                     Text = tag.Name,
