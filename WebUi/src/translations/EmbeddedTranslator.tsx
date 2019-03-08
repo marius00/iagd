@@ -32,7 +32,8 @@ class EmbeddedTranslator {
     'crafting.header.recipeName': 'iatag_html_badstate_title', // TODO:
     'crafting.header.currentlyLacking': 'iatag_html_crafting_lacking',
     'item.augmentPurchasable': 'iatag_html_augmentation_item',
-    'app.copyToClipboard': 'iatag_html_copytoclipboard'
+    'app.copyToClipboard': 'iatag_html_copytoclipboard',
+    'item.label.setbonus': 'iatag_html_setbonus'
   };
   static defaults = {
     'app.tab.items': 'Items',
@@ -60,7 +61,8 @@ class EmbeddedTranslator {
     'crafting.header.recipeName': 'Crafting recipe for {0}',
     'crafting.header.currentlyLacking': 'You are currently lacking:',
     'item.augmentPurchasable': 'You may be able to purchase this augment from {0}',
-    'app.copyToClipboard': 'Copy to clipboard'
+    'app.copyToClipboard': 'Copy to clipboard',
+    'item.label.setbonus': 'Set:'
   };
 
   public translate(id: string): string {

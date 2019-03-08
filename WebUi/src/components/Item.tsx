@@ -179,7 +179,7 @@ class Item extends React.PureComponent<Props, object> {
           ) : ''
           }
 
-          {setName !== undefined && <div><br />Set: <span className="set-name">{setName}</span></div>}
+          {setName !== undefined && <div><br />{translate('item.label.setbonus')} <span className="set-name">{setName}</span></div>}
 
           {item.skill ? <Skill skill={item.skill} keyPrefix={item.url.join(':')}/> : ''}
 

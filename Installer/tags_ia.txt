@@ -239,6 +239,7 @@ iatag_html_badstate_subtitle=It seems IA has gotten in a bad state!
 iatag_html_onlinesync_ok=This item has been backed up to the cloud
 iatag_html_onlinesync_err=This item has not been backed up to the cloud
 iatag_html_augmentation_item=You may be able to purchase this augment from {0}
+iatag_html_setbonus=Set:
 iatag_ui_buddy_userid=User ID: 
 iatag_ui_buddy_userid_none=None
 iatag_ui_buddy_userid_name=Name: 

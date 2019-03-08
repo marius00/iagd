@@ -297,6 +297,7 @@ namespace StatTranslator
             { "iatag_html_onlinesync_ok", "This item has been backed up to the cloud" },
             { "iatag_html_onlinesync_err", "This item has not been backed up to the cloud" },
             { "iatag_html_augmentation_item", "You may be able to purchase this augment from {0}" },
+            { "iatag_html_setbonus", "Set:" },
 
             // TODO: Merge duplicates, regroup similar to a single one (ie. Language select/change/selection),
             //       and regroup/reorder tags in blocks
