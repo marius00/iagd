@@ -4,6 +4,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -131,6 +132,17 @@ namespace EvilsoftCommons.DllInjector {
                 throw new NotSupportedException("Class name provided instead of window name, not yet implemented.");
             }
         }
+
+        private bool Is64Bit(int pid) {
+            try {
+                var p = Process.GetProcessById(pid);
+                return DllInjector.Is64BitProcess(p);
+            }
+            catch (ArgumentException) {
+                return false;
+            }
+        }
+
         private void process(BackgroundWorker worker, RunArguments arguments) {
             System.Threading.Thread.Sleep(1200);
 
@@ -150,9 +162,14 @@ namespace EvilsoftCommons.DllInjector {
                 foreach (uint pid in pids) {
                     if (!_previouslyInjected.Contains(pid)) {
 
-
-                        //DllInjector.adjustDebugPriv(pid);
-                        IntPtr remoteModuleHandle = DllInjector.NewInject(pid, dll);
+                        IntPtr remoteModuleHandle = IntPtr.Zero;
+                        if (Is64Bit((int)pid)) {
+                            // TODO: Run the exe instead, if 64bit
+                            Logger.Warn("GD is running as 64bit, IAGD does not support this as of yet.");
+                        }
+                        else {
+                            remoteModuleHandle = DllInjector.NewInject(pid, dll);
+                        }
                         if (remoteModuleHandle == IntPtr.Zero) {
                             if (!_dontLog.Contains(pid)) {
                                 Logger.WarnFormat("Could not inject dll into process {0}, if this is a recurring issue, try running as administrator.", pid);

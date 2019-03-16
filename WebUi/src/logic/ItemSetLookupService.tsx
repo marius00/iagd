@@ -29,7 +29,7 @@ export default function GetSetName(baseRecord: string): string | undefined {
     return elems[0].setName;
   }
 
-  console.log('Could not find entry for', baseRecord, 'in', elems, dataset);
+  // console.log('Could not find entry for', baseRecord, 'in', elems, dataset);
 
 
   return undefined;

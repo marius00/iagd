@@ -111,7 +111,7 @@ unsigned __stdcall WorkerThreadMethodWrap(void* argss) {
 	return 0;
 }
 void StartWorkerThread() {
-
+	LOG("Starting worker thread..");
 	unsigned int pid;
 	//g_thread = (HANDLE)_beginthread(WorkerThreadMethod,0,0);
 	g_thread = (HANDLE)_beginthreadex(NULL, 0, &WorkerThreadMethodWrap, NULL, 0, &pid);
@@ -120,11 +120,13 @@ void StartWorkerThread() {
 	int offset = FindOffset();
 	DataItemPtr item(new DataItem(TYPE_REPORT_WORKER_THREAD_LAUNCHED, sizeof(offset), (char*)&offset));
 	g_dataQueue.push(item);
-	SetEvent(g_hEvent);	
+	SetEvent(g_hEvent);
+	LOG("Started worker thread..");
 }
 
 
 void EndWorkerThread() {
+	LOG("Ending worker thread..");
 	if (g_hEvent != NULL) {
 		SetEvent(g_hEvent);
 		HANDLE h = g_hEvent;
@@ -140,9 +142,11 @@ void EndWorkerThread() {
 
 std::vector<BaseMethodHook*> hooks;
 int ProcessAttach(HINSTANCE _hModule) {
+	LOG("Attatching to process..");
 	g_hEvent = CreateEvent(NULL,FALSE,FALSE,"IA_Worker");
 
-	
+
+	LOG("Preparing hooks..");
 	hooks.push_back(new HookWalkTo(&g_dataQueue, g_hEvent));
 	hooks.push_back(new ControllerPlayerStateIdleRequestNpcAction(&g_dataQueue, g_hEvent));
 	hooks.push_back(new ControllerPlayerStateMoveToRequestNpcAction(&g_dataQueue, g_hEvent));
@@ -155,23 +159,35 @@ int ProcessAttach(HINSTANCE _hModule) {
 	
 	hooks.push_back(new SaveTransferStash(&g_dataQueue, g_hEvent));
 	hooks.push_back(new NpcDetectionHook(&g_dataQueue, g_hEvent));
-	
+
+	LOG("Fetching registry configuration..");
+#if defined(_AMD64_)
+	DWORD stashToLootFrom = 5;
+#else
 	DWORD stashToLootFrom = GetDWORDRegKey("StashToLootFrom", 5);
+#endif
+	LOG("Fetched registry configuration..");
 	g_Sack = new InventorySack_AddItem(&g_dataQueue, g_hEvent, stashToLootFrom);
 	hooks.push_back(g_Sack);
+	LOG("Configured inventory sacks..");
 
 
+	LOG("Notifying IAGD that the registry configuration has been read..");
 	DataItemPtr item(new DataItem(TYPE_DetectedStashToLootFrom, sizeof(stashToLootFrom), (char*)&stashToLootFrom));
 	g_dataQueue.push(item);
 	SetEvent(g_hEvent);
 	
-	
+
+	LOG("Starting hook enabling..");
 	for (unsigned int i = 0; i < hooks.size(); i++) {
+		LOG("Enabling hook..");
 		hooks[i]->EnableHook();
 	}
+	LOG("Hooking complete..");
 
 	
     StartWorkerThread();
+	LOG("Existing initialization..");
     return TRUE;
 }
 

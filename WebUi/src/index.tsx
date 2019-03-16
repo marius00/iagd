@@ -34,6 +34,7 @@ if (typeof data === 'object') {
 }
 /* == END MAGIC == */
 
+console.log("To manually load more items, type the following, and hit enter: data.globalRequestInitialItems()");
 ReactDOM.render(
   <App store={store} />,
   document.getElementById('root') as HTMLElement

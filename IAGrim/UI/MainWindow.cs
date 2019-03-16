@@ -686,7 +686,7 @@ namespace IAGrim.UI
             hasMods = false; // TODO TODO TODO TODO
 #endif
             // CBA dealing with this.
-            string dllname = "ItemAssistantHook.dll";
+            string dllname = "ItemAssistantHook_x64.dll";
             _injector = new InjectionHelper(new BackgroundWorker(), _injectorCallbackDelegate, false, "Grim Dawn", string.Empty, dllname);
         }
 

@@ -2,6 +2,7 @@
 using EvilsoftCommons.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -9,12 +10,8 @@ using System.Text;
 using System.IO;
 
 namespace EvilsoftCommons.DllInjector {
-    public class DllInjector {        
-        static ILog logger = LogManager.GetLogger(typeof(DllInjector));
-
-/*
-        [DllImport(@"ItemAssistantHook.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern bool InjectDLL(ulong ProcessID);*/
+    public class DllInjector {
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(DllInjector));
 
 
         private static DllInjector _instance;
@@ -82,6 +79,19 @@ namespace EvilsoftCommons.DllInjector {
             return clients;
         }
 
+        [DllImport("kernel32.dll", SetLastError = true, CallingConvention = CallingConvention.Winapi)][return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool IsWow64Process([In] IntPtr hProcess, [Out] out bool lpSystemInfo);
+
+        public static bool Is64BitProcess(Process process) {
+            if (!Environment.Is64BitOperatingSystem)
+                return false;
+
+            bool isWow64Process;
+            if (!IsWow64Process(process.Handle, out isWow64Process))
+                throw new Win32Exception(Marshal.GetLastWin32Error());
+
+            return !isWow64Process;
+        }
 
         public static string GetProcessPath(uint pid) {
             try {
@@ -89,8 +99,8 @@ namespace EvilsoftCommons.DllInjector {
                 return proc.MainModule.FileName.ToString();
             }
             catch (Exception ex) {
-                logger.Warn(ex.Message);
-                logger.Warn(ex.StackTrace);
+                Logger.Warn(ex.Message);
+                Logger.Warn(ex.StackTrace);
                 ExceptionReporter.ReportException(ex, "GetProcessPath");
                 return string.Empty;
             }

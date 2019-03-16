@@ -93,6 +93,7 @@ namespace IAGrim.UI.Misc.CEF {
 
         public void AddItems() {
             if (_browser.IsBrowserInitialized) {
+                // TODO: This may not be available yet, better the .js ask us for data, and then we deliver it.
                 _browser.ExecuteScriptAsync($"addItemsFromGlobalItems();");
             }
             else {
