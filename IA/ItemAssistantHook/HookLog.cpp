@@ -56,7 +56,9 @@ void HookLog::out( std::string const& output )
             }
             else
             {
-                m_out << "Last message was repeated " << m_lastMessageCount << " times." << std::endl;
+				if (m_lastMessageCount > 1) {
+					m_out << "Last message was repeated " << m_lastMessageCount << " times." << std::endl;
+				}
                 m_lastMessage = output;
                 m_lastMessageCount = 1;
                 m_out << output.c_str() << std::endl;

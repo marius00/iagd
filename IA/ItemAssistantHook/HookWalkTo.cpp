@@ -11,7 +11,11 @@ DataQueue* HookWalkTo::m_dataQueue;
 HookWalkTo::OriginalMethodPtr HookWalkTo::originalMethod;
 
 void HookWalkTo::EnableHook() {
+#if defined(_AMD64_)
+	originalMethod = (OriginalMethodPtr)GetProcAddress(::GetModuleHandle("Game.dll"), "?RequestMoveAction@ControllerPlayerStateIdle@GAME@@MEAAX_N0AEBVWorldVec3@2@@Z");
+#else
 	originalMethod = (OriginalMethodPtr)GetProcAddress(::GetModuleHandle("Game.dll"), "?RequestMoveAction@ControllerPlayerStateIdle@GAME@@MAEX_N0ABVWorldVec3@2@@Z");
+#endif
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
 	DetourAttach((PVOID*)&originalMethod, HookedMethod);
@@ -34,6 +38,31 @@ void HookWalkTo::DisableHook() {
 	DetourTransactionCommit();
 }
 
+
+#if defined(_AMD64_)
+void* HookWalkTo::HookedMethod(void* This, bool a, bool b, Vec3f const& xyz) {
+	const size_t bufflen = sizeof(Vec3f) + sizeof(bool) * 2;
+	char buffer[bufflen];
+
+	size_t pos = 0;
+
+	memcpy(buffer + pos, &xyz, sizeof(Vec3f));
+	pos += sizeof(Vec3f);
+
+	memcpy(buffer + pos, &a, sizeof(bool) * 1);
+	pos += sizeof(bool);
+
+	memcpy(buffer + pos, &b, sizeof(bool) * 1);
+	pos += sizeof(bool);
+
+	DataItemPtr item(new DataItem(TYPE_ControllerPlayerStateIdleRequestMoveAction, bufflen, (char*)buffer));
+	m_dataQueue->push(item);
+	SetEvent(m_hEvent);
+
+	void* v = originalMethod(This, a, b, xyz);
+	return v;
+}
+#else
 void* __fastcall HookWalkTo::HookedMethod(void* This, void* notUsed, bool a, bool b, Vec3f const & xyz) {
 
 	const size_t bufflen = sizeof(Vec3f) + sizeof(bool)*2;
@@ -57,3 +86,4 @@ void* __fastcall HookWalkTo::HookedMethod(void* This, void* notUsed, bool a, boo
 	void* v = originalMethod(This, a, b, xyz);
 	return v;
 }
+#endif

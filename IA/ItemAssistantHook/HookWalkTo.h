@@ -24,7 +24,10 @@ private:
 	static OriginalMethodPtr originalMethod;
 	static DataQueue* m_dataQueue;
 
-
+#if defined(_AMD64_)
+	static void* HookedMethod(void* This, bool, bool, Vec3f const& xyz);
+#else
 	static void* __fastcall HookedMethod(void* This, void* notUsed, bool, bool, Vec3f const& xyz);
+#endif
 	
 };

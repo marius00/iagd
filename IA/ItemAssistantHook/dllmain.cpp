@@ -162,7 +162,7 @@ int ProcessAttach(HINSTANCE _hModule) {
 
 	LOG("Fetching registry configuration..");
 #if defined(_AMD64_)
-	DWORD stashToLootFrom = 5;
+	DWORD stashToLootFrom = 5; // TODO: Need this to work for 64bit as well.
 #else
 	DWORD stashToLootFrom = GetDWORDRegKey("StashToLootFrom", 5);
 #endif
