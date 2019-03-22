@@ -2,6 +2,7 @@
 #include <windows.h>
 #include "DataQueue.h"
 #include "BaseMethodHook.h"
+#include "HookLog.h"
 
 /************************************************************************
  Hook for the in-game "GetPrivateStash" method
@@ -10,7 +11,7 @@
 class HookWalkTo : public BaseMethodHook {
 public:
 	HookWalkTo();
-	HookWalkTo(DataQueue* dataQueue, HANDLE hEvent);
+	HookWalkTo(DataQueue* dataQueue, HANDLE hEvent, HookLog* logger);
 	void EnableHook();
 	void DisableHook();
 
@@ -23,6 +24,7 @@ private:
 	static HANDLE m_hEvent;
 	static OriginalMethodPtr originalMethod;
 	static DataQueue* m_dataQueue;
+	static HookLog* m_logger;
 
 #if defined(_AMD64_)
 	static void* HookedMethod(void* This, bool, bool, Vec3f const& xyz);

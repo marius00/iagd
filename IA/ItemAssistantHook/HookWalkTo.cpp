@@ -5,10 +5,12 @@
 #include "MessageType.h"
 #include <detours.h>
 #include "HookWalkTo.h"
+#include <MinHook.h>
 
 HANDLE HookWalkTo::m_hEvent;
 DataQueue* HookWalkTo::m_dataQueue;
 HookWalkTo::OriginalMethodPtr HookWalkTo::originalMethod;
+HookLog* HookWalkTo::m_logger;
 
 void HookWalkTo::EnableHook() {
 #if defined(_AMD64_)
@@ -16,15 +18,31 @@ void HookWalkTo::EnableHook() {
 #else
 	originalMethod = (OriginalMethodPtr)GetProcAddress(::GetModuleHandle("Game.dll"), "?RequestMoveAction@ControllerPlayerStateIdle@GAME@@MAEX_N0ABVWorldVec3@2@@Z");
 #endif
+
+	if (MH_CreateHookApiEx(
+		L"game.dll", 
+		"?RequestMoveAction@ControllerPlayerStateIdle@GAME@@MEAAX_N0AEBVWorldVec3@2@@Z", 
+		&HookedMethod, 
+		(PVOID*)&originalMethod, NULL) != MH_OK) {
+		HookWalkTo::m_logger->out("Unable to hook ?RequestMoveAction@ControllerPlayerStateIdle");
+		// TODO: Notify IAGD
+	}
+
+	if (MH_EnableHook(&MessageBoxW) != MH_OK)
+	{
+		return 1;
+	}
+
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
 	DetourAttach((PVOID*)&originalMethod, HookedMethod);
 	DetourTransactionCommit();
 }
 
-HookWalkTo::HookWalkTo(DataQueue* dataQueue, HANDLE hEvent) {
+HookWalkTo::HookWalkTo(DataQueue* dataQueue, HANDLE hEvent, HookLog* logger) {
 	HookWalkTo::m_dataQueue = dataQueue;
 	HookWalkTo::m_hEvent = hEvent;
+	HookWalkTo::m_logger = logger;
 }
 
 HookWalkTo::HookWalkTo() {

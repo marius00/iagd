@@ -4,6 +4,7 @@
 #include <windows.h>
 #include <detours.h>
 #include <stdio.h>
+#include <MinHook.h>
 #include <stdlib.h>
 #include <set>
 #include <boost/smart_ptr.hpp>
@@ -26,6 +27,11 @@
 #include "SaveTransferStash.h"
 InventorySack_AddItem* g_Sack = NULL;
 
+#if defined _M_X64
+#pragma comment(lib, "libMinHook-x64-v140-mt.lib")
+#elif defined _M_IX86
+#pragma comment(lib, "MinHook.x86.lib")
+#endif
 
 
 #pragma region Variables
@@ -145,12 +151,19 @@ int ProcessAttach(HINSTANCE _hModule) {
 	LOG("Attatching to process..");
 	g_hEvent = CreateEvent(NULL,FALSE,FALSE,"IA_Worker");
 
+	// Initialize MinHook.
+	LOG("Initializing MinHook..");
+	if (MH_Initialize() != MH_OK) {
+		LOG("Failed to initialize MinHook..");
+		return 1;
+	}
 
 	LOG("Preparing hooks..");
-	hooks.push_back(new HookWalkTo(&g_dataQueue, g_hEvent));
+	hooks.push_back(new HookWalkTo(&g_dataQueue, g_hEvent, &g_log));
+	hooks.push_back(new ControllerPlayerStateMoveToRequestMoveAction(&g_dataQueue, g_hEvent));
+	/*
 	hooks.push_back(new ControllerPlayerStateIdleRequestNpcAction(&g_dataQueue, g_hEvent));
 	hooks.push_back(new ControllerPlayerStateMoveToRequestNpcAction(&g_dataQueue, g_hEvent));
-	hooks.push_back(new ControllerPlayerStateMoveToRequestMoveAction(&g_dataQueue, g_hEvent));
 
 	hooks.push_back(new CloudGetNumFiles(&g_dataQueue, g_hEvent));
 	hooks.push_back(new CloudRead(&g_dataQueue, g_hEvent));
@@ -158,7 +171,7 @@ int ProcessAttach(HINSTANCE _hModule) {
 	hooks.push_back(new CreatePlayerItemHook(&g_dataQueue, g_hEvent));
 	
 	hooks.push_back(new SaveTransferStash(&g_dataQueue, g_hEvent));
-	hooks.push_back(new NpcDetectionHook(&g_dataQueue, g_hEvent));
+	hooks.push_back(new NpcDetectionHook(&g_dataQueue, g_hEvent));*/
 
 	LOG("Fetching registry configuration..");
 #if defined(_AMD64_)
@@ -167,16 +180,17 @@ int ProcessAttach(HINSTANCE _hModule) {
 	DWORD stashToLootFrom = GetDWORDRegKey("StashToLootFrom", 5);
 #endif
 	LOG("Fetched registry configuration..");
-	g_Sack = new InventorySack_AddItem(&g_dataQueue, g_hEvent, stashToLootFrom);
-	hooks.push_back(g_Sack);
+	
+	//g_Sack = new InventorySack_AddItem(&g_dataQueue, g_hEvent, stashToLootFrom);
+	//hooks.push_back(g_Sack);
 	LOG("Configured inventory sacks..");
 
-
+	/*
 	LOG("Notifying IAGD that the registry configuration has been read..");
 	DataItemPtr item(new DataItem(TYPE_DetectedStashToLootFrom, sizeof(stashToLootFrom), (char*)&stashToLootFrom));
 	g_dataQueue.push(item);
 	SetEvent(g_hEvent);
-	
+	*/
 
 	LOG("Starting hook enabling..");
 	for (unsigned int i = 0; i < hooks.size(); i++) {
