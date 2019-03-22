@@ -48,7 +48,7 @@ namespace EvilsoftCommons.DllInjector {
             if (File.Exists("Listdlls.exe")) {
                 ProcessStartInfo startInfo = new ProcessStartInfo();
                 startInfo.FileName = "Listdlls.exe";
-                startInfo.Arguments = String.Format("-d {0}", dll);
+                startInfo.Arguments = $"-d \"{dll}\"";
                 startInfo.RedirectStandardOutput = true;
                 startInfo.RedirectStandardError = true;
                 startInfo.UseShellExecute = false;
