@@ -163,6 +163,7 @@
     <Compile Include="Database\Model\UnlootedStashItem.cs" />
     <Compile Include="UI\Controller\dto\ItemTypeDto.cs" />
     <Compile Include="UI\FilterEventArgs.cs" />
+    <Compile Include="Utilities\AutomaticUpdateChecker.cs" />
     <Compile Include="Utilities\HelperClasses\IComboBoxItemToggle.cs" />
     <Compile Include="UI\Misc\CEF\CefRequestHandler.cs" />
     <Compile Include="Backup\Azure\CefSharp\AzureOnClosePopupHijack.cs" />
@@ -504,6 +505,7 @@
     <Compile Include="Utilities\Registry\RegistryHelper.cs" />
     <Compile Include="Utilities\TempFile.cs" />
     <Compile Include="Utilities\TemporaryCopy.cs" />
+    <Compile Include="Utilities\UsageStatisticsReporter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

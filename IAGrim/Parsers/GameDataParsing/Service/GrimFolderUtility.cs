@@ -41,15 +41,5 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
             return String.Empty;
         }
 
-        public static int CountExisting(params string[] files) {
-            int count = 0;
-            foreach (var file in files) {
-                if (File.Exists(file)) {
-                    count++;
-                }
-            }
-
-            return count;
-        }
     }
 }

@@ -110,17 +110,14 @@ namespace IAGrim
 
             Logger.InfoFormat("Running version {0}.{1}.{2}.{3} from {4}", version.Major, version.Minor, version.Build, version.Revision, buildDate.ToString("dd/MM/yyyy"));
 
-
-            if (!DependencyChecker.CheckNet452Installed())
-            {
+            if (!DependencyChecker.CheckNet452Installed()) {
                 MessageBox.Show("It appears .Net Framework 4.5.2 is not installed.\nIA May not function correctly", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-            if (!DependencyChecker.CheckVS2013Installed())
-            {
+
+            if (!DependencyChecker.CheckVs2013Installed()) {
                 MessageBox.Show("It appears VS 2013 (x86) redistributable is not installed.\nPlease install it to continue using IA", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-            if (!DependencyChecker.CheckVS2010Installed())
-            {
+            if (!DependencyChecker.CheckVs2010Installed()) {
                 MessageBox.Show("It appears VS 2010 (x86) redistributable is not installed.\nPlease install it to continue using IA", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 

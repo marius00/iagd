@@ -24,30 +24,22 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
         public List<ItemTag> Tags => _tagAccumulator.Tags;
 
         public void LoadItems(
-            string itemsfileVanilla,
-            string itemsfileExpansion1,
-            string itemsfileMod,
+            List<string> arzFiles,
             ProgressTracker tracker
         ) {
-            int numFiles = GrimFolderUtility.CountExisting(itemsfileVanilla, itemsfileExpansion1, itemsfileMod);
-            tracker.MaxValue = numFiles;
+            tracker.MaxValue = arzFiles.Select(File.Exists).Count();
 
             // Developers can flip this switch to get a full dump of the GD database. 
             // Setting it to true will cause the parsing to skip a lot of data that IA does not need.
             const bool skipIrrelevantStats = false; 
 
             ItemAccumulator accumulator = new ItemAccumulator();
-            if (File.Exists(itemsfileVanilla)) {
-                Parser.Arz.ArzParser.LoadItemRecords(itemsfileVanilla, skipIrrelevantStats).ForEach(accumulator.Add);
-                tracker.Increment();
-            }
-            if (File.Exists(itemsfileExpansion1)) {
-                Parser.Arz.ArzParser.LoadItemRecords(itemsfileExpansion1, skipIrrelevantStats).ForEach(accumulator.Add);
-                tracker.Increment();
-            }
-            if (File.Exists(itemsfileMod)) {
-                Parser.Arz.ArzParser.LoadItemRecords(itemsfileMod, skipIrrelevantStats).ForEach(accumulator.Add);
-                tracker.Increment();
+
+            foreach (string arzFile in arzFiles) {
+                if (File.Exists(arzFile)) {
+                    Parser.Arz.ArzParser.LoadItemRecords(arzFile, skipIrrelevantStats).ForEach(accumulator.Add);
+                    tracker.Increment();
+                }
             }
 
             Items = accumulator.Items;
@@ -64,18 +56,15 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
         }
 
         public void LoadTags(
-            string tagfileVanilla,
-            string tagfileExpansion1,
-            string tagfileMod,
+            List<string> tagfiles,
             string localizationFile,
             ProgressTracker tracker
         ) {
-            var files = new[] {tagfileVanilla, tagfileExpansion1, tagfileMod};
-            int numFiles = files.Length - files.Where(string.IsNullOrEmpty).Count() + (string.IsNullOrEmpty(localizationFile) ? 0 : 1);
+            int numFiles = tagfiles.Count - tagfiles.Where(string.IsNullOrEmpty).Count() + (string.IsNullOrEmpty(localizationFile) ? 0 : 1);
             tracker.MaxValue = numFiles;
 
             // Load tags in a prioritized order
-            foreach (var tagfile in files) {
+            foreach (var tagfile in tagfiles) {
                 if (File.Exists(tagfile)) {
                     LoadTags(tagfile);
                 }

@@ -115,6 +115,7 @@ namespace IAGrim.Utilities {
         /// Copy any css/js files from the app\resource folder to the items working directory
         /// </summary>
         public static void CopyMissingFiles() {
+            Logger.Debug("Copying missing files / etc to IA storage folder");
             string appResFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resources");
 
             foreach (string dirPath in Directory.GetDirectories(appResFolder, "*", SearchOption.AllDirectories)) {
@@ -125,6 +126,8 @@ namespace IAGrim.Utilities {
             foreach (string newPath in Directory.GetFiles(appResFolder, "*.*", SearchOption.AllDirectories)) {
                 File.Copy(newPath, newPath.Replace(appResFolder, GlobalPaths.StorageFolder), true);
             }
+
+            Logger.Debug("Copy complete");
         }
 
         public static List<JsonItem> ToJsonSerializeable(List<PlayerHeldItem> items) {

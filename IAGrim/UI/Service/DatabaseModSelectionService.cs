@@ -45,8 +45,20 @@ namespace IAGrim.UI.Service {
             empty.Tag = null;
             entries.Add(empty);
 
+            
             foreach (var gdPath in paths) {
-                foreach (var modpath in new[] {Path.Combine(gdPath, "mods"), Path.Combine(gdPath, "gdx1", "mods")}) {
+                List<string> modpaths = new List<string>();
+                modpaths.Add(Path.Combine(gdPath, "mods"));
+
+                // Detect expansions and DLCs
+                for (int i = 1; i <= 9; i++) {
+                    string path = Path.Combine(gdPath, $"gdx{i}", "mods");
+                    if (Directory.Exists(path)) {
+                        modpaths.Add(path);
+                    }
+                }
+
+                foreach (var modpath in modpaths) {
                     if (Directory.Exists(modpath)) {
                         foreach (var directory in Directory.EnumerateDirectories(modpath)) {
                             if (Directory.EnumerateFiles(directory, "*.arz", SearchOption.AllDirectories).Any()) {

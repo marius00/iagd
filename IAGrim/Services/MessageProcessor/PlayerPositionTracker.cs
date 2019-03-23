@@ -19,13 +19,16 @@ namespace IAGrim.Services.MessageProcessor
                 {
                     GrimStateTracker.LastKnownPosition = new GrimStateTracker.WorldVector {
                         X = IOHelper.GetFloat(data, 4),
-                        Y = IOHelper.GetFloat(data, 8),
-                        Z = IOHelper.GetFloat(data, 12),
+                        Y = IOHelper.GetFloat(data, 8), // Getting X here??
+                        Z = IOHelper.GetFloat(data, 12), // Getting Y here..
                         Zone = IOHelper.GetInt(data, 0)
                     };
+                    Logger.Debug(GrimStateTracker.LastKnownPosition.ToString());
+                    Logger.Debug($"Testy: ZoneAsFloat: {IOHelper.GetFloat(data, 0)}");
+                    Logger.Debug($"Testy: XAsInt: {IOHelper.GetInt(data, 4)}");
 
-                    //Logger.Debug($"Received a TYPE_Move({IOHelper.GetFloat(data, 4)}, {IOHelper.GetFloat(data, 8)}, {IOHelper.GetFloat(data, 12)}, {IOHelper.GetInt(data, 0)}");
-                }
+                        //Logger.Debug($"Received a TYPE_Move({IOHelper.GetFloat(data, 4)}, {IOHelper.GetFloat(data, 8)}, {IOHelper.GetFloat(data, 12)}, {IOHelper.GetInt(data, 0)}");
+                    }
 
                     //Logger.DebugFormat("Received a TYPE_Move({0}, {1}, {2}, {5}), ({3},{4})", x, y, z, data[data.Length - 2], data[data.Length - 1], zone);
                     break;
