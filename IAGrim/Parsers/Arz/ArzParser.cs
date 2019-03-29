@@ -74,14 +74,8 @@ namespace IAGrim.Parsers.Arz {
                     Logger.Warn("Could not find the vanilla icons, skipping.");
                 }
             }
-
-            // TODO: Iterate gdx\n+ and include all
-            var expansion3Folder = Path.Combine(grimdawnLocation, "gdx3");
-            var expansion2Folder = Path.Combine(grimdawnLocation, "gdx2");
-            var expansion1Folder = Path.Combine(grimdawnLocation, "gdx1");
-            var crucibleFolder = Path.Combine(grimdawnLocation, "mods", "survivalmode");
-
-            foreach (string path in new string[] { expansion3Folder, expansion2Folder, expansion1Folder, crucibleFolder}) {
+            
+            foreach (string path in GrimFolderUtility.GetGrimExpansionFolders(grimdawnLocation)) {
                 var arcItemsFile = GrimFolderUtility.FindArcFile(path, "items.arc");
                 if (!string.IsNullOrEmpty(arcItemsFile)) {
                     Logger.Debug($"Loading expansion icons from {arcItemsFile}");
@@ -269,6 +263,5 @@ namespace IAGrim.Parsers.Arz {
                     break;
             }
         }
-
     }
 }

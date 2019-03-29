@@ -397,13 +397,19 @@ namespace IAGrim
                     GDPath = GrimDawnDetector.GetGrimLocation();
                 }
 
-                if (!string.IsNullOrEmpty(GDPath) && Directory.Exists(GDPath))
-                {
+                if (!string.IsNullOrEmpty(GDPath) && Directory.Exists(GDPath)) {
 
                     var numFiles = Directory.GetFiles(GlobalPaths.StorageFolder).Length;
-                    if (numFiles < 2000)
-                    {
-                        Logger.Debug($"Only found {numFiles} in storage, expected ~3200+, parsing item icons.");
+                    int numFilesExpected = 2100;
+                    if (Directory.Exists(Path.Combine(GDPath, "gdx2"))) {
+                        numFilesExpected += 580;
+                    }
+                    if (Directory.Exists(Path.Combine(GDPath, "gdx1"))) {
+                        numFilesExpected += 890;
+                    }
+
+                    if (numFiles < numFilesExpected) {
+                        Logger.Debug($"Only found {numFiles} in storage, expected ~{numFilesExpected}+, parsing item icons.");
                         ThreadPool.QueueUserWorkItem((m) => ArzParser.LoadIconsOnly(GDPath));
                     }
 

@@ -70,7 +70,7 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
                 }
                 else {
                     diag.DefaultExt = "gst";
-                    diag.Filter = "Grim Dawn Stash files (*.gst)|*.gst";
+                    diag.Filter = "Grim Dawn Stash files (*.gst)|*.gst|HD Hardcore Stash files (*.gsh)|*.gsh";
                     diag.FileName = "transfer.gst";
                 }
 

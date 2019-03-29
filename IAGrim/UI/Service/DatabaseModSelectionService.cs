@@ -14,16 +14,34 @@ namespace IAGrim.UI.Service {
     /// Perhaps more of a presenter
     /// </summary>
     class DatabaseModSelectionService {
+
+        private string GetLabel(int expansionLevel) {
+            var tagVanilla = GlobalSettings.Language.GetTag("iatag_ui_vanilla");
+            var tagVanillaXpac = GlobalSettings.Language.GetTag("iatag_ui_vanilla_xpac");
+            var tagForgottenGods = GlobalSettings.Language.GetTag("iatag_ui_forgottengods");
+            switch (expansionLevel) {
+                case 0:
+                    return tagVanilla;
+                case 1:
+                    return tagVanillaXpac;
+                case 2:
+                    return tagForgottenGods;
+                default:
+                    return $"{expansionLevel} Expansions"; // No translation, this is a worst case IA is outdated error.
+            }
+        }
         public List<ListViewItem> GetGrimDawnInstalls(IEnumerable<string> paths) {
             List<ListViewItem> entries = new List<ListViewItem>();
 
-            var tagVanilla = GlobalSettings.Language.GetTag("iatag_ui_vanilla");
-            var tagVanillaXpac = GlobalSettings.Language.GetTag("iatag_ui_vanilla_xpac");
-
             foreach (var gdPath in paths) {
                 if (!string.IsNullOrEmpty(gdPath) && Directory.Exists(gdPath)) {
-                    bool hasExpansion = Directory.Exists(Path.Combine(gdPath, "gdx1"));
-                    ListViewItem vanilla = new ListViewItem(hasExpansion ? tagVanillaXpac : tagVanilla);
+
+                    int expansionLevel = 0;
+                    for (int i = 1; i <= 9; i++) {
+                        expansionLevel = Directory.Exists(Path.Combine(gdPath, $"gdx{i}")) ? i : expansionLevel;
+                    }
+                    
+                    ListViewItem vanilla = new ListViewItem(GetLabel(expansionLevel));
                     vanilla.SubItems.Add(gdPath);
                     vanilla.Tag = new ListViewEntry { Path = gdPath, IsVanilla = true };
                     entries.Add(vanilla);
@@ -31,13 +49,14 @@ namespace IAGrim.UI.Service {
 
             }
 
+            
 
             return entries;
         }
 
         public List<ListViewItem> GetInstalledMods(IEnumerable<string> paths) {
             List<ListViewItem> entries = new List<ListViewItem>();
-            const string TheCrucibleDLC = "survivalmode";
+            const string theCrucibleDlc = "survivalmode";
             var noModSelected = GlobalSettings.Language.GetTag("iatag_ui_none");
 
             ListViewItem empty = new ListViewItem(noModSelected);
@@ -65,7 +84,7 @@ namespace IAGrim.UI.Service {
 
                                 // Just ignore the crucible
                                 var modName = Path.GetFileName(directory);
-                                if (modName == TheCrucibleDLC) {
+                                if (modName == theCrucibleDlc) {
                                     continue;
                                 }
 

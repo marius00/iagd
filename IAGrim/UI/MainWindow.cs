@@ -458,7 +458,7 @@ namespace IAGrim.UI
             _authAuthService = new AzureAuthService(_cefBrowserHandler, new AuthenticationProvider());
             var backupSettings = new BackupSettings(_playerItemDao, _authAuthService);
             addAndShow(backupSettings, backupPanel);
-            addAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, _playerItemDao, _parsingService), modsPanel);
+            addAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, _playerItemDao, _parsingService, _databaseSettingDao), modsPanel);
             addAndShow(new HelpTab(), panelHelp);            
             addAndShow(new LoggingWindow(), panelLogging);
             var backupService = new BackupService(_authAuthService, _playerItemDao, _azurePartitionDao, () => Settings.Default.UsingDualComputer);
@@ -491,7 +491,7 @@ namespace IAGrim.UI
 
 #if !DEBUG
             ThreadPool.QueueUserWorkItem(m => ExceptionReporter.ReportUsage());
-            CheckForUpdates();
+            _automaticUpdateChecker.CheckForUpdates();
 #endif
 
             Shown += (_, __) => { StartInjector(); };

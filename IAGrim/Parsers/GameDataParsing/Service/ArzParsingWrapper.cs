@@ -37,8 +37,12 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
 
             foreach (string arzFile in arzFiles) {
                 if (File.Exists(arzFile)) {
+                    Logger.Debug($"Parsing / Loading items from {arzFile}");
                     Parser.Arz.ArzParser.LoadItemRecords(arzFile, skipIrrelevantStats).ForEach(accumulator.Add);
                     tracker.Increment();
+                }
+                else {
+                    Logger.Debug($"Ignnoring non existing arz file {arzFile}");
                 }
             }
 
@@ -66,7 +70,11 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
             // Load tags in a prioritized order
             foreach (var tagfile in tagfiles) {
                 if (File.Exists(tagfile)) {
+                    Logger.Debug($"Loading tags from {tagfile}");
                     LoadTags(tagfile);
+                }
+                else {
+                    Logger.Debug($"Ignoring non-existing tagfile {tagfile}");
                 }
 
                 tracker.Increment();

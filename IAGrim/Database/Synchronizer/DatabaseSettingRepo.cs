@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace IAGrim.Database.Synchronizer {
-    class DatabaseSettingRepo : BasicSynchronizer<DatabaseSetting>, IDatabaseSettingDao {
+    public class DatabaseSettingRepo : BasicSynchronizer<DatabaseSetting>, IDatabaseSettingDao {
         private readonly IDatabaseSettingDao repo;
         public DatabaseSettingRepo(ThreadExecuter threadExecuter, ISessionCreator sessionCreator) : base(threadExecuter, sessionCreator) {
             this.repo = new DatabaseSettingDaoImpl(sessionCreator);

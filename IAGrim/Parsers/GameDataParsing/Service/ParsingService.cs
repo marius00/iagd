@@ -19,11 +19,11 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
 
 
         public ParsingService(
-            IItemTagDao itemTagDao, 
-            string grimdawnLocation, 
-            IDatabaseItemDao databaseItemDao, 
-            IDatabaseItemStatDao databaseItemStatDao, 
-            IItemSkillDao itemSkillDao, 
+            IItemTagDao itemTagDao,
+            string grimdawnLocation,
+            IDatabaseItemDao databaseItemDao,
+            IDatabaseItemStatDao databaseItemStatDao,
+            IItemSkillDao itemSkillDao,
             string localizationFile
         ) {
             _itemTagDao = itemTagDao;
@@ -50,10 +50,10 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
                 tagfiles.Add(vanillaTags);
             }
 
-            for (int i = 0; i <= 9; i++) {
-                string expansion1Tags = GrimFolderUtility.FindArcFile(Path.Combine(_grimdawnLocation, $"gdx{i}"), "text_en.arc");
-                if (!string.IsNullOrEmpty(expansion1Tags)) {
-                    tagfiles.Add(expansion1Tags);
+            foreach (string path in GrimFolderUtility.GetGrimExpansionFolders(_grimdawnLocation)) {
+                string expansionTags = GrimFolderUtility.FindArcFile(path, "text_en.arc");
+                if (!string.IsNullOrEmpty(expansionTags)) {
+                    tagfiles.Add(expansionTags);
                 }
             }
 
@@ -63,7 +63,6 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
             }
 
             List<Action> actions = new List<Action>();
-            // TODO: gdx2
 
 
             actions.Add(() => parser.LoadTags(tagfiles, _localizationFile, new WinformsProgressBar(form.LoadingTags).Tracker));
@@ -73,8 +72,8 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
                 GrimFolderUtility.FindArzFile(_grimdawnLocation)
             };
 
-            for (int i = 1; i <= 9; i++) {
-                string expansionItems = GrimFolderUtility.FindArzFile(Path.Combine(_grimdawnLocation, $"gdx{i}"));
+            foreach (string path in GrimFolderUtility.GetGrimExpansionFolders(_grimdawnLocation)) {
+                string expansionItems = GrimFolderUtility.FindArzFile(path);
 
                 if (!string.IsNullOrEmpty(expansionItems)) {
                     arzFiles.Add(GrimFolderUtility.FindArzFile(expansionItems));
