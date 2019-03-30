@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using IAGrim.Database.Synchronizer;
+using IAGrim.Services;
 
 namespace IAGrim.UI
 {
@@ -50,10 +51,12 @@ namespace IAGrim.UI
 
             listViewInstalls.EndUpdate();
 
-            if (listViewInstalls.Items.Count > 0)
-            {
+            if (listViewInstalls.Items.Count > 0) {
                 listViewInstalls.Items[0].Selected = true;
             }
+
+            // Show help linklabel?
+            helpFindGrimdawnInstall.Visible = listViewInstalls.Items.Count == 0;
 
             listViewMods.BeginUpdate();
             listViewMods.Items.Clear();
@@ -138,6 +141,10 @@ namespace IAGrim.UI
 
             updatingPlayerItemsScreen.ShowDialog();
             _itemViewUpdateTrigger?.Invoke();
+        }
+
+        private void helpFindGrimdawnInstall_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            HelpService.ShowHelp(HelpService.HelpType.CannotFindGrimdawn);
         }
     }
 }

@@ -401,7 +401,7 @@ namespace IAGrim.UI
 
             if (!_stashFileMonitor.StartMonitorStashfile(GlobalPaths.SavePath)) {
                 MessageBox.Show("Ooops!\nIt seems you are synchronizing your saves to steam cloud..\nThis tool is unfortunately not compatible.\n");
-                Process.Start("http://www.grimdawn.com/forums/showthread.php?t=20752");
+                HelpService.ShowHelp(HelpService.HelpType.CloudSavesEnabled);
 
                 if (!Debugger.IsAttached)
                     Close();

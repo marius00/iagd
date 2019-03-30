@@ -43,6 +43,7 @@
             this.panelBox1 = new PanelBox();
             this.buttonSyncNow = new FirefoxButton();
             this.buddySyncEnabled = new FirefoxCheckBox();
+            this.helpWhatIsThis = new System.Windows.Forms.LinkLabel();
             this.contextMenuStrip1.SuspendLayout();
             this.contextMenuStripDescription.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
@@ -89,6 +90,7 @@
             this.panelBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelBox3.Controls.Add(this.helpWhatIsThis);
             this.panelBox3.Controls.Add(this.button1);
             this.panelBox3.Controls.Add(this.label1);
             this.panelBox3.Controls.Add(this.descriptionLabel);
@@ -269,6 +271,20 @@
             this.buddySyncEnabled.Tag = "iatag_ui_enabled";
             this.buddySyncEnabled.Text = "Enabled";
             // 
+            // helpWhatIsThis
+            // 
+            this.helpWhatIsThis.AutoSize = true;
+            this.helpWhatIsThis.BackColor = System.Drawing.Color.Transparent;
+            this.helpWhatIsThis.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.helpWhatIsThis.Location = new System.Drawing.Point(119, 20);
+            this.helpWhatIsThis.Name = "helpWhatIsThis";
+            this.helpWhatIsThis.Size = new System.Drawing.Size(73, 13);
+            this.helpWhatIsThis.TabIndex = 9;
+            this.helpWhatIsThis.TabStop = true;
+            this.helpWhatIsThis.Tag = "iatag_ui_whatisthis";
+            this.helpWhatIsThis.Text = "What is this?";
+            this.helpWhatIsThis.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpWhatIsThis_LinkClicked);
+            // 
             // BuddySettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -315,5 +331,6 @@
         private System.Windows.Forms.ErrorProvider errorProvider1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.LinkLabel helpWhatIsThis;
     }
 }

@@ -6,6 +6,7 @@ using NHibernate.Criterion;
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using IAGrim.Services;
 
 namespace IAGrim.UI
 {
@@ -264,6 +265,10 @@ namespace IAGrim.UI
         private void button1_Click(object sender, EventArgs e)
         {
             editToolStripMenuItem_Click(sender, e);
+        }
+
+        private void helpWhatIsThis_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            HelpService.ShowHelp(HelpService.HelpType.BuddyItems);
         }
     }
 }

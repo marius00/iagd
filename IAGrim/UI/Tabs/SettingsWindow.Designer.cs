@@ -29,6 +29,7 @@
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelBox4 = new PanelBox();
+            this.helpWhatIsRecipeAsItems = new System.Windows.Forms.LinkLabel();
             this.cbShowAugments = new FirefoxCheckBox();
             this.cbDualComputer = new FirefoxCheckBox();
             this.linkSourceCode = new System.Windows.Forms.LinkLabel();
@@ -94,6 +95,7 @@
             // 
             // panelBox4
             // 
+            this.panelBox4.Controls.Add(this.helpWhatIsRecipeAsItems);
             this.panelBox4.Controls.Add(this.cbShowAugments);
             this.panelBox4.Controls.Add(this.cbDualComputer);
             this.panelBox4.Controls.Add(this.linkSourceCode);
@@ -115,6 +117,21 @@
             this.panelBox4.Tag = "iatag_ui_settings_title";
             this.panelBox4.Text = "Settings";
             this.panelBox4.TextLocation = "8; 5";
+            // 
+            // helpWhatIsRecipeAsItems
+            // 
+            this.helpWhatIsRecipeAsItems.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.helpWhatIsRecipeAsItems.AutoSize = true;
+            this.helpWhatIsRecipeAsItems.BackColor = System.Drawing.Color.Transparent;
+            this.helpWhatIsRecipeAsItems.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.helpWhatIsRecipeAsItems.Location = new System.Drawing.Point(259, 61);
+            this.helpWhatIsRecipeAsItems.Name = "helpWhatIsRecipeAsItems";
+            this.helpWhatIsRecipeAsItems.Size = new System.Drawing.Size(18, 13);
+            this.helpWhatIsRecipeAsItems.TabIndex = 21;
+            this.helpWhatIsRecipeAsItems.TabStop = true;
+            this.helpWhatIsRecipeAsItems.Tag = "iatag_ui_questionmark";
+            this.helpWhatIsRecipeAsItems.Text = " ? ";
+            this.helpWhatIsRecipeAsItems.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpWhatIsRecipeAsItems_LinkClicked);
             // 
             // cbShowAugments
             // 
@@ -539,5 +556,6 @@
         private FirefoxCheckBox cbDualComputer;
         private FirefoxCheckBox cbShowAugments;
         private FirefoxButton buttonDevTools;
+        private System.Windows.Forms.LinkLabel helpWhatIsRecipeAsItems;
     }
 }

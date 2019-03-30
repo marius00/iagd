@@ -450,8 +450,8 @@ namespace StatTranslator
             { "iatag_ui_shaman", "Shaman" },
             { "iatag_ui_inquisitor", "Inquisitor" },
             { "iatag_ui_necromancer", "Necromancer" },
-
-            //TODO: Are those used?
+            { "iatag_ui_oathkeeper", "Oathkeeper" },
+            
             { "class00", "abcccc" },
             { "class01", "Soldier" },
             { "class02", "Demolitionist" },
@@ -462,6 +462,10 @@ namespace StatTranslator
             { "class07", "Inquisitor" },
             { "class08", "Necromancer" },
 
+            
+            { "iatag_ui_questionmark", " ? " },
+            { "iatag_ui_howdoifindgrimdawn", "How can I find the Grim Dawn install?" },
+            { "iatag_ui_whatisthis", "What is this?" },
             { "iatag_no_stash_abort", "No stash chosen. Aborting transfer." },
             { "iatag_stash_status_error", "Could not inject into Grim Dawn, are you sure the bank is CLOSED?" },
             { "iatag_ui_recentonly", "Recent Only" },

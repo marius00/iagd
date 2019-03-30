@@ -10,6 +10,8 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
+using IAGrim.Services;
+
 // 
 namespace IAGrim.UI
 {
@@ -173,6 +175,10 @@ namespace IAGrim.UI
 
         private void buttonDevTools_Click(object sender, EventArgs e) {
             _cefBrowserHandler.ShowDevTools();
+        }
+
+        private void helpWhatIsRecipeAsItems_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            HelpService.ShowHelp(HelpService.HelpType.ShowRecipesAsItems);
         }
     }
 }
