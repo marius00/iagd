@@ -55,7 +55,8 @@ namespace IAGrim.Parsers.Arz
             _setFeedback = setFeedback;
             _performedLootCallback = performedLootCallback;
 
-            var path = GlobalPaths.SavePath;
+            // TODO: Should also check for transfer.gsh and pick whichever is newest / has the highest number
+            var path = Path.Combine(GlobalPaths.SavePath, "transfer.gst");
 
             if (!string.IsNullOrEmpty(path) && File.Exists(path))
             {

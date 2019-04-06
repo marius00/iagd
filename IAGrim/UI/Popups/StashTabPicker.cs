@@ -31,8 +31,8 @@ namespace IAGrim.UI.Popups {
                 Properties.Settings.Default.StashToLootFrom != 0) {
                 MessageBox.Show(
                     "I cannot overstate what an incredibly bad experience it would be to use only one tab.",
-                    "Yeah.. Nope!", 
-                    MessageBoxButtons.OK, 
+                    "Yeah.. Nope!",
+                    MessageBoxButtons.OK,
                     MessageBoxIcon.Exclamation
                 );
             }
@@ -48,50 +48,71 @@ namespace IAGrim.UI.Popups {
             if (stash == 0) {
                 stash = _numStashTabs;
             }
+
             RegistryHelper.Write(@"Software\EvilSoft\IAGD", "StashToLootFrom", stash);
         }
 
+        private FirefoxRadioButton CreateCheckbox(string name, string label, string text, Point position, FirefoxRadioButton.CheckedChangedEventHandler callback) {
+            FirefoxRadioButton checkbox = new FirefoxRadioButton();
+            checkbox.Bold = false;
+            checkbox.Checked = false;
+            checkbox.EnabledCalc = true;
+            checkbox.Font = new Font("Segoe UI", 10F);
+            checkbox.ForeColor = Color.FromArgb(((int) (((byte) (66)))), ((int) (((byte) (78)))), ((int) (((byte) (90)))));
+            checkbox.Location = position;
+            checkbox.Name = name;
+            checkbox.Size = new Size(188, 27);
+            checkbox.TabIndex = 3;
+            checkbox.Tag = label;
+            checkbox.Text = text;
+            checkbox.CheckedChanged += callback;
+            return checkbox;
+        }
+
         private void StashTabPicker_Load(object sender, EventArgs e) {
-            switch (Properties.Settings.Default.StashToDepositTo) {
-                case 0:
-                    radioOutputSecondToLast.Checked = true;
-                    break;
-                case 1:
-                    radioOutput1.Checked = true;
-                    break;
-                case 2:
-                    radioOutput2.Checked = true;
-                    break;
-                case 3:
-                    radioOutput3.Checked = true;
-                    break;
-                case 4:
-                    radioOutput4.Checked = true;
-                    break;
-                case 5:
-                    radioOutput5.Checked = true;
-                    break;
+            // Calculate the height dynamically depending on how many stashes the user has
+            Height = Math.Min(800, Math.Max(357, 202 + 31 * _numStashTabs));
+            gbMoveTo.Height = Math.Max(248, 83 + 33 * _numStashTabs);
+            gbLootFrom.Height = Math.Max(248, 83 + 33 * _numStashTabs);
+
+
+            for (int i = 1; i <= Math.Max(5, _numStashTabs); i++) {
+                int p = i; // Don't reference out scope (mutated)
+                FirefoxRadioButton.CheckedChangedEventHandler callback = (o, args) => {
+                    if (p <= _numStashTabs) {
+                        // Don't trust the "Firefox framework" to not trigger clicks on disabled buttons.
+                        Properties.Settings.Default.StashToDepositTo = p;
+                    }
+                };
+
+                int y = 32 + 33 * i;
+                var cb = CreateCheckbox($"moveto_tab_{i}", $"iatag_ui_tab_{i}", $"Tab {i}", new Point(6, y), callback);
+                cb.Checked = Properties.Settings.Default.StashToDepositTo == i;
+                cb.Enabled = i <= _numStashTabs;
+                cb.EnabledCalc = i <= _numStashTabs;
+                this.gbMoveTo.Controls.Add(cb);
             }
-            switch (Properties.Settings.Default.StashToLootFrom) {
-                case 0:
-                    radioInputLast.Checked = true;
-                    break;
-                case 1:
-                    radioInput1.Checked = true;
-                    break;
-                case 2:
-                    radioInput2.Checked = true;
-                    break;
-                case 3:
-                    radioInput3.Checked = true;
-                    break;
-                case 4:
-                    radioInput4.Checked = true;
-                    break;
-                case 5:
-                    radioInput5.Checked = true;
-                    break;
+
+
+            for (int i = 1; i <= Math.Max(5, _numStashTabs); i++) {
+                int p = i; // Don't reference out scope (mutated)
+                FirefoxRadioButton.CheckedChangedEventHandler callback = (o, args) => {
+                    if (p <= _numStashTabs) {
+                        // Don't trust the "Firefox framework" to not trigger clicks on disabled buttons.
+                        Properties.Settings.Default.StashToLootFrom = p;
+                    }
+                };
+
+                int y = 32 + 33 * i;
+                var cb = CreateCheckbox($"lootfrom_tab_{i}", $"iatag_ui_tab_{i}", $"Tab {i}", new Point(6, y), callback);
+                cb.Checked = Properties.Settings.Default.StashToLootFrom == i;
+                cb.Enabled = i <= _numStashTabs;
+                cb.EnabledCalc = i <= _numStashTabs;
+                this.gbLootFrom.Controls.Add(cb);
             }
+            
+            radioOutputSecondToLast.Checked = Properties.Settings.Default.StashToDepositTo == 0;
+            radioInputLast.Checked = Properties.Settings.Default.StashToLootFrom == 0;
 
             LocalizationLoader.ApplyLanguage(Controls, GlobalSettings.Language);
         }
@@ -100,48 +121,8 @@ namespace IAGrim.UI.Popups {
             Properties.Settings.Default.StashToDepositTo = 0;
         }
 
-        private void radioOutput1_CheckedChanged(object sender, EventArgs e) {
-            Properties.Settings.Default.StashToDepositTo = 1;
-        }
-
-        private void radioOutput2_CheckedChanged(object sender, EventArgs e) {
-            Properties.Settings.Default.StashToDepositTo = 2;
-        }
-
-        private void radioOutput3_CheckedChanged(object sender, EventArgs e) {
-            Properties.Settings.Default.StashToDepositTo = 3;
-        }
-
-        private void radioOutput4_CheckedChanged(object sender, EventArgs e) {
-            Properties.Settings.Default.StashToDepositTo = 4;
-        }
-
-        private void radioOutput5_CheckedChanged(object sender, EventArgs e) {
-            Properties.Settings.Default.StashToDepositTo = 5;
-        }
-
         private void radioInputLast_CheckedChanged(object sender, EventArgs e) {
             Properties.Settings.Default.StashToLootFrom = 0;
-        }
-
-        private void radioInput1_CheckedChanged(object sender, EventArgs e) {
-            Properties.Settings.Default.StashToLootFrom = 1;
-        }
-
-        private void radioInput2_CheckedChanged(object sender, EventArgs e) {
-            Properties.Settings.Default.StashToLootFrom = 2;
-        }
-
-        private void radioInput3_CheckedChanged(object sender, EventArgs e) {
-            Properties.Settings.Default.StashToLootFrom = 3;
-        }
-
-        private void radioInput4_CheckedChanged(object sender, EventArgs e) {
-            Properties.Settings.Default.StashToLootFrom = 4;
-        }
-
-        private void radioInput5_CheckedChanged(object sender, EventArgs e) {
-            Properties.Settings.Default.StashToLootFrom = 5;
         }
     }
 }

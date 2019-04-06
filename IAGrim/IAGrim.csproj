@@ -444,12 +444,6 @@
     <Compile Include="UI\Tabs\ModsDatabaseConfig.Designer.cs">
       <DependentUpon>ModsDatabaseConfig.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Tabs\SearchWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Tabs\SearchWindow.Designer.cs">
-      <DependentUpon>SearchWindow.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\Tabs\SettingsWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -598,9 +592,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Tabs\ModsDatabaseConfig.resx">
       <DependentUpon>ModsDatabaseConfig.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\Tabs\SearchWindow.resx">
-      <DependentUpon>SearchWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Tabs\SettingsWindow.resx">
       <DependentUpon>SettingsWindow.cs</DependentUpon>

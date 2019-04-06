@@ -119,3 +119,22 @@ For the web ui, they are passed in via the JSWrapper object.
 For the C# Forms user interface, the "tag" property is used to detect the appropriate translation string.
 Default language is located in EnglishLanguage.cs, IA looks for tags_ia.txt in GD translation files.
 
+
+
+
+## Restoring items from old backup to new one:
+SELECT 
+
+id_playeritem,baserecord,PrefixRecord,SuffixRecord,ModifierRecord,null,
+Seed,MateriaRecord,RelicCompletionRecord,RelicSeed,null,
+0,0,MateriaCombines,StackCount,
+null,null,null,null,0,null,null,0,null,null,null,null,null,null
+
+FROM `playeritem` WHERE id_itemowner = 41025536
+
+
+UPDATE PlayerItem SET enchantmentrecord = NULL where enchantmentrecord = 0;
+UPDATE PlayerItem SET azuuid_v2 = NULL where azuuid_v2 = 'NULL';
+UPDATE PlayerItem SET azpartition_v2 = NULL where azpartition_v2 = 'NULL';
+UPDATE PlayerItem SET Mod = NULL where Mod = 'NULL';
+UPDATE PlayerItem SET TransmuteRecord = NULL where TransmuteRecord = 'NULL';

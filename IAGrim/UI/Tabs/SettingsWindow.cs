@@ -180,5 +180,18 @@ namespace IAGrim.UI
         private void helpWhatIsRecipeAsItems_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             HelpService.ShowHelp(HelpService.HelpType.ShowRecipesAsItems);
         }
+
+        private void helpWhatIsAugmentAsItem_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            HelpService.ShowHelp(HelpService.HelpType.ShowAugmentsAsItems);
+
+        }
+
+        private void helpWhatIsSecureTransfers_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            HelpService.ShowHelp(HelpService.HelpType.SecureTransfers);
+        }
+
+        private void helpWhatIsTransferToAnyMod_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            HelpService.ShowHelp(HelpService.HelpType.TransferToAnyMod);
+        }
     }
 }

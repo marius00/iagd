@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <title>GD Item Assistant</title>
     <link href="vendor/bootstrap.min.css" rel="stylesheet">
     <script src="vendor/jquery-1.10.2.min.js"></script>
@@ -14,13 +14,9 @@
             text-align: left;
         }
 
-        .panel-body {
-            min-height: 70px;
-        }
+        .panel-body { min-height: 70px; }
 
-        .panel-heading {
-            font-weight: bold;
-        }
+        .panel-heading { font-weight: bold; }
 
         .linkbutton {
             cursor: pointer;
@@ -32,18 +28,16 @@
             user-select: none;
         }
 
-        .highlight {
-            background-color: #fff000 !important;
-        }
+        .highlight { background-color: #fff000 !important; }
     </style>
 </head>
 <body>
-    <h1 class="logo header">GD Item Assistant</h1>
+<h1 class="logo header">GD Item Assistant</h1>
 
-    <p class="text-warning">
-        DON'T PANIC! IT WILL BE OKAY.
-    </p>
-    <img src="static\flail.gif" />
+<p class="text-warning">
+    DON'T PANIC! IT WILL BE OKAY.
+</p>
+<img src="static\flail.gif"/>
 
 <br><br>
 <div data-bind="foreach: questions, visible: !noCollapse()">
@@ -80,380 +74,401 @@
     </div>
 </div>
 
-    <div id="questions" style="display: none">
-        <div>
-            <div>
-                IA shows me "Unknown Item"!??
-            </div>
-            <div>
-                <ol>
-                    <li>Open IA</li>
-                    <li><b>Close Grim Dawn</b></li>
-                    <li>Click the "Mods" tab</li>
-                    <li>Select "Vanilla" (If you have Forgotten Gods, it will say that instead of Vanilla)</li>
-                    <li>Click "Load Database"</li>
-                </ol>
-            </div>
-        </div>
-        <div>
-            <div>
-                IA says injection failed when running Grim Dawn 64 bit
-            </div>
-            <div>
-                Item Assistant does not support the 64 bit version of Grim Dawn just yet. <br/>
-                This feature is still pending, but IA will continue working just fine with the 32bit version.
-            </div>
-        </div>
-        <div>
-            <div>
-                Help!? I've lost all my items!?!?!!
-            </div>
-            <div>
-                <p class="text-warning">
-                    <b>DON'T PANIC! IT WILL BE OKAY.</b>
-                </p>
-
-                <br><br>
-                IA takes daily backups of your items and keeps copies of the the previous 100 stash files.<br>
-                Most likely the wrong mod is selected or you just need to parse the GD database.<br><br>
-                If you click Win+R at the same time, and then type: <u>%appdata%\..\local\evilsoft\iagd\backup</u> <br />
-                That should show all of your previous 100 stashes. Sort them by timestamp, fetch the newest, rename it to <u>transfer.gst</u> <br />
-                And just copy it into your Grim Dawn save folder. <br />
-                (Win is the Windows button on your keyboard)
-            </div>
-        </div>
-        <div>
-            <div>
-                My item names are missing
-            </div>
-            <div>
-                <ol>
-                    <li>Open IA</li>
-                    <li>Click the "Mods" tab</li>
-                    <li>Select "Vanilla" (or Forgotten Gods/AoM)</li>
-                    <li>Click "Load Database"</li>
-                    <li>Click "Update Item Stats"</li>
-                </ol>
-                <i>If this did not resolve your issue, try restarting IA.</i><br>
-            </div>
-        </div>
-        <div>
-            <div>
-                My item are named funny stuff like gdxTag0134
-            </div>
-            <div>
-                <ol>
-                    <li>Open IA</li>
-                    <li>Click the "Mods" tab</li>
-                    <li>Select "Vanilla & Expansion"</li>
-                    <li>Click "Load Database"</li>
-                    <li>Click "Update Item Stats"</li>
-                </ol>
-                <i>If this did not resolve your issue, try restarting IA.</i><br>
-            </div>
-        </div>
-
-        <div>
-            <div>
-                My icons are missing!
-            </div>
-            <div>
-                <ol>
-                    <li>Open IA</li>
-                    <li><b>Close Grim Dawn</b></li>
-                    <li>Click the "Mods" tab</li>
-                    <li>Select the install</li>
-                    <li>Click "Load Database"</li>
-                </ol>
-                IA will also attempt to load icons when starting up.
-            </div>
-        </div>
-
-        <div>
-            <div>
-                Which version am I running?
-            </div>
-            <div>
-                <ol>
-                    <li>Click log</li>
-                    <li>Scroll up to the top</li>
-                    <li>On roughly the 4th line you'll see:</li>
-                    <li>Running version 1.2.6503.41798 from 21.10.2017</li>
-                </ol>
-            </div>
-        </div>
-
-
-        <div>
-            <div>
-                Will IA give me back exactly the same item, with the same stats?
-            </div>
-            <div>
-                Yes, yes and yes.<br>
-                IA will never modify any of your items, and will always reproduce them <u>exactly</u> as it found them.<br>
-                Even if merging items is enabled, your items will remain unchanged. <br>
-                <b>Always.</b>
-            </div>
-        </div>
-
-        <div>
-            <div>
-                I can't find my items!
-            </div>
-            <div>
-                <ol>
-                    <li>Restart IA</li>
-                    <li>Make sure you've selected the right mod (upper right corner, most likely Vanilla)</li>
-                </ol>
-                IA may not be able to detect mod/etc settings on the very first run, but should get caught up pretty quickly after a restart. <br />
-            </div>
-        </div>
-
-        <div>
-            <div>
-                IA is not looting any items
-            </div>
-            <div>
-                <ol>
-                    <li>Place items in your stash</li>
-                    <li>Walk away from your stash area</li>
-                    <li>IA should now have looted these items</li>
-                    <li>The status bar in IA should indicate it just looted some items</li>
-                </ol>
-                <b>If this did not resolve your issue, please try running IA as administrator.<br></b>
-                In some cases IA requires aditional permissions to run properly.
-                <br>
-            </div>
-        </div>
-        <div>
-            <div>
-                How do I find my log files?
-            </div>
-            <div>
-                <ol>
-                    <li>Click the "Settings" tab</li>
-                    <li>Click "View Logs"</li>
-                    <li>The most recent log is "log.txt"</li>
-                </ol>
-            </div>
-        </div>
-
-        <div>
-            <div>
-                IA loots items but I can't see find them in IA
-            </div>
-            <div>
-                <b>Most likely you have the wrong <u>mod</u> selected.<br></b>
-                See the Mod selection in the upper right corner (Vanilla, Vanilla (HC), SomeMod, ...)<br>
-                <br>
-                If this is the first time you're using IA and have just looted items, try restarting IA.<br>
-                IA may take a restart to detect mods and stashes after looting its very first item.
-            </div>
-        </div>
-
-        <div>
-            <div>
-                How do i restore a transfer stash? (lost items from tab1 / tab2 for example)
-            </div>
-            <div>
-                <ol>
-                    <li>Close Grim Dawn (or at least go to the main menu)</li>
-                    <li>In IA go to settings</li>
-                    <li>Click "View Logs"</li>
-                    <li>Enter the "backup" folder</li>
-                    <li>You're looking for a file named transfer-something, look at the timestamps to find the correct one</li>
-                    <li>Once you think you've found the correct transfer copy, go to "my documents"\"my games"\"grim dawn"\"save"</li>
-                    <li>Find transfer.gst and rename it to transfer-renamed.gst</li>
-                    <li>Copy the transfer file from the backup folder into the save\ folder</li>
-                    <li>Rename the copied file to "transfer.gst"</li>
-                    <li>Open Grim dawn and go pick up your items from the stash</li>
-                    <li>Close grim dawn</li>
-                    <li>Delete the copied file, and rename the transfer-renamed.gst to transfer.gst to restore your stash</li>
-                </ol>
-
-                IA keeps the last 100 copies of your transfer stash, so you may need to guess which file you need based on the timestamp.
-                <br>
-                Remember: only you know when this happened.
-            </div>
-        </div>
-
-        <div name="CloudSavesEnabled">
-            <div>
-                IA says cloud saving is enabled
-            </div>
-            <div>
-                This is by far the most common issue in IA.<br>
-                <br>
-                Cloud saving have to be disabled in <u>two</u> locations.
-                <br>
-                <ol>
-                    <li>In steam</li>
-                    <li>Inside Grim Dawn itself, under "Settings"</li>
-                </ol>
-
-                Grim Dawn uses a different save directory with cloud saving disabled.<br>
-                After disabling cloud saving you still need to copy your characters to the correct directory.<br>
-                <br>
-                For more information on cloud saving, see <b><u>http://www.grimdawn.com/forums/showthread.php?t=20752</u></b>
-            </div>
-        </div>
-        <div>
-            <div>
-                How do I backup my items?
-            </div>
-            <div>
-                <b>IA can automatically backup your items to your favorite cloud provider, or to a custom folder (for example on your desktop or a USB stick)<br></b>
-                <br>
-                To backup your items to a custom folder:<br>
-
-                <ol>
-                    <li>Click the checkbox next to the "Custom" button</li>
-                    <li>Click "Custom" button to select the folder</li>
-                    <li>Click "Backup Now" to create the backup immediately</li>
-                </ol>
-                The backup will also include your Grim Dawn characters and stash files.
-
-                <br><br><br>
-                <b>If you just want to quickly move your items to another computer:</b>
-                <ol>
-                    <li>Click the "Settings" tab</li>
-                    <li>Click "View Logs"</li>
-                    <li>Go into "data"</li>
-                    <li>Copy "userdata.db"</li>
-                </ol>
-            </div>
-        </div>
-
-        <div>
-            <div>
-                How do I restore from a backup?
-            </div>
-            <div>
-                <b>There are two ways you may have backed up IA:</b><br>
-                <br>
-                <b>If you backed up IA via cloud backups or to a custom folder:</b><br>
-
-                <ol>
-                    <li>Unzip the <i>export.ias</i> file from your backup</li>
-                    <li>Open IA</li>
-                    <li>Click the "Settings" tab</li>
-                    <li>Click "Import/Export"</li>
-                    <li>Import / IAS</li>
-                    <li>Import the export.ias file</li>
-                </ol>
-                You will also find your Grim Dawn characters under the 'save' directory in the backup file.<br>
-                <br>
-                <b>If you backed up IA manually just copying <i>userdata.db</i></b><br>
-                <ol>
-                    <li>Open IA</li>
-                    <li>Click the "Settings" tab</li>
-                    <li>Click "View Logs"</li>
-                    <li>Enter the "data" folder</li>
-                    <li><b>Close IA</b></li>
-                    <li>Copy <i>"userdata.db" into the data folder</i></li>
-                </ol>
-            </div>
-        </div>
-
-
-        <div>
-            <div>
-                Everything is messed up after restoring from a backup!
-            </div>
-            <div>
-                <p class="text-warning">
-                    <b>DON'T PANIC! IT WILL BE OKAY.</b>
-                </p>
-                <ol>
-                    <li>Open IA</li>
-                    <li>Click the "Mods" tab</li>
-                    <li>Select "Vanilla"</li>
-                    <li>Click "Load Database"</li>
-                </ol>
-                <i>If this did not resolve your issue, try restarting IA.</i><br>
-            </div>
-        </div>
-        <div>
-            <div>
-                Settings: Whare are secure transfers?
-            </div>
-            <div>
-                <b>Disabling the <i>Secure Transfers</i> option lets IA transfer items even when the stash status is open or unknown</b><br>
-                This is an override provided for extreme cases where IA cannot detect the Grim Dawn stash status.<br><br>
-                If secure transfers is disabled, <u>it is up to the user to make sure the stash is closed</u>, or risk losing items during transfer.<br><br>
-                <font color="red">This is an emergency option only.</font>
-            </div>
-        </div>
-
-        <div>
-            <div>
-                Settings: What is transfer to any mod?
-            </div>
-            <div>
-                <b>Transfer to any mod lets you transfer items between the regular campaign and your mods.</b><br>
-                This is not enabled by default, as it could be considered cheating by some.
-            </div>
-        </div>
-
-        <div name="ShowRecipesAsItems">
-            <div>
-                Settings: What is show recipes as items?
-            </div>
-            <div>
-                <b>Show recipes as items will include your recipes when searching for items</b><br>
-                Some players are more interested in what is available, in both items and what they can make<br>
-                And this option lets them see craftable items as well as their own.
-            </div>
-        </div>
-        
-    <div name="BuddyItems">
-        <div>
-            Settings: What is buddy items?
-        </div>
-        <div>
-            Buddy items lets you see all of your friends items.<br>
-            This can be useful if you're playing with a friend / spouse / etc <br>
-            As you can both search and see the items the other person has.
-        </div>
+<div id="questions" style="display: none">
+<div name="UnknownItem">
+    <div>
+        IA shows me "Unknown Item"!??
     </div>
-    <div name="CannotFindGrimdawn">
-        <div>
-            Cannot find the Grim Dawn installation
-        </div>
-        <div>
-            IA will automatically attempt to detect Grim Dawn the following ways:
-            
-            <ul>
-                <li>By checking if Grim Dawn is currently running</li>
-                <li>By reading the steam config</li>
-                <li>By reading the registry</li>
-                <li>By looking for GOG Galaxy</li>
-            </ul>
-            <b>The easiest way to get IA to detect Grim Dawn, is to simply start the game while IA is running.</b>
-        </div>
+    <div>
+        <ol>
+            <li>Open IA</li>
+            <li>
+                <b>Close Grim Dawn</b>
+            </li>
+            <li>Click the "Mods" tab</li>
+            <li>Select "Vanilla" (If you have Forgotten Gods, it will say that instead of Vanilla)</li>
+            <li>Click "Load Database"</li>
+        </ol>
     </div>
-    
+</div>
+<div>
+    <div>
+        IA says injection failed when running Grim Dawn 64 bit
     </div>
+    <div>
+        Item Assistant does not support the 64 bit version of Grim Dawn just yet. <br/>
+        This feature is still pending, but IA will continue working just fine with the 32bit version.
+    </div>
+</div>
+<div>
+    <div>
+        Help!? I've lost all my items!?!?!!
+    </div>
+    <div>
+        <p class="text-warning">
+            <b>DON'T PANIC! IT WILL BE OKAY.</b>
+        </p>
+
+        <br><br>
+        IA takes daily backups of your items and keeps copies of the the previous 100 stash files.<br>
+        Most likely the wrong mod is selected or you just need to parse the GD database.<br><br>
+        If you click Win+R at the same time, and then type: <u>%appdata%\..\local\evilsoft\iagd\backup</u> <br/>
+        That should show all of your previous 100 stashes. Sort them by timestamp, fetch the newest, rename it to <u>transfer.gst</u> <br/>
+        And just copy it into your Grim Dawn save folder. <br/>
+        (Win is the Windows button on your keyboard)
+    </div>
+</div>
+<div>
+    <div>
+        My item names are missing
+    </div>
+    <div>
+        <ol>
+            <li>Open IA</li>
+            <li>Click the "Mods" tab</li>
+            <li>Select "Vanilla" (or Forgotten Gods/AoM)</li>
+            <li>Click "Load Database"</li>
+            <li>Click "Update Item Stats"</li>
+        </ol>
+        <i>If this did not resolve your issue, try restarting IA.</i><br>
+    </div>
+</div>
+<div>
+    <div>
+        My item are named funny stuff like gdxTag0134
+    </div>
+    <div>
+        <ol>
+            <li>Open IA</li>
+            <li>Click the "Mods" tab</li>
+            <li>Select "Vanilla & Expansion"</li>
+            <li>Click "Load Database"</li>
+            <li>Click "Update Item Stats"</li>
+        </ol>
+        <i>If this did not resolve your issue, try restarting IA.</i><br>
+    </div>
+</div>
+
+<div>
+    <div>
+        My icons are missing!
+    </div>
+    <div>
+        <ol>
+            <li>Open IA</li>
+            <li>
+                <b>Close Grim Dawn</b>
+            </li>
+            <li>Click the "Mods" tab</li>
+            <li>Select the install</li>
+            <li>Click "Load Database"</li>
+        </ol>
+        IA will also attempt to load icons when starting up.
+    </div>
+</div>
+
+<div>
+    <div>
+        Which version am I running?
+    </div>
+    <div>
+        <ol>
+            <li>Click log</li>
+            <li>Scroll up to the top</li>
+            <li>On roughly the 4th line you'll see:</li>
+            <li>Running version 1.2.6503.41798 from 21.10.2017</li>
+        </ol>
+    </div>
+</div>
+
+
+<div>
+    <div>
+        Will IA give me back exactly the same item, with the same stats?
+    </div>
+    <div>
+        Yes, yes and yes.<br>
+        IA will never modify any of your items, and will always reproduce them <u>exactly</u> as it found them.<br>
+        Even if merging items is enabled, your items will remain unchanged. <br>
+        <b>Always.</b>
+    </div>
+</div>
+
+<div>
+    <div>
+        I can't find my items!
+    </div>
+    <div>
+        <ol>
+            <li>Restart IA</li>
+            <li>Make sure you've selected the right mod (upper right corner, most likely Vanilla)</li>
+        </ol>
+        IA may not be able to detect mod/etc settings on the very first run, but should get caught up pretty quickly after a restart. <br/>
+    </div>
+</div>
+
+<div>
+    <div>
+        IA is not looting any items
+    </div>
+    <div>
+        <ol>
+            <li>Place items in your stash</li>
+            <li>Walk away from your stash area</li>
+            <li>IA should now have looted these items</li>
+            <li>The status bar in IA should indicate it just looted some items</li>
+        </ol>
+        <b>If this did not resolve your issue, please try running IA as administrator.<br></b>
+        In some cases IA requires aditional permissions to run properly.
+        <br>
+    </div>
+</div>
+<div>
+    <div>
+        How do I find my log files?
+    </div>
+    <div>
+        <ol>
+            <li>Click the "Settings" tab</li>
+            <li>Click "View Logs"</li>
+            <li>The most recent log is "log.txt"</li>
+        </ol>
+    </div>
+</div>
+
+<div>
+    <div>
+        IA loots items but I can't see find them in IA
+    </div>
+    <div>
+        <b>Most likely you have the wrong <u>mod</u> selected.<br></b>
+        See the Mod selection in the upper right corner (Vanilla, Vanilla (HC), SomeMod, ...)<br>
+        <br>
+        If this is the first time you're using IA and have just looted items, try restarting IA.<br>
+        IA may take a restart to detect mods and stashes after looting its very first item.
+    </div>
+</div>
+
+<div>
+    <div>
+        How do i restore a transfer stash? (lost items from tab1 / tab2 for example)
+    </div>
+    <div>
+        <ol>
+            <li>Close Grim Dawn (or at least go to the main menu)</li>
+            <li>In IA go to settings</li>
+            <li>Click "View Logs"</li>
+            <li>Enter the "backup" folder</li>
+            <li>You're looking for a file named transfer-something, look at the timestamps to find the correct one</li>
+            <li>Once you think you've found the correct transfer copy, go to "my documents"\"my games"\"grim dawn"\"save"</li>
+            <li>Find transfer.gst and rename it to transfer-renamed.gst</li>
+            <li>Copy the transfer file from the backup folder into the save\ folder</li>
+            <li>Rename the copied file to "transfer.gst"</li>
+            <li>Open Grim dawn and go pick up your items from the stash</li>
+            <li>Close grim dawn</li>
+            <li>Delete the copied file, and rename the transfer-renamed.gst to transfer.gst to restore your stash</li>
+        </ol>
+
+        IA keeps the last 100 copies of your transfer stash, so you may need to guess which file you need based on the timestamp.
+        <br>
+        Remember: only you know when this happened.
+    </div>
+</div>
+
+<div name="CloudSavesEnabled">
+    <div>
+        IA says cloud saving is enabled
+    </div>
+    <div>
+        This is by far the most common issue in IA.<br>
+        <br>
+        Cloud saving have to be disabled in <u>two</u> locations.
+        <br>
+        <ol>
+            <li>In steam</li>
+            <li>Inside Grim Dawn itself, under "Settings"</li>
+        </ol>
+
+        Grim Dawn uses a different save directory with cloud saving disabled.<br>
+        After disabling cloud saving you still need to copy your characters to the correct directory.<br>
+        <br>
+        For more information on cloud saving, see
+        <b>
+            <u>http://www.grimdawn.com/forums/showthread.php?t=20752</u>
+        </b>
+    </div>
+</div>
+<div>
+    <div>
+        How do I backup my items?
+    </div>
+    <div>
+        <b>IA can automatically backup your items to your favorite cloud provider, or to a custom folder (for example on your desktop or a USB stick)<br></b>
+        <br>
+        To backup your items to a custom folder:<br>
+
+        <ol>
+            <li>Click the checkbox next to the "Custom" button</li>
+            <li>Click "Custom" button to select the folder</li>
+            <li>Click "Backup Now" to create the backup immediately</li>
+        </ol>
+        The backup will also include your Grim Dawn characters and stash files.
+
+        <br><br><br>
+        <b>If you just want to quickly move your items to another computer:</b>
+        <ol>
+            <li>Click the "Settings" tab</li>
+            <li>Click "View Logs"</li>
+            <li>Go into "data"</li>
+            <li>Copy "userdata.db"</li>
+        </ol>
+    </div>
+</div>
+
+<div name="RestoreBackup">
+    <div>
+        How do I restore from a backup?
+    </div>
+    <div>
+        <b>There are two ways you may have backed up IA:</b><br>
+        <br>
+        <b>If you backed up IA via cloud backups or to a custom folder:</b><br>
+
+        <ol>
+            <li>Unzip the <i>export.ias</i> file from your backup</li>
+            <li>Open IA</li>
+            <li>Click the "Settings" tab</li>
+            <li>Click "Import/Export"</li>
+            <li>Import / IAS</li>
+            <li>Import the export.ias file</li>
+        </ol>
+        You will also find your Grim Dawn characters under the 'save' directory in the backup file.<br>
+        <br>
+        <b>If you backed up IA manually just copying <i>userdata.db</i></b><br>
+        <ol>
+            <li>Open IA</li>
+            <li>Click the "Settings" tab</li>
+            <li>Click "View Logs"</li>
+            <li>Enter the "data" folder</li>
+            <li>
+                <b>Close IA</b>
+            </li>
+            <li>Copy <i>"userdata.db" into the data folder</i></li>
+        </ol>
+    </div>
+</div>
+
+
+<div>
+    <div>
+        Everything is messed up after restoring from a backup!
+    </div>
+    <div>
+        <p class="text-warning">
+            <b>DON'T PANIC! IT WILL BE OKAY.</b>
+        </p>
+        <ol>
+            <li>Open IA</li>
+            <li>Click the "Mods" tab</li>
+            <li>Select "Vanilla"</li>
+            <li>Click "Load Database"</li>
+        </ol>
+        <i>If this did not resolve your issue, try restarting IA.</i><br>
+    </div>
+</div>
+<div name="SecureTransfers">
+    <div>
+        Settings: Whare are secure transfers?
+    </div>
+    <div>
+        <b>Disabling the <i>Secure Transfers</i> option lets IA transfer items even when the stash status is open or unknown</b><br>
+        This is an override provided for extreme cases where IA cannot detect the Grim Dawn stash status.<br><br>
+        If secure transfers is disabled, <u>it is up to the user to make sure the stash is closed</u>, or risk losing items during transfer.<br><br>
+        <font color="red">This is an emergency option only.</font>
+    </div>
+</div>
+
+<div name="TransferToAnyMod">
+    <div>
+        Settings: What is transfer to any mod?
+    </div>
+    <div>
+        <b>Transfer to any mod lets you transfer items between the regular campaign and your mods.</b><br>
+        This is not enabled by default, as it could be considered cheating by some.
+    </div>
+</div>
+
+
+<div name="ShowRecipesAsItems">
+    <div>
+        Settings: What is show recipes as items?
+    </div>
+    <div>
+        <b>Show recipes as items will include your recipes when searching for items</b><br>
+        Some players are more interested in what is available, in both items and what they can make<br>
+        And this option lets them see craftable items as well as their own.
+    </div>
+</div>
+
+<div name="ShowAugmentsAsItems">
+    <div>
+        Settings: What is show augments as items?
+    </div>
+    <div>
+        <b>Show augments as items will include purchaseable augments when searching for items</b><br>
+        Some players are more interested in what is available, in both items and what they can purchase
+    </div>
+</div>
+
+<div name="BuddyItems">
+    <div>
+        Settings: What is buddy items?
+    </div>
+    <div>
+        Buddy items lets you see all of your friends items.<br>
+        This can be useful if you're playing with a friend / spouse / etc <br>
+        As you can both search and see the items the other person has.
+    </div>
+</div>
+<div name="CannotFindGrimdawn">
+    <div>
+        Cannot find the Grim Dawn installation
+    </div>
+    <div>
+        IA will automatically attempt to detect Grim Dawn the following ways:
+
+        <ul>
+            <li>By checking if Grim Dawn is currently running</li>
+            <li>By reading the steam config</li>
+            <li>By reading the registry</li>
+            <li>By looking for GOG Galaxy</li>
+        </ul>
+        <b>The easiest way to get IA to detect Grim Dawn, is to simply start the game while IA is running.</b>
+    </div>
+</div>
+
+</div>
 
 <script>
     var numRendered = 0;
     var q = false;
     try {
         q = new URL(window.location.href).searchParams.get("q");
-    } catch (err) {}
+    } catch (err) {
+    }
 
     function _VM() {
         var self = this;
         this.questions = ko.observableArray([{ issue: '', solution: '', name: Math.random().toString() },]);
         this.noCollapse = ko.observable(q ? true : false);
-        this.postRender = function () {
+        this.postRender = function() {
             numRendered++;
             if (numRendered === $('#questions').children().length) {
                 console.log('Done rendering');
                 // Check if this was a direct link to a question
                 if (q) {
                     setTimeout(function() {
-                        
+
                             $('html,body').animate({ scrollTop: $('[name=' + q + ']').offset().top }, 1);
                             $('[name=' + q + ']').addClass('highlight');
                         },
@@ -463,8 +478,9 @@
             }
         }
     }
+
     var VM = new _VM();
-    $(document).ready(function () {
+    $(document).ready(function() {
         ko.applyBindings(VM);
         var data = []
         var questions = $('#questions').children();
@@ -479,20 +495,20 @@
 
     });
 </script>
-    <!--
-      <div class="panel panel-default">
-        <div class="panel-heading linkbutton" role="tab" id="qh01" class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#qc01" aria-expanded="false" aria-controls="qc01">
-          <h4 class="panel-title">
+<!--
+<div class="panel panel-default">
+    <div class="panel-heading linkbutton" role="tab" id="qh01" class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#qc01" aria-expanded="false" aria-controls="qc01">
+        <h4 class="panel-title">
             <a>
-              My item icons are missing
+                My item icons are missing
             </a>
-          </h4>
-        </div>
-        <div id="qc01" class="panel-collapse collapse" role="tabpanel" aria-labelledby="qh01">
-          <div class="panel-body">
+        </h4>
+    </div>
+    <div id="qc01" class="panel-collapse collapse" role="tabpanel" aria-labelledby="qh01">
+        <div class="panel-body">
             Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-          </div>
         </div>
-      </div>-->
+    </div>
+</div>-->
 </body>
 </html>

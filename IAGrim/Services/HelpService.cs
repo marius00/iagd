@@ -13,7 +13,11 @@ namespace IAGrim.Services {
             BuddyItems,
             CloudSavesEnabled,
             CannotFindGrimdawn,
-            ShowRecipesAsItems
+            ShowRecipesAsItems,
+            ShowAugmentsAsItems,
+            SecureTransfers,
+            TransferToAnyMod,
+            RestoreBackup
         }
 
         public static void ShowHelp(HelpType type) {

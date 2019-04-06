@@ -29,6 +29,9 @@
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelBox4 = new PanelBox();
+            this.helpWhatIsTransferToAnyMod = new System.Windows.Forms.LinkLabel();
+            this.helpWhatIsSecureTransfers = new System.Windows.Forms.LinkLabel();
+            this.helpWhatIsAugmentAsItem = new System.Windows.Forms.LinkLabel();
             this.helpWhatIsRecipeAsItems = new System.Windows.Forms.LinkLabel();
             this.cbShowAugments = new FirefoxCheckBox();
             this.cbDualComputer = new FirefoxCheckBox();
@@ -48,7 +51,6 @@
             this.buttonDevTools = new FirefoxButton();
             this.buttonDonate = new FirefoxButton();
             this.buttonForum = new FirefoxButton();
-            this.buttonDeveloper = new FirefoxButton();
             this.panelBox1 = new PanelBox();
             this.buttonAdvancedSettings = new FirefoxButton();
             this.buttonImportExport = new FirefoxButton();
@@ -95,6 +97,9 @@
             // 
             // panelBox4
             // 
+            this.panelBox4.Controls.Add(this.helpWhatIsTransferToAnyMod);
+            this.panelBox4.Controls.Add(this.helpWhatIsSecureTransfers);
+            this.panelBox4.Controls.Add(this.helpWhatIsAugmentAsItem);
             this.panelBox4.Controls.Add(this.helpWhatIsRecipeAsItems);
             this.panelBox4.Controls.Add(this.cbShowAugments);
             this.panelBox4.Controls.Add(this.cbDualComputer);
@@ -117,6 +122,51 @@
             this.panelBox4.Tag = "iatag_ui_settings_title";
             this.panelBox4.Text = "Settings";
             this.panelBox4.TextLocation = "8; 5";
+            // 
+            // helpWhatIsTransferToAnyMod
+            // 
+            this.helpWhatIsTransferToAnyMod.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.helpWhatIsTransferToAnyMod.AutoSize = true;
+            this.helpWhatIsTransferToAnyMod.BackColor = System.Drawing.Color.Transparent;
+            this.helpWhatIsTransferToAnyMod.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.helpWhatIsTransferToAnyMod.Location = new System.Drawing.Point(259, 127);
+            this.helpWhatIsTransferToAnyMod.Name = "helpWhatIsTransferToAnyMod";
+            this.helpWhatIsTransferToAnyMod.Size = new System.Drawing.Size(18, 13);
+            this.helpWhatIsTransferToAnyMod.TabIndex = 26;
+            this.helpWhatIsTransferToAnyMod.TabStop = true;
+            this.helpWhatIsTransferToAnyMod.Tag = "iatag_ui_questionmark";
+            this.helpWhatIsTransferToAnyMod.Text = " ? ";
+            this.helpWhatIsTransferToAnyMod.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpWhatIsTransferToAnyMod_LinkClicked);
+            // 
+            // helpWhatIsSecureTransfers
+            // 
+            this.helpWhatIsSecureTransfers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.helpWhatIsSecureTransfers.AutoSize = true;
+            this.helpWhatIsSecureTransfers.BackColor = System.Drawing.Color.Transparent;
+            this.helpWhatIsSecureTransfers.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.helpWhatIsSecureTransfers.Location = new System.Drawing.Point(259, 160);
+            this.helpWhatIsSecureTransfers.Name = "helpWhatIsSecureTransfers";
+            this.helpWhatIsSecureTransfers.Size = new System.Drawing.Size(18, 13);
+            this.helpWhatIsSecureTransfers.TabIndex = 25;
+            this.helpWhatIsSecureTransfers.TabStop = true;
+            this.helpWhatIsSecureTransfers.Tag = "iatag_ui_questionmark";
+            this.helpWhatIsSecureTransfers.Text = " ? ";
+            this.helpWhatIsSecureTransfers.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpWhatIsSecureTransfers_LinkClicked);
+            // 
+            // helpWhatIsAugmentAsItem
+            // 
+            this.helpWhatIsAugmentAsItem.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.helpWhatIsAugmentAsItem.AutoSize = true;
+            this.helpWhatIsAugmentAsItem.BackColor = System.Drawing.Color.Transparent;
+            this.helpWhatIsAugmentAsItem.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.helpWhatIsAugmentAsItem.Location = new System.Drawing.Point(259, 259);
+            this.helpWhatIsAugmentAsItem.Name = "helpWhatIsAugmentAsItem";
+            this.helpWhatIsAugmentAsItem.Size = new System.Drawing.Size(18, 13);
+            this.helpWhatIsAugmentAsItem.TabIndex = 24;
+            this.helpWhatIsAugmentAsItem.TabStop = true;
+            this.helpWhatIsAugmentAsItem.Tag = "iatag_ui_questionmark";
+            this.helpWhatIsAugmentAsItem.Text = " ? ";
+            this.helpWhatIsAugmentAsItem.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpWhatIsAugmentAsItem_LinkClicked);
             // 
             // helpWhatIsRecipeAsItems
             // 
@@ -338,7 +388,6 @@
             this.panelBox2.Controls.Add(this.buttonDevTools);
             this.panelBox2.Controls.Add(this.buttonDonate);
             this.panelBox2.Controls.Add(this.buttonForum);
-            this.panelBox2.Controls.Add(this.buttonDeveloper);
             this.panelBox2.Font = new System.Drawing.Font("Segoe UI Semibold", 20F);
             this.panelBox2.HeaderHeight = 40;
             this.panelBox2.Location = new System.Drawing.Point(260, 12);
@@ -355,7 +404,7 @@
             this.buttonDevTools.EnabledCalc = true;
             this.buttonDevTools.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.buttonDevTools.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
-            this.buttonDevTools.Location = new System.Drawing.Point(14, 165);
+            this.buttonDevTools.Location = new System.Drawing.Point(14, 125);
             this.buttonDevTools.Name = "buttonDevTools";
             this.buttonDevTools.Size = new System.Drawing.Size(192, 32);
             this.buttonDevTools.TabIndex = 6;
@@ -368,7 +417,7 @@
             this.buttonDonate.EnabledCalc = true;
             this.buttonDonate.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.buttonDonate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
-            this.buttonDonate.Location = new System.Drawing.Point(14, 127);
+            this.buttonDonate.Location = new System.Drawing.Point(14, 87);
             this.buttonDonate.Name = "buttonDonate";
             this.buttonDonate.Size = new System.Drawing.Size(192, 32);
             this.buttonDonate.TabIndex = 5;
@@ -381,26 +430,13 @@
             this.buttonForum.EnabledCalc = true;
             this.buttonForum.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.buttonForum.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
-            this.buttonForum.Location = new System.Drawing.Point(14, 89);
+            this.buttonForum.Location = new System.Drawing.Point(14, 49);
             this.buttonForum.Name = "buttonForum";
             this.buttonForum.Size = new System.Drawing.Size(192, 32);
             this.buttonForum.TabIndex = 4;
             this.buttonForum.Tag = "iatag_ui_openforum";
             this.buttonForum.Text = "Open Forum";
             this.buttonForum.Click += new System.EventHandler(this.buttonForum_Click);
-            // 
-            // buttonDeveloper
-            // 
-            this.buttonDeveloper.EnabledCalc = true;
-            this.buttonDeveloper.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.buttonDeveloper.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
-            this.buttonDeveloper.Location = new System.Drawing.Point(14, 51);
-            this.buttonDeveloper.Name = "buttonDeveloper";
-            this.buttonDeveloper.Size = new System.Drawing.Size(192, 32);
-            this.buttonDeveloper.TabIndex = 3;
-            this.buttonDeveloper.Tag = "iatag_ui_contactdev";
-            this.buttonDeveloper.Text = "Contact Developer";
-            this.buttonDeveloper.Click += new System.EventHandler(this.buttonDeveloper_Click);
             // 
             // panelBox1
             // 
@@ -528,7 +564,6 @@
 
         private PanelBox panelBox1;
         private PanelBox panelBox2;
-        private FirefoxButton buttonDeveloper;
         private FirefoxButton buttonViewBackups;
         private FirefoxButton buttonViewLogs;
         private FirefoxButton buttonForum;
@@ -557,5 +592,8 @@
         private FirefoxCheckBox cbShowAugments;
         private FirefoxButton buttonDevTools;
         private System.Windows.Forms.LinkLabel helpWhatIsRecipeAsItems;
+        private System.Windows.Forms.LinkLabel helpWhatIsAugmentAsItem;
+        private System.Windows.Forms.LinkLabel helpWhatIsSecureTransfers;
+        private System.Windows.Forms.LinkLabel helpWhatIsTransferToAnyMod;
     }
 }
