@@ -687,6 +687,9 @@ namespace IAGrim.UI
 #endif
             // CBA dealing with this.
             string dllname = "ItemAssistantHook_x64.dll";
+#if DEBUG
+            dllname = @"S:\my documents\Visual Studio 2012\Projects\IAGrim\IA\ItemAssistantHook\CUSTOM\x64\Release\ItemAssistantHook.dll";
+#endif
             _injector = new InjectionHelper(new BackgroundWorker(), _injectorCallbackDelegate, false, "Grim Dawn", string.Empty, dllname);
         }
 

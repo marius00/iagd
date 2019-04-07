@@ -18,7 +18,7 @@ void HookWalkTo::EnableHook() {
 #else
 	originalMethod = (OriginalMethodPtr)GetProcAddress(::GetModuleHandle("Game.dll"), "?RequestMoveAction@ControllerPlayerStateIdle@GAME@@MAEX_N0ABVWorldVec3@2@@Z");
 #endif
-
+	/*
 	if (MH_CreateHookApiEx(
 		L"game.dll", 
 		"?RequestMoveAction@ControllerPlayerStateIdle@GAME@@MEAAX_N0AEBVWorldVec3@2@@Z", 
@@ -30,8 +30,8 @@ void HookWalkTo::EnableHook() {
 
 	if (MH_EnableHook(&MessageBoxW) != MH_OK)
 	{
-		return 1;
-	}
+		return;
+	}*/
 
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());

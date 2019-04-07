@@ -114,7 +114,7 @@ namespace IAGrim {
                                 string exe = (string)gameKey.GetValue("EXEFILE");
                                 string location = (string)gameKey.GetValue("PATH");
                                 if (!string.IsNullOrEmpty(exe) && !string.IsNullOrEmpty(location)) {
-                                    bool isGrimDawn = "grim dawn.exe".Equals(Path.GetFileName(exe).ToLower());
+                                    bool isGrimDawn = "grim dawn.exe".Equals(Path.GetFileName(exe).ToLowerInvariant());
                                     bool exists = File.Exists(Path.Combine(location, exe));
                                     if (isGrimDawn) {
                                         if (exists) {
@@ -306,7 +306,7 @@ namespace IAGrim {
                 var searcher = new ManagementObjectSearcher("Select * From Win32_Process");
                 var processList = searcher.Get();
                 foreach (var process in processList) {
-                    if ("grim dawn.exe".Equals(process["Name"].ToString().ToLower())) {
+                    if ("grim dawn.exe".Equals(process["Name"].ToString().ToLowerInvariant())) {
                         if (File.Exists(process["ExecutablePath"].ToString()))
                             paths.Add(process["ExecutablePath"].ToString());
                     }
