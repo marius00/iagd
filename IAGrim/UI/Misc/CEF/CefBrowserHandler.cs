@@ -103,7 +103,7 @@ namespace IAGrim.UI.Misc.CEF {
 
 
         public void ShowMessage(string message, UserFeedbackLevel level) {
-            string levelLowercased = level.ToString().ToLower();
+            string levelLowercased = level.ToString().ToLowerInvariant();
             var m = message.Replace("\n", "\\n").Replace("'", "\\'");
             if (!string.IsNullOrEmpty(message)) {
                 if (_browser.IsBrowserInitialized)

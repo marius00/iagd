@@ -364,7 +364,7 @@ namespace IAGrim.UI
 
                 var cb = new FirefoxCheckBox {
                     Size = new Size {Height = 27, Width = 121},
-                    Tag = $"iatag_ui_{tag.Name.ToLower()}",
+                    Tag = $"iatag_ui_{tag.Name.ToLowerInvariant()}",
                     Text = tag.Name,
                     Location = new Point {X = 3, Y = 3 + cbNum * 33}
                 };
