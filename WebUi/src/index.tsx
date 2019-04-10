@@ -21,7 +21,7 @@ declare abstract class data {
   public static globalSetRecipes(recipes: RecipeList): {};
   public static globalSetRecipeIngredients(components: Component): {};
   public static globalSetIsLoading(v: boolean): {};
-  public static showMessage(message: string, level: string): {};
+  public static showMessage(message: string, level: string, url: string | undefined): {};
 }
 if (typeof data === 'object') {
   data.globalStore = store;

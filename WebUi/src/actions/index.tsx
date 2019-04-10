@@ -76,13 +76,21 @@ export function requestInitialItems(): RequestInitialItems {
   };
 }
 
-export function showMessage(message: string, level: NotificationLevel): Action {
+export function showMessage(message: string, level: NotificationLevel, url: string | undefined): Action {
+  const action = url !== undefined ? {
+    label: 'Click here for more info',
+    callback: function () {
+      window.open(url);
+    }
+  } : undefined;
+
   return show(
     {
       message: message,
       autoDismiss: 3.5,
       dismissible: false,
-      position: 'bc'
+      position: 'bc',
+      action: action
     },
     level
   );

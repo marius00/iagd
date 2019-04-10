@@ -15,9 +15,8 @@ namespace IAGrim.Database {
     public class DatabaseSettingDaoImpl : BaseDao<DatabaseSetting>, IDatabaseSettingDao {
         private static ILog logger = LogManager.GetLogger(typeof(DatabaseSettingDaoImpl));
 
-        public DatabaseSettingDaoImpl(ISessionCreator sessionCreator) : base (sessionCreator) {
+        public DatabaseSettingDaoImpl(ISessionCreator sessionCreator) : base(sessionCreator) {
         }
-
 
 
         /// <summary>
@@ -54,7 +53,6 @@ namespace IAGrim.Database {
 
             return 0L;
         }*/
-
         /// <summary>
         /// Store the current database path
         /// Mainly just for displaying the currently loaded mod (if any)
@@ -64,11 +62,11 @@ namespace IAGrim.Database {
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
                     bool updated = session
-                        .CreateQuery("UPDATE DatabaseSetting SET V2 = :value WHERE Id = 'CurrentDatabase'")
-                        .SetParameter("value", path).ExecuteUpdate() != 0;
+                                       .CreateQuery("UPDATE DatabaseSetting SET V2 = :value WHERE Id = 'CurrentDatabase'")
+                                       .SetParameter("value", path).ExecuteUpdate() != 0;
 
                     if (!updated) {
-                        session.Save(new DatabaseSetting { Id = "CurrentDatabase", V2 = path });
+                        session.Save(new DatabaseSetting {Id = "CurrentDatabase", V2 = path});
                     }
 
                     transaction.Commit();
@@ -102,9 +100,8 @@ namespace IAGrim.Database {
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
                     if (session.CreateQuery("UPDATE DatabaseSetting SET V1 = :value WHERE Id = 'LastRecipeUpdate'")
-                        .SetParameter("value", ts).ExecuteUpdate() == 0) {
-
-                            session.Save(new DatabaseSetting { Id = "LastRecipeUpdate", V1 = ts });
+                            .SetParameter("value", ts).ExecuteUpdate() == 0) {
+                        session.Save(new DatabaseSetting {Id = "LastRecipeUpdate", V1 = ts});
                     }
 
                     transaction.Commit();
@@ -121,10 +118,9 @@ namespace IAGrim.Database {
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
                     if (session.CreateQuery("UPDATE DatabaseSetting SET V1 = :value WHERE Id = 'LastUpdate'")
-                        .SetParameter("value", ts)
-                        .ExecuteUpdate() == 0) {
-
-                            session.Save(new DatabaseSetting { Id = "LastUpdate", V1 = ts });
+                            .SetParameter("value", ts)
+                            .ExecuteUpdate() == 0) {
+                        session.Save(new DatabaseSetting {Id = "LastUpdate", V1 = ts});
                     }
 
                     transaction.Commit();
@@ -155,12 +151,31 @@ namespace IAGrim.Database {
                     if (session.CreateQuery("UPDATE DatabaseSetting SET V2 = :value WHERE Id = 'Uuid'")
                             .SetParameter("value", uuid)
                             .ExecuteUpdate() == 0) {
-
-                        session.Save(new DatabaseSetting { Id = "Uuid", V2 = uuid });
+                        session.Save(new DatabaseSetting {Id = "Uuid", V2 = uuid});
                     }
 
                     transaction.Commit();
                 }
+            }
+        }
+
+        public void Clean() {
+            // CREATE TABLE DatabaseItemStat_v2 (id_databaseitemstat  integer primary key autoincrement, id_databaseitem BIGINT, Stat TEXT, TextValue TEXT, val1 DOUBLE, constraint FK9663A5FC6B4AFA92 foreign key (id_databaseitem) references DatabaseItem_v2)
+            string[] tables = new[] {"DatabaseItemStat_v2", "DatabaseItem_v2", "ItemTag"};
+            string fetchCreateTableQuery = "SELECT sql FROM sqlite_master WHERE type='table' AND name = :table";
+
+
+            using (ISession session = SessionCreator.OpenSession()) {
+                using (ITransaction transaction = session.BeginTransaction()) {
+                    foreach (var table in tables) {
+                        string recreateQuery = session.CreateSQLQuery(fetchCreateTableQuery).SetParameter("table", table).UniqueResult<string>();
+                        session.CreateSQLQuery("DROP TABLE IF EXISTS " + table).ExecuteUpdate();
+                        session.CreateSQLQuery(recreateQuery).ExecuteUpdate();
+                    }
+
+                    transaction.Commit();
+                }
+
             }
 
         }

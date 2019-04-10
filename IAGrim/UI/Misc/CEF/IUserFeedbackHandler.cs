@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IAGrim.UI.Misc.CEF {
     public interface IUserFeedbackHandler {
-        void ShowMessage(string message, UserFeedbackLevel level);
+        void ShowMessage(string message, UserFeedbackLevel level, string helpUrl = null);
         void ShowMessage(string message);
     }
 }

@@ -63,6 +63,11 @@ namespace IAGrim.UI
                     },
                     new ComboBoxItem
                     {
+                        Text = language.GetTag("iatag_slot_armor"),
+                        Filter = new[] {"ArmorProtective_Head", "ArmorProtective_Hands", "ArmorProtective_Feet", "ArmorProtective_Legs", "ArmorProtective_Chest", "ArmorProtective_Waist", "ArmorJewelry_Medal", "ArmorJewelry_Ring", "ArmorProtective_Shoulders", "ArmorJewelry_Amulet" }
+                    },
+                    new ComboBoxItem
+                    {
                         Text = language.GetTag("iatag_slot_head"),
                         Filter = new[] {"ArmorProtective_Head"}
                     },

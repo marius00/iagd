@@ -31,7 +31,7 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
 
             // Developers can flip this switch to get a full dump of the GD database. 
             // Setting it to true will cause the parsing to skip a lot of data that IA does not need.
-            const bool skipIrrelevantStats = false; 
+            const bool skipIrrelevantStats = true; 
 
             ItemAccumulator accumulator = new ItemAccumulator();
 

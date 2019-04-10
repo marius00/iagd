@@ -302,6 +302,7 @@ namespace StatTranslator
             // TODO: Merge duplicates, regroup similar to a single one (ie. Language select/change/selection),
             //       and regroup/reorder tags in blocks
             // UI, IA Only
+            { "iatag_ui_clean", "Clean Database" },
             { "iatag_ui_buddy_userid", "User ID: " },
             { "iatag_ui_buddy_userid_none", "None" },
             { "iatag_ui_buddy_userid_name", "Name: " },
@@ -520,6 +521,7 @@ namespace StatTranslator
             { "iatag_feedback_duplicates_not_looted", "{0} items were not looted due to being possible duplicates (bugged items)" },
 
             { "iatag_slot_any", "Any" },
+            { "iatag_slot_armor", "Armor" },
             { "iatag_slot_head", "Head" },
             { "iatag_slot_hands", "Hands" },
             { "iatag_slot_feet", "Feet" },
@@ -557,6 +559,8 @@ namespace StatTranslator
             { "tagFactionUser11_ia", "Malmouth Resistance" },
             { "iatag_ui_dontwantbackups", "I don't want backups, stop asking me!" },
 
+            { "iatag_ui_clean_body", "The internal IA cache has been deleted.\nYour items are still fine, but will shown up as 'Unknown Item'.\n\nIn order to display items, re-parse the GD database." },
+            { "iatag_ui_clean_caption", "Cache wiped" },
             { "iatag_ui_tab_secondtolast", "Second to last tab" },
             { "iatag_ui_tab_1", "Tab 1" },
             { "iatag_ui_tab_2", "Tab 2" },

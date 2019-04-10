@@ -37,6 +37,12 @@ namespace IAGrim.Database.Synchronizer {
             );
         }
 
+        public void Clean() {
+            ThreadExecuter.Execute(
+                () => repo.Clean()
+            );
+        }
+
         public string GetUuid() {
             return ThreadExecuter.Execute(
                 () => repo.GetUuid()

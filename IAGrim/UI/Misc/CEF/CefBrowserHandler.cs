@@ -102,14 +102,21 @@ namespace IAGrim.UI.Misc.CEF {
         }
 
 
-        public void ShowMessage(string message, UserFeedbackLevel level) {
+        public void ShowMessage(string message, UserFeedbackLevel level, string helpUrl = null) {
             string levelLowercased = level.ToString().ToLowerInvariant();
             var m = message.Replace("\n", "\\n").Replace("'", "\\'");
             if (!string.IsNullOrEmpty(message)) {
-                if (_browser.IsBrowserInitialized)
-                    _browser.ExecuteScriptAsync($"{Dispatch}(data.showMessage('{m}', '{levelLowercased}'));");
-                else
+                if (_browser.IsBrowserInitialized) {
+                    if (!string.IsNullOrEmpty(helpUrl)) {
+                        _browser.ExecuteScriptAsync($"{Dispatch}(data.showMessage('{m}', '{levelLowercased}', '{helpUrl}'));");
+                    }
+                    else {
+                        _browser.ExecuteScriptAsync($"{Dispatch}(data.showMessage('{m}', '{levelLowercased}', undefined));");
+                    }
+                }
+                else {
                     Logger.Warn($"Attempted to display message \"{message}\" but browser is not yet initialized");
+                }
             }
         }
 

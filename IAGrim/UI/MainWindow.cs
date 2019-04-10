@@ -320,8 +320,19 @@ namespace IAGrim.UI
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
-        private void SetFeedback(string level, string feedback) {
-            SetFeedback(feedback);
+        private void SetFeedback(string level, string feedback, string helpUrl) {
+            try {
+                if (InvokeRequired) {
+                    Invoke((MethodInvoker)delegate { SetFeedback(level, feedback, helpUrl); });
+                }
+                else {
+                    statusLabel.Text = feedback.Replace("\\n", " - ");
+                    _cefBrowserHandler.ShowMessage(feedback, UserFeedbackLevel.Info, helpUrl);
+                }
+            }
+            catch (ObjectDisposedException) {
+                Logger.Debug("Attempted to set feedback, but UI already disposed. (Probably shutting down)");
+            }
         }
 
         private void SetFeedback(string feedback) {
