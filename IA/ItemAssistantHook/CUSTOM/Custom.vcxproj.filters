@@ -16,6 +16,9 @@
     <Filter Include="HookedMethods">
       <UniqueIdentifier>{cf078cd9-dce6-4c25-8dab-94cd799c91e6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Types">
+      <UniqueIdentifier>{b30431d8-b111-4f5f-b794-30bc8e65832d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\DataQueue.cpp">
@@ -139,6 +142,9 @@
     </ClInclude>
     <ClInclude Include="..\NpcDetectionHook.h">
       <Filter>HookedMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="Vec3f.h">
+      <Filter>Types</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

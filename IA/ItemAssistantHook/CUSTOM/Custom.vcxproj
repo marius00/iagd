@@ -316,6 +316,7 @@
     <ClInclude Include="..\SaveTransferStash.h" />
     <ClInclude Include="..\stdafx.h" />
     <ClInclude Include="MessageType.h" />
+    <ClInclude Include="Vec3f.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
