@@ -13,6 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using IAGrim.Services;
 using IAGrim.Utilities;
 
 namespace IAGrim.UI.Popups.ImportExport.Panels {
@@ -70,7 +71,7 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
                 }
                 else {
                     diag.DefaultExt = "gst";
-                    diag.Filter = "Grim Dawn Stash files (*.gst)|*.gst";
+                    diag.Filter = "Grim Dawn Stash files (*.gst)|*.gst|HD Hardcore Stash files (*.gsh)|*.gsh";
                     diag.FileName = "transfer.gst";
                 }
 
@@ -112,6 +113,10 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
                 MessageBox.Show("Items imported\nIf you already had items, you may have gotten duplicates.", "Items imported!", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             }
+        }
+
+        private void helpRestoreBackup_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            HelpService.ShowHelp(HelpService.HelpType.RestoreBackup);
         }
     }
 }

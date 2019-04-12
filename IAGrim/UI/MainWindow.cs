@@ -47,25 +47,15 @@ namespace IAGrim.UI
         private static readonly ILog Logger = LogManager.GetLogger(typeof(MainWindow));
         readonly CefBrowserHandler _cefBrowserHandler;
 
-        private string UPDATE_XML {
-            get {
-                var v = Assembly.GetExecutingAssembly().GetName().Version;
-                string version = $"{v.Major}.{v.Minor}.{v.Build}.{v.Revision}";
-
-                if ((bool)Settings.Default.SubscribeExperimentalUpdates) {
-                    return $"http://grimdawn.dreamcrash.org/ia/version.php?beta&version={version}";
-                }
-                return $"http://grimdawn.dreamcrash.org/ia/version.php?version={version}";
-            }
-        }
 
         private readonly ISettingsReadController _settingsController = new SettingsController();
 
         private FormWindowState _previousWindowState = FormWindowState.Normal;
         private readonly TooltipHelper _tooltipHelper = new TooltipHelper();
         private DateTime _lastAutomaticUpdateCheck = default(DateTime);
-        private DateTime _lastTimeNotMinimized = DateTime.Now;
         private readonly DynamicPacker _dynamicPacker;
+        private readonly UsageStatisticsReporter _usageStatisticsReporter = new UsageStatisticsReporter();
+        private readonly AutomaticUpdateChecker _automaticUpdateChecker = new AutomaticUpdateChecker();
         private readonly List<IMessageProcessor> _messageProcessors = new List<IMessageProcessor>();
 
         private SplitSearchWindow _searchWindow;
@@ -78,7 +68,6 @@ namespace IAGrim.UI
         private InjectionHelper _injector;
         private ProgressChangedEventHandler _injectorCallbackDelegate;
 
-        private Timer _timerReportUsage;
         private BuddyBackgroundThread _buddyBackgroundThread;
         private BackgroundTask _backupBackgroundTask;
         private ItemTransferController _transferController;
@@ -99,7 +88,6 @@ namespace IAGrim.UI
         private AzureAuthService _authAuthService;
         private BackupServiceWorker _backupServiceWorker;
 
-        private readonly Stopwatch _reportUsageStatistics;
 
 #region Stash Status
         
@@ -133,8 +121,6 @@ namespace IAGrim.UI
 
 #endregion Stash Status
 
-        [DllImport("kernel32")]
-        private static extern UInt64 GetTickCount64();
 
         /// <summary>
         /// Perform a search the moment were initialized
@@ -172,9 +158,6 @@ namespace IAGrim.UI
             InitializeComponent();
             FormClosing += MainWindow_FormClosing;
 
-            _reportUsageStatistics = new Stopwatch();
-            _reportUsageStatistics.Start();
-
             _dynamicPacker = new DynamicPacker(databaseItemStatDao);
             _databaseItemDao = databaseItemDao;
             _databaseItemStatDao = databaseItemStatDao;
@@ -205,19 +188,6 @@ namespace IAGrim.UI
             Refresh();
         }
 
-        /// <summary>
-        /// Report usage once every 12 hours, in case the user runs it 'for ever'
-        /// Will halt if not opened for 38 hours
-        /// </summary>
-        private void ReportUsage() {
-            if ((DateTime.Now - _lastTimeNotMinimized).TotalHours < 38) {
-                if (_reportUsageStatistics.Elapsed.Hours > 12) {
-                    _reportUsageStatistics.Restart();
-                    ThreadPool.QueueUserWorkItem(m => ExceptionReporter.ReportUsage());
-                    AutoUpdater.Start(UPDATE_XML);
-                }
-            }
-        }
 
 
 
@@ -241,10 +211,8 @@ namespace IAGrim.UI
             _stashManager = null;
 
             _backupBackgroundTask?.Dispose();
-
-            _timerReportUsage?.Stop();
-            _timerReportUsage?.Dispose();
-            _timerReportUsage = null;
+            _usageStatisticsReporter.Dispose();
+            _automaticUpdateChecker.Dispose();
 
             _tooltipHelper?.Dispose();
 
@@ -348,8 +316,19 @@ namespace IAGrim.UI
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
-        private void SetFeedback(string level, string feedback) {
-            SetFeedback(feedback);
+        private void SetFeedback(string level, string feedback, string helpUrl) {
+            try {
+                if (InvokeRequired) {
+                    Invoke((MethodInvoker)delegate { SetFeedback(level, feedback, helpUrl); });
+                }
+                else {
+                    statusLabel.Text = feedback.Replace("\\n", " - ");
+                    _cefBrowserHandler.ShowMessage(feedback, UserFeedbackLevel.Info, helpUrl);
+                }
+            }
+            catch (ObjectDisposedException) {
+                Logger.Debug("Attempted to set feedback, but UI already disposed. (Probably shutting down)");
+            }
         }
 
         private void SetFeedback(string feedback) {
@@ -371,17 +350,6 @@ namespace IAGrim.UI
             _tooltipHelper.ShowTooltipAtMouse(message, _cefBrowserHandler.BrowserControl);
         }
 
-        private void CheckForUpdates() {
-            if (GetTickCount64() > 5 * 60 * 1000 && (DateTime.Now - _lastAutomaticUpdateCheck).TotalHours > 36) {
-                AutoUpdater.LetUserSelectRemindLater = true;
-                AutoUpdater.RemindLaterTimeSpan = RemindLaterFormat.Days;
-                AutoUpdater.RemindLaterAt = 7;
-                AutoUpdater.Start(UPDATE_XML);
-
-                _lastAutomaticUpdateCheck = DateTime.Now;
-                Logger.Info("Checking for updates..");
-            }
-        }
 
         private void TimerTickLookForGrimDawn(object sender, EventArgs e) {
             System.Windows.Forms.Timer timer = sender as System.Windows.Forms.Timer;
@@ -421,8 +389,10 @@ namespace IAGrim.UI
         }
 
         private void MainWindow_Load(object sender, EventArgs e) {
-            if (Thread.CurrentThread.Name == null)
+            if (Thread.CurrentThread.Name == null) {
                 Thread.CurrentThread.Name = "UI";
+            }
+            Logger.Debug("Starting UI initialization");
 
             ExceptionReporter.EnableLogUnhandledOnThread();
             SizeChanged += OnMinimizeWindow;
@@ -438,7 +408,7 @@ namespace IAGrim.UI
 
             if (!_stashFileMonitor.StartMonitorStashfile(GlobalPaths.SavePath)) {
                 MessageBox.Show("Ooops!\nIt seems you are synchronizing your saves to steam cloud..\nThis tool is unfortunately not compatible.\n");
-                Process.Start("http://www.grimdawn.com/forums/showthread.php?t=20752");
+                HelpService.ShowHelp(HelpService.HelpType.CloudSavesEnabled);
 
                 if (!Debugger.IsAttached)
                     Close();
@@ -495,7 +465,7 @@ namespace IAGrim.UI
             _authAuthService = new AzureAuthService(_cefBrowserHandler, new AuthenticationProvider());
             var backupSettings = new BackupSettings(_playerItemDao, _authAuthService);
             addAndShow(backupSettings, backupPanel);
-            addAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, _playerItemDao, _parsingService), modsPanel);
+            addAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, _playerItemDao, _parsingService, _databaseSettingDao), modsPanel);
             addAndShow(new HelpTab(), panelHelp);            
             addAndShow(new LoggingWindow(), panelLogging);
             var backupService = new BackupService(_authAuthService, _playerItemDao, _azurePartitionDao, () => Settings.Default.UsingDualComputer);
@@ -528,21 +498,8 @@ namespace IAGrim.UI
 
 #if !DEBUG
             ThreadPool.QueueUserWorkItem(m => ExceptionReporter.ReportUsage());
-            CheckForUpdates();
+            _automaticUpdateChecker.CheckForUpdates();
 #endif
-
-            int min = 1000 * 60;
-            int hour = 60 * min;
-            _timerReportUsage = new Timer();
-            _timerReportUsage.Start();
-            _timerReportUsage.Elapsed += (a1, a2) => {
-                if (Thread.CurrentThread.Name == null)
-                    Thread.CurrentThread.Name = "ReportUsageThread";
-                ReportUsage();
-            };
-            _timerReportUsage.Interval = 12 * hour;
-            _timerReportUsage.AutoReset = true;
-            _timerReportUsage.Start();
 
             Shown += (_, __) => { StartInjector(); };
 
@@ -632,7 +589,11 @@ namespace IAGrim.UI
             _cefBrowserHandler.TransferSingleRequested += TransferSingleItem;
             _cefBrowserHandler.TransferAllRequested += TransferAllItems;
             new WindowSizeManager(this);
+
+
+            Logger.Debug("UI initialization complete");
         }
+
         void TransferSingleItem(object ignored, EventArgs args) {
 
             if (InvokeRequired) {
@@ -765,7 +726,8 @@ namespace IAGrim.UI
                 Logger.Warn(ex.StackTrace);
             }
 
-            _lastTimeNotMinimized = DateTime.Now;
+            _usageStatisticsReporter.ResetLastMinimized();
+            _automaticUpdateChecker.ResetLastMinimized();
         }
 
         public void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e) {

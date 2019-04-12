@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -33,9 +34,18 @@ namespace IAGrim.Parsers.Arz {
                     return true;
                 }
 
-                var expansionLocation = Path.Combine(grimdawnLocation, "gdx1");
-                if (Directory.Exists(expansionLocation))
-                    return NeedUpdate(expansionLocation);
+                // TODO: Improve this
+                var expansionLocation3 = Path.Combine(grimdawnLocation, "gdx3");
+                if (Directory.Exists(expansionLocation3))
+                    return NeedUpdate(expansionLocation3);
+
+                var expansionLocation2 = Path.Combine(grimdawnLocation, "gdx2");
+                if (Directory.Exists(expansionLocation2))
+                    return NeedUpdate(expansionLocation2);
+
+                var expansionLocation1 = Path.Combine(grimdawnLocation, "gdx1");
+                if (Directory.Exists(expansionLocation1))
+                    return NeedUpdate(expansionLocation1);
             }
             else {
                 Logger.WarnFormat("Could not locate database at \"{0}\"", grimdawnLocation);
@@ -64,10 +74,9 @@ namespace IAGrim.Parsers.Arz {
                     Logger.Warn("Could not find the vanilla icons, skipping.");
                 }
             }
-
-            var expansionFolder = Path.Combine(grimdawnLocation, "gdx1");
-            if (Directory.Exists(expansionFolder)) {
-                var arcItemsFile = GrimFolderUtility.FindArcFile(expansionFolder, "items.arc");
+            
+            foreach (string path in GrimFolderUtility.GetGrimExpansionFolders(grimdawnLocation)) {
+                var arcItemsFile = GrimFolderUtility.FindArcFile(path, "items.arc");
                 if (!string.IsNullOrEmpty(arcItemsFile)) {
                     Logger.Debug($"Loading expansion icons from {arcItemsFile}");
                     LoadIcons(arcItemsFile);
@@ -75,18 +84,7 @@ namespace IAGrim.Parsers.Arz {
                 else {
                     Logger.Warn("Could not find the expansion, skipping.");
                 }
-            }
 
-            var crucibleFolder = Path.Combine(grimdawnLocation, "mods", "survivalmode");
-            if (Directory.Exists(crucibleFolder)) {
-                var arcItemsFile = GrimFolderUtility.FindArcFile(crucibleFolder, "items.arc");
-                if (!string.IsNullOrEmpty(arcItemsFile)) {
-                    Logger.Debug($"Loading \"The Crucible\" icons from {arcItemsFile}");
-                    LoadIcons(arcItemsFile);
-                }
-                else {
-                    Logger.Warn("Could not find \"The crucible\", skipping.");
-                }
             }
         }
 
@@ -265,6 +263,5 @@ namespace IAGrim.Parsers.Arz {
                     break;
             }
         }
-
     }
 }

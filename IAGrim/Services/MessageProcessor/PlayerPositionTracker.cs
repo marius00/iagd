@@ -21,8 +21,8 @@ namespace IAGrim.Services.MessageProcessor {
                 case MessageType.TYPE_ControllerPlayerStateMoveToRequestNpcAction: {
                     GrimStateTracker.LastKnownPosition = new GrimStateTracker.WorldVector {
                         X = IOHelper.GetFloat(data, 4),
-                        Y = IOHelper.GetFloat(data, 8),
-                        Z = IOHelper.GetFloat(data, 12),
+                        Y = IOHelper.GetFloat(data, 8), // Getting X here??
+                        Z = IOHelper.GetFloat(data, 12), // Getting Y here..
                         Zone = IOHelper.GetInt(data, 0)
                     };
                     break;

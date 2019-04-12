@@ -32,6 +32,7 @@
             this.radioGameStash = new FirefoxRadioButton();
             this.radioGDStash = new FirefoxRadioButton();
             this.radioIAStash = new FirefoxRadioButton();
+            this.helpRestoreBackup = new System.Windows.Forms.LinkLabel();
             this.panelBox3.SuspendLayout();
             this.panelBox1.SuspendLayout();
             this.panelBox2.SuspendLayout();
@@ -104,6 +105,7 @@
             // 
             // panelBox2
             // 
+            this.panelBox2.Controls.Add(this.helpRestoreBackup);
             this.panelBox2.Controls.Add(this.radioGameStash);
             this.panelBox2.Controls.Add(this.radioGDStash);
             this.panelBox2.Controls.Add(this.radioIAStash);
@@ -163,6 +165,21 @@
             this.radioIAStash.Text = "IA Stash";
             this.radioIAStash.CheckedChanged += new FirefoxRadioButton.CheckedChangedEventHandler(this.radioIAStash_CheckedChanged);
             // 
+            // helpRestoreBackup
+            // 
+            this.helpRestoreBackup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.helpRestoreBackup.AutoSize = true;
+            this.helpRestoreBackup.BackColor = System.Drawing.Color.Transparent;
+            this.helpRestoreBackup.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.helpRestoreBackup.Location = new System.Drawing.Point(122, 60);
+            this.helpRestoreBackup.Name = "helpRestoreBackup";
+            this.helpRestoreBackup.Size = new System.Drawing.Size(18, 13);
+            this.helpRestoreBackup.TabIndex = 22;
+            this.helpRestoreBackup.TabStop = true;
+            this.helpRestoreBackup.Tag = "iatag_ui_questionmark";
+            this.helpRestoreBackup.Text = " ? ";
+            this.helpRestoreBackup.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpRestoreBackup_LinkClicked);
+            // 
             // ImportMode
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -178,6 +195,7 @@
             this.panelBox3.ResumeLayout(false);
             this.panelBox1.ResumeLayout(false);
             this.panelBox2.ResumeLayout(false);
+            this.panelBox2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -193,5 +211,6 @@
         private FirefoxButton buttonImport;
         private System.Windows.Forms.ComboBox cbItemSelection;
         private FirefoxRadioButton radioGameStash;
+        private System.Windows.Forms.LinkLabel helpRestoreBackup;
     }
 }

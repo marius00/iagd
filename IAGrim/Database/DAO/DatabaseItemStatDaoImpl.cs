@@ -65,7 +65,7 @@ namespace IAGrim.Database {
                          $"{DatabaseItemStatTable.TextValue} AS TextValue, " +
                          $"{DatabaseItemStatTable.Value} AS Value " +
                          $"FROM {DatabaseItemTable.Table} item, {DatabaseItemStatTable.Table} stat " +
-                         $"WHERE {DatabaseItemTable.Record} LIKE '%/itemskillsgdx1/%' " +
+                         $"WHERE {DatabaseItemTable.Record} LIKE '%/itemskillsgdx%' " +
                          $"AND stat.{DatabaseItemStatTable.Item} = item.{DatabaseItemTable.Id} ORDER BY item.{DatabaseItemTable.Id}";
 
             Dictionary<string, ISet<DBSTatRow>> stats = new Dictionary<string, ISet<DBSTatRow>>();

@@ -7,6 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
+using IAGrim.Database.Synchronizer;
+using IAGrim.Services;
+using IAGrim.Utilities;
 
 namespace IAGrim.UI
 {
@@ -18,16 +21,20 @@ namespace IAGrim.UI
         private readonly IPlayerItemDao _playerItemDao;
         private readonly ParsingService _parsingService;
         private readonly DatabaseModSelectionService _databaseModSelectionService;
+        private readonly IDatabaseSettingDao _databaseSettingRepo;
 
         public ModsDatabaseConfig(
             Action itemViewUpdateTrigger, 
             IPlayerItemDao playerItemDao, 
-            ParsingService parsingService)
+            ParsingService parsingService,
+            IDatabaseSettingDao databaseSettingRepo
+            )
         {
             InitializeComponent();
             _itemViewUpdateTrigger = itemViewUpdateTrigger;
             _playerItemDao = playerItemDao;
             _parsingService = parsingService;
+            _databaseSettingRepo = databaseSettingRepo;
             _databaseModSelectionService = new DatabaseModSelectionService();
         }
 
@@ -45,10 +52,12 @@ namespace IAGrim.UI
 
             listViewInstalls.EndUpdate();
 
-            if (listViewInstalls.Items.Count > 0)
-            {
+            if (listViewInstalls.Items.Count > 0) {
                 listViewInstalls.Items[0].Selected = true;
             }
+
+            // Show help linklabel?
+            helpFindGrimdawnInstall.Visible = listViewInstalls.Items.Count == 0;
 
             listViewMods.BeginUpdate();
             listViewMods.Items.Clear();
@@ -118,6 +127,7 @@ namespace IAGrim.UI
                 var entry = lvi.Tag as ListViewEntry;
 
                 ForceDatabaseUpdate(entry.Path, mod?.Path);
+                _databaseSettingRepo.UpdateCurrentDatabase(entry.Path);
             }
         }
 
@@ -132,6 +142,16 @@ namespace IAGrim.UI
 
             updatingPlayerItemsScreen.ShowDialog();
             _itemViewUpdateTrigger?.Invoke();
+        }
+
+        private void helpFindGrimdawnInstall_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            HelpService.ShowHelp(HelpService.HelpType.CannotFindGrimdawn);
+        }
+
+        private void buttonClean_Click(object sender, EventArgs e) {
+            _databaseSettingRepo.Clean();
+            buttonUpdateItemStats_Click(sender, e);
+            MessageBox.Show(GlobalSettings.Language.GetTag("iatag_ui_clean_body"), GlobalSettings.Language.GetTag("iatag_ui_clean_caption"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
     }
 }

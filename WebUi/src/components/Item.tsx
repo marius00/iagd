@@ -24,10 +24,14 @@ interface Props {
 class Item extends React.PureComponent<Props, object> {
 
   openItemSite() {
-    if (isEmbedded) {
-      document.location.href = `http://www.grimtools.com/db/search?query=${this.props.item.name}`;
+    let url = `http://www.grimtools.com/db/search?query=${this.props.item.name}`;
+    if (this.props.item.numItems > 50) {
+      console.log('Unknown item, redirecting to help page.');
+      window.open('http://grimdawn.dreamcrash.org/ia/help.html?q=UnknownItem');
+    } else if (isEmbedded) {
+      document.location.href = url;
     } else {
-      window.open(`http://www.grimtools.com/db/search?query=${this.props.item.name}`);
+      window.open(url);
     }
   }
 
@@ -226,6 +230,8 @@ class Item extends React.PureComponent<Props, object> {
           </div>
           : ''
         }
+
+        {item.type === IItemType.Player && this.props.item.numItems > 50 && <div className="unknownitem"><a onClick={() => this.openItemSite()}>You may be experiencing issues..</a></div>}
       </div>
     );
   }

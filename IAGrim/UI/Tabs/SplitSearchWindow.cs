@@ -441,6 +441,8 @@ namespace IAGrim.UI.Tabs
             // 
             this.orderByLevel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.orderByLevel.AutoSize = true;
+            this.orderByLevel.Checked = true;
+            this.orderByLevel.CheckState = System.Windows.Forms.CheckState.Checked;
             this.orderByLevel.Location = new System.Drawing.Point(313, 19);
             this.orderByLevel.Margin = new System.Windows.Forms.Padding(3, 19, 3, 3);
             this.orderByLevel.Name = "orderByLevel";

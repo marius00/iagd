@@ -21,7 +21,7 @@ declare abstract class data {
   public static globalSetRecipes(recipes: RecipeList): {};
   public static globalSetRecipeIngredients(components: Component): {};
   public static globalSetIsLoading(v: boolean): {};
-  public static showMessage(message: string, level: string): {};
+  public static showMessage(message: string, level: string, url: string | undefined): {};
 }
 if (typeof data === 'object') {
   data.globalStore = store;
@@ -34,7 +34,7 @@ if (typeof data === 'object') {
 }
 /* == END MAGIC == */
 
-console.log("To manually load more items, type the following, and hit enter: data.globalRequestInitialItems()");
+console.log('To manually load more items, type the following, and hit enter: data.globalRequestInitialItems()');
 ReactDOM.render(
   <App store={store} />,
   document.getElementById('root') as HTMLElement

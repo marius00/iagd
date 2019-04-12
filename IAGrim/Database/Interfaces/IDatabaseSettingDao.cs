@@ -8,5 +8,6 @@
 
         string GetUuid();
         void SetUuid(string uuid);
+        void Clean();
     }
 }

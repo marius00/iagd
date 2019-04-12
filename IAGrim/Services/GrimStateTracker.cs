@@ -10,6 +10,11 @@ namespace IAGrim.Services {
             public float Y { get; set; }
             public float Z { get; set; }
             public int Zone { get; set; }
+
+            
+            public override string ToString() {
+                return $"[{X}, {Z}, {Y}, {Zone}]";
+            }
         }
         public static WorldVector LastKnownPosition { get; set; }
         public static WorldVector LastStashPosition { get; set; }
