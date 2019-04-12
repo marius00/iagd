@@ -19,6 +19,9 @@
     <Filter Include="Types">
       <UniqueIdentifier>{b30431d8-b111-4f5f-b794-30bc8e65832d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Variable">
+      <UniqueIdentifier>{7a529b84-8e91-4b3f-ae41-c5ebd3815933}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\DataQueue.cpp">
@@ -61,9 +64,6 @@
       <Filter>HookedMethods</Filter>
     </ClCompile>
     <ClCompile Include="..\CloudWrite.cpp">
-      <Filter>HookedMethods</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ItemInjectorHook.cpp">
       <Filter>HookedMethods</Filter>
     </ClCompile>
     <ClCompile Include="..\CreatePlayerItemHook.cpp">
@@ -128,9 +128,6 @@
     <ClInclude Include="..\CloudWrite.h">
       <Filter>HookedMethods</Filter>
     </ClInclude>
-    <ClInclude Include="..\ItemInjectorHook.h">
-      <Filter>HookedMethods</Filter>
-    </ClInclude>
     <ClInclude Include="..\CreatePlayerItemHook.h">
       <Filter>HookedMethods</Filter>
     </ClInclude>
@@ -145,6 +142,9 @@
     </ClInclude>
     <ClInclude Include="Vec3f.h">
       <Filter>Types</Filter>
+    </ClInclude>
+    <ClInclude Include="Exports.h">
+      <Filter>Variable</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

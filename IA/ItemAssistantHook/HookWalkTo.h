@@ -24,10 +24,14 @@ private:
 	static DataQueue* m_dataQueue;
 	static HookLog* m_logger;
 
-#if defined(_AMD64_)
-	static void* __fastcall HookedMethod(void* This, bool, bool, Vec3f const& xyz);
-#else
-	static void* __fastcall HookedMethod(void* This, void* notUsed, bool, bool, Vec3f const& xyz);
+	static void* __fastcall HookedMethod(
+		void* This, 
+#if !defined(_AMD64_)
+		void* notUsed,
 #endif
+		bool, 
+		bool, 
+		Vec3f const& xyz
+	);
 
 };

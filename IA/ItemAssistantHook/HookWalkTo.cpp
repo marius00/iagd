@@ -5,7 +5,7 @@
 #include "MessageType.h"
 #include <detours.h>
 #include "HookWalkTo.h"
-#include <MinHook.h>
+#include "CUSTOM\Exports.h"
 
 HANDLE HookWalkTo::m_hEvent;
 DataQueue* HookWalkTo::m_dataQueue;
@@ -13,11 +13,7 @@ HookWalkTo::OriginalMethodPtr HookWalkTo::originalMethod;
 HookLog* HookWalkTo::m_logger;
 
 void HookWalkTo::EnableHook() {
-#if defined(_AMD64_)
-	originalMethod = (OriginalMethodPtr)GetProcAddress(::GetModuleHandle("Game.dll"), "?RequestMoveAction@ControllerPlayerStateIdle@GAME@@MEAAX_N0AEBVWorldVec3@2@@Z");
-#else
-	originalMethod = (OriginalMethodPtr)GetProcAddress(::GetModuleHandle("Game.dll"), "?RequestMoveAction@ControllerPlayerStateIdle@GAME@@MAEX_N0ABVWorldVec3@2@@Z");
-#endif
+	originalMethod = (OriginalMethodPtr)GetProcAddress(::GetModuleHandle("Game.dll"), REQUEST_MOVE_ACTION_IDLE);
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
 	DetourAttach((PVOID*)&originalMethod, HookedMethod);
@@ -42,15 +38,23 @@ void HookWalkTo::DisableHook() {
 }
 
 
-#if defined(_AMD64_)
 // void GAME::ControllerPlayerStateIdle::RequestMoveAction(bool,bool,class GAME::WorldVec3 const &)
-void* HookWalkTo::HookedMethod(void* This, bool a, bool b, Vec3f const& xyz) {
-	const size_t bufflen = sizeof(Vec3f) + sizeof(bool) * 2;
+void* HookWalkTo::HookedMethod(
+	void* This, 
+
+#if !defined(_AMD64_)
+	void* notUsed,
+#endif
+	bool a, 
+	bool b, 
+	Vec3f const& xyz
+) {
+	const size_t bufflen = sizeof(float) * 4 + sizeof(bool) * 2;
 	char buffer[bufflen];
 
 	size_t pos = 0;
 
-	memcpy(buffer + pos, &xyz.unknown2, sizeof(float));
+	memcpy(buffer + pos, &xyz.unknown, sizeof(float));
 	pos += sizeof(float);
 
 	memcpy(buffer + pos, &xyz.x, sizeof(float));
@@ -75,28 +79,3 @@ void* HookWalkTo::HookedMethod(void* This, bool a, bool b, Vec3f const& xyz) {
 	void* v = originalMethod(This, a, b, xyz);
 	return v;
 }
-#else
-void* __fastcall HookWalkTo::HookedMethod(void* This, void* notUsed, bool a, bool b, Vec3f const & xyz) {
-
-	const size_t bufflen = sizeof(Vec3f) + sizeof(bool)*2;
-	char buffer[bufflen];
-
-	size_t pos = 0;
-
-	memcpy(buffer + pos, &xyz, sizeof(Vec3f));
-	pos += sizeof(Vec3f);
-
-	memcpy(buffer + pos, &a, sizeof(bool)*1);
-	pos += sizeof(bool);
-
-	memcpy(buffer + pos, &b, sizeof(bool)*1);
-	pos += sizeof(bool);
-
-	DataItemPtr item(new DataItem(TYPE_ControllerPlayerStateIdleRequestMoveAction, bufflen, (char*)buffer));
-	m_dataQueue->push(item);
-	SetEvent(m_hEvent);	
-
-	void* v = originalMethod(This, a, b, xyz);
-	return v;
-}
-#endif

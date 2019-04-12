@@ -284,7 +284,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release-Instaloot|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release-Instaloot|x64'">false</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\ItemInjectorHook.cpp" />
     <ClCompile Include="..\NpcDetectionHook.cpp" />
     <ClCompile Include="..\SaveTransferStash.cpp" />
     <ClCompile Include="..\stdafx.cpp" />
@@ -310,11 +309,11 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release-Instaloot|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release-Instaloot|x64'">false</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="..\ItemInjectorHook.h" />
     <ClInclude Include="..\MessageType.h" />
     <ClInclude Include="..\NpcDetectionHook.h" />
     <ClInclude Include="..\SaveTransferStash.h" />
     <ClInclude Include="..\stdafx.h" />
+    <ClInclude Include="Exports.h" />
     <ClInclude Include="MessageType.h" />
     <ClInclude Include="Vec3f.h" />
   </ItemGroup>

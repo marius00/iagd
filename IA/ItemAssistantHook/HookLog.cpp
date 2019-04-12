@@ -9,8 +9,7 @@ HookLog::HookLog()
     GetTempPath(MAX_PATH, tmpfolder);
 
     std::string tmpfile(tmpfolder);
-	tmpfile += "iagd_hook.log";
-    //tmpfile = _T("C:\\Users\\Andrew\\Desktop\\aoia_hook.log");
+	tmpfile += "iagd_hook.log"; // %appdata%\..\local\temp\iagd_hook.log
 
     m_out.open(tmpfile);
 
