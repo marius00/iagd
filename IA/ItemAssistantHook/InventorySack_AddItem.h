@@ -61,7 +61,6 @@ void GAME::Inventory::RemoveItemFromInventory(unsigned int)
 GAME::InventorySack::SetItemAddedWhileNotTheCurrentlySelectedInventoryTab(bool)
 /************************************************************************/
 
-class ItemInjectorHook;
 class InventorySack_AddItem : public BaseMethodHook {
 public:
 	InventorySack_AddItem();
@@ -74,24 +73,13 @@ private:
 		float x,y;
 	};
 	//static OriginalAttachItem dll_AttachItem;
-	static int REPLICA_PTR_OFFSET;
 	static DataQueue* m_dataQueue;
 	static HANDLE m_hEvent;
 	static void* m_gameEngine;
-	static ItemInjectorHook itemInjector;
 	static GetPrivateStash privateStashHook;
 
-	static bool CanTransferItems();
 	static bool IsTransferStash(void* stash, int idx);
 	static int GetStashIndex(void* stash);
-	static std::set<void*> inventorySacks;
-
-	static DataItemPtr GetModName(void* This);
-	static void GetModNameAndTriggerMessage(void* This);
-	static std::string previousModSetting;
-
-	static bool m_hasModName;
-	static char m_modName[256];
 
 	static int m_isHardcore;
 	static int m_stashToLootFrom;
@@ -99,31 +87,23 @@ private:
 	// void GAME::Item::GetItemReplicaInfo(struct GAME::ItemReplicaInfo &)
 	typedef void* (__thiscall *Item_GetItemReplicaInfo)(void* This, void* replicaInfo);
 
-	typedef int* (__thiscall *InventorySack_AddItem01)(void*, void* item, bool findPosition, bool playSound);
-	typedef int* (__thiscall *InventorySack_AddItem02)(void*, Vec2f const &, void* item, bool);
 	typedef int* (__thiscall *GameEngine_GetTransferSack)(void* ge, int idx);
+
 	typedef int* (__thiscall *GameEngine_AddItemToTransfer_01)(void*, unsigned int, void* Vec2, unsigned int index, bool);
 	typedef int* (__thiscall *GameEngine_AddItemToTransfer_02)(void*, unsigned int, unsigned int index, bool);
+
 	typedef int(__thiscall *GameEngine_SetTransferOpen)(void*, bool);
 	typedef int*(__thiscall *GameInfo_GameInfo_Param)(void*, void* info);
 	typedef int*(__thiscall *GameInfo_GameInfo)(void*);
 	typedef int*(__thiscall *GameInfo_SetHardcore)(void*, bool isHardcore);
 
-	typedef int*(__thiscall *GameInfo_SetModName)(void*, void* stdString);
-	typedef int*(__thiscall *GameInfo_SetModNameWideString)(void*, void* stdStringWide);
-	typedef int*(__thiscall *GameInfo_GetModName)(void* This);
-
 	typedef int*(__thiscall *InventorySack_InventorySack)(void*);
 	typedef int*(__thiscall *InventorySack_InventorySackParam)(void*, void* stdstring);
-	typedef int*(__thiscall *InventorySack_Deconstruct)(void*);
 
 	typedef bool(__thiscall *InventorySack_Sort)(void*, unsigned int unknown);
 
 	typedef bool(__thiscall *GameInfo_GetHardcore)(void*);
 	static GameInfo_GetHardcore dll_GameInfo_GetHardcore;
-	static GameInfo_SetModName dll_GameInfo_SetModName;
-	static GameInfo_SetModNameWideString dll_GameInfo_SetModNameWideString;
-	static GameInfo_GetModName dll_GameInfo_GetModName;
 
 
 	typedef char* (__thiscall *GameEngine_GetGameInfo)(void* This);
@@ -132,30 +112,18 @@ private:
 
 	
 	static GameEngine_GetTransferSack dll_GameEngine_GetTransferSack;
-	static InventorySack_AddItem01 dll_InventorySack_AddItem01;
-	static InventorySack_AddItem02 dll_InventorySack_AddItem02;
-	static GameEngine_AddItemToTransfer_01 dll_GameEngine_AddItemToTransfer_01;
-	static GameEngine_AddItemToTransfer_02 dll_GameEngine_AddItemToTransfer_02;
 	static GameEngine_SetTransferOpen dll_GameEngine_SetTransferOpen;
 	static GameInfo_GameInfo_Param dll_GameInfo_GameInfo_Param;
 	static GameInfo_GameInfo dll_GameInfo_GameInfo;
 	static GameInfo_SetHardcore dll_GameInfo_SetHardcore;
 	static InventorySack_InventorySackParam dll_InventorySack_InventorySackParam;
 	static InventorySack_InventorySack dll_InventorySack_InventorySack;
-	static InventorySack_Deconstruct dll_InventorySack_Deconstruct;
 	static InventorySack_Sort dll_InventorySack_Sort;
 	static Item_GetItemReplicaInfo dll_GetItemReplicaInfo;
-
-
-	// bool GAME::InventorySack::AddItem(class GAME::Item *,bool,bool)
-	static void* __fastcall Hooked_InventorySack_AddItem_01(void* This, void* notUsed, void* item, bool findPosition, bool playSound);
-	// bool GAME::InventorySack::AddItem(class GAME::Vec2 const &, class GAME::Item *, bool)
-	static void* __fastcall Hooked_InventorySack_AddItem_02(void* This, void* notUsed, Vec2f const&, void* item, bool);
 
 	// Previously in a separate class
 	// void GAME::GameEngine::SetTransferOpen(bool)
 	static void __fastcall Hooked_GameEngine_SetTransferOpen(void* This, void* notUsed, bool firstParam);
-
 
 
 	// Game info is used to monitor IsHardcore and ModLabel
@@ -165,32 +133,6 @@ private:
 
 	//void GAME::GameInfo::SetHardcore(bool)
 	static void* __fastcall Hooked_GameInfo_SetHardcore(void* This, void* notUsed, bool isHardcore);
-
-
-	static void* __fastcall Hooked_GameInfo_SetModName(void* This, void* notUsed, void* stdString);
-	static void* __fastcall Hooked_GameInfo_SetModName_WideStr(void* This, void* notUsed, void* stdStringWide);
-
-
-	//GAME::InventorySack::InventorySack(class GAME::InventorySack const &)
-	static void* __fastcall Hooked_InventorySack_InventorySackParam(void* This, void* Other);
-	//GAME::InventorySack::InventorySack(void)
-	static void* __fastcall Hooked_InventorySack_InventorySack(void* This);
-	//GAME::InventorySack::~InventorySack(void)
-	static void* __fastcall Hooked_InventorySack_Deconstruct(void* This);
-
 	static bool __fastcall Hooked_InventorySack_Sort(void* This, void* notUsed, unsigned int unknown);
-
-
-	/* NEVER CALLED: To be removed */
-	
-	//bool GAME::GameEngine::AddItemToTransfer(unsigned int, class GAME::Vec2 const &, unsigned int, bool)
-	static void* __fastcall Hooked_GameEngine_AddItemToTransfer_01(void* This, void* notUsed, unsigned int, void* Vec2, unsigned int index, bool);
-
-	//bool GAME::GameEngine::AddItemToTransfer(unsigned int, unsigned int, bool)
-	static void* __fastcall Hooked_GameEngine_AddItemToTransfer_02(void* This, void* notUsed, unsigned int, unsigned int index, bool);
-
 	static int* __fastcall Hooked_GameEngine_GetTransferSack(void* This, void* discarded, int idx);
-
-
-	static void* __fastcall Hooked_GameInfo_GetModName(void* This, void* discarded);
 };

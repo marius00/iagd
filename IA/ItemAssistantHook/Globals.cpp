@@ -1,36 +1,5 @@
 #include <windows.h>
 
-
-static int cachedOffset = 0;
-int FindOffset() {
-	const int RETN = 0xC2;
-	const int LEA = 0x8D;
-
-	if (cachedOffset != 0)
-		return cachedOffset;
-
-	int addressToRead = (int)GetProcAddress(::GetModuleHandle("Game.dll"), "?GetItemReplicaInfo@Item@GAME@@UBEXAAUItemReplicaInfo@2@@Z");
-	byte newData[19] = { 0 };
-	HANDLE hProcess = GetCurrentProcess();
-	SIZE_T bytesRead = 0;
-	ReadProcessMemory(hProcess, (void*)addressToRead, newData, 19, &bytesRead);
-	for (unsigned int i = 1; i < bytesRead - 5; i++) {
-		if (newData[i] == RETN)
-			return 0;
-
-		// LEA Register+
-		if (newData[i] == LEA && newData[i + 1] >= 0x80 && newData[i + 1] <= 0x87) {
-			int* ptr = (int*)&newData[i + 2];
-
-			cachedOffset = *ptr;
-			return *ptr;
-		}
-	}
-
-	return 0;
-}
-
-
 #define MCPY(x) { memcpy(buffer + pos, &x, sizeof(x)); pos += sizeof(x); }
 // Extract a string from a "GDString"
 // Returns [length][string]

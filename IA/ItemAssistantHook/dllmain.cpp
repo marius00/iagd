@@ -4,7 +4,6 @@
 #include <windows.h>
 #include <detours.h>
 #include <stdio.h>
-#include <MinHook.h>
 #include <stdlib.h>
 #include <set>
 #include <boost/smart_ptr.hpp>
@@ -28,9 +27,7 @@
 InventorySack_AddItem* g_Sack = NULL;
 
 #if defined _M_X64
-#pragma comment(lib, "libMinHook-x64-v140-mt.lib")
 #elif defined _M_IX86
-#pragma comment(lib, "MinHook.x86.lib")
 #endif
 
 
@@ -119,12 +116,10 @@ unsigned __stdcall WorkerThreadMethodWrap(void* argss) {
 void StartWorkerThread() {
 	LOG("Starting worker thread..");
 	unsigned int pid;
-	//g_thread = (HANDLE)_beginthread(WorkerThreadMethod,0,0);
 	g_thread = (HANDLE)_beginthreadex(NULL, 0, &WorkerThreadMethodWrap, NULL, 0, &pid);
 	
 
-	int offset = FindOffset();
-	DataItemPtr item(new DataItem(TYPE_REPORT_WORKER_THREAD_LAUNCHED, sizeof(offset), (char*)&offset));
+	DataItemPtr item(new DataItem(TYPE_REPORT_WORKER_THREAD_LAUNCHED, 0, NULL));
 	g_dataQueue.push(item);
 	SetEvent(g_hEvent);
 	LOG("Started worker thread..");
@@ -151,13 +146,6 @@ int ProcessAttach(HINSTANCE _hModule) {
 	LOG("Attatching to process..");
 	g_hEvent = CreateEvent(NULL,FALSE,FALSE,"IA_Worker");
 
-	// Initialize MinHook.
-	LOG("Initializing MinHook..");
-	if (MH_Initialize() != MH_OK) {
-		LOG("Failed to initialize MinHook..");
-		return 1;
-	}
-
 	LOG("Preparing hooks..");
 	hooks.push_back(new HookWalkTo(&g_dataQueue, g_hEvent, &g_log));
 	hooks.push_back(new ControllerPlayerStateMoveToRequestMoveAction(&g_dataQueue, g_hEvent));
@@ -181,8 +169,8 @@ int ProcessAttach(HINSTANCE _hModule) {
 #endif
 	LOG("Fetched registry configuration..");
 	
-	//g_Sack = new InventorySack_AddItem(&g_dataQueue, g_hEvent, stashToLootFrom);
-	//hooks.push_back(g_Sack);
+	g_Sack = new InventorySack_AddItem(&g_dataQueue, g_hEvent, stashToLootFrom);
+	hooks.push_back(g_Sack);
 	LOG("Configured inventory sacks..");
 
 	/*
