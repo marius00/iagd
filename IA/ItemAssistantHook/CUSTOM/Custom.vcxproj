@@ -271,7 +271,6 @@
     <ClCompile Include="..\ControllerPlayerStateIdleRequestNpcAction.cpp" />
     <ClCompile Include="..\ControllerPlayerStateMoveToRequestMoveAction.cpp" />
     <ClCompile Include="..\ControllerPlayerStateMoveToRequestNpcAction.cpp" />
-    <ClCompile Include="..\CreatePlayerItemHook.cpp" />
     <ClCompile Include="..\DataQueue.cpp" />
     <ClCompile Include="..\dllmain.cpp" />
     <ClCompile Include="..\GetPrivateStash.cpp" />
@@ -296,7 +295,6 @@
     <ClInclude Include="..\ControllerPlayerStateIdleRequestNpcAction.h" />
     <ClInclude Include="..\ControllerPlayerStateMoveToRequestMoveAction.h" />
     <ClInclude Include="..\ControllerPlayerStateMoveToRequestNpcAction.h" />
-    <ClInclude Include="..\CreatePlayerItemHook.h" />
     <ClInclude Include="..\DataQueue.h" />
     <ClInclude Include="..\dllmain.h" />
     <ClInclude Include="..\GetPrivateStash.h" />

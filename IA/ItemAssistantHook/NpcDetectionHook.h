@@ -17,5 +17,16 @@ private:
 
 	static DataQueue* m_dataQueue;
 
-	static void* __fastcall HookedMethod(void* This, void* notUsed, void* uk0, void* uk1, void* uk2, void* uk3, bool a, bool b);
+	static void* __fastcall HookedMethod(
+		void* This, 
+#if !defined(_AMD64_)
+		void* notUsed,
+#endif
+		void* uk0, 
+		void* uk1, 
+		void* uk2, 
+		void* uk3, 
+		bool a, 
+		bool b
+	);
 };

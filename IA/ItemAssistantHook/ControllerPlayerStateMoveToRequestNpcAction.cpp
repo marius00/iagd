@@ -5,13 +5,14 @@
 #include "MessageType.h"
 #include <detours.h>
 #include "ControllerPlayerStateMoveToRequestNpcAction.h"
+#include "CUSTOM\Exports.h"
 
 HANDLE ControllerPlayerStateMoveToRequestNpcAction::m_hEvent;
 DataQueue* ControllerPlayerStateMoveToRequestNpcAction::m_dataQueue;
 ControllerPlayerStateMoveToRequestNpcAction::OriginalMethodPtr ControllerPlayerStateMoveToRequestNpcAction::originalMethod;
 
 void ControllerPlayerStateMoveToRequestNpcAction::EnableHook() {
-	originalMethod = (OriginalMethodPtr)GetProcAddress(::GetModuleHandle("Game.dll"), "?RequestNpcAction@ControllerPlayerStateMoveTo@GAME@@MAEX_N0ABVWorldVec3@2@PBVNpc@2@@Z");
+	originalMethod = (OriginalMethodPtr)GetProcAddress(::GetModuleHandle("Game.dll"), REQUEST_NPC_ACTION_MOVETO);
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
 	DetourAttach((PVOID*)&originalMethod, HookedMethod);
@@ -34,15 +35,32 @@ void ControllerPlayerStateMoveToRequestNpcAction::DisableHook() {
 	DetourTransactionCommit();
 }
 
-void* __fastcall ControllerPlayerStateMoveToRequestNpcAction::HookedMethod(void* This, void* notUsed, bool a, bool b, Vec3f const & xyz, void* npc) {
+void* __fastcall ControllerPlayerStateMoveToRequestNpcAction::HookedMethod(
+	void* This, 
+#if !defined(_AMD64_)
+	void* notUsed, 
+#endif
+	bool a, 
+	bool b, 
+	Vec3f const & xyz, 
+	void* npc) {
 
-	const size_t bufflen = sizeof(Vec3f) + sizeof(bool)*2;
+	const size_t bufflen = sizeof(float) * 4 + sizeof(bool)*2;
 	char buffer[bufflen];
 
 	size_t pos = 0;
 
-	memcpy(buffer + pos, &xyz, sizeof(Vec3f));
-	pos += sizeof(Vec3f);
+	memcpy(buffer + pos, &xyz.unknown, sizeof(float));
+	pos += sizeof(float);
+
+	memcpy(buffer + pos, &xyz.x, sizeof(float));
+	pos += sizeof(float);
+
+	memcpy(buffer + pos, &xyz.y, sizeof(float));
+	pos += sizeof(float);
+
+	memcpy(buffer + pos, &xyz.z, sizeof(float));
+	pos += sizeof(float);
 
 	memcpy(buffer + pos, &a, sizeof(bool)*1);
 	pos += sizeof(bool);

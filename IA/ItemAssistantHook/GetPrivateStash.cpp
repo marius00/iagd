@@ -5,6 +5,7 @@
 #include "MessageType.h"
 #include <detours.h>
 #include "GetPrivateStash.h"
+#include "CUSTOM/Exports.h"
 
 HANDLE GetPrivateStash::m_hEvent;
 DataQueue* GetPrivateStash::m_dataQueue;
@@ -13,9 +14,9 @@ void* GetPrivateStash::privateStashSack;
 
 void GetPrivateStash::EnableHook() {
 #if defined(_AMD64_)
-	originalMethod = (OriginalMethodPtr)GetProcAddress(::GetModuleHandle("Game.dll"), "?GetPrivateStash@Player@GAME@@QEAAAEAV?$vector@PEAVInventorySack@GAME@@@mem@@XZ");
+	originalMethod = (OriginalMethodPtr)GetProcAddress(::GetModuleHandle("Game.dll"), GET_PRIVATE_STASH);
 #else
-	originalMethod = (OriginalMethodPtr)GetProcAddress(::GetModuleHandle("Game.dll"), "?GetPrivateStash@Player@GAME@@QAEAAV?$vector@PAVInventorySack@GAME@@@mem@@XZ");
+	originalMethod = (OriginalMethodPtr)GetProcAddress(::GetModuleHandle("Game.dll"), GET_PRIVATE_STASH);
 #endif
 	if (originalMethod == NULL) {
 		DataItemPtr item(new DataItem(TYPE_ERROR_HOOKING_PRIVATE_STASH, 0, 0));

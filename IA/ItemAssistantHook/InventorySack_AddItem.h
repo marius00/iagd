@@ -61,10 +61,16 @@ void GAME::Inventory::RemoveItemFromInventory(unsigned int)
 GAME::InventorySack::SetItemAddedWhileNotTheCurrentlySelectedInventoryTab(bool)
 /************************************************************************/
 
+#if !defined(_AMD64_)
+#define DISCARD_ARG ,void* discarded
+#else
+#define DISCARD_ARG
+#endif
+
 class InventorySack_AddItem : public BaseMethodHook {
 public:
 	InventorySack_AddItem();
-	InventorySack_AddItem(DataQueue* dataQueue, HANDLE hEvent, DWORD stashToLootFrom);
+	InventorySack_AddItem(DataQueue* dataQueue, HANDLE hEvent);
 	void EnableHook();
 	void DisableHook();
 
@@ -119,20 +125,19 @@ private:
 	static InventorySack_InventorySackParam dll_InventorySack_InventorySackParam;
 	static InventorySack_InventorySack dll_InventorySack_InventorySack;
 	static InventorySack_Sort dll_InventorySack_Sort;
-	static Item_GetItemReplicaInfo dll_GetItemReplicaInfo;
 
 	// Previously in a separate class
 	// void GAME::GameEngine::SetTransferOpen(bool)
-	static void __fastcall Hooked_GameEngine_SetTransferOpen(void* This, void* notUsed, bool firstParam);
+	static void __fastcall Hooked_GameEngine_SetTransferOpen(void* This DISCARD_ARG, bool firstParam);
 
 
 	// Game info is used to monitor IsHardcore and ModLabel
 	//GAME::GameInfo::GameInfo(class GAME::GameInfo const &)
-	static void* __fastcall Hooked_GameInfo_GameInfo_Param(void* This, void* notUsed, void* info);
-	static void* __fastcall Hooked_GameInfo_GameInfo(void* This, void* notUsed);
+	static void* __fastcall Hooked_GameInfo_GameInfo_Param(void* This DISCARD_ARG, void* info);
+	static void* __fastcall Hooked_GameInfo_GameInfo(void* This DISCARD_ARG);
 
 	//void GAME::GameInfo::SetHardcore(bool)
-	static void* __fastcall Hooked_GameInfo_SetHardcore(void* This, void* notUsed, bool isHardcore);
-	static bool __fastcall Hooked_InventorySack_Sort(void* This, void* notUsed, unsigned int unknown);
-	static int* __fastcall Hooked_GameEngine_GetTransferSack(void* This, void* discarded, int idx);
+	static void* __fastcall Hooked_GameInfo_SetHardcore(void* This DISCARD_ARG, bool isHardcore);
+	static bool __fastcall Hooked_InventorySack_Sort(void* This DISCARD_ARG, unsigned int unknown);
+	static int* __fastcall Hooked_GameEngine_GetTransferSack(void* This DISCARD_ARG, int idx);
 };

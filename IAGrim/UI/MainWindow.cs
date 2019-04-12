@@ -289,7 +289,6 @@ namespace IAGrim.UI
                 Logger.Debug("GrimDawnRunning flag has been changed from false to true");
                 GlobalSettings.GrimDawnRunning = true; // V1.0.4.0 hotfix   
             }
-
             int offset;
             switch (type) {
                 case MessageType.TYPE_DetectedStashToLootFrom: {
@@ -299,15 +298,12 @@ namespace IAGrim.UI
                 break;
 
                 case MessageType.TYPE_REPORT_WORKER_THREAD_LAUNCHED:
-                    offset = IOHelper.GetInt(bt.Data, 0);
-                    Logger.Info($"Grim Dawn hook reports successful launch, offset: {offset}");
+                    Logger.Info("Grim Dawn hook reports successful launch.");
                     break;
 
                 case MessageType.TYPE_REPORT_WORKER_THREAD_EXPERIMENTAL_LAUNCHED:
-                    offset = IOHelper.GetInt(bt.Data, 0);
-                    Logger.Info($"Grim Dawn exp-hook reports successful launch, offset: {offset}");
+                    Logger.Info("Grim Dawn exp-hook reports successful launch");
                     break;
-
 
 
                 case MessageType.TYPE_GameInfo_IsHardcore:
@@ -686,10 +682,7 @@ namespace IAGrim.UI
             hasMods = false; // TODO TODO TODO TODO
 #endif
             // CBA dealing with this.
-            string dllname = "ItemAssistantHook_x64.dll";
-#if DEBUG
-            dllname = @"S:\my documents\Visual Studio 2012\Projects\IAGrim\IA\ItemAssistantHook\CUSTOM\x64\Release\ItemAssistantHook.dll";
-#endif
+            string dllname = "ItemAssistantHook.dll";
             _injector = new InjectionHelper(new BackgroundWorker(), _injectorCallbackDelegate, false, "Grim Dawn", string.Empty, dllname);
         }
 

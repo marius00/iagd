@@ -6,6 +6,7 @@
 #include <detours.h>
 #include "CloudGetNumFiles.h"
 #include "DataQueue.h"
+#include "CUSTOM\Exports.h"
 
 HANDLE CloudGetNumFiles::m_hEvent;
 DataQueue* CloudGetNumFiles::m_dataQueue;
@@ -13,7 +14,7 @@ CloudGetNumFiles::OriginalMethodPtr CloudGetNumFiles::originalMethod;
 
 void CloudGetNumFiles::EnableHook() {
 	originalMethod = (OriginalMethodPtr)HookEngine(
-		"?CloudGetNumFiles@Steamworks@GAME@@QBEIXZ",
+		CLOUD_GET_NUM_FILES,
 		HookedMethod,
 		m_dataQueue,
 		m_hEvent,
@@ -37,7 +38,12 @@ void CloudGetNumFiles::DisableHook() {
 	DetourTransactionCommit();
 }
 
-unsigned int __fastcall CloudGetNumFiles::HookedMethod(void* This, void* notUsed) {
+unsigned int __fastcall CloudGetNumFiles::HookedMethod(
+	void* This
+#if !defined(_AMD64_)
+	, void* notUsed
+#endif
+) {
 	DataItemPtr item(new DataItem(TYPE_CloudGetNumFiles, 0, 0));
 	m_dataQueue->push(item);
 	SetEvent(m_hEvent);

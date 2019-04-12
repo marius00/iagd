@@ -66,9 +66,6 @@
     <ClCompile Include="..\CloudWrite.cpp">
       <Filter>HookedMethods</Filter>
     </ClCompile>
-    <ClCompile Include="..\CreatePlayerItemHook.cpp">
-      <Filter>HookedMethods</Filter>
-    </ClCompile>
     <ClCompile Include="..\Globals.cpp">
       <Filter>HookedMethods</Filter>
     </ClCompile>
@@ -126,9 +123,6 @@
       <Filter>HookedMethods</Filter>
     </ClInclude>
     <ClInclude Include="..\CloudWrite.h">
-      <Filter>HookedMethods</Filter>
-    </ClInclude>
-    <ClInclude Include="..\CreatePlayerItemHook.h">
       <Filter>HookedMethods</Filter>
     </ClInclude>
     <ClInclude Include="..\Globals.h">

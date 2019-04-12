@@ -23,6 +23,10 @@ private:
 	static DataQueue* m_dataQueue;
 
 
+#if defined(_AMD64_)
+	static bool __fastcall HookedMethod(void* This, void* str_filename, void* unknown0, unsigned int unknown1);
+#else
 	static bool __fastcall HookedMethod(void* This, void* notUsed, void* str_filename, void* unknown0, unsigned int unknown1);
+#endif
 
 };

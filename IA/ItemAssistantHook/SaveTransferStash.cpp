@@ -5,6 +5,7 @@
 #include "MessageType.h"
 #include <detours.h>
 #include "SaveTransferStash.h"
+#include "CUSTOM\Exports.h"
 
 HANDLE SaveTransferStash::m_hEvent;
 DataQueue* SaveTransferStash::m_dataQueue;
@@ -13,7 +14,7 @@ void* SaveTransferStash::privateStashSack;
 
 void SaveTransferStash::EnableHook() {
 
-	originalMethod = (OriginalMethodPtr)GetProcAddress(::GetModuleHandle("Game.dll"), "?SaveTransferStash@GameEngine@GAME@@QAEXXZ");
+	originalMethod = (OriginalMethodPtr)GetProcAddress(::GetModuleHandle("Game.dll"), SAVE_TRANSFER_STASH);
 	if (originalMethod == NULL) {
 		DataItemPtr item(new DataItem(TYPE_ERROR_HOOKING_SAVETRANSFER_STASH, 0, 0));
 		m_dataQueue->push(item);
@@ -45,7 +46,12 @@ void SaveTransferStash::DisableHook() {
 }
 
 // This is spammed non stop when the private stash is open(not transfer)
-void* __fastcall SaveTransferStash::HookedMethod(void* This, void* notUsed) {
+void* __fastcall SaveTransferStash::HookedMethod(
+	void* This
+#if !defined(_AMD64_)
+	,void* notUsed
+#endif
+) {
 
 	void* v = originalMethod(This);
 	privateStashSack = v;
