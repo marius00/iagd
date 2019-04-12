@@ -16,9 +16,9 @@
 #define REQUEST_NPC_ACTION_MOVETO "?RequestNpcAction@ControllerPlayerStateMoveTo@GAME@@MEAAX_N0AEBVWorldVec3@2@PEBVNpc@2@@Z"
 #define GET_PLAYER_ITEM_COUNT_IN_STASHES "?GetItemCountInStashes@Player@GAME@@UEBAHAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV?$vector@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@mem@@1AEAV?$vector@I@6@_N3@Z"
 
-#define CLOUD_WRITE ""
-#define CLOUD_READ ""
-#define CLOUD_GET_NUM_FILES ""
+#define CLOUD_WRITE "?CloudWrite@Steamworks@GAME@@QEBA_NAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PEBXI_N@Z"
+#define CLOUD_READ "?CloudRead@Steamworks@GAME@@QEBA_NAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PEAXI@Z"
+#define CLOUD_GET_NUM_FILES "?CloudGetNumFiles@Steamworks@GAME@@QEBAIXZ"
 
 #define GET_PRIVATE_STASH "?GetPrivateStash@Player@GAME@@QEAAAEAV?$vector@PEAVInventorySack@GAME@@@mem@@XZ"
 #else

@@ -133,9 +133,9 @@ int ProcessAttach(HINSTANCE _hModule) {
 	hooks.push_back(new ControllerPlayerStateIdleRequestNpcAction(&g_dataQueue, g_hEvent));
 	hooks.push_back(new ControllerPlayerStateMoveToRequestNpcAction(&g_dataQueue, g_hEvent));
 
-	//hooks.push_back(new CloudGetNumFiles(&g_dataQueue, g_hEvent));
-	//hooks.push_back(new CloudRead(&g_dataQueue, g_hEvent));
-	//hooks.push_back(new CloudWrite(&g_dataQueue, g_hEvent));
+	hooks.push_back(new CloudGetNumFiles(&g_dataQueue, g_hEvent));
+	hooks.push_back(new CloudRead(&g_dataQueue, g_hEvent));
+	hooks.push_back(new CloudWrite(&g_dataQueue, g_hEvent));
 
 	hooks.push_back(new NpcDetectionHook(&g_dataQueue, g_hEvent));
 	hooks.push_back(new SaveTransferStash(&g_dataQueue, g_hEvent));
