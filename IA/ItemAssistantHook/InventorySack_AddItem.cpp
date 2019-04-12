@@ -5,7 +5,6 @@
 #include "MessageType.h"
 #include <detours.h>
 #include "InventorySack_AddItem.h"
-#include "Globals.h"
 #include "CUSTOM\Exports.h"
 
 #define STASH_1 0

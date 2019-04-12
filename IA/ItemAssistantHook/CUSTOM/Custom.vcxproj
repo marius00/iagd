@@ -114,8 +114,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>n:\boost_1_61_0;..\..\Detours-master\src;..\..\MinHook_133_lib\include;..\..\;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\MinHook_133_lib\lib;n:\boost_1_61_0\lib64-msvc-14.0;..\..\Detours-master\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>n:\boost_1_61_0;..\..\Detours-master\src;..\..\;$(IncludePath)</IncludePath>
+    <LibraryPath>n:\boost_1_61_0\lib64-msvc-14.0;..\..\Detours-master\x64;$(LibraryPath)</LibraryPath>
     <TargetName>ItemAssistantHook_x64</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-Instaloot|Win32'">
@@ -274,7 +274,6 @@
     <ClCompile Include="..\DataQueue.cpp" />
     <ClCompile Include="..\dllmain.cpp" />
     <ClCompile Include="..\GetPrivateStash.cpp" />
-    <ClCompile Include="..\Globals.cpp" />
     <ClCompile Include="..\HookLog.cpp" />
     <ClCompile Include="..\HookWalkTo.cpp" />
     <ClCompile Include="..\InventorySack_AddItem.cpp">
@@ -298,7 +297,6 @@
     <ClInclude Include="..\DataQueue.h" />
     <ClInclude Include="..\dllmain.h" />
     <ClInclude Include="..\GetPrivateStash.h" />
-    <ClInclude Include="..\Globals.h" />
     <ClInclude Include="..\HookLog.h" />
     <ClInclude Include="..\HookWalkTo.h" />
     <ClInclude Include="..\InventorySack_AddItem.h">

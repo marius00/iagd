@@ -15,13 +15,6 @@ namespace IAGrim.Services.MessageProcessor {
                         Z = IOHelper.GetFloat(data, 12),
                         Zone = IOHelper.GetInt(data, 0)
                     };
-
-                    Logger.Debug($"/0Received a TYPE_Move({IOHelper.GetFloat(data, 4)}, {IOHelper.GetFloat(data, 8)}, {IOHelper.GetFloat(data, 12)}, {IOHelper.GetInt(data, 0)}");
-                    Logger.Debug($"/0Received a TYPE_Move({IOHelper.GetFloat(data, 4)}, {IOHelper.GetFloat(data, 8)}, {IOHelper.GetFloat(data, 12)}, {IOHelper.GetFloat(data, 0)}");
-                    if (data.Length == 22) {
-                        Logger.Debug($"/0 Extra TYPE_Move({IOHelper.GetFloat(data, 16)}");
-                        }
-                        // Logger.DebugFormat("Received a TYPE_Move({0}, {1}, {2}, {5}), ({3},{4})", x, y, z, data[data.Length - 2], data[data.Length - 1], zone);
                     } break;
 
                 case MessageType.TYPE_ControllerPlayerStateIdleRequestNpcAction:
@@ -43,8 +36,6 @@ namespace IAGrim.Services.MessageProcessor {
                         Zone = IOHelper.GetInt(data, 0)
                     };
 
-                    Logger.Debug($"/1!Received a TYPE_Move({IOHelper.GetFloat(data, 4)}, {IOHelper.GetFloat(data, 8)}, {IOHelper.GetFloat(data, 12)}, {IOHelper.GetInt(data, 0)}");
-                    // Logger.DebugFormat("Received a TYPE_Move({0}, {1}, {2}, {5}), ({3},{4})", x, y, z, data[data.Length - 2], data[data.Length - 1], zone);
                     } break;
 
                 case MessageType.TYPE_OPEN_PRIVATE_STASH:
