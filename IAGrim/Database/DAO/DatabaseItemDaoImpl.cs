@@ -37,7 +37,7 @@ namespace IAGrim.Database {
         public Dictionary<string, string> GetTagDictionary() {
             Dictionary<string, string> result = new Dictionary<string, string>();
             using (var session = SessionCreator.OpenStatelessSession()) {
-                using (ITransaction transaction = session.BeginTransaction()) {
+                using (session.BeginTransaction()) {
                     foreach (ItemTag entry in session.CreateCriteria<ItemTag>().List()) {
                         result[entry.Tag] = entry.Name;
                     }

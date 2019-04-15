@@ -119,10 +119,9 @@ namespace IAGrim.UI
             _itemViewUpdateTrigger?.Invoke();
         }
 
-        private void buttonForceUpdate_Click(object sender, EventArgs e)
-        {
-            foreach (ListViewItem lvi in listViewInstalls.SelectedItems)
-            {
+        private void buttonForceUpdate_Click(object sender, EventArgs e) {
+            _databaseSettingRepo.Clean();
+            foreach (ListViewItem lvi in listViewInstalls.SelectedItems) {
                 var mod = listViewMods.SelectedItems[0].Tag as ListViewEntry;
                 var entry = lvi.Tag as ListViewEntry;
 
@@ -131,8 +130,7 @@ namespace IAGrim.UI
             }
         }
 
-        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
-        {
+        private void listView1_SelectedIndexChanged(object sender, EventArgs e) {
             buttonForceUpdate.Enabled = listViewInstalls.SelectedItems.Count > 0;
         }
 
