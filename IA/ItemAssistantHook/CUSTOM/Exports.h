@@ -21,6 +21,8 @@
 #define CLOUD_GET_NUM_FILES "?CloudGetNumFiles@Steamworks@GAME@@QEBAIXZ"
 
 #define GET_PRIVATE_STASH "?GetPrivateStash@Player@GAME@@QEAAAEAV?$vector@PEAVInventorySack@GAME@@@mem@@XZ"
+
+#define SAVE_MANAGER_DIRECTREAD "?DirectRead@SaveManager@GAME@@QEAA_NAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEAPEAXAEAI_N3@Z"
 #else
 #define REQUEST_MOVE_ACTION_IDLE "?RequestMoveAction@ControllerPlayerStateIdle@GAME@@MAEX_N0ABVWorldVec3@2@@Z"
 #define REQUEST_MOVE_ACTION_MOVETO "?RequestMoveAction@ControllerPlayerStateMoveTo@GAME@@MAEX_N0ABVWorldVec3@2@@Z"
@@ -41,4 +43,7 @@
 #define CLOUD_READ "?CloudRead@Steamworks@GAME@@QBE_NABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PAXI@Z"
 #define CLOUD_GET_NUM_FILES "?CloudGetNumFiles@Steamworks@GAME@@QBEIXZ"
 #define GET_PRIVATE_STASH "?GetPrivateStash@Player@GAME@@QAEAAV?$vector@PAVInventorySack@GAME@@@mem@@XZ"
+
+#define SAVE_MANAGER_DIRECTREAD ""
+
 #endif

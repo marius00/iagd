@@ -285,6 +285,7 @@
     <ClCompile Include="..\NpcDetectionHook.cpp" />
     <ClCompile Include="..\SaveTransferStash.cpp" />
     <ClCompile Include="..\stdafx.cpp" />
+    <ClCompile Include="SaveManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\BaseMethodHook.h" />
@@ -311,6 +312,7 @@
     <ClInclude Include="..\stdafx.h" />
     <ClInclude Include="Exports.h" />
     <ClInclude Include="MessageType.h" />
+    <ClInclude Include="SaveManager.h" />
     <ClInclude Include="Vec3f.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

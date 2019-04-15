@@ -60,5 +60,6 @@ enum MessageType {
 	TYPE_GameInfo_IsHardcore_via_init = 47,
 	TYPE_GameInfo_IsHardcore_via_init_2 = 48,
 	TYPE_DetectedStashToLootFrom = 49,
-
+	TYPE_SaveManager = 50,
+	TYPE_InterceptDirectRead = 51,
 };

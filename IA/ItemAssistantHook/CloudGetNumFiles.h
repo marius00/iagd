@@ -13,9 +13,6 @@ public:
 	void DisableHook();
 
 private:
-	struct Vec3f {
-		float x,y,z,u;
-	};
 
 	typedef unsigned int (__thiscall *OriginalMethodPtr)(void*);
 	static HANDLE m_hEvent;

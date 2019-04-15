@@ -13,9 +13,6 @@ public:
 	void DisableHook();
 
 private:
-	struct Vec3f {
-		float x,y,z,u;
-	};
 
 	typedef bool (__thiscall *OriginalMethodPtr)(void*, void* str_filename, void const* unknown0, unsigned int unknown1, bool unknown2);
 	static HANDLE m_hEvent;

@@ -14,6 +14,7 @@
 #include "InventorySack_AddItem.h"
 #include "NpcDetectionHook.h"
 #include "SaveTransferStash.h"
+#include "CUSTOM/SaveManager.h"
 
 #if defined _M_X64
 #elif defined _M_IX86
@@ -140,6 +141,7 @@ int ProcessAttach(HINSTANCE _hModule) {
 	hooks.push_back(new NpcDetectionHook(&g_dataQueue, g_hEvent));
 	hooks.push_back(new SaveTransferStash(&g_dataQueue, g_hEvent));
 	hooks.push_back(new InventorySack_AddItem(&g_dataQueue, g_hEvent));
+	hooks.push_back(new SaveManager(&g_dataQueue, g_hEvent));
 	LOG("Configured inventory sacks..");
 
 	LOG("Starting hook enabling..");

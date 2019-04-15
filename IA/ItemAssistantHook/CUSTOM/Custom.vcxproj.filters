@@ -72,6 +72,9 @@
     <ClCompile Include="..\NpcDetectionHook.cpp">
       <Filter>HookedMethods</Filter>
     </ClCompile>
+    <ClCompile Include="SaveManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\DataQueue.h">
@@ -133,6 +136,9 @@
     </ClInclude>
     <ClInclude Include="Exports.h">
       <Filter>Variable</Filter>
+    </ClInclude>
+    <ClInclude Include="SaveManager.h">
+      <Filter>HookedMethods</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
