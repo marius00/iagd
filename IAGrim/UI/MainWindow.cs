@@ -257,7 +257,7 @@ namespace IAGrim.UI
                 Logger.Debug("GrimDawnRunning flag has been changed from false to true");
                 GlobalSettings.GrimDawnRunning = true; // V1.0.4.0 hotfix   
             }
-            int offset;
+
             switch (type) {
                 case MessageType.TYPE_DetectedStashToLootFrom: {
                     int stashToLootFrom = IOHelper.GetInt(bt.Data, 0);
@@ -539,7 +539,7 @@ namespace IAGrim.UI
             }
 
             _messageProcessors.Add(new ItemPositionFinder(_dynamicPacker));
-            _messageProcessors.Add(new PlayerPositionTracker());
+            _messageProcessors.Add(new PlayerPositionTracker(false));
             _messageProcessors.Add(new StashStatusHandler());
             _messageProcessors.Add(new ItemReceivedProcessor(_searchWindow, _stashFileMonitor, _playerItemDao));
             _messageProcessors.Add(new ItemInjectCallbackProcessor(_searchWindow.UpdateListViewDelayed, _playerItemDao));
