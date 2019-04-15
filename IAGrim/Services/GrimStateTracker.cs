@@ -26,7 +26,7 @@ namespace IAGrim.Services {
 
                 float distSq = (LastKnownPosition.X - LastStashPosition.X) * (LastKnownPosition.X - LastStashPosition.X) 
                     + (LastKnownPosition.Z - LastStashPosition.Z) * (LastKnownPosition.Z - LastStashPosition.Z);
-                return distSq >= 25;
+                return distSq >= 15;
             }
         }
     }

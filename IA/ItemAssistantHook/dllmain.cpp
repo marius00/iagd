@@ -1,17 +1,9 @@
 #include "stdafx.h"
-#include "dllmain.h"
-#include <shared/aopackets.h>
 #include <windows.h>
-#include <detours.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <set>
-#include <boost/smart_ptr.hpp>
 #include <boost/thread.hpp>
 #include "DataQueue.h"
 #include "MessageType.h"
-//#include "GetPrivateStash.h"
-//#include "SetTransferOpen.h"
 #include "HookWalkTo.h"
 #include "ControllerPlayerStateMoveToRequestNpcAction.h"
 #include "ControllerPlayerStateIdleRequestNpcAction.h"
@@ -20,12 +12,13 @@
 #include "CloudRead.h"
 #include "CloudWrite.h"
 #include "InventorySack_AddItem.h"
-#include "CreatePlayerItemHook.h"
-#include "Globals.h"
 #include "NpcDetectionHook.h"
 #include "SaveTransferStash.h"
-InventorySack_AddItem* g_Sack = NULL;
+#include "CUSTOM/SaveManager.h"
 
+#if defined _M_X64
+#elif defined _M_IX86
+#endif
 
 
 #pragma region Variables
@@ -45,12 +38,7 @@ HookLog g_log;
     __noop;
 #endif
 
-
-PVOID Func;
-
-DWORD g_lastTick = 0;
 DWORD g_lastThreadTick = 0;
-std::set<unsigned int> g_messageFilter;
 HANDLE g_hEvent;
 HANDLE g_thread;
 
@@ -58,9 +46,6 @@ DataQueue g_dataQueue;
 
 HWND g_targetWnd = NULL;
 
-using namespace AO;
-
-PDETOUR_TRAMPOLINE Trampoline = NULL;
 #pragma endregion
 
 #pragma region CORE
@@ -113,12 +98,10 @@ unsigned __stdcall WorkerThreadMethodWrap(void* argss) {
 void StartWorkerThread() {
 	LOG("Starting worker thread..");
 	unsigned int pid;
-	//g_thread = (HANDLE)_beginthread(WorkerThreadMethod,0,0);
 	g_thread = (HANDLE)_beginthreadex(NULL, 0, &WorkerThreadMethodWrap, NULL, 0, &pid);
 	
 
-	int offset = FindOffset();
-	DataItemPtr item(new DataItem(TYPE_REPORT_WORKER_THREAD_LAUNCHED, sizeof(offset), (char*)&offset));
+	DataItemPtr item(new DataItem(TYPE_REPORT_WORKER_THREAD_LAUNCHED, 0, NULL));
 	g_dataQueue.push(item);
 	SetEvent(g_hEvent);
 	LOG("Started worker thread..");
@@ -145,38 +128,21 @@ int ProcessAttach(HINSTANCE _hModule) {
 	LOG("Attatching to process..");
 	g_hEvent = CreateEvent(NULL,FALSE,FALSE,"IA_Worker");
 
-
 	LOG("Preparing hooks..");
-	hooks.push_back(new HookWalkTo(&g_dataQueue, g_hEvent));
+	hooks.push_back(new HookWalkTo(&g_dataQueue, g_hEvent, &g_log));
+	hooks.push_back(new ControllerPlayerStateMoveToRequestMoveAction(&g_dataQueue, g_hEvent));
 	hooks.push_back(new ControllerPlayerStateIdleRequestNpcAction(&g_dataQueue, g_hEvent));
 	hooks.push_back(new ControllerPlayerStateMoveToRequestNpcAction(&g_dataQueue, g_hEvent));
-	hooks.push_back(new ControllerPlayerStateMoveToRequestMoveAction(&g_dataQueue, g_hEvent));
 
 	hooks.push_back(new CloudGetNumFiles(&g_dataQueue, g_hEvent));
 	hooks.push_back(new CloudRead(&g_dataQueue, g_hEvent));
 	hooks.push_back(new CloudWrite(&g_dataQueue, g_hEvent));
-	hooks.push_back(new CreatePlayerItemHook(&g_dataQueue, g_hEvent));
-	
-	hooks.push_back(new SaveTransferStash(&g_dataQueue, g_hEvent));
+
 	hooks.push_back(new NpcDetectionHook(&g_dataQueue, g_hEvent));
-
-	LOG("Fetching registry configuration..");
-#if defined(_AMD64_)
-	DWORD stashToLootFrom = 5;
-#else
-	DWORD stashToLootFrom = GetDWORDRegKey("StashToLootFrom", 5);
-#endif
-	LOG("Fetched registry configuration..");
-	g_Sack = new InventorySack_AddItem(&g_dataQueue, g_hEvent, stashToLootFrom);
-	hooks.push_back(g_Sack);
+	hooks.push_back(new SaveTransferStash(&g_dataQueue, g_hEvent));
+	hooks.push_back(new InventorySack_AddItem(&g_dataQueue, g_hEvent));
+	hooks.push_back(new SaveManager(&g_dataQueue, g_hEvent));
 	LOG("Configured inventory sacks..");
-
-
-	LOG("Notifying IAGD that the registry configuration has been read..");
-	DataItemPtr item(new DataItem(TYPE_DetectedStashToLootFrom, sizeof(stashToLootFrom), (char*)&stashToLootFrom));
-	g_dataQueue.push(item);
-	SetEvent(g_hEvent);
-	
 
 	LOG("Starting hook enabling..");
 	for (unsigned int i = 0; i < hooks.size(); i++) {
@@ -213,36 +179,14 @@ int ProcessDetach( HINSTANCE _hModule ) {
 		delete hooks[i];
 	}
 	hooks.clear();
-	g_Sack = NULL;
-
 
     EndWorkerThread();
-
     return TRUE;
 }
 
 BOOL APIENTRY DllMain(HINSTANCE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved) {
     switch (ul_reason_for_call) {
 	case DLL_PROCESS_ATTACH:
-/*
-	{
-		int addressToPatch = 40 + (int)GetProcAddress(::GetModuleHandle("Game.dll"), "?Log@Engine@GAME@@UBAXW4LogPriority@2@IPBDZZ");
-		byte newData[2]{ 0x90, 0x90 };
-		HANDLE hProcess = GetCurrentProcess();
-		WriteProcessMemory(hProcess, (void*)addressToPatch, newData, 2, NULL);
-
-		// +58
-		// ?InternalLog@Engine@GAME@@ABEXW4LogPriority@2@IPBD@Z
-	}
-	{
-		int addressToPatch = 58 + (int)GetProcAddress(::GetModuleHandle("Game.dll"), "?InternalLog@Engine@GAME@@ABEXW4LogPriority@2@IPBD@Z");
-		byte newData[2]{ 0x90, 0x90 };
-		HANDLE hProcess = GetCurrentProcess();
-		WriteProcessMemory(hProcess, (void*)addressToPatch, newData, 2, NULL);
-	}*/
-		// https://wiki.skullsecurity.org/.dll_Injection_and_Patching
-		// Log() + 40
-		// Write 2b "NOP"
         return ProcessAttach( hModule );
 
 	case DLL_PROCESS_DETACH:

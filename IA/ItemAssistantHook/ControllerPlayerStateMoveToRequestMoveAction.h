@@ -1,6 +1,7 @@
 #include <windows.h>
 #include "DataQueue.h"
 #include "BaseMethodHook.h"
+#include "CUSTOM/Vec3f.h"
 
 /************************************************************************
 /************************************************************************/
@@ -12,16 +13,20 @@ public:
 	void DisableHook();
 
 private:
-	struct Vec3f {
-		float x,y,z,u;
-	};
-
 	typedef int* (__thiscall *OriginalMethodPtr)(void*, bool, bool, Vec3f const&);
 	static HANDLE m_hEvent;
 	static OriginalMethodPtr originalMethod;
 	static DataQueue* m_dataQueue;
 
 
-	static void* __fastcall HookedMethod(void* This, void* notUsed, bool, bool, Vec3f const& xyz);
+	static void* __fastcall HookedMethod(
+		void* This, 
+#if !defined(_AMD64_)
+		void* notUsed, 
+#endif
+		bool, 
+		bool, 
+		Vec3f const& xyz
+	);
 	
 };

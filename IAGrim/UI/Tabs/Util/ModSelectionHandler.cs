@@ -116,7 +116,7 @@ namespace IAGrim.UI.Tabs.Util
 
             foreach (var entry in _playerItemDao.GetModSelection())
             {
-                if (!mods.Any(m => m.IsHardcore == entry.IsHardcore && m.Mod?.ToLower() == entry.Mod?.ToLower()))
+                if (!mods.Any(m => m.IsHardcore == entry.IsHardcore && m.Mod?.ToLowerInvariant() == entry.Mod?.ToLowerInvariant()))
                 {
                     mods.Add(new GDTransferFile
                     {

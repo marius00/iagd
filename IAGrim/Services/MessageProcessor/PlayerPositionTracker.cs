@@ -2,51 +2,82 @@
 using IAGrim.UI.Misc;
 using log4net;
 
-namespace IAGrim.Services.MessageProcessor
-{
-    internal class PlayerPositionTracker : IMessageProcessor
-    {
-        private readonly ILog Logger = LogManager.GetLogger(typeof(PlayerPositionTracker));
+namespace IAGrim.Services.MessageProcessor {
+    internal class PlayerPositionTracker : IMessageProcessor {
+        private readonly bool _debugPlayerPositions;
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(PlayerPositionTracker));
 
-        public void Process(MessageType type, byte[] data)
-        {
-            switch (type)
-            {
-                case MessageType.TYPE_ControllerPlayerStateIdleRequestMoveAction:
-                case MessageType.TYPE_ControllerPlayerStateIdleRequestNpcAction:
-                case MessageType.TYPE_ControllerPlayerStateMoveToRequestNpcAction:
-                case MessageType.TYPE_ControllerPlayerStateMoveToRequestMoveAction:
-                {
+        public PlayerPositionTracker(bool debugPlayerPositions) {
+            _debugPlayerPositions = debugPlayerPositions;
+        }
+
+        public void Process(MessageType type, byte[] data) {
+            switch (type) {
+                case MessageType.TYPE_ControllerPlayerStateIdleRequestMoveAction: {
                     GrimStateTracker.LastKnownPosition = new GrimStateTracker.WorldVector {
                         X = IOHelper.GetFloat(data, 4),
-                        Y = IOHelper.GetFloat(data, 8), // Getting X here??
-                        Z = IOHelper.GetFloat(data, 12), // Getting Y here..
+                        Y = IOHelper.GetFloat(data, 8),
+                        Z = IOHelper.GetFloat(data, 12),
                         Zone = IOHelper.GetInt(data, 0)
                     };
-                        // Logger.Debug(GrimStateTracker.LastKnownPosition.ToString());
-                        // Logger.Debug($"Testy: ZoneAsFloat: {IOHelper.GetFloat(data, 0)}");
-                    // Logger.Debug($"Testy: XAsInt: {IOHelper.GetInt(data, 4)}");
 
-                        //Logger.Debug($"Received a TYPE_Move({IOHelper.GetFloat(data, 4)}, {IOHelper.GetFloat(data, 8)}, {IOHelper.GetFloat(data, 12)}, {IOHelper.GetInt(data, 0)}");
+                    if (_debugPlayerPositions) {
+                        Logger.Debug(GrimStateTracker.LastKnownPosition);
+                    }
+                }
+                    break;
+
+                case MessageType.TYPE_ControllerPlayerStateIdleRequestNpcAction:
+                case MessageType.TYPE_ControllerPlayerStateMoveToRequestNpcAction: {
+                    GrimStateTracker.LastKnownPosition = new GrimStateTracker.WorldVector {
+                        X = IOHelper.GetFloat(data, 4),
+                        Y = IOHelper.GetFloat(data, 8),
+                        Z = IOHelper.GetFloat(data, 12),
+                        Zone = IOHelper.GetInt(data, 0)
+                    };
+
+                    if (_debugPlayerPositions) {
+                        Logger.Debug(GrimStateTracker.LastKnownPosition);
                     }
 
-                    //Logger.DebugFormat("Received a TYPE_Move({0}, {1}, {2}, {5}), ({3},{4})", x, y, z, data[data.Length - 2], data[data.Length - 1], zone);
+                    break;
+                }
+
+                case MessageType.TYPE_ControllerPlayerStateMoveToRequestMoveAction: {
+                    GrimStateTracker.LastKnownPosition = new GrimStateTracker.WorldVector {
+                        X = IOHelper.GetFloat(data, 4),
+                        Y = IOHelper.GetFloat(data, 8),
+                        Z = IOHelper.GetFloat(data, 12),
+                        Zone = IOHelper.GetInt(data, 0)
+                    };
+
+                    if (_debugPlayerPositions) {
+                        Logger.Debug(GrimStateTracker.LastKnownPosition);
+                    }
+                }
                     break;
 
                 case MessageType.TYPE_OPEN_PRIVATE_STASH:
                 case MessageType.TYPE_OPEN_CLOSE_TRANSFER_STASH:
-                    if (data.Length == 1)
-                    {
+                    if (data.Length == 1) {
                         bool isOpen = data[0] != 0;
                         if (isOpen)
                             GrimStateTracker.LastStashPosition = GrimStateTracker.LastKnownPosition;
                     }
-                    else
-                    {
+                    else {
                         Logger.WarnFormat(
                             "Received a Open/Close stash message from hook, expected length 1, got length {0}",
                             data.Length);
                     }
+
+                    break;
+
+                // TODO: Not the right place.. but so be it, right?
+                case MessageType.TYPE_SaveManager:
+                    Logger.Info("TYPE_SaveManager received");
+                    break;
+                case MessageType.TYPE_InterceptDirectRead:
+                    Logger.Info($"TYPE_InterceptDirectRead: {IOHelper.GetInt(data, 0)}");
                     break;
             }
         }

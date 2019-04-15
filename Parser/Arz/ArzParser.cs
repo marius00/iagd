@@ -185,7 +185,7 @@ namespace IAGrim.Parser.Arz {
                 List<IItemTag> tags = new List<IItemTag>();
 
                 foreach (var s in decompresser.strings) {
-                    if (s.ToLower().EndsWith(".txt")) {
+                    if (s.ToLowerInvariant().EndsWith(".txt")) {
                         tags.AddRange(decompresser.GetTags(s));
                         logger.Debug($"Loading tags from {s}");
                     }

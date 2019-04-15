@@ -5,6 +5,7 @@
 #include "MessageType.h"
 #include <detours.h>
 #include "NpcDetectionHook.h"
+#include "CUSTOM/Exports.h"
 
 HANDLE NpcDetectionHook::m_hEvent;
 DataQueue* NpcDetectionHook::m_dataQueue;
@@ -21,7 +22,7 @@ int GetItemCountInStashes(
 */
 void NpcDetectionHook::EnableHook() {
 	originalMethod = (OriginalMethodPtr)HookGame(
-		"?GetItemCountInStashes@Player@GAME@@UBEHABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@ABV?$vector@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@mem@@1AAV?$vector@I@6@_N3@Z",
+		GET_PLAYER_ITEM_COUNT_IN_STASHES,
 		HookedMethod,
 		m_dataQueue,
 		m_hEvent,
@@ -42,7 +43,18 @@ void NpcDetectionHook::DisableHook() {
 	Unhook((PVOID*)&originalMethod, HookedMethod);
 }
 
-void* __fastcall NpcDetectionHook::HookedMethod(void* This, void* notUsed, void* uk0, void* uk1, void* uk2, void* uk3, bool a, bool b) {
+void* __fastcall NpcDetectionHook::HookedMethod(
+	void* This, 
+#if !defined(_AMD64_)
+	void* notUsed, 
+#endif
+	void* uk0, 
+	void* uk1, 
+	void* uk2, 
+	void* uk3, 
+	bool a, 
+	bool b
+) {
 	DataItemPtr item(new DataItem(TYPE_DISPLAY_CRAFTER, 0, 0));
 	m_dataQueue->push(item);
 	SetEvent(m_hEvent);

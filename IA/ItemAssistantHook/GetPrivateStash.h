@@ -25,5 +25,6 @@ private:
 	static DataQueue* m_dataQueue;
 	static void* privateStashSack;
 
+	static void* __stdcall HookedMethod64(void* This);
 	static void* __fastcall HookedMethod(void* This, void* notUsed);
 };

@@ -85,7 +85,7 @@ namespace EvilsoftCommons.DllInjector {
                     Thread.CurrentThread.Name = "InjectionHelper";
                 
                 while (!worker.CancellationPending) {
-                    process(worker, e.Argument as RunArguments);
+                    Process(worker, e.Argument as RunArguments);
                 }
             }
             catch (Exception ex) {
@@ -135,7 +135,7 @@ namespace EvilsoftCommons.DllInjector {
 
         private bool Is64Bit(int pid) {
             try {
-                var p = Process.GetProcessById(pid);
+                var p = System.Diagnostics.Process.GetProcessById(pid);
                 return DllInjector.Is64BitProcess(p);
             }
             catch (ArgumentException) {
@@ -143,7 +143,55 @@ namespace EvilsoftCommons.DllInjector {
             }
         }
 
-        private void process(BackgroundWorker worker, RunArguments arguments) {
+        public static IntPtr Inject64Bit(string exe, string dll) {
+            Logger.Info("Running 64 bit injector...");
+            if (File.Exists("DllInjector64.exe")) {
+                ProcessStartInfo startInfo = new ProcessStartInfo();
+                startInfo.FileName = "DllInjector64.exe";
+                startInfo.Arguments = $"-t 1 \"{exe}\" \"{dll}\"";
+                startInfo.RedirectStandardOutput = true;
+                startInfo.RedirectStandardError = true;
+                startInfo.UseShellExecute = false;
+
+                startInfo.CreateNoWindow = true;
+
+                Process processTemp = new Process();
+                processTemp.StartInfo = startInfo;
+                processTemp.EnableRaisingEvents = true;
+                try {
+                    int timeout = 1000;
+                    processTemp.Start();
+                    processTemp.WaitForExit(timeout);
+                    if (!processTemp.HasExited) {
+                        Logger.Warn($"Injector did not finish in {timeout}ms, discarding result");
+                        return IntPtr.Zero;
+                    }
+
+                    
+                    while (!processTemp.StandardOutput.EndOfStream) {
+                        string output = processTemp.StandardOutput.ReadLine();
+                        if (processTemp.ExitCode != 0) {
+                            Logger.Warn($"Injector returned status code {processTemp.ExitCode} with error: {output}");
+                            return IntPtr.Zero;
+                        }
+                        else {
+                            Logger.Info("Injection successful, storing mock point due to pointer space being outside of 32bit range.");
+                            return new IntPtr(0xBADF00D);
+                        }
+                    }
+                }
+                catch (Exception ex) {
+                    Logger.Warn($"Exception while attempting to verify injection.. {ex.Message}", ex);
+                    ExceptionReporter.ReportException(ex);
+                }
+            }
+            else {
+                Logger.Warn("Could not find DllInjector64.exe, unable to inject into Grim Dawn 64bit.");
+            }
+            return IntPtr.Zero;
+        }
+
+        private void Process(BackgroundWorker worker, RunArguments arguments) {
             System.Threading.Thread.Sleep(1200);
 
             HashSet<uint> pids = FindProcesses(arguments);
@@ -154,22 +202,36 @@ namespace EvilsoftCommons.DllInjector {
             else if (pids.Count == 0)
                 worker.ReportProgress(NO_PROCESS_FOUND, null);
 
-            string dll = Path.Combine(Directory.GetCurrentDirectory(), arguments.DllName);
-            if (!File.Exists(dll)) {
-                Logger.FatalFormat("Could not find {1} at \"{0}\"", dll, arguments.DllName);
+
+
+            string dll32Bit = Path.Combine(Directory.GetCurrentDirectory(), arguments.DllName.Replace(".dll", "_x86.dll"));
+            string dll64Bit = Path.Combine(Directory.GetCurrentDirectory(), arguments.DllName.Replace(".dll", "_x64.dll"));
+            if (!File.Exists(dll32Bit)) {
+                Logger.FatalFormat("Could not find {1} at \"{0}\"", dll32Bit, arguments.DllName);
+            } else if (!File.Exists(dll64Bit)) {
+                Logger.FatalFormat("Could not find {1} at \"{0}\"", dll64Bit, arguments.DllName);
             }
             else {
                 foreach (uint pid in pids) {
                     if (!_previouslyInjected.Contains(pid)) {
-
-                        IntPtr remoteModuleHandle = IntPtr.Zero;
+                        string dllName;
                         if (Is64Bit((int)pid)) {
-                            // TODO: Run the exe instead, if 64bit
-                            Logger.Warn("GD is running as 64bit, IAGD does not support this as of yet.");
+                            if (InjectionVerifier.VerifyInjection(pid, dll64Bit)) {
+                                Logger.Info($"DLL already injected into target process, skipping injection into {pid}");
+                                _dontLog.Add(pid);
+                                _previouslyInjected.Add(pid);
+                            }
+                            else {
+                                Inject64Bit("Grim Dawn.exe", dll64Bit);
+                            }
+
+                            continue;
                         }
                         else {
-                            remoteModuleHandle = DllInjector.NewInject(pid, dll);
+                            dllName = dll32Bit;
                         }
+                        var remoteModuleHandle = DllInjector.NewInject(pid, dllName);
+
                         if (remoteModuleHandle == IntPtr.Zero) {
                             if (!_dontLog.Contains(pid)) {
                                 Logger.WarnFormat("Could not inject dll into process {0}, if this is a recurring issue, try running as administrator.", pid);
@@ -180,7 +242,7 @@ namespace EvilsoftCommons.DllInjector {
                             if (!_dontLog.Contains(pid))
                                 Logger.Info("Injected dll into process " + pid);
 
-                            if (!InjectionVerifier.VerifyInjection(pid, arguments.DllName)) {
+                            if (!InjectionVerifier.VerifyInjection(pid, dllName)) {
                                 if (!_dontLog.Contains(pid)) {
                                     Logger.Warn("InjectionVerifier reports injection failed.");
                                     ExceptionReporter.ReportIssue("InjectionVerifier reports injection failed into PID " + pid);

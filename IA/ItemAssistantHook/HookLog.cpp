@@ -9,8 +9,7 @@ HookLog::HookLog()
     GetTempPath(MAX_PATH, tmpfolder);
 
     std::string tmpfile(tmpfolder);
-	tmpfile += "iagd_hook.log";
-    //tmpfile = _T("C:\\Users\\Andrew\\Desktop\\aoia_hook.log");
+	tmpfile += "iagd_hook.log"; // %appdata%\..\local\temp\iagd_hook.log
 
     m_out.open(tmpfile);
 
@@ -56,7 +55,9 @@ void HookLog::out( std::string const& output )
             }
             else
             {
-                m_out << "Last message was repeated " << m_lastMessageCount << " times." << std::endl;
+				if (m_lastMessageCount > 1) {
+					m_out << "Last message was repeated " << m_lastMessageCount << " times." << std::endl;
+				}
                 m_lastMessage = output;
                 m_lastMessageCount = 1;
                 m_out << output.c_str() << std::endl;

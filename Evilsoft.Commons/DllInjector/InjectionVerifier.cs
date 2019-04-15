@@ -48,7 +48,7 @@ namespace EvilsoftCommons.DllInjector {
             if (File.Exists("Listdlls.exe")) {
                 ProcessStartInfo startInfo = new ProcessStartInfo();
                 startInfo.FileName = "Listdlls.exe";
-                startInfo.Arguments = String.Format("-d {0}", dll);
+                startInfo.Arguments = $"{pid}";
                 startInfo.RedirectStandardOutput = true;
                 startInfo.RedirectStandardError = true;
                 startInfo.UseShellExecute = false;
@@ -61,9 +61,14 @@ namespace EvilsoftCommons.DllInjector {
                 try {
                     string spid = pid.ToString();
                     processTemp.Start();
+                    processTemp.WaitForExit(3000);
+  
+
+                    List<string> output = new List<string>();
                     while (!processTemp.StandardOutput.EndOfStream) {
                         string line = processTemp.StandardOutput.ReadLine();
-                        if (line.EndsWith(spid))
+                        output.Add(line);
+                        if (line.Contains(dll))
                             return true;
                     }
                 }

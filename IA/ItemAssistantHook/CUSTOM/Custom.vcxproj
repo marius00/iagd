@@ -271,11 +271,9 @@
     <ClCompile Include="..\ControllerPlayerStateIdleRequestNpcAction.cpp" />
     <ClCompile Include="..\ControllerPlayerStateMoveToRequestMoveAction.cpp" />
     <ClCompile Include="..\ControllerPlayerStateMoveToRequestNpcAction.cpp" />
-    <ClCompile Include="..\CreatePlayerItemHook.cpp" />
     <ClCompile Include="..\DataQueue.cpp" />
     <ClCompile Include="..\dllmain.cpp" />
     <ClCompile Include="..\GetPrivateStash.cpp" />
-    <ClCompile Include="..\Globals.cpp" />
     <ClCompile Include="..\HookLog.cpp" />
     <ClCompile Include="..\HookWalkTo.cpp" />
     <ClCompile Include="..\InventorySack_AddItem.cpp">
@@ -284,10 +282,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release-Instaloot|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release-Instaloot|x64'">false</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\ItemInjectorHook.cpp" />
     <ClCompile Include="..\NpcDetectionHook.cpp" />
     <ClCompile Include="..\SaveTransferStash.cpp" />
     <ClCompile Include="..\stdafx.cpp" />
+    <ClCompile Include="SaveManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\BaseMethodHook.h" />
@@ -297,11 +295,9 @@
     <ClInclude Include="..\ControllerPlayerStateIdleRequestNpcAction.h" />
     <ClInclude Include="..\ControllerPlayerStateMoveToRequestMoveAction.h" />
     <ClInclude Include="..\ControllerPlayerStateMoveToRequestNpcAction.h" />
-    <ClInclude Include="..\CreatePlayerItemHook.h" />
     <ClInclude Include="..\DataQueue.h" />
     <ClInclude Include="..\dllmain.h" />
     <ClInclude Include="..\GetPrivateStash.h" />
-    <ClInclude Include="..\Globals.h" />
     <ClInclude Include="..\HookLog.h" />
     <ClInclude Include="..\HookWalkTo.h" />
     <ClInclude Include="..\InventorySack_AddItem.h">
@@ -310,12 +306,14 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release-Instaloot|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release-Instaloot|x64'">false</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="..\ItemInjectorHook.h" />
     <ClInclude Include="..\MessageType.h" />
     <ClInclude Include="..\NpcDetectionHook.h" />
     <ClInclude Include="..\SaveTransferStash.h" />
     <ClInclude Include="..\stdafx.h" />
+    <ClInclude Include="Exports.h" />
     <ClInclude Include="MessageType.h" />
+    <ClInclude Include="SaveManager.h" />
+    <ClInclude Include="Vec3f.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -13,9 +13,6 @@ public:
 	void DisableHook();
 
 private:
-	struct Vec3f {
-		float x,y,z,u;
-	};
 
 	typedef unsigned int (__thiscall *OriginalMethodPtr)(void*);
 	static HANDLE m_hEvent;
@@ -23,6 +20,10 @@ private:
 	static DataQueue* m_dataQueue;
 
 
+#if defined(_AMD64_)
+	static unsigned int __fastcall HookedMethod(void* This);
+#else
 	static unsigned int __fastcall HookedMethod(void* This, void* notUsed);
+#endif
 
 };

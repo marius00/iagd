@@ -24,7 +24,7 @@ namespace IAGrim.Parser.Arc {
         private readonly bool lazyInitialize;
 
         public Decompress(String fileName, bool lazyInitialize) {
-            String extension = Path.GetExtension(fileName.ToLower());
+            String extension = Path.GetExtension(fileName.ToLowerInvariant());
             if (".zip".Equals(extension)) {
                 zipFileName = fileName;
             }

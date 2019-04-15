@@ -9,14 +9,14 @@ using EvilsoftCommons;
 
 namespace IAGrim.Services.MessageProcessor {
     class GenericErrorHandler : IMessageProcessor {
-        private ILog logger = LogManager.GetLogger(typeof(GenericErrorHandler));
+        private readonly ILog _logger = LogManager.GetLogger(typeof(GenericErrorHandler));
 
         public void Process(MessageType type, byte[] data) {
             if (type == MessageType.TYPE_ERROR_HOOKING_GENERIC) {
                 int method = IOHelper.GetInt(data, 0);
-                logger.Error($"Error Hooking method \"{method}\"");
+                _logger.Error($"Error Hooking method \"{method}\"");
                 if (method == 11 || method == 12 || method == 13) { // Steam cloud sync
-                    logger.Info("If you are using the GOG version, this is normal.");
+                    _logger.Info("If you are using the GOG version, this is normal.");
                 }
             }
         }

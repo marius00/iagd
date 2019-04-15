@@ -258,7 +258,6 @@ namespace IAGrim.UI
                 GlobalSettings.GrimDawnRunning = true; // V1.0.4.0 hotfix   
             }
 
-            int offset;
             switch (type) {
                 case MessageType.TYPE_DetectedStashToLootFrom: {
                     int stashToLootFrom = IOHelper.GetInt(bt.Data, 0);
@@ -267,15 +266,12 @@ namespace IAGrim.UI
                 break;
 
                 case MessageType.TYPE_REPORT_WORKER_THREAD_LAUNCHED:
-                    offset = IOHelper.GetInt(bt.Data, 0);
-                    Logger.Info($"Grim Dawn hook reports successful launch, offset: {offset}");
+                    Logger.Info("Grim Dawn hook reports successful launch.");
                     break;
 
                 case MessageType.TYPE_REPORT_WORKER_THREAD_EXPERIMENTAL_LAUNCHED:
-                    offset = IOHelper.GetInt(bt.Data, 0);
-                    Logger.Info($"Grim Dawn exp-hook reports successful launch, offset: {offset}");
+                    Logger.Info("Grim Dawn exp-hook reports successful launch");
                     break;
-
 
 
                 case MessageType.TYPE_GameInfo_IsHardcore:
@@ -543,7 +539,7 @@ namespace IAGrim.UI
             }
 
             _messageProcessors.Add(new ItemPositionFinder(_dynamicPacker));
-            _messageProcessors.Add(new PlayerPositionTracker());
+            _messageProcessors.Add(new PlayerPositionTracker(false));
             _messageProcessors.Add(new StashStatusHandler());
             _messageProcessors.Add(new ItemReceivedProcessor(_searchWindow, _stashFileMonitor, _playerItemDao));
             _messageProcessors.Add(new ItemInjectCallbackProcessor(_searchWindow.UpdateListViewDelayed, _playerItemDao));
@@ -647,7 +643,7 @@ namespace IAGrim.UI
             hasMods = false; // TODO TODO TODO TODO
 #endif
             // CBA dealing with this.
-            string dllname = @"ItemAssistantHook.dll";
+            string dllname = "ItemAssistantHook.dll";
             _injector = new InjectionHelper(new BackgroundWorker(), _injectorCallbackDelegate, false, "Grim Dawn", string.Empty, dllname);
         }
 

@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using EvilsoftCommons.DllInjector;
 
 namespace DllInjector64 {
     class Program {
@@ -16,7 +15,7 @@ namespace DllInjector64 {
             }
             if (args.Length == 0) {
                 Console.WriteLine("Expected command line parameters: PID DllName");
-                Console.WriteLine($"PID: {DllInjector.FindProcessForWindow("Grim Dawn").FirstOrDefault()}");
+                Console.WriteLine($"PID: {DllInjectorCopy.FindProcessForWindow("Grim Dawn").FirstOrDefault()}");
                 return 1;
             }
 
@@ -33,7 +32,7 @@ namespace DllInjector64 {
 
             try {
                 var p = Process.GetProcessById((int) pid);
-                if (!DllInjector.Is64BitProcess(p)) {
+                if (!DllInjectorCopy.Is64BitProcess(p)) {
                     Console.WriteLine("The target process is not 64bit");
                     return 1;
                 }
@@ -44,7 +43,7 @@ namespace DllInjector64 {
             }
 
             try {
-                var result = DllInjector.NewInject(pid, args[1]);
+                var result = DllInjectorCopy.NewInject(pid, args[1]);
                 if (result == IntPtr.Zero) {
                     Console.WriteLine("Unknown error injecting into target process");
                     return 1;

@@ -21,8 +21,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "DataAccess\Da
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StatTranslatorTests", "StatTranslatorTests\StatTranslatorTests.csproj", "{C9ABAAEF-15F7-445B-8CB0-7EEDFBD2E981}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DllInjector64", "DllInjector64\DllInjector64.csproj", "{66BF831C-8E88-4A4D-8BAA-7B7B8E72BF89}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -103,14 +101,6 @@ Global
 		{C9ABAAEF-15F7-445B-8CB0-7EEDFBD2E981}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C9ABAAEF-15F7-445B-8CB0-7EEDFBD2E981}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{C9ABAAEF-15F7-445B-8CB0-7EEDFBD2E981}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{66BF831C-8E88-4A4D-8BAA-7B7B8E72BF89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{66BF831C-8E88-4A4D-8BAA-7B7B8E72BF89}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{66BF831C-8E88-4A4D-8BAA-7B7B8E72BF89}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{66BF831C-8E88-4A4D-8BAA-7B7B8E72BF89}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{66BF831C-8E88-4A4D-8BAA-7B7B8E72BF89}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{66BF831C-8E88-4A4D-8BAA-7B7B8E72BF89}.Release|Any CPU.Build.0 = Release|Any CPU
-		{66BF831C-8E88-4A4D-8BAA-7B7B8E72BF89}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{66BF831C-8E88-4A4D-8BAA-7B7B8E72BF89}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

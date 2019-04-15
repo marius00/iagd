@@ -5,13 +5,14 @@
 #include "MessageType.h"
 #include <detours.h>
 #include "ControllerPlayerStateMoveToRequestMoveAction.h"
+#include "CUSTOM\Exports.h"
 
 HANDLE ControllerPlayerStateMoveToRequestMoveAction::m_hEvent;
 DataQueue* ControllerPlayerStateMoveToRequestMoveAction::m_dataQueue;
 ControllerPlayerStateMoveToRequestMoveAction::OriginalMethodPtr ControllerPlayerStateMoveToRequestMoveAction::originalMethod;
 
 void ControllerPlayerStateMoveToRequestMoveAction::EnableHook() {
-	originalMethod = (OriginalMethodPtr)GetProcAddress(::GetModuleHandle("Game.dll"), "?RequestMoveAction@ControllerPlayerStateMoveTo@GAME@@MAEX_N0ABVWorldVec3@2@@Z");
+	originalMethod = (OriginalMethodPtr)GetProcAddress(::GetModuleHandle("Game.dll"), REQUEST_MOVE_ACTION_MOVETO);
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
 	DetourAttach((PVOID*)&originalMethod, HookedMethod);
@@ -34,15 +35,31 @@ void ControllerPlayerStateMoveToRequestMoveAction::DisableHook() {
 	DetourTransactionCommit();
 }
 
-void* __fastcall ControllerPlayerStateMoveToRequestMoveAction::HookedMethod(void* This, void* notUsed, bool a, bool b, Vec3f const & xyz) {
+void* __fastcall ControllerPlayerStateMoveToRequestMoveAction::HookedMethod(
+	void* This,
+#if !defined(_AMD64_)
+	void* notUsed, 
+#endif
+	bool a, 
+	bool b, 
+	Vec3f const & xyz) {
 
-	const size_t bufflen = sizeof(Vec3f) + sizeof(bool)*2;
+	const size_t bufflen = sizeof(float) * 4 + sizeof(bool)*2;
 	char buffer[bufflen];
 
 	size_t pos = 0;
 
-	memcpy(buffer + pos, &xyz, sizeof(Vec3f));
-	pos += sizeof(Vec3f);
+	memcpy(buffer + pos, &xyz.unknown, sizeof(float));
+	pos += sizeof(float);
+
+	memcpy(buffer + pos, &xyz.x, sizeof(float));
+	pos += sizeof(float);
+
+	memcpy(buffer + pos, &xyz.y, sizeof(float));
+	pos += sizeof(float);
+
+	memcpy(buffer + pos, &xyz.z, sizeof(float));
+	pos += sizeof(float);
 
 	memcpy(buffer + pos, &a, sizeof(bool)*1);
 	pos += sizeof(bool);
