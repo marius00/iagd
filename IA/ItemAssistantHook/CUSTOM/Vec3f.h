@@ -8,7 +8,7 @@ struct Vec3f {
 };
 #else
 struct Vec3f {
-	float x, y, z, unknown;
+	float unknown, x, y, z;
 };
 
 #endif
