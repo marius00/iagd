@@ -17,7 +17,7 @@ namespace IAGrim.UI
     public partial class LanguagePackPicker : Form
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(LanguagePackPicker));
-        private readonly IEnumerable<string> _paths;
+        private IEnumerable<string> _paths;
         private readonly List<FirefoxRadioButton> _checkboxes = new List<FirefoxRadioButton>();
         private readonly IItemTagDao _itemTagDao;
         private readonly IPlayerItemDao _playerItemDao;
@@ -26,18 +26,19 @@ namespace IAGrim.UI
         public LanguagePackPicker(
             IItemTagDao itemTagDao,
             IPlayerItemDao playerItemDao,
-            IEnumerable<string> paths,
             ParsingService parsingService
         )
         {
             InitializeComponent();
 
-            _paths = paths;
             _parsingService = parsingService;
             _itemTagDao = itemTagDao;
             _playerItemDao = playerItemDao;
+        }
 
-            LocalizationLoader.ApplyLanguage(Controls, GlobalSettings.Language);
+        public DialogResult Show(IEnumerable<string> paths) {
+            this._paths = paths;
+            return ShowDialog();
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -109,8 +110,9 @@ namespace IAGrim.UI
             Close();
         }
 
-        private void LanguagePackPicker_Load(object sender, EventArgs e)
-        {
+        private void LanguagePackPicker_Load(object sender, EventArgs e) {
+
+            LocalizationLoader.ApplyLanguage(Controls, GlobalSettings.Language);
             var loc = new LocalizationLoader();
 
             var n = 0;

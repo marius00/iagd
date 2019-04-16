@@ -12,44 +12,35 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using IAGrim.Services;
 
-// 
-namespace IAGrim.UI
-{
+namespace IAGrim.UI {
     partial class SettingsWindow : Form {
-        private ISettingsController _controller = new SettingsController();
-        private TooltipHelper _tooltipHelper;
+        private readonly ISettingsController _controller = new SettingsController();
+        private readonly TooltipHelper _tooltipHelper;
 
         private readonly Action _itemViewUpdateTrigger;
-        private readonly IDatabaseSettingDao _settingsDao;
-        private readonly ArzParser _parser;
         private readonly IPlayerItemDao _playerItemDao;
-        private readonly IItemTagDao _itemTagDao;
         private readonly GDTransferFile[] _modFilter;
         private readonly StashManager _stashManager;
-        private readonly ParsingService _parsingService;
         private readonly CefBrowserHandler _cefBrowserHandler;
+        private readonly LanguagePackPicker _languagePackPicker;
 
         public SettingsWindow(
             CefBrowserHandler cefBrowserHandler,
-            IItemTagDao itemTagDao,
             TooltipHelper tooltipHelper, 
             Action itemViewUpdateTrigger, 
-            IDatabaseSettingDao settingsDao,
             IPlayerItemDao playerItemDao,
-            ArzParser parser,
             GDTransferFile[] modFilter,
-            StashManager stashManager, ParsingService parsingService) {            
+            StashManager stashManager, 
+            LanguagePackPicker languagePackPicker
+            ) {            
             InitializeComponent();
             this._cefBrowserHandler = cefBrowserHandler;
             this._tooltipHelper = tooltipHelper;
             this._itemViewUpdateTrigger = itemViewUpdateTrigger;
-            this._settingsDao = settingsDao;
             this._playerItemDao = playerItemDao;
-            this._parser = parser;
             this._modFilter = modFilter;
             this._stashManager = stashManager;
-            _parsingService = parsingService;
-            _itemTagDao = itemTagDao;
+            _languagePackPicker = languagePackPicker;
 
             _controller.BindCheckbox(cbMinimizeToTray);
 
@@ -79,10 +70,6 @@ namespace IAGrim.UI
 
         private void buttonViewLogs_Click(object sender, EventArgs e) {
             _controller.OpenLogFolder();
-        }
-
-        private void buttonDeveloper_Click(object sender, EventArgs e) {
-            System.Diagnostics.Process.Start("http://www.grimdawn.com/forums/member.php?u=17888");
         }
 
         private void buttonForum_Click(object sender, EventArgs e) {
@@ -124,24 +111,19 @@ namespace IAGrim.UI
         }
 
         private void cbShowRecipesAsItems_CheckedChanged(object sender, EventArgs e) {
-            if (_itemViewUpdateTrigger != null)
-                _itemViewUpdateTrigger();
+            _itemViewUpdateTrigger?.Invoke();
         }
 
         private void cbMergeDuplicates_CheckedChanged(object sender, EventArgs e) {
-            if (_itemViewUpdateTrigger != null)
-                _itemViewUpdateTrigger();
+            _itemViewUpdateTrigger?.Invoke();
         }
 
         private void cbShowBaseStats_CheckedChanged(object sender, EventArgs e) {
-            if (_itemViewUpdateTrigger != null)
-                _itemViewUpdateTrigger();
+            _itemViewUpdateTrigger?.Invoke();
         }
 
         private void buttonLanguageSelect_Click(object sender, EventArgs e) {
-            new LanguagePackPicker(_itemTagDao, _playerItemDao, GrimDawnDetector.GetGrimLocations(), _parsingService)
-                .ShowDialog();
-
+            _languagePackPicker.Show(GrimDawnDetector.GetGrimLocations());
             _itemViewUpdateTrigger?.Invoke();
         }
 

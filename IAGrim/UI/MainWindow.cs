@@ -479,18 +479,16 @@ namespace IAGrim.UI
                 _searchWindow.UpdateListView();
             };
 
+            var languagePackPicker = new LanguagePackPicker(_itemTagDao, _playerItemDao, _parsingService);
             addAndShow(
                 new SettingsWindow(
                     _cefBrowserHandler,
-                    _itemTagDao,
                     _tooltipHelper,
                     ListviewUpdateTrigger,
-                    _databaseSettingDao,
                     _playerItemDao,
-                    _arzParser,
                     _searchWindow.ModSelectionHandler.GetAvailableModSelection(),
                     _stashManager,
-                    _parsingService
+                    languagePackPicker
                 ),
                 settingsPanel);
 
