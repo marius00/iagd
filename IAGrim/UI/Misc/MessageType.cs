@@ -68,5 +68,6 @@ namespace IAGrim.UI.Misc {
         TYPE_DetectedStashToLootFrom = 49,
         TYPE_SaveManager = 50,
         TYPE_InterceptDirectRead = 51,
+        TYPE_SUCCESS_HOOKING_GENERIC = 52,
     };
 }

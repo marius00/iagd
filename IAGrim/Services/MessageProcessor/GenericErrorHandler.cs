@@ -19,6 +19,10 @@ namespace IAGrim.Services.MessageProcessor {
                     _logger.Info("If you are using the GOG version, this is normal.");
                 }
             }
+            else if (type == MessageType.TYPE_SUCCESS_HOOKING_GENERIC) {
+                int method = IOHelper.GetInt(data, 0);
+                _logger.Debug($"Hooking method \"{(MessageType)method}\" ({method})");
+            }
         }
     }
 }

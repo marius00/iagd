@@ -123,28 +123,49 @@ void EndWorkerThread() {
 
 #pragma endregion
 
+static void ConfigurePlayerPositionHooks(std::vector<BaseMethodHook*>& hooks) {
+	hooks.push_back(new HookWalkTo(&g_dataQueue, g_hEvent, &g_log));
+	hooks.push_back(new ControllerPlayerStateMoveToRequestMoveAction(&g_dataQueue, g_hEvent));
+	hooks.push_back(new ControllerPlayerStateIdleRequestNpcAction(&g_dataQueue, g_hEvent));
+	hooks.push_back(new ControllerPlayerStateMoveToRequestNpcAction(&g_dataQueue, g_hEvent));
+}
+
+// Cloud detection (is cloud enabled?) hooks
+static void ConfigureCloudDetectionHooks(std::vector<BaseMethodHook*>& hooks) {
+	hooks.push_back(new CloudGetNumFiles(&g_dataQueue, g_hEvent));
+	hooks.push_back(new CloudRead(&g_dataQueue, g_hEvent));
+	hooks.push_back(new CloudWrite(&g_dataQueue, g_hEvent));
+}
+
+static void ConfigureStashDetectionHooks(std::vector<BaseMethodHook*>& hooks) {
+	// Stash detection hooks
+	hooks.push_back(new NpcDetectionHook(&g_dataQueue, g_hEvent));
+	hooks.push_back(new SaveTransferStash(&g_dataQueue, g_hEvent));
+	hooks.push_back(new InventorySack_AddItem(&g_dataQueue, g_hEvent)); // Includes GetPrivateStash internally
+}
+
+static void ConfigureExperimentalHooks(std::vector<BaseMethodHook*>& hooks) {
+	// Experimental hooks
+	// hooks.push_back(new SaveManager(&g_dataQueue, g_hEvent));
+}
+
 std::vector<BaseMethodHook*> hooks;
 int ProcessAttach(HINSTANCE _hModule) {
 	LOG("Attatching to process..");
 	g_hEvent = CreateEvent(NULL,FALSE,FALSE,"IA_Worker");
 
 	LOG("Preparing hooks..");
-	hooks.push_back(new HookWalkTo(&g_dataQueue, g_hEvent, &g_log));
-	hooks.push_back(new ControllerPlayerStateMoveToRequestMoveAction(&g_dataQueue, g_hEvent));
-	hooks.push_back(new ControllerPlayerStateIdleRequestNpcAction(&g_dataQueue, g_hEvent));
-	hooks.push_back(new ControllerPlayerStateMoveToRequestNpcAction(&g_dataQueue, g_hEvent));
+	// Player position hooks
+	ConfigurePlayerPositionHooks(hooks);
+	ConfigureCloudDetectionHooks(hooks);
+	ConfigureStashDetectionHooks(hooks);
 
-	hooks.push_back(new CloudGetNumFiles(&g_dataQueue, g_hEvent));
-	hooks.push_back(new CloudRead(&g_dataQueue, g_hEvent));
-	hooks.push_back(new CloudWrite(&g_dataQueue, g_hEvent));
+	// TODO: Feature toggle on build
+	ConfigureExperimentalHooks(hooks);
 
-	hooks.push_back(new NpcDetectionHook(&g_dataQueue, g_hEvent));
-	hooks.push_back(new SaveTransferStash(&g_dataQueue, g_hEvent));
-	hooks.push_back(new InventorySack_AddItem(&g_dataQueue, g_hEvent));
-	hooks.push_back(new SaveManager(&g_dataQueue, g_hEvent));
-	LOG("Configured inventory sacks..");
-
-	LOG("Starting hook enabling..");
+	std::stringstream msg;
+	msg << "Starting hook enabling.. " << hooks.size() << " hooks.";
+	LOG(msg);
 	for (unsigned int i = 0; i < hooks.size(); i++) {
 		LOG("Enabling hook..");
 		hooks[i]->EnableHook();
@@ -155,9 +176,6 @@ int ProcessAttach(HINSTANCE _hModule) {
     StartWorkerThread();
 	LOG("Existing initialization..");
     return TRUE;
-}
-
-__declspec(dllexport) void Test(char*) {
 }
 
 

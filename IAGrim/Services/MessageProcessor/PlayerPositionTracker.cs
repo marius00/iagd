@@ -12,7 +12,7 @@ namespace IAGrim.Services.MessageProcessor {
         }
 
         public void Process(MessageType type, byte[] data) {
-            switch (type) {
+             switch (type) {
                 case MessageType.TYPE_ControllerPlayerStateIdleRequestMoveAction: {
                     GrimStateTracker.LastKnownPosition = new GrimStateTracker.WorldVector {
                         X = IOHelper.GetFloat(data, 4),

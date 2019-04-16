@@ -13,11 +13,13 @@ HookWalkTo::OriginalMethodPtr HookWalkTo::originalMethod;
 HookLog* HookWalkTo::m_logger;
 
 void HookWalkTo::EnableHook() {
-	originalMethod = (OriginalMethodPtr)GetProcAddress(::GetModuleHandle("Game.dll"), REQUEST_MOVE_ACTION_IDLE);
-	DetourTransactionBegin();
-	DetourUpdateThread(GetCurrentThread());
-	DetourAttach((PVOID*)&originalMethod, HookedMethod);
-	DetourTransactionCommit();
+	originalMethod = (OriginalMethodPtr)HookGame(
+		REQUEST_MOVE_ACTION_IDLE,
+		HookedMethod,
+		m_dataQueue,
+		m_hEvent,
+		TYPE_ControllerPlayerStateIdleRequestMoveAction
+	);
 }
 
 HookWalkTo::HookWalkTo(DataQueue* dataQueue, HANDLE hEvent, HookLog* logger) {
@@ -31,10 +33,7 @@ HookWalkTo::HookWalkTo() {
 }
 
 void HookWalkTo::DisableHook() {
-	LONG res1 = DetourTransactionBegin();
-	LONG res2 = DetourUpdateThread(GetCurrentThread());
-	DetourDetach((PVOID*)&originalMethod, HookedMethod);
-	DetourTransactionCommit();
+	Unhook((PVOID*)&originalMethod, HookedMethod);
 }
 
 

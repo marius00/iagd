@@ -40,8 +40,10 @@
     <ClInclude Include="HookLog.h" />
     <ClInclude Include="HookWalkTo.h" />
     <ClInclude Include="InventorySack_AddItem.h" />
+    <ClInclude Include="LoadPlayerTransfer.h" />
     <ClInclude Include="MessageType.h" />
     <ClInclude Include="NpcDetectionHook.h" />
+    <ClInclude Include="ReadPlayerTransfer.h" />
     <ClInclude Include="SaveManager.h" />
     <ClInclude Include="SaveTransferStash.h" />
     <ClInclude Include="stdafx.h" />
@@ -61,7 +63,9 @@
     <ClCompile Include="HookLog.cpp" />
     <ClCompile Include="HookWalkTo.cpp" />
     <ClCompile Include="InventorySack_AddItem.cpp" />
+    <ClCompile Include="LoadPlayerTransfer.cpp" />
     <ClCompile Include="NpcDetectionHook.cpp" />
+    <ClCompile Include="ReadPlayerTransfer.cpp" />
     <ClCompile Include="SaveManager.cpp" />
     <ClCompile Include="SaveTransferStash.cpp" />
     <ClCompile Include="stdafx.cpp" />

@@ -1,13 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
-    <Filter Include="HookedMethods">
-      <UniqueIdentifier>{cf078cd9-dce6-4c25-8dab-94cd799c91e6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="CoreHooks">
       <UniqueIdentifier>{d7793ae7-36e6-4b2d-b13b-a96817b4219d}</UniqueIdentifier>
     </Filter>
@@ -88,6 +81,12 @@
     <ClInclude Include="GetPrivateStash.h">
       <Filter>CoreHooks\StashDetection</Filter>
     </ClInclude>
+    <ClInclude Include="LoadPlayerTransfer.h">
+      <Filter>ExperimentalHooks</Filter>
+    </ClInclude>
+    <ClInclude Include="ReadPlayerTransfer.h">
+      <Filter>ExperimentalHooks</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ControllerPlayerStateMoveToRequestMoveAction.cpp">
@@ -140,6 +139,12 @@
     </ClCompile>
     <ClCompile Include="GetPrivateStash.cpp">
       <Filter>CoreHooks\StashDetection</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadPlayerTransfer.cpp">
+      <Filter>ExperimentalHooks</Filter>
+    </ClCompile>
+    <ClCompile Include="ReadPlayerTransfer.cpp">
+      <Filter>ExperimentalHooks</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
