@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="HookedMethods">
+      <UniqueIdentifier>{cf078cd9-dce6-4c25-8dab-94cd799c91e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CoreHooks">
+      <UniqueIdentifier>{d7793ae7-36e6-4b2d-b13b-a96817b4219d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ExperimentalHooks">
+      <UniqueIdentifier>{10e94856-d61b-4d87-838f-e8c2e7dc8f4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CoreHooks\PlayerPosition">
+      <UniqueIdentifier>{8a5bd2b3-81da-4e92-92a4-b733b453fa30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CoreHooks\CloudDetection">
+      <UniqueIdentifier>{2fba36a6-e0ce-4d27-a38e-0209bba806f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Setup">
+      <UniqueIdentifier>{20930370-ff39-4302-be6c-3bd3493aba5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared">
+      <UniqueIdentifier>{777d6945-1330-4415-86b9-6cf0b9958333}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CoreHooks\StashDetection">
+      <UniqueIdentifier>{af07545a-97de-4a4c-9bc3-ffbfc51487a5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ControllerPlayerStateMoveToRequestMoveAction.h">
+      <Filter>CoreHooks\PlayerPosition</Filter>
+    </ClInclude>
+    <ClInclude Include="ControllerPlayerStateMoveToRequestNpcAction.h">
+      <Filter>CoreHooks\PlayerPosition</Filter>
+    </ClInclude>
+    <ClInclude Include="ControllerPlayerStateIdleRequestNpcAction.h">
+      <Filter>CoreHooks\PlayerPosition</Filter>
+    </ClInclude>
+    <ClInclude Include="HookWalkTo.h">
+      <Filter>CoreHooks\PlayerPosition</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Setup</Filter>
+    </ClInclude>
+    <ClInclude Include="CloudRead.h">
+      <Filter>CoreHooks\CloudDetection</Filter>
+    </ClInclude>
+    <ClInclude Include="CloudWrite.h">
+      <Filter>CoreHooks\CloudDetection</Filter>
+    </ClInclude>
+    <ClInclude Include="CloudGetNumFiles.h">
+      <Filter>CoreHooks\CloudDetection</Filter>
+    </ClInclude>
+    <ClInclude Include="DataQueue.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="MessageType.h">
+      <Filter>CoreHooks</Filter>
+    </ClInclude>
+    <ClInclude Include="HookLog.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="InventorySack_AddItem.h">
+      <Filter>CoreHooks\StashDetection</Filter>
+    </ClInclude>
+    <ClInclude Include="NpcDetectionHook.h">
+      <Filter>CoreHooks\StashDetection</Filter>
+    </ClInclude>
+    <ClInclude Include="SaveTransferStash.h">
+      <Filter>CoreHooks\StashDetection</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseMethodHook.h">
+      <Filter>CoreHooks</Filter>
+    </ClInclude>
+    <ClInclude Include="SaveManager.h">
+      <Filter>ExperimentalHooks</Filter>
+    </ClInclude>
+    <ClInclude Include="Exports.h">
+      <Filter>CoreHooks</Filter>
+    </ClInclude>
+    <ClInclude Include="Vec3f.h">
+      <Filter>CoreHooks</Filter>
+    </ClInclude>
+    <ClInclude Include="GetPrivateStash.h">
+      <Filter>CoreHooks\StashDetection</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ControllerPlayerStateMoveToRequestMoveAction.cpp">
+      <Filter>CoreHooks\PlayerPosition</Filter>
+    </ClCompile>
+    <ClCompile Include="ControllerPlayerStateMoveToRequestNpcAction.cpp">
+      <Filter>CoreHooks\PlayerPosition</Filter>
+    </ClCompile>
+    <ClCompile Include="ControllerPlayerStateIdleRequestNpcAction.cpp">
+      <Filter>CoreHooks\PlayerPosition</Filter>
+    </ClCompile>
+    <ClCompile Include="HookWalkTo.cpp">
+      <Filter>CoreHooks\PlayerPosition</Filter>
+    </ClCompile>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>Setup</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Setup</Filter>
+    </ClCompile>
+    <ClCompile Include="CloudRead.cpp">
+      <Filter>CoreHooks\CloudDetection</Filter>
+    </ClCompile>
+    <ClCompile Include="CloudWrite.cpp">
+      <Filter>CoreHooks\CloudDetection</Filter>
+    </ClCompile>
+    <ClCompile Include="CloudGetNumFiles.cpp">
+      <Filter>CoreHooks\CloudDetection</Filter>
+    </ClCompile>
+    <ClCompile Include="DataQueue.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="HookLog.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="InventorySack_AddItem.cpp">
+      <Filter>CoreHooks\StashDetection</Filter>
+    </ClCompile>
+    <ClCompile Include="NpcDetectionHook.cpp">
+      <Filter>CoreHooks\StashDetection</Filter>
+    </ClCompile>
+    <ClCompile Include="SaveTransferStash.cpp">
+      <Filter>CoreHooks\StashDetection</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseMethodHook.cpp">
+      <Filter>CoreHooks</Filter>
+    </ClCompile>
+    <ClCompile Include="SaveManager.cpp">
+      <Filter>ExperimentalHooks</Filter>
+    </ClCompile>
+    <ClCompile Include="GetPrivateStash.cpp">
+      <Filter>CoreHooks\StashDetection</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
