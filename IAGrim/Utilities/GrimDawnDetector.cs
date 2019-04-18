@@ -208,8 +208,15 @@ namespace IAGrim {
 
             foreach (string possible in possibles) {
                 var p = Path.Combine(Path.GetDirectoryName(possible), "database", "database.arz");
-                if (File.Exists(p))
+                if (File.Exists(p)) {
                     return Path.GetDirectoryName(possible);
+                }
+                else {
+                    var x64 = Path.Combine(Path.GetDirectoryName(possible), "..", "database", "database.arz");
+                    if (File.Exists(x64)) {
+                        return Path.GetDirectoryName(Path.GetFullPath(Path.Combine(possible, "..")));
+                    }
+                }
             }
 
             return string.Empty;
