@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "MessageType.h"
-#include <detours.h>
 #include "CloudWrite.h"
 #include "DataQueue.h"
 #include "Exports.h"

@@ -15,6 +15,8 @@
 #include "NpcDetectionHook.h"
 #include "SaveTransferStash.h"
 #include "SaveManager.h"
+#include "ReadPlayerTransfer.h"
+#include "LoadPlayerTransfer.h"
 
 #if defined _M_X64
 #elif defined _M_IX86
@@ -146,7 +148,9 @@ static void ConfigureStashDetectionHooks(std::vector<BaseMethodHook*>& hooks) {
 
 static void ConfigureExperimentalHooks(std::vector<BaseMethodHook*>& hooks) {
 	// Experimental hooks
-	// hooks.push_back(new SaveManager(&g_dataQueue, g_hEvent));
+	hooks.push_back(new SaveManager(&g_dataQueue, g_hEvent));
+	hooks.push_back(new ReadPlayerTransfer(&g_dataQueue, g_hEvent));
+	hooks.push_back(new LoadPlayerTransfer(&g_dataQueue, g_hEvent));
 }
 
 std::vector<BaseMethodHook*> hooks;

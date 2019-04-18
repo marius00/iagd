@@ -589,7 +589,16 @@ namespace StatTranslator
             { "iatag_ui_gamestash", "Game Stash" },
             { "iatag_ui_gdstash", "GD Stash" },
             { "iatag_ui_iastash", "IA Stash" },
-            { "iatag_ui_translation", "Item Assistant is available in your language! Go to settings and click \"Language\" to change to English." }
+            { "iatag_ui_translation", "Item Assistant is available in your language! Go to settings and click \"Language\" to change to English." },
+
+            // These cannot currently be translated.
+            // Once the injection code is moved back into the "core" IA, this should be possible.
+            {"iatag_ui_avasted", "Avasted!" },
+            {"iatag_ui_avast1", "It appears that one or several essential components of Grim Dawn Item Assistant has been deleted." },
+            {"iatag_ui_avast2", "This is typically caused by Avast \"anti virus\" flagging Item Assistant as a false positive, without informing the user." },
+            {"iatag_ui_avast3", "In order to keep using IA, you must first whitelist it in whichever anti virus/similar software, and then reinstall IA to restore the missing files.!" },
+            {"iatag_ui_avast_ok", "OK" },
+            {"iatag_ui_avastlink", "Click here for more information" },
         };
 
         private const string English = "{%_s0}{%_s1}{%_s2}{%_s3}{%_s4}";

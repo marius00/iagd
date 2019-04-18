@@ -40,6 +40,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -53,6 +55,12 @@
     <Compile Include="InjectionVerifier.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegisterWindow.cs" />
+    <Compile Include="UI\AvastedWarning.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\AvastedWarning.Designer.cs">
+      <DependentUpon>AvastedWarning.cs</DependentUpon>
+    </Compile>
     <Compile Include="Win32.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -63,6 +71,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="UI\AvastedWarning.resx">
+      <DependentUpon>AvastedWarning.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

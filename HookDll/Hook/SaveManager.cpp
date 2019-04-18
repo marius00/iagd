@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <detours.h>
 #include "SaveManager.h"
 #include "DataQueue.h"
 #include "MessageType.h"
@@ -54,5 +53,5 @@ int __fastcall SaveManager::HookedMethod(
 	m_dataQueue->push(item);
 	SetEvent(m_hEvent);
 
-	return 0;
+	return res;
 }

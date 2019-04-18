@@ -69,5 +69,7 @@ namespace IAGrim.UI.Misc {
         TYPE_SaveManager = 50,
         TYPE_InterceptDirectRead = 51,
         TYPE_SUCCESS_HOOKING_GENERIC = 52,
+        TYPE_LoadPlayerTransfer = 53,
+        TYPE_ReadPlayerTransfer = 54,
     };
 }

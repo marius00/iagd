@@ -71,14 +71,6 @@ namespace IAGrim.Services.MessageProcessor {
                     }
 
                     break;
-
-                // TODO: Not the right place.. but so be it, right?
-                case MessageType.TYPE_SaveManager:
-                    Logger.Info("TYPE_SaveManager received");
-                    break;
-                case MessageType.TYPE_InterceptDirectRead:
-                    Logger.Info($"TYPE_InterceptDirectRead: {IOHelper.GetInt(data, 0)}");
-                    break;
             }
         }
     }

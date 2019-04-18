@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 using IAGrim.UI.Misc;
 using log4net;
 using EvilsoftCommons;
+using log4net.Repository.Hierarchy;
 
 namespace IAGrim.Services.MessageProcessor {
     class DebugMessageProcessor : IMessageProcessor {
-        private ILog logger = LogManager.GetLogger(typeof(DebugMessageProcessor));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(DebugMessageProcessor));
         public void Process(MessageType type, byte[] data) {
             int t = (int)type;
             switch (type) {
@@ -20,7 +21,24 @@ namespace IAGrim.Services.MessageProcessor {
                     break;
 
                 case MessageType.TYPE_GameEngine_GetTransferSack:
-                    logger.InfoFormat("GameEngine::GetTransferSack({0})", IOHelper.GetInt(data, 0));
+                    Logger.InfoFormat("GameEngine::GetTransferSack({0})", IOHelper.GetInt(data, 0));
+                    break;
+
+
+                // TODO: Not the right place.. but so be it, right?
+                case MessageType.TYPE_SaveManager:
+                    Logger.Info("TYPE_SaveManager received");
+                    break;
+
+                    // Very spammy
+                case MessageType.TYPE_InterceptDirectRead:
+                    // Logger.Info($"TYPE_InterceptDirectRead: {IOHelper.GetInt(data, 0)}");
+                    break;
+                case MessageType.TYPE_LoadPlayerTransfer:
+                    Logger.Info($"TYPE_LoadPlayerTransfer");
+                    break;
+                case MessageType.TYPE_ReadPlayerTransfer:
+                    Logger.Info($"TYPE_ReadPlayerTransfer");
                     break;
             }
             
@@ -34,9 +52,9 @@ namespace IAGrim.Services.MessageProcessor {
             };
             if (t >= 50000) {
                 if (map.ContainsKey(t))
-                    logger.Debug($"Got message {map[t]}");
+                    Logger.Debug($"Got message {map[t]}");
                 else
-                    logger.Debug($"Got message {t}");
+                    Logger.Debug($"Got message {t}");
             }
         }
     }

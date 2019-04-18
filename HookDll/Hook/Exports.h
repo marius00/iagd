@@ -23,7 +23,11 @@
 #define GET_PRIVATE_STASH "?GetPrivateStash@Player@GAME@@QEAAAEAV?$vector@PEAVInventorySack@GAME@@@mem@@XZ"
 
 #define SAVE_MANAGER_DIRECTREAD "?DirectRead@SaveManager@GAME@@QEAA_NAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEAPEAXAEAI_N3@Z"
+#define LOAD_PLAYER_TRANSFER "?LoadPlayerTransfer@GameEngine@GAME@@QEAAXXZ"
+#define READ_PLAYER_TRANSFER "?ReadPlayerTransfer@GameEngine@GAME@@QEAA_NAEAVCheckedReader@2@@Z"
+
 #else
+
 #define REQUEST_MOVE_ACTION_IDLE "?RequestMoveAction@ControllerPlayerStateIdle@GAME@@MAEX_N0ABVWorldVec3@2@@Z"
 #define REQUEST_MOVE_ACTION_MOVETO "?RequestMoveAction@ControllerPlayerStateMoveTo@GAME@@MAEX_N0ABVWorldVec3@2@@Z"
 #define GET_TRANSFER_SACK "?GetTransferSack@GameEngine@GAME@@QAEPAVInventorySack@2@H@Z"

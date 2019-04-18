@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using DllInjector.UI;
 
 namespace EvilsoftCommons.DllInjector {
     public class InjectionHelper : IDisposable {
@@ -77,15 +78,21 @@ namespace EvilsoftCommons.DllInjector {
         }
 
         private void bw_DoWork(object sender, DoWorkEventArgs e) {
-            
+            if (Thread.CurrentThread.Name == null)
+                Thread.CurrentThread.Name = "InjectionHelper";
+
             try {
                 BackgroundWorker worker = sender as BackgroundWorker;
-
-                if (Thread.CurrentThread.Name == null)
-                    Thread.CurrentThread.Name = "InjectionHelper";
                 
                 while (!worker.CancellationPending) {
-                    Process(worker, e.Argument as RunArguments);
+                    if (!File.Exists("DllInjector64.exe") || !File.Exists("DllInjector32.exe")) {
+                        new AvastedWarning().ShowDialog();
+                        Logger.Fatal("Shutting down injection helper. End user has been avasted and IA is now inoperational until reinstalled.");
+                        return;
+                    }
+                    else {
+                        Process(worker, e.Argument as RunArguments);
+                    }
                 }
             }
             catch (Exception ex) {
@@ -143,7 +150,7 @@ namespace EvilsoftCommons.DllInjector {
             }
         }
 
-        public static IntPtr Inject64Bit(string exe, string dll) {
+        private static IntPtr Inject64Bit(string exe, string dll) {
             Logger.Info("Running 64 bit injector...");
             if (File.Exists("DllInjector64.exe")) {
                 ProcessStartInfo startInfo = new ProcessStartInfo();
