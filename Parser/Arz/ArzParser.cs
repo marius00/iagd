@@ -6,15 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace IAGrim.Parser.Arz {
-
-
     public class ArzParser {
-        private static ILog logger = LogManager.GetLogger(typeof(ArzParser));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(ArzParser));
         
 
         
@@ -25,7 +19,7 @@ namespace IAGrim.Parser.Arz {
         /// <param name="start"></param>
         /// <param name="numBytes"></param>
         private static List<string> LoadStringTable(FileStream fs, uint start, uint numBytes) {
-            var StringTable = new List<string>();
+            var stringTable = new List<string>();
             fs.Seek(start, SeekOrigin.Begin);
 
             uint end = start + numBytes;
@@ -33,17 +27,18 @@ namespace IAGrim.Parser.Arz {
                 uint count = IOHelper.ReadUInteger(fs);
                 for (int i = 0; i < count; i++) {
                     string s = IOHelper.ReadString(fs);                    
-                    StringTable.Add(s);
+                    stringTable.Add(s);
                     
                 }
             }
 
-            return StringTable;
+            return stringTable;
         }
 
         private static bool IsInteresting(string record) {
             var interesting = new[] {
                 "records/endlessdungeon/scriptentities/",
+                "records/endlessdungeon/items/",
                 "records/items/",
                 "records/storyelements/",
                 "records/skills/",
@@ -58,7 +53,7 @@ namespace IAGrim.Parser.Arz {
             return false;
         }
 
-        private static IItem ExtractItem(Record record, List<string> stringTable, bool skipLots) {
+        private static IItem ExtractItem(Record record, IReadOnlyList<string> stringTable, bool skipLots) {
 
             int tmp = 0;
 
@@ -118,10 +113,7 @@ namespace IAGrim.Parser.Arz {
         /// <summary>
         /// Load items from the Grim Dawn client
         /// </summary>
-        /// <param name="fs"></param>
-        /// <param name="start"></param>
-        /// <param name="numRecords"></param>
-        private static List<IItem> LoadRecords(FileStream fs, uint start, uint numRecords, List<string> stringTable, bool skipLots) {
+        private static List<IItem> LoadRecords(FileStream fs, uint start, uint numRecords, IReadOnlyList<string> stringTable, bool skipLots) {
             fs.Seek(start, SeekOrigin.Begin);
 
             List<Record> tempRecords = new List<Record>();
@@ -159,7 +151,7 @@ namespace IAGrim.Parser.Arz {
         private static void Decompress(FileStream fs, Record record) {
             fs.Seek(record.Offset + 24, SeekOrigin.Begin); // 24?
             if (fs.Read(record.Compressed, 0, record.Compressed.Length) != record.Compressed.Length) {
-                logger.Warn("Could not read an entire record..");
+                Logger.Warn("Could not read an entire record..");
             }
             else {
                 record.Uncompressed = LZ4.LZ4Codec.Decode(record.Compressed, 0, record.Compressed.Length, record.Uncompressed.Length);
@@ -173,8 +165,8 @@ namespace IAGrim.Parser.Arz {
             record.Type = IOHelper.ReadString(fs);
 
             record.Offset = IOHelper.ReadUInteger(fs);
-            uint SizeCompressed = IOHelper.ReadUInteger(fs);
-            record.Compressed = new byte[SizeCompressed];
+            uint sizeCompressed = IOHelper.ReadUInteger(fs);
+            record.Compressed = new byte[sizeCompressed];
 
             record.SizeUncompressed = IOHelper.ReadUInteger(fs);
 
@@ -186,7 +178,7 @@ namespace IAGrim.Parser.Arz {
         public static List<IItemTag> ParseArcFile(string file) {
             // Load the ARC data (item names etc)
             if (!string.IsNullOrEmpty(file)) {
-                var decompresser = new Arc.Decompress(file, true);
+                var decompresser = new Decompress(file, true);
                 decompresser.decompress();
 
                 List<IItemTag> tags = new List<IItemTag>();
@@ -194,15 +186,15 @@ namespace IAGrim.Parser.Arz {
                 foreach (var s in decompresser.strings) {
                     if (s.ToLowerInvariant().EndsWith(".txt")) {
                         tags.AddRange(decompresser.GetTags(s));
-                        logger.Debug($"Loading tags from {s}");
+                        Logger.Debug($"Loading tags from {s}");
                     }
                 }
 
-                logger.Debug($"Loaded {tags.Count} tags");
+                Logger.Debug($"Loaded {tags.Count} tags");
                 return tags;
             }
             else {
-                logger.Warn("Could not locate text_en.arc");
+                Logger.Warn("Could not locate text_en.arc");
             }
 
             return null;
@@ -228,11 +220,11 @@ namespace IAGrim.Parser.Arz {
 
 
                 var stringTable = LoadStringTable(fs, header.StringTableStart, header.StringTableSize);
-                logger.InfoFormat("Loaded {0} strings from Grim Dawn.", stringTable.Count);
+                Logger.InfoFormat("Loaded {0} strings from Grim Dawn.", stringTable.Count);
 
-                logger.Info("Attempting to parse items from Grim Dawn");
+                Logger.Info("Attempting to parse items from Grim Dawn");
                 var items = LoadRecords(fs, header.RecordTableStart, header.RecordTableEntryCount, stringTable, skipLots);
-                logger.InfoFormat("Loaded {0} items from Grim Dawn.", items.Count);
+                Logger.InfoFormat("Loaded {0} items from Grim Dawn.", items.Count);
 
                 return items;
             }

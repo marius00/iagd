@@ -70,8 +70,11 @@ namespace IAGrim.StashFile {
                 return false;
 
             bool result;
-            if (!pCrypto.ReadCryptoUInt(out this.Unknown1) || this.Unknown1 != 2u)
+            if (!pCrypto.ReadCryptoUInt(out this.Unknown1) || this.Unknown1 != 2u) {
+                logger.Warn($"Unexpected failure reading transfer stash, expected file to start with 2, got {this.Unknown1}. Transfer file possibly corrupted.");
                 return false;
+            }
+
             if (!Block.ReadStart(out this.Block, pCrypto) || this.Block.Result != 18u) {
                 return false;
             }
@@ -90,6 +93,7 @@ namespace IAGrim.StashFile {
             
             if (this.Version >= 5) {
                 if (!pCrypto.ReadCryptoBool(out IsExpansion1)) {
+                    logger.Warn($"New version of transfer stash out? Cannot parse version {this.Version}");
                     return false;
                 }
             }

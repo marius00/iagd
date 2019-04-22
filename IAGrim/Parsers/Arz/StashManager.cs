@@ -358,6 +358,9 @@ namespace IAGrim.Parsers.Arz {
                     result = stash.ModLabel;
                     return true;
                 }
+                else {
+                    Logger.Warn($"Discarding transfer file \"{filename}\", could not read the file.");
+                }
             }
 
             result = string.Empty;

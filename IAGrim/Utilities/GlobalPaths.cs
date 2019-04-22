@@ -6,11 +6,13 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using log4net;
 
 namespace IAGrim.Utilities {
     internal static class GlobalPaths {
-        private static HashSet<string> ParsedFiles = new HashSet<string>();
-        private static List<GDTransferFile> TransferFilesCache = new List<GDTransferFile>();
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(GlobalPaths));
+        private static readonly HashSet<string> ParsedFiles = new HashSet<string>();
+        private static readonly List<GDTransferFile> TransferFilesCache = new List<GDTransferFile>();
 
 
         public static string LocalAppdata {
@@ -42,16 +44,16 @@ namespace IAGrim.Utilities {
         public static string[] FormulasFiles {
             get {
                 string documents = SavePath;
-                string file_n = Path.Combine(documents, "formulas.gst");
-                string file_hc = Path.Combine(documents, "formulas.gsh");
+                string formulasSoftcore = Path.Combine(documents, "formulas.gst");
+                string formulasHardcore = Path.Combine(documents, "formulas.gsh");
 
-                if (!File.Exists(file_n))
-                    file_n = string.Empty;
+                if (!File.Exists(formulasSoftcore))
+                    formulasSoftcore = string.Empty;
 
-                if (!File.Exists(file_hc))
-                    file_hc = string.Empty;
+                if (!File.Exists(formulasHardcore))
+                    formulasHardcore = string.Empty;
 
-                return new string[] { file_n, file_hc };
+                return new string[] { formulasSoftcore, formulasHardcore };
             }
         }
 
@@ -102,8 +104,14 @@ namespace IAGrim.Utilities {
                                 LastAccess = lastAccess
                             });
                         }
-
                     }
+
+                    if (TransferFilesCache.Count == 0) {
+                        Logger.Warn($"No stash files detected in {documents}");
+                    }
+                }
+                else {
+                    Logger.Warn($"Could not locate the folder \"{documents}\"");
                 }
 
                 return new List<GDTransferFile>(TransferFilesCache);
