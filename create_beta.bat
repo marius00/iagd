@@ -5,7 +5,7 @@ copy inno\2010sp1_vcredist_x86.exe IAGrim\bin\release\
 
 
 
-
-Inno\iscc Inno\gdia_beta.iss
 copy IAGrim\bin\release\IAGrim.exe Installer\IAGrim_beta.exe
 copy IAGrim\resources\help.html Installer\help.html
+
+Inno\iscc Inno\gdia_beta.iss
