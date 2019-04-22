@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.ComponentModel;
 using System.Runtime.InteropServices;
 using log4net;
 using System.Security.Principal;
@@ -99,18 +95,16 @@ namespace EvilsoftCommons.DllInjector {
                 System.Runtime.InteropServices.Marshal.Copy(cps.lpData, Data, 0, (int)cps.dwData);
             }
 
-            public byte[] Data { get; set; }
-            public int Type { get; set; }
+            public byte[] Data { get; }
+            public int Type { get; }
         }
 
 
         private IntPtr ProxyWndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam) {
             if (msg == RegisterWindow.WM_COPYDATA) {
                 COPYDATASTRUCT cps = (COPYDATASTRUCT)Marshal.PtrToStructure(lParam, typeof(COPYDATASTRUCT));
-
                 DataAndType bt = new DataAndType(cps);
-                if (CustomWndProc != null)
-                    CustomWndProc(bt);
+                CustomWndProc?.Invoke(bt);
             }
 
             return RegisterWindow.DefWindowProcW(hWnd, msg, wParam, lParam);
@@ -137,10 +131,10 @@ namespace EvilsoftCommons.DllInjector {
             }
         }
 
-        public RegisterWindow(string class_name, Action<DataAndType> callback) {
+        public RegisterWindow(string className, Action<DataAndType> callback) {
 
-            if (class_name == null) throw new System.Exception("class_name is null");
-            if (class_name == String.Empty) throw new System.Exception("class_name is empty");
+            if (className == null) throw new System.Exception("class_name is null");
+            if (className == String.Empty) throw new System.Exception("class_name is empty");
 
 
             CustomWndProc = callback;
@@ -149,7 +143,7 @@ namespace EvilsoftCommons.DllInjector {
 
             // Create WNDCLASS
             WNDCLASS wind_class = new WNDCLASS();
-            wind_class.lpszClassName = class_name;
+            wind_class.lpszClassName = className;
             wind_class.lpfnWndProc = System.Runtime.InteropServices.Marshal.GetFunctionPointerForDelegate(m_wnd_proc_delegate);
 
             UInt16 class_atom = RegisterClassW(ref wind_class);
@@ -163,7 +157,7 @@ namespace EvilsoftCommons.DllInjector {
             // Create window
             m_hwnd = CreateWindowExW(
                 0,
-                class_name,
+                className,
                 String.Empty,
                 0,
                 0,
@@ -186,78 +180,5 @@ namespace EvilsoftCommons.DllInjector {
                     logger.Info("Not running as administrator, UIPI filte not required.");
             }
         }
-
-
-        /*private static IntPtr CustomWndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam) {
-            return DefWindowProcW(hWnd, msg, wParam, lParam);
-        }*/
-
-
-    }
-
-
-    /// <summary>
-    /// Apparently on IA:Light uses this..
-    /// No idea if its required
-    /// </summary>
-    public class MessagePump : IDisposable {
-        static ILog logger = LogManager.GetLogger(typeof(MessagePump));
-
-
-        [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
-        public struct POINT {
-            public int X;
-            public int Y;
-
-            public POINT(int x, int y) {
-                this.X = x;
-                this.Y = y;
-            }
-        }
-
-        [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
-        public struct MSG {
-            public IntPtr hwnd;
-            public UInt32 message;
-            public IntPtr wParam;
-            public IntPtr lParam;
-            public UInt32 time;
-            public POINT pt;
-        }
-
-
-        [System.Runtime.InteropServices.DllImport("user32.dll")]
-        [return: System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.Bool)]
-        static extern bool PeekMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax, uint wRemoveMsg);
-
-        [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
-        static extern sbyte GetMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
-
-        [System.Runtime.InteropServices.DllImport("user32.dll")]
-        static extern bool TranslateMessage(ref MSG lpMsg);
-
-        [System.Runtime.InteropServices.DllImport("user32.dll")]
-        static extern IntPtr DispatchMessage(ref MSG lpmsg);
-
-        public static bool pump(IntPtr hwnd) {
-            MSG msg = new MSG();
-            System.Runtime.InteropServices.GCHandle handle = System.Runtime.InteropServices.GCHandle.Alloc(msg);
-            bool foundMessage = PeekMessage(out msg, hwnd, 0, 0, 0);
-            handle.Free();
-
-            if (foundMessage) {
-                TranslateMessage(ref msg);
-                DispatchMessage(ref msg);
-            }
-
-            return foundMessage;
-
-
-        }
-
-        public void Dispose() {
-        }
-
-
     }
 }

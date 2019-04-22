@@ -18,13 +18,15 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
     public partial class ExportMode : Form {
         private readonly GDTransferFile[] _modSelection;
         private readonly IPlayerItemDao _playerItemDao;
+        private readonly Action onClose;
         private string _filename;
         private bool _isGdstashFormat = false;
 
-        public ExportMode(GDTransferFile[] modSelection, IPlayerItemDao playerItemDao) {
+        public ExportMode(GDTransferFile[] modSelection, IPlayerItemDao playerItemDao, Action onClose) {
             InitializeComponent();
             this._modSelection = modSelection;
             this._playerItemDao = playerItemDao;
+            this.onClose = onClose;
         }
 
         enum FilterType {
@@ -33,22 +35,26 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
         };
 
         private void buttonBrowse_Click(object sender, EventArgs e) {
-            var diag = new OpenFileDialog {
+            var diag = new SaveFileDialog {
                 CheckFileExists = false,
                 CheckPathExists = true,
                 DefaultExt = "ias",
                 Filter = "IA Stash exports (*.ias)|*.ias|GD Stash exports (*.gds)|*.gds",
                 InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "Grim Dawn", "Save"),
-                Multiselect = false,
                 Title = "Choose filename for export"
             };
 
-            if (diag.ShowDialog() == DialogResult.OK) {
+            if (diag.ShowDialog() == DialogResult.OK && !string.IsNullOrEmpty(diag.FileName)) {
                 buttonExport.Enabled = true;
                 var idx = diag.FilterIndex;
                 cbItemSelection.Visible = diag.FilterIndex == (int)FilterType.GDS;
                 this._isGdstashFormat = diag.FileName.EndsWith(".gds");
                 this._filename = diag.FileName;
+            }
+
+            // For IA exports, we can skip the manual export step, since we dont have the list view to worry about.
+            if (!cbItemSelection.Visible) {
+                buttonExport_Click(sender, e);
             }
         }
 
@@ -90,7 +96,7 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
                 }
 
                 MessageBox.Show("Items Exported!", "Items exported!", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                this.Close();
+                this.onClose();
             }
         }
     }

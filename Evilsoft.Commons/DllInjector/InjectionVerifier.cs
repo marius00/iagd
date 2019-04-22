@@ -14,7 +14,7 @@ namespace EvilsoftCommons.DllInjector {
     /// Sometimes the injection reports as successful, but the DLL does not persist. (unloaded by anti virus?)
     /// </summary>
     public class InjectionVerifier {
-        static ILog logger = LogManager.GetLogger(typeof(InjectionVerifier));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(InjectionVerifier));
 
 
         /// <summary>
@@ -36,15 +36,15 @@ namespace EvilsoftCommons.DllInjector {
                 key.Close();
             }
             catch (Exception ex) {
-                logger.Warn("Error trying to create registry keys, this is not critical.");
-                logger.Warn(ex.Message);
+                Logger.Warn("Error trying to create registry keys, this is not critical.");
+                Logger.Warn(ex.Message);
             }
         }
 
         public static bool VerifyInjection(long pid, string dll) {
             FixRegistryNagOnListDlls();
 
-            logger.Info("Running Listdlls...");
+            Logger.Info("Running Listdlls...");
             if (File.Exists("Listdlls.exe")) {
                 ProcessStartInfo startInfo = new ProcessStartInfo();
                 startInfo.FileName = "Listdlls.exe";
@@ -73,12 +73,12 @@ namespace EvilsoftCommons.DllInjector {
                     }
                 }
                 catch (Exception ex) {
-                    logger.Warn("Exception while attempting to verify injection.. " + ex.Message + ex.StackTrace);
+                    Logger.Warn("Exception while attempting to verify injection.. " + ex.Message + ex.StackTrace);
                     ExceptionReporter.ReportException(ex);
                 }
             }
             else {
-                logger.Warn("Could not find Listdlls.exe, unable to verify successful injection.");
+                Logger.Warn("Could not find Listdlls.exe, unable to verify successful injection.");
             }
             return false;
         }

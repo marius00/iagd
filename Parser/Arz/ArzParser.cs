@@ -41,7 +41,22 @@ namespace IAGrim.Parser.Arz {
             return StringTable;
         }
 
+        private static bool IsInteresting(string record) {
+            var interesting = new[] {
+                "records/endlessdungeon/scriptentities/",
+                "records/items/",
+                "records/storyelements/",
+                "records/skills/",
+                "records/creatures/npcs/npcgear"
+            };
 
+            foreach (var prefix in interesting) {
+                if (record.StartsWith(prefix))
+                    return true;
+            }
+
+            return false;
+        }
 
         private static IItem ExtractItem(Record record, List<string> stringTable, bool skipLots) {
 
@@ -50,8 +65,7 @@ namespace IAGrim.Parser.Arz {
             string itemName = stringTable[(int)record.StringIndex];
 
             // Skip effects/procs/etc
-            if (skipLots && !itemName.StartsWith("records/items/") && !itemName.StartsWith("records/storyelements/")
-                && !itemName.StartsWith("records/skills/") && !itemName.StartsWith("records/creatures/npcs/npcgear"))
+            if (skipLots && !IsInteresting(itemName))
                 return null;
 
             IItem item = new Item {
@@ -70,7 +84,6 @@ namespace IAGrim.Parser.Arz {
 
                 // Store the interesting records
                 string recordstring = stringTable[(int)stringIndex];
-                /*if (types.Contains(recordstring))*/
                 {
                     for (uint n = 0; n < numEntries; n++) {
                         uint pos = 8 + 4 * n;
@@ -89,7 +102,6 @@ namespace IAGrim.Parser.Arz {
                         }
                         else {
                             uint val = IOHelper.GetUInt(data, offset + pos);
-                            float testonly = IOHelper.GetFloat(data, offset + pos);
                             if (val > 0)
                                 item.Stats.Add(new ItemStat { Stat = recordstring, Value = (int)val });
                         }
@@ -114,15 +126,11 @@ namespace IAGrim.Parser.Arz {
 
             List<Record> tempRecords = new List<Record>();
 
-
-
             // Read all the records
             for (int i = 0; i < numRecords; i++) {
-                Record record = ReadRecord(stringTable, fs);
+                Record record = ReadRecord(fs);
                 tempRecords.Add(record);                
             }
-
-
 
             // Read and uncompress the data
             for (int i = 0; i < tempRecords.Count; i++) {
@@ -159,11 +167,10 @@ namespace IAGrim.Parser.Arz {
             }
         }
 
-        private static Record ReadRecord(List<string> stringTable, FileStream fs) {
+        private static Record ReadRecord(FileStream fs) {
             Record record = new Record();
             record.StringIndex = IOHelper.ReadUInteger(fs);
             record.Type = IOHelper.ReadString(fs);
-            string itemName = stringTable[(int)record.StringIndex];
 
             record.Offset = IOHelper.ReadUInteger(fs);
             uint SizeCompressed = IOHelper.ReadUInteger(fs);
@@ -190,23 +197,6 @@ namespace IAGrim.Parser.Arz {
                         logger.Debug($"Loading tags from {s}");
                     }
                 }
-                /*
-                if (decompresser.hasFile("tags_items.txt")) {
-                    tags.AddRange(decompresser.GetTags("tags_items.txt"));
-                    logger.InfoFormat("Loaded {0} item tags from Grim Dawn.", tags.Count);
-                }
-                else {
-                    logger.WarnFormat("The Arc file at \"{0}\" does not contain tags_items.txt for item names.", file);
-                }
-
-                if (decompresser.hasFile("tags_skills.txt")) {
-                    tags.AddRange(decompresser.GetTags("tags_skills.txt"));
-                    logger.InfoFormat("Loaded {0} skill tags from Grim Dawn.", tags.Count);
-                }
-                else {
-                    logger.WarnFormat("The Arc file at \"{0}\" does not contain tags_skills.txt for skill names.", file);
-                }
-                */
 
                 logger.Debug($"Loaded {tags.Count} tags");
                 return tags;

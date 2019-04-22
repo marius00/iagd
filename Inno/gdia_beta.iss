@@ -42,13 +42,13 @@ UseSetupLdr=yes
 DisableProgramGroupPage=yes
 DiskSpanning=no
 AppVersion={#ApplicationVersion}
-VersionInfoProductTextVersion={#ProductVersion}
+VersionInfoProductTextVersion={#ApplicationVersion}
 PrivilegesRequired=admin
 DisableWelcomePage=Yes
 ArchitecturesInstallIn64BitMode=x64
 AlwaysShowDirOnReadyPage=Yes
 DisableDirPage=No
-OutputBaseFilename=GDItemAssistantBeta
+OutputBaseFilename=GDItemAssistantBeta-{#ApplicationVersion}
 
 [UninstallDelete]
 Type: filesandordirs; Name: {app}

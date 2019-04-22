@@ -17,15 +17,13 @@ namespace EvilsoftCommons.DllInjector {
         private BackgroundWorker _bw;
         private readonly HashSet<uint> _previouslyInjected = new HashSet<uint>();
         private readonly HashSet<uint> _dontLog = new HashSet<uint>();
-        private readonly Dictionary<uint, IntPtr> _pidModuleHandleMap = new Dictionary<uint, IntPtr>();
-        private readonly bool _unloadOnExit;
         private readonly RunArguments _exitArguments;
 
         public const int INJECTION_ERROR = 0;
         public const int NO_PROCESS_FOUND_ON_STARTUP = 1;
         public const int NO_PROCESS_FOUND = 2;
 
-        private ProgressChangedEventHandler _registeredProgressCallback;
+        private readonly ProgressChangedEventHandler _registeredProgressCallback;
 
         class RunArguments {
             public string WindowName;
@@ -51,12 +49,10 @@ namespace EvilsoftCommons.DllInjector {
             }
 
             this._registeredProgressCallback = progressChanged;
-            this._unloadOnExit = unloadOnExit;
             bw.DoWork += new DoWorkEventHandler(bw_DoWork);
             bw.WorkerSupportsCancellation = true;
             bw.WorkerReportsProgress = true;
             bw.ProgressChanged += progressChanged;
-            //bw.ProgressChanged += bw_ProgressChanged;
 
             _exitArguments = new RunArguments {
                 WindowName = windowName,
@@ -64,17 +60,6 @@ namespace EvilsoftCommons.DllInjector {
                 DllName = dll
             };
             bw.RunWorkerAsync(_exitArguments);
-        }
-
-        void bw_ProgressChanged(object sender, ProgressChangedEventArgs e) {
-            
-        }
-
-        public void Cancel() {
-            if (_bw != null) {
-                _bw.CancelAsync();
-                _bw = null;
-            }
         }
 
         private void bw_DoWork(object sender, DoWorkEventArgs e) {
@@ -109,24 +94,6 @@ namespace EvilsoftCommons.DllInjector {
                 _bw.CancelAsync();
                 _bw = null;
             }
-
-            if (_unloadOnExit) {
-                // Unload the DLL from any still running instance
-                HashSet<uint> pids = FindProcesses(_exitArguments);
-                foreach (uint pid in _pidModuleHandleMap.Keys) {
-                    if (pids.Contains(pid)) {
-                        if (DllInjector.UnloadDll(pid, _pidModuleHandleMap[pid])) {
-                            Logger.InfoFormat("Unloaded module from pid {0}", pid);
-                        }
-                        else {
-                            Logger.InfoFormat("Failed to unload module from pid {0}", pid);
-                        }
-                    }
-                }
-            }
-            else {
-                Logger.Info("Exiting without unloading DLL (as per configuration)");
-            }
         }
 
 
@@ -151,10 +118,18 @@ namespace EvilsoftCommons.DllInjector {
         }
 
         private static IntPtr Inject64Bit(string exe, string dll) {
-            Logger.Info("Running 64 bit injector...");
-            if (File.Exists("DllInjector64.exe")) {
+            return InjectXBit("DllInjector64.exe", exe, dll);
+        }
+
+        private static IntPtr Inject32Bit(string exe, string dll) {
+            return InjectXBit("DllInjector32.exe", exe, dll);
+        }
+
+        private static IntPtr InjectXBit(string injector, string exe, string dll) {
+            Logger.Info($"Running {injector}...");
+            if (File.Exists(injector)) {
                 ProcessStartInfo startInfo = new ProcessStartInfo();
-                startInfo.FileName = "DllInjector64.exe";
+                startInfo.FileName = injector;
                 startInfo.Arguments = $"-t 1 \"{exe}\" \"{dll}\"";
                 startInfo.RedirectStandardOutput = true;
                 startInfo.RedirectStandardError = true;
@@ -193,7 +168,7 @@ namespace EvilsoftCommons.DllInjector {
                 }
             }
             else {
-                Logger.Warn("Could not find DllInjector64.exe, unable to inject into Grim Dawn 64bit.");
+                Logger.Warn($"Could not find {injector}, unable to inject into Grim Dawn.");
             }
             return IntPtr.Zero;
         }
@@ -221,7 +196,6 @@ namespace EvilsoftCommons.DllInjector {
             else {
                 foreach (uint pid in pids) {
                     if (!_previouslyInjected.Contains(pid)) {
-                        string dllName;
                         if (Is64Bit((int)pid)) {
                             if (InjectionVerifier.VerifyInjection(pid, dll64Bit)) {
                                 Logger.Info($"DLL already injected into target process, skipping injection into {pid}");
@@ -231,40 +205,16 @@ namespace EvilsoftCommons.DllInjector {
                             else {
                                 Inject64Bit("Grim Dawn.exe", dll64Bit);
                             }
-
-                            continue;
                         }
                         else {
-                            dllName = dll32Bit;
-                        }
-                        var remoteModuleHandle = DllInjector.NewInject(pid, dllName);
-
-                        if (remoteModuleHandle == IntPtr.Zero) {
-                            if (!_dontLog.Contains(pid)) {
-                                Logger.WarnFormat("Could not inject dll into process {0}, if this is a recurring issue, try running as administrator.", pid);
-                                worker.ReportProgress(INJECTION_ERROR, "Could not inject dll into process " + pid);
-                            }
-                        }
-                        else {
-                            if (!_dontLog.Contains(pid))
-                                Logger.Info("Injected dll into process " + pid);
-
-                            if (!InjectionVerifier.VerifyInjection(pid, dllName)) {
-                                if (!_dontLog.Contains(pid)) {
-                                    Logger.Warn("InjectionVerifier reports injection failed.");
-                                    ExceptionReporter.ReportIssue("InjectionVerifier reports injection failed into PID " + pid);
-                                    worker.ReportProgress(INJECTION_ERROR, string.Format("InjectionVerifier reports injection failed into PID {0}, try running as administrator.", pid));
-                                }
-
-
+                            if (InjectionVerifier.VerifyInjection(pid, dll32Bit)) {
+                                Logger.Info($"DLL already injected into target process, skipping injection into {pid}");
                                 _dontLog.Add(pid);
+                                _previouslyInjected.Add(pid);
                             }
                             else {
-                                Logger.Info("InjectionVerifier reports injection succeeded.");
-                                _previouslyInjected.Add(pid);
-                                _pidModuleHandleMap[pid] = remoteModuleHandle;
+                                Inject32Bit("Grim Dawn.exe", dll32Bit);
                             }
-
                         }
                     }
                 }

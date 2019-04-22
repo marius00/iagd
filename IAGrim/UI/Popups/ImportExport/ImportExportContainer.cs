@@ -26,7 +26,13 @@ namespace IAGrim.UI.Popups.ImportExport {
         }
 
         private void ImportExportContainer_Load(object sender, EventArgs e) {
-            UIHelper.AddAndShow(new ImportExportModePicker(modFilter, playerItemDao, contentPanel.Controls, sm), contentPanel);
+            UIHelper.AddAndShow(new ImportExportModePicker(
+                modFilter, 
+                playerItemDao, 
+                contentPanel.Controls, 
+                sm,
+                () => this.Close()
+                ), contentPanel);
         }
     }
 }

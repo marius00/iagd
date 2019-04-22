@@ -52,14 +52,14 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
                 AddIfExists(Path.Combine(grimdawnLocation, $"gdx{i}"));
             }
 
-            /*
+            
              // No useful items, only writs. Not worth the insane parsing time.
             for (int i = 9; i >= 1; i--) {
                 AddIfExists(Path.Combine(grimdawnLocation, $"survivalmode{i}"));
             }
 
             AddIfExists(Path.Combine(grimdawnLocation, "mods", "survivalmode"));
-            */
+            
 
             return paths;
 

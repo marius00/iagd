@@ -51,7 +51,7 @@ class App extends React.PureComponent<Props, object> {
                   {translate('app.tab.videoGuide').length > 0 &&
                     <Tab disabled={true}><a onClick={() => this.openUrl(translate('app.tab.videoGuideUrl'))}>{translate('app.tab.videoGuide')}</a></Tab>
                   }
-                  <Tab disabled={true}><a onClick={() => this.openUrl('https://discord.gg/PJ87Ewa')}>{translate('app.tab.discord')}</a></Tab>
+                  <Tab disabled={true}><a onClick={() => this.openUrl('https://discord.gg/bKWuaG7')}>{translate('app.tab.discord')}</a></Tab>
                 </TabList>
               </div>
 
