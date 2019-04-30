@@ -30,7 +30,7 @@ namespace IAGrim.UI.Controller
         private readonly ItemPaginatorService _itemPaginatorService;
         private readonly RecipeService _recipeService;
         private readonly CostCalculationService _costCalculationService;
-        private readonly StashManager _stashManager;
+        private readonly TransferStashService _transferStashService;
         private readonly AugmentationItemRepo _augmentationItemRepo;
 
         private string _previousMod = string.Empty;
@@ -47,7 +47,7 @@ namespace IAGrim.UI.Controller
             IDatabaseItemStatDao databaseItemStatDao,
             IItemSkillDao itemSkillDao,
             IBuddyItemDao buddyItemDao,
-            StashManager stashManager,
+            TransferStashService transferStashService,
             AugmentationItemRepo augmentationItemRepo
         )
         {
@@ -56,9 +56,9 @@ namespace IAGrim.UI.Controller
             _itemStatService = new ItemStatService(databaseItemStatDao, itemSkillDao);
             _itemPaginatorService = new ItemPaginatorService(TakeSize);
             _recipeService = new RecipeService(databaseItemDao);
-            _costCalculationService = new CostCalculationService(playerItemDao, stashManager);
+            _costCalculationService = new CostCalculationService(playerItemDao, transferStashService);
             _buddyItemDao = buddyItemDao;
-            _stashManager = stashManager;
+            _transferStashService = transferStashService;
             _augmentationItemRepo = augmentationItemRepo;
 
             // Just make sure it writes .css/.html files before displaying anything to the browser
@@ -80,7 +80,7 @@ namespace IAGrim.UI.Controller
             };
 
             // Update the recipe when the stash has changed
-            stashManager.StashUpdated += StashManagerOnStashUpdated;
+            transferStashService.StashUpdated += StashManagerOnStashUpdated;
 
             // Return the list of recipes
             JsBind.OnRequestRecipeList += (sender, args) =>
@@ -103,7 +103,7 @@ namespace IAGrim.UI.Controller
 
         ~SearchController()
         {
-            _stashManager.StashUpdated -= StashManagerOnStashUpdated;
+            _transferStashService.StashUpdated -= StashManagerOnStashUpdated;
         }
 
         private void JsBind_OnRequestItems(object sender, EventArgs e)

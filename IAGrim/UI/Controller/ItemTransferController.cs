@@ -29,7 +29,7 @@ namespace IAGrim.UI.Controller
         private readonly SplitSearchWindow _searchWindow;
         private readonly DynamicPacker _dynamicPacker;
         private readonly CefBrowserHandler _browser;
-        private readonly StashManager _stashManager;
+        private readonly TransferStashService _transferStashService;
         private readonly ItemStatService _itemStatService;
 
         public ItemTransferController(
@@ -40,7 +40,7 @@ namespace IAGrim.UI.Controller
                 SplitSearchWindow searchWindow,
                 DynamicPacker dynamicPacker,
                 IPlayerItemDao playerItemDao,
-                StashManager stashManager,
+                TransferStashService transferStashService,
                 ItemStatService itemStatService
             )
         {
@@ -51,7 +51,7 @@ namespace IAGrim.UI.Controller
             _searchWindow = searchWindow;
             _dynamicPacker = dynamicPacker;
             _dao = playerItemDao;
-            _stashManager = stashManager;
+            _transferStashService = transferStashService;
             _itemStatService = itemStatService;
         }
 
@@ -108,7 +108,7 @@ namespace IAGrim.UI.Controller
             int numItemsRequested = Math.Min(maxItemsToTransfer, numItemsReceived);
 
             _itemStatService.ApplyStatsToPlayerItems(items); // For item class? 'IsStackable' maybe?
-            _stashManager.Deposit(transferFile, items, maxItemsToTransfer, out error);
+            _transferStashService.Deposit(transferFile, items, maxItemsToTransfer, out error);
             _dao.Update(items, true);
 
             var numItemsAfterTransfer = items.Sum(item => item.StackCount);
@@ -281,7 +281,7 @@ namespace IAGrim.UI.Controller
             if (stashTab == 0)
             {
                 // Find real tab.. Related to hotfix v1.0.4.0
-                stashTab = StashManager.GetNumStashPages(GetTransferFile());
+                stashTab = TransferStashService.GetNumStashPages(GetTransferFile());
             }
 
             var position = _dynamicPacker.Insert(pi.BaseRecord, (uint)pi.Seed);

@@ -15,10 +15,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using IAGrim.Parser.Stash;
 
 namespace IAGrim.Parsers.Arz {
-    internal class StashManager {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(StashManager));
+    internal class TransferStashService {
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(TransferStashService));
 
         private readonly Action<string, string, string> _setFeedback;
         private readonly Action _performedLootCallback;
@@ -33,7 +34,7 @@ namespace IAGrim.Parsers.Arz {
         /// </summary>
         private bool _hasRecentlyUpdatedTimerFeedback;
 
-        public static bool _hasLootedItemsOnceThisSession;
+        public static bool HasLootedItemsOnceThisSession;
 
         public readonly int NumStashTabs;
 
@@ -41,7 +42,7 @@ namespace IAGrim.Parsers.Arz {
 
         public event EventHandler StashUpdated;
 
-        public StashManager(
+        public TransferStashService(
             IPlayerItemDao playerItemDao,
             IDatabaseItemStatDao dbItemStatDao,
             Action<string, string, string> setFeedback,
@@ -256,16 +257,17 @@ namespace IAGrim.Parsers.Arz {
                 }
 
                 if (stash.Tabs[lootFromIndex].Items.Count > 0) {
-                    _hasLootedItemsOnceThisSession = true;
+                    HasLootedItemsOnceThisSession = true;
 
                     // Grab the items and clear the tab
                     var items = stash.Tabs[lootFromIndex].Items
                         .Where(m => m.StackCount <= 1)
-                        .Where(m => !_playerItemDao.Exists(Map(m, stash.ModLabel, isHardcore, stash.IsExpansion1)))
+                        .Where(m => !_playerItemDao.Exists(Map(m, stash.ModLabel, isHardcore)))
                         .ToList();
                     var notLootedDueToStackSize = stash.Tabs[lootFromIndex].Items.Where(m => m.StackCount > 1).ToList();
 
                     if (notLootedDueToStackSize.Count > 0) {
+                        notLootedDueToStackSize.ForEach(item => Logger.Debug($"NotLootedStacksize: {item}"));
                         _setFeedback(
                             "Warning", 
                             GlobalSettings.Language.GetTag("iatag_feedback_stacked_not_looted", notLootedDueToStackSize.Count),
@@ -274,10 +276,10 @@ namespace IAGrim.Parsers.Arz {
                     }
 
                     var notLootedDueToDuplicate = stash.Tabs[lootFromIndex].Items.ToList();
-
                     notLootedDueToDuplicate.RemoveAll(m => items.Contains(m) || m.StackCount > 1);
 
                     if (notLootedDueToDuplicate.Count > 0) {
+                        notLootedDueToDuplicate.ForEach(item => Logger.Debug($"NotLootedDuplicate: {item}"));
                         _setFeedback(
                             "Warning",
                             GlobalSettings.Language.GetTag("iatag_feedback_duplicates_not_looted", notLootedDueToDuplicate.Count),
@@ -333,7 +335,7 @@ namespace IAGrim.Parsers.Arz {
                 SafelyWriteStash(filename, stash);
                 Logger.InfoFormat("Looted {0} items from stash", items.Count);
 
-                return items.Select(m => Map(m, stash.ModLabel, isHardcore, stash.IsExpansion1)).ToList();
+                return items.Select(m => Map(m, stash.ModLabel, isHardcore)).ToList();
             }
 
             Logger.Error("Could not load stash file.");
@@ -495,15 +497,12 @@ namespace IAGrim.Parsers.Arz {
 
         /// <summary>
         ///     Deposit the provided items to bank page Y
+        ///     The items deposited, caller responsibility to delete them from DB if stacksize is LE 0, and update if not
         /// </summary>
-        /// <param name="filename"></param>
-        /// <param name="playerItems">
-        ///     The items deposited, caller responsibility to delete them from DB if stacksize is LE 0, and update if not</param>
-        /// <returns></returns>
         public void Deposit(string filename, IList<PlayerItem> playerItems, int maxItemsToTransfer, out string error) {
             error = string.Empty;
 
-            const int MAX_ITEMS_IN_TAB = 16 * 8;
+            const int maxItemsInTab = 18 * 10;
 
             var stash = GetStash(filename);
             if (stash != null) {
@@ -523,7 +522,7 @@ namespace IAGrim.Parsers.Arz {
                     error = GlobalSettings.Language.GetTag("iatag_invalid_deposit_stash_number", depositToIndex + 1, stash.Tabs.Count);
                 }
 
-                else if (stash.Tabs[depositToIndex].Items.Count < MAX_ITEMS_IN_TAB && playerItems.Count > 0) {
+                else if (stash.Tabs[depositToIndex].Items.Count < maxItemsInTab && playerItems.Count > 0) {
                     var tab = stash.Tabs[depositToIndex];
                     var stashItems = ConvertToStashItems(playerItems, maxItemsToTransfer, tab);
 
@@ -545,7 +544,7 @@ namespace IAGrim.Parsers.Arz {
             }
         }
 
-        private PlayerItem Map(Item item, string mod, bool isHardcore, bool isExpansion1) {
+        private PlayerItem Map(Item item, string mod, bool isHardcore) {
             return new PlayerItem {
                 BaseRecord = item.BaseRecord,
                 EnchantmentRecord = item.EnchantmentRecord,
@@ -597,7 +596,7 @@ namespace IAGrim.Parsers.Arz {
             var playerItems = new List<PlayerItem>();
 
             foreach (var item in items) {
-                var newItem = Map(item, mod, isHardcore, isExpansion1);
+                var newItem = Map(item, mod, isHardcore);
                 playerItems.Add(newItem);
             }
 

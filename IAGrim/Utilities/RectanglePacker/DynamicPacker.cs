@@ -12,13 +12,13 @@ using System.Threading.Tasks;
 
 namespace IAGrim.Utilities.RectanglePacker {
     class DynamicPacker {
-        private Packer packer;
-        private readonly IDatabaseItemStatDao itemStatDao;
-        private readonly Dictionary<string, Shape> itemShapeCache = new Dictionary<string, Shape>();
-        private readonly List<ItemInsertion> Queue = new List<ItemInsertion>();
+        private Packer _packer;
+        private readonly IDatabaseItemStatDao _itemStatDao;
+        private readonly Dictionary<string, Shape> _itemShapeCache = new Dictionary<string, Shape>();
+        private readonly List<ItemInsertion> _queue = new List<ItemInsertion>();
 
         public DynamicPacker(IDatabaseItemStatDao itemStatDao) {
-            this.itemStatDao = itemStatDao;
+            this._itemStatDao = itemStatDao;
         }
 
         /// <summary>
@@ -26,15 +26,15 @@ namespace IAGrim.Utilities.RectanglePacker {
         /// </summary>
         /// <param name="baseRecords"></param>
         private void LoadItemSizes(IEnumerable<string> baseRecords) {
-            var relevant = baseRecords.Where(m => !itemShapeCache.Keys.Contains(m));
-            var tmp = itemStatDao.MapItemBitmaps(relevant.ToList());
+            var relevant = baseRecords.Where(m => !_itemShapeCache.Keys.Contains(m));
+            var tmp = _itemStatDao.MapItemBitmaps(relevant.ToList());
             foreach (var key in tmp.Keys) {
 
-                var bitmap = string.Format("{0}.png", Path.GetFileName(tmp[key].Replace(".dbr", ".tex")));
+                var bitmap = $"{Path.GetFileName(tmp[key].Replace(".dbr", ".tex"))}.png";
                 int h, w;
                 ItemSizeService.MapItemSize(bitmap, out h, out w);
 
-                itemShapeCache[key] = new Shape {
+                _itemShapeCache[key] = new Shape {
                     Width = w,
                     Height = h
                 };
@@ -47,9 +47,9 @@ namespace IAGrim.Utilities.RectanglePacker {
         /// Should be called every time the stash is closed
         /// </summary>
         public void Clear() {
-            if (packer != null) {
-                Queue.Clear();
-                packer = new Packer(packer.Height, packer.Width);
+            if (_packer != null) {
+                _queue.Clear();
+                _packer = new Packer(_packer.Height, _packer.Width);
             }
         }
 
@@ -63,19 +63,19 @@ namespace IAGrim.Utilities.RectanglePacker {
         /// <returns>A valid position of null if stash is full</returns>
         public Packer.Position Insert(string baseRecord, uint seed) {
             // Load item sizes
-            List<string> records = new List<string>(Queue.Select(m => m.BaseRecord));
+            List<string> records = new List<string>(_queue.Select(m => m.BaseRecord));
             records.Add(baseRecord);
             LoadItemSizes(records);
 
             // Insert any queued items
-            foreach (var elem in Queue) {
-                packer.Insert(itemShapeCache[elem.BaseRecord], elem.X, elem.Y);
+            foreach (var elem in _queue) {
+                _packer.Insert(_itemShapeCache[elem.BaseRecord], elem.X, elem.Y);
             }
-            Queue.Clear();
+            _queue.Clear();
 
 
             // Calculate the position for this item
-            return packer.Insert(itemShapeCache[baseRecord]);
+            return _packer.Insert(_itemShapeCache[baseRecord]);
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace IAGrim.Utilities.RectanglePacker {
         /// <param name="x"></param>
         /// <param name="y"></param>
         public void Insert(string baseRecord, uint seed, uint x, uint y) {
-            Queue.Add(
+            _queue.Add(
                 new ItemInsertion {
                     BaseRecord = baseRecord,
                     Seed = seed,
@@ -97,7 +97,7 @@ namespace IAGrim.Utilities.RectanglePacker {
         }
 
         public void Initialize(uint width, uint height) {
-            packer = new RectanglePacker.Packer(height, width);
+            _packer = new RectanglePacker.Packer(height, width);
         }
 
 

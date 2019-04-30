@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using IAGrim.Parser.Stash;
 
 namespace IAGrim.StashFile {
     public class StashTab {
@@ -26,15 +27,11 @@ namespace IAGrim.StashFile {
             "records/items/questitems/quest_dynamite.dbr"
         };
 
-        public const int DEFAULT_WIDTH = 8;
-
-        public const int DEFAULT_HEIGHT = 16;
-
         public Block Block = new Block();
 
-        public uint Width = 8u;
+        public uint Width = 10u;
 
-        public uint Height = 16u;
+        public uint Height = 18u;
 
         public List<Item> Items { get; private set; }
 

@@ -111,13 +111,13 @@ namespace IAGrim.Parsers.Arz {
                         GlobalSettings.StashStatus == StashAvailability.CRAFTING) {
                         Logger.Info("Detected an update to stash file, but ignoring due to crafting-safety-check");
                         // OBS: Can only do this if we've previously looted! CAnnot risk it containing unlooted items
-                        if (StashManager._hasLootedItemsOnceThisSession) {
+                        if (TransferStashService.HasLootedItemsOnceThisSession) {
                             if (_delayedLootTimer == null) {
                                 Logger.Info(
                                     "Items has already been looted this session, post-crafting safety measures required.");
 
 
-                                StashManager.DeleteItemsInPageX(e.FullPath);
+                                TransferStashService.DeleteItemsInPageX(e.FullPath);
                             }
                             else {
                                 Logger.Info("Player may have opened devotion screen before running away.. leaving items be..");

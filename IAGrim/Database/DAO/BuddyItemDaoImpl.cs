@@ -171,7 +171,7 @@ namespace IAGrim.Database
             public string Rarity { get; set; }
         }
 
-        private static Dictionary<string, int> _rarityMap = new Dictionary<string, int> {
+        private static readonly Dictionary<string, int> _rarityMap = new Dictionary<string, int> {
             {"Legendary", 6},
             {"Epic", 5},
             {"Rare", 4},
@@ -179,7 +179,7 @@ namespace IAGrim.Database
             {"Magical", 2},
         };
 
-        private static Dictionary<string, string> _rarityTranslations = new Dictionary<string, string> {
+        private static readonly Dictionary<string, string> _rarityTranslations = new Dictionary<string, string> {
             {"Legendary", "Epic"},
             {"Epic", "Blue"},
             {"Rare", "Green"},

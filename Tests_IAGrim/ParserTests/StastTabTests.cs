@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IAGrim.Parser.Stash;
 using SharpTestsEx;
 
 namespace Tests_IAGrim.ParserTests {

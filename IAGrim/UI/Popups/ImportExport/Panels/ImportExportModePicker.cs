@@ -11,14 +11,14 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
         private readonly Control.ControlCollection parentContainer;
         private readonly IPlayerItemDao playerItemDao;
         private readonly GDTransferFile[] modFilter;
-        private readonly StashManager sm;
+        private readonly TransferStashService sm;
         private readonly Action onClose;
 
         public ImportExportModePicker(
             GDTransferFile[] modFilter, 
             IPlayerItemDao playerItemDao, 
             Control.ControlCollection parentContainer, 
-            StashManager sm,
+            TransferStashService sm,
             Action onClose
             ) {
             InitializeComponent();

@@ -15,9 +15,9 @@ namespace IAGrim.Utilities {
         private static readonly List<GDTransferFile> TransferFilesCache = new List<GDTransferFile>();
 
 
-        public static string LocalAppdata {
+        private static string LocalAppdata {
             get {
-                String appdata = System.Environment.GetEnvironmentVariable("LocalAppData");
+                string appdata = System.Environment.GetEnvironmentVariable("LocalAppData");
                 if (string.IsNullOrEmpty(appdata))
                     return Path.Combine(System.Environment.GetEnvironmentVariable("AppData"), "..", "local");
                 else
@@ -93,13 +93,12 @@ namespace IAGrim.Utilities {
 
 
                     foreach (string potential in files) {
-                        string fn;
-                        if (StashManager.TryGetModLabel(potential, out fn)) {
+                        if (TransferStashService.TryGetModLabel(potential, out var mod)) {
                             ParsedFiles.Add(potential);
                             var lastAccess = File.GetLastWriteTime(potential);
                             TransferFilesCache.Add(new GDTransferFile {
                                 Filename = potential,
-                                Mod = fn,
+                                Mod = mod,
                                 IsHardcore = IsHardcore(potential),
                                 LastAccess = lastAccess
                             });
@@ -148,24 +147,11 @@ namespace IAGrim.Utilities {
             }
         }
 
-        public static string USERDATA_FILE_FIXED {
-            get {
-                return "userdata.db";
-            }
-        }
 
 #if DEBUG
-        public static string USERDATA_FILE {
-            get {
-                return "userdata-test.db";
-            }
-        }
+        public static string USERDATA_FILE => "userdata-test.db";
 #else
-        public static string USERDATA_FILE {
-            get {
-                return USERDATA_FILE_FIXED;
-            }
-        }
+        public static string USERDATA_FILE => "userdata.db";
 #endif
 
     }

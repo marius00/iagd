@@ -20,7 +20,7 @@ namespace IAGrim.UI {
         private readonly Action _itemViewUpdateTrigger;
         private readonly IPlayerItemDao _playerItemDao;
         private readonly GDTransferFile[] _modFilter;
-        private readonly StashManager _stashManager;
+        private readonly TransferStashService _transferStashService;
         private readonly CefBrowserHandler _cefBrowserHandler;
         private readonly LanguagePackPicker _languagePackPicker;
 
@@ -30,7 +30,7 @@ namespace IAGrim.UI {
             Action itemViewUpdateTrigger, 
             IPlayerItemDao playerItemDao,
             GDTransferFile[] modFilter,
-            StashManager stashManager, 
+            TransferStashService transferStashService, 
             LanguagePackPicker languagePackPicker
             ) {            
             InitializeComponent();
@@ -39,7 +39,7 @@ namespace IAGrim.UI {
             this._itemViewUpdateTrigger = itemViewUpdateTrigger;
             this._playerItemDao = playerItemDao;
             this._modFilter = modFilter;
-            this._stashManager = stashManager;
+            this._transferStashService = transferStashService;
             _languagePackPicker = languagePackPicker;
 
             _controller.BindCheckbox(cbMinimizeToTray);
@@ -129,7 +129,7 @@ namespace IAGrim.UI {
 
 
         private void buttonImportExport_Click(object sender, EventArgs e) {
-            new Popups.ImportExport.ImportExportContainer(_modFilter, _playerItemDao, _stashManager).ShowDialog();
+            new Popups.ImportExport.ImportExportContainer(_modFilter, _playerItemDao, _transferStashService).ShowDialog();
         }
 
         private void cbDisplaySkills_CheckedChanged(object sender, EventArgs e) {
@@ -137,7 +137,7 @@ namespace IAGrim.UI {
         }
 
         private void buttonAdvancedSettings_Click(object sender, EventArgs e) {
-            new StashTabPicker(_stashManager.NumStashTabs).ShowDialog();
+            new StashTabPicker(_transferStashService.NumStashTabs).ShowDialog();
         }
 
         private void linkSourceCode_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {

@@ -59,7 +59,7 @@ namespace IAGrim.UI
         private readonly List<IMessageProcessor> _messageProcessors = new List<IMessageProcessor>();
 
         private SplitSearchWindow _searchWindow;
-        private StashManager _stashManager;
+        private TransferStashService _transferStashService;
         private BuddySettings _buddySettingsWindow;
         private StashFileMonitor _stashFileMonitor = new StashFileMonitor();
 
@@ -208,7 +208,7 @@ namespace IAGrim.UI
 
             _stashFileMonitor?.Dispose();
             _stashFileMonitor = null;
-            _stashManager = null;
+            _transferStashService = null;
 
             _backupBackgroundTask?.Dispose();
             _usageStatisticsReporter.Dispose();
@@ -397,10 +397,10 @@ namespace IAGrim.UI
             ExceptionReporter.EnableLogUnhandledOnThread();
             SizeChanged += OnMinimizeWindow;
 
-            _stashManager = new StashManager(_playerItemDao, _databaseItemStatDao, SetFeedback, ListviewUpdateTrigger);
+            _transferStashService = new TransferStashService(_playerItemDao, _databaseItemStatDao, SetFeedback, ListviewUpdateTrigger);
             _stashFileMonitor.OnStashModified += (_, __) => {
                 StashEventArg args = __ as StashEventArg;
-                if (_stashManager != null && _stashManager.TryLootStashFile(args?.Filename)) {
+                if (_transferStashService != null && _transferStashService.TryLootStashFile(args?.Filename)) {
                     // STOP TIMER
                     _stashFileMonitor.CancelQueuedNotify();
                 } // TODO: This logic should be changed to 're queue' but only trigger once, if its slow it triggers multiple times.
@@ -421,7 +421,7 @@ namespace IAGrim.UI
                 _databaseItemStatDao, 
                 _itemSkillDao, 
                 _buddyItemDao,
-                _stashManager,
+                _transferStashService,
                 _augmentationItemRepo
             );
 
@@ -475,7 +475,7 @@ namespace IAGrim.UI
 
             _searchWindow = new SplitSearchWindow(_cefBrowserHandler.BrowserControl, SetFeedback, _playerItemDao, searchController, _itemTagDao);
             addAndShow(_searchWindow, searchPanel);
-            _stashManager.StashUpdated += (_, __) => {
+            _transferStashService.StashUpdated += (_, __) => {
                 _searchWindow.UpdateListView();
             };
 
@@ -487,12 +487,12 @@ namespace IAGrim.UI
                     ListviewUpdateTrigger,
                     _playerItemDao,
                     _searchWindow.ModSelectionHandler.GetAvailableModSelection(),
-                    _stashManager,
+                    _transferStashService,
                     languagePackPicker
                 ),
                 settingsPanel);
 
-            new StashTabPicker(_stashManager.NumStashTabs).SaveStashSettingsToRegistry();
+            new StashTabPicker(_transferStashService.NumStashTabs).SaveStashSettingsToRegistry();
 
 #if !DEBUG
             ThreadPool.QueueUserWorkItem(m => ExceptionReporter.ReportUsage());
@@ -517,7 +517,7 @@ namespace IAGrim.UI
                 var transferFiles = GlobalPaths.TransferFiles;
                 if (transferFiles.Count > 0) {
                     var file = transferFiles.MaxBy(m => m.LastAccess);
-                    var stash = StashManager.GetStash(file.Filename);
+                    var stash = TransferStashService.GetStash(file.Filename);
                     if (stash != null) {
                         _dynamicPacker.Initialize(stash.Width, stash.Height);
                         if (stash.Tabs.Count >= 3) {
@@ -559,7 +559,7 @@ namespace IAGrim.UI
                 _searchWindow, 
                 _dynamicPacker,
                 _playerItemDao,
-                _stashManager,
+                _transferStashService,
                 new ItemStatService(_databaseItemStatDao, _itemSkillDao)
                 );
             Application.AddMessageFilter(new MousewheelMessageFilter());

@@ -21,9 +21,9 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
         private readonly GDTransferFile[] _modSelection;
         private readonly IPlayerItemDao _playerItemDao;
         private string _filename;
-        private readonly StashManager _sm;
+        private readonly TransferStashService _sm;
 
-        public ImportMode(GDTransferFile[] modSelection, IPlayerItemDao playerItemDao, StashManager sm) {
+        public ImportMode(GDTransferFile[] modSelection, IPlayerItemDao playerItemDao, TransferStashService sm) {
             InitializeComponent();
             this._modSelection = modSelection;
             this._playerItemDao = playerItemDao;

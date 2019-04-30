@@ -828,11 +828,7 @@ namespace IAGrim.Database {
                 .SetParameter("seed", item.Seed)
                 .UniqueResult();
 
-            if (result != null) {
-                return true;
-            }
-
-            return false;
+            return result != null;
         }
 
 

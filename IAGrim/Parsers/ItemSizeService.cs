@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IAGrim.Parser.Stash;
 
 namespace IAGrim.Parsers {
     class ItemSizeService {

@@ -267,7 +267,7 @@
     <Compile Include="Parsers\Arz\dto\StashEventArg.cs" />
     <Compile Include="Parsers\Arz\LocalizationLoader.cs" />
     <Compile Include="Parsers\Arz\StashFileMonitor.cs" />
-    <Compile Include="Parsers\Arz\StashManager.cs" />
+    <Compile Include="Parsers\Arz\TransferStashService.cs" />
     <Compile Include="Parsers\Arz\StatUpdateUIBackgroundWorker.cs" />
     <Compile Include="BuddyShare\BuddyBackgroundThread.cs" />
     <Compile Include="BuddyShare\SerializedPlayerItems.cs" />

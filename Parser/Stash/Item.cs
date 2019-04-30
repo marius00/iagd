@@ -1,12 +1,14 @@
 using System;
+using System.Collections.Generic;
+using IAGrim.StashFile;
 
-namespace IAGrim.StashFile {
+namespace IAGrim.Parser.Stash {
     public class Item : IComparable<Item> {
         public override string ToString() {
             return $"Item[{BaseRecord},{PrefixRecord},{SuffixRecord},{ModifierRecord},{TransmuteRecord},{MateriaRecord},{Seed},{RelicCompletionBonusRecord},{RelicSeed},{EnchantmentRecord},{EnchantmentSeed},{MateriaCombines},{StackCount}]";
         }
 
-        private static Random _random = new Random();
+        private static readonly Random Random = new Random();
 
         public string BaseRecord = "";
 
@@ -50,11 +52,11 @@ namespace IAGrim.StashFile {
         }
 
         public uint RandomizeSeed() {
-            return this.Seed = (uint)Item._random.Next();
+            return this.Seed = (uint)Item.Random.Next();
         }
 
         public uint RandomizeRelicSeed() {
-            return this.RelicSeed = (uint)Item._random.Next();
+            return this.RelicSeed = (uint)Item.Random.Next();
         }
 
         public bool Read(GDCryptoDataBuffer pCrypto) {
@@ -115,5 +117,22 @@ namespace IAGrim.StashFile {
             return true;
         }
 
+        public override int GetHashCode() {
+            var hashCode = -2107434431;
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(BaseRecord);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(PrefixRecord);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(SuffixRecord);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(ModifierRecord);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(TransmuteRecord);
+            hashCode = hashCode * -1521134295 + Seed.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(MateriaRecord);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(RelicCompletionBonusRecord);
+            hashCode = hashCode * -1521134295 + RelicSeed.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(EnchantmentRecord);
+            hashCode = hashCode * -1521134295 + EnchantmentSeed.GetHashCode();
+            hashCode = hashCode * -1521134295 + MateriaCombines.GetHashCode();
+            hashCode = hashCode * -1521134295 + StackCount.GetHashCode();
+            return hashCode;
+        }
     }
 }
