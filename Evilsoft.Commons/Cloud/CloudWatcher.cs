@@ -115,8 +115,8 @@ namespace EvilsoftCommons.Cloud {
             }
             else {
                 try {
-                    Guid FOLDERID_SkyDrive = new Guid("A52BBA46-E9E1-435f-B3D9-28DAA648C0F6");
-                    string location = GetKnownFolderPath(FOLDERID_SkyDrive);
+                    Guid folderidOneDrive = new Guid("A52BBA46-E9E1-435f-B3D9-28DAA648C0F6");
+                    string location = GetKnownFolderPath(folderidOneDrive);
                     if (Directory.Exists(location)) {
                         Providers.Add(new CloudProvider {
                             Location = location,
@@ -125,8 +125,8 @@ namespace EvilsoftCommons.Cloud {
                     }
                 }
                 catch (Exception ex) {
-                    logger.Warn(ex.Message);
-                    logger.Warn(ex.StackTrace);
+                    logger.Debug($"Error detecting OneDrive installation path (this is fine, don't worry): {ex.Message}");
+                    logger.Debug(ex.StackTrace);
                 }
             }
 

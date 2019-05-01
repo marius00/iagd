@@ -467,6 +467,7 @@ namespace StatTranslator
             { "iatag_ui_questionmark", " ? " },
             { "iatag_ui_howdoifindgrimdawn", "How can I find the Grim Dawn install?" },
             { "iatag_ui_whatisthis", "What is this?" },
+            { "iatag_ui_backupsdisabled", "Why is this disabled?" },
             { "iatag_no_stash_abort", "No stash chosen. Aborting transfer." },
             { "iatag_stash_status_error", "Could not inject into Grim Dawn, are you sure the bank is CLOSED?" },
             { "iatag_ui_recentonly", "Recent Only" },

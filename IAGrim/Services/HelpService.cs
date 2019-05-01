@@ -19,7 +19,8 @@ namespace IAGrim.Services {
             TransferToAnyMod,
             RestoreBackup,
             DuplicateItem,
-            NoStacks
+            NoStacks,
+            BackupAutodetectDisabled
         }
 
         public static void ShowHelp(HelpType type) {

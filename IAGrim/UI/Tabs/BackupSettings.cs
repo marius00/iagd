@@ -7,6 +7,7 @@ using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using IAGrim.Services;
 
 namespace IAGrim.UI
 {
@@ -32,37 +33,37 @@ namespace IAGrim.UI
 
             cbDropbox.Enabled = provider.Providers.Any(m => m.Provider == CloudProviderEnum.DROPBOX);
             cbGoogle.Enabled = provider.Providers.Any(m => m.Provider == CloudProviderEnum.GOOGLE_DRIVE);
-            cbSkydrive.Enabled = provider.Providers.Any(m => m.Provider == CloudProviderEnum.ONEDRIVE);
+            cbOneDrive.Enabled = provider.Providers.Any(m => m.Provider == CloudProviderEnum.ONEDRIVE);
+            helpWhyDropboxDisabled.Visible = !cbDropbox.Enabled;
+            helpWhyGdriveDisabled.Visible = !cbGoogle.Enabled;
+            helpWhyOnedriveDisabled.Visible = !cbOneDrive.Enabled;
 
-            if (provider.Providers.All(m => m.Provider != CloudProviderEnum.DROPBOX))
-            {
+            if (provider.Providers.All(m => m.Provider != CloudProviderEnum.DROPBOX)) {
                 pbDropbox.Image = error;
             }
 
-            if (provider.Providers.All(m => m.Provider != CloudProviderEnum.GOOGLE_DRIVE))
-            {
+            if (provider.Providers.All(m => m.Provider != CloudProviderEnum.GOOGLE_DRIVE)) {
                 pbGoogle.Image = error;
             }
 
-            if (provider.Providers.All(m => m.Provider != CloudProviderEnum.ONEDRIVE))
-            {
+            if (provider.Providers.All(m => m.Provider != CloudProviderEnum.ONEDRIVE)) {
                 pbSkydrive.Image = error;
             }
 
             pbDropbox.Enabled = cbDropbox.Enabled;
             pbGoogle.Enabled = cbGoogle.Enabled;
-            pbSkydrive.Enabled = cbSkydrive.Enabled;
+            pbSkydrive.Enabled = cbOneDrive.Enabled;
 
             cbDropbox.Checked = Properties.Settings.Default.BackupDropbox;
             cbGoogle.Checked = Properties.Settings.Default.BackupGoogle;
-            cbSkydrive.Checked = Properties.Settings.Default.BackupOnedrive;
+            cbOneDrive.Checked = Properties.Settings.Default.BackupOnedrive;
             cbCustom.Checked = Properties.Settings.Default.BackupCustom;
             cbDontWantBackups.Checked = Properties.Settings.Default.OptOutOfBackups;
             buttonLogin.Enabled = !Properties.Settings.Default.OptOutOfBackups;
 
             cbDropbox.CheckedChanged += cbDropbox_CheckedChanged;
             cbGoogle.CheckedChanged += cbGoogle_CheckedChanged;
-            cbSkydrive.CheckedChanged += cbSkydrive_CheckedChanged;
+            cbOneDrive.CheckedChanged += CbOneDriveCheckedChanged;
             cbCustom.CheckedChanged += cbCustom_CheckedChanged;
         }
 
@@ -76,9 +77,9 @@ namespace IAGrim.UI
 
         private void pbSkydrive_Click(object sender, EventArgs e)
         {
-            if (cbSkydrive.Enabled)
+            if (cbOneDrive.Enabled)
             {
-                cbSkydrive.Checked = !cbSkydrive.Checked;
+                cbOneDrive.Checked = !cbOneDrive.Checked;
             }
         }
 
@@ -106,7 +107,7 @@ namespace IAGrim.UI
             Properties.Settings.Default.Save();
         }
 
-        private void cbSkydrive_CheckedChanged(object sender, EventArgs e)
+        private void CbOneDriveCheckedChanged(object sender, EventArgs e)
         {
             var cb = sender as FirefoxCheckBox;
 
@@ -186,6 +187,18 @@ namespace IAGrim.UI
             buttonLogin.Enabled = !cbDontWantBackups.Checked;
             Properties.Settings.Default.OptOutOfBackups = cbDontWantBackups.Checked;
             Properties.Settings.Default.Save();
+        }
+
+        private void helpWhyGdriveDisabled_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            HelpService.ShowHelp(HelpService.HelpType.BackupAutodetectDisabled);
+        }
+
+        private void helpWhyDropboxDisabled_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            HelpService.ShowHelp(HelpService.HelpType.BackupAutodetectDisabled);
+        }
+
+        private void helpWhyOnedriveDisabled_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            HelpService.ShowHelp(HelpService.HelpType.BackupAutodetectDisabled);
         }
     }
 }

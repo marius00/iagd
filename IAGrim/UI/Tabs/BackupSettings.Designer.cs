@@ -27,10 +27,13 @@
             this.cbDontWantBackups = new FirefoxCheckBox();
             this.buttonLogin = new FirefoxButton();
             this.panelBox5 = new PanelBox();
+            this.helpWhyOnedriveDisabled = new System.Windows.Forms.LinkLabel();
+            this.helpWhyDropboxDisabled = new System.Windows.Forms.LinkLabel();
+            this.helpWhyGdriveDisabled = new System.Windows.Forms.LinkLabel();
             this.buttonBackupNow = new FirefoxButton();
             this.buttonCustom = new System.Windows.Forms.Button();
             this.cbCustom = new FirefoxCheckBox();
-            this.cbSkydrive = new FirefoxCheckBox();
+            this.cbOneDrive = new FirefoxCheckBox();
             this.cbDropbox = new FirefoxCheckBox();
             this.pbSkydrive = new System.Windows.Forms.PictureBox();
             this.pbDropbox = new System.Windows.Forms.PictureBox();
@@ -94,10 +97,13 @@
             // 
             this.panelBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelBox5.Controls.Add(this.helpWhyOnedriveDisabled);
+            this.panelBox5.Controls.Add(this.helpWhyDropboxDisabled);
+            this.panelBox5.Controls.Add(this.helpWhyGdriveDisabled);
             this.panelBox5.Controls.Add(this.buttonBackupNow);
             this.panelBox5.Controls.Add(this.buttonCustom);
             this.panelBox5.Controls.Add(this.cbCustom);
-            this.panelBox5.Controls.Add(this.cbSkydrive);
+            this.panelBox5.Controls.Add(this.cbOneDrive);
             this.panelBox5.Controls.Add(this.cbDropbox);
             this.panelBox5.Controls.Add(this.pbSkydrive);
             this.panelBox5.Controls.Add(this.pbDropbox);
@@ -113,6 +119,48 @@
             this.panelBox5.Tag = "iatag_ui_backup_location";
             this.panelBox5.Text = "Local Backup";
             this.panelBox5.TextLocation = "8; 5";
+            // 
+            // helpWhyOnedriveDisabled
+            // 
+            this.helpWhyOnedriveDisabled.AutoSize = true;
+            this.helpWhyOnedriveDisabled.BackColor = System.Drawing.Color.Transparent;
+            this.helpWhyOnedriveDisabled.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.helpWhyOnedriveDisabled.Location = new System.Drawing.Point(107, 187);
+            this.helpWhyOnedriveDisabled.Name = "helpWhyOnedriveDisabled";
+            this.helpWhyOnedriveDisabled.Size = new System.Drawing.Size(115, 13);
+            this.helpWhyOnedriveDisabled.TabIndex = 15;
+            this.helpWhyOnedriveDisabled.TabStop = true;
+            this.helpWhyOnedriveDisabled.Tag = "iatag_ui_backupsdisabled";
+            this.helpWhyOnedriveDisabled.Text = "Why is this disabled?";
+            this.helpWhyOnedriveDisabled.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpWhyOnedriveDisabled_LinkClicked);
+            // 
+            // helpWhyDropboxDisabled
+            // 
+            this.helpWhyDropboxDisabled.AutoSize = true;
+            this.helpWhyDropboxDisabled.BackColor = System.Drawing.Color.Transparent;
+            this.helpWhyDropboxDisabled.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.helpWhyDropboxDisabled.Location = new System.Drawing.Point(107, 130);
+            this.helpWhyDropboxDisabled.Name = "helpWhyDropboxDisabled";
+            this.helpWhyDropboxDisabled.Size = new System.Drawing.Size(115, 13);
+            this.helpWhyDropboxDisabled.TabIndex = 14;
+            this.helpWhyDropboxDisabled.TabStop = true;
+            this.helpWhyDropboxDisabled.Tag = "iatag_ui_backupsdisabled";
+            this.helpWhyDropboxDisabled.Text = "Why is this disabled?";
+            this.helpWhyDropboxDisabled.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpWhyDropboxDisabled_LinkClicked);
+            // 
+            // helpWhyGdriveDisabled
+            // 
+            this.helpWhyGdriveDisabled.AutoSize = true;
+            this.helpWhyGdriveDisabled.BackColor = System.Drawing.Color.Transparent;
+            this.helpWhyGdriveDisabled.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.helpWhyGdriveDisabled.Location = new System.Drawing.Point(107, 77);
+            this.helpWhyGdriveDisabled.Name = "helpWhyGdriveDisabled";
+            this.helpWhyGdriveDisabled.Size = new System.Drawing.Size(115, 13);
+            this.helpWhyGdriveDisabled.TabIndex = 13;
+            this.helpWhyGdriveDisabled.TabStop = true;
+            this.helpWhyGdriveDisabled.Tag = "iatag_ui_backupsdisabled";
+            this.helpWhyGdriveDisabled.Text = "Why is this disabled?";
+            this.helpWhyGdriveDisabled.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpWhyGdriveDisabled_LinkClicked);
             // 
             // buttonBackupNow
             // 
@@ -150,16 +198,16 @@
             this.cbCustom.Size = new System.Drawing.Size(29, 27);
             this.cbCustom.TabIndex = 7;
             // 
-            // cbSkydrive
+            // cbOneDrive
             // 
-            this.cbSkydrive.Bold = false;
-            this.cbSkydrive.EnabledCalc = true;
-            this.cbSkydrive.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cbSkydrive.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbSkydrive.Location = new System.Drawing.Point(17, 180);
-            this.cbSkydrive.Name = "cbSkydrive";
-            this.cbSkydrive.Size = new System.Drawing.Size(29, 27);
-            this.cbSkydrive.TabIndex = 6;
+            this.cbOneDrive.Bold = false;
+            this.cbOneDrive.EnabledCalc = true;
+            this.cbOneDrive.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbOneDrive.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbOneDrive.Location = new System.Drawing.Point(17, 180);
+            this.cbOneDrive.Name = "cbOneDrive";
+            this.cbOneDrive.Size = new System.Drawing.Size(29, 27);
+            this.cbOneDrive.TabIndex = 6;
             // 
             // cbDropbox
             // 
@@ -233,6 +281,7 @@
             this.Load += new System.EventHandler(this.BackupSettings_Load);
             this.onlineBackup.ResumeLayout(false);
             this.panelBox5.ResumeLayout(false);
+            this.panelBox5.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbSkydrive)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbDropbox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbGoogle)).EndInit();
@@ -247,7 +296,7 @@
         private System.Windows.Forms.PictureBox pbDropbox;
         private System.Windows.Forms.PictureBox pbGoogle;
         private System.Windows.Forms.PictureBox pbSkydrive;
-        private FirefoxCheckBox cbSkydrive;
+        private FirefoxCheckBox cbOneDrive;
         private FirefoxCheckBox cbDropbox;
         private System.Windows.Forms.Button buttonCustom;
         private FirefoxCheckBox cbCustom;
@@ -255,5 +304,8 @@
         private PanelBox onlineBackup;
         private FirefoxButton buttonLogin;
         private FirefoxCheckBox cbDontWantBackups;
+        private System.Windows.Forms.LinkLabel helpWhyGdriveDisabled;
+        private System.Windows.Forms.LinkLabel helpWhyOnedriveDisabled;
+        private System.Windows.Forms.LinkLabel helpWhyDropboxDisabled;
     }
 }
