@@ -64,31 +64,3 @@ namespace IAGrim.Parsers.Arz {
         }
     }
 }
-
-// TODO: If this is still a thing, create a bug report with crate, don't work around a known bug.
-/*
-if (GlobalSettings.PreviousStashStatus == StashAvailability.CRAFTING ||
-    GlobalSettings.StashStatus == StashAvailability.CRAFTING) {
-    Logger.Info("Detected an update to stash file, but ignoring due to crafting-safety-check");
-    // OBS: Can only do this if we've previously looted! CAnnot risk it containing unlooted items
-    if (TransferStashService.HasLootedItemsOnceThisSession) {
-        if (_delayedLootTimer == null) {
-            Logger.Info(
-                "Items has already been looted this session, post-crafting safety measures required.");
-
-
-            TransferStashService.DeleteItemsInPageX(e.FullPath);
-        }
-        else {
-            Logger.Info("Player may have opened devotion screen before running away.. leaving items be..");
-        }
-    }
-    else {
-        Logger.Info("No items has been looted this session, ignoring safety measures.");
-    }
-}
-else {
-    Logger.Info("Detected an update to stash file, checking for loot..");
-
-    NotifyStashChangeDelayed(e.FullPath);
-}*/

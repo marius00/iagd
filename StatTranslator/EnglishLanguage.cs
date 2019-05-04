@@ -478,7 +478,6 @@ namespace StatTranslator
             { "iatag_deposit_stash_sorted", "Cannot deposit item, please open or close your stash in-game (stash was sorted)" },
             { "iatag_deposit_stash_unknown_tooltip", "Stash status is unknown, open & close stash in-game to resolve." },
             { "iatag_deposit_stash_unknown_feedback", "Cannot deposit item, please open and close your stash in-game" },
-            { "iatag_stash_hotfix_1_0_40_0_rejected", "Transfer rejected due to v1.0.40.0 hotfix - Either use instatransfer or close GrimDawn first" },
             { "iatag_deposit_pipe_success", "Item sent to GD" },
             { "iatag_file_does_not_exist", "The specified file does not exist" },
             { "iatag_file_not_zip", "Specified file is not a zip file!?" },

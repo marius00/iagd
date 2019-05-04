@@ -84,7 +84,7 @@ namespace IAGrim.Parsers.TransferStash {
                     return (false, UserFeedback.FromTagSingleton("iatag_feedback_too_close_to_stash"));
                 }
                 else {
-                    Logger.Info("Delaying stash loot, player location is unknown.");
+                    //Logger.Info("Delaying stash loot, player location is unknown.");
                     return (false, UserFeedback.FromTagSingleton("iatag_feedback_stash_position_unknown"));
                 }
             }

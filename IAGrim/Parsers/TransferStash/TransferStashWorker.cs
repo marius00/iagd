@@ -14,9 +14,11 @@ namespace IAGrim.Parsers.TransferStash {
         private BackgroundWorker _bw = new BackgroundWorker();
         private readonly TransferStashService2 _transferStashService;
         private readonly ConcurrentQueue<string> _queuedTransferFiles = new ConcurrentQueue<string>();
+        private readonly UserFeedbackService _feedbackService;
 
-        public TransferStashWorker(TransferStashService2 transferStashService) {
+        public TransferStashWorker(TransferStashService2 transferStashService, UserFeedbackService feedbackService) {
             _transferStashService = transferStashService;
+            _feedbackService = feedbackService;
 
             _bw.DoWork += new DoWorkEventHandler(bw_DoWork);
             _bw.WorkerSupportsCancellation = true;
@@ -73,11 +75,7 @@ namespace IAGrim.Parsers.TransferStash {
                     feedback = UserFeedback.FromTagSingleton("iatag_feedback_unable_to_loot_stash");
                 }
 
-                foreach (var message in feedback) {
-                    Logger.Warn($"No feedback service yet, so this is it: {message.Message}");
-                }
-                // TODO: Handle feedback
-                // TODO: Handle errors, some kind of ErrorService? -- feedback service will be responsible to cutting out spammed messages. Somehow..
+                _feedbackService.Print(feedback);
             }
         }
 

@@ -27,7 +27,6 @@ namespace IAGrim.UI.Controller {
             SecureTransfers = (bool)Properties.Settings.Default.SecureTransfers;
             ShowRecipesAsItems = (bool)Properties.Settings.Default.ShowRecipesAsItems;
             AutoUpdateModSettings = (bool)Properties.Settings.Default.AutoUpdateModSettings;
-            InstaTransfer = (bool)Properties.Settings.Default.InstaTransfer;
             AutoSearch = (bool)Properties.Settings.Default.AutoSearch;
             DisplaySkills = Properties.Settings.Default.DisplaySkills;
         }
@@ -45,9 +44,7 @@ namespace IAGrim.UI.Controller {
         /// Also goes for softcore/hardcore
         /// </summary>
         public bool AutoUpdateModSettings {
-            get {
-                return (bool)Properties.Settings.Default.AutoUpdateModSettings;
-            }
+            get => Properties.Settings.Default.AutoUpdateModSettings;
             set {
                 Properties.Settings.Default.AutoUpdateModSettings = value;
                 Properties.Settings.Default.Save();
@@ -59,9 +56,7 @@ namespace IAGrim.UI.Controller {
         /// List recipes along with items
         /// </summary>
         public bool ShowRecipesAsItems {
-            get {
-                return (bool)Properties.Settings.Default.ShowRecipesAsItems;
-            }
+            get => Properties.Settings.Default.ShowRecipesAsItems;
             set {
                 Properties.Settings.Default.ShowRecipesAsItems = value;
                 Properties.Settings.Default.Save();
@@ -84,11 +79,9 @@ namespace IAGrim.UI.Controller {
         /// Minimize the program to the system tray
         /// </summary>
         public bool MinimizeToTray {
-            get {
-                return (bool)Properties.Settings.Default.MinimizeToTray;
-            }
+            get => Properties.Settings.Default.MinimizeToTray;
             set {
-                if ((bool)Properties.Settings.Default.MinimizeToTray != value) {
+                if (Properties.Settings.Default.MinimizeToTray != value) {
                     Properties.Settings.Default.MinimizeToTray = value;
                     Properties.Settings.Default.Save();
                     OnPropertyChanged();
@@ -101,9 +94,7 @@ namespace IAGrim.UI.Controller {
         /// Merge duplicate items into a single entry
         /// </summary>
         public bool MergeDuplicates {
-            get {
-                return (bool)Properties.Settings.Default.MergeDuplicates;
-            }
+            get => Properties.Settings.Default.MergeDuplicates;
             set {
                 Properties.Settings.Default.MergeDuplicates = value;
                 Properties.Settings.Default.Save();
@@ -141,27 +132,11 @@ namespace IAGrim.UI.Controller {
             }
         }
 
-
-        public bool InstaTransfer {
-            get {
-                return (bool)Properties.Settings.Default.InstaTransfer;
-            }
-            set {
-                Properties.Settings.Default.InstaTransfer = value;
-                Properties.Settings.Default.Save();
-                OnPropertyChanged();
-            }
-        }
-
-
-
         /// <summary>
         /// Enable DLL stash-closed safety checks
         /// </summary>
         public bool SecureTransfers {
-            get {
-                return (bool)Properties.Settings.Default.SecureTransfers;
-            }
+            get => Properties.Settings.Default.SecureTransfers;
             set {
                 if (value || MessageBox.Show("Are you sure you wish to disable secure transfers?\n\nIt will be YOUR responsibility to make sure the bank is closed when transferring.", "Are you sure?", MessageBoxButtons.YesNo) == DialogResult.Yes) {
                     Properties.Settings.Default.SecureTransfers = value;

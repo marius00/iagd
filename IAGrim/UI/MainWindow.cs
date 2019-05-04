@@ -39,6 +39,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
+using DllInjector;
 using IAGrim.Parsers.TransferStash;
 using Timer = System.Timers.Timer;
 
@@ -83,17 +84,17 @@ namespace IAGrim.UI
         private readonly IDatabaseSettingDao _databaseSettingDao;
         private readonly IBuddyItemDao _buddyItemDao;
         private readonly IBuddySubscriptionDao _buddySubscriptionDao;
-        private readonly ArzParser _arzParser;
         private readonly RecipeParser _recipeParser;
         private readonly IItemSkillDao _itemSkillDao;
         private readonly ParsingService _parsingService;
         private readonly AugmentationItemRepo _augmentationItemRepo;
         private AzureAuthService _authAuthService;
         private BackupServiceWorker _backupServiceWorker;
+        private readonly UserFeedbackService _userFeedbackService;
 
 
-#region Stash Status
-        
+        #region Stash Status
+
         /// <summary>
         /// Toolstrip callback for GDInjector
         /// </summary>
@@ -111,13 +112,11 @@ namespace IAGrim.UI
                 else if (e.ProgressPercentage == InjectionHelper.NO_PROCESS_FOUND_ON_STARTUP) {
                     if (GlobalSettings.StashStatus == StashAvailability.UNKNOWN) {
                         GlobalSettings.StashStatus = StashAvailability.CLOSED;
-                        GlobalSettings.GrimDawnRunning = false; // V1.0.4.0 hotfix
                     }
                 }
                 // No grim dawn client, so stash is closed!
                 else if (e.ProgressPercentage == InjectionHelper.NO_PROCESS_FOUND) {
                     GlobalSettings.StashStatus = StashAvailability.CLOSED;
-                    GlobalSettings.GrimDawnRunning = false;// V1.0.4.0 hotfix
                 }
             }
         }
@@ -150,7 +149,6 @@ namespace IAGrim.UI
             IDatabaseSettingDao databaseSettingDao,
             IBuddyItemDao buddyItemDao,
             IBuddySubscriptionDao buddySubscriptionDao,
-            ArzParser arzParser,
             IRecipeItemDao recipeItemDao,
             IItemSkillDao itemSkillDao,
             IItemTagDao itemTagDao, 
@@ -169,12 +167,12 @@ namespace IAGrim.UI
             _databaseSettingDao = databaseSettingDao;
             _buddyItemDao = buddyItemDao;
             _buddySubscriptionDao = buddySubscriptionDao;
-            _arzParser = arzParser;
             _recipeParser = new RecipeParser(recipeItemDao);
             _itemSkillDao = itemSkillDao;
             _itemTagDao = itemTagDao;
             _parsingService = parsingService;
             _augmentationItemRepo = augmentationItemRepo;
+            _userFeedbackService = new UserFeedbackService(_cefBrowserHandler);
         }
 
         /// <summary>
@@ -249,16 +247,9 @@ namespace IAGrim.UI
                 return;
             }
 
-
             MessageType type = (MessageType)bt.Type;
-            
             foreach (IMessageProcessor t in _messageProcessors) {
                 t.Process(type, bt.Data);
-            }
-
-            if (!GlobalSettings.GrimDawnRunning) {
-                Logger.Debug("GrimDawnRunning flag has been changed from false to true");
-                GlobalSettings.GrimDawnRunning = true; // V1.0.4.0 hotfix   
             }
 
             switch (type) {
@@ -326,7 +317,7 @@ namespace IAGrim.UI
                 }
                 else {
                     statusLabel.Text = feedback.Replace("\\n", " - ");
-                    _cefBrowserHandler.ShowMessage(feedback, UserFeedbackLevel.Info, helpUrl);
+                    _userFeedbackService.SetFeedback(feedback, level, helpUrl);
                 }
             }
             catch (ObjectDisposedException) {
@@ -341,7 +332,7 @@ namespace IAGrim.UI
                 }
                 else {
                     statusLabel.Text = feedback.Replace("\\n", " - ");
-                    _cefBrowserHandler.ShowMessage(feedback, UserFeedbackLevel.Info);
+                    _userFeedbackService.SetFeedback(feedback);
                 }
             }
             catch (ObjectDisposedException) {
@@ -401,8 +392,9 @@ namespace IAGrim.UI
             SizeChanged += OnMinimizeWindow;
 
             var cacher = new TransferStashServiceCache(_databaseItemDao); // TODO: This needs to refresh on db load
-            _transferStashWorker = new TransferStashWorker(new TransferStashService2(_playerItemDao, cacher));
-            _transferStashService = new TransferStashService(_playerItemDao, _databaseItemStatDao, SetFeedback, ListviewUpdateTrigger);
+            var transferStashService2 = new TransferStashService2(_playerItemDao, cacher);
+            _transferStashWorker = new TransferStashWorker(transferStashService2, _userFeedbackService);
+            _transferStashService = new TransferStashService(_databaseItemStatDao);
             _stashFileMonitor.OnStashModified += (_, __) => {
                 StashEventArg args = __ as StashEventArg;
                 _transferStashWorker.Queue(args?.Filename);
@@ -478,6 +470,10 @@ namespace IAGrim.UI
             _searchWindow = new SplitSearchWindow(_cefBrowserHandler.BrowserControl, SetFeedback, _playerItemDao, searchController, _itemTagDao);
             addAndShow(_searchWindow, searchPanel);
             _transferStashService.StashUpdated += (_, __) => {
+                _searchWindow.UpdateListView();
+            };
+
+            transferStashService2.OnUpdate += (_, __) => {
                 _searchWindow.UpdateListView();
             };
 
