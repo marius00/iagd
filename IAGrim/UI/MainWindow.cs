@@ -39,6 +39,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
+using IAGrim.Parsers.TransferStash;
 using Timer = System.Timers.Timer;
 
 namespace IAGrim.UI
@@ -60,6 +61,8 @@ namespace IAGrim.UI
 
         private SplitSearchWindow _searchWindow;
         private TransferStashService _transferStashService;
+        private TransferStashWorker _transferStashWorker;
+        
         private BuddySettings _buddySettingsWindow;
         private StashFileMonitor _stashFileMonitor = new StashFileMonitor();
 
@@ -397,13 +400,12 @@ namespace IAGrim.UI
             ExceptionReporter.EnableLogUnhandledOnThread();
             SizeChanged += OnMinimizeWindow;
 
+            var cacher = new TransferStashServiceCache(_databaseItemDao); // TODO: This needs to refresh on db load
+            _transferStashWorker = new TransferStashWorker(new TransferStashService2(_playerItemDao, cacher));
             _transferStashService = new TransferStashService(_playerItemDao, _databaseItemStatDao, SetFeedback, ListviewUpdateTrigger);
             _stashFileMonitor.OnStashModified += (_, __) => {
                 StashEventArg args = __ as StashEventArg;
-                if (_transferStashService != null && _transferStashService.TryLootStashFile(args?.Filename)) {
-                    // STOP TIMER
-                    _stashFileMonitor.CancelQueuedNotify();
-                } // TODO: This logic should be changed to 're queue' but only trigger once, if its slow it triggers multiple times.
+                _transferStashWorker.Queue(args?.Filename);
             };
 
             if (!_stashFileMonitor.StartMonitorStashfile(GlobalPaths.SavePath)) {
@@ -539,7 +541,6 @@ namespace IAGrim.UI
             _messageProcessors.Add(new ItemPositionFinder(_dynamicPacker));
             _messageProcessors.Add(new PlayerPositionTracker(Debugger.IsAttached && false));
             _messageProcessors.Add(new StashStatusHandler());
-            _messageProcessors.Add(new ItemReceivedProcessor(_searchWindow, _stashFileMonitor, _playerItemDao));
             _messageProcessors.Add(new ItemInjectCallbackProcessor(_searchWindow.UpdateListViewDelayed, _playerItemDao));
             _messageProcessors.Add(new ItemSpawnedProcessor());
             _messageProcessors.Add(new CloudDetectorProcessor(SetFeedback));

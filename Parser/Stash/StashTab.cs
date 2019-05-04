@@ -9,6 +9,7 @@ namespace IAGrim.StashFile {
 
         // TODO: Load this dynamically
         // select s.id_databaseitem, i.name from databaseitemstat_v2 s, databaseitem_v2 i where stat = 'preventEasyDrops' and i.id_databaseitem = s.id_databaseitem -- These are stackable
+        [Obsolete] // See _databaseItemDao.GetSpecialStackableRecords()
         public static readonly string[] HardcodedRecords = {
             "records/items/crafting/materials/craft_bloodchthon.dbr",
             "records/items/crafting/materials/craft_manticore.dbr",

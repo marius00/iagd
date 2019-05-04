@@ -499,7 +499,7 @@ namespace StatTranslator
             { "iatag_invalid_deposit_stash_number", "You have configured IA to deposit to stash {0} but you only have {1} pages" },
             { "iatag_invalid_loot_stash_number", "You have configured IA to loot from stash {0} but you only have {1} pages" },
             { "iatag_stash_might_be_full", "Some items not deposited, stash {0} might be full." },
-            { "iatag_not_enough_stash", "File \"{0}\" only contains {1} pages. IA requires at least 2 pages to function properly." },
+            { "iatag_not_enough_stash", "Transfer Stash only contains {0} pages. IA requires at least 2 pages to function properly." },
             { "iatag_no_matching_items_found", "No matching items found" },
             { "iatag_additional_items_found", "An additional {0} items found from your friends" },
 
@@ -513,12 +513,14 @@ namespace StatTranslator
 
             { "iatag_feedback_already_logged_in", "You are already logged in" },
             { "iatag_feedback_too_close_to_stash", "Delaying stash loot - Standing too close to stash!" },
+            { "iatag_feedback_stash_position_unknown", "Cannot loot, stash position still unknown.." },
             { "iatag_feedback_delaying_stash_loot_status", "Waiting for stash to close.." },
             { "iatag_feedback_no_items_to_loot", "No items to loot in SHARED stash tab"},
             { "iatag_feedback_unable_to_loot_stash", "Unable to loot SHARED stash page."},
             { "iatag_feedback_item_does_not_exist", "Cannot deposit item, item does not appear to exist.. (ghost item)"},
             { "iatag_feedback_cloud_save_enabled_ingame", "WARNING - Grim Dawn Cloud saving is active." },
             { "iatag_feedback_stacked_not_looted", "{0} items were not looted due to being a stack" },
+            { "iatag_feedback_unknown_not_looted", "{0} items were not looted due to being unidentified" },
             { "iatag_feedback_duplicates_not_looted", "{0} items were not looted due to being possible duplicates (bugged items)" },
 
             { "iatag_slot_any", "Any" },

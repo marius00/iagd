@@ -16,6 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using IAGrim.Parser.Stash;
+using IAGrim.Parsers.TransferStash;
 
 namespace IAGrim.Parsers.Arz {
     internal class TransferStashService {
@@ -27,6 +28,9 @@ namespace IAGrim.Parsers.Arz {
         private readonly ItemSizeService _itemSizeService;
         private readonly object _fileLock = new object();
 
+        /// <summary>
+        /// Used for the crafting tab, I believe.
+        /// </summary>
         private ConcurrentBag<Item> _unlootedItems = new ConcurrentBag<Item>();
 
         /// <summary>
@@ -168,7 +172,7 @@ namespace IAGrim.Parsers.Arz {
                     if (stash.Tabs.Count >= lootFromIndex + 1
                         && stash.Tabs[lootFromIndex].Items.Count > 0) {
                         stash.Tabs[lootFromIndex].Items.Clear();
-                        SafelyWriteStash(filename, stash);
+                        SafeTransferStashWriter.SafelyWriteStash(filename, stash);
                     }
                 }
             }
@@ -191,7 +195,7 @@ namespace IAGrim.Parsers.Arz {
             return 0;
         }
 
-        private static int GetStashToLootFrom(Stash stash) {
+        public static int GetStashToLootFrom(Stash stash) {
             if (Settings.Default.StashToLootFrom == 0) {
                 return stash.Tabs.Count - 1;
             }
@@ -227,7 +231,7 @@ namespace IAGrim.Parsers.Arz {
                         stash.Tabs.Add(new StashTab());
                     }
 
-                    SafelyWriteStash(filename, stash);
+                    SafeTransferStashWriter.SafelyWriteStash(filename, stash);
                     Logger.Info("Upgraded stash to 5 pages.");
 
                     return string.Empty;
@@ -295,7 +299,7 @@ namespace IAGrim.Parsers.Arz {
                     if (storedItems != null) {
                         Logger.Info(message);
 
-                        if (!SafelyWriteStash(filename, stash)) {
+                        if (!SafeTransferStashWriter.SafelyWriteStash(filename, stash)) {
                             _playerItemDao.Remove(storedItems);
                         }
                     }
@@ -332,7 +336,7 @@ namespace IAGrim.Parsers.Arz {
                     tab.Items.Clear();
                 }
 
-                SafelyWriteStash(filename, stash);
+                SafeTransferStashWriter.SafelyWriteStash(filename, stash);
                 Logger.InfoFormat("Looted {0} items from stash", items.Count);
 
                 return items.Select(m => Map(m, stash.ModLabel, isHardcore)).ToList();
@@ -367,48 +371,6 @@ namespace IAGrim.Parsers.Arz {
 
             result = string.Empty;
             return false;
-        }
-
-        /// <summary>
-        ///     Write the GD Stash file
-        /// </summary>
-        /// <param name="filename"></param>
-        /// <param name="stash"></param>
-        /// <returns></returns>
-        private static bool SafelyWriteStash(string filename, Stash stash) {
-            try {
-                var tempName = $"{filename}.ia";
-
-                // Store the stash file in a temporary location
-                var dataBuffer = new DataBuffer();
-
-                stash.Write(dataBuffer);
-                DataBuffer.WriteBytesToDisk(tempName, dataBuffer.Data);
-
-                // Get the current backup number
-                var backupNumber = Settings.Default.BackupNumber;
-
-                Settings.Default.BackupNumber = (backupNumber + 1) % 100;
-                Settings.Default.Save();
-
-                // Back up the existing stash and replace with new stash file
-                var backupLocation = Path.Combine(GlobalPaths.BackupLocation, $"transfer.{backupNumber:00}.gs_");
-                File.Copy(filename, backupLocation, true);
-                File.Copy(tempName, filename, true);
-
-                // Delete the temporary file
-                if (File.Exists(tempName)) {
-                    File.Delete(tempName);
-                }
-
-                return true;
-            }
-            catch (UnauthorizedAccessException ex) {
-                Logger.Warn(ex.Message);
-                Logger.Warn(ex.StackTrace);
-                ExceptionReporter.ReportException(ex, "SafelyWriteDatabase");
-                return false;
-            }
         }
 
         private Item GetItem(PlayerItem item) {
@@ -533,7 +495,7 @@ namespace IAGrim.Parsers.Arz {
                     }
 
                     // Store to stash
-                    SafelyWriteStash(filename, stash);
+                    SafeTransferStashWriter.SafelyWriteStash(filename, stash);
 
                     var numItemsNotDeposited = playerItems.Sum(m => m.StackCount);
 
@@ -544,7 +506,7 @@ namespace IAGrim.Parsers.Arz {
             }
         }
 
-        private PlayerItem Map(Item item, string mod, bool isHardcore) {
+        public static PlayerItem Map(Item item, string mod, bool isHardcore) {
             return new PlayerItem {
                 BaseRecord = item.BaseRecord,
                 EnchantmentRecord = item.EnchantmentRecord,

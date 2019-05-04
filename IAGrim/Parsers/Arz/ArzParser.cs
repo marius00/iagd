@@ -24,44 +24,7 @@ namespace IAGrim.Parsers.Arz {
         public ArzParser(IDatabaseSettingDao databaseSettingDao) {
             _databaseSettingDao = databaseSettingDao;
         }
-
-        public bool NeedUpdate(string grimdawnLocation) {
-            string databaseFile = GrimFolderUtility.FindArzFile(grimdawnLocation);
-            if (!string.IsNullOrEmpty(databaseFile)) {
-                long lastModified = File.GetLastWriteTime(databaseFile).Ticks;
-                if (_databaseSettingDao.GetLastDatabaseUpdate() < lastModified) {
-                    Logger.Debug($"A new database parse is required, the file \"{databaseFile}\" has been modified");
-                    return true;
-                }
-
-                // TODO: Improve this
-                var expansionLocation3 = Path.Combine(grimdawnLocation, "gdx3");
-                if (Directory.Exists(expansionLocation3))
-                    return NeedUpdate(expansionLocation3);
-
-                var expansionLocation2 = Path.Combine(grimdawnLocation, "gdx2");
-                if (Directory.Exists(expansionLocation2))
-                    return NeedUpdate(expansionLocation2);
-
-                var expansionLocation1 = Path.Combine(grimdawnLocation, "gdx1");
-                if (Directory.Exists(expansionLocation1))
-                    return NeedUpdate(expansionLocation1);
-            }
-            else {
-                Logger.WarnFormat("Could not locate database at \"{0}\"", grimdawnLocation);
-            }
-            return false;
-        }
-
-
-        private DatabaseItemStat map(IItemStat stat) {
-            return new DatabaseItemStat {
-                Stat = stat.Stat,
-                TextValue = stat.TextValue,
-                Value = stat.Value
-            };
-        }
-
+        
         public static void LoadIconsOnly(string grimdawnLocation) {
             Logger.Debug("Icon loading requested");
             {
@@ -105,6 +68,7 @@ namespace IAGrim.Parsers.Arz {
 
             DDSImageReader.ExtractItemIcons(arcItemfile, GlobalPaths.StorageFolder);
         }
+
         public static string ExtractClassFromRecord(string record, IEnumerable<DatabaseItem> items) {
             Regex playerClassRx = new Regex(@".*/player(class\d+)/.*");
             // "MasteryEnumeration"	"SkillClass24" => tagSkillClassName24

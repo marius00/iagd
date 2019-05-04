@@ -24,9 +24,22 @@ namespace IAGrim.Services {
                 if (LastKnownPosition == null || LastStashPosition == null)
                     return false;
 
-                float distSq = (LastKnownPosition.X - LastStashPosition.X) * (LastKnownPosition.X - LastStashPosition.X) 
-                    + (LastKnownPosition.Z - LastStashPosition.Z) * (LastKnownPosition.Z - LastStashPosition.Z);
-                return distSq >= 15;
+                float distSq = (LastKnownPosition.X - LastStashPosition.X) * (LastKnownPosition.X - LastStashPosition.X)
+                               + (LastKnownPosition.Z - LastStashPosition.Z) * (LastKnownPosition.Z - LastStashPosition.Z);
+                return distSq >= MinDistance * MinDistance;
+            }
+        }
+
+        public static int MinDistance => 15;
+
+        public static int? Distance {
+            get {
+                if (LastKnownPosition == null || LastStashPosition == null)
+                    return null;
+
+                float distSq = (LastKnownPosition.X - LastStashPosition.X) * (LastKnownPosition.X - LastStashPosition.X)
+                               + (LastKnownPosition.Z - LastStashPosition.Z) * (LastKnownPosition.Z - LastStashPosition.Z);
+                return (int)Math.Sqrt(distSq);
             }
         }
     }

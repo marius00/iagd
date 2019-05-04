@@ -36,6 +36,18 @@ namespace IAGrim.Database.Synchronizer {
             );
         }
 
+        public IList<string> GetSpecialStackableRecords() {
+            return ThreadExecuter.Execute(
+                () => _repo.GetSpecialStackableRecords()
+            );
+        }
+
+        public IList<string> GetStackableComponentsPotionsMisc() {
+            return ThreadExecuter.Execute(
+                () => _repo.GetStackableComponentsPotionsMisc()
+            );
+        }
+
 
         public DatabaseItemDto FindDtoByRecord(string record) {
             return ThreadExecuter.Execute(
