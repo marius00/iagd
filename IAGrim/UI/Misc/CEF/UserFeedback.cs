@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using IAGrim.Utilities;
 
 namespace IAGrim.UI.Misc.CEF {
-    class UserFeedback {
+    public class UserFeedback {
         public string Message { get; set; }
         public UserFeedbackLevel Level { get; set; } = UserFeedbackLevel.Info;
         public string URL { get; set; }

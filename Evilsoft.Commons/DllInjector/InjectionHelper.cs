@@ -1,17 +1,15 @@
-﻿using log4net;
-using EvilsoftCommons.Exceptions;
-using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using DllInjector.UI;
+using EvilsoftCommons.DllInjector;
+using EvilsoftCommons.Exceptions;
+using log4net;
 
-namespace EvilsoftCommons.DllInjector {
+namespace DllInjector {
     public class InjectionHelper : IDisposable {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(InjectionHelper));
         private BackgroundWorker _bw;
@@ -100,7 +98,7 @@ namespace EvilsoftCommons.DllInjector {
         private HashSet<uint> FindProcesses(RunArguments args) {
 
             if (!string.IsNullOrEmpty(args.WindowName)) {
-                return DllInjector.FindProcessForWindow(args.WindowName);
+                return EvilsoftCommons.DllInjector.DllInjector.FindProcessForWindow(args.WindowName);
             }
             else {
                 throw new NotSupportedException("Class name provided instead of window name, not yet implemented.");
@@ -110,7 +108,7 @@ namespace EvilsoftCommons.DllInjector {
         private bool Is64Bit(int pid) {
             try {
                 var p = System.Diagnostics.Process.GetProcessById(pid);
-                return DllInjector.Is64BitProcess(p);
+                return EvilsoftCommons.DllInjector.DllInjector.Is64BitProcess(p);
             }
             catch (ArgumentException) {
                 return false;

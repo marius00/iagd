@@ -22,6 +22,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
+using DllInjector;
 
 
 namespace IAGrim
@@ -33,8 +34,7 @@ namespace IAGrim
 
 #if DEBUG
 
-        private static void Test()
-        {
+        private static void Test() {
             return;
             using (ThreadExecuter threadExecuter = new ThreadExecuter())
             {
@@ -315,8 +315,6 @@ namespace IAGrim
             DumpTranslationTemplate();
 
             // Prohibited for now
-            Properties.Settings.Default.InstaTransfer = false;
-            Properties.Settings.Default.Save();
             threadExecuter.Execute(() => new MigrationHandler(factory).Migrate());
 
             IDatabaseSettingDao databaseSettingDao = new DatabaseSettingRepo(threadExecuter, factory);
@@ -379,7 +377,6 @@ namespace IAGrim
                     databaseSettingDao,
                     buddyItemDao,
                     buddySubscriptionDao,
-                    arzParser,
                     recipeItemDao,
                     itemSkillDao,
                     itemTagDao,

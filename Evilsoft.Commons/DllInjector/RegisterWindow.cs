@@ -171,13 +171,14 @@ namespace EvilsoftCommons.DllInjector {
             );
             logger.Info("Created window with hwnd " + m_hwnd);
 
+            // This should allow IA to receive messages from GD, even if IA is running as admin.
             if (!ChangeWindowMessageFilterEx(m_hwnd, WM_COPYDATA, ChangeWindowMessageFilterExAction.Allow, IntPtr.Zero)) {
                 var isAdmin = (new WindowsPrincipal(WindowsIdentity.GetCurrent())).IsInRole(WindowsBuiltInRole.Administrator);
                 logger.Warn("Failed to remove UIPI filter restrictions.");
                 if (isAdmin)
                     logger.Fatal("Running as administrator, IA will not be able to communicate with GD due to UIPI filter.");
                 else
-                    logger.Info("Not running as administrator, UIPI filte not required.");
+                    logger.Info("Not running as administrator, UIPI filter not required.");
             }
         }
     }

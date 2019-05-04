@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 
 namespace IAGrim.Services {
-    class GrimStateTracker {
+    static class GrimStateTracker {
         public class WorldVector {
             public float X  { get; set; }
             public float Y { get; set; }

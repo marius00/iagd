@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdministratorDetection.cs" />
     <Compile Include="COPYDATASTRUCT.cs" />
     <Compile Include="DllInjector.cs" />
     <Compile Include="InjectionHelper.cs" />
