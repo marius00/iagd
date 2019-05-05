@@ -131,7 +131,7 @@ namespace IAGrim.Utilities {
 
         public static string StorageFolder {
             get {
-                string path = Path.Combine(CoreFolder, "storage");
+                string path = Path.Combine(CoreFolder, "storage").Replace("#", ""); // Some brilliant people have hashtags in their windows usernames..  That works poorly when opening HTML files with a # in the path.
                 Directory.CreateDirectory(path);
 
                 return path;
