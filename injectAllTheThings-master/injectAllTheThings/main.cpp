@@ -37,33 +37,27 @@ DWORD wmain(int argc, wchar_t* argv[])
 		switch (_wtoi(argv[2]))
 		{
 		case 1:
-			demoCreateRemoteThreadW(pszLibFile, dwProcessId);
-			break;
+			return demoCreateRemoteThreadW(pszLibFile, dwProcessId);
 		case 2:
 			if (v < 2)
 				wprintf(TEXT("[-] NtCreateThread() is only available in Windows Vista and up."));
 			else
-				demoNtCreateThreadEx(pszLibFile, dwProcessId);
+				return demoNtCreateThreadEx(pszLibFile, dwProcessId);
 			break;
 		case 3:
-			demoQueueUserAPC(pszLibFile, dwProcessId);
-			break;
+			return demoQueueUserAPC(pszLibFile, dwProcessId);
 		case 4:
-			demoSetWindowsHookEx(pszLibFile, dwProcessId, strProcName);
-			break;
+			return demoSetWindowsHookEx(pszLibFile, dwProcessId, strProcName);
 		case 5:
-			demoRtlCreateUserThread(pszLibFile, dwProcessId);
-			break;
+			return demoRtlCreateUserThread(pszLibFile, dwProcessId);
 		case 6:
 #ifdef _WIN64
-			demoSuspendInjectResume64(pszLibFile, dwProcessId);
+			return demoSuspendInjectResume64(pszLibFile, dwProcessId);
 #else
-			demoSuspendInjectResume(pszLibFile, dwProcessId);
+			return demoSuspendInjectResume(pszLibFile, dwProcessId);
 #endif
-			break;
 		case 7:
-			demoReflectiveDllInjection(pszLibFile, dwProcessId);
-			break;
+			return demoReflectiveDllInjection(pszLibFile, dwProcessId);
 		default:
 			displayHelp();
 		}
