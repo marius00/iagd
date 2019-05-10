@@ -162,6 +162,7 @@
     <Compile Include="Database\Model\ItemSetAssociation.cs" />
     <Compile Include="Database\Model\UnlootedStashItem.cs" />
     <Compile Include="Services\HelpService.cs" />
+    <Compile Include="StartupService.cs" />
     <Compile Include="UI\Controller\dto\ItemTypeDto.cs" />
     <Compile Include="UI\FilterEventArgs.cs" />
     <Compile Include="Utilities\AutomaticUpdateChecker.cs" />

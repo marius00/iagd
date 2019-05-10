@@ -295,6 +295,7 @@ namespace IAGrim.Parsers.Arz {
                     if (storedItems != null) {
                         Logger.Info(message);
 
+                        // Delete items from IA if we failed to remove them from GD.
                         if (!SafelyWriteStash(filename, stash)) {
                             _playerItemDao.Remove(storedItems);
                         }
@@ -332,7 +333,7 @@ namespace IAGrim.Parsers.Arz {
                     tab.Items.Clear();
                 }
 
-                SafelyWriteStash(filename, stash);
+                SafelyWriteStash(filename, stash); // TODO: Ideally we should check if it worked. 
                 Logger.InfoFormat("Looted {0} items from stash", items.Count);
 
                 return items.Select(m => Map(m, stash.ModLabel, isHardcore)).ToList();
@@ -495,6 +496,9 @@ namespace IAGrim.Parsers.Arz {
             return stash.Read(pCrypto) ? stash : null;
         }
 
+        public class DepositException : Exception {
+        }
+
         /// <summary>
         ///     Deposit the provided items to bank page Y
         ///     The items deposited, caller responsibility to delete them from DB if stacksize is LE 0, and update if not
@@ -533,7 +537,10 @@ namespace IAGrim.Parsers.Arz {
                     }
 
                     // Store to stash
-                    SafelyWriteStash(filename, stash);
+                    if (!SafelyWriteStash(filename, stash)) {
+                        Logger.Error("Could not deposit items");
+                        throw new DepositException();
+                    }
 
                     var numItemsNotDeposited = playerItems.Sum(m => m.StackCount);
 
