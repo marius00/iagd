@@ -71,26 +71,6 @@ namespace IAGrim.UI.Misc.CEF {
             }
         }
 
-        public void SetRecipes(string json) {
-            if (_browser.IsBrowserInitialized) {
-                var command = $"{Dispatch}(data.globalSetRecipes({json}));";
-                _browser.ExecuteScriptAsync(command);
-            }
-            else {
-                Logger.Warn("Attempted a call to JS CEF not yet initialized.");
-            }
-        }
-
-        public void SetRecipeIngredients(string json) {
-            if (_browser.IsBrowserInitialized) {
-                var command = $"{Dispatch}(data.globalSetRecipeIngredients({json}));";
-                _browser.ExecuteScriptAsync(command);
-            }
-            else {
-                Logger.Warn("Attempted a call to JS CEF not yet initialized.");
-            }
-        }
-
         public void AddItems() {
             if (_browser.IsBrowserInitialized) {
                 // TODO: This may not be available yet, better the .js ask us for data, and then we deliver it.

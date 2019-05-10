@@ -9,9 +9,7 @@ import { isEmbedded } from './constants/index';
 import 'react-tabs/style/react-tabs.css'; // scss and less also available
 import './App.css';
 import { requestInitialItems } from './actions';
-import CraftingContainer from './containers/recipes/CraftingContainer';
 import NotificationContainer from './containers/NotificationContainer';
-import { getRecipes } from './containers/recipes/actions';
 import translate from './translations/EmbeddedTranslator';
 
 export interface Props {
@@ -24,7 +22,6 @@ class App extends React.PureComponent<Props, object> {
   constructor(props: Props) {
     super(props);
     this.props.store.dispatch(requestInitialItems());
-    this.props.store.dispatch(getRecipes());
   }
 
   openUrl(url: string) {
@@ -46,7 +43,6 @@ class App extends React.PureComponent<Props, object> {
               <div className="tab-list">
                 <TabList>
                   <Tab>{translate('app.tab.items')}</Tab>
-                  <Tab>{translate('app.tab.crafting')}</Tab>
                   <Tab disabled={true}><a onClick={() => this.openUrl('http://dev.dreamcrash.org/enchantments/')}>{translate('app.tab.components')}</a></Tab>
                   {translate('app.tab.videoGuide').length > 0 &&
                     <Tab disabled={true}><a onClick={() => this.openUrl(translate('app.tab.videoGuideUrl'))}>{translate('app.tab.videoGuide')}</a></Tab>
@@ -58,10 +54,6 @@ class App extends React.PureComponent<Props, object> {
               <TabPanel>
                 {!isEmbedded ? <MagicButton label="Load mock items"/> : ''}
                 <ItemContainer/>
-              </TabPanel>
-
-              <TabPanel>
-                <CraftingContainer/>
               </TabPanel>
 
               <TabPanel/>

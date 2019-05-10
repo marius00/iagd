@@ -4,7 +4,6 @@ using IAGrim.Database.Interfaces;
 using IAGrim.Database.Synchronizer;
 using IAGrim.Parsers.Arz;
 using IAGrim.Services;
-using IAGrim.Services.Crafting;
 using IAGrim.UI.Controller.dto;
 using IAGrim.UI.Misc;
 using IAGrim.UI.Misc.CEF;
@@ -28,14 +27,10 @@ namespace IAGrim.UI.Controller
         private readonly ItemStatService _itemStatService;
         private readonly IBuddyItemDao _buddyItemDao;
         private readonly ItemPaginatorService _itemPaginatorService;
-        private readonly RecipeService _recipeService;
-        private readonly CostCalculationService _costCalculationService;
         private readonly TransferStashService _transferStashService;
         private readonly AugmentationItemRepo _augmentationItemRepo;
 
         private string _previousMod = string.Empty;
-        private string _previousRecipe;
-        private string _previousCallback;
 
         public CefBrowserHandler Browser;
         public readonly JSWrapper JsBind = new JSWrapper { IsTimeToShowNag = -1 };
@@ -55,8 +50,6 @@ namespace IAGrim.UI.Controller
             _playerItemDao = playerItemDao;
             _itemStatService = new ItemStatService(databaseItemStatDao, itemSkillDao);
             _itemPaginatorService = new ItemPaginatorService(TakeSize);
-            _recipeService = new RecipeService(databaseItemDao);
-            _costCalculationService = new CostCalculationService(playerItemDao, transferStashService);
             _buddyItemDao = buddyItemDao;
             _transferStashService = transferStashService;
             _augmentationItemRepo = augmentationItemRepo;
@@ -65,45 +58,6 @@ namespace IAGrim.UI.Controller
             // 
             ItemHtmlWriter.ToJsonSerializeable(new List<PlayerHeldItem>()); // TODO: is this not a NOOP?
             JsBind.OnRequestItems += JsBind_OnRequestItems;
-
-            // Return the ingredients for a given recipe
-            JsBind.OnRequestRecipeIngredients += (sender, args) =>
-            {
-                var recipeArgument = args as RequestRecipeArgument;
-                var ingredients = _recipeService.GetRecipeIngredients(recipeArgument?.RecipeRecord);
-                _costCalculationService.Populate(ingredients);
-                _costCalculationService.SetMod(_previousMod);
-
-                _previousCallback = recipeArgument?.Callback;
-                _previousRecipe = recipeArgument?.RecipeRecord;
-                Browser.SetRecipeIngredients(JsBind.Serialize(ingredients));
-            };
-
-            // Update the recipe when the stash has changed
-            transferStashService.StashUpdated += StashManagerOnStashUpdated;
-
-            // Return the list of recipes
-            JsBind.OnRequestRecipeList += (sender, args) =>
-            {
-                var recipes = _recipeService.GetRecipeList();
-                Browser.SetRecipes(JsBind.Serialize(recipes));
-            };
-        }
-
-        private void StashManagerOnStashUpdated(object o, EventArgs eventArgs)
-        {
-            if (!string.IsNullOrEmpty(_previousRecipe))
-            {
-                var ingredients = _recipeService.GetRecipeIngredients(_previousRecipe);
-                _costCalculationService.Populate(ingredients);
-                _costCalculationService.SetMod(_previousMod);
-                Browser.SetRecipeIngredients(JsBind.Serialize(ingredients));
-            }
-        }
-
-        ~SearchController()
-        {
-            _transferStashService.StashUpdated -= StashManagerOnStashUpdated;
         }
 
         private void JsBind_OnRequestItems(object sender, EventArgs e)
@@ -163,12 +117,6 @@ namespace IAGrim.UI.Controller
             string message;
             long personalCount = 0;
 
-            // If we've changed the mod, we'll need to update any recipes. (data source changes)
-            if (_previousCallback != query?.Mod)
-            {
-                _previousMod = query?.Mod;
-                StashManagerOnStashUpdated(null, null);
-            }
 
             Logger.Info("Searching for items..");
 
