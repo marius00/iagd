@@ -16,7 +16,7 @@ namespace IAGrim {
     class GrimDawnDetector {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(GrimDawnDetector));
 
-        public static string GetSteamDirectory() {
+        private static string GetSteamDirectory() {
             using (RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(@"Software\Valve\Steam")) {
                 Logger.Debug("Looking for steam registry key..");
                 if (registryKey != null) {
@@ -32,8 +32,8 @@ namespace IAGrim {
             return string.Empty;
         }
 
-        
-        public static List<string> ExtractSteamLibraryPaths(string vdf) {
+
+        private static List<string> ExtractSteamLibraryPaths(string vdf) {
             List<string> paths = new List<string>();
             if (File.Exists(vdf)) {
                 dynamic config = VdfConvert.Deserialize(File.ReadAllText(vdf));
@@ -82,7 +82,7 @@ namespace IAGrim {
             return paths;
         }
 
-        public static List<string> GetGrimFolderFromSteamLibrary(List<string> libraryPaths) {
+        private static List<string> GetGrimFolderFromSteamLibrary(List<string> libraryPaths) {
             List<string> validPaths = new List<string>();
             foreach (var path in libraryPaths) {
                 var subPath = Path.Combine(path, "steamapps", "common", "Grim Dawn");
@@ -306,7 +306,7 @@ namespace IAGrim {
         }
 
 
-        public static HashSet<string> FindViaManagmentSearch() {
+        private static HashSet<string> FindViaManagmentSearch() {
             HashSet<string> paths = new HashSet<string>();
             try {
 
@@ -336,7 +336,7 @@ namespace IAGrim {
         private static string GetProcessPath(uint pid) {
             try {
                 Process proc = Process.GetProcessById((int)pid);
-                return proc.MainModule.FileName.ToString();
+                return proc.MainModule?.FileName;
             }	
             catch (ArgumentException ex) {
                 Logger.Warn(ex.Message);
@@ -351,16 +351,9 @@ namespace IAGrim {
                     Logger.Fatal("ACCESS_DENIED obtaining the Grim Dawn process -- IA will run in limited usability mode, and will not function for GoG installs.");
                     Logger.Info("Running IA as administrator may solve this issue.");
                 }
-                //ExceptionReporter.ReportException(ex, message);
+
                 throw;
             }
-/*
-            catch (Exception ex) {
-                logger.Warn(ex.Message);
-                logger.Warn(ex.StackTrace);
-                ExceptionReporter.ReportException(ex, "GetProcessPath");
-                throw;
-            }*/
         }
 
 
@@ -376,7 +369,7 @@ namespace IAGrim {
         /// </summary>
         /// <param name="windowname"></param>
         /// <returns></returns>
-        public static HashSet<string> FindProcessForWindow(string windowname) {
+        private static HashSet<string> FindProcessForWindow(string windowname) {
             // Find the windows
             HashSet<string> clients = new HashSet<string>();
             uint pid;
@@ -386,11 +379,13 @@ namespace IAGrim {
                 if (prevWindow != null && prevWindow != IntPtr.Zero) {
                     GetWindowThreadProcessId(prevWindow, out pid);
                     string path = GetProcessPath(pid);
-                    if (!string.IsNullOrEmpty(path))
+                    if (!string.IsNullOrEmpty(path)) {
                         clients.Add(path);
+                    }
                     else {
-                        if (!string.IsNullOrEmpty(path))
+                        if (!string.IsNullOrEmpty(path)) {
                             clients.Add(path);
+                        }
                     }
                 }
             }

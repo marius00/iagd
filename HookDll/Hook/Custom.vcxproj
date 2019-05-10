@@ -31,14 +31,12 @@
     <ClInclude Include="CloudGetNumFiles.h" />
     <ClInclude Include="CloudRead.h" />
     <ClInclude Include="CloudWrite.h" />
-    <ClInclude Include="ControllerPlayerStateIdleRequestNpcAction.h" />
-    <ClInclude Include="ControllerPlayerStateMoveToRequestMoveAction.h" />
-    <ClInclude Include="ControllerPlayerStateMoveToRequestNpcAction.h" />
+    <ClInclude Include="StateRequestNpcAction.h" />
+    <ClInclude Include="StateRequestMoveAction.h" />
     <ClInclude Include="DataQueue.h" />
     <ClInclude Include="Exports.h" />
     <ClInclude Include="GetPrivateStash.h" />
     <ClInclude Include="HookLog.h" />
-    <ClInclude Include="HookWalkTo.h" />
     <ClInclude Include="InventorySack_AddItem.h" />
     <ClInclude Include="LoadPlayerTransfer.h" />
     <ClInclude Include="MessageType.h" />
@@ -46,6 +44,7 @@
     <ClInclude Include="ReadPlayerTransfer.h" />
     <ClInclude Include="SaveManager.h" />
     <ClInclude Include="SaveTransferStash.h" />
+    <ClInclude Include="StateRequestRotateAction.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Vec3f.h" />
   </ItemGroup>
@@ -54,20 +53,19 @@
     <ClCompile Include="CloudGetNumFiles.cpp" />
     <ClCompile Include="CloudRead.cpp" />
     <ClCompile Include="CloudWrite.cpp" />
-    <ClCompile Include="ControllerPlayerStateIdleRequestNpcAction.cpp" />
-    <ClCompile Include="ControllerPlayerStateMoveToRequestMoveAction.cpp" />
-    <ClCompile Include="ControllerPlayerStateMoveToRequestNpcAction.cpp" />
+    <ClCompile Include="StateRequestNpcAction.cpp" />
+    <ClCompile Include="StateRequestMoveAction.cpp" />
     <ClCompile Include="DataQueue.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="GetPrivateStash.cpp" />
     <ClCompile Include="HookLog.cpp" />
-    <ClCompile Include="HookWalkTo.cpp" />
     <ClCompile Include="InventorySack_AddItem.cpp" />
     <ClCompile Include="LoadPlayerTransfer.cpp" />
     <ClCompile Include="NpcDetectionHook.cpp" />
     <ClCompile Include="ReadPlayerTransfer.cpp" />
     <ClCompile Include="SaveManager.cpp" />
     <ClCompile Include="SaveTransferStash.cpp" />
+    <ClCompile Include="StateRequestRotateAction.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

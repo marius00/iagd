@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+// ReSharper disable InconsistentNaming
 
 namespace IAGrim.UI.Misc {
 
@@ -12,20 +13,17 @@ namespace IAGrim.UI.Misc {
         TYPE_OPEN_PRIVATE_STASH = 1,
         TYPE_OPEN_CLOSE_TRANSFER_STASH = 2,
         TYPE_REPORT_WORKER_THREAD_LAUNCHED = 3,
-        TYPE_ControllerPlayerStateIdleRequestMoveAction = 4,
 
-        //TYPE_ControllerPlayerStateIdleRequestInteractableAction = 5,
-        TYPE_ControllerPlayerStateIdleRequestNpcAction = 6,
+        // Movement
+        TYPE_ControllerRequestNpcAction = 7,
+        TYPE_ControllerRequestMoveAction = 8,
+        TYPE_ControllerRequestRotateAction = 55,
 
-        TYPE_ControllerPlayerStateMoveToRequestNpcAction = 7,
-        TYPE_ControllerPlayerStateMoveToRequestMoveAction = 8,
         TYPE_InventorySack_AddItem = 9,
         TYPE_InventorySack_AddItem_Vec2 = 10,
         TYPE_CloudGetNumFiles = 11,
         TYPE_CloudRead = 12,
         TYPE_CloudWrite = 13,
-        TYPE_DamageAttributeAbs_AddDamageToAccumulator = 14,
-        TYPE_Nabbed_ItemReplicaInfo = 15,
         TYPE_GameEngine_GetTransferSack = 16,
         TYPE_HookUnload = 17,
         TYPE_GameEngine_AddItemToTransfer_01 = 18,

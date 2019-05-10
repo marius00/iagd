@@ -24,18 +24,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ControllerPlayerStateMoveToRequestMoveAction.h">
-      <Filter>CoreHooks\PlayerPosition</Filter>
-    </ClInclude>
-    <ClInclude Include="ControllerPlayerStateMoveToRequestNpcAction.h">
-      <Filter>CoreHooks\PlayerPosition</Filter>
-    </ClInclude>
-    <ClInclude Include="ControllerPlayerStateIdleRequestNpcAction.h">
-      <Filter>CoreHooks\PlayerPosition</Filter>
-    </ClInclude>
-    <ClInclude Include="HookWalkTo.h">
-      <Filter>CoreHooks\PlayerPosition</Filter>
-    </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>Setup</Filter>
     </ClInclude>
@@ -87,20 +75,17 @@
     <ClInclude Include="ReadPlayerTransfer.h">
       <Filter>ExperimentalHooks</Filter>
     </ClInclude>
+    <ClInclude Include="StateRequestNpcAction.h">
+      <Filter>CoreHooks\PlayerPosition</Filter>
+    </ClInclude>
+    <ClInclude Include="StateRequestMoveAction.h">
+      <Filter>CoreHooks\PlayerPosition</Filter>
+    </ClInclude>
+    <ClInclude Include="StateRequestRotateAction.h">
+      <Filter>CoreHooks\PlayerPosition</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ControllerPlayerStateMoveToRequestMoveAction.cpp">
-      <Filter>CoreHooks\PlayerPosition</Filter>
-    </ClCompile>
-    <ClCompile Include="ControllerPlayerStateMoveToRequestNpcAction.cpp">
-      <Filter>CoreHooks\PlayerPosition</Filter>
-    </ClCompile>
-    <ClCompile Include="ControllerPlayerStateIdleRequestNpcAction.cpp">
-      <Filter>CoreHooks\PlayerPosition</Filter>
-    </ClCompile>
-    <ClCompile Include="HookWalkTo.cpp">
-      <Filter>CoreHooks\PlayerPosition</Filter>
-    </ClCompile>
     <ClCompile Include="dllmain.cpp">
       <Filter>Setup</Filter>
     </ClCompile>
@@ -145,6 +130,15 @@
     </ClCompile>
     <ClCompile Include="ReadPlayerTransfer.cpp">
       <Filter>ExperimentalHooks</Filter>
+    </ClCompile>
+    <ClCompile Include="StateRequestNpcAction.cpp">
+      <Filter>CoreHooks\PlayerPosition</Filter>
+    </ClCompile>
+    <ClCompile Include="StateRequestMoveAction.cpp">
+      <Filter>CoreHooks\PlayerPosition</Filter>
+    </ClCompile>
+    <ClCompile Include="StateRequestRotateAction.cpp">
+      <Filter>CoreHooks\PlayerPosition</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
