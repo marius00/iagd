@@ -88,6 +88,20 @@ void* __fastcall StateRequestMoveAction::HookedMethod_Wrap8(void* This, bool a, 
 void* __fastcall StateRequestMoveAction::HookedMethod_Wrap9(void* This, bool a, bool b, Vec3f const & xyz) { return HookedMethod(This, a, b, xyz, originalMethods[9]); }
 void* __fastcall StateRequestMoveAction::HookedMethod_Wrap10(void* This, bool a, bool b, Vec3f const & xyz) { return HookedMethod(This, a, b, xyz, originalMethods[10]); }
 void* __fastcall StateRequestMoveAction::HookedMethod_Wrap11(void* This, bool a, bool b, Vec3f const & xyz) { return HookedMethod(This, a, b, xyz, originalMethods[11]); }
+#else
+
+void* __fastcall StateRequestMoveAction::HookedMethod_Wrap0(void* This, void* unused, bool a, bool b, Vec3f const & xyz) { return HookedMethod(This, a, b, xyz, originalMethods[0]); }
+void* __fastcall StateRequestMoveAction::HookedMethod_Wrap1(void* This, void* unused, bool a, bool b, Vec3f const & xyz) { return HookedMethod(This, a, b, xyz, originalMethods[1]); }
+void* __fastcall StateRequestMoveAction::HookedMethod_Wrap2(void* This, void* unused, bool a, bool b, Vec3f const & xyz) { return HookedMethod(This, a, b, xyz, originalMethods[2]); }
+void* __fastcall StateRequestMoveAction::HookedMethod_Wrap3(void* This, void* unused, bool a, bool b, Vec3f const & xyz) { return HookedMethod(This, a, b, xyz, originalMethods[3]); }
+void* __fastcall StateRequestMoveAction::HookedMethod_Wrap4(void* This, void* unused, bool a, bool b, Vec3f const & xyz) { return HookedMethod(This, a, b, xyz, originalMethods[4]); }
+void* __fastcall StateRequestMoveAction::HookedMethod_Wrap5(void* This, void* unused, bool a, bool b, Vec3f const & xyz) { return HookedMethod(This, a, b, xyz, originalMethods[5]); }
+void* __fastcall StateRequestMoveAction::HookedMethod_Wrap6(void* This, void* unused, bool a, bool b, Vec3f const & xyz) { return HookedMethod(This, a, b, xyz, originalMethods[6]); }
+void* __fastcall StateRequestMoveAction::HookedMethod_Wrap7(void* This, void* unused, bool a, bool b, Vec3f const & xyz) { return HookedMethod(This, a, b, xyz, originalMethods[7]); }
+void* __fastcall StateRequestMoveAction::HookedMethod_Wrap8(void* This, void* unused, bool a, bool b, Vec3f const & xyz) { return HookedMethod(This, a, b, xyz, originalMethods[8]); }
+void* __fastcall StateRequestMoveAction::HookedMethod_Wrap9(void* This, void* unused, bool a, bool b, Vec3f const & xyz) { return HookedMethod(This, a, b, xyz, originalMethods[9]); }
+void* __fastcall StateRequestMoveAction::HookedMethod_Wrap10(void* This, void* unused, bool a, bool b, Vec3f const & xyz) { return HookedMethod(This, a, b, xyz, originalMethods[10]); }
+void* __fastcall StateRequestMoveAction::HookedMethod_Wrap11(void* This, void* unused, bool a, bool b, Vec3f const & xyz) { return HookedMethod(This, a, b, xyz, originalMethods[11]); }
 #endif
 
 void* __fastcall StateRequestMoveAction::HookedMethod(void* This, bool a,  bool b,  Vec3f const & xyz, OriginalMethodPtr original) {

@@ -77,4 +77,23 @@
 
 #define SAVE_MANAGER_DIRECTREAD ""
 
+#define REQUEST_NPC_ACTION_JUMP_TO_SKILL "?RequestNpcAction@ControllerPlayerStateJumpToUseSkill@GAME@@MAEX_N0ABVWorldVec3@2@PBVNpc@2@@Z"
+#define REQUEST_NPC_ACTION_LONG_IDLE "?RequestNpcAction@ControllerPlayerStateLongIdle@GAME@@MAEX_N0ABVWorldVec3@2@PBVNpc@2@@Z"
+#define REQUEST_NPC_ACTION_MOVE_AND_SKILL "?RequestNpcAction@ControllerPlayerStateMoveAndUseSkill@GAME@@MAEX_N0ABVWorldVec3@2@PBVNpc@2@@Z"
+#define REQUEST_NPC_ACTION_MOVE_TO_ACTOR "?RequestNpcAction@ControllerPlayerStateMoveToActorBase@GAME@@MAEX_N0ABVWorldVec3@2@PBVNpc@2@@Z"
+#define REQUEST_NPC_ACTION_MOVE_TO_NPC "?RequestNpcAction@ControllerPlayerStateMoveToNpc@GAME@@MAEX_N0ABVWorldVec3@2@PBVNpc@2@@Z"
+#define REQUEST_NPC_ACTION_MOVE_TO_SKILL "?RequestNpcAction@ControllerPlayerStateMoveToUseSkill@GAME@@MAEX_N0ABVWorldVec3@2@PBVNpc@2@@Z"
+#define REQUEST_NPC_ACTION_PICKUP_ITEM "?RequestNpcAction@ControllerPlayerStatePickupItem@GAME@@MAEX_N0ABVWorldVec3@2@PBVNpc@2@@Z"
+#define REQUEST_NPC_ACTION_TALK_TO_NPC "?RequestNpcAction@ControllerPlayerStateTalkToNpc@GAME@@MAEX_N0ABVWorldVec3@2@PBVNpc@2@@Z"
+
+#define REQUEST_MOVE_ACTION_LONG_IDLE "?RequestMoveAction@ControllerPlayerStateLongIdle@GAME@@MAEX_N0ABVWorldVec3@2@@Z"
+#define REQUEST_MOVE_ACTION_MOVE_AND_SKILL "?RequestMoveAction@ControllerPlayerStateMoveAndUseSkill@GAME@@MAEX_N0ABVWorldVec3@2@@Z"
+#define REQUEST_MOVE_ACTION_MOVE_ACTOR "?RequestMoveAction@ControllerPlayerStateMoveToActorBase@GAME@@MAEX_N0ABVWorldVec3@2@@Z"
+#define REQUEST_MOVE_ACTION_MOVE_TO_SKILL "?RequestMoveAction@ControllerPlayerStateMoveToUseSkill@GAME@@MAEX_N0ABVWorldVec3@2@@Z"
+#define REQUEST_MOVE_ACTION_PICKUP "?RequestMoveAction@ControllerPlayerStatePickupItem@GAME@@MAEX_N0ABVWorldVec3@2@@Z"
+#define REQUEST_MOVE_ACTION_TALK_TO_NPC "?RequestMoveAction@ControllerPlayerStateTalkToNpc@GAME@@MAEX_N0ABVWorldVec3@2@@Z"
+#define REQUEST_MOVE_ACTION_SKILL "?RequestMoveAction@ControllerPlayerStateUseSkill@GAME@@MAEX_N0ABVWorldVec3@2@@Z"
+
+#define LOAD_PLAYER_TRANSFER "?LoadPlayerTransfer@GameEngine@GAME@@QAEXXZ"
+#define READ_PLAYER_TRANSFER "?ReadPlayerTransfer@GameEngine@GAME@@QAE_NAAVCheckedReader@2@@Z"
 #endif

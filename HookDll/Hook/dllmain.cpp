@@ -16,7 +16,6 @@
 #include "ReadPlayerTransfer.h"
 #include "LoadPlayerTransfer.h"
 #include "Exports.h"
-#include "StateRequestRotateAction.h"
 
 #if defined _M_X64
 #elif defined _M_IX86
@@ -152,8 +151,8 @@ static void ConfigurePlayerPositionHooks(std::vector<BaseMethodHook*>& hooks) {
 	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_MOVE_TO_NPC));
 	
 	// Unsure about the rotation, could be random locations under the mouse pointer
-	hooks.push_back(new StateRequestRotateAction(&g_dataQueue, g_hEvent, REQUEST_ROTATE_ACTION_IDLE));
-	hooks.push_back(new StateRequestRotateAction(&g_dataQueue, g_hEvent, REQUEST_ROTATE_ACTION_LONG_IDLE));
+	//hooks.push_back(new StateRequestRotateAction(&g_dataQueue, g_hEvent, REQUEST_ROTATE_ACTION_IDLE));
+	//hooks.push_back(new StateRequestRotateAction(&g_dataQueue, g_hEvent, REQUEST_ROTATE_ACTION_LONG_IDLE));
 	
 }
 

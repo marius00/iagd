@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "MessageType.h"
 #include "StateRequestRotateAction.h"
-
+#if defined(_AMD64_)
 HANDLE StateRequestRotateAction::m_hEvent;
 DataQueue* StateRequestRotateAction::m_dataQueue;
 std::vector<StateRequestRotateAction::OriginalMethodPtr> StateRequestRotateAction::originalMethods;
@@ -119,3 +119,4 @@ void* __fastcall StateRequestRotateAction::HookedMethod(void* This, Vec3f const 
 	void* v = original(This, xyz);
 	return v;
 }
+#endif
