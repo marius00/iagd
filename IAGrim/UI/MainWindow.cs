@@ -589,6 +589,15 @@ namespace IAGrim.UI
             new WindowSizeManager(this);
 
 
+            // Suggest translation packs if available
+            if (!Settings.Default.HasSuggestedLanguageChange && string.IsNullOrEmpty(Settings.Default.LocalizationFile)) {
+                if (LocalizationLoader.HasSupportedTranslations(GrimDawnDetector.GetGrimLocations())) {
+                    Logger.Debug("A new language pack has been detected, informing end user..");
+                    new LanguagePackPicker(_itemTagDao, _playerItemDao, _parsingService).Show(GrimDawnDetector.GetGrimLocations());
+                    Settings.Default.HasSuggestedLanguageChange = true;
+                    Settings.Default.Save();
+                }
+            }
             Logger.Debug("UI initialization complete");
         }
 

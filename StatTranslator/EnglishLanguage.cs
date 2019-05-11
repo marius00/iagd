@@ -333,7 +333,7 @@ namespace StatTranslator
             { "iatag_ui_language_select", "Language Select" },
             { "iatag_ui_change_language", "Change Language" },
             { "iatag_ui_language_selection", "Language Selection" },
-            { "iatag_ui_language_by_author", "{0} by {0}" },
+            { "iatag_ui_language_by_author", "{0} by {1}" },
             { "iatag_ui_classes", "Classes" },
             { "iatag_ui_tab_items", "Items" },
             { "iatag_ui_devtools", "Devtools" },
