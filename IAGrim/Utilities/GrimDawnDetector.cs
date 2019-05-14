@@ -16,17 +16,35 @@ namespace IAGrim {
     class GrimDawnDetector {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(GrimDawnDetector));
 
+        private static bool IsSteamDirectory(string path) {
+            return !string.IsNullOrEmpty(path) && File.Exists(Path.Combine(path, "config", "config.vdf"));
+        }
         private static string GetSteamDirectory() {
             using (RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(@"Software\Valve\Steam")) {
                 Logger.Debug("Looking for steam registry key..");
                 if (registryKey != null) {
                     string location = (string)registryKey.GetValue("SteamPath");
-                    if (!string.IsNullOrEmpty(location) && File.Exists(Path.Combine(location, "config", "config.vdf"))) {
+                    if (IsSteamDirectory(location)) {
                         Logger.Info("Steam config location located");
                         return location;
                     }
                 }
                 Logger.Debug("Steam registry key not found");
+            }
+
+            // Attempt to locate steam via the shell command, registry entry "Computer\HKEY_CLASSES_ROOT\steam\Shell\Open\Command"
+            using (RegistryKey registryKey = Registry.ClassesRoot.OpenSubKey(@"steam\Shell\Open\Command")) {
+                string content = (string) registryKey?.GetValue("");
+                if (!string.IsNullOrEmpty(content) && content.Contains(".exe")) {
+                    var sub = content.Substring(0, 4 + content.IndexOf(".exe", StringComparison.InvariantCultureIgnoreCase)).Replace("\"", "");
+                    var exe = Path.GetFullPath(sub);
+                    if (File.Exists(exe)) {
+                        var candidate = Directory.GetParent(exe).FullName;
+                        if (IsSteamDirectory(candidate)) {
+                            return candidate;
+                        }
+                    }
+                }
             }
 
             return string.Empty;
@@ -155,6 +173,7 @@ namespace IAGrim {
                     }
                 }
             }
+
             using (RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(@"Software\Valve\Steam")) {
                 if (registryKey != null) {
                     string location = (string)registryKey.GetValue("SourceModInstallPath");
