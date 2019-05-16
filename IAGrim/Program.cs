@@ -31,6 +31,7 @@ namespace IAGrim
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(Program));
         private static MainWindow _mw;
+        private static StartupService startupService = new StartupService();
 
 #if DEBUG
 
@@ -103,23 +104,7 @@ namespace IAGrim
             AzureUris.Initialize(AzureUris.EnvAzure);
 #endif
 
-            var version = Assembly.GetExecutingAssembly().GetName().Version;
-            DateTime buildDate = new DateTime(2000, 1, 1)
-                .AddDays(version.Build)
-                .AddSeconds(version.Revision * 2);
-
-            Logger.InfoFormat("Running version {0}.{1}.{2}.{3} from {4}", version.Major, version.Minor, version.Build, version.Revision, buildDate.ToString("dd/MM/yyyy"));
-
-            if (!DependencyChecker.CheckNet452Installed()) {
-                MessageBox.Show("It appears .Net Framework 4.5.2 is not installed.\nIA May not function correctly", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-
-            if (!DependencyChecker.CheckVs2013Installed()) {
-                MessageBox.Show("It appears VS 2013 (x86) redistributable is not installed.\nPlease install it to continue using IA", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-            if (!DependencyChecker.CheckVs2010Installed()) {
-                MessageBox.Show("It appears VS 2010 (x86) redistributable is not installed.\nPlease install it to continue using IA", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
+            startupService.Init();
 
 #if DEBUG
             Test();
@@ -169,33 +154,6 @@ namespace IAGrim
             Logger.Info("IA Exited");
         }
 
-
-        /// <summary>
-        /// Upgrade any settings if required
-        /// This happens for just about every compile
-        /// </summary>
-        private static bool UpgradeSettings()
-        {
-            try
-            {
-                if (Properties.Settings.Default.CallUpgrade)
-                {
-                    Properties.Settings.Default.Upgrade();
-                    Properties.Settings.Default.CallUpgrade = false;
-                    Logger.Info("Settings upgraded..");
-
-                    return true;
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Warn(ex.Message);
-                Logger.Warn(ex.StackTrace);
-                ExceptionReporter.ReportException(ex);
-            }
-
-            return false;
-        }
 
         /// <summary>
         /// Attempting to run a second copy of the program
@@ -307,7 +265,7 @@ namespace IAGrim
 
             // Settings should be upgraded early, it contains the language pack etc and some services depends on settings.
             IPlayerItemDao playerItemDao = new PlayerItemRepo(threadExecuter, factory);
-            var statUpgradeNeeded = UpgradeSettings();
+            var statUpgradeNeeded = StartupService.UpgradeSettings();
 
             // X
             IDatabaseItemDao databaseItemDao = new DatabaseItemRepo(threadExecuter, factory);

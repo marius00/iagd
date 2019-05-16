@@ -171,6 +171,7 @@
     <Compile Include="Parsers\TransferStash\TransferStashServiceCache.cs" />
     <Compile Include="Parsers\TransferStash\TransferStashWorker.cs" />
     <Compile Include="Services\HelpService.cs" />
+    <Compile Include="StartupService.cs" />
     <Compile Include="UI\Controller\dto\ItemTypeDto.cs" />
     <Compile Include="UI\FilterEventArgs.cs" />
     <Compile Include="UI\Misc\CEF\UserFeedback.cs" />
@@ -319,11 +320,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Services\Crafting\CostCalculationService.cs" />
-    <Compile Include="Services\Crafting\dto\ComponentCost.cs" />
-    <Compile Include="Services\Crafting\dto\CraftableRecipes.cs" />
-    <Compile Include="Services\Crafting\dto\ComponentListEntry.cs" />
-    <Compile Include="Services\Crafting\RecipeService.cs" />
     <Compile Include="Services\Dto\DBSTatRow.cs" />
     <Compile Include="Services\GrimStateTracker.cs" />
     <Compile Include="Services\ItemPaginatorService.cs" />
@@ -356,7 +352,6 @@
     <Compile Include="UI\Misc\CEF\IUserFeedbackHandler.cs" />
     <Compile Include="UI\Misc\CEF\UserFeedbackLevel.cs" />
     <Compile Include="UI\Misc\HtmlTranslation.cs" />
-    <Compile Include="UI\Misc\RequestRecipeArgument.cs" />
     <Compile Include="UI\Misc\TextboxHoverFocusHighlight.cs" />
     <Compile Include="UI\Misc\WindowSizeManager.cs" />
     <Compile Include="UI\Model\ListViewEntry.cs" />

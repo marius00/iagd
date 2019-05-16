@@ -92,6 +92,118 @@ namespace IAGrim.Parsers.Arz {
             return Settings.Default.StashToDepositTo - 1;
         }
 
+        /// <summary>
+        ///     Loot all the items stored on page X, and store them to the local database
+        /// </summary>
+        /// <param name="filename"></param>
+        ///
+         /*
+        private string EmptyPageX(string filename) {
+            Logger.InfoFormat("Looting {0}", filename);
+
+            var pCrypto = new GDCryptoDataBuffer(DataBuffer.ReadBytesFromDisk(filename));
+            var stash = new Stash();
+
+            if (stash.Read(pCrypto)) {
+                var lootFromIndex = GetStashToLootFrom(stash);
+                var isHardcore = GlobalPaths.IsHardcore(filename);
+
+#if DEBUG
+                if (stash.Tabs.Count < 5) {
+                    while (stash.Tabs.Count < 5) {
+                        stash.Tabs.Add(new StashTab());
+                    }
+
+                    SafelyWriteStash(filename, stash);
+                    Logger.Info("Upgraded stash to 5 pages.");
+
+                    return string.Empty;
+                }
+#endif
+
+                // Update the internal listing of unlooted items (in other stash tabs)
+                var unlootedLocal = new List<Item>();
+
+                for (var idx = 0; idx < stash.Tabs.Count; idx++) {
+                    if (idx != lootFromIndex) {
+                        unlootedLocal.AddRange(stash.Tabs[idx].Items);
+                    }
+                }
+
+                Interlocked.Exchange(ref _unlootedItems, new ConcurrentBag<Item>(unlootedLocal));
+                StashUpdated?.Invoke(null, null);
+
+                if (stash.Tabs.Count < 2) {
+                    Logger.WarnFormat($"File \"{filename}\" only contains {stash.Tabs.Count} pages. IA requires at least 2 stash pages to function properly.");
+                    return GlobalSettings.Language.GetTag("iatag_not_enough_stash", filename, stash.Tabs.Count);
+                }
+
+                if (stash.Tabs.Count < lootFromIndex + 1) {
+                    Logger.Warn($"You have configured IA to loot from stash {lootFromIndex + 1} but you only have {stash.Tabs.Count} pages");
+                    return GlobalSettings.Language.GetTag("iatag_invalid_loot_stash_number", lootFromIndex + 1, stash.Tabs.Count);
+                }
+
+                if (stash.Tabs[lootFromIndex].Items.Count > 0) {
+                    HasLootedItemsOnceThisSession = true;
+
+                    // Grab the items and clear the tab
+                    var items = stash.Tabs[lootFromIndex].Items
+                        .Where(m => m.StackCount <= 1)
+                        .Where(m => !_playerItemDao.Exists(Map(m, stash.ModLabel, isHardcore)))
+                        .ToList();
+                    var notLootedDueToStackSize = stash.Tabs[lootFromIndex].Items.Where(m => m.StackCount > 1).ToList();
+
+                    if (notLootedDueToStackSize.Count > 0) {
+                        notLootedDueToStackSize.ForEach(item => Logger.Debug($"NotLootedStacksize: {item}"));
+                        _setFeedback(
+                            "Warning", 
+                            GlobalSettings.Language.GetTag("iatag_feedback_stacked_not_looted", notLootedDueToStackSize.Count),
+                            HelpService.GetUrl(HelpService.HelpType.NoStacks)
+                            );
+                    }
+
+                    var notLootedDueToDuplicate = stash.Tabs[lootFromIndex].Items.ToList();
+                    notLootedDueToDuplicate.RemoveAll(m => items.Contains(m) || m.StackCount > 1);
+
+                    if (notLootedDueToDuplicate.Count > 0) {
+                        notLootedDueToDuplicate.ForEach(item => Logger.Debug($"NotLootedDuplicate: {item}"));
+                        _setFeedback(
+                            "Warning",
+                            GlobalSettings.Language.GetTag("iatag_feedback_duplicates_not_looted", notLootedDueToDuplicate.Count),
+                            HelpService.GetUrl(HelpService.HelpType.DuplicateItem)
+                        );
+                    }
+
+                    stash.Tabs[lootFromIndex].Items.RemoveAll(e => items.Any(m => m.Equals(e)));
+
+                    var storedItems = StoreItemsToDatabase(items, stash.ModLabel, isHardcore, stash.IsExpansion1);
+                    var message = GlobalSettings.Language.GetTag("iatag_looted_from_stash", items.Count, lootFromIndex + 1);
+
+                    if (storedItems != null) {
+                        Logger.Info(message);
+
+                        // Delete items from IA if we failed to remove them from GD.
+                        if (!SafelyWriteStash(filename, stash)) {
+                            _playerItemDao.Remove(storedItems);
+                        }
+                    }
+
+                    _performedLootCallback();
+
+                    return message;
+                }
+
+                Logger.Info($"Looting of stash {lootFromIndex + 1} halted, no items available.");
+
+                return GlobalSettings.Language.GetTag("iatag_feedback_no_items_to_loot");
+            }
+
+            Logger.Error("Could not load stash file.");
+            Logger.Error("An update from the developer is most likely required.");
+
+            return string.Empty;
+        }
+        */
         public List<PlayerItem> EmptyStash(string filename) {
             Logger.InfoFormat("Looting {0}", filename);
 
@@ -108,7 +220,7 @@ namespace IAGrim.Parsers.Arz {
                     tab.Items.Clear();
                 }
 
-                SafeTransferStashWriter.SafelyWriteStash(filename, stash);
+                SafeTransferStashWriter.SafelyWriteStash(filename, stash); // TODO: Ideally we should check if it worked. 
                 Logger.InfoFormat("Looted {0} items from stash", items.Count);
 
                 return items.Select(m => Map(m, stash.ModLabel, isHardcore)).ToList();
@@ -229,6 +341,9 @@ namespace IAGrim.Parsers.Arz {
             return stash.Read(pCrypto) ? stash : null;
         }
 
+        public class DepositException : Exception {
+        }
+
         /// <summary>
         ///     Deposit the provided items to bank page Y
         ///     The items deposited, caller responsibility to delete them from DB if stacksize is LE 0, and update if not
@@ -267,7 +382,10 @@ namespace IAGrim.Parsers.Arz {
                     }
 
                     // Store to stash
-                    SafeTransferStashWriter.SafelyWriteStash(filename, stash);
+                    if (!SafeTransferStashWriter.SafelyWriteStash(filename, stash)) {
+                        Logger.Error("Could not deposit items");
+                        throw new DepositException();
+                    }
 
                     var numItemsNotDeposited = playerItems.Sum(m => m.StackCount);
 

@@ -333,7 +333,7 @@ namespace StatTranslator
             { "iatag_ui_language_select", "Language Select" },
             { "iatag_ui_change_language", "Change Language" },
             { "iatag_ui_language_selection", "Language Selection" },
-            { "iatag_ui_language_by_author", "{0} by {0}" },
+            { "iatag_ui_language_by_author", "{0} by {1}" },
             { "iatag_ui_classes", "Classes" },
             { "iatag_ui_tab_items", "Items" },
             { "iatag_ui_devtools", "Devtools" },
@@ -521,7 +521,8 @@ namespace StatTranslator
             { "iatag_feedback_stacked_not_looted", "{0} items were not looted due to being a stack" },
             { "iatag_feedback_unknown_not_looted", "{0} items were not looted due to being unidentified" },
             { "iatag_feedback_duplicates_not_looted", "{0} items were not looted due to being possible duplicates (bugged items)" },
-
+            { "iatag_feedback_unable_to_deposit", "An error occurred depositing items, check the logs." },
+            
             { "iatag_slot_any", "Any" },
             { "iatag_slot_armor", "Armor" },
             { "iatag_slot_head", "Head" },

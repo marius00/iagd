@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using IAGrim.UI;
 
 namespace IAGrim.Parsers.Arz {
     public class LocalizationLoader {
@@ -135,6 +136,7 @@ namespace IAGrim.Parsers.Arz {
                 return false;
             }
         }
+
         static IDictionary<TKey, TValue> Merge<TKey, TValue>(IDictionary<TKey, TValue> x, IDictionary<TKey, TValue> y) {
             return x
                 .Except(x.Join(y, z => z.Key, z => z.Key, (a, b) => a))
@@ -163,13 +165,47 @@ namespace IAGrim.Parsers.Arz {
                         _tagsIa = null;
                     }
                 }
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 Logger.Warn(ex.Message);
                 Logger.Warn(ex.StackTrace);
                 return false;
             }
 
             return true;
+        }
+
+
+        public static bool HasSupportedTranslations(IEnumerable<string> grimDawnInstallPaths) {
+            foreach (var path in grimDawnInstallPaths) {
+                if (Directory.Exists(Path.Combine(path, "localization"))) {
+                    foreach (var file in Directory.EnumerateFiles(Path.Combine(path, "localization"), "*.zip")) {
+                        if (IsFullySupportedTranslation(file)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private static bool IsFullySupportedTranslation(string filename) {
+            if (!File.Exists(filename)) {
+                return false;
+            }
+
+            try {
+                using (ZipFile zip = ZipFile.Read(filename)) {
+                    var tagsIaFile = zip.Entries.FirstOrDefault(m => m.FileName == "tags_ia.txt");
+                    return tagsIaFile != null;
+                }
+            }
+            catch (Exception ex) {
+                Logger.Warn(ex.Message);
+                Logger.Warn(ex.StackTrace);
+                return false;
+            }
         }
     }
 }

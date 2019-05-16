@@ -14,30 +14,13 @@ namespace IAGrim.UI.Misc {
     public class JSWrapper {
         private readonly JsonSerializerSettings _settings;
 
-        public event EventHandler OnRequestRecipeList;
-        public event EventHandler OnRequestRecipeIngredients;
-
         public string ItemSetAssociations { get; private set; }
 
         public void SetItemSetAssociations(IList<ItemSetAssociation> elems) {
             this.ItemSetAssociations = JsonConvert.SerializeObject(elems, _settings);
         }
 
-
-
-        public void requestRecipeIngredients(string recipeRecord, string callback) {
-            OnRequestRecipeIngredients?.Invoke(this, new RequestRecipeArgument {
-                RecipeRecord = recipeRecord,
-                Callback = callback
-            });
-        }
-
-        public void requestRecipeList(string callback) {
-            OnRequestRecipeList?.Invoke(this, new RequestRecipeArgument {
-                Callback = callback
-            });
-        }
-
+        
         public JSWrapper() {
             _settings = new JsonSerializerSettings {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
@@ -107,20 +90,10 @@ namespace IAGrim.UI.Misc {
             }
         }
 
-
-        public void globalRequestRecipeComponents(string recipeRecord) {
-            OnRequestRecipeIngredients?.Invoke(this, new RequestRecipeArgument {
-                RecipeRecord = recipeRecord
-            });
-        }
-
-        public void globalRequestRecipeList() {
-            OnRequestRecipeList?.Invoke(this, null);
-        }
-
         public void globalRequestInitialItems() {
             OnRequestItems?.Invoke(this, null);
         }
+
         public HtmlTranslation translation { get; private set; }
 
         public string Items { get; set; }

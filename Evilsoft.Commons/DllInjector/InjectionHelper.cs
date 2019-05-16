@@ -202,6 +202,10 @@ namespace DllInjector {
                             }
                             else {
                                 Inject64Bit("Grim Dawn.exe", dll64Bit);
+
+                                if (!InjectionVerifier.VerifyInjection(pid, dll64Bit)) {
+                                    worker.ReportProgress(INJECTION_ERROR, null);
+                                }
                             }
                         }
                         else {
@@ -211,7 +215,13 @@ namespace DllInjector {
                                 _previouslyInjected.Add(pid);
                             }
                             else {
+                                //DllInjector.NewInject(pid, dll32Bit);
                                 Inject32Bit("Grim Dawn.exe", dll32Bit);
+
+
+                                if (!InjectionVerifier.VerifyInjection(pid, dll32Bit)) {
+                                    worker.ReportProgress(INJECTION_ERROR, null);
+                                }
                             }
                         }
                     }

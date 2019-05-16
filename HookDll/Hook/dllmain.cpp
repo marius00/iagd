@@ -4,10 +4,8 @@
 #include <boost/thread.hpp>
 #include "DataQueue.h"
 #include "MessageType.h"
-#include "HookWalkTo.h"
-#include "ControllerPlayerStateMoveToRequestNpcAction.h"
-#include "ControllerPlayerStateIdleRequestNpcAction.h"
-#include "ControllerPlayerStateMoveToRequestMoveAction.h"
+#include "StateRequestNpcAction.h"
+#include "StateRequestMoveAction.h"
 #include "CloudGetNumFiles.h"
 #include "CloudRead.h"
 #include "CloudWrite.h"
@@ -17,6 +15,7 @@
 #include "SaveManager.h"
 #include "ReadPlayerTransfer.h"
 #include "LoadPlayerTransfer.h"
+#include "Exports.h"
 
 #if defined _M_X64
 #elif defined _M_IX86
@@ -126,10 +125,35 @@ void EndWorkerThread() {
 #pragma endregion
 
 static void ConfigurePlayerPositionHooks(std::vector<BaseMethodHook*>& hooks) {
-	hooks.push_back(new HookWalkTo(&g_dataQueue, g_hEvent, &g_log));
-	hooks.push_back(new ControllerPlayerStateMoveToRequestMoveAction(&g_dataQueue, g_hEvent));
-	hooks.push_back(new ControllerPlayerStateIdleRequestNpcAction(&g_dataQueue, g_hEvent));
-	hooks.push_back(new ControllerPlayerStateMoveToRequestNpcAction(&g_dataQueue, g_hEvent));
+
+	hooks.push_back(new StateRequestMoveAction(&g_dataQueue, g_hEvent, REQUEST_MOVE_ACTION_MOVETO));
+	hooks.push_back(new StateRequestMoveAction(&g_dataQueue, g_hEvent, REQUEST_MOVE_ACTION_IDLE));
+	hooks.push_back(new StateRequestMoveAction(&g_dataQueue, g_hEvent, REQUEST_MOVE_ACTION_LONG_IDLE));
+	hooks.push_back(new StateRequestMoveAction(&g_dataQueue, g_hEvent, REQUEST_MOVE_ACTION_MOVE_AND_SKILL));
+	hooks.push_back(new StateRequestMoveAction(&g_dataQueue, g_hEvent, REQUEST_MOVE_ACTION_MOVE_ACTOR));
+
+	hooks.push_back(new StateRequestMoveAction(&g_dataQueue, g_hEvent, REQUEST_MOVE_ACTION_MOVE_TO_SKILL));
+	hooks.push_back(new StateRequestMoveAction(&g_dataQueue, g_hEvent, REQUEST_MOVE_ACTION_PICKUP));
+	hooks.push_back(new StateRequestMoveAction(&g_dataQueue, g_hEvent, REQUEST_MOVE_ACTION_TALK_TO_NPC));
+	hooks.push_back(new StateRequestMoveAction(&g_dataQueue, g_hEvent, REQUEST_MOVE_ACTION_SKILL));
+
+
+	// For these, the target position could actually be the smuggler.
+	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_IDLE));
+	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_MOVETO));
+	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_JUMP_TO_SKILL));
+	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_LONG_IDLE));
+	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_MOVE_AND_SKILL));
+	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_MOVE_TO_ACTOR));	
+	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_MOVE_TO_SKILL));
+	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_PICKUP_ITEM));
+	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_TALK_TO_NPC));
+	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_MOVE_TO_NPC));
+	
+	// Unsure about the rotation, could be random locations under the mouse pointer
+	//hooks.push_back(new StateRequestRotateAction(&g_dataQueue, g_hEvent, REQUEST_ROTATE_ACTION_IDLE));
+	//hooks.push_back(new StateRequestRotateAction(&g_dataQueue, g_hEvent, REQUEST_ROTATE_ACTION_LONG_IDLE));
+	
 }
 
 // Cloud detection (is cloud enabled?) hooks

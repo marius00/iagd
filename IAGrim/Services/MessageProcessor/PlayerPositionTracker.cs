@@ -13,7 +13,7 @@ namespace IAGrim.Services.MessageProcessor {
 
         public void Process(MessageType type, byte[] data) {
              switch (type) {
-                case MessageType.TYPE_ControllerPlayerStateIdleRequestMoveAction: {
+                case MessageType.TYPE_ControllerRequestMoveAction: {
                     GrimStateTracker.LastKnownPosition = new GrimStateTracker.WorldVector {
                         X = IOHelper.GetFloat(data, 4),
                         Y = IOHelper.GetFloat(data, 8),
@@ -27,35 +27,36 @@ namespace IAGrim.Services.MessageProcessor {
                 }
                     break;
 
-                case MessageType.TYPE_ControllerPlayerStateIdleRequestNpcAction:
-                case MessageType.TYPE_ControllerPlayerStateMoveToRequestNpcAction: {
-                    GrimStateTracker.LastKnownPosition = new GrimStateTracker.WorldVector {
-                        X = IOHelper.GetFloat(data, 4),
-                        Y = IOHelper.GetFloat(data, 8),
-                        Z = IOHelper.GetFloat(data, 12),
-                        Zone = IOHelper.GetInt(data, 0)
-                    };
+                 case MessageType.TYPE_ControllerRequestNpcAction: {
+                     GrimStateTracker.LastKnownPosition = new GrimStateTracker.WorldVector {
+                         X = IOHelper.GetFloat(data, 4),
+                         Y = IOHelper.GetFloat(data, 8),
+                         Z = IOHelper.GetFloat(data, 12),
+                         Zone = IOHelper.GetInt(data, 0)
+                     };
 
-                    if (_debugPlayerPositions) {
-                        Logger.Debug(GrimStateTracker.LastKnownPosition);
-                    }
+                     if (_debugPlayerPositions) {
+                         Logger.Debug(GrimStateTracker.LastKnownPosition);
+                     }
 
-                    break;
-                }
+                     break;
+                 }
 
-                case MessageType.TYPE_ControllerPlayerStateMoveToRequestMoveAction: {
-                    GrimStateTracker.LastKnownPosition = new GrimStateTracker.WorldVector {
-                        X = IOHelper.GetFloat(data, 4),
-                        Y = IOHelper.GetFloat(data, 8),
-                        Z = IOHelper.GetFloat(data, 12),
-                        Zone = IOHelper.GetInt(data, 0)
-                    };
+                 case MessageType.TYPE_ControllerRequestRotateAction: {
+                     var vec = new GrimStateTracker.WorldVector {
+                         X = IOHelper.GetFloat(data, 4),
+                         Y = IOHelper.GetFloat(data, 8),
+                         Z = IOHelper.GetFloat(data, 12),
+                         Zone = IOHelper.GetInt(data, 0)
+                     };
 
-                    if (_debugPlayerPositions) {
-                        Logger.Debug(GrimStateTracker.LastKnownPosition);
-                    }
-                }
-                    break;
+                     if (_debugPlayerPositions) {
+                         Logger.Debug($"RotateTo: {vec}");
+                     }
+
+                     break;
+                 }
+
 
                 case MessageType.TYPE_OPEN_PRIVATE_STASH:
                 case MessageType.TYPE_OPEN_CLOSE_TRANSFER_STASH:

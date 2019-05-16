@@ -3,14 +3,13 @@ enum MessageType {
 	TYPE_OPEN_PRIVATE_STASH = 1,
 	TYPE_OPEN_CLOSE_TRANSFER_STASH = 2,
 
-#ifndef INSTALOOT_ENABLE
 	TYPE_REPORT_WORKER_THREAD_LAUNCHED = 3,
-#endif
-	TYPE_ControllerPlayerStateIdleRequestMoveAction = 4,
-	//TYPE_ControllerPlayerStateIdleRequestInteractableAction = 5,
-	TYPE_ControllerPlayerStateIdleRequestNpcAction = 6,
-	TYPE_ControllerPlayerStateMoveToRequestNpcAction = 7,
-	TYPE_ControllerPlayerStateMoveToRequestMoveAction = 8,
+
+	// Movement
+	TYPE_ControllerRequestNpcAction = 7,
+	TYPE_ControllerRequestMoveAction = 8,
+	TYPE_ControllerRequestRotateAction = 55,
+
 	TYPE_InventorySack_AddItem = 9,
 	TYPE_InventorySack_AddItem_Vec2 = 10,
 	TYPE_CloudGetNumFiles = 11,
@@ -54,9 +53,6 @@ enum MessageType {
 	TYPE_ERROR_HOOKING_GENERIC = 44,
 	TYPE_RequestRestrictedSack = 45,
 
-#ifdef INSTALOOT_ENABLE
-	TYPE_REPORT_WORKER_THREAD_LAUNCHED = 46,
-#endif
 	TYPE_GameInfo_IsHardcore_via_init = 47,
 	TYPE_GameInfo_IsHardcore_via_init_2 = 48,
 	TYPE_DetectedStashToLootFrom = 49,

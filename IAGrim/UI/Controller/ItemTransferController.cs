@@ -97,21 +97,30 @@ namespace IAGrim.UI.Controller {
             int numItemsRequested = Math.Min(maxItemsToTransfer, numItemsReceived);
 
             _itemStatService.ApplyStatsToPlayerItems(items); // For item class? 'IsStackable' maybe?
-            _transferStashService.Deposit(transferFile, items, maxItemsToTransfer, out error);
-            _dao.Update(items, true);
+            try {
+                _transferStashService.Deposit(transferFile, items, maxItemsToTransfer, out error);
+                _dao.Update(items, true);
 
-            var numItemsAfterTransfer = items.Sum(item => item.StackCount);
-            long numItemsTransferred = numReceived - numItemsAfterTransfer;
+                var numItemsAfterTransfer = items.Sum(item => item.StackCount);
+                long numItemsTransferred = numReceived - numItemsAfterTransfer;
 
-            if (!string.IsNullOrEmpty(error)) {
-                Logger.Warn(error);
-                _browser.ShowMessage(error, UserFeedbackLevel.Error);
+                if (!string.IsNullOrEmpty(error)) {
+                    Logger.Warn(error);
+                    _browser.ShowMessage(error, UserFeedbackLevel.Error);
+                }
+
+                return new TransferStatus {
+                    NumItemsTransferred = (int)numItemsTransferred,
+                    NumItemsRequested = numItemsRequested
+                };
             }
-
-            return new TransferStatus {
-                NumItemsTransferred = (int) numItemsTransferred,
-                NumItemsRequested = numItemsRequested
-            };
+            catch (TransferStashService.DepositException) {
+                _browser.ShowMessage(GlobalSettings.Language.GetTag("iatag_feedback_unable_to_deposit"), UserFeedbackLevel.Error);
+                return new TransferStatus {
+                    NumItemsTransferred = 0,
+                    NumItemsRequested = numItemsRequested
+                };
+            }
         }
 
         private string GetTransferFile() {
