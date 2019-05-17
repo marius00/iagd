@@ -11,7 +11,9 @@ using log4net.Repository.Hierarchy;
 namespace IAGrim.Services.MessageProcessor {
     class DebugMessageProcessor : IMessageProcessor {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(DebugMessageProcessor));
+
         public void Process(MessageType type, byte[] data) {
+#if DEBUG
             int t = (int)type;
             switch (type) {
 
@@ -56,6 +58,7 @@ namespace IAGrim.Services.MessageProcessor {
                 else
                     Logger.Debug($"Got message {t}");
             }
+#endif
         }
     }
 }

@@ -57,11 +57,11 @@ namespace IAGrim.UI {
         private void SettingsWindow_Load(object sender, EventArgs e) {
             this.Dock = DockStyle.Fill;
 
-            radioBeta.Checked = (bool)Properties.Settings.Default.SubscribeExperimentalUpdates;
-            radioRelease.Checked = !(bool)Properties.Settings.Default.SubscribeExperimentalUpdates;
+            radioBeta.Checked = Properties.Settings.Default.SubscribeExperimentalUpdates;
+            radioRelease.Checked = !radioBeta.Checked;
             cbDualComputer.Checked = Properties.Settings.Default.UsingDualComputer;
             cbShowAugments.Checked = Properties.Settings.Default.ShowAugmentsAsItems;
-
+            cbDeleteDuplicates.Checked = Properties.Settings.Default.DeleteDuplicates;
         }
 
         private void buttonViewBackups_Click(object sender, EventArgs e) {
@@ -174,6 +174,19 @@ namespace IAGrim.UI {
 
         private void helpWhatIsTransferToAnyMod_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             HelpService.ShowHelp(HelpService.HelpType.TransferToAnyMod);
+        }
+
+        private void helpWhatIsUsingMultiplePc_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            HelpService.ShowHelp(HelpService.HelpType.MultiplePcs);
+        }
+
+        private void helpWhatIsDeleteDuplicates_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            HelpService.ShowHelp(HelpService.HelpType.DeleteDuplicates);
+        }
+
+        private void cbDeleteDuplicates_CheckedChanged(object sender, EventArgs e) {
+            Properties.Settings.Default.DeleteDuplicates = (sender as FirefoxCheckBox).Checked;
+            Properties.Settings.Default.Save();
         }
     }
 }

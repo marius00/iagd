@@ -299,9 +299,6 @@ namespace StatTranslator
             { "iatag_html_augmentation_item", "You may be able to purchase this augment from {0}" },
             { "iatag_html_setbonus", "Set:" },
 
-            // TODO: Merge duplicates, regroup similar to a single one (ie. Language select/change/selection),
-            //       and regroup/reorder tags in blocks
-            // UI, IA Only
             { "iatag_ui_clean", "Clean Database" },
             { "iatag_ui_buddy_userid", "User ID: " },
             { "iatag_ui_buddy_userid_none", "None" },
@@ -320,6 +317,7 @@ namespace StatTranslator
             { "iatag_ui_no", "No" },
             { "iatag_ui_survivalmode", "The Crucible (DLC)" },
             { "iatag_ui_dualcomputer", "Using IA on multiple PCs" },
+            { "iatag_ui_deleteduplicates", "Delete bugged duplicates" },
             { "iatag_ui_backup_service_error", "The backup service is currently experiencing technical difficulties.\nPlease try again later." },
             { "iatag_ui_backup_status", "Backup status" },
             { "iatag_ui_backup_complete", "Backup complete!" },
@@ -462,8 +460,9 @@ namespace StatTranslator
             { "class06", "Shaman" },
             { "class07", "Inquisitor" },
             { "class08", "Necromancer" },
+            { "class09", "Oathkeeper" },
 
-            
+
             { "iatag_ui_questionmark", " ? " },
             { "iatag_ui_howdoifindgrimdawn", "How can I find the Grim Dawn install?" },
             { "iatag_ui_whatisthis", "What is this?" },

@@ -491,29 +491,6 @@ namespace StatTranslator
 
         public TranslatedStat TranslateSkillAutoController(string record)
         {
-            // TODO: Unused?
-            var mapping = new Dictionary<string, string> {
-                { "records/controllers/itemskills/cast_@allyonattack_", "-" },
-                { "records/controllers/itemskills/cast_@allyonlowhealth", "-" },
-                { "records/controllers/itemskills/cast_@enemylocationonkill", "" },
-                { "records/controllers/itemskills/cast_@enemyonanyhit_", "" },
-                { "records/controllers/itemskills/cast_@enemyonattack", "{0}% Chance on attack" },
-                { "records/controllers/itemskills/cast_@enemyonattackcrit", "{0}% Chance on a critical attack (target enemy)" },
-                { "records/controllers/itemskills/cast_@enemyonblock", "{0}% Chance when blocked" },
-                { "records/controllers/itemskills/cast_@enemyonhitcritical", "{0}% Chance when hit by a critical" },
-                { "records/controllers/itemskills/cast_@enemyonkill", "{0}% Chance on Enemy Death" },  //C
-                { "records/controllers/itemskills/cast_@enemyonmeleehit", "{0}% Chance when hit by a melee attack" },
-                { "records/controllers/itemskills/cast_@enemyonprojectilehit", "{0}% NPSkill Proc" },
-                { "records/controllers/itemskills/cast_@selfonanyhit", "{0}% Chance when hit" }, //C
-                { "records/controllers/itemskills/cast_@selfonattack", "{0}% Chance on attacking" },
-                { "records/controllers/itemskills/cast_@selfonattackcrit", "{0}% Chance on a critical attack" },
-                { "records/controllers/itemskills/cast_@selfonblock", "{0}% Chance when blocking" },
-                { "records/controllers/itemskills/cast_@selfonhitcritica", "{0}% Chance when Hit by a Critical" },//C
-                { "records/controllers/itemskills/cast_@selfonkill", "{0}% Chance on Enemy Death" }, //C
-                { "records/controllers/itemskills/cast_@selfonlowhealth", "{0}% Chance at 25% health" },
-                { "records/controllers/itemskills/cast_@selfonmeleehit", "{0}% Chance when Hit by Melee Attacks" },
-                { "records/controllers/itemskills/cast_@selfonprojectilehit", "{0}% Chance when Hit by Ranged Attacks" },
-            };
 
             try
             {
@@ -935,15 +912,11 @@ namespace StatTranslator
         public List<TranslatedStat> ProcessStats(ISet<IItemStat> stats, TranslatedStatType type)
         {
             List<TranslatedStat> result = new List<TranslatedStat>();
-
-            // null plays havoc with AutoMapper TODO: Is this still required? automapper is no longer being used
-            if (stats == null)
-            {
+            if (stats == null) {
                 return result;
             }
 
-            switch (type)
-            {
+            switch (type) {
                 case TranslatedStatType.BODY:
                     ProcessBodyDamage(stats, result);
                     ProccessBodyRetaliation(stats, result);

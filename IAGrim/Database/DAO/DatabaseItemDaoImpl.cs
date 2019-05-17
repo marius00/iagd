@@ -54,7 +54,7 @@ namespace IAGrim.Database {
         }
 
 
-        public void Save(DatabaseItem item) {
+        public override void Save(DatabaseItem item) {
 
             using (var session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {

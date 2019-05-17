@@ -77,6 +77,11 @@ namespace IAGrim.Parsers.TransferStash {
                 return (true, new List<UserFeedback>());
             }
 
+            if (GlobalSettings.StashStatus != StashAvailability.CLOSED) {
+                Logger.Info($"Delaying stash loot, stash status {GlobalSettings.StashStatus} != CLOSED.");
+                return (false, UserFeedback.FromTagSingleton("iatag_feedback_delaying_stash_loot_status"));
+            }
+
             if (!GrimStateTracker.IsFarFromStash) {
                 var distance = GrimStateTracker.Distance;
                 if (distance.HasValue) {
@@ -89,10 +94,6 @@ namespace IAGrim.Parsers.TransferStash {
                 }
             }
 
-            if (GlobalSettings.StashStatus != StashAvailability.CLOSED) {
-                Logger.Info($"Delaying stash loot, stash status {GlobalSettings.StashStatus} != CLOSED.");
-                return (false, UserFeedback.FromTagSingleton("iatag_feedback_delaying_stash_loot_status"));
-            }
 
             return (true, new List<UserFeedback>());
         }
@@ -111,13 +112,25 @@ namespace IAGrim.Parsers.TransferStash {
                 if (HasItems(stash, lootFromStashIdx)) {
                     var classifiedItems = Classify(stash.Tabs[lootFromStashIdx]);
 
-                    // TODO: Once we're safe on components etc, just auto delete instead?
+                    // Warn or auto delete bugged duplicates
                     if (classifiedItems.Duplicates.Count > 0) {
-                        classifiedItems.Duplicates.ForEach(item => Logger.Debug($"NotLootedDuplicate: {item}"));
-                        feedbacks.Add(new UserFeedback(UserFeedbackLevel.Warning,
-                            GlobalSettings.Language.GetTag("iatag_feedback_duplicates_not_looted", classifiedItems.Duplicates.Count),
-                            HelpService.GetUrl(HelpService.HelpType.DuplicateItem)
-                        ));
+                        if (Settings.Default.DeleteDuplicates) {
+                            stash.Tabs[lootFromStashIdx].Items.RemoveAll(e => classifiedItems.Duplicates.Any(m => m.Equals(e)));
+
+                            // No items to loot, so just delete the duplicates.
+                            if (classifiedItems.Remaining.Count == 0) {
+                                if (!SafeTransferStashWriter.SafelyWriteStash(transferFile, stash)) {
+                                    Logger.Error("Fatal error deleting items from Grim Dawn, items has been duplicated.");
+                                }
+                            }
+                        }
+                        else {
+                            classifiedItems.Duplicates.ForEach(item => Logger.Debug($"NotLootedDuplicate: {item}"));
+                            feedbacks.Add(new UserFeedback(UserFeedbackLevel.Warning,
+                                GlobalSettings.Language.GetTag("iatag_feedback_duplicates_not_looted", classifiedItems.Duplicates.Count),
+                                HelpService.GetUrl(HelpService.HelpType.DuplicateItem)
+                            ));
+                        }
                     }
 
                     if (classifiedItems.Stacked.Count > 0) {
@@ -135,7 +148,7 @@ namespace IAGrim.Parsers.TransferStash {
                         ));
                     }
 
-                    // The items we can actually loot
+                    // The items we can actually loot (or delete duplicates)
                     if (classifiedItems.Remaining.Count > 0) {
                         OnUpdate?.Invoke(this, null);
                         

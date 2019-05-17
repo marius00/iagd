@@ -1,6 +1,7 @@
 using log4net;
 using System;
 using System.Collections.Generic;
+using IAGrim.Parser.Stash;
 
 namespace IAGrim.StashFile {
     public class Stash {

@@ -58,6 +58,9 @@
             this.buttonLanguageSelect = new FirefoxButton();
             this.buttonViewBackups = new FirefoxButton();
             this.buttonViewLogs = new FirefoxButton();
+            this.cbDeleteDuplicates = new FirefoxCheckBox();
+            this.helpWhatIsUsingMultiplePc = new System.Windows.Forms.LinkLabel();
+            this.helpWhatIsDeleteDuplicates = new System.Windows.Forms.LinkLabel();
             this.contextMenuStrip1.SuspendLayout();
             this.panelBox4.SuspendLayout();
             this.panelBox3.SuspendLayout();
@@ -97,6 +100,9 @@
             // 
             // panelBox4
             // 
+            this.panelBox4.Controls.Add(this.helpWhatIsDeleteDuplicates);
+            this.panelBox4.Controls.Add(this.helpWhatIsUsingMultiplePc);
+            this.panelBox4.Controls.Add(this.cbDeleteDuplicates);
             this.panelBox4.Controls.Add(this.helpWhatIsTransferToAnyMod);
             this.panelBox4.Controls.Add(this.helpWhatIsSecureTransfers);
             this.panelBox4.Controls.Add(this.helpWhatIsAugmentAsItem);
@@ -532,6 +538,50 @@
             this.buttonViewLogs.Text = "View Logs";
             this.buttonViewLogs.Click += new System.EventHandler(this.buttonViewLogs_Click);
             // 
+            // cbDeleteDuplicates
+            // 
+            this.cbDeleteDuplicates.Bold = false;
+            this.cbDeleteDuplicates.EnabledCalc = true;
+            this.cbDeleteDuplicates.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbDeleteDuplicates.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbDeleteDuplicates.Location = new System.Drawing.Point(3, 318);
+            this.cbDeleteDuplicates.Name = "cbDeleteDuplicates";
+            this.cbDeleteDuplicates.Size = new System.Drawing.Size(268, 27);
+            this.cbDeleteDuplicates.TabIndex = 27;
+            this.cbDeleteDuplicates.Tag = "iatag_ui_deleteduplicates";
+            this.cbDeleteDuplicates.Text = "Delete bugged duplicates";
+            this.cbDeleteDuplicates.CheckedChanged += new System.EventHandler(this.cbDeleteDuplicates_CheckedChanged);
+            // 
+            // helpWhatIsUsingMultiplePc
+            // 
+            this.helpWhatIsUsingMultiplePc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.helpWhatIsUsingMultiplePc.AutoSize = true;
+            this.helpWhatIsUsingMultiplePc.BackColor = System.Drawing.Color.Transparent;
+            this.helpWhatIsUsingMultiplePc.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.helpWhatIsUsingMultiplePc.Location = new System.Drawing.Point(259, 292);
+            this.helpWhatIsUsingMultiplePc.Name = "helpWhatIsUsingMultiplePc";
+            this.helpWhatIsUsingMultiplePc.Size = new System.Drawing.Size(18, 13);
+            this.helpWhatIsUsingMultiplePc.TabIndex = 28;
+            this.helpWhatIsUsingMultiplePc.TabStop = true;
+            this.helpWhatIsUsingMultiplePc.Tag = "iatag_ui_questionmark";
+            this.helpWhatIsUsingMultiplePc.Text = " ? ";
+            this.helpWhatIsUsingMultiplePc.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpWhatIsUsingMultiplePc_LinkClicked);
+            // 
+            // helpWhatIsDeleteDuplicates
+            // 
+            this.helpWhatIsDeleteDuplicates.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.helpWhatIsDeleteDuplicates.AutoSize = true;
+            this.helpWhatIsDeleteDuplicates.BackColor = System.Drawing.Color.Transparent;
+            this.helpWhatIsDeleteDuplicates.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.helpWhatIsDeleteDuplicates.Location = new System.Drawing.Point(259, 325);
+            this.helpWhatIsDeleteDuplicates.Name = "helpWhatIsDeleteDuplicates";
+            this.helpWhatIsDeleteDuplicates.Size = new System.Drawing.Size(18, 13);
+            this.helpWhatIsDeleteDuplicates.TabIndex = 29;
+            this.helpWhatIsDeleteDuplicates.TabStop = true;
+            this.helpWhatIsDeleteDuplicates.Tag = "iatag_ui_questionmark";
+            this.helpWhatIsDeleteDuplicates.Text = " ? ";
+            this.helpWhatIsDeleteDuplicates.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpWhatIsDeleteDuplicates_LinkClicked);
+            // 
             // SettingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -595,5 +645,8 @@
         private System.Windows.Forms.LinkLabel helpWhatIsAugmentAsItem;
         private System.Windows.Forms.LinkLabel helpWhatIsSecureTransfers;
         private System.Windows.Forms.LinkLabel helpWhatIsTransferToAnyMod;
+        private FirefoxCheckBox cbDeleteDuplicates;
+        private System.Windows.Forms.LinkLabel helpWhatIsDeleteDuplicates;
+        private System.Windows.Forms.LinkLabel helpWhatIsUsingMultiplePc;
     }
 }

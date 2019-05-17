@@ -490,5 +490,17 @@ namespace IAGrim.Properties {
                 this["HasSuggestedLanguageChange"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DeleteDuplicates {
+            get {
+                return ((bool)(this["DeleteDuplicates"]));
+            }
+            set {
+                this["DeleteDuplicates"] = value;
+            }
+        }
     }
 }

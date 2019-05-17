@@ -21,7 +21,10 @@ namespace IAGrim.Services {
             DuplicateItem,
             NoStacks,
             BackupAutodetectDisabled,
-            NotLootingUnidentified
+            NotLootingUnidentified,
+            DeleteDuplicates,
+            MultiplePcs
+
         }
 
         public static void ShowHelp(HelpType type) {

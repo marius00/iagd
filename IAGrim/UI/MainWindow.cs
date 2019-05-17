@@ -54,7 +54,6 @@ namespace IAGrim.UI
 
         private FormWindowState _previousWindowState = FormWindowState.Normal;
         private readonly TooltipHelper _tooltipHelper = new TooltipHelper();
-        private DateTime _lastAutomaticUpdateCheck = default(DateTime);
         private readonly DynamicPacker _dynamicPacker;
         private readonly UsageStatisticsReporter _usageStatisticsReporter = new UsageStatisticsReporter();
         private readonly AutomaticUpdateChecker _automaticUpdateChecker = new AutomaticUpdateChecker();

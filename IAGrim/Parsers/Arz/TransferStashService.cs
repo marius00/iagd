@@ -24,21 +24,7 @@ namespace IAGrim.Parsers.Arz {
 
         private readonly ItemSizeService _itemSizeService;
 
-        /// <summary>
-        /// Used for the crafting tab, I believe.
-        /// </summary>
-        private ConcurrentBag<Item> _unlootedItems = new ConcurrentBag<Item>();
-
-        /// <summary>
-        /// Used to prevent feedback spam, potentially overriding more important new information from other sources
-        /// </summary>
-        private bool _hasRecentlyUpdatedTimerFeedback;
-
-        public static bool HasLootedItemsOnceThisSession;
-
         public readonly int NumStashTabs;
-
-        public IEnumerable<Item> UnlootedItems => _unlootedItems.ToList();
 
         [Obsolete]
         public event EventHandler StashUpdated;
@@ -50,29 +36,12 @@ namespace IAGrim.Parsers.Arz {
             var path = Path.Combine(GlobalPaths.SavePath, "transfer.gst");
 
             if (!string.IsNullOrEmpty(path) && File.Exists(path)) {
-                UpdateUnlooted(path);
-
                 var pCrypto = new GDCryptoDataBuffer(DataBuffer.ReadBytesFromDisk(path));
                 var stash = new Stash();
 
                 if (stash.Read(pCrypto)) {
                     NumStashTabs = stash.Tabs.Count;
                 }
-            }
-        }
-
-        public void UpdateUnlooted(string filename) {
-            var pCrypto = new GDCryptoDataBuffer(DataBuffer.ReadBytesFromDisk(filename));
-            var stash = new Stash();
-
-            if (stash.Read(pCrypto)) {
-                // Update the internal listing of unlooted items (in stash tabs)
-                var unlootedLocal = new List<Item>();
-                foreach (var tab in stash.Tabs) {
-                    unlootedLocal.AddRange(tab.Items);
-                }
-
-                Interlocked.Exchange(ref _unlootedItems, new ConcurrentBag<Item>(unlootedLocal));
             }
         }
 

@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using IAGrim.Parser.Stash;
+using IAGrim.StashFile;
 
-namespace IAGrim.StashFile {
+namespace IAGrim.Parser.Stash {
     public class StashTab {
         private static readonly string[] StackableSlots = { "ItemRelic", "OneShot_PotionHealth", "OneShot_PotionMana", "OneShot_Scroll" };
 
@@ -28,7 +28,7 @@ namespace IAGrim.StashFile {
             "records/items/questitems/quest_dynamite.dbr"
         };
 
-        public Block Block = new Block();
+        private Block _block = new Block();
 
         public uint Width = 10u;
 
@@ -44,35 +44,9 @@ namespace IAGrim.StashFile {
             return StackableSlots.Contains(slot);
         }
 
-        /// <summary>
-        /// Add an item to the tab
-        /// If the item already exists, the stackcount is increased.
-        /// </summary>
-        /// <param name="item"></param>
-        public void AddItem(Item item, string slot) {
-            var comparator = Items.Where(i => i.Equals(item));
-            if ((CanStack(slot) || HardcodedRecords.Contains(item.BaseRecord)) && comparator.Any()) {
-                Item existing = comparator.First();
-                
-                existing.StackCount += Math.Max(1, item.StackCount);
-
-                // Prevent any stacksize from exceeding 100
-                // This may not be correct for augments but is necessary for potions
-                if (existing.StackCount > 100) {
-                    item.StackCount = existing.StackCount - 100;
-                    existing.StackCount = 100;
-                    Items.Add(item);
-                }
-            }
-            else {
-                Items.Add(item);
-            }
-        }
-
-
         public bool Read(GDCryptoDataBuffer pCrypto) {
             uint num = 0;
-            bool flag = !Block.ReadStart(out this.Block, pCrypto) || !pCrypto.ReadCryptoUInt(out this.Width) || !pCrypto.ReadCryptoUInt(out this.Height) || !pCrypto.ReadCryptoUInt(out num);
+            bool flag = !Block.ReadStart(out this._block, pCrypto) || !pCrypto.ReadCryptoUInt(out this.Width) || !pCrypto.ReadCryptoUInt(out this.Height) || !pCrypto.ReadCryptoUInt(out num);
             bool result;
             if (flag) {
                 result = false;
@@ -88,14 +62,14 @@ namespace IAGrim.StashFile {
                     }
                     this.Items.Add(item);
                 }
-                bool flag3 = !this.Block.ReadEnd(pCrypto);
+                bool flag3 = !this._block.ReadEnd(pCrypto);
                 result = !flag3;
             }
             return result;
         }
 
         public void Write(DataBuffer pBuffer) {
-            this.Block.WriteStart(0, pBuffer);
+            this._block.WriteStart(0, pBuffer);
             pBuffer.WriteUInt(this.Width);
             pBuffer.WriteUInt(this.Height);
             if ((this.Items == null) || (this.Items.Count < 1)) {
@@ -103,11 +77,11 @@ namespace IAGrim.StashFile {
             }
             else {
                 pBuffer.WriteUInt((uint)this.Items.Count);
-                for (int i = 0; i < this.Items.Count; i++) {
-                    this.Items[i].Write(pBuffer);
+                foreach (var item in this.Items) {
+                    item.Write(pBuffer);
                 }
             }
-            this.Block.WriteEnd(pBuffer);
+            this._block.WriteEnd(pBuffer);
         }
 
 

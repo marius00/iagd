@@ -79,18 +79,13 @@ namespace IAGrim.Database.Synchronizer {
             );
         }
 
-        public void Save(DatabaseItem item) {
-            ThreadExecuter.Execute(
-                () => _repo.Save(item)
-            );
-        }
-
         public void Save(ICollection<DatabaseItem> items) {
             ThreadExecuter.Execute(
                 () => _repo.Save(items), 
                 ThreadExecuter.ThreadTimeout * 2
             );
         }
+
         public void Save(List<DatabaseItem> items, ProgressTracker progressTracker) {
             ThreadExecuter.Execute(
                 () => _repo.Save(items, progressTracker),
