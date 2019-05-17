@@ -33,13 +33,7 @@ void ReadPlayerTransfer::DisableHook() {
 	Unhook((PVOID*)&originalMethod, HookedMethod);
 }
 
-int __fastcall ReadPlayerTransfer::HookedMethod(
-	void* This,
-#if !defined(_AMD64_)
-	void* notUsed,
-#endif
-	void* checkedReader
-) {
+int __fastcall ReadPlayerTransfer::HookedMethod(void* This, void* checkedReader) {
 	// Who knows what this'll do..
 	int res = originalMethod(This, checkedReader);
 

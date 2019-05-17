@@ -17,9 +17,5 @@ private:
 	static DataQueue* m_dataQueue;
 	static void* privateStashSack;
 
-#if !defined(_AMD64_)
-	static void* __fastcall HookedMethod(void* This, void* notUsed);
-#else
 	static void* __fastcall HookedMethod(void* This);
-#endif
 };

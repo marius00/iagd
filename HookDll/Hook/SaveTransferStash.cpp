@@ -46,12 +46,7 @@ void SaveTransferStash::DisableHook() {
 }
 
 // This is spammed non stop when the private stash is open(not transfer)
-void* __fastcall SaveTransferStash::HookedMethod(
-	void* This
-#if !defined(_AMD64_)
-	,void* notUsed
-#endif
-) {
+void* __fastcall SaveTransferStash::HookedMethod(void* This) {
 
 	void* v = originalMethod(This);
 	privateStashSack = v;

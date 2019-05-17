@@ -14,14 +14,6 @@
 #define STASH_5 4
 #define STASH_PRIVATE 1000
 
-
-
-#if !defined(_AMD64_)
-#define DISCARD_ARG ,void* discarded 
-#else
-#define DISCARD_ARG
-#endif
-
 HANDLE InventorySack_AddItem::m_hEvent;
 DataQueue* InventorySack_AddItem::m_dataQueue;
 
@@ -144,7 +136,7 @@ void InventorySack_AddItem::DisableHook() {
 	privateStashHook.DisableHook();
 }
 
-void __fastcall InventorySack_AddItem::Hooked_GameEngine_SetTransferOpen(void* This DISCARD_ARG, bool isOpen) {
+void __fastcall InventorySack_AddItem::Hooked_GameEngine_SetTransferOpen(void* This , bool isOpen) {
 	dll_GameEngine_SetTransferOpen(This, isOpen);
 	m_gameEngine = This;
 
@@ -174,7 +166,7 @@ int InventorySack_AddItem::GetStashIndex(void* stash) {
 }
 
 // Since were creating from an existing object we'll need to call Get() on isHardcore and ModLabel
-void* __fastcall InventorySack_AddItem::Hooked_GameInfo_GameInfo_Param(void* This DISCARD_ARG, void* info) {
+void* __fastcall InventorySack_AddItem::Hooked_GameInfo_GameInfo_Param(void* This , void* info) {
 	void* result = dll_GameInfo_GameInfo_Param(This, info);
 
 	bool isHardcore = dll_GameInfo_GetHardcore(This);
@@ -185,7 +177,7 @@ void* __fastcall InventorySack_AddItem::Hooked_GameInfo_GameInfo_Param(void* Thi
 
 	return result;
 }
-void* __fastcall InventorySack_AddItem::Hooked_GameInfo_GameInfo(void* This DISCARD_ARG) {
+void* __fastcall InventorySack_AddItem::Hooked_GameInfo_GameInfo(void* This ) {
 	void* result = dll_GameInfo_GameInfo(This);
 
 	DataItemPtr dataEvent(new DataItem(TYPE_GameInfo_IsHardcore_via_init_2, 0, 0));
@@ -197,7 +189,7 @@ void* __fastcall InventorySack_AddItem::Hooked_GameInfo_GameInfo(void* This DISC
 
 
 //void GAME::GameInfo::SetHardcore(bool)
-void* __fastcall InventorySack_AddItem::Hooked_GameInfo_SetHardcore(void* This DISCARD_ARG, bool isHardcore) {
+void* __fastcall InventorySack_AddItem::Hooked_GameInfo_SetHardcore(void* This , bool isHardcore) {
 	DataItemPtr dataEvent(new DataItem(TYPE_GameInfo_IsHardcore, sizeof(isHardcore), (char*)&isHardcore));
 	m_dataQueue->push(dataEvent);
 	SetEvent(m_hEvent);
@@ -208,7 +200,7 @@ void* __fastcall InventorySack_AddItem::Hooked_GameInfo_SetHardcore(void* This D
 
 
 // When stash 3 is sorted, IA no longer knows where items are placed
-bool __fastcall InventorySack_AddItem::Hooked_InventorySack_Sort(void* This DISCARD_ARG, unsigned int unknown) {
+bool __fastcall InventorySack_AddItem::Hooked_InventorySack_Sort(void* This , unsigned int unknown) {
 	if (IsTransferStash(This, 2)) { // TODO: This is now dynamic....
 		DataItemPtr dataEvent(new DataItem(TYPE_InventorySack_Sort, 0, 0));
 		m_dataQueue->push(dataEvent);
@@ -218,7 +210,7 @@ bool __fastcall InventorySack_AddItem::Hooked_InventorySack_Sort(void* This DISC
 	return dll_InventorySack_Sort(This, unknown);
 }
 
-int* __fastcall InventorySack_AddItem::Hooked_GameEngine_GetTransferSack(void* This DISCARD_ARG, int idx
+int* __fastcall InventorySack_AddItem::Hooked_GameEngine_GetTransferSack(void* This , int idx
 ) {
 	if (idx == STASH_PRIVATE || idx == STASH_1 || idx == STASH_2 || idx == STASH_3 || idx == STASH_4 || idx == STASH_5) {
 		DataItemPtr dataEvent(new DataItem(TYPE_RequestRestrictedSack, sizeof(idx), (char*)&idx));

@@ -34,16 +34,7 @@ void CloudWrite::DisableHook() {
 	Unhook((PVOID*)&originalMethod, HookedMethod);
 }
 
-bool __fastcall CloudWrite::HookedMethod(
-	void* This, 
-#if !defined(_AMD64_)
-	void* notUsed,
-#endif
-	void* str_filename, 
-	void const* unknown0, 
-	unsigned int unknown1, 
-	bool unknown2
-) {
+bool __fastcall CloudWrite::HookedMethod(void* This, void* str_filename, void const* unknown0, unsigned int unknown1, bool unknown2) {
 	DataItemPtr item(new DataItem(TYPE_CloudWrite, 0, 0));
 	m_dataQueue->push(item);
 	SetEvent(m_hEvent);

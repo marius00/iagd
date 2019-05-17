@@ -76,8 +76,6 @@ void StateRequestNpcAction::DisableHook() {
 	//Unhook((PVOID*)&originalMethod, &HookedMethod);
 }
 
-
-#if defined(_AMD64_)
 void* __fastcall StateRequestNpcAction::HookedMethod_Wrap0(void* This, bool a, bool b, Vec3f const & xyz, void* npc) { return HookedMethod(This, a, b, xyz, npc, originalMethods[0]); }
 void* __fastcall StateRequestNpcAction::HookedMethod_Wrap1(void* This, bool a, bool b, Vec3f const & xyz, void* npc) { return HookedMethod(This, a, b, xyz, npc, originalMethods[1]); }
 void* __fastcall StateRequestNpcAction::HookedMethod_Wrap2(void* This, bool a, bool b, Vec3f const & xyz, void* npc) { return HookedMethod(This, a, b, xyz, npc, originalMethods[2]); }
@@ -90,21 +88,6 @@ void* __fastcall StateRequestNpcAction::HookedMethod_Wrap8(void* This, bool a, b
 void* __fastcall StateRequestNpcAction::HookedMethod_Wrap9(void* This, bool a, bool b, Vec3f const & xyz, void* npc) { return HookedMethod(This, a, b, xyz, npc, originalMethods[9]); }
 void* __fastcall StateRequestNpcAction::HookedMethod_Wrap10(void* This, bool a, bool b, Vec3f const & xyz, void* npc) { return HookedMethod(This, a, b, xyz, npc, originalMethods[10]); }
 void* __fastcall StateRequestNpcAction::HookedMethod_Wrap11(void* This, bool a, bool b, Vec3f const & xyz, void* npc) { return HookedMethod(This, a, b, xyz, npc, originalMethods[11]); }
-#else
-
-void* __fastcall StateRequestNpcAction::HookedMethod_Wrap0(void* This, void* unused, bool a, bool b, Vec3f const & xyz, void* npc) { return HookedMethod(This, a, b, xyz, npc, originalMethods[0]); }
-void* __fastcall StateRequestNpcAction::HookedMethod_Wrap1(void* This, void* unused, bool a, bool b, Vec3f const & xyz, void* npc) { return HookedMethod(This, a, b, xyz, npc, originalMethods[1]); }
-void* __fastcall StateRequestNpcAction::HookedMethod_Wrap2(void* This, void* unused, bool a, bool b, Vec3f const & xyz, void* npc) { return HookedMethod(This, a, b, xyz, npc, originalMethods[2]); }
-void* __fastcall StateRequestNpcAction::HookedMethod_Wrap3(void* This, void* unused, bool a, bool b, Vec3f const & xyz, void* npc) { return HookedMethod(This, a, b, xyz, npc, originalMethods[3]); }
-void* __fastcall StateRequestNpcAction::HookedMethod_Wrap4(void* This, void* unused, bool a, bool b, Vec3f const & xyz, void* npc) { return HookedMethod(This, a, b, xyz, npc, originalMethods[4]); }
-void* __fastcall StateRequestNpcAction::HookedMethod_Wrap5(void* This, void* unused, bool a, bool b, Vec3f const & xyz, void* npc) { return HookedMethod(This, a, b, xyz, npc, originalMethods[5]); }
-void* __fastcall StateRequestNpcAction::HookedMethod_Wrap6(void* This, void* unused, bool a, bool b, Vec3f const & xyz, void* npc) { return HookedMethod(This, a, b, xyz, npc, originalMethods[6]); }
-void* __fastcall StateRequestNpcAction::HookedMethod_Wrap7(void* This, void* unused, bool a, bool b, Vec3f const & xyz, void* npc) { return HookedMethod(This, a, b, xyz, npc, originalMethods[7]); }
-void* __fastcall StateRequestNpcAction::HookedMethod_Wrap8(void* This, void* unused, bool a, bool b, Vec3f const & xyz, void* npc) { return HookedMethod(This, a, b, xyz, npc, originalMethods[8]); }
-void* __fastcall StateRequestNpcAction::HookedMethod_Wrap9(void* This, void* unused, bool a, bool b, Vec3f const & xyz, void* npc) { return HookedMethod(This, a, b, xyz, npc, originalMethods[9]); }
-void* __fastcall StateRequestNpcAction::HookedMethod_Wrap10(void* This, void* unused, bool a, bool b, Vec3f const & xyz, void* npc) { return HookedMethod(This, a, b, xyz, npc, originalMethods[10]); }
-void* __fastcall StateRequestNpcAction::HookedMethod_Wrap11(void* This, void* unused, bool a, bool b, Vec3f const & xyz, void* npc) { return HookedMethod(This, a, b, xyz, npc, originalMethods[11]); }
-#endif
 
 void* __fastcall StateRequestNpcAction::HookedMethod(void* This, bool a, bool b, Vec3f const & xyz, void* npc, OriginalMethodPtr original) {
 

@@ -22,11 +22,5 @@ private:
 	static OriginalMethodPtr originalMethod;
 	static DataQueue* m_dataQueue;
 
-
-#if defined(_AMD64_)
 	static int __fastcall HookedMethod(void* This, void* checkedReader);
-#else
-	static int __fastcall HookedMethod(void* This, void* notUsed, void* checkedReader);
-#endif
-
 };

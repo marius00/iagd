@@ -18,12 +18,5 @@ private:
 	static HANDLE m_hEvent;
 	static OriginalMethodPtr originalMethod;
 	static DataQueue* m_dataQueue;
-
-
-#if defined(_AMD64_)
 	static unsigned int __fastcall HookedMethod(void* This);
-#else
-	static unsigned int __fastcall HookedMethod(void* This, void* notUsed);
-#endif
-
 };
