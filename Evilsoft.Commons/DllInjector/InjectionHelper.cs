@@ -217,6 +217,7 @@ namespace EvilsoftCommons.DllInjector {
                                 _previouslyInjected.Add(pid);
                             }
                             else {
+                                Logger.Warn("Grim Dawn is running as 32bit, sometime in the future 32bit support in IA will be removed.");
                                 DllInjector.NewInject(pid, dll32Bit);
                                 // Inject32Bit("Grim Dawn.exe", dll32Bit);
 
