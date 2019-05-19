@@ -677,6 +677,11 @@ namespace IAGrim.Database {
                 queryParams.Add("rarity", query.Rarity);
             }
 
+            if (query.PrefixRarity > 0) {
+                queryFragments.Add("PI.PrefixRarity >= :prefixRarity");
+                queryParams.Add("prefixRarity", query.PrefixRarity);
+            }
+
             if (query.SocketedOnly) {
                 queryFragments.Add("PI.MateriaRecord is not null and PI.MateriaRecord != ''");
             }
