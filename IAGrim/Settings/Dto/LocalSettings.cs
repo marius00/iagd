@@ -26,6 +26,8 @@ namespace IAGrim.Settings.Dto {
         private bool _optOutOfBackups;
         private string _backupCustomLocation;
 
+        public string MachineName { get; set; }
+
         public List<string> GrimDawnLocation {
             get => _grimDawnLocation;
             set {

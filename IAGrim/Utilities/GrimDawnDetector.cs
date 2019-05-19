@@ -256,7 +256,7 @@ namespace IAGrim {
         /// </summary>
         /// <returns></returns>
         public string GetGrimLocation() {
-            string location = _settingsService.GetLocal().GrimDawnLocation.FirstOrDefault();
+            string location = _settingsService.GetLocal().GrimDawnLocation?.FirstOrDefault();
             if (!string.IsNullOrEmpty(location) && Directory.Exists(location) && !location.Contains(".arz"))
                 return location;
 
