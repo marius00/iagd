@@ -15,15 +15,15 @@ namespace IAGrim.Services.MessageProcessor {
         private DynamicPacker _dynamicPacker;
         public ItemPositionFinder(DynamicPacker packer) {
             this._dynamicPacker = packer;
-            GlobalSettings.StashStatusChanged += GlobalSettings_StashStatusChanged;
+            RuntimeSettings.StashStatusChanged += GlobalSettings_StashStatusChanged;
         }
 
         ~ItemPositionFinder() {
-            GlobalSettings.StashStatusChanged -= GlobalSettings_StashStatusChanged;
+            RuntimeSettings.StashStatusChanged -= GlobalSettings_StashStatusChanged;
         }
 
         private void GlobalSettings_StashStatusChanged(object sender, EventArgs e) {
-            if (GlobalSettings.StashStatus == Utilities.HelperClasses.StashAvailability.OPEN)
+            if (RuntimeSettings.StashStatus == Utilities.HelperClasses.StashAvailability.OPEN)
                 _dynamicPacker.Clear();
         }
 

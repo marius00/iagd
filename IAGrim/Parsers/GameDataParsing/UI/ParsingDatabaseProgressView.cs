@@ -44,7 +44,7 @@ namespace IAGrim.Parsers.GameDataParsing.UI {
         }
 
         private void ParsingDatabaseProgressView_Load(object sender, EventArgs e) {
-            LocalizationLoader.ApplyLanguage(Controls, GlobalSettings.Language);
+            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
         }
     }
 }

@@ -11,14 +11,23 @@ using System.Management;
 using System.Runtime.InteropServices;
 using System.Text;
 using Gameloop.Vdf;
+using IAGrim.Settings;
+using IAGrim.Settings.Dto;
+using NHibernate.Util;
 
 namespace IAGrim {
-    class GrimDawnDetector {
+    public class GrimDawnDetector {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(GrimDawnDetector));
+        private readonly SettingsService _settingsService;
+
+        public GrimDawnDetector(SettingsService settingsService) {
+            _settingsService = settingsService;
+        }
 
         private static bool IsSteamDirectory(string path) {
             return !string.IsNullOrEmpty(path) && File.Exists(Path.Combine(path, "config", "config.vdf"));
         }
+
         private static string GetSteamDirectory() {
             using (RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(@"Software\Valve\Steam")) {
                 Logger.Debug("Looking for steam registry key..");
@@ -246,8 +255,8 @@ namespace IAGrim {
         /// Get the location of Grim Dawn
         /// </summary>
         /// <returns></returns>
-        public static string GetGrimLocation() {
-            string location = Properties.Settings.Default.GrimDawnLocation as string;
+        public string GetGrimLocation() {
+            string location = _settingsService.GetStrings(LocalSetting.GrimDawnLocation).FirstOrDefault();
             if (!string.IsNullOrEmpty(location) && Directory.Exists(location) && !location.Contains(".arz"))
                 return location;
 
@@ -276,8 +285,7 @@ namespace IAGrim {
 
             // Cache the location
             finally {
-                Properties.Settings.Default.GrimDawnLocation = location;
-                Properties.Settings.Default.Save();
+                _settingsService.Save(LocalSetting.GrimDawnLocation, new List<string> {location});
             }
 
             return string.Empty;
@@ -290,12 +298,14 @@ namespace IAGrim {
                 return input.Replace("/", @"\").ToLowerInvariant();
         }
 
-        public static ISet<string> GetGrimLocations() {
+        public ISet<string> GetGrimLocations() {
             var locations = new HashSet<string>();
 
-            string location = Properties.Settings.Default.GrimDawnLocation as string;
-            if (!string.IsNullOrEmpty(location) && Directory.Exists(location) && !location.Contains(".arz")) {
-                locations.Add(CleanInvertedSlashes(location));
+            var cached = _settingsService.GetStrings(LocalSetting.GrimDawnLocation);
+            foreach (var dir in cached) {
+                if (!string.IsNullOrEmpty(dir) && Directory.Exists(dir) && !dir.Contains(".arz")) {
+                    locations.Add(CleanInvertedSlashes(dir));
+                }
             }
 
 
@@ -311,7 +321,7 @@ namespace IAGrim {
                 Logger.Warn(ex.StackTrace);
             }
 
-            location = FindGogByRegistry();
+            var location = FindGogByRegistry();
             if (!string.IsNullOrEmpty(location)) {
                 locations.Add(CleanInvertedSlashes(location));
             }

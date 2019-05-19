@@ -82,7 +82,7 @@ namespace IAGrim.UI.Controller
             {
                 _logger.Warn("Attempted to transfer NULL item.");
 
-                var message = GlobalSettings.Language.GetTag("iatag_feedback_item_does_not_exist");
+                var message = RuntimeSettings.Language.GetTag("iatag_feedback_item_does_not_exist");
                 _setFeedback(message);
                 _browser.ShowMessage(message, UserFeedbackLevel.Error);
 
@@ -126,7 +126,7 @@ namespace IAGrim.UI.Controller
                 };
             }
             catch (TransferStashService.DepositException) {
-                _browser.ShowMessage(GlobalSettings.Language.GetTag("iatag_feedback_unable_to_deposit"), UserFeedbackLevel.Error);
+                _browser.ShowMessage(RuntimeSettings.Language.GetTag("iatag_feedback_unable_to_deposit"), UserFeedbackLevel.Error);
                 return new TransferStatus {
                     NumItemsTransferred = 0,
                     NumItemsRequested = numItemsRequested
@@ -147,9 +147,9 @@ namespace IAGrim.UI.Controller
                     return picker.Result;
                 }
 
-                _logger.Info(GlobalSettings.Language.GetTag("iatag_no_stash_abort"));
-                _setFeedback(GlobalSettings.Language.GetTag("iatag_no_stash_abort"));
-                _browser.ShowMessage(GlobalSettings.Language.GetTag("iatag_no_stash_abort"), UserFeedbackLevel.Error);
+                _logger.Info(RuntimeSettings.Language.GetTag("iatag_no_stash_abort"));
+                _setFeedback(RuntimeSettings.Language.GetTag("iatag_no_stash_abort"));
+                _browser.ShowMessage(RuntimeSettings.Language.GetTag("iatag_no_stash_abort"), UserFeedbackLevel.Error);
 
                 return string.Empty;
             }
@@ -159,11 +159,11 @@ namespace IAGrim.UI.Controller
 
         private bool CanTransfer()
         {
-            return GlobalSettings.StashStatus == StashAvailability.CLOSED
+            return RuntimeSettings.StashStatus == StashAvailability.CLOSED
                 || !_settingsController.SecureTransfers
-                || (GlobalSettings.StashStatus == StashAvailability.ERROR
+                || (RuntimeSettings.StashStatus == StashAvailability.ERROR
                     && MessageBox.Show(
-                        GlobalSettings.Language.GetTag("iatag_stash_status_error"),
+                        RuntimeSettings.Language.GetTag("iatag_stash_status_error"),
                         "Warning",
                         MessageBoxButtons.YesNo,
                         MessageBoxIcon.Warning) == DialogResult.Yes);
@@ -198,7 +198,7 @@ namespace IAGrim.UI.Controller
                         result.NumItemsRequested);
                     try
                     {
-                        var message = string.Format(GlobalSettings.Language.GetTag("iatag_stash3_success"),
+                        var message = string.Format(RuntimeSettings.Language.GetTag("iatag_stash3_success"),
                             result.NumItemsTransferred, result.NumItemsRequested);
                         _browser.ShowMessage(message, UserFeedbackLevel.Success);
                     }
@@ -210,8 +210,8 @@ namespace IAGrim.UI.Controller
                     }
                     if (result.NumItemsTransferred == 0)
                     {
-                        _setTooltip(GlobalSettings.Language.GetTag("iatag_stash3_failure"));
-                        _browser.ShowMessage(GlobalSettings.Language.GetTag("iatag_stash3_failure"), UserFeedbackLevel.Warning);
+                        _setTooltip(RuntimeSettings.Language.GetTag("iatag_stash3_failure"));
+                        _browser.ShowMessage(RuntimeSettings.Language.GetTag("iatag_stash3_failure"), UserFeedbackLevel.Warning);
                     }
 
                     // Lets do this last, to make sure feedback reaches the user as fast as possible
@@ -222,105 +222,24 @@ namespace IAGrim.UI.Controller
                     _logger.Warn("Could not find any items for the requested transfer");
                 }
             }
-            else if (GlobalSettings.StashStatus == StashAvailability.OPEN)
-            {
-                // "InstaTransfer" is an experimental feature
-                if (Properties.Settings.Default.InstaTransfer)
-                { // disabled for now
-                    List<PlayerItem> items = GetItemsForTransfer(args);
-                    int numDepositedItems = 0;
-                    int numItemsToTransfer = items?.Count ?? 0;
-
-                    if (items == null)
-                    {
-                        _logger.Info("Item previously deposited (ghost item)");
-                        _browser.ShowMessage("Item previously deposited (ghost item)", UserFeedbackLevel.Warning);
-                        _searchWindow.UpdateListViewDelayed();
-                    }
-                    else
-                    {
-                        foreach (var item in items)
-                        {
-                            if (TransferToOpenStash(item))
-                            {
-                                _dao.Remove(item);
-                                numDepositedItems++;
-                            }
-                        }
-
-                        var message = string.Format(GlobalSettings.Language.GetTag("iatag_stash3_success"), numDepositedItems, numItemsToTransfer);
-                        _setFeedback(message);
-                        _browser.ShowMessage(message, UserFeedbackLevel.Success);
-
-                        _logger.InfoFormat("Successfully deposited {0} out of {1} items", numDepositedItems, numItemsToTransfer);
-                        if (numDepositedItems > 0)
-                        {
-                            _searchWindow.UpdateListViewDelayed();
-                        }
-                    }
-                }
-                else
-                {
-                    var message = GlobalSettings.Language.GetTag("iatag_deposit_stash_open");
-                    _setFeedback(message);
-                    _setTooltip(message);
-                    _browser.ShowMessage(message, UserFeedbackLevel.Warning);
-                }
+            else if (RuntimeSettings.StashStatus == StashAvailability.OPEN) {
+                var message = RuntimeSettings.Language.GetTag("iatag_deposit_stash_open");
+                _setFeedback(message);
+                _setTooltip(message);
+                _browser.ShowMessage(message, UserFeedbackLevel.Warning);
             }
-            else if (GlobalSettings.StashStatus == StashAvailability.SORTED)
+            else if (RuntimeSettings.StashStatus == StashAvailability.SORTED)
             {
-                _setFeedback(GlobalSettings.Language.GetTag("iatag_deposit_stash_sorted"));
-                _browser.ShowMessage(GlobalSettings.Language.GetTag("iatag_deposit_stash_sorted"), UserFeedbackLevel.Warning);
+                _setFeedback(RuntimeSettings.Language.GetTag("iatag_deposit_stash_sorted"));
+                _browser.ShowMessage(RuntimeSettings.Language.GetTag("iatag_deposit_stash_sorted"), UserFeedbackLevel.Warning);
             }
 
-            else if (GlobalSettings.StashStatus == StashAvailability.UNKNOWN)
+            else if (RuntimeSettings.StashStatus == StashAvailability.UNKNOWN)
             {
-                _setFeedback(GlobalSettings.Language.GetTag("iatag_deposit_stash_unknown_feedback"));
-                _setTooltip(GlobalSettings.Language.GetTag("iatag_deposit_stash_unknown_tooltip"));
-                _browser.ShowMessage(GlobalSettings.Language.GetTag("iatag_deposit_stash_unknown_feedback"), UserFeedbackLevel.Warning);
+                _setFeedback(RuntimeSettings.Language.GetTag("iatag_deposit_stash_unknown_feedback"));
+                _setTooltip(RuntimeSettings.Language.GetTag("iatag_deposit_stash_unknown_tooltip"));
+                _browser.ShowMessage(RuntimeSettings.Language.GetTag("iatag_deposit_stash_unknown_feedback"), UserFeedbackLevel.Warning);
             }
-        }
-
-        public bool TransferToOpenStash(PlayerItem pi)
-        {
-            List<byte> buffer = ItemInjectCallbackProcessor.Serialize(pi);
-            var stashTab = Properties.Settings.Default.StashToDepositTo;
-            if (stashTab == 0)
-            {
-                // Find real tab.. Related to hotfix v1.0.4.0
-                stashTab = TransferStashService.GetNumStashPages(GetTransferFile());
-            }
-
-            var position = _dynamicPacker.Insert(pi.BaseRecord, (uint)pi.Seed);
-            if (position == null)
-            {
-                _logger.Warn("Item insert canceled, no valid position found.");
-                _setFeedback(GlobalSettings.Language.GetTag("iatag_deposit_stash_full"));
-                return false;
-            }
-            buffer.InsertRange(0, BitConverter.GetBytes(position.X * 32));
-            buffer.InsertRange(4, BitConverter.GetBytes(position.Y * 32));
-            buffer.InsertRange(0, BitConverter.GetBytes(stashTab));
-
-            using (NamedPipeClientStream pipeStream = new NamedPipeClientStream(".", "gdiahook", PipeDirection.InOut, PipeOptions.Asynchronous))
-            {
-                // The connect function will indefinitely wait for the pipe to become available
-                // If that is not acceptable specify a maximum waiting time (in ms)
-                try
-                {
-                    pipeStream.Connect(250);
-                }
-                catch (TimeoutException)
-                {
-                    return false;
-                }
-
-                pipeStream.Write(buffer.ToArray(), 0, buffer.Count);
-                _logger.Debug("Wrote item to pipe");
-                _setFeedback(GlobalSettings.Language.GetTag("iatag_deposit_pipe_success"));
-            }
-
-            return true;
         }
     }
 }

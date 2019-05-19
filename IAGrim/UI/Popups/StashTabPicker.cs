@@ -1,34 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using IAGrim.Parsers.Arz;
-using IAGrim.UI.Tabs.Util;
+using IAGrim.Settings;
+using IAGrim.Settings.Dto;
 using IAGrim.Utilities;
-using IAGrim.Utilities.Registry;
 using log4net;
-using log4net.Repository.Hierarchy;
-using Microsoft.Win32;
 
 namespace IAGrim.UI.Popups {
     public partial class StashTabPicker : Form {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(StashTabPicker));
+        private readonly SettingsService _settings;
         private readonly int _numStashTabs;
 
-        public StashTabPicker(int numStashTabs) {
+        public StashTabPicker(int numStashTabs, SettingsService settings) {
             InitializeComponent();
             _numStashTabs = numStashTabs;
+            _settings = settings;
         }
 
         private void buttonClose_Click(object sender, EventArgs e) {
-            if (Properties.Settings.Default.StashToLootFrom == Properties.Settings.Default.StashToDepositTo &&
-                Properties.Settings.Default.StashToLootFrom != 0) {
+            if (_settings.GetLong(LocalSetting.StashToLootFrom) == _settings.GetLong(LocalSetting.StashToDepositTo) &&
+                _settings.GetLong(LocalSetting.StashToLootFrom) != 0) {
                 MessageBox.Show(
                     "I cannot overstate what an incredibly bad experience it would be to use only one tab.",
                     "Yeah.. Nope!",
@@ -37,21 +29,10 @@ namespace IAGrim.UI.Popups {
                 );
             }
             else {
-                Properties.Settings.Default.Save();
-                SaveStashSettingsToRegistry();
                 this.Close();
             }
         }
-
-        public void SaveStashSettingsToRegistry() {
-            int stash = Properties.Settings.Default.StashToLootFrom;
-            if (stash == 0) {
-                stash = _numStashTabs;
-            }
-
-            RegistryHelper.Write(@"Software\EvilSoft\IAGD", "StashToLootFrom", stash);
-        }
-
+        
         private FirefoxRadioButton CreateCheckbox(string name, string label, string text, Point position, FirefoxRadioButton.CheckedChangedEventHandler callback) {
             FirefoxRadioButton checkbox = new FirefoxRadioButton();
             checkbox.Bold = false;
@@ -81,13 +62,14 @@ namespace IAGrim.UI.Popups {
                 FirefoxRadioButton.CheckedChangedEventHandler callback = (o, args) => {
                     if (p <= _numStashTabs) {
                         // Don't trust the "Firefox framework" to not trigger clicks on disabled buttons.
-                        Properties.Settings.Default.StashToDepositTo = p;
+                        _settings.Save(LocalSetting.StashToDepositTo, p);
                     }
                 };
 
                 int y = 32 + 33 * i;
                 var cb = CreateCheckbox($"moveto_tab_{i}", $"iatag_ui_tab_{i}", $"Tab {i}", new Point(6, y), callback);
-                cb.Checked = Properties.Settings.Default.StashToDepositTo == i;
+                
+                cb.Checked = _settings.GetLong(LocalSetting.StashToDepositTo) == i;
                 cb.Enabled = i <= _numStashTabs;
                 cb.EnabledCalc = i <= _numStashTabs;
                 this.gbMoveTo.Controls.Add(cb);
@@ -99,30 +81,32 @@ namespace IAGrim.UI.Popups {
                 FirefoxRadioButton.CheckedChangedEventHandler callback = (o, args) => {
                     if (p <= _numStashTabs) {
                         // Don't trust the "Firefox framework" to not trigger clicks on disabled buttons.
-                        Properties.Settings.Default.StashToLootFrom = p;
+                        _settings.Save(LocalSetting.StashToLootFrom, p);
                     }
                 };
 
                 int y = 32 + 33 * i;
                 var cb = CreateCheckbox($"lootfrom_tab_{i}", $"iatag_ui_tab_{i}", $"Tab {i}", new Point(6, y), callback);
-                cb.Checked = Properties.Settings.Default.StashToLootFrom == i;
+                cb.Checked = _settings.GetLong(LocalSetting.StashToLootFrom) == i;
                 cb.Enabled = i <= _numStashTabs;
                 cb.EnabledCalc = i <= _numStashTabs;
                 this.gbLootFrom.Controls.Add(cb);
             }
             
-            radioOutputSecondToLast.Checked = Properties.Settings.Default.StashToDepositTo == 0;
-            radioInputLast.Checked = Properties.Settings.Default.StashToLootFrom == 0;
 
-            LocalizationLoader.ApplyLanguage(Controls, GlobalSettings.Language);
+
+            radioOutputSecondToLast.Checked = _settings.GetLong(LocalSetting.StashToDepositTo) == 0;
+            radioInputLast.Checked = _settings.GetLong(LocalSetting.StashToLootFrom) == 0;
+
+            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
         }
 
         private void radioOutputSecondToLast_CheckedChanged(object sender, EventArgs e) {
-            Properties.Settings.Default.StashToDepositTo = 0;
+            _settings.Save(LocalSetting.StashToDepositTo, 0);
         }
 
         private void radioInputLast_CheckedChanged(object sender, EventArgs e) {
-            Properties.Settings.Default.StashToLootFrom = 0;
+            _settings.Save(LocalSetting.StashToLootFrom, 0);
         }
     }
 }

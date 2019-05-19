@@ -1,18 +1,13 @@
 ﻿using IAGrim.Database;
-using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Runtime.Caching;
-using NHibernate;
-using NHibernate.Transform;
 using IAGrim.Services.Dto;
 using log4net;
 using IAGrim.Database.Interfaces;
 using IAGrim.Database.DAO.Dto;
 using IAGrim.Database.Model;
+using IAGrim.Settings;
+using IAGrim.Settings.Dto;
 using MoreLinq;
 
 namespace IAGrim.Services {
@@ -20,18 +15,18 @@ namespace IAGrim.Services {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ItemStatService));
         private readonly IDatabaseItemStatDao _databaseItemStatDao;
         private readonly IItemSkillDao _itemSkillDao;
-        private bool _displaySkills => Properties.Settings.Default.DisplaySkills;
+        private bool _displaySkills => _settings.GetBool(PersistentSetting.DisplaySkills);
         private readonly Dictionary<string, ISet<DBSTatRow>> _xpacSkills;
-
+        private readonly SettingsService _settings;
 
 
 
         public ItemStatService(
             IDatabaseItemStatDao databaseItemStatDao, 
-            IItemSkillDao itemSkillDao
-        ) {
+            IItemSkillDao itemSkillDao, SettingsService settings) {
             this._databaseItemStatDao = databaseItemStatDao;
             this._itemSkillDao = itemSkillDao;
+            _settings = settings;
             _xpacSkills = _databaseItemStatDao.GetExpacSkillModifierSkills();
         }
 

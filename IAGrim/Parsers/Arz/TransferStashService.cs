@@ -16,6 +16,8 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using IAGrim.Parser.Stash;
+using IAGrim.Settings;
+using IAGrim.Settings.Dto;
 
 namespace IAGrim.Parsers.Arz {
     internal class TransferStashService {
@@ -26,6 +28,7 @@ namespace IAGrim.Parsers.Arz {
         private readonly IPlayerItemDao _playerItemDao;
         private readonly ItemSizeService _itemSizeService;
         private readonly object _fileLock = new object();
+        private readonly SettingsService _settings;
 
         private ConcurrentBag<Item> _unlootedItems = new ConcurrentBag<Item>();
 
@@ -46,12 +49,12 @@ namespace IAGrim.Parsers.Arz {
             IPlayerItemDao playerItemDao,
             IDatabaseItemStatDao dbItemStatDao,
             Action<string, string, string> setFeedback,
-            Action performedLootCallback
-        ) {
+            Action performedLootCallback, SettingsService settings) {
             _playerItemDao = playerItemDao;
             _itemSizeService = new ItemSizeService(dbItemStatDao);
             _setFeedback = setFeedback;
             _performedLootCallback = performedLootCallback;
+            _settings = settings;
 
             // TODO: Should also check for transfer.gsh and pick whichever is newest / has the highest number
             var path = Path.Combine(GlobalPaths.SavePath, "transfer.gst");
@@ -69,12 +72,13 @@ namespace IAGrim.Parsers.Arz {
         }
 
         public bool TryLootStashFile(string filename) {
+            var secureTransfers = _settings.GetBool(LocalSetting.SecureTransfers);
             lock (_fileLock) {
                 var isValid =
-                    (GlobalSettings.StashStatus == StashAvailability.CLOSED && GrimStateTracker.IsFarFromStash) ||
-                    !Settings.Default.SecureTransfers;
+                    (RuntimeSettings.StashStatus == StashAvailability.CLOSED && GrimStateTracker.IsFarFromStash) ||
+                    !secureTransfers;
 
-                if (GlobalSettings.PreviousStashStatus == StashAvailability.CRAFTING) {
+                if (RuntimeSettings.PreviousStashStatus == StashAvailability.CRAFTING) {
                     Logger.Debug("Stash is now available for looting, but the previous state was crafting, no new items should have been added");
 
                     return true;
@@ -84,15 +88,15 @@ namespace IAGrim.Parsers.Arz {
                     if (!GrimStateTracker.IsFarFromStash) {
                         if (!_hasRecentlyUpdatedTimerFeedback) {
                             Logger.Info("Delaying stash loot, too close to stash. (this is to prevent item dupes on quick re-open)");
-                            _setFeedback("Info", GlobalSettings.Language.GetTag("iatag_feedback_too_close_to_stash"), null);
+                            _setFeedback("Info", RuntimeSettings.Language.GetTag("iatag_feedback_too_close_to_stash"), null);
                         }
 
                         _hasRecentlyUpdatedTimerFeedback = true;
                     }
                     else {
                         if (!_hasRecentlyUpdatedTimerFeedback) {
-                            _setFeedback("Info", GlobalSettings.Language.GetTag("iatag_feedback_delaying_stash_loot_status"), null);
-                            Logger.InfoFormat("Delaying stash loot, stash status {0}.", GlobalSettings.StashStatus);
+                            _setFeedback("Info", RuntimeSettings.Language.GetTag("iatag_feedback_delaying_stash_loot_status"), null);
+                            Logger.InfoFormat("Delaying stash loot, stash status {0}.", RuntimeSettings.StashStatus);
                         }
 
                         _hasRecentlyUpdatedTimerFeedback = true;
@@ -102,7 +106,7 @@ namespace IAGrim.Parsers.Arz {
                     _hasRecentlyUpdatedTimerFeedback = false;
 
                     Logger.InfoFormat("Looting stash, IsStashOpen: {0}, IsFarFromStash: {1}",
-                        GlobalSettings.StashStatus != StashAvailability.CLOSED, GrimStateTracker.IsFarFromStash);
+                        RuntimeSettings.StashStatus != StashAvailability.CLOSED, GrimStateTracker.IsFarFromStash);
 
                     try {
                         var message = EmptyPageX(filename);
@@ -111,19 +115,19 @@ namespace IAGrim.Parsers.Arz {
                     catch (NullReferenceException ex) {
                         Logger.Warn(ex.Message);
                         Logger.Warn(ex.StackTrace);
-                        _setFeedback("Warning", GlobalSettings.Language.GetTag("iatag_feedback_unable_to_loot_stash"), null);
+                        _setFeedback("Warning", RuntimeSettings.Language.GetTag("iatag_feedback_unable_to_loot_stash"), null);
                     }
                     catch (IOException ex) {
                         Logger.Warn(ex.Message);
                         Logger.Warn(ex.StackTrace);
                         Logger.Info("Exception not reported, IOExceptions are bound to happen.");
-                        _setFeedback("Warning", GlobalSettings.Language.GetTag("iatag_feedback_unable_to_loot_stash"), null);
+                        _setFeedback("Warning", RuntimeSettings.Language.GetTag("iatag_feedback_unable_to_loot_stash"), null);
                     }
                     catch (Exception ex) {
                         Logger.Warn(ex.Message);
                         Logger.Warn(ex.StackTrace);
                         ExceptionReporter.ReportException(ex, "EmptyPageX??");
-                        _setFeedback("Warning", GlobalSettings.Language.GetTag("iatag_feedback_unable_to_loot_stash"), null);
+                        _setFeedback("Warning", RuntimeSettings.Language.GetTag("iatag_feedback_unable_to_loot_stash"), null);
                     }
 
                     return true;
@@ -148,19 +152,19 @@ namespace IAGrim.Parsers.Arz {
             }
         }
 
-        public static void DeleteItemsInPageX(string filename) {
+        public void DeleteItemsInPageX(string filename) {
             try {
                 var pCrypto = new GDCryptoDataBuffer(DataBuffer.ReadBytesFromDisk(filename));
                 var stash = new Stash();
 
                 if (stash.Read(pCrypto)) {
                     int lootFromIndex;
-
-                    if (Settings.Default.StashToLootFrom == 0) {
+                    
+                    if (_settings.GetLong(LocalSetting.StashToLootFrom) == 0) {
                         lootFromIndex = stash.Tabs.Count - 1;
                     }
                     else {
-                        lootFromIndex = Settings.Default.StashToLootFrom - 1;
+                        lootFromIndex = (int)_settings.GetLong(LocalSetting.StashToLootFrom) - 1;
                     }
 
                     Logger.Debug($"Deleting all items in stash #{lootFromIndex}");
@@ -191,20 +195,20 @@ namespace IAGrim.Parsers.Arz {
             return 0;
         }
 
-        private static int GetStashToLootFrom(Stash stash) {
-            if (Settings.Default.StashToLootFrom == 0) {
+        private int GetStashToLootFrom(Stash stash) {
+            if (_settings.GetLong(LocalSetting.StashToLootFrom) == 0) {
                 return stash.Tabs.Count - 1;
             }
 
-            return Settings.Default.StashToLootFrom - 1;
+            return (int)_settings.GetLong(LocalSetting.StashToLootFrom) - 1;
         }
 
-        private static int GetStashToDepositTo(Stash stash) {
-            if (Settings.Default.StashToDepositTo == 0) {
+        private int GetStashToDepositTo(Stash stash) {
+            if (_settings.GetLong(LocalSetting.StashToDepositTo) == 0) {
                 return stash.Tabs.Count - 2;
             }
-
-            return Settings.Default.StashToDepositTo - 1;
+            
+            return (int)_settings.GetLong(LocalSetting.StashToDepositTo) - 1;
         }
 
         /// <summary>
@@ -248,12 +252,12 @@ namespace IAGrim.Parsers.Arz {
 
                 if (stash.Tabs.Count < 2) {
                     Logger.WarnFormat($"File \"{filename}\" only contains {stash.Tabs.Count} pages. IA requires at least 2 stash pages to function properly.");
-                    return GlobalSettings.Language.GetTag("iatag_not_enough_stash", filename, stash.Tabs.Count);
+                    return RuntimeSettings.Language.GetTag("iatag_not_enough_stash", filename, stash.Tabs.Count);
                 }
 
                 if (stash.Tabs.Count < lootFromIndex + 1) {
                     Logger.Warn($"You have configured IA to loot from stash {lootFromIndex + 1} but you only have {stash.Tabs.Count} pages");
-                    return GlobalSettings.Language.GetTag("iatag_invalid_loot_stash_number", lootFromIndex + 1, stash.Tabs.Count);
+                    return RuntimeSettings.Language.GetTag("iatag_invalid_loot_stash_number", lootFromIndex + 1, stash.Tabs.Count);
                 }
 
                 if (stash.Tabs[lootFromIndex].Items.Count > 0) {
@@ -270,7 +274,7 @@ namespace IAGrim.Parsers.Arz {
                         notLootedDueToStackSize.ForEach(item => Logger.Debug($"NotLootedStacksize: {item}"));
                         _setFeedback(
                             "Warning", 
-                            GlobalSettings.Language.GetTag("iatag_feedback_stacked_not_looted", notLootedDueToStackSize.Count),
+                            RuntimeSettings.Language.GetTag("iatag_feedback_stacked_not_looted", notLootedDueToStackSize.Count),
                             HelpService.GetUrl(HelpService.HelpType.NoStacks)
                             );
                     }
@@ -282,7 +286,7 @@ namespace IAGrim.Parsers.Arz {
                         notLootedDueToDuplicate.ForEach(item => Logger.Debug($"NotLootedDuplicate: {item}"));
                         _setFeedback(
                             "Warning",
-                            GlobalSettings.Language.GetTag("iatag_feedback_duplicates_not_looted", notLootedDueToDuplicate.Count),
+                            RuntimeSettings.Language.GetTag("iatag_feedback_duplicates_not_looted", notLootedDueToDuplicate.Count),
                             HelpService.GetUrl(HelpService.HelpType.DuplicateItem)
                         );
                     }
@@ -290,7 +294,7 @@ namespace IAGrim.Parsers.Arz {
                     stash.Tabs[lootFromIndex].Items.RemoveAll(e => items.Any(m => m.Equals(e)));
 
                     var storedItems = StoreItemsToDatabase(items, stash.ModLabel, isHardcore, stash.IsExpansion1);
-                    var message = GlobalSettings.Language.GetTag("iatag_looted_from_stash", items.Count, lootFromIndex + 1);
+                    var message = RuntimeSettings.Language.GetTag("iatag_looted_from_stash", items.Count, lootFromIndex + 1);
 
                     if (storedItems != null) {
                         Logger.Info(message);
@@ -308,7 +312,7 @@ namespace IAGrim.Parsers.Arz {
 
                 Logger.Info($"Looting of stash {lootFromIndex + 1} halted, no items available.");
 
-                return GlobalSettings.Language.GetTag("iatag_feedback_no_items_to_loot");
+                return RuntimeSettings.Language.GetTag("iatag_feedback_no_items_to_loot");
             }
 
             Logger.Error("Could not load stash file.");
@@ -376,7 +380,7 @@ namespace IAGrim.Parsers.Arz {
         /// <param name="filename"></param>
         /// <param name="stash"></param>
         /// <returns></returns>
-        private static bool SafelyWriteStash(string filename, Stash stash) {
+        private bool SafelyWriteStash(string filename, Stash stash) {
             try {
                 var tempName = $"{filename}.ia";
 
@@ -387,10 +391,8 @@ namespace IAGrim.Parsers.Arz {
                 DataBuffer.WriteBytesToDisk(tempName, dataBuffer.Data);
 
                 // Get the current backup number
-                var backupNumber = Settings.Default.BackupNumber;
-
-                Settings.Default.BackupNumber = (backupNumber + 1) % 100;
-                Settings.Default.Save();
+                var backupNumber = _settings.GetLong(LocalSetting.BackupNumber);
+                _settings.Save(LocalSetting.BackupNumber, (backupNumber + 1) % 100);
 
                 // Back up the existing stash and replace with new stash file
                 var backupLocation = Path.Combine(GlobalPaths.BackupLocation, $"transfer.{backupNumber:00}.gs_");
@@ -519,11 +521,11 @@ namespace IAGrim.Parsers.Arz {
 #endif
                 if (stash.Tabs.Count < 2) {
                     Logger.WarnFormat("File \"{0}\" only contains {1} pages, must have at least 2 pages to function properly.", filename, stash.Tabs.Count);
-                    error = GlobalSettings.Language.GetTag("iatag_purchase_stash");
+                    error = RuntimeSettings.Language.GetTag("iatag_purchase_stash");
                 }
                 else if (stash.Tabs.Count < depositToIndex + 1) {
                     Logger.Warn($"You have configured IA to deposit to stash {depositToIndex + 1} but you only have {stash.Tabs.Count} pages");
-                    error = GlobalSettings.Language.GetTag("iatag_invalid_deposit_stash_number", depositToIndex + 1, stash.Tabs.Count);
+                    error = RuntimeSettings.Language.GetTag("iatag_invalid_deposit_stash_number", depositToIndex + 1, stash.Tabs.Count);
                 }
 
                 else if (stash.Tabs[depositToIndex].Items.Count < maxItemsInTab && playerItems.Count > 0) {
@@ -545,7 +547,7 @@ namespace IAGrim.Parsers.Arz {
                     var numItemsNotDeposited = playerItems.Sum(m => m.StackCount);
 
                     if (numItemsNotDeposited > 0) {
-                        error = GlobalSettings.Language.GetTag("iatag_stash_might_be_full", depositToIndex + 1);
+                        error = RuntimeSettings.Language.GetTag("iatag_stash_might_be_full", depositToIndex + 1);
                     }
                 }
             }

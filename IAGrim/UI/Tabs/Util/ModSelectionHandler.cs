@@ -8,12 +8,15 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
+using IAGrim.Settings;
+using IAGrim.Settings.Dto;
 
 namespace IAGrim.UI.Tabs.Util
 {
     class ModSelectionHandler : IDisposable
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ModSelectionHandler));
+        private readonly SettingsService _settings;
         private long _numAvailableModFiltersLastUpdate = -1;
         private ComboBox _cbModFilter;
         private readonly Action _updateView;
@@ -24,7 +27,7 @@ namespace IAGrim.UI.Tabs.Util
 
         public GDTransferFile SelectedMod { private set; get; }
 
-        public ModSelectionHandler(ComboBox cbModFilter, IPlayerItemDao playerItemDao, Action updateView, Action<string> setStatus)
+        public ModSelectionHandler(ComboBox cbModFilter, IPlayerItemDao playerItemDao, Action updateView, Action<string> setStatus, SettingsService settings)
         {
             _cbModFilter = cbModFilter;
             _cbModFilter.DropDown += modFilter_DropDown;
@@ -32,6 +35,7 @@ namespace IAGrim.UI.Tabs.Util
             _updateView = updateView;
             _playerItemDao = playerItemDao;
             _setStatus = setStatus;
+            _settings = settings;
 
             SelectedMod = _cbModFilter.SelectedItem as GDTransferFile;
         }
@@ -44,14 +48,8 @@ namespace IAGrim.UI.Tabs.Util
         private void cbModFilter_SelectedIndexChanged(object sender, EventArgs e)
         {
             SelectedMod = _cbModFilter.SelectedItem as GDTransferFile;
-
-            if (Properties.Settings.Default.AutoSearch)
-            {
-                _updateView();
-            }
-
-            Properties.Settings.Default.LastSelectedMod = JsonConvert.SerializeObject(SelectedMod);
-            Properties.Settings.Default.Save();
+            _updateView();
+            _settings.Save(LocalSetting.LastSelectedMod, SelectedMod);
         }
 
         private void UpdateModSelection(string mod, bool isHardcore)
@@ -82,12 +80,13 @@ namespace IAGrim.UI.Tabs.Util
 
             if (_cbModFilter.Items.Count == 0)
             {
-                _setStatus(GlobalSettings.Language.GetTag("iatag_stash_not_found"));
+                _setStatus(RuntimeSettings.Language.GetTag("iatag_stash_not_found"));
                 Logger.Warn("Could not locate any stash files");
             }
             else
             {
-                var lastSelectedMod = JsonConvert.DeserializeObject<GDTransferFile>(Properties.Settings.Default.LastSelectedMod);
+                
+                var lastSelectedMod = _settings.Get<GDTransferFile>(LocalSetting.LastSelectedMod);
 
                 if (lastSelectedMod != null)
                 {

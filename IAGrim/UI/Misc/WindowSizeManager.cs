@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using IAGrim.Settings;
+using IAGrim.Settings.Dto;
 using Newtonsoft.Json;
 
 namespace IAGrim.UI.Misc {
@@ -19,12 +21,15 @@ namespace IAGrim.UI.Misc {
             NullValueHandling = NullValueHandling.Ignore
         };
         private Form _form;
+        private readonly SettingsService _settingsService;
 
-        public WindowSizeManager(Form form) {
+        public WindowSizeManager(Form form, SettingsService settingsService) {
             _form = form;
+            _settingsService = settingsService;
             _form.FormClosing += _form_FormClosing;
 
-            var obj = JsonConvert.DeserializeObject< Dictionary<string, int>>(Properties.Settings.Default.WindowPositionSettings, _settings);
+            var obj = JsonConvert.DeserializeObject<Dictionary<string, int>>(_settingsService.GetString(LocalSetting.WindowPositionSettings), _settings)
+                      ?? new Dictionary<string, int>();
             if (obj.ContainsKey("state")) {
                 _form.WindowState = (FormWindowState)obj["state"];
             }
@@ -61,10 +66,7 @@ namespace IAGrim.UI.Misc {
                 };
 
                 var json = JsonConvert.SerializeObject(props, _settings);
-                Properties.Settings.Default.WindowPositionSettings = json;
-                Properties.Settings.Default.Save();
-
-               
+                _settingsService.Save(LocalSetting.WindowPositionSettings, json);
                 _form = null;
             }
         }

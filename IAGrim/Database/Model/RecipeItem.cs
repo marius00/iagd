@@ -30,15 +30,15 @@ namespace IAGrim.Database {
 
         public virtual IList<TranslatedStat> PetStats {
             get {
-                return GlobalSettings.StatManager.ProcessStats(new HashSet<IItemStat>(Tags), TranslatedStatType.PET);
+                return RuntimeSettings.StatManager.ProcessStats(new HashSet<IItemStat>(Tags), TranslatedStatType.PET);
             }
         }
 
         public virtual List<SkillModifierStat> ModifiedSkills { get; } = new List<SkillModifierStat>();
 
-        public virtual IList<TranslatedStat> HeaderStats => GlobalSettings.StatManager.ProcessStats(new HashSet<IItemStat>(Tags), TranslatedStatType.HEADER);
+        public virtual IList<TranslatedStat> HeaderStats => RuntimeSettings.StatManager.ProcessStats(new HashSet<IItemStat>(Tags), TranslatedStatType.HEADER);
 
-        public virtual IList<TranslatedStat> BodyStats => GlobalSettings.StatManager.ProcessStats(new HashSet<IItemStat>(Tags), TranslatedStatType.BODY);
+        public virtual IList<TranslatedStat> BodyStats => RuntimeSettings.StatManager.ProcessStats(new HashSet<IItemStat>(Tags), TranslatedStatType.BODY);
 
         public virtual string Bitmap => DatabaseItem.GetBitmap(Tags);
 

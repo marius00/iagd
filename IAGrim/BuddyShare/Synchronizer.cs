@@ -14,7 +14,8 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using EvilsoftCommons.Exceptions;
 using IAGrim.BuddyShare.dto;
-using log4net.Util;
+using IAGrim.Settings;
+using IAGrim.Settings.Dto;
 
 
 namespace IAGrim.BuddyShare {
@@ -30,8 +31,14 @@ namespace IAGrim.BuddyShare {
         private const string UrlBuddyDownload = UrlBuddyServer + "/getuser/";
         private const string UrlBuddyCreateUser = UrlBuddyServer + "/createuser";
 
-        private ActionCooldown _uploadCooldown = new ActionCooldown(UploadSynchronizeCooldown);
-        private ActionCooldown _downloadCooldown = new ActionCooldown(DownloadSynchronizeCooldown);
+        private readonly ActionCooldown _uploadCooldown = new ActionCooldown(UploadSynchronizeCooldown);
+        private readonly ActionCooldown _downloadCooldown = new ActionCooldown(DownloadSynchronizeCooldown);
+        private readonly SettingsService _settings;
+
+        public Synchronizer(SettingsService settings) {
+            _settings = settings;
+        }
+
 
         /// <summary>
         /// Upload item data to buddies
@@ -59,8 +66,7 @@ namespace IAGrim.BuddyShare {
                     // Access denied, we'll need a new user id it seems.
                     // Something must be wrong.
                     if (result != null && result.Status == 401) {
-                        Properties.Settings.Default.BuddySyncUserIdV2 = 0;
-                        Properties.Settings.Default.Save();
+                        _settings.Save(PersistentSetting.BuddySyncUserIdV2, 0);
                         CreateUserId();
                     }
 
@@ -84,18 +90,18 @@ namespace IAGrim.BuddyShare {
         /// </summary>
         /// <returns></returns>
         public long CreateUserId() {
-            long existingId = (long)Properties.Settings.Default.BuddySyncUserIdV2;
+            
+            long existingId = _settings.GetLong(PersistentSetting.BuddySyncUserIdV2);
             if (existingId != 0)
                 return existingId;
 
-            var result = UploadBuddyData($"uuid={GlobalSettings.Uuid}", UrlBuddyCreateUser, true);
+            var result = UploadBuddyData($"uuid={RuntimeSettings.Uuid}", UrlBuddyCreateUser, true);
             var json = result.Content;
             var x = JObject.Parse(json);
             if ("ok".Equals(x["status"].ToString())) {
                 long id;
                 if (long.TryParse(x["uid"].ToString(), out id)) {
-                    Properties.Settings.Default.BuddySyncUserIdV2 = id;
-                    Properties.Settings.Default.Save();
+                    _settings.Save(PersistentSetting.BuddySyncUserIdV2, id);
                     return id;
                 }
             }

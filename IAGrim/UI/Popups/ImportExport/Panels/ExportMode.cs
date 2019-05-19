@@ -64,7 +64,7 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
             cbItemSelection.SelectedIndex = 0;
             buttonExport.Enabled = false;
             cbItemSelection.Visible = false;
-            LocalizationLoader.ApplyLanguage(Controls, GlobalSettings.Language);
+            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
         }
 
         private void buttonExport_Click(object sender, EventArgs e) {

@@ -20,6 +20,7 @@ using IAGrim.Backup.Azure.Dto;
 using IAGrim.Database.DAO;
 using IAGrim.Database.DAO.Table;
 using IAGrim.Database.DAO.Util;
+using IAGrim.Settings;
 
 namespace IAGrim.Database {
 
@@ -29,7 +30,10 @@ namespace IAGrim.Database {
     public class PlayerItemDaoImpl : BaseDao<PlayerItem>, IPlayerItemDao {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(IPlayerItemDao));
         private readonly IDatabaseItemStatDao _databaseItemStatDao;
-        public PlayerItemDaoImpl(ISessionCreator sessionCreator, IDatabaseItemStatDao databaseItemStatDao) : base(sessionCreator) {
+
+        public PlayerItemDaoImpl(
+            ISessionCreator sessionCreator, 
+            IDatabaseItemStatDao databaseItemStatDao) : base(sessionCreator) {
             _databaseItemStatDao = databaseItemStatDao;
         }
         
@@ -186,25 +190,6 @@ namespace IAGrim.Database {
                         .SetProjection(Projections.Property("BaseRecord"))
                         .SetResultTransformer(new DistinctRootEntityResultTransformer())
                         .List<string>();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Update the "IsHardcore" flag depending on being an old Hard
-        /// </summary>
-        public void UpdateHardcoreSettings() {
-            using (ISession session = SessionCreator.OpenSession()) {
-                using (ITransaction transaction = session.BeginTransaction()) {
-                    bool value = (bool)Properties.Settings.Default.IsHardcore;
-                    int n = session.CreateQuery("UPDATE PlayerItem SET IsHardcore = :val WHERE IsHardcore IS NULL")
-                        .SetParameter("val", value)
-                        .ExecuteUpdate();
-
-                    if (n > 0) {
-                        transaction.Commit();
-                        Logger.InfoFormat("Updated the IsHardcore flag for {0} items to: {1}", n, value);
-                    }
                 }
             }
         }

@@ -22,6 +22,8 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
+using IAGrim.Settings;
+using IAGrim.Settings.Dto;
 
 
 namespace IAGrim
@@ -34,32 +36,8 @@ namespace IAGrim
 
 #if DEBUG
 
-        private static void Test()
-        {
+        private static void Test() {
             return;
-            using (ThreadExecuter threadExecuter = new ThreadExecuter())
-            {
-                var factory = new SessionFactory();
-                string _grimdawnLocation = new DatabaseSettingRepo(threadExecuter, factory).GetCurrentDatabasePath();
-                IItemTagDao _itemTagDao = new ItemTagRepo(threadExecuter, factory);
-                IDatabaseItemDao _databaseItemDao = new DatabaseItemRepo(threadExecuter, factory);
-                IDatabaseItemStatDao _databaseItemStatDao = new DatabaseItemStatRepo(threadExecuter, factory);
-                IItemSkillDao _itemSkillDao = new ItemSkillRepo(threadExecuter, factory);
-
-                ParsingService parsingService = new ParsingService(
-                    _itemTagDao,
-                    _grimdawnLocation,
-                    _databaseItemDao,
-                    _databaseItemStatDao,
-                    _itemSkillDao,
-                    Properties.Settings.Default.LocalizationFile
-                );
-
-                parsingService.Execute();
-
-                int x = 9;
-            }
-
         }
 #endif
 
@@ -73,9 +51,9 @@ namespace IAGrim
                 dao.SetUuid(uuid);
             }
 
-            GlobalSettings.Uuid = uuid;
+            RuntimeSettings.Uuid = uuid;
             ExceptionReporter.Uuid = uuid;
-            Logger.InfoFormat("Your user id is {0}, use this for any bug reports", GlobalSettings.Uuid);
+            Logger.InfoFormat("Your user id is {0}, use this for any bug reports", RuntimeSettings.Uuid);
         }
 
         public static MainWindow MainWindow => _mw;
@@ -175,27 +153,23 @@ namespace IAGrim
         }
 
         // TODO: This creates another session instance, should be executed inside the ThreadExecuter
-        private static void PrintStartupInfo(SessionFactory factory)
-        {
-            if (Properties.Settings.Default.StashToLootFrom == 0)
-            {
+        private static void PrintStartupInfo(SessionFactory factory, SettingsService settings) {
+            
+            if (settings.GetLong(LocalSetting.StashToLootFrom) == 0) {
                 Logger.Info("IA is configured to loot from the last stash page");
             }
-            else
-            {
-                Logger.Info($"IA is configured to loot from stash page #{Properties.Settings.Default.StashToLootFrom}");
+            else {
+                Logger.Info($"IA is configured to loot from stash page #{settings.GetLong(LocalSetting.StashToLootFrom)}");
             }
-            if (Properties.Settings.Default.StashToDepositTo == 0)
-            {
+            
+            if (settings.GetLong(LocalSetting.StashToDepositTo) == 0) {
                 Logger.Info("IA is configured to deposit to the second-to-last stash page");
             }
-            else
-            {
-                Logger.Info($"IA is configured to deposit to stash page #{Properties.Settings.Default.StashToDepositTo}");
+            else {
+                Logger.Info($"IA is configured to deposit to stash page #{settings.GetLong(LocalSetting.StashToDepositTo)}");
             }
 
-            using (var session = factory.OpenSession())
-            {
+            using (var session = factory.OpenSession()) {
                 var numItemsStored = session.CreateCriteria<PlayerItem>()
                     .SetProjection(NHibernate.Criterion.Projections.RowCountInt64())
                     .UniqueResult<long>();
@@ -203,18 +177,21 @@ namespace IAGrim
                 Logger.Info($"There are {numItemsStored} items stored in the database.");
             }
 
-            if (Properties.Settings.Default.BuddySyncEnabled)
-                Logger.Info($"Buddy items is enabled with user id {Properties.Settings.Default.BuddySyncUserIdV2}");
-            else
+            
+            if (settings.GetBool(PersistentSetting.BuddySyncEnabled)) {
+                Logger.Info($"Buddy items is enabled with user id {settings.GetLong(PersistentSetting.BuddySyncUserIdV2)}");
+            }
+            else {
                 Logger.Info("Buddy items is disabled");
-
-            if (Properties.Settings.Default.ShowRecipesAsItems)
+            }
+            
+            if (settings.GetBool(PersistentSetting.ShowRecipesAsItems))
                 Logger.Info("Show recipes as items is enabled");
             else
                 Logger.Info("Show recipes as items is disabled");
-
-            Logger.Info("Transfer to any mod is " + (Properties.Settings.Default.TransferAnyMod ? "enabled" : "disabled"));
-            Logger.Info("Experimental updates is " + (Properties.Settings.Default.SubscribeExperimentalUpdates ? "enabled" : "disabled"));
+            
+            Logger.Info("Transfer to any mod is " + (settings.GetBool(PersistentSetting.TransferAnyMod) ? "enabled" : "disabled"));
+            Logger.Info("Experimental updates is " + (settings.GetBool(PersistentSetting.SubscribeExperimentalUpdates) ? "enabled" : "disabled"));
 
 
             var mods = GlobalPaths.TransferFiles;
@@ -264,17 +241,15 @@ namespace IAGrim
             var factory = new SessionFactory();
 
             // Settings should be upgraded early, it contains the language pack etc and some services depends on settings.
+            var settingsService = LoadSettingsService();
             IPlayerItemDao playerItemDao = new PlayerItemRepo(threadExecuter, factory);
-            var statUpgradeNeeded = StartupService.UpgradeSettings();
-
+            StartupService.UpgradeSettings();
+            
             // X
             IDatabaseItemDao databaseItemDao = new DatabaseItemRepo(threadExecuter, factory);
-            GlobalSettings.InitializeLanguage(Properties.Settings.Default.LocalizationFile, databaseItemDao.GetTagDictionary());
+            RuntimeSettings.InitializeLanguage(settingsService.GetString(LocalSetting.LocalizationFile), databaseItemDao.GetTagDictionary());
             DumpTranslationTemplate();
 
-            // Prohibited for now
-            Properties.Settings.Default.InstaTransfer = false;
-            Properties.Settings.Default.Save();
             threadExecuter.Execute(() => new MigrationHandler(factory).Migrate());
 
             IDatabaseSettingDao databaseSettingDao = new DatabaseSettingRepo(threadExecuter, factory);
@@ -299,20 +274,20 @@ namespace IAGrim
             IBuddySubscriptionDao buddySubscriptionDao = new BuddySubscriptionRepo(threadExecuter, factory);
             IRecipeItemDao recipeItemDao = new RecipeItemRepo(threadExecuter, factory);
             IItemSkillDao itemSkillDao = new ItemSkillRepo(threadExecuter, factory);
-            ArzParser arzParser = new ArzParser(databaseSettingDao);
             AugmentationItemRepo augmentationItemRepo = new AugmentationItemRepo(threadExecuter, factory, new DatabaseItemStatDaoImpl(factory));
+            var grimDawnDetector = new GrimDawnDetector(settingsService);
 
             Logger.Debug("Updating augment state..");
             augmentationItemRepo.UpdateState();
 
             // TODO: GD Path has to be an input param, as does potentially mods.
-            ParsingService parsingService = new ParsingService(itemTagDao, null, databaseItemDao, databaseItemStatDao, itemSkillDao, Properties.Settings.Default.LocalizationFile);
+            ParsingService parsingService = new ParsingService(itemTagDao, null, databaseItemDao, databaseItemStatDao, itemSkillDao, settingsService.GetString(LocalSetting.LocalizationFile));
 
-            PrintStartupInfo(factory);
+            PrintStartupInfo(factory, settingsService);
 
 
 
-            if (GlobalSettings.Language is EnglishLanguage language)
+            if (RuntimeSettings.Language is EnglishLanguage language)
             {
                 foreach (var tag in itemTagDao.GetClassItemTags())
                 {
@@ -322,8 +297,7 @@ namespace IAGrim
 
             if (args != null && args.Any(m => m.Contains("-logout"))) {
                 Logger.Info("Started with -logout specified, logging out of online backups.");
-                Settings.Default.AzureAuthToken = null;
-                Settings.Default.Save();
+                settingsService.Save(PersistentSetting.AzureAuthToken, null);
             }
 
             // TODO: Urgent, introduce DI and have MainWindow receive premade objects, not create them itself.
@@ -337,38 +311,39 @@ namespace IAGrim
                     databaseSettingDao,
                     buddyItemDao,
                     buddySubscriptionDao,
-                    arzParser,
                     recipeItemDao,
                     itemSkillDao,
                     itemTagDao,
                     parsingService,
-                    augmentationItemRepo
+                    augmentationItemRepo,
+                    settingsService,
+                    grimDawnDetector
                 );
 
                 Logger.Info("Checking for database updates..");
 
 
                 // Load the GD database (or mod, if any)
-                string GDPath = databaseSettingDao.GetCurrentDatabasePath();
-                if (string.IsNullOrEmpty(GDPath) || !Directory.Exists(GDPath))
+                string gdPath = databaseSettingDao.GetCurrentDatabasePath();
+                if (string.IsNullOrEmpty(gdPath) || !Directory.Exists(gdPath))
                 {
-                    GDPath = GrimDawnDetector.GetGrimLocation();
+                    gdPath = grimDawnDetector.GetGrimLocation();
                 }
 
-                if (!string.IsNullOrEmpty(GDPath) && Directory.Exists(GDPath)) {
+                if (!string.IsNullOrEmpty(gdPath) && Directory.Exists(gdPath)) {
 
                     var numFiles = Directory.GetFiles(GlobalPaths.StorageFolder).Length;
                     int numFilesExpected = 2100;
-                    if (Directory.Exists(Path.Combine(GDPath, "gdx2"))) {
+                    if (Directory.Exists(Path.Combine(gdPath, "gdx2"))) {
                         numFilesExpected += 580;
                     }
-                    if (Directory.Exists(Path.Combine(GDPath, "gdx1"))) {
+                    if (Directory.Exists(Path.Combine(gdPath, "gdx1"))) {
                         numFilesExpected += 890;
                     }
 
                     if (numFiles < numFilesExpected) {
                         Logger.Debug($"Only found {numFiles} in storage, expected ~{numFilesExpected}+, parsing item icons.");
-                        ThreadPool.QueueUserWorkItem((m) => ArzParser.LoadIconsOnly(GDPath));
+                        ThreadPool.QueueUserWorkItem((m) => ArzParser.LoadIconsOnly(gdPath));
                     }
 
                 }
@@ -377,11 +352,9 @@ namespace IAGrim
                     Logger.Warn("Could not find the Grim Dawn install location");
                 }
 
-                playerItemDao.UpdateHardcoreSettings();
-
                 _mw.Visible = false;
-                if (DonateNagScreen.CanNag)
-                    Application.Run(new DonateNagScreen());
+                if (new DonateNagScreen(settingsService).CanNag)
+                    Application.Run(new DonateNagScreen(settingsService));
 
                 Logger.Info("Running the main application..");
 
@@ -390,6 +363,54 @@ namespace IAGrim
             }
 
             Logger.Info("Application ended.");
+        }
+
+        private static SettingsService LoadSettingsService() {
+            string settingsFile = GlobalPaths.SettingsFile;
+            if (File.Exists(settingsFile)) {
+                return SettingsService.Load(settingsFile);
+            }
+            else {
+                var p = Properties.Settings.Default;
+                var service = SettingsService.Load(settingsFile);
+                service.Save(LocalSetting.GrimDawnLocation, new List<string>{ p.GrimDawnLocation });
+                service.Save(LocalSetting.BackupNumber, p.BackupNumber);
+                service.Save(LocalSetting.HasSuggestedLanguageChange, p.HasSuggestedLanguageChange);
+
+                
+                service.Save(PersistentSetting.BuddySyncUserIdV2, p.BuddySyncUserIdV2);
+                service.Save(PersistentSetting.BuddySyncDescription, p.BuddySyncDescription);
+                service.Save(PersistentSetting.BuddySyncEnabled, p.BuddySyncEnabled);
+
+                service.Save(PersistentSetting.SubscribeExperimentalUpdates, p.SubscribeExperimentalUpdates);
+                service.Save(PersistentSetting.ShowRecipesAsItems, p.ShowRecipesAsItems);
+                service.Save(LocalSetting.LastNagTimestamp, p.LastNagTimestamp);
+                service.Save(PersistentSetting.MinimizeToTray, p.MinimizeToTray);
+                service.Save(PersistentSetting.UsingDualComputer, p.UsingDualComputer);
+                service.Save(PersistentSetting.ShowAugmentsAsItems, p.ShowAugmentsAsItems);
+                service.Save(PersistentSetting.MergeDuplicates, p.MergeDuplicates);
+                service.Save(PersistentSetting.TransferAnyMod, p.TransferAnyMod);
+                service.Save(LocalSetting.SecureTransfers, p.SecureTransfers);
+                service.Save(PersistentSetting.AutoUpdateModSettings, p.AutoUpdateModSettings);
+                service.Save(PersistentSetting.DisplaySkills, p.DisplaySkills);
+                service.Save(LocalSetting.StashToDepositTo, p.StashToDepositTo);
+                service.Save(LocalSetting.StashToLootFrom, p.StashToLootFrom);
+                service.Save(LocalSetting.LastSelectedMod, p.LastSelectedMod);
+                service.Save(LocalSetting.LocalizationFile, p.LocalizationFile);
+
+
+                service.Save(LocalSetting.BackupDropbox, p.BackupDropbox);
+                service.Save(LocalSetting.BackupGoogle, p.BackupGoogle);
+                service.Save(LocalSetting.BackupOnedrive, p.BackupOnedrive);
+                service.Save(LocalSetting.BackupCustom, p.BackupCustom);
+                service.Save(LocalSetting.BackupCustomLocation, p.BackupCustomLocation);
+
+                service.Save(PersistentSetting.AzureAuthToken, p.AzureAuthToken);
+
+                service.Save(LocalSetting.WindowPositionSettings, "{}");
+
+                return service;
+            }
         }
     }
 }

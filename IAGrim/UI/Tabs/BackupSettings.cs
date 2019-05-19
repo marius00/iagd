@@ -1,27 +1,31 @@
-﻿using EvilsoftCommons.Cloud;
-using IAGrim.Backup.Azure.Service;
-using IAGrim.Database.Interfaces;
-using IAGrim.Utilities;
-using IAGrim.Utilities.Cloud;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using EvilsoftCommons.Cloud;
+using IAGrim.Backup.Azure.Service;
+using IAGrim.Database.Interfaces;
 using IAGrim.Services;
+using IAGrim.Settings;
+using IAGrim.Settings.Dto;
+using IAGrim.Utilities;
+using IAGrim.Utilities.Cloud;
 
-namespace IAGrim.UI
+namespace IAGrim.UI.Tabs
 {
     public partial class BackupSettings : Form
     {
         private readonly IPlayerItemDao _playerItemDao;
         private readonly AzureAuthService _authAuthService;
+        private readonly SettingsService _settings;
 
 
-        public BackupSettings(IPlayerItemDao playerItemDao, AzureAuthService authAuthService)
+        public BackupSettings(IPlayerItemDao playerItemDao, AzureAuthService authAuthService, SettingsService settings)
         {
             InitializeComponent();
             _playerItemDao = playerItemDao;
             _authAuthService = authAuthService;
+            _settings = settings;
         }
 
         private void BackupSettings_Load(object sender, EventArgs e)
@@ -53,13 +57,15 @@ namespace IAGrim.UI
             pbDropbox.Enabled = cbDropbox.Enabled;
             pbGoogle.Enabled = cbGoogle.Enabled;
             pbSkydrive.Enabled = cbOneDrive.Enabled;
+            
 
-            cbDropbox.Checked = Properties.Settings.Default.BackupDropbox;
-            cbGoogle.Checked = Properties.Settings.Default.BackupGoogle;
-            cbOneDrive.Checked = Properties.Settings.Default.BackupOnedrive;
-            cbCustom.Checked = Properties.Settings.Default.BackupCustom;
-            cbDontWantBackups.Checked = Properties.Settings.Default.OptOutOfBackups;
-            buttonLogin.Enabled = !Properties.Settings.Default.OptOutOfBackups;
+
+            cbDropbox.Checked = _settings.GetBool(LocalSetting.BackupDropbox);
+            cbGoogle.Checked = _settings.GetBool(LocalSetting.BackupGoogle);
+            cbOneDrive.Checked = _settings.GetBool(LocalSetting.BackupOnedrive);
+            cbCustom.Checked = _settings.GetBool(LocalSetting.BackupCustom);
+            cbDontWantBackups.Checked = _settings.GetBool(LocalSetting.OptOutOfBackups);
+            buttonLogin.Enabled = !_settings.GetBool(LocalSetting.OptOutOfBackups);
 
             cbDropbox.CheckedChanged += cbDropbox_CheckedChanged;
             cbGoogle.CheckedChanged += cbGoogle_CheckedChanged;
@@ -94,33 +100,25 @@ namespace IAGrim.UI
         private void cbGoogle_CheckedChanged(object sender, EventArgs e)
         {
             var cb = sender as FirefoxCheckBox;
-
-            Properties.Settings.Default.BackupGoogle = cb.Checked;
-            Properties.Settings.Default.Save();
+            _settings.Save(LocalSetting.BackupGoogle, cb.Checked);
         }
 
         private void cbDropbox_CheckedChanged(object sender, EventArgs e)
         {
             var cb = sender as FirefoxCheckBox;
-
-            Properties.Settings.Default.BackupDropbox = cb.Checked;
-            Properties.Settings.Default.Save();
+            _settings.Save(LocalSetting.BackupDropbox, cb.Checked);
         }
 
         private void CbOneDriveCheckedChanged(object sender, EventArgs e)
         {
             var cb = sender as FirefoxCheckBox;
-
-            Properties.Settings.Default.BackupOnedrive = cb.Checked;
-            Properties.Settings.Default.Save();
+            _settings.Save(LocalSetting.BackupOnedrive, cb.Checked);
         }
 
         private void cbCustom_CheckedChanged(object sender, EventArgs e)
         {
             var cb = sender as FirefoxCheckBox;
-
-            Properties.Settings.Default.BackupCustom = cb.Checked;
-            Properties.Settings.Default.Save();
+            _settings.Save(LocalSetting.BackupCustom, cb.Checked);
         }
 
         private void buttonCustom_Click(object sender, EventArgs e)
@@ -130,28 +128,27 @@ namespace IAGrim.UI
             if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
                 DialogResult = DialogResult.None;
-                Properties.Settings.Default.BackupCustomLocation = folderBrowserDialog.SelectedPath;
-                Properties.Settings.Default.Save();
+                _settings.Save(LocalSetting.BackupCustomLocation, folderBrowserDialog.SelectedPath);
             }
         }
 
         private void buttonBackupNow_Click(object sender, EventArgs e)
         {
-            var fileBackup = new FileBackup(_playerItemDao);
+            var fileBackup = new FileBackup(_playerItemDao, _settings);
 
             if (fileBackup.Backup(true))
             {
                 MessageBox.Show(
-                    GlobalSettings.Language.GetTag("iatag_ui_backup_complete"), 
-                    GlobalSettings.Language.GetTag("iatag_ui_backup_status"), 
+                    RuntimeSettings.Language.GetTag("iatag_ui_backup_complete"), 
+                    RuntimeSettings.Language.GetTag("iatag_ui_backup_status"), 
                     MessageBoxButtons.OK, 
                     MessageBoxIcon.Information);
             }
             else
             {
                 MessageBox.Show(
-                    GlobalSettings.Language.GetTag("iatag_ui_backup_failed"),
-                    GlobalSettings.Language.GetTag("iatag_ui_backup_status"), 
+                    RuntimeSettings.Language.GetTag("iatag_ui_backup_failed"),
+                    RuntimeSettings.Language.GetTag("iatag_ui_backup_status"), 
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
@@ -166,10 +163,10 @@ namespace IAGrim.UI
                         _authAuthService.Authenticate();
                         break;
                     case AzureAuthService.AccessStatus.Unknown:
-                        MessageBox.Show(GlobalSettings.Language.GetTag("iatag_ui_backup_service_error"));
+                        MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_backup_service_error"));
                         break;
                     default: {
-                        var alreadyLoggedIn = GlobalSettings.Language.GetTag("iatag_feedback_already_logged_in");
+                        var alreadyLoggedIn = RuntimeSettings.Language.GetTag("iatag_feedback_already_logged_in");
 
                         MessageBox.Show(
                             alreadyLoggedIn,
@@ -185,8 +182,7 @@ namespace IAGrim.UI
 
         private void cbDontWantBackups_CheckedChanged(object sender, EventArgs e) {
             buttonLogin.Enabled = !cbDontWantBackups.Checked;
-            Properties.Settings.Default.OptOutOfBackups = cbDontWantBackups.Checked;
-            Properties.Settings.Default.Save();
+            _settings.Save(LocalSetting.OptOutOfBackups, cbDontWantBackups.Checked);
         }
 
         private void helpWhyGdriveDisabled_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {

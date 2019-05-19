@@ -13,7 +13,6 @@ namespace IAGrim.Database.Interfaces {
         void SetAzureIds(List<AzureUploadedItem> mappings);
 
 
-        void UpdateHardcoreSettings();
         void UpdateAllItemStats(IList<PlayerItem> items, Action<int> progress);
         void Delete(List<AzureItemDeletionDto> items);
 

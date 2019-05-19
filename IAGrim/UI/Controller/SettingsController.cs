@@ -7,29 +7,30 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows.Forms;
+using IAGrim.Settings;
+using IAGrim.Settings.Dto;
 using IAGrim.Utilities.HelperClasses;
 
 namespace IAGrim.UI.Controller {
 
     class SettingsController : INotifyPropertyChanged, ISettingsController, ISettingsReadController {
+        private readonly SettingsService _settings;
 
 
-        public SettingsController() {
-            //radioBeta.Checked = (bool)Properties.Settings.Default["SubscribeExperimentalUpdates"];
-            //radioRelease.Checked = !(bool)Properties.Settings.Default["SubscribeExperimentalUpdates"];
+        public SettingsController(SettingsService settings) {
+            _settings = settings;
         }
 
 
         public void LoadDefaults() {
-            MinimizeToTray = (bool)Properties.Settings.Default.MinimizeToTray;
-            MergeDuplicates = (bool)Properties.Settings.Default.MergeDuplicates;
-            TransferAnyMod = (bool)Properties.Settings.Default.TransferAnyMod;
-            SecureTransfers = (bool)Properties.Settings.Default.SecureTransfers;
-            ShowRecipesAsItems = (bool)Properties.Settings.Default.ShowRecipesAsItems;
-            AutoUpdateModSettings = (bool)Properties.Settings.Default.AutoUpdateModSettings;
-            InstaTransfer = (bool)Properties.Settings.Default.InstaTransfer;
-            AutoSearch = (bool)Properties.Settings.Default.AutoSearch;
-            DisplaySkills = Properties.Settings.Default.DisplaySkills;
+            
+            MinimizeToTray = _settings.GetBool(PersistentSetting.MinimizeToTray);
+            MergeDuplicates = _settings.GetBool(PersistentSetting.MergeDuplicates);
+            TransferAnyMod = _settings.GetBool(PersistentSetting.TransferAnyMod);
+            SecureTransfers = _settings.GetBoolOrNull(LocalSetting.SecureTransfers) ?? true;
+            ShowRecipesAsItems = _settings.GetBool(PersistentSetting.ShowRecipesAsItems);
+            AutoUpdateModSettings = _settings.GetBool(PersistentSetting.AutoUpdateModSettings);
+            DisplaySkills = _settings.GetBool(PersistentSetting.DisplaySkills);
         }
 
         
@@ -45,12 +46,9 @@ namespace IAGrim.UI.Controller {
         /// Also goes for softcore/hardcore
         /// </summary>
         public bool AutoUpdateModSettings {
-            get {
-                return (bool)Properties.Settings.Default.AutoUpdateModSettings;
-            }
-            set {
-                Properties.Settings.Default.AutoUpdateModSettings = value;
-                Properties.Settings.Default.Save();
+            get => _settings.GetBool(PersistentSetting.AutoUpdateModSettings);
+            private set {
+                _settings.Save(PersistentSetting.AutoUpdateModSettings, value);
                 OnPropertyChanged();
             }
         }
@@ -59,23 +57,17 @@ namespace IAGrim.UI.Controller {
         /// List recipes along with items
         /// </summary>
         public bool ShowRecipesAsItems {
-            get {
-                return (bool)Properties.Settings.Default.ShowRecipesAsItems;
-            }
+            get => _settings.GetBool(PersistentSetting.ShowRecipesAsItems);
             set {
-                Properties.Settings.Default.ShowRecipesAsItems = value;
-                Properties.Settings.Default.Save();
+                _settings.Save(PersistentSetting.ShowRecipesAsItems, value);
                 OnPropertyChanged();
             }
         }
 
         public bool DisplaySkills {
-            get {
-                return Properties.Settings.Default.DisplaySkills;
-            }
+            get => _settings.GetBool(PersistentSetting.DisplaySkills);
             set {
-                Properties.Settings.Default.DisplaySkills = value;
-                Properties.Settings.Default.Save();
+                _settings.Save(PersistentSetting.DisplaySkills, value);
                 OnPropertyChanged();
             }
         }
@@ -84,15 +76,10 @@ namespace IAGrim.UI.Controller {
         /// Minimize the program to the system tray
         /// </summary>
         public bool MinimizeToTray {
-            get {
-                return (bool)Properties.Settings.Default.MinimizeToTray;
-            }
+            get => _settings.GetBool(PersistentSetting.MinimizeToTray);
             set {
-                if ((bool)Properties.Settings.Default.MinimizeToTray != value) {
-                    Properties.Settings.Default.MinimizeToTray = value;
-                    Properties.Settings.Default.Save();
-                    OnPropertyChanged();
-                }
+                _settings.Save(PersistentSetting.MinimizeToTray, value);
+                OnPropertyChanged();
             }
         }
             
@@ -101,12 +88,9 @@ namespace IAGrim.UI.Controller {
         /// Merge duplicate items into a single entry
         /// </summary>
         public bool MergeDuplicates {
-            get {
-                return (bool)Properties.Settings.Default.MergeDuplicates;
-            }
+            get => _settings.GetBool(PersistentSetting.MergeDuplicates);
             set {
-                Properties.Settings.Default.MergeDuplicates = value;
-                Properties.Settings.Default.Save();
+                _settings.Save(PersistentSetting.MergeDuplicates, value);
                 OnPropertyChanged();
             }
         }
@@ -116,56 +100,22 @@ namespace IAGrim.UI.Controller {
         /// Transfer to any mod without restrictions
         /// </summary>
         public bool TransferAnyMod {
-            get {
-                return (bool)Properties.Settings.Default.TransferAnyMod;
-            }
+            get => _settings.GetBool(PersistentSetting.TransferAnyMod);
             set {
-                Properties.Settings.Default.TransferAnyMod = value;
-                Properties.Settings.Default.Save();
+                _settings.Save(PersistentSetting.TransferAnyMod, value);
                 OnPropertyChanged();
             }
         }
 
-
-        /// <summary>
-        /// Automatically update the item view when a filter changes?
-        /// </summary>
-        public bool AutoSearch {
-            get {
-                return (bool)Properties.Settings.Default.AutoSearch;
-            }
-            set {
-                Properties.Settings.Default.AutoSearch = value;
-                Properties.Settings.Default.Save();
-                OnPropertyChanged();
-            }
-        }
-
-
-        public bool InstaTransfer {
-            get {
-                return (bool)Properties.Settings.Default.InstaTransfer;
-            }
-            set {
-                Properties.Settings.Default.InstaTransfer = value;
-                Properties.Settings.Default.Save();
-                OnPropertyChanged();
-            }
-        }
-
-
-
+        
         /// <summary>
         /// Enable DLL stash-closed safety checks
         /// </summary>
         public bool SecureTransfers {
-            get {
-                return (bool)Properties.Settings.Default.SecureTransfers;
-            }
+            get => _settings.GetBool(LocalSetting.SecureTransfers);
             set {
                 if (value || MessageBox.Show("Are you sure you wish to disable secure transfers?\n\nIt will be YOUR responsibility to make sure the bank is closed when transferring.", "Are you sure?", MessageBoxButtons.YesNo) == DialogResult.Yes) {
-                    Properties.Settings.Default.SecureTransfers = value;
-                    Properties.Settings.Default.Save();
+                    _settings.Save(LocalSetting.SecureTransfers, value);
                     OnPropertyChanged();
                 }
             }
@@ -208,8 +158,7 @@ namespace IAGrim.UI.Controller {
         public void DonateNow() {
             System.Diagnostics.Process.Start("http://grimdawn.dreamcrash.org/ia/?donate");
             DateTime dt = DateTime.Now.AddDays(new Random().Next(14,25));
-            Properties.Settings.Default.LastNagTimestamp = dt.Ticks;
-            Properties.Settings.Default.Save();
+            _settings.Save(LocalSetting.LastNagTimestamp, dt.Ticks);
         }
 
         public void OpenDataFolder() {
