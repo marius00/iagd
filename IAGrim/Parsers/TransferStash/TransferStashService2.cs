@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using EvilsoftCommons.Exceptions;
-using IAGrim.Database;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parser.Stash;
 using IAGrim.Parsers.Arz;
-using IAGrim.Properties;
 using IAGrim.Services;
+using IAGrim.Settings;
 using IAGrim.StashFile;
 using IAGrim.UI.Misc.CEF;
 using IAGrim.Utilities;
@@ -25,11 +21,17 @@ namespace IAGrim.Parsers.TransferStash {
         private readonly object _fileLock = new object();
         private readonly IPlayerItemDao _playerItemDao;
         private readonly TransferStashServiceCache _cache;
+        private readonly TransferStashService _transferStashService;
+        private readonly SafeTransferStashWriter _stashWriter;
+        private readonly SettingsService _settings;
         public event EventHandler OnUpdate;
 
-        public TransferStashService2(IPlayerItemDao playerItemDao, TransferStashServiceCache cache) {
+        public TransferStashService2(IPlayerItemDao playerItemDao, TransferStashServiceCache cache, TransferStashService transferStashService, SafeTransferStashWriter stashWriter, SettingsService settings) {
             _playerItemDao = playerItemDao;
             _cache = cache;
+            _transferStashService = transferStashService;
+            _stashWriter = stashWriter;
+            _settings = settings;
         }
 
         private static List<UserFeedback> Validate(Stash stash, int lootFromIndex) {
@@ -44,12 +46,12 @@ namespace IAGrim.Parsers.TransferStash {
 
             if (stash.Tabs.Count < 2) {
                 Logger.WarnFormat($"Transfer stash contains {stash.Tabs.Count} pages. IA requires at least 2 stash pages to function properly.");
-                return new List<UserFeedback> {new UserFeedback(UserFeedbackLevel.Warning, GlobalSettings.Language.GetTag("iatag_not_enough_stash", stash.Tabs.Count))};
+                return new List<UserFeedback> {new UserFeedback(UserFeedbackLevel.Warning, RuntimeSettings.Language.GetTag("iatag_not_enough_stash", stash.Tabs.Count))};
             }
 
             if (stash.Tabs.Count < lootFromIndex + 1) {
                 Logger.Warn($"You have configured IA to loot from stash {lootFromIndex + 1} but you only have {stash.Tabs.Count} pages");
-                return new List<UserFeedback> {new UserFeedback(UserFeedbackLevel.Warning, GlobalSettings.Language.GetTag("iatag_invalid_loot_stash_number", lootFromIndex + 1, stash.Tabs.Count))};
+                return new List<UserFeedback> {new UserFeedback(UserFeedbackLevel.Warning, RuntimeSettings.Language.GetTag("iatag_invalid_loot_stash_number", lootFromIndex + 1, stash.Tabs.Count))};
             }
 
             return new List<UserFeedback>(0);
@@ -59,7 +61,7 @@ namespace IAGrim.Parsers.TransferStash {
             var pCrypto = new GDCryptoDataBuffer(DataBuffer.ReadBytesFromDisk(transferFile));
             var stash = new Stash();
             if (stash.Read(pCrypto)) {
-                var lootFromStashIdx = Arz.TransferStashService.GetStashToLootFrom(stash);
+                var lootFromStashIdx = _transferStashService.GetStashToLootFrom(stash);
                 var errors = Validate(stash, lootFromStashIdx);
                 if (errors.Count > 0) {
                     return (null, errors);
@@ -72,13 +74,14 @@ namespace IAGrim.Parsers.TransferStash {
         }
 
         public (bool, List<UserFeedback>) IsTransferStashLootable() {
-            if (!Settings.Default.SecureTransfers) {
+            
+            if (!(_settings.GetLocal().SecureTransfers ?? true)) {
                 Logger.Debug("Secure transfers are disabled, ignoring stash loot safety checks.");
                 return (true, new List<UserFeedback>());
             }
 
-            if (GlobalSettings.StashStatus != StashAvailability.CLOSED) {
-                Logger.Info($"Delaying stash loot, stash status {GlobalSettings.StashStatus} != CLOSED.");
+            if (RuntimeSettings.StashStatus != StashAvailability.CLOSED) {
+                Logger.Info($"Delaying stash loot, stash status {RuntimeSettings.StashStatus} != CLOSED.");
                 return (false, UserFeedback.FromTagSingleton("iatag_feedback_delaying_stash_loot_status"));
             }
 
@@ -108,18 +111,18 @@ namespace IAGrim.Parsers.TransferStash {
 
                 // TODO: Delegate the stash to the crafting service
                 List<UserFeedback> feedbacks = new List<UserFeedback>();
-                var lootFromStashIdx = Arz.TransferStashService.GetStashToLootFrom(stash);
+                var lootFromStashIdx = _transferStashService.GetStashToLootFrom(stash);
                 if (HasItems(stash, lootFromStashIdx)) {
                     var classifiedItems = Classify(stash.Tabs[lootFromStashIdx]);
 
                     // Warn or auto delete bugged duplicates
                     if (classifiedItems.Duplicates.Count > 0) {
-                        if (Settings.Default.DeleteDuplicates) {
+                        if (_settings.GetPersistent().DeleteDuplicates) {
                             stash.Tabs[lootFromStashIdx].Items.RemoveAll(e => classifiedItems.Duplicates.Any(m => m.Equals(e)));
 
                             // No items to loot, so just delete the duplicates.
                             if (classifiedItems.Remaining.Count == 0) {
-                                if (!SafeTransferStashWriter.SafelyWriteStash(transferFile, stash)) {
+                                if (!_stashWriter.SafelyWriteStash(transferFile, stash)) {
                                     Logger.Error("Fatal error deleting items from Grim Dawn, items has been duplicated.");
                                 }
                             }
@@ -127,7 +130,7 @@ namespace IAGrim.Parsers.TransferStash {
                         else {
                             classifiedItems.Duplicates.ForEach(item => Logger.Debug($"NotLootedDuplicate: {item}"));
                             feedbacks.Add(new UserFeedback(UserFeedbackLevel.Warning,
-                                GlobalSettings.Language.GetTag("iatag_feedback_duplicates_not_looted", classifiedItems.Duplicates.Count),
+                                RuntimeSettings.Language.GetTag("iatag_feedback_duplicates_not_looted", classifiedItems.Duplicates.Count),
                                 HelpService.GetUrl(HelpService.HelpType.DuplicateItem)
                             ));
                         }
@@ -135,7 +138,7 @@ namespace IAGrim.Parsers.TransferStash {
 
                     if (classifiedItems.Stacked.Count > 0) {
                         classifiedItems.Stacked.ForEach(item => Logger.Debug($"NotLootedStacked: {item}"));
-                        feedbacks.Add(new UserFeedback(GlobalSettings.Language.GetTag("iatag_feedback_stacked_not_looted", classifiedItems.Stacked.Count)));
+                        feedbacks.Add(new UserFeedback(RuntimeSettings.Language.GetTag("iatag_feedback_stacked_not_looted", classifiedItems.Stacked.Count)));
                     }
 
                     // Unknown items, database not parsed for these items, IA can't deal with them.
@@ -143,7 +146,7 @@ namespace IAGrim.Parsers.TransferStash {
                         classifiedItems.Unknown.ForEach(item => Logger.Debug($"NotLootedUnknown: {item}"));
                         feedbacks.Add(new UserFeedback(
                             UserFeedbackLevel.Warning,
-                            GlobalSettings.Language.GetTag("iatag_feedback_unknown_not_looted", classifiedItems.Unknown.Count),
+                            RuntimeSettings.Language.GetTag("iatag_feedback_unknown_not_looted", classifiedItems.Unknown.Count),
                             HelpService.GetUrl(HelpService.HelpType.NotLootingUnidentified)
                         ));
                     }
@@ -156,9 +159,9 @@ namespace IAGrim.Parsers.TransferStash {
 
                         var isHardcore = GlobalPaths.IsHardcore(transferFile);
                         if (StoreItemsToDatabase(classifiedItems.Remaining, stash.ModLabel, isHardcore)) {
-                            feedbacks.Add(new UserFeedback(GlobalSettings.Language.GetTag("iatag_looted_from_stash", classifiedItems.Remaining.Count, lootFromStashIdx + 1)));
+                            feedbacks.Add(new UserFeedback(RuntimeSettings.Language.GetTag("iatag_looted_from_stash", classifiedItems.Remaining.Count, lootFromStashIdx + 1)));
                             
-                            if (!SafeTransferStashWriter.SafelyWriteStash(transferFile, stash)) {
+                            if (!_stashWriter.SafelyWriteStash(transferFile, stash)) {
                                 Logger.Error("Fatal error deleting items from Grim Dawn, items has been duplicated.");
                             }
 

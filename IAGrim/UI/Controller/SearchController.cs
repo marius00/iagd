@@ -12,6 +12,8 @@ using log4net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using IAGrim.Settings;
+using IAGrim.Settings.Dto;
 
 namespace IAGrim.UI.Controller
 {
@@ -27,10 +29,9 @@ namespace IAGrim.UI.Controller
         private readonly ItemStatService _itemStatService;
         private readonly IBuddyItemDao _buddyItemDao;
         private readonly ItemPaginatorService _itemPaginatorService;
-        private readonly TransferStashService _transferStashService;
         private readonly AugmentationItemRepo _augmentationItemRepo;
-
-        private string _previousMod = string.Empty;
+        private readonly SettingsService _settings;
+        
 
         public CefBrowserHandler Browser;
         public readonly JSWrapper JsBind = new JSWrapper { IsTimeToShowNag = -1 };
@@ -42,17 +43,15 @@ namespace IAGrim.UI.Controller
             IDatabaseItemStatDao databaseItemStatDao,
             IItemSkillDao itemSkillDao,
             IBuddyItemDao buddyItemDao,
-            TransferStashService transferStashService,
-            AugmentationItemRepo augmentationItemRepo
-        )
+            AugmentationItemRepo augmentationItemRepo, SettingsService settings)
         {
             _dbItemDao = databaseItemDao;
             _playerItemDao = playerItemDao;
-            _itemStatService = new ItemStatService(databaseItemStatDao, itemSkillDao);
+            _itemStatService = new ItemStatService(databaseItemStatDao, itemSkillDao, settings);
             _itemPaginatorService = new ItemPaginatorService(TakeSize);
             _buddyItemDao = buddyItemDao;
-            _transferStashService = transferStashService;
             _augmentationItemRepo = augmentationItemRepo;
+            _settings = settings;
 
             // Just make sure it writes .css/.html files before displaying anything to the browser
             // 
@@ -140,17 +139,15 @@ namespace IAGrim.UI.Controller
             else
             {
                 message = personalCount == 0
-                    ? GlobalSettings.Language.GetTag("iatag_no_matching_items_found")
+                    ? RuntimeSettings.Language.GetTag("iatag_no_matching_items_found")
                     : string.Empty;
             }
-
-            if (Properties.Settings.Default.ShowRecipesAsItems && !query.SocketedOnly)
-            {
+            
+            if (_settings.GetPersistent().ShowRecipesAsItems && !query.SocketedOnly) {
                 AddRecipeItems(items, query);
             }
 
-            if (Properties.Settings.Default.ShowAugmentsAsItems && !query.SocketedOnly)
-            {
+            if (_settings.GetPersistent().ShowAugmentsAsItems && !query.SocketedOnly) {
                 AddAugmentItems(items, query);
             }
 
@@ -209,7 +206,7 @@ namespace IAGrim.UI.Controller
             {
                 MergeDuplicates(buddyPlayerHeldItems);
                 items.AddRange(buddyPlayerHeldItems);
-                message = GlobalSettings.Language.GetTag("iatag_additional_items_found", buddyPlayerHeldItems.Count);
+                message = RuntimeSettings.Language.GetTag("iatag_additional_items_found", buddyPlayerHeldItems.Count);
             }
             else
             {
@@ -247,10 +244,9 @@ namespace IAGrim.UI.Controller
         /// IFF MergeDuplicates is enabled in the settings
         /// </summary>
         /// <param name="items"></param>
-        private void MergeDuplicates(List<PlayerHeldItem> items)
-        {
-            if (!Properties.Settings.Default.MergeDuplicates)
-            {
+        private void MergeDuplicates(List<PlayerHeldItem> items) {
+            
+            if (!_settings.GetPersistent().MergeDuplicates) {
                 return;
             }
 

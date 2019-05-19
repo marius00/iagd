@@ -78,7 +78,6 @@ void StateRequestRotateAction::DisableHook() {
 }
 
 
-#if defined(_AMD64_)
 void* __fastcall StateRequestRotateAction::HookedMethod_Wrap0(void* This, Vec3f const & xyz) { return HookedMethod(This, xyz, originalMethods[0]); }
 void* __fastcall StateRequestRotateAction::HookedMethod_Wrap1(void* This, Vec3f const & xyz) { return HookedMethod(This, xyz, originalMethods[1]); }
 void* __fastcall StateRequestRotateAction::HookedMethod_Wrap2(void* This, Vec3f const & xyz) { return HookedMethod(This, xyz, originalMethods[2]); }
@@ -91,7 +90,6 @@ void* __fastcall StateRequestRotateAction::HookedMethod_Wrap8(void* This, Vec3f 
 void* __fastcall StateRequestRotateAction::HookedMethod_Wrap9(void* This, Vec3f const & xyz) { return HookedMethod(This, xyz, originalMethods[9]); }
 void* __fastcall StateRequestRotateAction::HookedMethod_Wrap10(void* This, Vec3f const & xyz) { return HookedMethod(This, xyz, originalMethods[10]); }
 void* __fastcall StateRequestRotateAction::HookedMethod_Wrap11(void* This, Vec3f const & xyz) { return HookedMethod(This, xyz, originalMethods[11]); }
-#endif
 
 void* __fastcall StateRequestRotateAction::HookedMethod(void* This, Vec3f const & xyz, OriginalMethodPtr original) {
 

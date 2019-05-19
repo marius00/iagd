@@ -60,11 +60,6 @@ void GAME::Inventory::RemoveItemFromInventory(unsigned int)
 GAME::InventorySack::SetItemAddedWhileNotTheCurrentlySelectedInventoryTab(bool)
 /************************************************************************/
 
-#if !defined(_AMD64_)
-#define DISCARD_ARG ,void* discarded
-#else
-#define DISCARD_ARG
-#endif
 
 class InventorySack_AddItem : public BaseMethodHook {
 public:
@@ -127,16 +122,16 @@ private:
 
 	// Previously in a separate class
 	// void GAME::GameEngine::SetTransferOpen(bool)
-	static void __fastcall Hooked_GameEngine_SetTransferOpen(void* This DISCARD_ARG, bool firstParam);
+	static void __fastcall Hooked_GameEngine_SetTransferOpen(void* This, bool firstParam);
 
 
 	// Game info is used to monitor IsHardcore and ModLabel
 	//GAME::GameInfo::GameInfo(class GAME::GameInfo const &)
-	static void* __fastcall Hooked_GameInfo_GameInfo_Param(void* This DISCARD_ARG, void* info);
-	static void* __fastcall Hooked_GameInfo_GameInfo(void* This DISCARD_ARG);
+	static void* __fastcall Hooked_GameInfo_GameInfo_Param(void* This, void* info);
+	static void* __fastcall Hooked_GameInfo_GameInfo(void* This);
 
 	//void GAME::GameInfo::SetHardcore(bool)
-	static void* __fastcall Hooked_GameInfo_SetHardcore(void* This DISCARD_ARG, bool isHardcore);
-	static bool __fastcall Hooked_InventorySack_Sort(void* This DISCARD_ARG, unsigned int unknown);
-	static int* __fastcall Hooked_GameEngine_GetTransferSack(void* This DISCARD_ARG, int idx);
+	static void* __fastcall Hooked_GameInfo_SetHardcore(void* This, bool isHardcore);
+	static bool __fastcall Hooked_InventorySack_Sort(void* This, unsigned int unknown);
+	static int* __fastcall Hooked_GameEngine_GetTransferSack(void* This, int idx);
 };

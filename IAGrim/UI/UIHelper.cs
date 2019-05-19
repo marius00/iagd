@@ -21,28 +21,28 @@ namespace IAGrim.UI
                 {
                     new ComboBoxItemQuality
                     {
-                        Text = GlobalSettings.Language.GetTag("iatag_rarity_any"),
+                        Text = RuntimeSettings.Language.GetTag("iatag_rarity_any"),
                         Rarity = null
                     },
                     new ComboBoxItemQuality
                     {
-                        Text = GlobalSettings.Language.GetTag("iatag_rarity_yellow"),
+                        Text = RuntimeSettings.Language.GetTag("iatag_rarity_yellow"),
                         Rarity = "Yellow"
                     },
                     new ComboBoxItemQuality
                     {
 
-                        Text = GlobalSettings.Language.GetTag("iatag_rarity_green"),
+                        Text = RuntimeSettings.Language.GetTag("iatag_rarity_green"),
                         Rarity = "Green"
                     },
                     new ComboBoxItemQuality
                     {
-                        Text = GlobalSettings.Language.GetTag("iatag_rarity_blue"),
+                        Text = RuntimeSettings.Language.GetTag("iatag_rarity_blue"),
                         Rarity = "Blue"
                     },
                     new ComboBoxItemQuality
                     {
-                        Text = GlobalSettings.Language.GetTag("iatag_rarity_epic"),
+                        Text = RuntimeSettings.Language.GetTag("iatag_rarity_epic"),
                         Rarity = "Epic"
                     }
                 };
@@ -52,7 +52,7 @@ namespace IAGrim.UI
 
         public static ComboBoxItem[] SlotFilter {
             get {
-                var language = GlobalSettings.Language;
+                var language = RuntimeSettings.Language;
                 List<ComboBoxItem> slotFilter = new List<ComboBoxItem>
                 {
                     new ComboBoxItem

@@ -35,12 +35,7 @@ void LoadPlayerTransfer::DisableHook() {
 	Unhook((PVOID*)&originalMethod, HookedMethod);
 }
 
-int __fastcall LoadPlayerTransfer::HookedMethod(
-	void* This
-#if !defined(_AMD64_)
-	,void* notUsed
-#endif
-) {
+int __fastcall LoadPlayerTransfer::HookedMethod(void* This) {
 	// Who knows what this'll do..
 	int res = originalMethod(This);
 

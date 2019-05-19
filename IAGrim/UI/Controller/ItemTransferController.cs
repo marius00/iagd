@@ -13,7 +13,6 @@ using log4net;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Pipes;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -73,7 +72,7 @@ namespace IAGrim.UI.Controller {
             if (items.Contains(null)) {
                 Logger.Warn("Attempted to transfer NULL item.");
 
-                var message = GlobalSettings.Language.GetTag("iatag_feedback_item_does_not_exist");
+                var message = RuntimeSettings.Language.GetTag("iatag_feedback_item_does_not_exist");
                 _setFeedback(message);
                 _browser.ShowMessage(message, UserFeedbackLevel.Error);
 
@@ -115,7 +114,7 @@ namespace IAGrim.UI.Controller {
                 };
             }
             catch (TransferStashService.DepositException) {
-                _browser.ShowMessage(GlobalSettings.Language.GetTag("iatag_feedback_unable_to_deposit"), UserFeedbackLevel.Error);
+                _browser.ShowMessage(RuntimeSettings.Language.GetTag("iatag_feedback_unable_to_deposit"), UserFeedbackLevel.Error);
                 return new TransferStatus {
                     NumItemsTransferred = 0,
                     NumItemsRequested = numItemsRequested
@@ -133,9 +132,9 @@ namespace IAGrim.UI.Controller {
                     return picker.Result;
                 }
 
-                Logger.Info(GlobalSettings.Language.GetTag("iatag_no_stash_abort"));
-                _setFeedback(GlobalSettings.Language.GetTag("iatag_no_stash_abort"));
-                _browser.ShowMessage(GlobalSettings.Language.GetTag("iatag_no_stash_abort"), UserFeedbackLevel.Error);
+                Logger.Info(RuntimeSettings.Language.GetTag("iatag_no_stash_abort"));
+                _setFeedback(RuntimeSettings.Language.GetTag("iatag_no_stash_abort"));
+                _browser.ShowMessage(RuntimeSettings.Language.GetTag("iatag_no_stash_abort"), UserFeedbackLevel.Error);
 
                 return string.Empty;
             }
@@ -144,14 +143,15 @@ namespace IAGrim.UI.Controller {
         }
 
         private bool CanTransfer() {
-            return GlobalSettings.StashStatus == StashAvailability.CLOSED
+            return RuntimeSettings.StashStatus == StashAvailability.CLOSED
                    || !_settingsController.SecureTransfers
-                   || (GlobalSettings.StashStatus == StashAvailability.ERROR
+                   || (RuntimeSettings.StashStatus == StashAvailability.ERROR
                        && MessageBox.Show(
-                           GlobalSettings.Language.GetTag("iatag_stash_status_error"),
+                           RuntimeSettings.Language.GetTag("iatag_stash_status_error"),
                            "Warning",
                            MessageBoxButtons.YesNo,
                            MessageBoxIcon.Warning) == DialogResult.Yes);
+
         }
 
         /// <summary>
@@ -178,7 +178,7 @@ namespace IAGrim.UI.Controller {
                     Logger.InfoFormat("Successfully deposited {0} out of {1} items", result.NumItemsTransferred,
                         result.NumItemsRequested);
                     try {
-                        var message = string.Format(GlobalSettings.Language.GetTag("iatag_stash3_success"),
+                        var message = string.Format(RuntimeSettings.Language.GetTag("iatag_stash3_success"),
                             result.NumItemsTransferred, result.NumItemsRequested);
                         _browser.ShowMessage(message, UserFeedbackLevel.Success);
                     }
@@ -189,8 +189,9 @@ namespace IAGrim.UI.Controller {
                     }
 
                     if (result.NumItemsTransferred == 0) {
-                        _setTooltip(GlobalSettings.Language.GetTag("iatag_stash3_failure"));
-                        _browser.ShowMessage(GlobalSettings.Language.GetTag("iatag_stash3_failure"), UserFeedbackLevel.Warning);
+                        _setTooltip(RuntimeSettings.Language.GetTag("iatag_stash3_failure"));
+                        _browser.ShowMessage(RuntimeSettings.Language.GetTag("iatag_stash3_failure"), UserFeedbackLevel.Warning);
+
                     }
 
                     // Lets do this last, to make sure feedback reaches the user as fast as possible
@@ -200,21 +201,22 @@ namespace IAGrim.UI.Controller {
                     Logger.Warn("Could not find any items for the requested transfer");
                 }
             }
-            else if (GlobalSettings.StashStatus == StashAvailability.OPEN) {
-                var message = GlobalSettings.Language.GetTag("iatag_deposit_stash_open");
+            else if (RuntimeSettings.StashStatus == StashAvailability.OPEN) {
+                var message = RuntimeSettings.Language.GetTag("iatag_deposit_stash_open");
+
                 _setFeedback(message);
                 _setTooltip(message);
                 _browser.ShowMessage(message, UserFeedbackLevel.Warning);
             }
-            else if (GlobalSettings.StashStatus == StashAvailability.SORTED) {
-                _setFeedback(GlobalSettings.Language.GetTag("iatag_deposit_stash_sorted"));
-                _browser.ShowMessage(GlobalSettings.Language.GetTag("iatag_deposit_stash_sorted"), UserFeedbackLevel.Warning);
+            else if (RuntimeSettings.StashStatus == StashAvailability.SORTED) {
+                _setFeedback(RuntimeSettings.Language.GetTag("iatag_deposit_stash_sorted"));
+                _browser.ShowMessage(RuntimeSettings.Language.GetTag("iatag_deposit_stash_sorted"), UserFeedbackLevel.Warning);
             }
 
-            else if (GlobalSettings.StashStatus == StashAvailability.UNKNOWN) {
-                _setFeedback(GlobalSettings.Language.GetTag("iatag_deposit_stash_unknown_feedback"));
-                _setTooltip(GlobalSettings.Language.GetTag("iatag_deposit_stash_unknown_tooltip"));
-                _browser.ShowMessage(GlobalSettings.Language.GetTag("iatag_deposit_stash_unknown_feedback"), UserFeedbackLevel.Warning);
+            else if (RuntimeSettings.StashStatus == StashAvailability.UNKNOWN) {
+                _setFeedback(RuntimeSettings.Language.GetTag("iatag_deposit_stash_unknown_feedback"));
+                _setTooltip(RuntimeSettings.Language.GetTag("iatag_deposit_stash_unknown_tooltip"));
+                _browser.ShowMessage(RuntimeSettings.Language.GetTag("iatag_deposit_stash_unknown_feedback"), UserFeedbackLevel.Warning);
             }
         }
     }

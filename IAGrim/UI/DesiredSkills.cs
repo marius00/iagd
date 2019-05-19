@@ -395,10 +395,7 @@ namespace IAGrim.UI
                         var handler = OnChanged;
 
                         // Only search if the user desires auto search (probably 99%)
-                        if (handler != null && Properties.Settings.Default.AutoSearch)
-                        {
-                            handler(this, Filters);
-                        }
+                        handler?.Invoke(this, Filters);
                     };
                 }
 

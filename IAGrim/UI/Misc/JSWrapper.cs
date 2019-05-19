@@ -29,7 +29,7 @@ namespace IAGrim.UI.Misc {
                 NullValueHandling = NullValueHandling.Ignore
             };
 
-            var lang = GlobalSettings.Language;
+            var lang = RuntimeSettings.Language;
             /*
             translation = new Dictionary<string, string> {
                 {"items.label.cloudOk", "This 32432423423 has been backed up to the cloud"}

@@ -61,7 +61,7 @@ namespace IAGrim.Services.MessageProcessor {
                     case MessageType.TYPE_DISPLAY_CRAFTER:
                         if (PrivateStashStatus != InternalStashStatus.Open) {
                             PrivateStashStatus = InternalStashStatus.Crafting;
-                            GlobalSettings.StashStatus = StashAvailability.CRAFTING;
+                            RuntimeSettings.StashStatus = StashAvailability.CRAFTING;
                         }
                         break;
 
@@ -78,18 +78,18 @@ namespace IAGrim.Services.MessageProcessor {
 
                 switch (type) {
                     case MessageType.TYPE_InventorySack_Sort:
-                        GlobalSettings.StashStatus = StashAvailability.SORTED;
+                        RuntimeSettings.StashStatus = StashAvailability.SORTED;
                         break;
 
                     case MessageType.TYPE_OPEN_PRIVATE_STASH:
                     case MessageType.TYPE_OPEN_CLOSE_TRANSFER_STASH:
                     case MessageType.TYPE_SAVE_TRANSFER_STASH:
                         // Sorted can still be open, but lets treat it as sorted since we can't transfer items without knowing position
-                        if (GlobalSettings.StashStatus != StashAvailability.SORTED && !IsClosed)
-                            GlobalSettings.StashStatus = StashAvailability.OPEN;
+                        if (RuntimeSettings.StashStatus != StashAvailability.SORTED && !IsClosed)
+                            RuntimeSettings.StashStatus = StashAvailability.OPEN;
 
                         else if (IsClosed) {
-                            GlobalSettings.StashStatus = StashAvailability.CLOSED;
+                            RuntimeSettings.StashStatus = StashAvailability.CLOSED;
                             logger.Debug("Closed stash");
                         }
 

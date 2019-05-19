@@ -37,12 +37,7 @@ void CloudGetNumFiles::DisableHook() {
 	DetourTransactionCommit();
 }
 
-unsigned int __fastcall CloudGetNumFiles::HookedMethod(
-	void* This
-#if !defined(_AMD64_)
-	, void* notUsed
-#endif
-) {
+unsigned int __fastcall CloudGetNumFiles::HookedMethod(void* This) {
 	DataItemPtr item(new DataItem(TYPE_CloudGetNumFiles, 0, 0));
 	m_dataQueue->push(item);
 	SetEvent(m_hEvent);

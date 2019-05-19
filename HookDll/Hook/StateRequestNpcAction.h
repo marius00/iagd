@@ -23,7 +23,6 @@ private:
 	static std::vector<OriginalMethodPtr> originalMethods;
 
 	static void* __fastcall HookedMethod(void* This, bool, bool, Vec3f const& xyz, void* npc, OriginalMethodPtr original);
-#if defined(_AMD64_)
 	// TODO: Ideally this should be possible to write with generics.. but the x64 "some arguments are in registers" complicates that.
 	static void* __fastcall HookedMethod_Wrap0(void* This, bool a, bool b, Vec3f const& xyz, void* npc);
 	static void* __fastcall HookedMethod_Wrap1(void* This, bool a, bool b, Vec3f const& xyz, void* npc);
@@ -37,18 +36,5 @@ private:
 	static void* __fastcall HookedMethod_Wrap9(void* This, bool a, bool b, Vec3f const& xyz, void* npc);
 	static void* __fastcall HookedMethod_Wrap10(void* This, bool a, bool b, Vec3f const& xyz, void* npc);
 	static void* __fastcall HookedMethod_Wrap11(void* This, bool a, bool b, Vec3f const& xyz, void* npc);
-#else
-	static void* __fastcall HookedMethod_Wrap0(void* This, void* notUsed, bool a, bool b, Vec3f const& xyz, void* npc);
-	static void* __fastcall HookedMethod_Wrap1(void* This, void* notUsed, bool a, bool b, Vec3f const& xyz, void* npc);
-	static void* __fastcall HookedMethod_Wrap2(void* This, void* notUsed, bool a, bool b, Vec3f const& xyz, void* npc);
-	static void* __fastcall HookedMethod_Wrap3(void* This, void* notUsed, bool a, bool b, Vec3f const& xyz, void* npc);
-	static void* __fastcall HookedMethod_Wrap4(void* This, void* notUsed, bool a, bool b, Vec3f const& xyz, void* npc);
-	static void* __fastcall HookedMethod_Wrap5(void* This, void* notUsed, bool a, bool b, Vec3f const& xyz, void* npc);
-	static void* __fastcall HookedMethod_Wrap6(void* This, void* notUsed, bool a, bool b, Vec3f const& xyz, void* npc);
-	static void* __fastcall HookedMethod_Wrap7(void* This, void* notUsed, bool a, bool b, Vec3f const& xyz, void* npc);
-	static void* __fastcall HookedMethod_Wrap8(void* This, void* notUsed, bool a, bool b, Vec3f const& xyz, void* npc);
-	static void* __fastcall HookedMethod_Wrap9(void* This, void* notUsed, bool a, bool b, Vec3f const& xyz, void* npc);
-	static void* __fastcall HookedMethod_Wrap10(void* This, void* notUsed, bool a, bool b, Vec3f const& xyz, void* npc);
-	static void* __fastcall HookedMethod_Wrap11(void* This, void* notUsed, bool a, bool b, Vec3f const& xyz, void* npc);
-#endif
+
 };

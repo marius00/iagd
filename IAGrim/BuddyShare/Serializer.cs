@@ -11,6 +11,8 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using IAGrim.BuddyShare.dto;
+using IAGrim.Settings;
+using IAGrim.Settings.Dto;
 using Newtonsoft.Json;
 
 namespace IAGrim.BuddyShare {
@@ -19,18 +21,21 @@ namespace IAGrim.BuddyShare {
         static readonly ILog Logger = LogManager.GetLogger(typeof(Serializer));
         private readonly IBuddyItemDao _buddyItemDao;
         private readonly IPlayerItemDao _playerItemDao;
+        private readonly SettingsService _settings;
 
-        public Serializer(IBuddyItemDao buddyItemDao, IPlayerItemDao playerItemDao) {
+        public Serializer(IBuddyItemDao buddyItemDao, IPlayerItemDao playerItemDao, SettingsService settings) {
             this._buddyItemDao = buddyItemDao;
             this._playerItemDao = playerItemDao;
+            _settings = settings;
         }
 
         public SerializedPlayerItems Serialize() {
-            if ((long)Properties.Settings.Default.BuddySyncUserIdV2 != 0) {
+            
+            if (_settings.GetPersistent().BuddySyncUserIdV2 != 0) {
                 SerializedPlayerItems s = GetItems();
-                s.Description = Properties.Settings.Default.BuddySyncDescription;
-                s.UserId = (long)Properties.Settings.Default.BuddySyncUserIdV2;
-                s.UUID = GlobalSettings.Uuid;
+                s.Description = _settings.GetPersistent().BuddySyncDescription;
+                s.UserId = _settings.GetPersistent().BuddySyncUserIdV2 ?? 0L;
+                s.UUID = RuntimeSettings.Uuid;
                 return s;
             }
 

@@ -37,7 +37,7 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
             cbItemSelection.Enabled = false;
 
             cbItemSelection.Items.AddRange(_modSelection);
-            LocalizationLoader.ApplyLanguage(Controls, GlobalSettings.Language);
+            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
         }
 
         private void radioIAStash_CheckedChanged(object sender, EventArgs e) {

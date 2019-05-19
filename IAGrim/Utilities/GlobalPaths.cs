@@ -138,6 +138,8 @@ namespace IAGrim.Utilities {
             }
         }
 
+        public static string SettingsFile => Path.Combine(CoreFolder, "settings.json").Replace("#", "");
+
         public static string CoreFolder {
             get {
                 string path = Path.Combine(LocalAppdata, "EvilSoft", "IAGD");

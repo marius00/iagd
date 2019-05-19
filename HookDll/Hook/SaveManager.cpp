@@ -35,17 +35,7 @@ void SaveManager::DisableHook() {
 	Unhook((PVOID*)&originalMethod, HookedMethod);
 }
 
-int __fastcall SaveManager::HookedMethod(
-	void* This,
-#if !defined(_AMD64_)
-	void* notUsed,
-#endif
-	void* filename,
-	void const* dstBuf,
-	unsigned int numBytesToRead,
-	bool unknown1,
-	bool unknown2
-) {
+int __fastcall SaveManager::HookedMethod(void* This, void* filename, void const* dstBuf, unsigned int numBytesToRead, bool unknown1, bool unknown2) {
 	// Who knows what this'll do..
 	int res = originalMethod(This, filename, dstBuf, numBytesToRead, unknown1, unknown2);
 

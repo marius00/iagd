@@ -6,9 +6,7 @@ using IAGrim.Database;
 using IAGrim.Database.Interfaces;
 using IAGrim.Database.Migrations;
 using IAGrim.Database.Synchronizer;
-using IAGrim.Parsers.Arz;
 using IAGrim.Parsers.GameDataParsing.Service;
-using IAGrim.Properties;
 using IAGrim.UI;
 using IAGrim.UI.Misc.CEF;
 using IAGrim.Utilities;
@@ -16,14 +14,10 @@ using log4net;
 using StatTranslator;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
-using DllInjector;
-
 
 namespace IAGrim
 {
@@ -31,35 +25,12 @@ namespace IAGrim
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(Program));
         private static MainWindow _mw;
-        private static StartupService startupService = new StartupService();
+        private static readonly StartupService StartupService = new StartupService();
 
 #if DEBUG
 
         private static void Test() {
             return;
-            using (ThreadExecuter threadExecuter = new ThreadExecuter())
-            {
-                var factory = new SessionFactory();
-                string _grimdawnLocation = new DatabaseSettingRepo(threadExecuter, factory).GetCurrentDatabasePath();
-                IItemTagDao _itemTagDao = new ItemTagRepo(threadExecuter, factory);
-                IDatabaseItemDao _databaseItemDao = new DatabaseItemRepo(threadExecuter, factory);
-                IDatabaseItemStatDao _databaseItemStatDao = new DatabaseItemStatRepo(threadExecuter, factory);
-                IItemSkillDao _itemSkillDao = new ItemSkillRepo(threadExecuter, factory);
-
-                ParsingService parsingService = new ParsingService(
-                    _itemTagDao,
-                    _grimdawnLocation,
-                    _databaseItemDao,
-                    _databaseItemStatDao,
-                    _itemSkillDao,
-                    Properties.Settings.Default.LocalizationFile
-                );
-
-                parsingService.Execute();
-
-                int x = 9;
-            }
-
         }
 #endif
 
@@ -73,9 +44,9 @@ namespace IAGrim
                 dao.SetUuid(uuid);
             }
 
-            GlobalSettings.Uuid = uuid;
+            RuntimeSettings.Uuid = uuid;
             ExceptionReporter.Uuid = uuid;
-            Logger.InfoFormat("Your user id is {0}, use this for any bug reports", GlobalSettings.Uuid);
+            Logger.InfoFormat("Your user id is {0}, use this for any bug reports", RuntimeSettings.Uuid);
         }
 
         public static MainWindow MainWindow => _mw;
@@ -104,7 +75,7 @@ namespace IAGrim
             AzureUris.Initialize(AzureUris.EnvAzure);
 #endif
 
-            startupService.Init();
+            StartupService.Init();
 
 #if DEBUG
             Test();
@@ -174,81 +145,6 @@ namespace IAGrim
             }
         }
 
-        // TODO: This creates another session instance, should be executed inside the ThreadExecuter
-        private static void PrintStartupInfo(SessionFactory factory)
-        {
-            if (Properties.Settings.Default.StashToLootFrom == 0)
-            {
-                Logger.Info("IA is configured to loot from the last stash page");
-            }
-            else
-            {
-                Logger.Info($"IA is configured to loot from stash page #{Properties.Settings.Default.StashToLootFrom}");
-            }
-            if (Properties.Settings.Default.StashToDepositTo == 0)
-            {
-                Logger.Info("IA is configured to deposit to the second-to-last stash page");
-            }
-            else
-            {
-                Logger.Info($"IA is configured to deposit to stash page #{Properties.Settings.Default.StashToDepositTo}");
-            }
-
-            using (var session = factory.OpenSession())
-            {
-                var numItemsStored = session.CreateCriteria<PlayerItem>()
-                    .SetProjection(NHibernate.Criterion.Projections.RowCountInt64())
-                    .UniqueResult<long>();
-
-                Logger.Info($"There are {numItemsStored} items stored in the database.");
-            }
-
-            if (Properties.Settings.Default.BuddySyncEnabled)
-                Logger.Info($"Buddy items is enabled with user id {Properties.Settings.Default.BuddySyncUserIdV2}");
-            else
-                Logger.Info("Buddy items is disabled");
-
-            if (Properties.Settings.Default.ShowRecipesAsItems)
-                Logger.Info("Show recipes as items is enabled");
-            else
-                Logger.Info("Show recipes as items is disabled");
-
-            Logger.Info("Transfer to any mod is " + (Properties.Settings.Default.TransferAnyMod ? "enabled" : "disabled"));
-            Logger.Info("Experimental updates is " + (Properties.Settings.Default.SubscribeExperimentalUpdates ? "enabled" : "disabled"));
-
-
-            var mods = GlobalPaths.TransferFiles;
-            if (mods.Count == 0)
-            {
-                Logger.Warn("No transfer files has been found");
-            }
-            else
-            {
-                Logger.Info("The following transfer files has been found:");
-                foreach (var mod in mods)
-                {
-                    Logger.Info($"\"{mod.Filename}\": Mod: \"{mod.Mod}\", HC: {mod.IsHardcore}");
-                }
-            }
-
-            Logger.Info("There are items stored for the following mods:");
-            foreach (var entry in new PlayerItemDaoImpl(factory, new DatabaseItemStatDaoImpl(factory)).GetModSelection())
-            {
-                Logger.Info($"Mod: \"{entry.Mod}\", HC: {entry.IsHardcore}");
-            }
-
-            var gdPath = new DatabaseSettingDaoImpl(factory).GetCurrentDatabasePath();
-            if (string.IsNullOrEmpty(gdPath))
-            {
-                Logger.Info("The path to Grim Dawn is unknown (not great)");
-            }
-            else
-            {
-                Logger.Info($"The path to Grim Dawn is \"{gdPath}\"");
-            }
-
-            Logger.Info("Startup data dump complete");
-        }
 
         private static void DumpTranslationTemplate() {
             try {
@@ -264,15 +160,15 @@ namespace IAGrim
             var factory = new SessionFactory();
 
             // Settings should be upgraded early, it contains the language pack etc and some services depends on settings.
+            var settingsService = StartupService.LoadSettingsService();
             IPlayerItemDao playerItemDao = new PlayerItemRepo(threadExecuter, factory);
-            var statUpgradeNeeded = StartupService.UpgradeSettings();
-
+            StartupService.UpgradeSettings();
+            
             // X
             IDatabaseItemDao databaseItemDao = new DatabaseItemRepo(threadExecuter, factory);
-            GlobalSettings.InitializeLanguage(Properties.Settings.Default.LocalizationFile, databaseItemDao.GetTagDictionary());
+            RuntimeSettings.InitializeLanguage(settingsService.GetLocal().LocalizationFile, databaseItemDao.GetTagDictionary());
             DumpTranslationTemplate();
 
-            // Prohibited for now
             threadExecuter.Execute(() => new MigrationHandler(factory).Migrate());
 
             IDatabaseSettingDao databaseSettingDao = new DatabaseSettingRepo(threadExecuter, factory);
@@ -297,20 +193,19 @@ namespace IAGrim
             IBuddySubscriptionDao buddySubscriptionDao = new BuddySubscriptionRepo(threadExecuter, factory);
             IRecipeItemDao recipeItemDao = new RecipeItemRepo(threadExecuter, factory);
             IItemSkillDao itemSkillDao = new ItemSkillRepo(threadExecuter, factory);
-            ArzParser arzParser = new ArzParser(databaseSettingDao);
             AugmentationItemRepo augmentationItemRepo = new AugmentationItemRepo(threadExecuter, factory, new DatabaseItemStatDaoImpl(factory));
+            var grimDawnDetector = new GrimDawnDetector(settingsService);
 
             Logger.Debug("Updating augment state..");
             augmentationItemRepo.UpdateState();
 
             // TODO: GD Path has to be an input param, as does potentially mods.
-            ParsingService parsingService = new ParsingService(itemTagDao, null, databaseItemDao, databaseItemStatDao, itemSkillDao, Properties.Settings.Default.LocalizationFile);
-
-            PrintStartupInfo(factory);
-
+            ParsingService parsingService = new ParsingService(itemTagDao, null, databaseItemDao, databaseItemStatDao, itemSkillDao, settingsService.GetLocal().LocalizationFile);
+            StartupService.PrintStartupInfo(factory, settingsService);
 
 
-            if (GlobalSettings.Language is EnglishLanguage language)
+
+            if (RuntimeSettings.Language is EnglishLanguage language)
             {
                 foreach (var tag in itemTagDao.GetClassItemTags())
                 {
@@ -320,11 +215,9 @@ namespace IAGrim
 
             if (args != null && args.Any(m => m.Contains("-logout"))) {
                 Logger.Info("Started with -logout specified, logging out of online backups.");
-                Settings.Default.AzureAuthToken = null;
-                Settings.Default.Save();
+                settingsService.GetPersistent().AzureAuthToken = null;
             }
 
-            // TODO: Urgent, introduce DI and have MainWindow receive premade objects, not create them itself.
             using (CefBrowserHandler browser = new CefBrowserHandler())
             {
                 _mw = new MainWindow(browser,
@@ -339,46 +232,18 @@ namespace IAGrim
                     itemSkillDao,
                     itemTagDao,
                     parsingService,
-                    augmentationItemRepo
+                    augmentationItemRepo,
+                    settingsService,
+                    grimDawnDetector
                 );
 
                 Logger.Info("Checking for database updates..");
 
-
-                // Load the GD database (or mod, if any)
-                string GDPath = databaseSettingDao.GetCurrentDatabasePath();
-                if (string.IsNullOrEmpty(GDPath) || !Directory.Exists(GDPath))
-                {
-                    GDPath = GrimDawnDetector.GetGrimLocation();
-                }
-
-                if (!string.IsNullOrEmpty(GDPath) && Directory.Exists(GDPath)) {
-
-                    var numFiles = Directory.GetFiles(GlobalPaths.StorageFolder).Length;
-                    int numFilesExpected = 2100;
-                    if (Directory.Exists(Path.Combine(GDPath, "gdx2"))) {
-                        numFilesExpected += 580;
-                    }
-                    if (Directory.Exists(Path.Combine(GDPath, "gdx1"))) {
-                        numFilesExpected += 890;
-                    }
-
-                    if (numFiles < numFilesExpected) {
-                        Logger.Debug($"Only found {numFiles} in storage, expected ~{numFilesExpected}+, parsing item icons.");
-                        ThreadPool.QueueUserWorkItem((m) => ArzParser.LoadIconsOnly(GDPath));
-                    }
-
-                }
-                else
-                {
-                    Logger.Warn("Could not find the Grim Dawn install location");
-                }
-
-                playerItemDao.UpdateHardcoreSettings();
+                StartupService.PerformIconCheck(databaseSettingDao, grimDawnDetector);
 
                 _mw.Visible = false;
-                if (DonateNagScreen.CanNag)
-                    Application.Run(new DonateNagScreen());
+                if (new DonateNagScreen(settingsService).CanNag)
+                    Application.Run(new DonateNagScreen(settingsService));
 
                 Logger.Info("Running the main application..");
 
@@ -388,5 +253,6 @@ namespace IAGrim
 
             Logger.Info("Application ended.");
         }
+
     }
 }

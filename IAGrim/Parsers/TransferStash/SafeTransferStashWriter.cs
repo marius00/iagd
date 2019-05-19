@@ -8,13 +8,19 @@ using EvilsoftCommons;
 using EvilsoftCommons.Exceptions;
 using IAGrim.Parsers.Arz;
 using IAGrim.Properties;
+using IAGrim.Settings;
 using IAGrim.StashFile;
 using IAGrim.Utilities;
 using log4net;
 
 namespace IAGrim.Parsers.TransferStash {
-    static class SafeTransferStashWriter {
+    class SafeTransferStashWriter {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(SafeTransferStashWriter));
+        private readonly SettingsService _settings;
+
+        public SafeTransferStashWriter(SettingsService settings) {
+            _settings = settings;
+        }
 
         /// <summary>
         /// Write the GD Stash file
@@ -22,7 +28,7 @@ namespace IAGrim.Parsers.TransferStash {
         /// <param name="filename"></param>
         /// <param name="stash"></param>
         /// <returns></returns>
-        public static bool SafelyWriteStash(string filename, Stash stash) {
+        public bool SafelyWriteStash(string filename, Stash stash) {
             try {
                 var tempName = $"{filename}-{DateTime.UtcNow.ToTimestamp()}.ia";
 
@@ -33,10 +39,10 @@ namespace IAGrim.Parsers.TransferStash {
                 DataBuffer.WriteBytesToDisk(tempName, dataBuffer.Data);
 
                 // Get the current backup number
-                var backupNumber = Settings.Default.BackupNumber;
+                
+                var backupNumber = _settings.GetLocal().BackupNumber;
 
-                Settings.Default.BackupNumber = (backupNumber + 1) % 100;
-                Settings.Default.Save();
+                _settings.GetLocal().BackupNumber = (backupNumber + 1) % 100;
 
                 // Back up the existing stash and replace with new stash file
                 var backupLocation = Path.Combine(GlobalPaths.BackupLocation, $"transfer.{backupNumber:00}.gs_");

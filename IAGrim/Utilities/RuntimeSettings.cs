@@ -10,8 +10,8 @@ using System.Text;
 using log4net;
 
 namespace IAGrim.Utilities {
-    static class GlobalSettings {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(GlobalSettings));
+    static class RuntimeSettings {
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(RuntimeSettings));
 
         public static void InitializeLanguage(string localizationFile, Dictionary<string, string> dbTags) {
             var english = new EnglishLanguage(dbTags);
@@ -22,7 +22,7 @@ namespace IAGrim.Utilities {
                 Logger.Warn($"Could not locate {localizationFile}, defaulting to English.");
             }
             else {
-                Language = new LocalizationLoader().LoadLanguage(Properties.Settings.Default.LocalizationFile, english);
+                Language = new LocalizationLoader().LoadLanguage(localizationFile, english);
             }
         }
 

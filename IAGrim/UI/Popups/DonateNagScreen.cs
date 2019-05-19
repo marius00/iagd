@@ -8,21 +8,25 @@ using System.Text;
 using System.Windows.Forms;
 using System.Timers;
 using IAGrim.Parsers.Arz;
+using IAGrim.Settings;
+using IAGrim.Settings.Dto;
 using IAGrim.Utilities;
 
 namespace IAGrim.UI {
     public partial class DonateNagScreen : Form {
-        readonly System.Timers.Timer _aTimer = new System.Timers.Timer(50);
-        readonly Color _graycolor = Color.FromArgb(240, 240, 240);
-        readonly Color _greenish = Color.FromArgb(220, 224, 210);
-        const int Timer = 600;
-        const int NumSteps = Timer / 50;
-        int _nagDelay = 2200;
+        private readonly System.Timers.Timer _aTimer = new System.Timers.Timer(50);
+        private readonly Color _graycolor = Color.FromArgb(240, 240, 240);
+        private readonly Color _greenish = Color.FromArgb(220, 224, 210);
+        private const int Timer = 600;
+        private const int NumSteps = Timer / 50;
+        private int _nagDelay = 2200;
         
         private int _currentStep = 0;
         private bool _greening = true;
+        private readonly SettingsService _settings;
 
-        public DonateNagScreen() {
+        public DonateNagScreen(SettingsService settings) {
+            _settings = settings;
             InitializeComponent();
             this.FormClosing += DonateNagScreen_FormClosing;
         }
@@ -32,13 +36,13 @@ namespace IAGrim.UI {
                 e.Cancel = true;
         }
 
-        public static bool CanNag {
+        public bool CanNag {
             get {
-                long lastNag = Properties.Settings.Default.LastNagTimestamp;
+                
+                long lastNag = _settings.GetLocal().LastNagTimestamp;
                 if (lastNag == 0) {
                     DateTime dt = DateTime.Now.AddDays(new Random().Next(5, 14));
-                    Properties.Settings.Default.LastNagTimestamp = dt.Ticks;
-                    Properties.Settings.Default.Save();
+                    _settings.GetLocal().LastNagTimestamp = dt.Ticks;
                     return false;
                 }
 
@@ -54,10 +58,9 @@ namespace IAGrim.UI {
                 _aTimer.Enabled = true;
 
                 DateTime dt = DateTime.Now.AddDays(28 + new Random().Next(0, 5));
-                Properties.Settings.Default.LastNagTimestamp = dt.Ticks;
-                Properties.Settings.Default.Save();
+                _settings.GetLocal().LastNagTimestamp = dt.Ticks;
 
-                LocalizationLoader.ApplyLanguage(Controls, GlobalSettings.Language);
+                LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
             }
             else {
                 _nagDelay = -1;
@@ -107,9 +110,8 @@ namespace IAGrim.UI {
             
 
             DateTime dt = DateTime.Now.AddDays(62 + new Random().Next(0, 5));
-            Properties.Settings.Default.LastNagTimestamp = dt.Ticks;
-            Properties.Settings.Default.Save();            
-            
+            _settings.GetLocal().LastNagTimestamp = dt.Ticks;
+
         }
     }
 }

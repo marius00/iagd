@@ -171,6 +171,10 @@
     <Compile Include="Parsers\TransferStash\TransferStashServiceCache.cs" />
     <Compile Include="Parsers\TransferStash\TransferStashWorker.cs" />
     <Compile Include="Services\HelpService.cs" />
+    <Compile Include="Settings\Dto\LocalSettings.cs" />
+    <Compile Include="Settings\Dto\PersistentSettings.cs" />
+    <Compile Include="Settings\Dto\SettingsTemplate.cs" />
+    <Compile Include="Settings\SettingsService.cs" />
     <Compile Include="StartupService.cs" />
     <Compile Include="UI\Controller\dto\ItemTypeDto.cs" />
     <Compile Include="UI\FilterEventArgs.cs" />
@@ -477,7 +481,7 @@
     <Compile Include="Utilities\DependencyChecker.cs" />
     <Compile Include="Utilities\EasterEgg.cs" />
     <Compile Include="Utilities\GlobalPaths.cs" />
-    <Compile Include="Utilities\GlobalSettings.cs" />
+    <Compile Include="Utilities\RuntimeSettings.cs" />
     <Compile Include="Utilities\GrimDawnDetector.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,4 +1,4 @@
-﻿namespace IAGrim.UI
+﻿namespace IAGrim.UI.Tabs
 {
     partial class SettingsWindow {
         /// <summary>
@@ -38,7 +38,6 @@
             this.linkSourceCode = new System.Windows.Forms.LinkLabel();
             this.cbDisplaySkills = new FirefoxCheckBox();
             this.cbAutoUpdateModSettings = new FirefoxCheckBox();
-            this.cbAutoSearch = new FirefoxCheckBox();
             this.cbTransferAnyMod = new FirefoxCheckBox();
             this.cbShowRecipesAsItems = new FirefoxCheckBox();
             this.cbSecureTransfers = new FirefoxCheckBox();
@@ -112,7 +111,6 @@
             this.panelBox4.Controls.Add(this.linkSourceCode);
             this.panelBox4.Controls.Add(this.cbDisplaySkills);
             this.panelBox4.Controls.Add(this.cbAutoUpdateModSettings);
-            this.panelBox4.Controls.Add(this.cbAutoSearch);
             this.panelBox4.Controls.Add(this.cbTransferAnyMod);
             this.panelBox4.Controls.Add(this.cbShowRecipesAsItems);
             this.panelBox4.Controls.Add(this.cbSecureTransfers);
@@ -165,7 +163,7 @@
             this.helpWhatIsAugmentAsItem.AutoSize = true;
             this.helpWhatIsAugmentAsItem.BackColor = System.Drawing.Color.Transparent;
             this.helpWhatIsAugmentAsItem.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.helpWhatIsAugmentAsItem.Location = new System.Drawing.Point(259, 259);
+            this.helpWhatIsAugmentAsItem.Location = new System.Drawing.Point(259, 226);
             this.helpWhatIsAugmentAsItem.Name = "helpWhatIsAugmentAsItem";
             this.helpWhatIsAugmentAsItem.Size = new System.Drawing.Size(18, 13);
             this.helpWhatIsAugmentAsItem.TabIndex = 24;
@@ -195,7 +193,7 @@
             this.cbShowAugments.EnabledCalc = true;
             this.cbShowAugments.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbShowAugments.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbShowAugments.Location = new System.Drawing.Point(3, 252);
+            this.cbShowAugments.Location = new System.Drawing.Point(3, 219);
             this.cbShowAugments.Name = "cbShowAugments";
             this.cbShowAugments.Size = new System.Drawing.Size(268, 27);
             this.cbShowAugments.TabIndex = 23;
@@ -209,7 +207,7 @@
             this.cbDualComputer.EnabledCalc = true;
             this.cbDualComputer.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbDualComputer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbDualComputer.Location = new System.Drawing.Point(3, 285);
+            this.cbDualComputer.Location = new System.Drawing.Point(3, 252);
             this.cbDualComputer.Name = "cbDualComputer";
             this.cbDualComputer.Size = new System.Drawing.Size(268, 27);
             this.cbDualComputer.TabIndex = 22;
@@ -237,7 +235,7 @@
             this.cbDisplaySkills.EnabledCalc = true;
             this.cbDisplaySkills.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbDisplaySkills.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbDisplaySkills.Location = new System.Drawing.Point(3, 219);
+            this.cbDisplaySkills.Location = new System.Drawing.Point(3, 186);
             this.cbDisplaySkills.Name = "cbDisplaySkills";
             this.cbDisplaySkills.Size = new System.Drawing.Size(268, 27);
             this.cbDisplaySkills.TabIndex = 17;
@@ -260,21 +258,6 @@
             this.cbAutoUpdateModSettings.Text = "Auto Select Mod";
             this.cbAutoUpdateModSettings.UseVisualStyleBackColor = true;
             this.cbAutoUpdateModSettings.Visible = false;
-            // 
-            // cbAutoSearch
-            // 
-            this.cbAutoSearch.Bold = false;
-            this.cbAutoSearch.Enabled = false;
-            this.cbAutoSearch.EnabledCalc = true;
-            this.cbAutoSearch.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Strikeout, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cbAutoSearch.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbAutoSearch.Location = new System.Drawing.Point(3, 186);
-            this.cbAutoSearch.Name = "cbAutoSearch";
-            this.cbAutoSearch.Size = new System.Drawing.Size(268, 27);
-            this.cbAutoSearch.TabIndex = 16;
-            this.cbAutoSearch.Tag = "iatag_ui_autosearch";
-            this.cbAutoSearch.Text = "Auto Search";
-            this.cbAutoSearch.UseVisualStyleBackColor = true;
             // 
             // cbTransferAnyMod
             // 
@@ -633,7 +616,6 @@
         private PanelBox panelBox4;
         private FirefoxButton buttonLanguageSelect;
         private FirefoxButton buttonMigratePostgres;
-        private FirefoxCheckBox cbAutoSearch;
         private FirefoxButton buttonImportExport;
         private FirefoxCheckBox cbDisplaySkills;
         private FirefoxButton buttonAdvancedSettings;

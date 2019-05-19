@@ -23,7 +23,7 @@ namespace IAGrim.Database.Model {
 
         public string TriggerRecord { get; set; }
 
-        public TranslatedStat Trigger => TriggerRecord == null ? null : GlobalSettings.StatManager.TranslateSkillAutoController(TriggerRecord);
+        public TranslatedStat Trigger => TriggerRecord == null ? null : RuntimeSettings.StatManager.TranslateSkillAutoController(TriggerRecord);
 
         public ISet<DBSTatRow> Tags {
             get;
@@ -34,7 +34,7 @@ namespace IAGrim.Database.Model {
             get {
                 if (Tags == null)
                     return new List<TranslatedStat>();
-                return GlobalSettings.StatManager.ProcessStats(new HashSet<IItemStat>(Tags), TranslatedStatType.PET);
+                return RuntimeSettings.StatManager.ProcessStats(new HashSet<IItemStat>(Tags), TranslatedStatType.PET);
             }
         }
 
@@ -42,7 +42,7 @@ namespace IAGrim.Database.Model {
             get {
                 if (Tags == null)
                     return new List<TranslatedStat>();
-                return GlobalSettings.StatManager.ProcessStats(new HashSet<IItemStat>(Tags), TranslatedStatType.HEADER);
+                return RuntimeSettings.StatManager.ProcessStats(new HashSet<IItemStat>(Tags), TranslatedStatType.HEADER);
             }
         }
 
@@ -50,7 +50,7 @@ namespace IAGrim.Database.Model {
             get {
                 if (Tags == null)
                     return new List<TranslatedStat>();
-                return GlobalSettings.StatManager.ProcessStats(new HashSet<IItemStat>(Tags), TranslatedStatType.BODY);
+                return RuntimeSettings.StatManager.ProcessStats(new HashSet<IItemStat>(Tags), TranslatedStatType.BODY);
             }
         }
     }

@@ -28,12 +28,12 @@ namespace IAGrim.UI.Misc.CEF {
         }
 
         public static UserFeedback FromTag(string tag) {
-            return new UserFeedback(GlobalSettings.Language.GetTag(tag));
+            return new UserFeedback(RuntimeSettings.Language.GetTag(tag));
         }
 
         public static List<UserFeedback> FromTagSingleton(string tag) {
             return new List<UserFeedback> {
-                new UserFeedback(GlobalSettings.Language.GetTag(tag))
+                new UserFeedback(RuntimeSettings.Language.GetTag(tag))
             };
         }
 

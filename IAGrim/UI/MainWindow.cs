@@ -1,5 +1,4 @@
-﻿using AutoUpdaterDotNET;
-using CefSharp;
+﻿using CefSharp;
 using EvilsoftCommons;
 using EvilsoftCommons.Cloud;
 using EvilsoftCommons.DllInjector;
@@ -13,14 +12,12 @@ using IAGrim.Parsers;
 using IAGrim.Parsers.Arz;
 using IAGrim.Parsers.Arz.dto;
 using IAGrim.Parsers.GameDataParsing.Service;
-using IAGrim.Properties;
 using IAGrim.Services;
 using IAGrim.Services.MessageProcessor;
 using IAGrim.UI.Controller;
 using IAGrim.UI.Misc;
 using IAGrim.UI.Misc.CEF;
 using IAGrim.UI.Misc.CEF.Dto;
-using IAGrim.UI.Popups;
 using IAGrim.UI.Tabs;
 using IAGrim.Utilities;
 using IAGrim.Utilities.Cloud;
@@ -35,28 +32,26 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using DllInjector;
 using IAGrim.Parsers.TransferStash;
-using Timer = System.Timers.Timer;
+using IAGrim.Settings;
 
 namespace IAGrim.UI
 {
     public partial class MainWindow : Form {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(MainWindow));
-        readonly CefBrowserHandler _cefBrowserHandler;
+        private readonly CefBrowserHandler _cefBrowserHandler;
 
 
-        private readonly ISettingsReadController _settingsController = new SettingsController();
+        private readonly ISettingsReadController _settingsController;
 
         private FormWindowState _previousWindowState = FormWindowState.Normal;
         private readonly TooltipHelper _tooltipHelper = new TooltipHelper();
         private readonly DynamicPacker _dynamicPacker;
         private readonly UsageStatisticsReporter _usageStatisticsReporter = new UsageStatisticsReporter();
-        private readonly AutomaticUpdateChecker _automaticUpdateChecker = new AutomaticUpdateChecker();
+        private readonly AutomaticUpdateChecker _automaticUpdateChecker;
         private readonly List<IMessageProcessor> _messageProcessors = new List<IMessageProcessor>();
 
         private SplitSearchWindow _searchWindow;
@@ -90,6 +85,8 @@ namespace IAGrim.UI
         private AzureAuthService _authAuthService;
         private BackupServiceWorker _backupServiceWorker;
         private readonly UserFeedbackService _userFeedbackService;
+        private readonly SettingsService _settingsService;
+        private readonly GrimDawnDetector _grimDawnDetector;
 
 
         #region Stash Status
@@ -104,18 +101,18 @@ namespace IAGrim.UI
                 Invoke((MethodInvoker)delegate { InjectorCallback(sender, e); });
             } else {
                 if (e.ProgressPercentage == InjectionHelper.INJECTION_ERROR) {
-                    GlobalSettings.StashStatus = StashAvailability.ERROR;
+                    RuntimeSettings.StashStatus = StashAvailability.ERROR;
                     statusLabel.Text = e.UserState as string;
                 }
                 // No grim dawn client, so stash is closed!
                 else if (e.ProgressPercentage == InjectionHelper.NO_PROCESS_FOUND_ON_STARTUP) {
-                    if (GlobalSettings.StashStatus == StashAvailability.UNKNOWN) {
-                        GlobalSettings.StashStatus = StashAvailability.CLOSED;
+                    if (RuntimeSettings.StashStatus == StashAvailability.UNKNOWN) {
+                        RuntimeSettings.StashStatus = StashAvailability.CLOSED;
                     }
                 }
                 // No grim dawn client, so stash is closed!
                 else if (e.ProgressPercentage == InjectionHelper.NO_PROCESS_FOUND) {
-                    GlobalSettings.StashStatus = StashAvailability.CLOSED;
+                    RuntimeSettings.StashStatus = StashAvailability.CLOSED;
                 }
             }
         }
@@ -152,12 +149,15 @@ namespace IAGrim.UI
             IItemSkillDao itemSkillDao,
             IItemTagDao itemTagDao, 
             ParsingService parsingService, 
-            AugmentationItemRepo augmentationItemRepo
-        ) {
+            AugmentationItemRepo augmentationItemRepo, 
+            SettingsService settingsService, 
+            GrimDawnDetector grimDawnDetector
+            ) {
             _cefBrowserHandler = browser;
             InitializeComponent();
             FormClosing += MainWindow_FormClosing;
-
+            _automaticUpdateChecker = new AutomaticUpdateChecker(settingsService);
+            _settingsController = new SettingsController(settingsService);
             _dynamicPacker = new DynamicPacker(databaseItemStatDao);
             _databaseItemDao = databaseItemDao;
             _databaseItemStatDao = databaseItemStatDao;
@@ -172,6 +172,8 @@ namespace IAGrim.UI
             _parsingService = parsingService;
             _augmentationItemRepo = augmentationItemRepo;
             _userFeedbackService = new UserFeedbackService(_cefBrowserHandler);
+            _settingsService = settingsService;
+            _grimDawnDetector = grimDawnDetector;
         }
 
         /// <summary>
@@ -179,11 +181,11 @@ namespace IAGrim.UI
         /// </summary>
         public void UpdateLanguage()
         {
-            LocalizationLoader.ApplyLanguage(Controls, GlobalSettings.Language);
-            Text = GlobalSettings.Language.GetTag(Tag.ToString());
+            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
+            Text = RuntimeSettings.Language.GetTag(Tag.ToString());
             if (tsStashStatus.Tag is string)
             {
-                tsStashStatus.Text = GlobalSettings.Language.GetTag(tsStashStatus.Tag.ToString());
+                tsStashStatus.Text = RuntimeSettings.Language.GetTag(tsStashStatus.Tag.ToString());
             }
             Refresh();
         }
@@ -349,7 +351,7 @@ namespace IAGrim.UI
             if (Thread.CurrentThread.Name == null)
                 Thread.CurrentThread.Name = "DetectGrimDawnTimer";
 
-            string gdPath = GrimDawnDetector.GetGrimLocation();
+            string gdPath = _grimDawnDetector.GetGrimLocation();
             if (!string.IsNullOrEmpty(gdPath) && Directory.Exists(gdPath)) {
                 timer?.Stop();
 
@@ -391,9 +393,11 @@ namespace IAGrim.UI
             SizeChanged += OnMinimizeWindow;
 
             var cacher = new TransferStashServiceCache(_databaseItemDao); // TODO: This needs to refresh on db load
-            var transferStashService2 = new TransferStashService2(_playerItemDao, cacher);
+            var stashWriter = new SafeTransferStashWriter(_settingsService);
+            _transferStashService = new TransferStashService(_databaseItemStatDao, _settingsService, stashWriter);
+            var transferStashService2 = new TransferStashService2(_playerItemDao, cacher, _transferStashService, stashWriter, _settingsService);
             _transferStashWorker = new TransferStashWorker(transferStashService2, _userFeedbackService);
-            _transferStashService = new TransferStashService(_databaseItemStatDao);
+
             _stashFileMonitor.OnStashModified += (_, __) => {
                 StashEventArg args = __ as StashEventArg;
                 _transferStashWorker.Queue(args?.Filename);
@@ -414,8 +418,8 @@ namespace IAGrim.UI
                 _databaseItemStatDao, 
                 _itemSkillDao, 
                 _buddyItemDao,
-                _transferStashService,
-                _augmentationItemRepo
+                _augmentationItemRepo,
+                _settingsService
             );
 
             searchController.JsBind.SetItemSetAssociations(_databaseItemDao.GetItemSetAssociations());
@@ -424,7 +428,7 @@ namespace IAGrim.UI
             searchController.JsBind.OnClipboard += SetItemsClipboard;
 
             // Load the grim database
-            string gdPath = GrimDawnDetector.GetGrimLocation();
+            string gdPath = _grimDawnDetector.GetGrimLocation();
             if (!string.IsNullOrEmpty(gdPath)) {
             } else {
                 Logger.Warn("Could not find the Grim Dawn install location");
@@ -450,23 +454,24 @@ namespace IAGrim.UI
             // Create the tab contents
             _buddySettingsWindow = new BuddySettings(delegate (bool b) { BuddySyncEnabled = b; }, 
                 _buddyItemDao, 
-                _buddySubscriptionDao
+                _buddySubscriptionDao,
+                _settingsService
                 );
 
             addAndShow(_buddySettingsWindow, buddyPanel);
-
-            _authAuthService = new AzureAuthService(_cefBrowserHandler, new AuthenticationProvider());
-            var backupSettings = new BackupSettings(_playerItemDao, _authAuthService);
+            
+            _authAuthService = new AzureAuthService(_cefBrowserHandler, new AuthenticationProvider(_settingsService));
+            var backupSettings = new BackupSettings(_playerItemDao, _authAuthService, _settingsService);
             addAndShow(backupSettings, backupPanel);
-            addAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, _playerItemDao, _parsingService, _databaseSettingDao), modsPanel);
+            addAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, _playerItemDao, _parsingService, _databaseSettingDao, _grimDawnDetector), modsPanel);
             addAndShow(new HelpTab(), panelHelp);            
             addAndShow(new LoggingWindow(), panelLogging);
-            var backupService = new BackupService(_authAuthService, _playerItemDao, _azurePartitionDao, () => Settings.Default.UsingDualComputer);
+            var backupService = new BackupService(_authAuthService, _playerItemDao, _azurePartitionDao, () => _settingsService.GetPersistent().UsingDualComputer);
             _backupServiceWorker = new BackupServiceWorker(backupService);
             backupService.OnUploadComplete += (o, args) => _searchWindow.UpdateListView();
             searchController.OnSearch += (o, args) => backupService.OnSearch();
 
-            _searchWindow = new SplitSearchWindow(_cefBrowserHandler.BrowserControl, SetFeedback, _playerItemDao, searchController, _itemTagDao);
+            _searchWindow = new SplitSearchWindow(_cefBrowserHandler.BrowserControl, SetFeedback, _playerItemDao, searchController, _itemTagDao, _settingsService);
             addAndShow(_searchWindow, searchPanel);
             _transferStashService.StashUpdated += (_, __) => {
                 _searchWindow.UpdateListView();
@@ -476,7 +481,8 @@ namespace IAGrim.UI
                 _searchWindow.UpdateListView();
             };
 
-            var languagePackPicker = new LanguagePackPicker(_itemTagDao, _playerItemDao, _parsingService);
+            var languagePackPicker = new LanguagePackPicker(_itemTagDao, _playerItemDao, _parsingService, _settingsService);
+
             addAndShow(
                 new SettingsWindow(
                     _cefBrowserHandler,
@@ -485,11 +491,11 @@ namespace IAGrim.UI
                     _playerItemDao,
                     _searchWindow.ModSelectionHandler.GetAvailableModSelection(),
                     _transferStashService,
-                    languagePackPicker
+                    languagePackPicker,
+                    _settingsService,
+                    _grimDawnDetector
                 ),
                 settingsPanel);
-
-            new StashTabPicker(_transferStashService.NumStashTabs).SaveStashSettingsToRegistry();
 
 #if !DEBUG
             ThreadPool.QueueUserWorkItem(m => ExceptionReporter.ReportUsage());
@@ -499,13 +505,14 @@ namespace IAGrim.UI
             Shown += (_, __) => { StartInjector(); };
 
             //settingsController.Data.budd
-            BuddySyncEnabled = (bool)Settings.Default.BuddySyncEnabled;
+            
+            BuddySyncEnabled = _settingsService.GetPersistent().BuddySyncEnabled;
 
             // Start the backup task
-            _backupBackgroundTask = new BackgroundTask(new FileBackup(_playerItemDao));
+            _backupBackgroundTask = new BackgroundTask(new FileBackup(_playerItemDao, _settingsService));
 
-            LocalizationLoader.ApplyLanguage(Controls, GlobalSettings.Language);
-            EasterEgg.Activate(this);
+            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
+            new EasterEgg(_settingsService).Activate(this);
 
             // Initialize the "stash packer" used to find item positions for transferring items ingame while the stash is open
             {
@@ -545,7 +552,7 @@ namespace IAGrim.UI
             _messageProcessors.Add(new DebugMessageProcessor());
 #endif
 
-            GlobalSettings.StashStatusChanged += GlobalSettings_StashStatusChanged;
+            RuntimeSettings.StashStatusChanged += GlobalSettings_StashStatusChanged;
 
             _transferController = new ItemTransferController(
                 _cefBrowserHandler, 
@@ -556,19 +563,20 @@ namespace IAGrim.UI
                 _dynamicPacker,
                 _playerItemDao,
                 _transferStashService,
-                new ItemStatService(_databaseItemStatDao, _itemSkillDao)
+                new ItemStatService(_databaseItemStatDao, _itemSkillDao, _settingsService)
                 );
             Application.AddMessageFilter(new MousewheelMessageFilter());
             
 
-            var titleTag = GlobalSettings.Language.GetTag("iatag_ui_itemassistant");
+            var titleTag = RuntimeSettings.Language.GetTag("iatag_ui_itemassistant");
             if (!string.IsNullOrEmpty(titleTag)) {
                 this.Text += $" - {titleTag}";
             }
 
 
             // Popup login diag
-            if (_authAuthService.CheckAuthentication() == AzureAuthService.AccessStatus.Unauthorized && !Settings.Default.OptOutOfBackups) {
+            
+            if (_authAuthService.CheckAuthentication() == AzureAuthService.AccessStatus.Unauthorized && !_settingsService.GetLocal().OptOutOfBackups) {
                 var t = new System.Windows.Forms.Timer {Interval = 100};
                 t.Tick += (o, args) => {
                     if (_cefBrowserHandler.BrowserControl.IsBrowserInitialized) {
@@ -582,16 +590,17 @@ namespace IAGrim.UI
 
             _cefBrowserHandler.TransferSingleRequested += TransferSingleItem;
             _cefBrowserHandler.TransferAllRequested += TransferAllItems;
-            new WindowSizeManager(this);
+            new WindowSizeManager(this, _settingsService);
 
 
             // Suggest translation packs if available
-            if (!Settings.Default.HasSuggestedLanguageChange && string.IsNullOrEmpty(Settings.Default.LocalizationFile)) {
-                if (LocalizationLoader.HasSupportedTranslations(GrimDawnDetector.GetGrimLocations())) {
+            
+            if (!string.IsNullOrEmpty(_settingsService.GetLocal().LocalizationFile) && !_settingsService.GetLocal().HasSuggestedLanguageChange) {
+                if (LocalizationLoader.HasSupportedTranslations(_grimDawnDetector.GetGrimLocations())) {
                     Logger.Debug("A new language pack has been detected, informing end user..");
-                    new LanguagePackPicker(_itemTagDao, _playerItemDao, _parsingService).Show(GrimDawnDetector.GetGrimLocations());
-                    Settings.Default.HasSuggestedLanguageChange = true;
-                    Settings.Default.Save();
+                    new LanguagePackPicker(_itemTagDao, _playerItemDao, _parsingService, _settingsService).Show(_grimDawnDetector.GetGrimLocations());
+
+                    _settingsService.GetLocal().HasSuggestedLanguageChange = true;
                 }
             }
             Logger.Debug("UI initialization complete");
@@ -667,41 +676,41 @@ namespace IAGrim.UI
                 return;
             }
 
-            switch (GlobalSettings.StashStatus) {
+            switch (RuntimeSettings.StashStatus) {
                 case StashAvailability.OPEN:
                     tsStashStatus.ForeColor = Color.FromArgb(255, 192, 0, 0);
                     tsStashStatus.Tag = "iatag_stash_open";
-                    tsStashStatus.Text = GlobalSettings.Language.GetTag(tsStashStatus.Tag.ToString());
+                    tsStashStatus.Text = RuntimeSettings.Language.GetTag(tsStashStatus.Tag.ToString());
                     break;
                 case StashAvailability.CRAFTING:
                     tsStashStatus.ForeColor = Color.FromArgb(255, 192, 0, 0);
                     tsStashStatus.Tag = "iatag_stash_crafting";
-                    tsStashStatus.Text = GlobalSettings.Language.GetTag(tsStashStatus.Tag.ToString());
+                    tsStashStatus.Text = RuntimeSettings.Language.GetTag(tsStashStatus.Tag.ToString());
                     break;
                 case StashAvailability.CLOSED:
                     tsStashStatus.ForeColor = Color.FromArgb(255, 0, 142, 0);
                     tsStashStatus.Tag = "iatag_stash_closed";
-                    tsStashStatus.Text = GlobalSettings.Language.GetTag(tsStashStatus.Tag.ToString());
+                    tsStashStatus.Text = RuntimeSettings.Language.GetTag(tsStashStatus.Tag.ToString());
                     break;
                 case StashAvailability.ERROR:
                     tsStashStatus.ForeColor = Color.FromArgb(255, 192, 0, 0);
                     tsStashStatus.Tag = "iatag_stash_error";
-                    tsStashStatus.Text = GlobalSettings.Language.GetTag(tsStashStatus.Tag.ToString());
+                    tsStashStatus.Text = RuntimeSettings.Language.GetTag(tsStashStatus.Tag.ToString());
                     break;
                 case StashAvailability.UNKNOWN:
                     tsStashStatus.ForeColor = Color.FromArgb(255, 192, 0, 0);
                     tsStashStatus.Tag = "iatag_stash_unknown";
-                    tsStashStatus.Text = GlobalSettings.Language.GetTag(tsStashStatus.Tag.ToString());
+                    tsStashStatus.Text = RuntimeSettings.Language.GetTag(tsStashStatus.Tag.ToString());
                     break;
                 case StashAvailability.SORTED:
                     tsStashStatus.ForeColor = Color.FromArgb(255, 192, 0, 0);
                     tsStashStatus.Tag = "iatag_stash_sorted";
-                    tsStashStatus.Text = GlobalSettings.Language.GetTag(tsStashStatus.Tag.ToString());
+                    tsStashStatus.Text = RuntimeSettings.Language.GetTag(tsStashStatus.Tag.ToString());
                     break;
                 default:
                     tsStashStatus.ForeColor = Color.FromArgb(255, 192, 0, 0);
                     tsStashStatus.Tag = null;
-                    tsStashStatus.Text = GlobalSettings.Language.GetTag("iatag_stash_") + GlobalSettings.StashStatus;
+                    tsStashStatus.Text = RuntimeSettings.Language.GetTag("iatag_stash_") + RuntimeSettings.StashStatus;
                     break;
             }
         }
@@ -764,7 +773,7 @@ namespace IAGrim.UI
                     BuddySyncEnabled = false;
 
                     List<long> buddies = new List<long>(_buddySubscriptionDao.ListAll().Select(m => m.Id));
-                    _buddyBackgroundThread = new BuddyBackgroundThread(BuddyItemsCallback, _playerItemDao, _buddyItemDao, buddies, 3 * 60 * 1000);
+                    _buddyBackgroundThread = new BuddyBackgroundThread(BuddyItemsCallback, _playerItemDao, _buddyItemDao, buddies, 3 * 60 * 1000, _settingsService);
                 } else {
                     if (_buddyBackgroundThread != null) {
                         _buddyBackgroundThread.Dispose();
@@ -804,7 +813,7 @@ namespace IAGrim.UI
                     Clipboard.SetText(args.Text);
                 }
 
-                _tooltipHelper.ShowTooltipAtMouse(GlobalSettings.Language.GetTag("iatag_copied_clipboard"), _cefBrowserHandler.BrowserControl);
+                _tooltipHelper.ShowTooltipAtMouse(RuntimeSettings.Language.GetTag("iatag_copied_clipboard"), _cefBrowserHandler.BrowserControl);
             }
         }
         

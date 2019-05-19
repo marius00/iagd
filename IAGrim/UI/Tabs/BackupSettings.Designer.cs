@@ -1,4 +1,4 @@
-﻿namespace IAGrim.UI {
+﻿namespace IAGrim.UI.Tabs {
     partial class BackupSettings {
         /// <summary>
         /// Required designer variable.

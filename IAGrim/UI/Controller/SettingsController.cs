@@ -7,47 +7,48 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows.Forms;
+using IAGrim.Settings;
+using IAGrim.Settings.Dto;
 using IAGrim.Utilities.HelperClasses;
 
 namespace IAGrim.UI.Controller {
 
     class SettingsController : INotifyPropertyChanged, ISettingsController, ISettingsReadController {
+        private readonly SettingsService _settings;
 
 
-        public SettingsController() {
-            //radioBeta.Checked = (bool)Properties.Settings.Default["SubscribeExperimentalUpdates"];
-            //radioRelease.Checked = !(bool)Properties.Settings.Default["SubscribeExperimentalUpdates"];
+        public SettingsController(SettingsService settings) {
+            _settings = settings;
         }
 
 
         public void LoadDefaults() {
-            MinimizeToTray = (bool)Properties.Settings.Default.MinimizeToTray;
-            MergeDuplicates = (bool)Properties.Settings.Default.MergeDuplicates;
-            TransferAnyMod = (bool)Properties.Settings.Default.TransferAnyMod;
-            SecureTransfers = (bool)Properties.Settings.Default.SecureTransfers;
-            ShowRecipesAsItems = (bool)Properties.Settings.Default.ShowRecipesAsItems;
-            AutoUpdateModSettings = (bool)Properties.Settings.Default.AutoUpdateModSettings;
-            AutoSearch = (bool)Properties.Settings.Default.AutoSearch;
-            DisplaySkills = Properties.Settings.Default.DisplaySkills;
+
+            MinimizeToTray = _settings.GetPersistent().MinimizeToTray;
+            MergeDuplicates = _settings.GetPersistent().MergeDuplicates;
+            TransferAnyMod = _settings.GetPersistent().TransferAnyMod;
+            SecureTransfers = _settings.GetLocal().SecureTransfers ?? true;
+            ShowRecipesAsItems = _settings.GetPersistent().ShowRecipesAsItems;
+            AutoUpdateModSettings = _settings.GetPersistent().AutoUpdateModSettings;
+            DisplaySkills = _settings.GetPersistent().DisplaySkills;
         }
 
-        
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         #region Properties
         private void OnPropertyChanged([CallerMemberName] string propertyName = "") {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        
+
         /// <summary>
         /// Automatically update the selected mod when changed ingame
         /// Also goes for softcore/hardcore
         /// </summary>
         public bool AutoUpdateModSettings {
-            get => Properties.Settings.Default.AutoUpdateModSettings;
-            set {
-                Properties.Settings.Default.AutoUpdateModSettings = value;
-                Properties.Settings.Default.Save();
+            get => _settings.GetPersistent().AutoUpdateModSettings;
+            private set {
+                _settings.GetPersistent().AutoUpdateModSettings = value;
                 OnPropertyChanged();
             }
         }
@@ -56,21 +57,17 @@ namespace IAGrim.UI.Controller {
         /// List recipes along with items
         /// </summary>
         public bool ShowRecipesAsItems {
-            get => Properties.Settings.Default.ShowRecipesAsItems;
+            get => _settings.GetPersistent().ShowRecipesAsItems;
             set {
-                Properties.Settings.Default.ShowRecipesAsItems = value;
-                Properties.Settings.Default.Save();
+                _settings.GetPersistent().ShowRecipesAsItems = value;
                 OnPropertyChanged();
             }
         }
 
         public bool DisplaySkills {
-            get {
-                return Properties.Settings.Default.DisplaySkills;
-            }
+            get => _settings.GetPersistent().DisplaySkills;
             set {
-                Properties.Settings.Default.DisplaySkills = value;
-                Properties.Settings.Default.Save();
+                _settings.GetPersistent().DisplaySkills = value;
                 OnPropertyChanged();
             }
         }
@@ -79,25 +76,21 @@ namespace IAGrim.UI.Controller {
         /// Minimize the program to the system tray
         /// </summary>
         public bool MinimizeToTray {
-            get => Properties.Settings.Default.MinimizeToTray;
+            get => _settings.GetPersistent().MinimizeToTray;
             set {
-                if (Properties.Settings.Default.MinimizeToTray != value) {
-                    Properties.Settings.Default.MinimizeToTray = value;
-                    Properties.Settings.Default.Save();
-                    OnPropertyChanged();
-                }
+                _settings.GetPersistent().MinimizeToTray = value;
+                OnPropertyChanged();
             }
         }
-            
+
 
         /// <summary>
         /// Merge duplicate items into a single entry
         /// </summary>
         public bool MergeDuplicates {
-            get => Properties.Settings.Default.MergeDuplicates;
+            get => _settings.GetPersistent().MergeDuplicates;
             set {
-                Properties.Settings.Default.MergeDuplicates = value;
-                Properties.Settings.Default.Save();
+                _settings.GetPersistent().MergeDuplicates = value;
                 OnPropertyChanged();
             }
         }
@@ -107,48 +100,30 @@ namespace IAGrim.UI.Controller {
         /// Transfer to any mod without restrictions
         /// </summary>
         public bool TransferAnyMod {
-            get {
-                return (bool)Properties.Settings.Default.TransferAnyMod;
-            }
+            get => _settings.GetPersistent().TransferAnyMod;
             set {
-                Properties.Settings.Default.TransferAnyMod = value;
-                Properties.Settings.Default.Save();
+                _settings.GetPersistent().TransferAnyMod = value;
                 OnPropertyChanged();
             }
         }
 
-
-        /// <summary>
-        /// Automatically update the item view when a filter changes?
-        /// </summary>
-        public bool AutoSearch {
-            get {
-                return (bool)Properties.Settings.Default.AutoSearch;
-            }
-            set {
-                Properties.Settings.Default.AutoSearch = value;
-                Properties.Settings.Default.Save();
-                OnPropertyChanged();
-            }
-        }
 
         /// <summary>
         /// Enable DLL stash-closed safety checks
         /// </summary>
         public bool SecureTransfers {
-            get => Properties.Settings.Default.SecureTransfers;
+            get => _settings.GetLocal().SecureTransfers ?? true;
             set {
                 if (value || MessageBox.Show("Are you sure you wish to disable secure transfers?\n\nIt will be YOUR responsibility to make sure the bank is closed when transferring.", "Are you sure?", MessageBoxButtons.YesNo) == DialogResult.Yes) {
-                    Properties.Settings.Default.SecureTransfers = value;
-                    Properties.Settings.Default.Save();
+                    _settings.GetLocal().SecureTransfers = value;
                     OnPropertyChanged();
                 }
             }
         }
 
-            
-            
-        
+
+
+
 
         #endregion
 
@@ -182,9 +157,8 @@ namespace IAGrim.UI.Controller {
 
         public void DonateNow() {
             System.Diagnostics.Process.Start("http://grimdawn.dreamcrash.org/ia/?donate");
-            DateTime dt = DateTime.Now.AddDays(new Random().Next(14,25));
-            Properties.Settings.Default.LastNagTimestamp = dt.Ticks;
-            Properties.Settings.Default.Save();
+            DateTime dt = DateTime.Now.AddDays(new Random().Next(14, 25));
+            _settings.GetLocal().LastNagTimestamp = dt.Ticks;
         }
 
         public void OpenDataFolder() {

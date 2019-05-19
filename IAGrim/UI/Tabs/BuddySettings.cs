@@ -7,6 +7,8 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using IAGrim.Services;
+using IAGrim.Settings;
+using IAGrim.Settings.Dto;
 
 namespace IAGrim.UI
 {
@@ -15,6 +17,7 @@ namespace IAGrim.UI
         private readonly IBuddyItemDao _buddyItemDao;
         private readonly IBuddySubscriptionDao _buddySubscriptionDao;
         private readonly Action<bool> _enableCallback;
+        private readonly SettingsService _settingsService;
 
         private Timer _delayedTextChangedTimer;
 
@@ -22,22 +25,23 @@ namespace IAGrim.UI
         {
             set
             {
-                var userId = GlobalSettings.Language.GetTag("iatag_ui_buddy_userid_none");
+                var userId = RuntimeSettings.Language.GetTag("iatag_ui_buddy_userid_none");
                 if (value > 0)
                 {
                     userId = value.ToString();
                 }
 
-                useridLabel.Text = $"{GlobalSettings.Language.GetTag("iatag_ui_buddy_userid")}{userId}";
+                useridLabel.Text = $"{RuntimeSettings.Language.GetTag("iatag_ui_buddy_userid")}{userId}";
             }
         }
 
-        public BuddySettings(Action<bool> enableCallback, IBuddyItemDao buddyItemDao, IBuddySubscriptionDao buddySubscriptionDao)
+        public BuddySettings(Action<bool> enableCallback, IBuddyItemDao buddyItemDao, IBuddySubscriptionDao buddySubscriptionDao, SettingsService settingsService)
         {
             InitializeComponent();
             _enableCallback = enableCallback;
             _buddyItemDao = buddyItemDao;
             _buddySubscriptionDao = buddySubscriptionDao;
+            _settingsService = settingsService;
         }
 
         private void BuddySettings_Load(object sender, EventArgs e)
@@ -45,13 +49,14 @@ namespace IAGrim.UI
             Dock = DockStyle.Fill;
             UpdateBuddyList();
 
-            buddySyncEnabled.Checked = Properties.Settings.Default.BuddySyncEnabled;
+            
+            buddySyncEnabled.Checked = _settingsService.GetPersistent().BuddySyncEnabled;
             UpdateEnabledStatus();
 
-            UID = Properties.Settings.Default.BuddySyncUserIdV2;
+            UID = _settingsService.GetPersistent().BuddySyncUserIdV2 ?? 0L;
 
-            descriptionLabel.Text = $"Name: {Properties.Settings.Default.BuddySyncDescription}";
-            tbDescription.Text = Properties.Settings.Default.BuddySyncDescription;
+            tbDescription.Text = _settingsService.GetPersistent().BuddySyncDescription;
+            descriptionLabel.Text = $"Name: {tbDescription.Text}";
 
             buddyId.KeyPress += buddyId_KeyPress;
             tbDescription.KeyPress += tbDescription_KeyPress;
@@ -90,7 +95,7 @@ namespace IAGrim.UI
             {
                 e.Handled = true;
 
-                errorProvider1.SetError(buddyId, GlobalSettings.Language.GetTag("iatag_ui_buddy_userid_numeric_error_message"));
+                errorProvider1.SetError(buddyId, RuntimeSettings.Language.GetTag("iatag_ui_buddy_userid_numeric_error_message"));
                 errorProvider1.SetIconAlignment(buddyId, ErrorIconAlignment.MiddleLeft);
             }
 
@@ -169,7 +174,7 @@ namespace IAGrim.UI
         {
             if (long.TryParse(buddyId.Text, out var id))
             {
-                if (id > 0 && id != Properties.Settings.Default.BuddySyncUserIdV2)
+                if (id > 0 && id != _settingsService.GetPersistent().BuddySyncUserIdV2)
                 {
                     _buddySubscriptionDao.SaveOrUpdate(new BuddySubscription { Id = id });
                 }
@@ -179,7 +184,7 @@ namespace IAGrim.UI
             }
             else
             {
-                errorProvider1.SetError(buddyId, GlobalSettings.Language.GetTag("iatag_ui_buddy_userid_numeric_error_message"));
+                errorProvider1.SetError(buddyId, RuntimeSettings.Language.GetTag("iatag_ui_buddy_userid_numeric_error_message"));
                 errorProvider1.SetIconAlignment(buddyId, ErrorIconAlignment.MiddleLeft);
             }
 
@@ -227,9 +232,7 @@ namespace IAGrim.UI
                 _delayedTextChangedTimer.Stop();
                 _delayedTextChangedTimer = null;
             }
-
-            Properties.Settings.Default.BuddySyncEnabled = buddySyncEnabled.Checked;
-            Properties.Settings.Default.Save();
+            _settingsService.GetPersistent().BuddySyncEnabled = buddySyncEnabled.Checked;
             _enableCallback(buddySyncEnabled.Checked);
         }
 
@@ -245,9 +248,9 @@ namespace IAGrim.UI
         private void tbDescription_TextChanged(object sender, EventArgs e)
         {
             var tb = sender as TextBox;
-            Properties.Settings.Default.BuddySyncDescription = tb.Text;
-            descriptionLabel.Text = $"{GlobalSettings.Language.GetTag("iatag_ui_buddy_userid_name")}{tb.Text}";
-            Properties.Settings.Default.Save();
+
+            _settingsService.GetPersistent().BuddySyncDescription = tb.Text;
+            descriptionLabel.Text = $"{RuntimeSettings.Language.GetTag("iatag_ui_buddy_userid_name")}{tb.Text}";
         }
 
         private void editToolStripMenuItem_Click(object sender, EventArgs e)

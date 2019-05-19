@@ -19,9 +19,6 @@ private:
 
 	static void* __fastcall HookedMethod(
 		void* This, 
-#if !defined(_AMD64_)
-		void* notUsed,
-#endif
 		void* uk0, 
 		void* uk1, 
 		void* uk2, 

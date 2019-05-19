@@ -53,47 +53,4 @@
 #define LOAD_PLAYER_TRANSFER "?LoadPlayerTransfer@GameEngine@GAME@@QEAAXXZ"
 #define READ_PLAYER_TRANSFER "?ReadPlayerTransfer@GameEngine@GAME@@QEAA_NAEAVCheckedReader@2@@Z"
 
-#else
-
-#define REQUEST_MOVE_ACTION_IDLE "?RequestMoveAction@ControllerPlayerStateIdle@GAME@@MAEX_N0ABVWorldVec3@2@@Z"
-#define REQUEST_MOVE_ACTION_MOVETO "?RequestMoveAction@ControllerPlayerStateMoveTo@GAME@@MAEX_N0ABVWorldVec3@2@@Z"
-#define GET_TRANSFER_SACK "?GetTransferSack@GameEngine@GAME@@QAEPAVInventorySack@2@H@Z"
-#define SET_TRANSFER_OPEN "?SetTransferOpen@GameEngine@GAME@@QAEX_N@Z"
-#define GAMEINFO_CONSTRUCTOR_ARGS "??0GameInfo@GAME@@QAE@ABV01@@Z"
-#define GAMEINFO_CONSTRUCTOR "??0GameInfo@GAME@@QAE@XZ"
-#define SET_IS_HARDCORE "?SetHardcore@GameInfo@GAME@@QAEX_N@Z"
-#define SORT_INVENTORY "?Sort@InventorySack@GAME@@QAE_NI@Z"
-#define GET_HARDCORE "?GetHardcore@GameInfo@GAME@@QBE_NXZ"
-#define GET_GAME_INFO "?GetGameInfo@Engine@GAME@@QAEPAVGameInfo@2@XZ"
-#define SAVE_TRANSFER_STASH "?SaveTransferStash@GameEngine@GAME@@QAEXXZ"
-#define REQUEST_NPC_ACTION_IDLE "?RequestNpcAction@ControllerPlayerStateIdle@GAME@@MAEX_N0ABVWorldVec3@2@PBVNpc@2@@Z"
-#define REQUEST_NPC_ACTION_MOVETO "?RequestNpcAction@ControllerPlayerStateMoveTo@GAME@@MAEX_N0ABVWorldVec3@2@PBVNpc@2@@Z"
-#define GET_PLAYER_ITEM_COUNT_IN_STASHES "?GetItemCountInStashes@Player@GAME@@UBEHABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@ABV?$vector@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@mem@@1AAV?$vector@I@6@_N3@Z"
-
-#define CLOUD_WRITE "?CloudWrite@Steamworks@GAME@@QBE_NABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PBXI_N@Z"
-#define CLOUD_READ "?CloudRead@Steamworks@GAME@@QBE_NABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PAXI@Z"
-#define CLOUD_GET_NUM_FILES "?CloudGetNumFiles@Steamworks@GAME@@QBEIXZ"
-#define GET_PRIVATE_STASH "?GetPrivateStash@Player@GAME@@QAEAAV?$vector@PAVInventorySack@GAME@@@mem@@XZ"
-
-#define SAVE_MANAGER_DIRECTREAD ""
-
-#define REQUEST_NPC_ACTION_JUMP_TO_SKILL "?RequestNpcAction@ControllerPlayerStateJumpToUseSkill@GAME@@MAEX_N0ABVWorldVec3@2@PBVNpc@2@@Z"
-#define REQUEST_NPC_ACTION_LONG_IDLE "?RequestNpcAction@ControllerPlayerStateLongIdle@GAME@@MAEX_N0ABVWorldVec3@2@PBVNpc@2@@Z"
-#define REQUEST_NPC_ACTION_MOVE_AND_SKILL "?RequestNpcAction@ControllerPlayerStateMoveAndUseSkill@GAME@@MAEX_N0ABVWorldVec3@2@PBVNpc@2@@Z"
-#define REQUEST_NPC_ACTION_MOVE_TO_ACTOR "?RequestNpcAction@ControllerPlayerStateMoveToActorBase@GAME@@MAEX_N0ABVWorldVec3@2@PBVNpc@2@@Z"
-#define REQUEST_NPC_ACTION_MOVE_TO_NPC "?RequestNpcAction@ControllerPlayerStateMoveToNpc@GAME@@MAEX_N0ABVWorldVec3@2@PBVNpc@2@@Z"
-#define REQUEST_NPC_ACTION_MOVE_TO_SKILL "?RequestNpcAction@ControllerPlayerStateMoveToUseSkill@GAME@@MAEX_N0ABVWorldVec3@2@PBVNpc@2@@Z"
-#define REQUEST_NPC_ACTION_PICKUP_ITEM "?RequestNpcAction@ControllerPlayerStatePickupItem@GAME@@MAEX_N0ABVWorldVec3@2@PBVNpc@2@@Z"
-#define REQUEST_NPC_ACTION_TALK_TO_NPC "?RequestNpcAction@ControllerPlayerStateTalkToNpc@GAME@@MAEX_N0ABVWorldVec3@2@PBVNpc@2@@Z"
-
-#define REQUEST_MOVE_ACTION_LONG_IDLE "?RequestMoveAction@ControllerPlayerStateLongIdle@GAME@@MAEX_N0ABVWorldVec3@2@@Z"
-#define REQUEST_MOVE_ACTION_MOVE_AND_SKILL "?RequestMoveAction@ControllerPlayerStateMoveAndUseSkill@GAME@@MAEX_N0ABVWorldVec3@2@@Z"
-#define REQUEST_MOVE_ACTION_MOVE_ACTOR "?RequestMoveAction@ControllerPlayerStateMoveToActorBase@GAME@@MAEX_N0ABVWorldVec3@2@@Z"
-#define REQUEST_MOVE_ACTION_MOVE_TO_SKILL "?RequestMoveAction@ControllerPlayerStateMoveToUseSkill@GAME@@MAEX_N0ABVWorldVec3@2@@Z"
-#define REQUEST_MOVE_ACTION_PICKUP "?RequestMoveAction@ControllerPlayerStatePickupItem@GAME@@MAEX_N0ABVWorldVec3@2@@Z"
-#define REQUEST_MOVE_ACTION_TALK_TO_NPC "?RequestMoveAction@ControllerPlayerStateTalkToNpc@GAME@@MAEX_N0ABVWorldVec3@2@@Z"
-#define REQUEST_MOVE_ACTION_SKILL "?RequestMoveAction@ControllerPlayerStateUseSkill@GAME@@MAEX_N0ABVWorldVec3@2@@Z"
-
-#define LOAD_PLAYER_TRANSFER "?LoadPlayerTransfer@GameEngine@GAME@@QAEXXZ"
-#define READ_PLAYER_TRANSFER "?ReadPlayerTransfer@GameEngine@GAME@@QAE_NAAVCheckedReader@2@@Z"
 #endif

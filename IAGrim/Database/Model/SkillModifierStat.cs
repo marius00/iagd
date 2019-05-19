@@ -16,7 +16,7 @@ namespace IAGrim.Database.Model {
             get {
                 if (Tags == null)
                     return new List<TranslatedStat>();
-                return GlobalSettings.StatManager.ProcessSkillModifierStats(new HashSet<IItemStat>(Tags), Name);
+                return RuntimeSettings.StatManager.ProcessSkillModifierStats(new HashSet<IItemStat>(Tags), Name);
             }
         }
 

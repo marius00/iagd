@@ -23,7 +23,6 @@ private:
 
 
 	static void* __fastcall HookedMethod(void* This, bool a, bool b, Vec3f const& xyz, OriginalMethodPtr original);
-#if defined(_AMD64_)
 	static void* __fastcall HookedMethod_Wrap0(void* This, bool a, bool b, Vec3f const& xyz);
 	static void* __fastcall HookedMethod_Wrap1(void* This, bool a, bool b, Vec3f const& xyz);
 	static void* __fastcall HookedMethod_Wrap2(void* This, bool a, bool b, Vec3f const& xyz);
@@ -36,19 +35,4 @@ private:
 	static void* __fastcall HookedMethod_Wrap9(void* This, bool a, bool b, Vec3f const& xyz);
 	static void* __fastcall HookedMethod_Wrap10(void* This, bool a, bool b, Vec3f const& xyz);
 	static void* __fastcall HookedMethod_Wrap11(void* This, bool a, bool b, Vec3f const& xyz);
-#else
-	static void* __fastcall HookedMethod_Wrap0(void* This, void* notUsed, bool a, bool b, Vec3f const& xyz);
-	static void* __fastcall HookedMethod_Wrap1(void* This, void* notUsed, bool a, bool b, Vec3f const& xyz);
-	static void* __fastcall HookedMethod_Wrap2(void* This, void* notUsed, bool a, bool b, Vec3f const& xyz);
-	static void* __fastcall HookedMethod_Wrap3(void* This, void* notUsed, bool a, bool b, Vec3f const& xyz);
-	static void* __fastcall HookedMethod_Wrap4(void* This, void* notUsed, bool a, bool b, Vec3f const& xyz);
-	static void* __fastcall HookedMethod_Wrap5(void* This, void* notUsed, bool a, bool b, Vec3f const& xyz);
-	static void* __fastcall HookedMethod_Wrap6(void* This, void* notUsed, bool a, bool b, Vec3f const& xyz);
-	static void* __fastcall HookedMethod_Wrap7(void* This, void* notUsed, bool a, bool b, Vec3f const& xyz);
-	static void* __fastcall HookedMethod_Wrap8(void* This, void* notUsed, bool a, bool b, Vec3f const& xyz);
-	static void* __fastcall HookedMethod_Wrap9(void* This, void* notUsed, bool a, bool b, Vec3f const& xyz);
-	static void* __fastcall HookedMethod_Wrap10(void* This, void* notUsed, bool a, bool b, Vec3f const& xyz);
-	static void* __fastcall HookedMethod_Wrap11(void* This, void* notUsed, bool a, bool b, Vec3f const& xyz);
-#endif
-	
 };

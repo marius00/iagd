@@ -61,7 +61,7 @@ namespace IAGrim.Utilities {
             else if (item is AugmentationItem) {
                 type = ItemTypeDto.Augmentation;
                 extras = ItemOperationsUtility.TranslateFaction(
-                    GlobalSettings.Language,
+                    RuntimeSettings.Language,
                     ((AugmentationItem) item).Tags.FirstOrDefault(m => m.Stat == "factionSource")?.TextValue ?? string.Empty
                 );
             }
@@ -89,7 +89,7 @@ namespace IAGrim.Utilities {
                 Skill = item.Skill != null ? GetJsonSkill(item.Skill) : null,
                 GreenRarity = item.PrefixRarity,
                 HasCloudBackup = isCloudSynced,
-                Slot = SlotTranslator.Translate(GlobalSettings.Language, item.Slot ?? ""),
+                Slot = SlotTranslator.Translate(RuntimeSettings.Language, item.Slot ?? ""),
                 Extras = extras
             };
 

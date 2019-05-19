@@ -16,9 +16,9 @@ namespace IAGrim.UI.Service {
     class DatabaseModSelectionService {
 
         private string GetLabel(int expansionLevel) {
-            var tagVanilla = GlobalSettings.Language.GetTag("iatag_ui_vanilla");
-            var tagVanillaXpac = GlobalSettings.Language.GetTag("iatag_ui_vanilla_xpac");
-            var tagForgottenGods = GlobalSettings.Language.GetTag("iatag_ui_forgottengods");
+            var tagVanilla = RuntimeSettings.Language.GetTag("iatag_ui_vanilla");
+            var tagVanillaXpac = RuntimeSettings.Language.GetTag("iatag_ui_vanilla_xpac");
+            var tagForgottenGods = RuntimeSettings.Language.GetTag("iatag_ui_forgottengods");
             switch (expansionLevel) {
                 case 0:
                     return tagVanilla;
@@ -57,7 +57,7 @@ namespace IAGrim.UI.Service {
         public List<ListViewItem> GetInstalledMods(IEnumerable<string> paths) {
             List<ListViewItem> entries = new List<ListViewItem>();
             const string theCrucibleDlc = "survivalmode";
-            var noModSelected = GlobalSettings.Language.GetTag("iatag_ui_none");
+            var noModSelected = RuntimeSettings.Language.GetTag("iatag_ui_none");
 
             ListViewItem empty = new ListViewItem(noModSelected);
             empty.SubItems.Add("-");
