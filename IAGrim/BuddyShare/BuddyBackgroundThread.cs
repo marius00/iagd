@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using IAGrim.Database.Interfaces;
+using IAGrim.Settings;
 
 namespace IAGrim.BuddyShare {
     class BuddyBackgroundThread : IDisposable {
@@ -22,17 +23,18 @@ namespace IAGrim.BuddyShare {
         private readonly IPlayerItemDao _playerItemDao;
         private readonly IBuddyItemDao _buddyItemDao;
         private readonly ActionCooldown _cooldown;
+        private readonly SettingsService _settings;
 
         public BuddyBackgroundThread(
             ProgressChangedEventHandler progressCallback, 
             IPlayerItemDao playerItemDao,
             IBuddyItemDao buddyItemDao,
             List<long> subscribers,
-            long cooldown
-        ) {
+            long cooldown, SettingsService settings) {
             _playerItemDao = playerItemDao;
             _buddyItemDao = buddyItemDao;
             this._subscribers = subscribers;
+            _settings = settings;
             _cooldown = new ActionCooldown(cooldown);
 
             _bw.DoWork += new DoWorkEventHandler(bw_DoWork);
@@ -49,8 +51,8 @@ namespace IAGrim.BuddyShare {
                 Thread.CurrentThread.Name = "BuddyBackground";
 
             BackgroundWorker worker = sender as BackgroundWorker;
-            Serializer serializer = new Serializer(_buddyItemDao, _playerItemDao);
-            Synchronizer synchronizer = new Synchronizer();
+            Serializer serializer = new Serializer(_buddyItemDao, _playerItemDao, _settings);
+            Synchronizer synchronizer = new Synchronizer(_settings);
 
 
             worker?.ReportProgress(ProgressSetUid, synchronizer.CreateUserId());
@@ -78,7 +80,7 @@ namespace IAGrim.BuddyShare {
                         if (syncdownData != null && syncdownData.Count > 0) {
                             Logger.InfoFormat("Downloaded itemdata for {0} buddies.", syncdownData.Count);
 
-                            var deserializer = new Serializer(_buddyItemDao, _playerItemDao);
+                            var deserializer = new Serializer(_buddyItemDao, _playerItemDao, _settings);
                             foreach (var item in syncdownData) {
                                 if (item.UserId > 0) {
                                     deserializer.DeserializeAndSave(item);

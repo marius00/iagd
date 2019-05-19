@@ -22,19 +22,20 @@ namespace IAGrim.UI
         private readonly ParsingService _parsingService;
         private readonly DatabaseModSelectionService _databaseModSelectionService;
         private readonly IDatabaseSettingDao _databaseSettingRepo;
+        private readonly GrimDawnDetector _grimDawnDetector;
 
         public ModsDatabaseConfig(
             Action itemViewUpdateTrigger, 
             IPlayerItemDao playerItemDao, 
             ParsingService parsingService,
-            IDatabaseSettingDao databaseSettingRepo
-            )
+            IDatabaseSettingDao databaseSettingRepo, GrimDawnDetector grimDawnDetector)
         {
             InitializeComponent();
             _itemViewUpdateTrigger = itemViewUpdateTrigger;
             _playerItemDao = playerItemDao;
             _parsingService = parsingService;
             _databaseSettingRepo = databaseSettingRepo;
+            _grimDawnDetector = grimDawnDetector;
             _databaseModSelectionService = new DatabaseModSelectionService();
         }
 
@@ -80,7 +81,7 @@ namespace IAGrim.UI
         {
             Dock = DockStyle.Fill;
 
-            var paths = GrimDawnDetector.GetGrimLocations();
+            var paths = _grimDawnDetector.GetGrimLocations();
 
             if (paths.Count == 0)
             {
@@ -149,7 +150,7 @@ namespace IAGrim.UI
         private void buttonClean_Click(object sender, EventArgs e) {
             _databaseSettingRepo.Clean();
             buttonUpdateItemStats_Click(sender, e);
-            MessageBox.Show(GlobalSettings.Language.GetTag("iatag_ui_clean_body"), GlobalSettings.Language.GetTag("iatag_ui_clean_caption"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_clean_body"), RuntimeSettings.Language.GetTag("iatag_ui_clean_caption"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
     }
 }

@@ -24,8 +24,8 @@ namespace IAGrim.Services.MessageProcessor {
                 case MessageType.TYPE_CloudWrite:
                     Logger.WarnFormat("GD calling {0}, cloud saving is still enabled ingame.", type);
                     Logger.Warn("Go to settings INSIDE GRIM DAWN and disable cloud saving.");
-                    _setFeedback(GlobalSettings.Language.GetTag("iatag_feedback_cloud_save_enabled_ingame"));
-                    GlobalSettings.StashStatus = StashAvailability.CLOUD;
+                    _setFeedback(RuntimeSettings.Language.GetTag("iatag_feedback_cloud_save_enabled_ingame"));
+                    RuntimeSettings.StashStatus = StashAvailability.CLOUD;
                     break;
             }
         }

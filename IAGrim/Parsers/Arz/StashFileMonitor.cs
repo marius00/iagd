@@ -87,7 +87,7 @@ namespace IAGrim.Parsers.Arz {
                         if (e.FullPath.EndsWith(".gst") || e.FullPath.EndsWith(".gsh")) {
                             Logger.Debug("File: " + e.FullPath + " " + e.ChangeType);
                             using (TemporaryCopy copy = new TemporaryCopy(e.FullPath)) {
-                                obj.LastSeenIsHardcore = GlobalSettings.IsHardcore(copy.Filename);
+                                obj.LastSeenIsHardcore = RuntimeSettings.IsHardcore(copy.Filename);
 
                                 GDCryptoDataBuffer pCrypto = new GDCryptoDataBuffer(DataBuffer.ReadBytesFromDisk(copy.Filename));
 
@@ -107,17 +107,15 @@ namespace IAGrim.Parsers.Arz {
             Logger.DebugFormat("File: {0} renamed to {1}", e.OldFullPath, e.FullPath);
             if (!e.FullPath.EndsWith(".bak")) {
                 if (File.Exists(e.FullPath)) {
-                    if (GlobalSettings.PreviousStashStatus == StashAvailability.CRAFTING ||
-                        GlobalSettings.StashStatus == StashAvailability.CRAFTING) {
+                    if (RuntimeSettings.PreviousStashStatus == StashAvailability.CRAFTING ||
+                        RuntimeSettings.StashStatus == StashAvailability.CRAFTING) {
                         Logger.Info("Detected an update to stash file, but ignoring due to crafting-safety-check");
                         // OBS: Can only do this if we've previously looted! CAnnot risk it containing unlooted items
                         if (TransferStashService.HasLootedItemsOnceThisSession) {
                             if (_delayedLootTimer == null) {
-                                Logger.Info(
-                                    "Items has already been looted this session, post-crafting safety measures required.");
-
-
-                                TransferStashService.DeleteItemsInPageX(e.FullPath);
+                                // TODO: This is being removed, so no point 'fixing it'.
+                                //Logger.Info("Items has already been looted this session, post-crafting safety measures required.");
+                                // TransferStashService.DeleteItemsInPageX(e.FullPath);
                             }
                             else {
                                 Logger.Info("Player may have opened devotion screen before running away.. leaving items be..");

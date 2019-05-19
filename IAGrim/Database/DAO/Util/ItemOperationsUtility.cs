@@ -172,7 +172,7 @@ namespace IAGrim.Database.DAO.Util {
             }
 
 
-            string localizedName = GlobalSettings.Language.TranslateName(prefix, quality, style, core, suffix);
+            string localizedName = RuntimeSettings.Language.TranslateName(prefix, quality, style, core, suffix);
             return localizedName + materia;
         }
     }

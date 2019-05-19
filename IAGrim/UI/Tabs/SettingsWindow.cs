@@ -1,20 +1,21 @@
-﻿using EvilsoftCommons;
+﻿using System;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Windows.Forms;
+using EvilsoftCommons;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.Arz;
-using IAGrim.Parsers.GameDataParsing.Service;
+using IAGrim.Services;
+using IAGrim.Settings;
+using IAGrim.Settings.Dto;
 using IAGrim.UI.Controller;
 using IAGrim.UI.Misc.CEF;
 using IAGrim.UI.Popups;
 using IAGrim.Utilities.HelperClasses;
-using System;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Windows.Forms;
-using IAGrim.Services;
 
-namespace IAGrim.UI {
+namespace IAGrim.UI.Tabs {
     partial class SettingsWindow : Form {
-        private readonly ISettingsController _controller = new SettingsController();
+        private readonly ISettingsController _controller;
         private readonly TooltipHelper _tooltipHelper;
 
         private readonly Action _itemViewUpdateTrigger;
@@ -23,6 +24,8 @@ namespace IAGrim.UI {
         private readonly TransferStashService _transferStashService;
         private readonly CefBrowserHandler _cefBrowserHandler;
         private readonly LanguagePackPicker _languagePackPicker;
+        private readonly SettingsService _settings;
+        private readonly GrimDawnDetector _grimDawnDetector;
 
         public SettingsWindow(
             CefBrowserHandler cefBrowserHandler,
@@ -31,9 +34,10 @@ namespace IAGrim.UI {
             IPlayerItemDao playerItemDao,
             GDTransferFile[] modFilter,
             TransferStashService transferStashService, 
-            LanguagePackPicker languagePackPicker
-            ) {            
+            LanguagePackPicker languagePackPicker, 
+            SettingsService settings, GrimDawnDetector grimDawnDetector) {            
             InitializeComponent();
+            _controller = new SettingsController(settings);
             this._cefBrowserHandler = cefBrowserHandler;
             this._tooltipHelper = tooltipHelper;
             this._itemViewUpdateTrigger = itemViewUpdateTrigger;
@@ -41,6 +45,8 @@ namespace IAGrim.UI {
             this._modFilter = modFilter;
             this._transferStashService = transferStashService;
             _languagePackPicker = languagePackPicker;
+            _settings = settings;
+            _grimDawnDetector = grimDawnDetector;
 
             _controller.BindCheckbox(cbMinimizeToTray);
 
@@ -49,18 +55,18 @@ namespace IAGrim.UI {
             _controller.BindCheckbox(cbSecureTransfers);
             _controller.BindCheckbox(cbShowRecipesAsItems);
             _controller.BindCheckbox(cbAutoUpdateModSettings);
-            _controller.BindCheckbox(cbAutoSearch);
             _controller.BindCheckbox(cbDisplaySkills);
             _controller.LoadDefaults();
         }
 
         private void SettingsWindow_Load(object sender, EventArgs e) {
             this.Dock = DockStyle.Fill;
-
-            radioBeta.Checked = (bool)Properties.Settings.Default.SubscribeExperimentalUpdates;
-            radioRelease.Checked = !(bool)Properties.Settings.Default.SubscribeExperimentalUpdates;
-            cbDualComputer.Checked = Properties.Settings.Default.UsingDualComputer;
-            cbShowAugments.Checked = Properties.Settings.Default.ShowAugmentsAsItems;
+            
+            
+            radioBeta.Checked = _settings.GetPersistent().SubscribeExperimentalUpdates;
+            radioRelease.Checked = !_settings.GetPersistent().SubscribeExperimentalUpdates;
+            cbDualComputer.Checked = _settings.GetPersistent().UsingDualComputer;
+            cbShowAugments.Checked = _settings.GetPersistent().ShowAugmentsAsItems;
 
         }
 
@@ -78,13 +84,11 @@ namespace IAGrim.UI {
 
 
         private void radioRelease_CheckedChanged(object sender, EventArgs e) {
-            Properties.Settings.Default.SubscribeExperimentalUpdates = false;
-            Properties.Settings.Default.Save();
+            _settings.GetPersistent().SubscribeExperimentalUpdates = false;
         }
 
         private void radioBeta_CheckedChanged(object sender, EventArgs e) {
-            Properties.Settings.Default.SubscribeExperimentalUpdates = true;
-            Properties.Settings.Default.Save();
+            _settings.GetPersistent().SubscribeExperimentalUpdates = true;
         }
 
         // create bindings and stick these into its own settings class
@@ -118,12 +122,8 @@ namespace IAGrim.UI {
             _itemViewUpdateTrigger?.Invoke();
         }
 
-        private void cbShowBaseStats_CheckedChanged(object sender, EventArgs e) {
-            _itemViewUpdateTrigger?.Invoke();
-        }
-
         private void buttonLanguageSelect_Click(object sender, EventArgs e) {
-            _languagePackPicker.Show(GrimDawnDetector.GetGrimLocations());
+            _languagePackPicker.Show(_grimDawnDetector.GetGrimLocations());
             _itemViewUpdateTrigger?.Invoke();
         }
 
@@ -137,7 +137,7 @@ namespace IAGrim.UI {
         }
 
         private void buttonAdvancedSettings_Click(object sender, EventArgs e) {
-            new StashTabPicker(_transferStashService.NumStashTabs).ShowDialog();
+            new StashTabPicker(_transferStashService.NumStashTabs, _settings).ShowDialog();
         }
 
         private void linkSourceCode_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
@@ -146,13 +146,11 @@ namespace IAGrim.UI {
 
 
         private void cbDualComputer_CheckedChanged(object sender, EventArgs e) {
-            Properties.Settings.Default.UsingDualComputer = (sender as FirefoxCheckBox).Checked;
-            Properties.Settings.Default.Save();
+            _settings.GetPersistent().UsingDualComputer = (sender as FirefoxCheckBox).Checked;
         }
 
         private void cbShowAugments_CheckedChanged(object sender, EventArgs e) {
-            Properties.Settings.Default.ShowAugmentsAsItems = (sender as FirefoxCheckBox).Checked;
-            Properties.Settings.Default.Save();
+            _settings.GetPersistent().ShowAugmentsAsItems = (sender as FirefoxCheckBox).Checked;
         }
 
         private void buttonDevTools_Click(object sender, EventArgs e) {

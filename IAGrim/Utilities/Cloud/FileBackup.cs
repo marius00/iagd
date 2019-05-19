@@ -13,17 +13,21 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using IAGrim.Settings;
+using IAGrim.Settings.Dto;
 
 namespace IAGrim.Utilities.Cloud {
 
     internal class FileBackup : ICloudBackup {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(FileBackup));
         private Stopwatch _timer;
-        private CloudWatcher _provider = new CloudWatcher();
+        private readonly CloudWatcher _provider = new CloudWatcher();
+        private readonly SettingsService settingsService;
         private readonly IPlayerItemDao _playerItemDao;
 
-        public FileBackup(IPlayerItemDao playerItemDao) {
+        public FileBackup(IPlayerItemDao playerItemDao, SettingsService settingsService) {
             this._playerItemDao = playerItemDao;
+            this.settingsService = settingsService;
         }
 
         public void Update() {
@@ -40,19 +44,20 @@ namespace IAGrim.Utilities.Cloud {
         public bool Backup(bool forced) {
             try {
                 List<string> paths = new List<string>();
-                if ((bool)Properties.Settings.Default.BackupDropbox && _provider.Providers.Any(m => m.Provider == CloudProviderEnum.DROPBOX))
+                
+                if (settingsService.GetLocal().BackupDropbox && _provider.Providers.Any(m => m.Provider == CloudProviderEnum.DROPBOX))
                     paths.Add(_provider.Providers.First(m => m.Provider == CloudProviderEnum.DROPBOX).Location);
-
-                if ((bool)Properties.Settings.Default.BackupGoogle && _provider.Providers.Any(m => m.Provider == CloudProviderEnum.GOOGLE_DRIVE))
+                
+                if (settingsService.GetLocal().BackupGoogle && _provider.Providers.Any(m => m.Provider == CloudProviderEnum.GOOGLE_DRIVE))
                     paths.Add(_provider.Providers.First(m => m.Provider == CloudProviderEnum.GOOGLE_DRIVE).Location);
-
-                if ((bool)Properties.Settings.Default.BackupOnedrive && _provider.Providers.Any(m => m.Provider == CloudProviderEnum.ONEDRIVE))
+                
+                if (settingsService.GetLocal().BackupOnedrive && _provider.Providers.Any(m => m.Provider == CloudProviderEnum.ONEDRIVE))
                     paths.Add(_provider.Providers.First(m => m.Provider == CloudProviderEnum.ONEDRIVE).Location);
-
+                
                 // God knows what the user has inputted here... lets err on the safe side.
                 try {
-                    string customPath = Properties.Settings.Default.BackupCustomLocation.ToString();
-                    if ((bool)Properties.Settings.Default.BackupCustom && !string.IsNullOrEmpty(customPath)) {
+                    string customPath = settingsService.GetLocal().BackupCustomLocation;
+                    if (settingsService.GetLocal().BackupCustom && !string.IsNullOrEmpty(customPath)) {
                         if (!Directory.Exists(customPath))
                             Directory.CreateDirectory(customPath);
 

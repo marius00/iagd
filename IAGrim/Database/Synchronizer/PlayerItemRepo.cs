@@ -123,11 +123,5 @@ namespace IAGrim.Database.Synchronizer {
                 () => repo.UpdateAllItemStats(items, progress)
             );
         }
-
-        public void UpdateHardcoreSettings() {
-            ThreadExecuter.Execute(
-                () => repo.UpdateHardcoreSettings()
-            );
-        }
     }
 }

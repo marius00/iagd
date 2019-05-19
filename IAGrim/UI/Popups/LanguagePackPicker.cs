@@ -11,6 +11,8 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using IAGrim.Settings;
+using IAGrim.Settings.Dto;
 
 namespace IAGrim.UI
 {
@@ -22,16 +24,18 @@ namespace IAGrim.UI
         private readonly IItemTagDao _itemTagDao;
         private readonly IPlayerItemDao _playerItemDao;
         private readonly ParsingService _parsingService;
+        private readonly SettingsService _settings;
 
         public LanguagePackPicker(
             IItemTagDao itemTagDao,
             IPlayerItemDao playerItemDao,
-            ParsingService parsingService
-        )
-        {
+            ParsingService parsingService, 
+            SettingsService settings
+            ) {
             InitializeComponent();
 
             _parsingService = parsingService;
+            _settings = settings;
             _itemTagDao = itemTagDao;
             _playerItemDao = playerItemDao;
         }
@@ -58,23 +62,19 @@ namespace IAGrim.UI
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
-        private void buttonSelect_Click(object sender, EventArgs e)
-        {
-            // find selected checkbox
-            // if selected != Properties.Settings.Default.LocalizationFile
+        private void buttonSelect_Click(object sender, EventArgs e) {
             var cb = _checkboxes.FirstOrDefault(m => m.Checked);
             if (cb != null)
             {
                 var package = cb.Tag.ToString();
-                if (package != Properties.Settings.Default.LocalizationFile)
-                {
-                    Properties.Settings.Default.LocalizationFile = package;
-                    Properties.Settings.Default.Save();
+                
+                if (package != _settings.GetLocal().LocalizationFile) {
+                    _settings.GetLocal().LocalizationFile = package;
 
-                    if (!string.IsNullOrEmpty(Properties.Settings.Default.LocalizationFile))
+                    if (!string.IsNullOrEmpty(_settings.GetLocal().LocalizationFile))
                     {
                         var loader = new LocalizationLoader();
-                        GlobalSettings.Language = loader.LoadLanguage(package, new EnglishLanguage(new Dictionary<string, string>()));
+                        RuntimeSettings.Language = loader.LoadLanguage(package, new EnglishLanguage(new Dictionary<string, string>()));
 
                         // TODO: Grab tags from loader and save to sql
                         _itemTagDao.Save(loader.GetItemTags(), new ProgressTracker());
@@ -86,7 +86,7 @@ namespace IAGrim.UI
                     else
                     {
                         // Override timestamp to force an update
-                        GlobalSettings.InitializeLanguage(string.Empty, new Dictionary<string, string>()); // TODO: Not ideal, will need a restart
+                        RuntimeSettings.InitializeLanguage(string.Empty, new Dictionary<string, string>()); // TODO: Not ideal, will need a restart
 
                         foreach (var location in _paths)
                         {
@@ -112,7 +112,7 @@ namespace IAGrim.UI
 
         private void LanguagePackPicker_Load(object sender, EventArgs e) {
 
-            LocalizationLoader.ApplyLanguage(Controls, GlobalSettings.Language);
+            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
             var loc = new LocalizationLoader();
 
             var n = 0;
@@ -124,7 +124,7 @@ namespace IAGrim.UI
                     Location = new Point(10, 25 + n * 33),
                     Text = "English (Official)",
                     Tag = string.Empty,
-                    Checked = string.IsNullOrEmpty(Properties.Settings.Default.LocalizationFile),
+                    Checked = string.IsNullOrEmpty(_settings.GetLocal().LocalizationFile),
                     TabIndex = n,
                     TabStop = true
                 };
@@ -145,11 +145,11 @@ namespace IAGrim.UI
                         var cb = new FirefoxRadioButton
                         {
                             Location = new Point(10, 25 + n * 33),
-                            Text = GlobalSettings.Language.GetTag("iatag_ui_language_by_author", language, author),
+                            Text = RuntimeSettings.Language.GetTag("iatag_ui_language_by_author", language, author),
                             Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top,
                             Width = groupBox1.Width - pictureBox1.Width,
                             Tag = file,
-                            Checked = file == Properties.Settings.Default.LocalizationFile,
+                            Checked = file == _settings.GetLocal().LocalizationFile,
                             TabIndex = n,
                             TabStop = true
                         };

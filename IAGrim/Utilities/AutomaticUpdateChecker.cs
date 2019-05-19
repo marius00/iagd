@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using AutoUpdaterDotNET;
-using EvilsoftCommons.Exceptions;
-using IAGrim.Properties;
-using log4net.Repository.Hierarchy;
+using IAGrim.Settings;
+using IAGrim.Settings.Dto;
 using Timer = System.Timers.Timer;
 
 namespace IAGrim.Utilities {
@@ -18,23 +12,26 @@ namespace IAGrim.Utilities {
         private Timer _timer;
         private DateTime _lastTimeNotMinimized = DateTime.UtcNow;
         private DateTime _lastAutomaticUpdateCheck = DateTime.UtcNow;
+        private readonly SettingsService _settings;
 
         [DllImport("kernel32")]
         private static extern UInt64 GetTickCount64();
 
-        private string UPDATE_XML {
+        private string UpdateXml {
             get {
                 var v = Assembly.GetExecutingAssembly().GetName().Version;
                 string version = $"{v.Major}.{v.Minor}.{v.Build}.{v.Revision}";
 
-                if ((bool)Settings.Default.SubscribeExperimentalUpdates) {
+                
+                if (_settings.GetPersistent().SubscribeExperimentalUpdates) {
                     return $"http://grimdawn.dreamcrash.org/ia/version.php?beta&version={version}";
                 }
                 return $"http://grimdawn.dreamcrash.org/ia/version.php?version={version}";
             }
         }
 
-        public AutomaticUpdateChecker() {
+        public AutomaticUpdateChecker(SettingsService settings) {
+            _settings = settings;
             int min = 1000 * 60;
             int hour = 60 * min;
             _timer = new Timer();
@@ -61,11 +58,11 @@ namespace IAGrim.Utilities {
         }
 
 
-        public void CheckForUpdates() {
+        private void CheckForUpdates() {
             AutoUpdater.LetUserSelectRemindLater = true;
             AutoUpdater.RemindLaterTimeSpan = RemindLaterFormat.Days;
             AutoUpdater.RemindLaterAt = 7;
-            AutoUpdater.Start(UPDATE_XML);
+            AutoUpdater.Start(UpdateXml);
         }
 
         public void Dispose() {

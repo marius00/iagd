@@ -7,31 +7,34 @@ using log4net;
 using System;
 using System.Linq;
 using System.Windows.Forms;
+using IAGrim.Settings;
+using IAGrim.Settings.Dto;
 
 namespace IAGrim.UI.Tabs
 {
     internal sealed class SplitSearchWindow : Form
     {
-        private static readonly ILog _logger = LogManager.GetLogger(typeof(SplitSearchWindow));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(SplitSearchWindow));
         private readonly Action<string> _setStatus;
         private readonly SearchController _searchController;
         private readonly IItemTagDao _itemTagDao;
         private Timer _delayedTextChangedTimer;
         private DesiredSkills _filterWindow;
-        private TextBox searchBox;
-        private CheckBox orderByLevel;
-        private ComboBox modFilter;
-        private ComboBox slotFilter;
-        private SplitContainer mainSplitter;
-        private ComboBox itemQuality;
+        private TextBox _searchBox;
+        private CheckBox _orderByLevel;
+        private ComboBox _modFilter;
+        private ComboBox _slotFilter;
+        private SplitContainer _mainSplitter;
+        private ComboBox _itemQuality;
         private ComboBoxItem _selectedSlot;
-        private TextBox minLevel;
-        private TextBox maxLevel;
-        private FlowLayoutPanel flowPanelFilter;
-        private GroupBox levelRequirementGroup;
+        private TextBox _minLevel;
+        private TextBox _maxLevel;
+        private FlowLayoutPanel _flowPanelFilter;
+        private GroupBox _levelRequirementGroup;
         private ComboBoxItemQuality _selectedItemQuality;
         private ScrollPanelMessageFilter _scrollableFilterView;
-        private ToolStripContainer toolStripContainer;
+        private ToolStripContainer _toolStripContainer;
+        private readonly SettingsService _settings;
 
         private const int FilterPanelMinSize = 250;
 
@@ -52,23 +55,24 @@ namespace IAGrim.UI.Tabs
             Action<string> setStatus,
             IPlayerItemDao playerItemDao,
             SearchController searchController,
-            IItemTagDao itemTagDao)
+            IItemTagDao itemTagDao, SettingsService settings)
         {
             _setStatus = setStatus;
             _searchController = searchController;
             _itemTagDao = itemTagDao;
+            _settings = settings;
             InitializeComponent();
 
             Dock = DockStyle.Fill;
 
-            mainSplitter.SplitterDistance = FilterPanelMinSize;
-            mainSplitter.SplitterWidth = 5;
-            mainSplitter.BorderStyle = BorderStyle.None;
-            mainSplitter.SplitterMoved += MainSplitterOnSplitterMoved;
+            _mainSplitter.SplitterDistance = FilterPanelMinSize;
+            _mainSplitter.SplitterWidth = 5;
+            _mainSplitter.BorderStyle = BorderStyle.None;
+            _mainSplitter.SplitterMoved += MainSplitterOnSplitterMoved;
 
-            ModSelectionHandler = new ModSelectionHandler(modFilter, playerItemDao, UpdateListViewDelayed, setStatus);
+            ModSelectionHandler = new ModSelectionHandler(_modFilter, playerItemDao, UpdateListViewDelayed, setStatus, _settings);
 
-            toolStripContainer.ContentPanel.Controls.Add(browser);
+            _toolStripContainer.ContentPanel.Controls.Add(browser);
 
             Activated += SplitSearchWindow_Activated;
             Deactivate += SplitSearchWindow_Deactivate;
@@ -82,11 +86,11 @@ namespace IAGrim.UI.Tabs
         public void ClearFilters()
         {
             _filterWindow.ClearFilters();
-            searchBox.Text = string.Empty;
-            itemQuality.SelectedIndex = 0;
-            slotFilter.SelectedIndex = 0;
-            minLevel.Text = "0";
-            maxLevel.Text = "110";
+            _searchBox.Text = string.Empty;
+            _itemQuality.SelectedIndex = 0;
+            _slotFilter.SelectedIndex = 0;
+            _minLevel.Text = "0";
+            _maxLevel.Text = "110";
 
             UpdateListViewDelayed();
         }
@@ -124,10 +128,10 @@ namespace IAGrim.UI.Tabs
             var slot = _selectedSlot;
             var query = new ItemSearchRequest
             {
-                Wildcard = searchBox.Text,
+                Wildcard = _searchBox.Text,
                 Filters = filters.Filters,
-                MinimumLevel = ParseNumeric(minLevel),
-                MaximumLevel = ParseNumeric(maxLevel),
+                MinimumLevel = ParseNumeric(_minLevel),
+                MaximumLevel = ParseNumeric(_maxLevel),
                 Rarity = rarity?.Rarity,
                 Slot = slot?.Filter,
                 PetBonuses = filters.PetBonuses,
@@ -139,16 +143,17 @@ namespace IAGrim.UI.Tabs
                 RecentOnly = filters.RecentOnly
             };
 
-            var includeBuddyItems = Properties.Settings.Default.BuddySyncEnabled;
-            var message = _searchController.Search(query, filters.DuplicatesOnly, includeBuddyItems, orderByLevel.Checked);
+            
+            var includeBuddyItems = _settings.GetPersistent().BuddySyncEnabled;
+            var message = _searchController.Search(query, filters.DuplicatesOnly, includeBuddyItems, _orderByLevel.Checked);
 
-            _logger.Info("Updating UI...");
+            Logger.Info("Updating UI...");
 
             if (!string.IsNullOrEmpty(message))
             {
                 _setStatus(message);
             }
-            _logger.Info("Done");
+            Logger.Info("Done");
         }
 
         /// <summary>
@@ -159,12 +164,8 @@ namespace IAGrim.UI.Tabs
             UpdateListViewDelayed(200);
         }
 
-        private void BeginSearchOnAutoSearch(object sender, EventArgs e)
-        {
-            if (Properties.Settings.Default.AutoSearch)
-            {
-                UpdateListViewDelayed();
-            }
+        private void BeginSearchOnAutoSearch(object sender, EventArgs e) {
+            UpdateListViewDelayed();
         }
 
         private void HandleDelayedTextChangedTimerTick(object sender, EventArgs e)
@@ -194,7 +195,7 @@ namespace IAGrim.UI.Tabs
             {
                 _filterWindow.OnChanged -= BeginSearchOnAutoSearch;
                 _filterWindow.Close();
-                mainSplitter.Panel1.Controls.Remove(_filterWindow);
+                _mainSplitter.Panel1.Controls.Remove(_filterWindow);
             }
 
             _filterWindow = new DesiredSkills(_itemTagDao)
@@ -202,15 +203,15 @@ namespace IAGrim.UI.Tabs
                 TopLevel = false
             };
             _filterWindow.OnChanged += BeginSearchOnAutoSearch;
-            mainSplitter.Panel1.Controls.Add(_filterWindow);
+            _mainSplitter.Panel1.Controls.Add(_filterWindow);
             _filterWindow.Show();
         }
 
         private void MainSplitterOnSplitterMoved(object sender, SplitterEventArgs e)
         {
-            if (mainSplitter.SplitterDistance < FilterPanelMinSize)
+            if (_mainSplitter.SplitterDistance < FilterPanelMinSize)
             {
-                mainSplitter.SplitterDistance = FilterPanelMinSize;
+                _mainSplitter.SplitterDistance = FilterPanelMinSize;
             }
         }
 
@@ -225,9 +226,9 @@ namespace IAGrim.UI.Tabs
                 else if (e.Delta < 0)
                 {
                     var newValue = Math.Min(Math.Max(0, ParseNumeric(c) - 1), 110);
-                    if (ParseNumeric(minLevel) > newValue)
+                    if (ParseNumeric(_minLevel) > newValue)
                     {
-                        minLevel.Text = newValue.ToString();
+                        _minLevel.Text = newValue.ToString();
                     }
                     c.Text = Math.Min(Math.Max(0, ParseNumeric(c) - 1), 110).ToString();
                 }
@@ -243,9 +244,9 @@ namespace IAGrim.UI.Tabs
                 if (e.Delta > 0)
                 {
                     var newValue = Math.Min(ParseNumeric(c) + 1, 110);
-                    if (ParseNumeric(maxLevel) < newValue)
+                    if (ParseNumeric(_maxLevel) < newValue)
                     {
-                        maxLevel.Text = newValue.ToString();
+                        _maxLevel.Text = newValue.ToString();
                     }
                     c.Text = newValue.ToString();
                 }
@@ -260,7 +261,7 @@ namespace IAGrim.UI.Tabs
 
         private void MinLevel_KeyPress(object sender, KeyPressEventArgs e)
         {
-            e.Handled = !(char.IsDigit(e.KeyChar) || ParseNumeric(minLevel) > 105 || e.KeyChar == '\b');
+            e.Handled = !(char.IsDigit(e.KeyChar) || ParseNumeric(_minLevel) > 105 || e.KeyChar == '\b');
             UpdateListViewDelayed(1200);
         }
 
@@ -273,59 +274,45 @@ namespace IAGrim.UI.Tabs
         {
             ModSelectionHandler.ConfigureModFilter();
 
-            minLevel.KeyPress += MinLevel_KeyPress;
-            minLevel.MouseWheel += MinLevel_MouseWheel;
+            _minLevel.KeyPress += MinLevel_KeyPress;
+            _minLevel.MouseWheel += MinLevel_MouseWheel;
 
-            maxLevel.KeyPress += MinLevel_KeyPress;
-            maxLevel.MouseWheel += MaxLevel_MouseWheel;
+            _maxLevel.KeyPress += MinLevel_KeyPress;
+            _maxLevel.MouseWheel += MaxLevel_MouseWheel;
 
-            itemQuality.Items.AddRange(UIHelper.QualityFilter.ToArray<object>());
-            itemQuality.SelectedIndex = 0;
-            _selectedItemQuality = itemQuality.SelectedItem as ComboBoxItemQuality;
-            itemQuality.SelectedIndexChanged += (s, ev) =>
+            _itemQuality.Items.AddRange(UIHelper.QualityFilter.ToArray<object>());
+            _itemQuality.SelectedIndex = 0;
+            _selectedItemQuality = _itemQuality.SelectedItem as ComboBoxItemQuality;
+            _itemQuality.SelectedIndexChanged += (s, ev) =>
             {
-                _selectedItemQuality = itemQuality.SelectedItem as ComboBoxItemQuality;
+                _selectedItemQuality = _itemQuality.SelectedItem as ComboBoxItemQuality;
             };
-            itemQuality.SelectedIndexChanged += BeginSearchOnAutoSearch;
+            _itemQuality.SelectedIndexChanged += BeginSearchOnAutoSearch;
 
-            slotFilter.Items.AddRange(UIHelper.SlotFilter.ToArray<object>());
-            slotFilter.SelectedIndex = 0;
-            _selectedSlot = slotFilter.SelectedItem as ComboBoxItem;
-            slotFilter.SelectedIndexChanged += (s, ev) =>
+            _slotFilter.Items.AddRange(UIHelper.SlotFilter.ToArray<object>());
+            _slotFilter.SelectedIndex = 0;
+            _selectedSlot = _slotFilter.SelectedItem as ComboBoxItem;
+            _slotFilter.SelectedIndexChanged += (s, ev) =>
             {
-                _selectedSlot = slotFilter.SelectedItem as ComboBoxItem;
+                _selectedSlot = _slotFilter.SelectedItem as ComboBoxItem;
             };
-            slotFilter.SelectedIndexChanged += BeginSearchOnAutoSearch;
+            _slotFilter.SelectedIndexChanged += BeginSearchOnAutoSearch;
 
             FormClosing += SplitSearchWindow_FormClosing;
 
-            searchBox.KeyDown += SearchBox_KeyDown;
-            searchBox.TextChanged += SearchBox_TextChanged;
+            _searchBox.TextChanged += SearchBox_TextChanged;
 
-            orderByLevel.CheckStateChanged += delegate
+            _orderByLevel.CheckStateChanged += delegate
             {
                 UpdateListViewDelayed();
             };
 
-            flowPanelFilter.SizeChanged += FlowPanelFilter_Resize;
-            mainSplitter.SizeChanged += FlowPanelFilter_Resize;
+            _flowPanelFilter.SizeChanged += FlowPanelFilter_Resize;
+            _mainSplitter.SizeChanged += FlowPanelFilter_Resize;
         }
 
-        private void SearchBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (!Properties.Settings.Default.AutoSearch && e.KeyCode == Keys.Enter)
-            {
-                UpdateListView();
-                e.Handled = true;
-            }
-        }
-
-        private void SearchBox_TextChanged(object sender, EventArgs e)
-        {
-            if (Properties.Settings.Default.AutoSearch)
-            {
-                UpdateListViewDelayed(600);
-            }
+        private void SearchBox_TextChanged(object sender, EventArgs e) {
+            UpdateListViewDelayed(600);
         }
 
         private void SplitSearchWindow_Activated(object sender, EventArgs e)
@@ -345,7 +332,7 @@ namespace IAGrim.UI.Tabs
             Activated -= SplitSearchWindow_Activated;
             Deactivate -= SplitSearchWindow_Deactivate;
 
-            toolStripContainer.ContentPanel.Controls.Clear();
+            _toolStripContainer.ContentPanel.Controls.Clear();
         }
 
         private void UpdateListViewDelayed(int delay)
@@ -360,192 +347,192 @@ namespace IAGrim.UI.Tabs
 
         private void InitializeComponent()
         {
-            this.mainSplitter = new System.Windows.Forms.SplitContainer();
-            this.toolStripContainer = new System.Windows.Forms.ToolStripContainer();
-            this.flowPanelFilter = new System.Windows.Forms.FlowLayoutPanel();
-            this.searchBox = new System.Windows.Forms.TextBox();
-            this.orderByLevel = new System.Windows.Forms.CheckBox();
-            this.itemQuality = new System.Windows.Forms.ComboBox();
-            this.slotFilter = new System.Windows.Forms.ComboBox();
-            this.modFilter = new System.Windows.Forms.ComboBox();
-            this.levelRequirementGroup = new System.Windows.Forms.GroupBox();
-            this.minLevel = new System.Windows.Forms.TextBox();
-            this.maxLevel = new System.Windows.Forms.TextBox();
-            ((System.ComponentModel.ISupportInitialize)(this.mainSplitter)).BeginInit();
-            this.mainSplitter.Panel2.SuspendLayout();
-            this.mainSplitter.SuspendLayout();
-            this.toolStripContainer.SuspendLayout();
-            this.flowPanelFilter.SuspendLayout();
-            this.levelRequirementGroup.SuspendLayout();
+            this._mainSplitter = new System.Windows.Forms.SplitContainer();
+            this._toolStripContainer = new System.Windows.Forms.ToolStripContainer();
+            this._flowPanelFilter = new System.Windows.Forms.FlowLayoutPanel();
+            this._searchBox = new System.Windows.Forms.TextBox();
+            this._orderByLevel = new System.Windows.Forms.CheckBox();
+            this._itemQuality = new System.Windows.Forms.ComboBox();
+            this._slotFilter = new System.Windows.Forms.ComboBox();
+            this._modFilter = new System.Windows.Forms.ComboBox();
+            this._levelRequirementGroup = new System.Windows.Forms.GroupBox();
+            this._minLevel = new System.Windows.Forms.TextBox();
+            this._maxLevel = new System.Windows.Forms.TextBox();
+            ((System.ComponentModel.ISupportInitialize)(this._mainSplitter)).BeginInit();
+            this._mainSplitter.Panel2.SuspendLayout();
+            this._mainSplitter.SuspendLayout();
+            this._toolStripContainer.SuspendLayout();
+            this._flowPanelFilter.SuspendLayout();
+            this._levelRequirementGroup.SuspendLayout();
             this.SuspendLayout();
             // 
             // mainSplitter
             // 
-            this.mainSplitter.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mainSplitter.Location = new System.Drawing.Point(0, 0);
-            this.mainSplitter.Name = "mainSplitter";
+            this._mainSplitter.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._mainSplitter.Location = new System.Drawing.Point(0, 0);
+            this._mainSplitter.Name = "_mainSplitter";
             // 
             // mainSplitter.Panel2
             // 
-            this.mainSplitter.Panel2.Controls.Add(this.toolStripContainer);
-            this.mainSplitter.Panel2.Controls.Add(this.flowPanelFilter);
-            this.mainSplitter.Size = new System.Drawing.Size(1313, 650);
-            this.mainSplitter.SplitterDistance = 204;
-            this.mainSplitter.SplitterWidth = 3;
-            this.mainSplitter.TabIndex = 0;
-            this.mainSplitter.TabStop = false;
+            this._mainSplitter.Panel2.Controls.Add(this._toolStripContainer);
+            this._mainSplitter.Panel2.Controls.Add(this._flowPanelFilter);
+            this._mainSplitter.Size = new System.Drawing.Size(1313, 650);
+            this._mainSplitter.SplitterDistance = 204;
+            this._mainSplitter.SplitterWidth = 3;
+            this._mainSplitter.TabIndex = 0;
+            this._mainSplitter.TabStop = false;
             // 
             // toolStripContainer
             // 
-            this.toolStripContainer.BottomToolStripPanelVisible = false;
+            this._toolStripContainer.BottomToolStripPanelVisible = false;
             // 
             // toolStripContainer.ContentPanel
             // 
-            this.toolStripContainer.ContentPanel.Size = new System.Drawing.Size(1106, 576);
-            this.toolStripContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.toolStripContainer.LeftToolStripPanelVisible = false;
-            this.toolStripContainer.Location = new System.Drawing.Point(0, 49);
-            this.toolStripContainer.Name = "toolStripContainer";
-            this.toolStripContainer.RightToolStripPanelVisible = false;
-            this.toolStripContainer.Size = new System.Drawing.Size(1106, 601);
-            this.toolStripContainer.TabIndex = 48;
-            this.toolStripContainer.Text = "toolStripContainer1";
+            this._toolStripContainer.ContentPanel.Size = new System.Drawing.Size(1106, 576);
+            this._toolStripContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._toolStripContainer.LeftToolStripPanelVisible = false;
+            this._toolStripContainer.Location = new System.Drawing.Point(0, 49);
+            this._toolStripContainer.Name = "_toolStripContainer";
+            this._toolStripContainer.RightToolStripPanelVisible = false;
+            this._toolStripContainer.Size = new System.Drawing.Size(1106, 601);
+            this._toolStripContainer.TabIndex = 48;
+            this._toolStripContainer.Text = "toolStripContainer1";
             // 
             // flowPanelFilter
             // 
-            this.flowPanelFilter.AutoSize = true;
-            this.flowPanelFilter.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.flowPanelFilter.Controls.Add(this.searchBox);
-            this.flowPanelFilter.Controls.Add(this.orderByLevel);
-            this.flowPanelFilter.Controls.Add(this.itemQuality);
-            this.flowPanelFilter.Controls.Add(this.slotFilter);
-            this.flowPanelFilter.Controls.Add(this.modFilter);
-            this.flowPanelFilter.Controls.Add(this.levelRequirementGroup);
-            this.flowPanelFilter.Dock = System.Windows.Forms.DockStyle.Top;
-            this.flowPanelFilter.Location = new System.Drawing.Point(0, 0);
-            this.flowPanelFilter.Name = "flowPanelFilter";
-            this.flowPanelFilter.Size = new System.Drawing.Size(1106, 49);
-            this.flowPanelFilter.TabIndex = 52;
+            this._flowPanelFilter.AutoSize = true;
+            this._flowPanelFilter.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this._flowPanelFilter.Controls.Add(this._searchBox);
+            this._flowPanelFilter.Controls.Add(this._orderByLevel);
+            this._flowPanelFilter.Controls.Add(this._itemQuality);
+            this._flowPanelFilter.Controls.Add(this._slotFilter);
+            this._flowPanelFilter.Controls.Add(this._modFilter);
+            this._flowPanelFilter.Controls.Add(this._levelRequirementGroup);
+            this._flowPanelFilter.Dock = System.Windows.Forms.DockStyle.Top;
+            this._flowPanelFilter.Location = new System.Drawing.Point(0, 0);
+            this._flowPanelFilter.Name = "_flowPanelFilter";
+            this._flowPanelFilter.Size = new System.Drawing.Size(1106, 49);
+            this._flowPanelFilter.TabIndex = 52;
             // 
             // searchBox
             // 
-            this.searchBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this._searchBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.searchBox.Location = new System.Drawing.Point(3, 17);
-            this.searchBox.Margin = new System.Windows.Forms.Padding(3, 17, 3, 3);
-            this.searchBox.Name = "searchBox";
-            this.searchBox.Size = new System.Drawing.Size(304, 20);
-            this.searchBox.TabIndex = 41;
+            this._searchBox.Location = new System.Drawing.Point(3, 17);
+            this._searchBox.Margin = new System.Windows.Forms.Padding(3, 17, 3, 3);
+            this._searchBox.Name = "_searchBox";
+            this._searchBox.Size = new System.Drawing.Size(304, 20);
+            this._searchBox.TabIndex = 41;
             // 
             // orderByLevel
             // 
-            this.orderByLevel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.orderByLevel.AutoSize = true;
-            this.orderByLevel.Checked = true;
-            this.orderByLevel.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.orderByLevel.Location = new System.Drawing.Point(313, 19);
-            this.orderByLevel.Margin = new System.Windows.Forms.Padding(3, 19, 3, 3);
-            this.orderByLevel.Name = "orderByLevel";
-            this.orderByLevel.Size = new System.Drawing.Size(96, 17);
-            this.orderByLevel.TabIndex = 42;
-            this.orderByLevel.Tag = "iatag_ui_orderbylevel";
-            this.orderByLevel.Text = "Order By Level";
-            this.orderByLevel.UseVisualStyleBackColor = true;
+            this._orderByLevel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this._orderByLevel.AutoSize = true;
+            this._orderByLevel.Checked = true;
+            this._orderByLevel.CheckState = System.Windows.Forms.CheckState.Checked;
+            this._orderByLevel.Location = new System.Drawing.Point(313, 19);
+            this._orderByLevel.Margin = new System.Windows.Forms.Padding(3, 19, 3, 3);
+            this._orderByLevel.Name = "_orderByLevel";
+            this._orderByLevel.Size = new System.Drawing.Size(96, 17);
+            this._orderByLevel.TabIndex = 42;
+            this._orderByLevel.Tag = "iatag_ui_orderbylevel";
+            this._orderByLevel.Text = "Order By Level";
+            this._orderByLevel.UseVisualStyleBackColor = true;
             // 
             // itemQuality
             // 
-            this.itemQuality.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.itemQuality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.itemQuality.FormattingEnabled = true;
-            this.itemQuality.Location = new System.Drawing.Point(415, 17);
-            this.itemQuality.Margin = new System.Windows.Forms.Padding(3, 17, 3, 3);
-            this.itemQuality.Name = "itemQuality";
-            this.itemQuality.Size = new System.Drawing.Size(59, 21);
-            this.itemQuality.TabIndex = 43;
+            this._itemQuality.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this._itemQuality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this._itemQuality.FormattingEnabled = true;
+            this._itemQuality.Location = new System.Drawing.Point(415, 17);
+            this._itemQuality.Margin = new System.Windows.Forms.Padding(3, 17, 3, 3);
+            this._itemQuality.Name = "_itemQuality";
+            this._itemQuality.Size = new System.Drawing.Size(59, 21);
+            this._itemQuality.TabIndex = 43;
             // 
             // slotFilter
             // 
-            this.slotFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.slotFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.slotFilter.FormattingEnabled = true;
-            this.slotFilter.Location = new System.Drawing.Point(480, 17);
-            this.slotFilter.Margin = new System.Windows.Forms.Padding(3, 17, 3, 3);
-            this.slotFilter.Name = "slotFilter";
-            this.slotFilter.Size = new System.Drawing.Size(120, 21);
-            this.slotFilter.TabIndex = 44;
+            this._slotFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this._slotFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this._slotFilter.FormattingEnabled = true;
+            this._slotFilter.Location = new System.Drawing.Point(480, 17);
+            this._slotFilter.Margin = new System.Windows.Forms.Padding(3, 17, 3, 3);
+            this._slotFilter.Name = "_slotFilter";
+            this._slotFilter.Size = new System.Drawing.Size(120, 21);
+            this._slotFilter.TabIndex = 44;
             // 
             // modFilter
             // 
-            this.modFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.modFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.modFilter.FormattingEnabled = true;
-            this.modFilter.Location = new System.Drawing.Point(606, 17);
-            this.modFilter.Margin = new System.Windows.Forms.Padding(3, 17, 3, 3);
-            this.modFilter.Name = "modFilter";
-            this.modFilter.Size = new System.Drawing.Size(102, 21);
-            this.modFilter.TabIndex = 45;
+            this._modFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this._modFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this._modFilter.FormattingEnabled = true;
+            this._modFilter.Location = new System.Drawing.Point(606, 17);
+            this._modFilter.Margin = new System.Windows.Forms.Padding(3, 17, 3, 3);
+            this._modFilter.Name = "_modFilter";
+            this._modFilter.Size = new System.Drawing.Size(102, 21);
+            this._modFilter.TabIndex = 45;
             // 
             // levelRequirementGroup
             // 
-            this.levelRequirementGroup.Controls.Add(this.minLevel);
-            this.levelRequirementGroup.Controls.Add(this.maxLevel);
-            this.levelRequirementGroup.Location = new System.Drawing.Point(714, 3);
-            this.levelRequirementGroup.Name = "levelRequirementGroup";
-            this.levelRequirementGroup.Size = new System.Drawing.Size(78, 43);
-            this.levelRequirementGroup.TabIndex = 50;
-            this.levelRequirementGroup.TabStop = false;
-            this.levelRequirementGroup.Tag = "iatag_ui_level_requirement";
-            this.levelRequirementGroup.Text = "Level";
+            this._levelRequirementGroup.Controls.Add(this._minLevel);
+            this._levelRequirementGroup.Controls.Add(this._maxLevel);
+            this._levelRequirementGroup.Location = new System.Drawing.Point(714, 3);
+            this._levelRequirementGroup.Name = "_levelRequirementGroup";
+            this._levelRequirementGroup.Size = new System.Drawing.Size(78, 43);
+            this._levelRequirementGroup.TabIndex = 50;
+            this._levelRequirementGroup.TabStop = false;
+            this._levelRequirementGroup.Tag = "iatag_ui_level_requirement";
+            this._levelRequirementGroup.Text = "Level";
             // 
             // minLevel
             // 
-            this.minLevel.Location = new System.Drawing.Point(5, 15);
-            this.minLevel.MaxLength = 3;
-            this.minLevel.Name = "minLevel";
-            this.minLevel.Size = new System.Drawing.Size(30, 20);
-            this.minLevel.TabIndex = 46;
-            this.minLevel.Text = "0";
-            this.minLevel.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.minLevel.WordWrap = false;
+            this._minLevel.Location = new System.Drawing.Point(5, 15);
+            this._minLevel.MaxLength = 3;
+            this._minLevel.Name = "_minLevel";
+            this._minLevel.Size = new System.Drawing.Size(30, 20);
+            this._minLevel.TabIndex = 46;
+            this._minLevel.Text = "0";
+            this._minLevel.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this._minLevel.WordWrap = false;
             // 
             // maxLevel
             // 
-            this.maxLevel.Location = new System.Drawing.Point(40, 15);
-            this.maxLevel.MaxLength = 3;
-            this.maxLevel.Name = "maxLevel";
-            this.maxLevel.Size = new System.Drawing.Size(30, 20);
-            this.maxLevel.TabIndex = 47;
-            this.maxLevel.Text = "110";
-            this.maxLevel.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.maxLevel.WordWrap = false;
+            this._maxLevel.Location = new System.Drawing.Point(40, 15);
+            this._maxLevel.MaxLength = 3;
+            this._maxLevel.Name = "_maxLevel";
+            this._maxLevel.Size = new System.Drawing.Size(30, 20);
+            this._maxLevel.TabIndex = 47;
+            this._maxLevel.Text = "110";
+            this._maxLevel.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this._maxLevel.WordWrap = false;
             // 
             // SplitSearchWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1313, 650);
-            this.Controls.Add(this.mainSplitter);
+            this.Controls.Add(this._mainSplitter);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "SplitSearchWindow";
             this.Text = "SearchWindow";
             this.Load += new System.EventHandler(this.SplitSearchWindow_Load);
-            this.mainSplitter.Panel2.ResumeLayout(false);
-            this.mainSplitter.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.mainSplitter)).EndInit();
-            this.mainSplitter.ResumeLayout(false);
-            this.toolStripContainer.ResumeLayout(false);
-            this.toolStripContainer.PerformLayout();
-            this.flowPanelFilter.ResumeLayout(false);
-            this.flowPanelFilter.PerformLayout();
-            this.levelRequirementGroup.ResumeLayout(false);
-            this.levelRequirementGroup.PerformLayout();
+            this._mainSplitter.Panel2.ResumeLayout(false);
+            this._mainSplitter.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this._mainSplitter)).EndInit();
+            this._mainSplitter.ResumeLayout(false);
+            this._toolStripContainer.ResumeLayout(false);
+            this._toolStripContainer.PerformLayout();
+            this._flowPanelFilter.ResumeLayout(false);
+            this._flowPanelFilter.PerformLayout();
+            this._levelRequirementGroup.ResumeLayout(false);
+            this._levelRequirementGroup.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         private void FlowPanelFilter_Resize(object sender, EventArgs e) {
-            searchBox.Width = Math.Max(300, flowPanelFilter.Width - 500);
-            searchBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            _searchBox.Width = Math.Max(300, _flowPanelFilter.Width - 500);
+            _searchBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
 
         }
     }

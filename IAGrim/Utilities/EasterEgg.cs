@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using IAGrim.Settings;
+using IAGrim.Settings.Dto;
 
 namespace IAGrim.Utilities {
     /// <summary>
@@ -10,26 +12,28 @@ namespace IAGrim.Utilities {
     /// Restarting the program will fix it.
     /// </summary>
     class EasterEgg {
+        private readonly SettingsService _settings;
+
+        public EasterEgg(SettingsService settings) {
+            _settings = settings;
+        }
 
 
-        public static void Activate(Control root) {
+        public void Activate(Control root) {
+            
             if (IsAprilFools()) {
-                if ((bool)Properties.Settings.Default.EasterPrank) {
+                if (_settings.GetLocal().EasterPrank) {
                     It(root.Controls);
 
                     // Only one prank per year
-                    Properties.Settings.Default.EasterPrank = false;
-                    Properties.Settings.Default.Save();
+                    _settings.GetLocal().EasterPrank = false;
 
                 }
             }
             else {
                 // Activate for next year..
-                Properties.Settings.Default.EasterPrank = true;
-                Properties.Settings.Default.Save();
+                _settings.GetLocal().EasterPrank = true;
             }
-
-                
         }
 
         public static bool IsAprilFools() {
@@ -37,7 +41,7 @@ namespace IAGrim.Utilities {
         }
 
 
-        private static void It(System.Windows.Forms.Control.ControlCollection collection) {
+        private static void It(Control.ControlCollection collection) {
             foreach (Control control in collection) {
                 It(control.Controls);
 

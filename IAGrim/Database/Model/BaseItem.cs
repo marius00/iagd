@@ -29,7 +29,7 @@ namespace IAGrim.Database.Model {
             get {
                 if (Tags == null)
                     return new List<TranslatedStat>();
-                return GlobalSettings.StatManager.ProcessStats(new HashSet<IItemStat>(Tags), TranslatedStatType.PET);
+                return RuntimeSettings.StatManager.ProcessStats(new HashSet<IItemStat>(Tags), TranslatedStatType.PET);
             }
         }
 
@@ -37,7 +37,7 @@ namespace IAGrim.Database.Model {
             get {
                 if (Tags == null)
                     return new List<TranslatedStat>();
-                return GlobalSettings.StatManager.ProcessStats(new HashSet<IItemStat>(Tags), TranslatedStatType.HEADER);
+                return RuntimeSettings.StatManager.ProcessStats(new HashSet<IItemStat>(Tags), TranslatedStatType.HEADER);
             }
         }
 
@@ -45,7 +45,7 @@ namespace IAGrim.Database.Model {
             get {
                 if (Tags == null)
                     return new List<TranslatedStat>();
-                return GlobalSettings.StatManager.ProcessStats(new HashSet<IItemStat>(Tags), TranslatedStatType.BODY);
+                return RuntimeSettings.StatManager.ProcessStats(new HashSet<IItemStat>(Tags), TranslatedStatType.BODY);
             }
         }
     }
