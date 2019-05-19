@@ -5,10 +5,16 @@ using System.Text;
 
 namespace IAGrim.Theme {
     class ComboBoxItemQuality {
+        public int PrefixRarity {
+            get;
+            set;
+        }
+
         public string Rarity {
             get;
             set;
         }
+
         public string Text {
             get;
             set;

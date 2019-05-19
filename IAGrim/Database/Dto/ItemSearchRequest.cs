@@ -17,6 +17,7 @@ namespace IAGrim.Database.Dto {
         public bool IsRetaliation { get; set; }
         public string Mod { get; set; }
         public bool IsHardcore { get; set; }
+        public int PrefixRarity { get; set; }
 
         public List<string> Classes { get; set; }
 

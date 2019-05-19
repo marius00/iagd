@@ -133,6 +133,7 @@ namespace IAGrim.UI.Tabs
                 MinimumLevel = ParseNumeric(_minLevel),
                 MaximumLevel = ParseNumeric(_maxLevel),
                 Rarity = rarity?.Rarity,
+                PrefixRarity = rarity?.PrefixRarity ?? 0,
                 Slot = slot?.Filter,
                 PetBonuses = filters.PetBonuses,
                 IsRetaliation = filters.IsRetaliation,

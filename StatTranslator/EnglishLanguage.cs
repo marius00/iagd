@@ -508,6 +508,8 @@ namespace StatTranslator
             { "iatag_rarity_any", "Any" },
             { "iatag_rarity_yellow", "Yellow" },
             { "iatag_rarity_green", "Green" },
+            { "iatag_rarity_green_p1", "Green (+1)" },
+            { "iatag_rarity_green_p2", "Green (+2)" },
             { "iatag_rarity_blue", "Blue" },
             { "iatag_rarity_epic", "Epic" },
 
