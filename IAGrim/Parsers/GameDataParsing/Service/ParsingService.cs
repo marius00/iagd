@@ -16,6 +16,7 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
         private readonly IDatabaseItemStatDao _databaseItemStatDao;
         private readonly IItemSkillDao _itemSkillDao;
         private readonly string _localizationFile;
+        public event EventHandler OnParseComplete;
 
 
         public ParsingService(
@@ -116,6 +117,8 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
 
             t.Start();
             form.ShowDialog();
+
+            OnParseComplete?.Invoke(this, null);
         }
     }
 }

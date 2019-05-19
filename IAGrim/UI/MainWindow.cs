@@ -391,8 +391,11 @@ namespace IAGrim.UI
 
             ExceptionReporter.EnableLogUnhandledOnThread();
             SizeChanged += OnMinimizeWindow;
+            
+            
+            var cacher = new TransferStashServiceCache(_databaseItemDao);
+            _parsingService.OnParseComplete += (o, args) => cacher.Refresh();
 
-            var cacher = new TransferStashServiceCache(_databaseItemDao); // TODO: This needs to refresh on db load
             var stashWriter = new SafeTransferStashWriter(_settingsService);
             _transferStashService = new TransferStashService(_databaseItemStatDao, _settingsService, stashWriter);
             var transferStashService2 = new TransferStashService2(_playerItemDao, cacher, _transferStashService, stashWriter, _settingsService);

@@ -67,8 +67,7 @@ namespace IAGrim.UI.Tabs {
             radioRelease.Checked = !_settings.GetPersistent().SubscribeExperimentalUpdates;
             cbDualComputer.Checked = _settings.GetPersistent().UsingDualComputer;
             cbShowAugments.Checked = _settings.GetPersistent().ShowAugmentsAsItems;
-
-            cbDeleteDuplicates.Checked = Properties.Settings.Default.DeleteDuplicates;
+            cbDeleteDuplicates.Checked = _settings.GetPersistent().DeleteDuplicates;
         }
 
         private void buttonViewBackups_Click(object sender, EventArgs e) {
@@ -184,8 +183,7 @@ namespace IAGrim.UI.Tabs {
         }
 
         private void cbDeleteDuplicates_CheckedChanged(object sender, EventArgs e) {
-            Properties.Settings.Default.DeleteDuplicates = (sender as FirefoxCheckBox).Checked;
-            Properties.Settings.Default.Save();
+            _settings.GetPersistent().DeleteDuplicates = (sender as FirefoxCheckBox).Checked;
         }
     }
 }
