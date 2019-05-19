@@ -50,12 +50,12 @@ namespace IAGrim.UI
             UpdateBuddyList();
 
             
-            buddySyncEnabled.Checked = _settingsService.GetBool(PersistentSetting.BuddySyncEnabled);
+            buddySyncEnabled.Checked = _settingsService.GetPersistent().BuddySyncEnabled;
             UpdateEnabledStatus();
 
-            UID = _settingsService.GetLong(PersistentSetting.BuddySyncUserIdV2);
+            UID = _settingsService.GetPersistent().BuddySyncUserIdV2 ?? 0L;
 
-            tbDescription.Text = _settingsService.GetString(PersistentSetting.BuddySyncDescription);
+            tbDescription.Text = _settingsService.GetPersistent().BuddySyncDescription;
             descriptionLabel.Text = $"Name: {tbDescription.Text}";
 
             buddyId.KeyPress += buddyId_KeyPress;
@@ -174,7 +174,7 @@ namespace IAGrim.UI
         {
             if (long.TryParse(buddyId.Text, out var id))
             {
-                if (id > 0 && id != _settingsService.GetLong(PersistentSetting.BuddySyncUserIdV2))
+                if (id > 0 && id != _settingsService.GetPersistent().BuddySyncUserIdV2)
                 {
                     _buddySubscriptionDao.SaveOrUpdate(new BuddySubscription { Id = id });
                 }
@@ -232,7 +232,7 @@ namespace IAGrim.UI
                 _delayedTextChangedTimer.Stop();
                 _delayedTextChangedTimer = null;
             }
-            _settingsService.Save(PersistentSetting.BuddySyncEnabled, buddySyncEnabled.Checked);
+            _settingsService.GetPersistent().BuddySyncEnabled = buddySyncEnabled.Checked;
             _enableCallback(buddySyncEnabled.Checked);
         }
 
@@ -249,7 +249,7 @@ namespace IAGrim.UI
         {
             var tb = sender as TextBox;
 
-            _settingsService.Save(PersistentSetting.BuddySyncDescription, tb.Text);
+            _settingsService.GetPersistent().BuddySyncDescription = tb.Text;
             descriptionLabel.Text = $"{RuntimeSettings.Language.GetTag("iatag_ui_buddy_userid_name")}{tb.Text}";
         }
 

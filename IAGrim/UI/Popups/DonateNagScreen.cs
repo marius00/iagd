@@ -39,10 +39,10 @@ namespace IAGrim.UI {
         public bool CanNag {
             get {
                 
-                long lastNag = _settings.GetLong(LocalSetting.LastNagTimestamp);
+                long lastNag = _settings.GetLocal().LastNagTimestamp;
                 if (lastNag == 0) {
                     DateTime dt = DateTime.Now.AddDays(new Random().Next(5, 14));
-                    _settings.Save(LocalSetting.LastNagTimestamp, dt.Ticks);
+                    _settings.GetLocal().LastNagTimestamp = dt.Ticks;
                     return false;
                 }
 
@@ -58,7 +58,7 @@ namespace IAGrim.UI {
                 _aTimer.Enabled = true;
 
                 DateTime dt = DateTime.Now.AddDays(28 + new Random().Next(0, 5));
-                _settings.Save(LocalSetting.LastNagTimestamp, dt.Ticks);
+                _settings.GetLocal().LastNagTimestamp = dt.Ticks;
 
                 LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
             }
@@ -110,7 +110,7 @@ namespace IAGrim.UI {
             
 
             DateTime dt = DateTime.Now.AddDays(62 + new Random().Next(0, 5));
-            _settings.Save(LocalSetting.LastNagTimestamp, dt.Ticks);
+            _settings.GetLocal().LastNagTimestamp = dt.Ticks;
 
         }
     }

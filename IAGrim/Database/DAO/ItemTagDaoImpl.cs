@@ -43,18 +43,17 @@ namespace IAGrim.Database.DAO {
 
 
         public IList<ItemTag> GetClassItemTags() {
-
-            Dictionary<string, string> result = new Dictionary<string, string>();
             using (var session = SessionCreator.OpenStatelessSession()) {
-                using (ITransaction transaction = session.BeginTransaction()) {
+                using (session.BeginTransaction()) {
                     return session.CreateCriteria<ItemTag>()
                         .Add(Restrictions.Like(nameof(ItemTag.Tag), "tagSkillClassName%"))
                         .List<ItemTag>()
-                        .Select(m => new Database.ItemTag { Name = m.Name, Tag = m.Tag.Replace("tagSkillClassName", "class") })
+                        .Select(m => new ItemTag { Name = m.Name, Tag = m.Tag.Replace("tagSkillClassName", "class") })
                         .ToList();
                 }
             }
         }
+
         public ISet<ItemTag> GetValidClassItemTags() {
             using (var session = SessionCreator.OpenStatelessSession()) {
                 using (session.BeginTransaction()) {

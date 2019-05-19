@@ -470,7 +470,7 @@ namespace IAGrim.UI
             addAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, _playerItemDao, _parsingService, _databaseSettingDao, _grimDawnDetector), modsPanel);
             addAndShow(new HelpTab(), panelHelp);            
             addAndShow(new LoggingWindow(), panelLogging);
-            var backupService = new BackupService(_authAuthService, _playerItemDao, _azurePartitionDao, () => _settingsService.GetBool(PersistentSetting.UsingDualComputer));
+            var backupService = new BackupService(_authAuthService, _playerItemDao, _azurePartitionDao, () => _settingsService.GetPersistent().UsingDualComputer);
             _backupServiceWorker = new BackupServiceWorker(backupService);
             backupService.OnUploadComplete += (o, args) => _searchWindow.UpdateListView();
             searchController.OnSearch += (o, args) => backupService.OnSearch();
@@ -505,7 +505,7 @@ namespace IAGrim.UI
 
             //settingsController.Data.budd
             
-            BuddySyncEnabled = _settingsService.GetBool(PersistentSetting.BuddySyncEnabled);
+            BuddySyncEnabled = _settingsService.GetPersistent().BuddySyncEnabled;
 
             // Start the backup task
             _backupBackgroundTask = new BackgroundTask(new FileBackup(_playerItemDao, _settingsService));
@@ -576,7 +576,7 @@ namespace IAGrim.UI
 
             // Popup login diag
             
-            if (_authAuthService.CheckAuthentication() == AzureAuthService.AccessStatus.Unauthorized && !_settingsService.GetBool(LocalSetting.OptOutOfBackups)) {
+            if (_authAuthService.CheckAuthentication() == AzureAuthService.AccessStatus.Unauthorized && !_settingsService.GetLocal().OptOutOfBackups) {
                 var t = new System.Windows.Forms.Timer {Interval = 100};
                 t.Tick += (o, args) => {
                     if (_cefBrowserHandler.BrowserControl.IsBrowserInitialized) {
@@ -595,12 +595,12 @@ namespace IAGrim.UI
 
             // Suggest translation packs if available
             
-            if (!_settingsService.GetBool(LocalSetting.HasSuggestedLanguageChange) && string.IsNullOrEmpty(_settingsService.GetString(LocalSetting.LocalizationFile))) {
+            if (!string.IsNullOrEmpty(_settingsService.GetLocal().LocalizationFile) && !_settingsService.GetLocal().HasSuggestedLanguageChange) {
                 if (LocalizationLoader.HasSupportedTranslations(_grimDawnDetector.GetGrimLocations())) {
                     Logger.Debug("A new language pack has been detected, informing end user..");
                     new LanguagePackPicker(_itemTagDao, _playerItemDao, _parsingService, _settingsService).Show(_grimDawnDetector.GetGrimLocations());
 
-                    _settingsService.Save(LocalSetting.HasSuggestedLanguageChange, true);
+                    _settingsService.GetLocal().HasSuggestedLanguageChange = true;
                 }
             }
             Logger.Debug("UI initialization complete");

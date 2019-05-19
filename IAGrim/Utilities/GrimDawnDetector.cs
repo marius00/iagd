@@ -256,7 +256,7 @@ namespace IAGrim {
         /// </summary>
         /// <returns></returns>
         public string GetGrimLocation() {
-            string location = _settingsService.GetStrings(LocalSetting.GrimDawnLocation).FirstOrDefault();
+            string location = _settingsService.GetLocal().GrimDawnLocation.FirstOrDefault();
             if (!string.IsNullOrEmpty(location) && Directory.Exists(location) && !location.Contains(".arz"))
                 return location;
 
@@ -285,7 +285,7 @@ namespace IAGrim {
 
             // Cache the location
             finally {
-                _settingsService.Save(LocalSetting.GrimDawnLocation, new List<string> {location});
+                _settingsService.GetLocal().GrimDawnLocation = new List<string> {location};
             }
 
             return string.Empty;
@@ -301,7 +301,7 @@ namespace IAGrim {
         public ISet<string> GetGrimLocations() {
             var locations = new HashSet<string>();
 
-            var cached = _settingsService.GetStrings(LocalSetting.GrimDawnLocation);
+            var cached = _settingsService.GetLocal().GrimDawnLocation;
             foreach (var dir in cached) {
                 if (!string.IsNullOrEmpty(dir) && Directory.Exists(dir) && !dir.Contains(".arz")) {
                     locations.Add(CleanInvertedSlashes(dir));

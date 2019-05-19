@@ -68,10 +68,10 @@ namespace IAGrim.UI
             {
                 var package = cb.Tag.ToString();
                 
-                if (package != _settings.GetString(LocalSetting.LocalizationFile)) {
-                    _settings.Save(LocalSetting.LocalizationFile, package);
+                if (package != _settings.GetLocal().LocalizationFile) {
+                    _settings.GetLocal().LocalizationFile = package;
 
-                    if (!string.IsNullOrEmpty(_settings.GetString(LocalSetting.LocalizationFile)))
+                    if (!string.IsNullOrEmpty(_settings.GetLocal().LocalizationFile))
                     {
                         var loader = new LocalizationLoader();
                         RuntimeSettings.Language = loader.LoadLanguage(package, new EnglishLanguage(new Dictionary<string, string>()));
@@ -124,7 +124,7 @@ namespace IAGrim.UI
                     Location = new Point(10, 25 + n * 33),
                     Text = "English (Official)",
                     Tag = string.Empty,
-                    Checked = string.IsNullOrEmpty(_settings.GetString(LocalSetting.LocalizationFile)),
+                    Checked = string.IsNullOrEmpty(_settings.GetLocal().LocalizationFile),
                     TabIndex = n,
                     TabStop = true
                 };
@@ -149,7 +149,7 @@ namespace IAGrim.UI
                             Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top,
                             Width = groupBox1.Width - pictureBox1.Width,
                             Tag = file,
-                            Checked = file == _settings.GetString(LocalSetting.LocalizationFile),
+                            Checked = file == _settings.GetLocal().LocalizationFile,
                             TabIndex = n,
                             TabStop = true
                         };

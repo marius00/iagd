@@ -19,8 +19,8 @@ namespace IAGrim.UI.Popups {
         }
 
         private void buttonClose_Click(object sender, EventArgs e) {
-            if (_settings.GetLong(LocalSetting.StashToLootFrom) == _settings.GetLong(LocalSetting.StashToDepositTo) &&
-                _settings.GetLong(LocalSetting.StashToLootFrom) != 0) {
+            if (_settings.GetLocal().StashToLootFrom == _settings.GetLocal().StashToDepositTo &&
+                _settings.GetLocal().StashToLootFrom != 0) {
                 MessageBox.Show(
                     "I cannot overstate what an incredibly bad experience it would be to use only one tab.",
                     "Yeah.. Nope!",
@@ -62,14 +62,14 @@ namespace IAGrim.UI.Popups {
                 FirefoxRadioButton.CheckedChangedEventHandler callback = (o, args) => {
                     if (p <= _numStashTabs) {
                         // Don't trust the "Firefox framework" to not trigger clicks on disabled buttons.
-                        _settings.Save(LocalSetting.StashToDepositTo, p);
+                        _settings.GetLocal().StashToDepositTo = p;
                     }
                 };
 
                 int y = 32 + 33 * i;
                 var cb = CreateCheckbox($"moveto_tab_{i}", $"iatag_ui_tab_{i}", $"Tab {i}", new Point(6, y), callback);
                 
-                cb.Checked = _settings.GetLong(LocalSetting.StashToDepositTo) == i;
+                cb.Checked = _settings.GetLocal().StashToDepositTo == i;
                 cb.Enabled = i <= _numStashTabs;
                 cb.EnabledCalc = i <= _numStashTabs;
                 this.gbMoveTo.Controls.Add(cb);
@@ -81,13 +81,13 @@ namespace IAGrim.UI.Popups {
                 FirefoxRadioButton.CheckedChangedEventHandler callback = (o, args) => {
                     if (p <= _numStashTabs) {
                         // Don't trust the "Firefox framework" to not trigger clicks on disabled buttons.
-                        _settings.Save(LocalSetting.StashToLootFrom, p);
+                        _settings.GetLocal().StashToLootFrom = p;
                     }
                 };
 
                 int y = 32 + 33 * i;
                 var cb = CreateCheckbox($"lootfrom_tab_{i}", $"iatag_ui_tab_{i}", $"Tab {i}", new Point(6, y), callback);
-                cb.Checked = _settings.GetLong(LocalSetting.StashToLootFrom) == i;
+                cb.Checked = _settings.GetLocal().StashToLootFrom == i;
                 cb.Enabled = i <= _numStashTabs;
                 cb.EnabledCalc = i <= _numStashTabs;
                 this.gbLootFrom.Controls.Add(cb);
@@ -95,18 +95,18 @@ namespace IAGrim.UI.Popups {
             
 
 
-            radioOutputSecondToLast.Checked = _settings.GetLong(LocalSetting.StashToDepositTo) == 0;
-            radioInputLast.Checked = _settings.GetLong(LocalSetting.StashToLootFrom) == 0;
+            radioOutputSecondToLast.Checked = _settings.GetLocal().StashToDepositTo == 0;
+            radioInputLast.Checked = _settings.GetLocal().StashToLootFrom == 0;
 
             LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
         }
 
         private void radioOutputSecondToLast_CheckedChanged(object sender, EventArgs e) {
-            _settings.Save(LocalSetting.StashToDepositTo, 0);
+            _settings.GetLocal().StashToDepositTo = 0;
         }
 
         private void radioInputLast_CheckedChanged(object sender, EventArgs e) {
-            _settings.Save(LocalSetting.StashToLootFrom, 0);
+            _settings.GetLocal().StashToLootFrom = 0;
         }
     }
 }

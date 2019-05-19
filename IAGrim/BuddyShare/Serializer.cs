@@ -31,10 +31,10 @@ namespace IAGrim.BuddyShare {
 
         public SerializedPlayerItems Serialize() {
             
-            if (_settings.GetLong(PersistentSetting.BuddySyncUserIdV2) != 0) {
+            if (_settings.GetPersistent().BuddySyncUserIdV2 != 0) {
                 SerializedPlayerItems s = GetItems();
-                s.Description = _settings.GetString(PersistentSetting.BuddySyncDescription);
-                s.UserId = _settings.GetLong(PersistentSetting.BuddySyncUserIdV2);
+                s.Description = _settings.GetPersistent().BuddySyncDescription;
+                s.UserId = _settings.GetPersistent().BuddySyncUserIdV2 ?? 0L;
                 s.UUID = RuntimeSettings.Uuid;
                 return s;
             }

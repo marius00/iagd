@@ -16,15 +16,15 @@ namespace IAGrim.Backup.Azure.Service {
         }
 
         public string GetToken() {
-            return _settings.GetString(PersistentSetting.AzureAuthToken);
+            return _settings.GetPersistent().AzureAuthToken;
         }
 
         public bool HasToken() {
-            return !string.IsNullOrWhiteSpace(_settings.GetString(PersistentSetting.AzureAuthToken));
+            return !string.IsNullOrWhiteSpace(_settings.GetPersistent().AzureAuthToken);
         }
 
         public void SetToken(string token) {
-            _settings.Save(PersistentSetting.AzureAuthToken, token);
+            _settings.GetPersistent().AzureAuthToken = token;
         } 
     }
 }

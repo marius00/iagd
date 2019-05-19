@@ -162,10 +162,9 @@
     <Compile Include="Database\Model\ItemSetAssociation.cs" />
     <Compile Include="Database\Model\UnlootedStashItem.cs" />
     <Compile Include="Services\HelpService.cs" />
-    <Compile Include="Settings\Dto\LocalSetting.cs" />
-    <Compile Include="Settings\Dto\PersistentSetting.cs" />
+    <Compile Include="Settings\Dto\LocalSettings.cs" />
+    <Compile Include="Settings\Dto\PersistentSettings.cs" />
     <Compile Include="Settings\Dto\SettingsTemplate.cs" />
-    <Compile Include="Settings\Dto\SettingsType.cs" />
     <Compile Include="Settings\SettingsService.cs" />
     <Compile Include="StartupService.cs" />
     <Compile Include="UI\Controller\dto\ItemTypeDto.cs" />

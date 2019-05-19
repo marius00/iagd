@@ -23,7 +23,7 @@ namespace IAGrim.Utilities {
                 string version = $"{v.Major}.{v.Minor}.{v.Build}.{v.Revision}";
 
                 
-                if (_settings.GetBool(PersistentSetting.SubscribeExperimentalUpdates)) {
+                if (_settings.GetPersistent().SubscribeExperimentalUpdates) {
                     return $"http://grimdawn.dreamcrash.org/ia/version.php?beta&version={version}";
                 }
                 return $"http://grimdawn.dreamcrash.org/ia/version.php?version={version}";

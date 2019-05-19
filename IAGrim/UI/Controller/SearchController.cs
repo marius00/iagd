@@ -143,11 +143,11 @@ namespace IAGrim.UI.Controller
                     : string.Empty;
             }
             
-            if (_settings.GetBool(PersistentSetting.ShowRecipesAsItems) && !query.SocketedOnly) {
+            if (_settings.GetPersistent().ShowRecipesAsItems && !query.SocketedOnly) {
                 AddRecipeItems(items, query);
             }
 
-            if (_settings.GetBool(PersistentSetting.ShowAugmentsAsItems) && !query.SocketedOnly) {
+            if (_settings.GetPersistent().ShowAugmentsAsItems && !query.SocketedOnly) {
                 AddAugmentItems(items, query);
             }
 
@@ -246,7 +246,7 @@ namespace IAGrim.UI.Controller
         /// <param name="items"></param>
         private void MergeDuplicates(List<PlayerHeldItem> items) {
             
-            if (!_settings.GetBool(PersistentSetting.MergeDuplicates)) {
+            if (!_settings.GetPersistent().MergeDuplicates) {
                 return;
             }
 

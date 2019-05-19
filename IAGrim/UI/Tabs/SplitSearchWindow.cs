@@ -144,7 +144,7 @@ namespace IAGrim.UI.Tabs
             };
 
             
-            var includeBuddyItems = _settings.GetBool(PersistentSetting.BuddySyncEnabled);
+            var includeBuddyItems = _settings.GetPersistent().BuddySyncEnabled;
             var message = _searchController.Search(query, filters.DuplicatesOnly, includeBuddyItems, _orderByLevel.Checked);
 
             Logger.Info("Updating UI...");

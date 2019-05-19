@@ -45,19 +45,19 @@ namespace IAGrim.Utilities.Cloud {
             try {
                 List<string> paths = new List<string>();
                 
-                if (settingsService.GetBool(LocalSetting.BackupDropbox) && _provider.Providers.Any(m => m.Provider == CloudProviderEnum.DROPBOX))
+                if (settingsService.GetLocal().BackupDropbox && _provider.Providers.Any(m => m.Provider == CloudProviderEnum.DROPBOX))
                     paths.Add(_provider.Providers.First(m => m.Provider == CloudProviderEnum.DROPBOX).Location);
                 
-                if (settingsService.GetBool(LocalSetting.BackupGoogle) && _provider.Providers.Any(m => m.Provider == CloudProviderEnum.GOOGLE_DRIVE))
+                if (settingsService.GetLocal().BackupGoogle && _provider.Providers.Any(m => m.Provider == CloudProviderEnum.GOOGLE_DRIVE))
                     paths.Add(_provider.Providers.First(m => m.Provider == CloudProviderEnum.GOOGLE_DRIVE).Location);
                 
-                if (settingsService.GetBool(LocalSetting.BackupOnedrive) && _provider.Providers.Any(m => m.Provider == CloudProviderEnum.ONEDRIVE))
+                if (settingsService.GetLocal().BackupOnedrive && _provider.Providers.Any(m => m.Provider == CloudProviderEnum.ONEDRIVE))
                     paths.Add(_provider.Providers.First(m => m.Provider == CloudProviderEnum.ONEDRIVE).Location);
                 
                 // God knows what the user has inputted here... lets err on the safe side.
                 try {
-                    string customPath = settingsService.GetString(LocalSetting.BackupCustomLocation);
-                    if (settingsService.GetBool(LocalSetting.BackupCustom) && !string.IsNullOrEmpty(customPath)) {
+                    string customPath = settingsService.GetLocal().BackupCustomLocation;
+                    if (settingsService.GetLocal().BackupCustom && !string.IsNullOrEmpty(customPath)) {
                         if (!Directory.Exists(customPath))
                             Directory.CreateDirectory(customPath);
 

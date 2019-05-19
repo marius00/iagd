@@ -72,7 +72,7 @@ namespace IAGrim.Parsers.Arz {
         }
 
         public bool TryLootStashFile(string filename) {
-            var secureTransfers = _settings.GetBool(LocalSetting.SecureTransfers);
+            var secureTransfers = _settings.GetLocal().SecureTransfers ?? true;
             lock (_fileLock) {
                 var isValid =
                     (RuntimeSettings.StashStatus == StashAvailability.CLOSED && GrimStateTracker.IsFarFromStash) ||
@@ -160,11 +160,11 @@ namespace IAGrim.Parsers.Arz {
                 if (stash.Read(pCrypto)) {
                     int lootFromIndex;
                     
-                    if (_settings.GetLong(LocalSetting.StashToLootFrom) == 0) {
+                    if (_settings.GetLocal().StashToLootFrom == 0) {
                         lootFromIndex = stash.Tabs.Count - 1;
                     }
                     else {
-                        lootFromIndex = (int)_settings.GetLong(LocalSetting.StashToLootFrom) - 1;
+                        lootFromIndex = (int)_settings.GetLocal().StashToLootFrom - 1;
                     }
 
                     Logger.Debug($"Deleting all items in stash #{lootFromIndex}");
@@ -196,19 +196,19 @@ namespace IAGrim.Parsers.Arz {
         }
 
         private int GetStashToLootFrom(Stash stash) {
-            if (_settings.GetLong(LocalSetting.StashToLootFrom) == 0) {
+            if (_settings.GetLocal().StashToLootFrom == 0) {
                 return stash.Tabs.Count - 1;
             }
 
-            return (int)_settings.GetLong(LocalSetting.StashToLootFrom) - 1;
+            return (int)_settings.GetLocal().StashToLootFrom - 1;
         }
 
         private int GetStashToDepositTo(Stash stash) {
-            if (_settings.GetLong(LocalSetting.StashToDepositTo) == 0) {
+            if (_settings.GetLocal().StashToDepositTo == 0) {
                 return stash.Tabs.Count - 2;
             }
             
-            return (int)_settings.GetLong(LocalSetting.StashToDepositTo) - 1;
+            return (int)_settings.GetLocal().StashToDepositTo - 1;
         }
 
         /// <summary>
@@ -391,8 +391,8 @@ namespace IAGrim.Parsers.Arz {
                 DataBuffer.WriteBytesToDisk(tempName, dataBuffer.Data);
 
                 // Get the current backup number
-                var backupNumber = _settings.GetLong(LocalSetting.BackupNumber);
-                _settings.Save(LocalSetting.BackupNumber, (backupNumber + 1) % 100);
+                var backupNumber = _settings.GetLocal().BackupNumber;
+                _settings.GetLocal().BackupNumber = (backupNumber + 1) % 100;
 
                 // Back up the existing stash and replace with new stash file
                 var backupLocation = Path.Combine(GlobalPaths.BackupLocation, $"transfer.{backupNumber:00}.gs_");

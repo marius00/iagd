@@ -23,32 +23,32 @@ namespace IAGrim.UI.Controller {
 
 
         public void LoadDefaults() {
-            
-            MinimizeToTray = _settings.GetBool(PersistentSetting.MinimizeToTray);
-            MergeDuplicates = _settings.GetBool(PersistentSetting.MergeDuplicates);
-            TransferAnyMod = _settings.GetBool(PersistentSetting.TransferAnyMod);
-            SecureTransfers = _settings.GetBoolOrNull(LocalSetting.SecureTransfers) ?? true;
-            ShowRecipesAsItems = _settings.GetBool(PersistentSetting.ShowRecipesAsItems);
-            AutoUpdateModSettings = _settings.GetBool(PersistentSetting.AutoUpdateModSettings);
-            DisplaySkills = _settings.GetBool(PersistentSetting.DisplaySkills);
+
+            MinimizeToTray = _settings.GetPersistent().MinimizeToTray;
+            MergeDuplicates = _settings.GetPersistent().MergeDuplicates;
+            TransferAnyMod = _settings.GetPersistent().TransferAnyMod;
+            SecureTransfers = _settings.GetLocal().SecureTransfers ?? true;
+            ShowRecipesAsItems = _settings.GetPersistent().ShowRecipesAsItems;
+            AutoUpdateModSettings = _settings.GetPersistent().AutoUpdateModSettings;
+            DisplaySkills = _settings.GetPersistent().DisplaySkills;
         }
 
-        
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         #region Properties
         private void OnPropertyChanged([CallerMemberName] string propertyName = "") {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        
+
         /// <summary>
         /// Automatically update the selected mod when changed ingame
         /// Also goes for softcore/hardcore
         /// </summary>
         public bool AutoUpdateModSettings {
-            get => _settings.GetBool(PersistentSetting.AutoUpdateModSettings);
+            get => _settings.GetPersistent().AutoUpdateModSettings;
             private set {
-                _settings.Save(PersistentSetting.AutoUpdateModSettings, value);
+                _settings.GetPersistent().AutoUpdateModSettings = value;
                 OnPropertyChanged();
             }
         }
@@ -57,17 +57,17 @@ namespace IAGrim.UI.Controller {
         /// List recipes along with items
         /// </summary>
         public bool ShowRecipesAsItems {
-            get => _settings.GetBool(PersistentSetting.ShowRecipesAsItems);
+            get => _settings.GetPersistent().ShowRecipesAsItems;
             set {
-                _settings.Save(PersistentSetting.ShowRecipesAsItems, value);
+                _settings.GetPersistent().ShowRecipesAsItems = value;
                 OnPropertyChanged();
             }
         }
 
         public bool DisplaySkills {
-            get => _settings.GetBool(PersistentSetting.DisplaySkills);
+            get => _settings.GetPersistent().DisplaySkills;
             set {
-                _settings.Save(PersistentSetting.DisplaySkills, value);
+                _settings.GetPersistent().DisplaySkills = value;
                 OnPropertyChanged();
             }
         }
@@ -76,21 +76,21 @@ namespace IAGrim.UI.Controller {
         /// Minimize the program to the system tray
         /// </summary>
         public bool MinimizeToTray {
-            get => _settings.GetBool(PersistentSetting.MinimizeToTray);
+            get => _settings.GetPersistent().MinimizeToTray;
             set {
-                _settings.Save(PersistentSetting.MinimizeToTray, value);
+                _settings.GetPersistent().MinimizeToTray = value;
                 OnPropertyChanged();
             }
         }
-            
+
 
         /// <summary>
         /// Merge duplicate items into a single entry
         /// </summary>
         public bool MergeDuplicates {
-            get => _settings.GetBool(PersistentSetting.MergeDuplicates);
+            get => _settings.GetPersistent().MergeDuplicates;
             set {
-                _settings.Save(PersistentSetting.MergeDuplicates, value);
+                _settings.GetPersistent().MergeDuplicates = value;
                 OnPropertyChanged();
             }
         }
@@ -100,30 +100,30 @@ namespace IAGrim.UI.Controller {
         /// Transfer to any mod without restrictions
         /// </summary>
         public bool TransferAnyMod {
-            get => _settings.GetBool(PersistentSetting.TransferAnyMod);
+            get => _settings.GetPersistent().TransferAnyMod;
             set {
-                _settings.Save(PersistentSetting.TransferAnyMod, value);
+                _settings.GetPersistent().TransferAnyMod = value;
                 OnPropertyChanged();
             }
         }
 
-        
+
         /// <summary>
         /// Enable DLL stash-closed safety checks
         /// </summary>
         public bool SecureTransfers {
-            get => _settings.GetBool(LocalSetting.SecureTransfers);
+            get => _settings.GetLocal().SecureTransfers ?? true;
             set {
                 if (value || MessageBox.Show("Are you sure you wish to disable secure transfers?\n\nIt will be YOUR responsibility to make sure the bank is closed when transferring.", "Are you sure?", MessageBoxButtons.YesNo) == DialogResult.Yes) {
-                    _settings.Save(LocalSetting.SecureTransfers, value);
+                    _settings.GetLocal().SecureTransfers = value;
                     OnPropertyChanged();
                 }
             }
         }
 
-            
-            
-        
+
+
+
 
         #endregion
 
@@ -157,8 +157,8 @@ namespace IAGrim.UI.Controller {
 
         public void DonateNow() {
             System.Diagnostics.Process.Start("http://grimdawn.dreamcrash.org/ia/?donate");
-            DateTime dt = DateTime.Now.AddDays(new Random().Next(14,25));
-            _settings.Save(LocalSetting.LastNagTimestamp, dt.Ticks);
+            DateTime dt = DateTime.Now.AddDays(new Random().Next(14, 25));
+            _settings.GetLocal().LastNagTimestamp = dt.Ticks;
         }
 
         public void OpenDataFolder() {

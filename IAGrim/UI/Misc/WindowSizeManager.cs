@@ -13,7 +13,7 @@ namespace IAGrim.UI.Misc {
     /// <summary>
     /// Responsible for persisting the window size and location across runs.
     /// </summary>
-    class WindowSizeManager {
+    public class WindowSizeManager {
         private readonly JsonSerializerSettings _settings = new JsonSerializerSettings {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
             Culture = System.Globalization.CultureInfo.InvariantCulture,
@@ -28,23 +28,22 @@ namespace IAGrim.UI.Misc {
             _settingsService = settingsService;
             _form.FormClosing += _form_FormClosing;
 
-            var obj = JsonConvert.DeserializeObject<Dictionary<string, int>>(_settingsService.GetString(LocalSetting.WindowPositionSettings), _settings)
-                      ?? new Dictionary<string, int>();
-            if (obj.ContainsKey("state")) {
-                _form.WindowState = (FormWindowState)obj["state"];
+            var obj = _settingsService.GetLocal().WindowPositionSettings;
+            if (obj?.State != null) {
+                _form.WindowState = (FormWindowState)obj.State;
             }
-            if (obj.ContainsKey("width") && obj.ContainsKey("height")) {
-                _form.Size = new Size(obj["width"], obj["height"]);
+            if (obj?.Width != null && obj?.Height != null) {
+                _form.Size = new Size(obj.Width.Value, obj.Height.Value);
             }
 
 
-            if (obj.ContainsKey("top")) {
-                var top = Math.Max(0, Math.Min(obj["top"], Screen.FromControl(_form).Bounds.Height - 100));
+            if (obj?.Top != null) {
+                var top = Math.Max(0, Math.Min(obj.Top.Value, Screen.FromControl(_form).Bounds.Height - 100));
                 _form.Top = top;
             }
 
-            if (obj.ContainsKey("left")) {
-                var left = Math.Max(0, Math.Min(obj["left"], Screen.FromControl(_form).Bounds.Width - 100));
+            if (obj?.Left!= null) {
+                var left = Math.Max(0, Math.Min(obj.Left.Value, Screen.FromControl(_form).Bounds.Width - 100));
                 _form.Left = left;
             }
         }
@@ -65,18 +64,17 @@ namespace IAGrim.UI.Misc {
                     Height = height
                 };
 
-                var json = JsonConvert.SerializeObject(props, _settings);
-                _settingsService.Save(LocalSetting.WindowPositionSettings, json);
+                _settingsService.GetLocal().WindowPositionSettings = props;
                 _form = null;
             }
         }
 
-        class WindowSizeProps {
+        public class WindowSizeProps {
             public int State { get; set; }
-            public int Height { get; set; }
-            public int Width { get; set; }
-            public int Top { get; set; }
-            public int Left { get; set; }
+            public int? Height { get; set; }
+            public int? Width { get; set; }
+            public int? Top { get; set; }
+            public int? Left { get; set; }
         }
         
     }

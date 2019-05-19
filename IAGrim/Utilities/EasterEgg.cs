@@ -22,17 +22,17 @@ namespace IAGrim.Utilities {
         public void Activate(Control root) {
             
             if (IsAprilFools()) {
-                if (_settings.GetBool(LocalSetting.EasterPrank)) {
+                if (_settings.GetLocal().EasterPrank) {
                     It(root.Controls);
 
                     // Only one prank per year
-                    _settings.Save(LocalSetting.EasterPrank, false);
+                    _settings.GetLocal().EasterPrank = false;
 
                 }
             }
             else {
                 // Activate for next year..
-                _settings.Save(LocalSetting.EasterPrank, true);
+                _settings.GetLocal().EasterPrank = true;
             }
         }
 

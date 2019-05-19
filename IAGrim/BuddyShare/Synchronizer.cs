@@ -66,7 +66,7 @@ namespace IAGrim.BuddyShare {
                     // Access denied, we'll need a new user id it seems.
                     // Something must be wrong.
                     if (result != null && result.Status == 401) {
-                        _settings.Save(PersistentSetting.BuddySyncUserIdV2, 0);
+                        _settings.GetPersistent().BuddySyncUserIdV2 = 0;
                         CreateUserId();
                     }
 
@@ -91,7 +91,7 @@ namespace IAGrim.BuddyShare {
         /// <returns></returns>
         public long CreateUserId() {
             
-            long existingId = _settings.GetLong(PersistentSetting.BuddySyncUserIdV2);
+            long existingId = _settings.GetPersistent().BuddySyncUserIdV2 ?? 0L;
             if (existingId != 0)
                 return existingId;
 
@@ -101,7 +101,7 @@ namespace IAGrim.BuddyShare {
             if ("ok".Equals(x["status"].ToString())) {
                 long id;
                 if (long.TryParse(x["uid"].ToString(), out id)) {
-                    _settings.Save(PersistentSetting.BuddySyncUserIdV2, id);
+                    _settings.GetPersistent().BuddySyncUserIdV2 = id;
                     return id;
                 }
             }

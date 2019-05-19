@@ -49,7 +49,7 @@ namespace IAGrim.UI.Tabs.Util
         {
             SelectedMod = _cbModFilter.SelectedItem as GDTransferFile;
             _updateView();
-            _settings.Save(LocalSetting.LastSelectedMod, SelectedMod);
+            _settings.GetLocal().LastSelectedMod = SelectedMod;
         }
 
         private void UpdateModSelection(string mod, bool isHardcore)
@@ -86,7 +86,7 @@ namespace IAGrim.UI.Tabs.Util
             else
             {
                 
-                var lastSelectedMod = _settings.Get<GDTransferFile>(LocalSetting.LastSelectedMod);
+                var lastSelectedMod = _settings.GetLocal().LastSelectedMod;
 
                 if (lastSelectedMod != null)
                 {

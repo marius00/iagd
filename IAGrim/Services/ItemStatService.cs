@@ -15,7 +15,7 @@ namespace IAGrim.Services {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ItemStatService));
         private readonly IDatabaseItemStatDao _databaseItemStatDao;
         private readonly IItemSkillDao _itemSkillDao;
-        private bool _displaySkills => _settings.GetBool(PersistentSetting.DisplaySkills);
+        private bool _displaySkills => _settings.GetPersistent().DisplaySkills;
         private readonly Dictionary<string, ISet<DBSTatRow>> _xpacSkills;
         private readonly SettingsService _settings;
 

@@ -63,10 +63,10 @@ namespace IAGrim.UI.Tabs {
             this.Dock = DockStyle.Fill;
             
             
-            radioBeta.Checked = _settings.GetBool(PersistentSetting.SubscribeExperimentalUpdates);
-            radioRelease.Checked = !_settings.GetBool(PersistentSetting.SubscribeExperimentalUpdates);
-            cbDualComputer.Checked = _settings.GetBool(PersistentSetting.UsingDualComputer);
-            cbShowAugments.Checked = _settings.GetBool(PersistentSetting.ShowAugmentsAsItems);
+            radioBeta.Checked = _settings.GetPersistent().SubscribeExperimentalUpdates;
+            radioRelease.Checked = !_settings.GetPersistent().SubscribeExperimentalUpdates;
+            cbDualComputer.Checked = _settings.GetPersistent().UsingDualComputer;
+            cbShowAugments.Checked = _settings.GetPersistent().ShowAugmentsAsItems;
 
         }
 
@@ -84,11 +84,11 @@ namespace IAGrim.UI.Tabs {
 
 
         private void radioRelease_CheckedChanged(object sender, EventArgs e) {
-            _settings.Save(PersistentSetting.SubscribeExperimentalUpdates, false);
+            _settings.GetPersistent().SubscribeExperimentalUpdates = false;
         }
 
         private void radioBeta_CheckedChanged(object sender, EventArgs e) {
-            _settings.Save(PersistentSetting.SubscribeExperimentalUpdates, true);
+            _settings.GetPersistent().SubscribeExperimentalUpdates = true;
         }
 
         // create bindings and stick these into its own settings class
@@ -146,11 +146,11 @@ namespace IAGrim.UI.Tabs {
 
 
         private void cbDualComputer_CheckedChanged(object sender, EventArgs e) {
-            _settings.Save(PersistentSetting.UsingDualComputer, (sender as FirefoxCheckBox).Checked);
+            _settings.GetPersistent().UsingDualComputer = (sender as FirefoxCheckBox).Checked;
         }
 
         private void cbShowAugments_CheckedChanged(object sender, EventArgs e) {
-            _settings.Save(PersistentSetting.ShowAugmentsAsItems, (sender as FirefoxCheckBox).Checked);
+            _settings.GetPersistent().ShowAugmentsAsItems = (sender as FirefoxCheckBox).Checked;
         }
 
         private void buttonDevTools_Click(object sender, EventArgs e) {

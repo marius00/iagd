@@ -60,12 +60,12 @@ namespace IAGrim.UI.Tabs
             
 
 
-            cbDropbox.Checked = _settings.GetBool(LocalSetting.BackupDropbox);
-            cbGoogle.Checked = _settings.GetBool(LocalSetting.BackupGoogle);
-            cbOneDrive.Checked = _settings.GetBool(LocalSetting.BackupOnedrive);
-            cbCustom.Checked = _settings.GetBool(LocalSetting.BackupCustom);
-            cbDontWantBackups.Checked = _settings.GetBool(LocalSetting.OptOutOfBackups);
-            buttonLogin.Enabled = !_settings.GetBool(LocalSetting.OptOutOfBackups);
+            cbDropbox.Checked = _settings.GetLocal().BackupDropbox;
+            cbGoogle.Checked = _settings.GetLocal().BackupGoogle;
+            cbOneDrive.Checked = _settings.GetLocal().BackupOnedrive;
+            cbCustom.Checked = _settings.GetLocal().BackupCustom;
+            cbDontWantBackups.Checked = _settings.GetLocal().OptOutOfBackups;
+            buttonLogin.Enabled = !_settings.GetLocal().OptOutOfBackups;
 
             cbDropbox.CheckedChanged += cbDropbox_CheckedChanged;
             cbGoogle.CheckedChanged += cbGoogle_CheckedChanged;
@@ -100,25 +100,25 @@ namespace IAGrim.UI.Tabs
         private void cbGoogle_CheckedChanged(object sender, EventArgs e)
         {
             var cb = sender as FirefoxCheckBox;
-            _settings.Save(LocalSetting.BackupGoogle, cb.Checked);
+            _settings.GetLocal().BackupGoogle = cb.Checked;
         }
 
         private void cbDropbox_CheckedChanged(object sender, EventArgs e)
         {
             var cb = sender as FirefoxCheckBox;
-            _settings.Save(LocalSetting.BackupDropbox, cb.Checked);
+            _settings.GetLocal().BackupDropbox = cb.Checked;
         }
 
         private void CbOneDriveCheckedChanged(object sender, EventArgs e)
         {
             var cb = sender as FirefoxCheckBox;
-            _settings.Save(LocalSetting.BackupOnedrive, cb.Checked);
+            _settings.GetLocal().BackupOnedrive = cb.Checked;
         }
 
         private void cbCustom_CheckedChanged(object sender, EventArgs e)
         {
             var cb = sender as FirefoxCheckBox;
-            _settings.Save(LocalSetting.BackupCustom, cb.Checked);
+            _settings.GetLocal().BackupCustom = cb.Checked;
         }
 
         private void buttonCustom_Click(object sender, EventArgs e)
@@ -128,7 +128,7 @@ namespace IAGrim.UI.Tabs
             if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
                 DialogResult = DialogResult.None;
-                _settings.Save(LocalSetting.BackupCustomLocation, folderBrowserDialog.SelectedPath);
+                _settings.GetLocal().BackupCustomLocation = folderBrowserDialog.SelectedPath;
             }
         }
 
@@ -182,7 +182,7 @@ namespace IAGrim.UI.Tabs
 
         private void cbDontWantBackups_CheckedChanged(object sender, EventArgs e) {
             buttonLogin.Enabled = !cbDontWantBackups.Checked;
-            _settings.Save(LocalSetting.OptOutOfBackups, cbDontWantBackups.Checked);
+            _settings.GetLocal().OptOutOfBackups = cbDontWantBackups.Checked;
         }
 
         private void helpWhyGdriveDisabled_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
