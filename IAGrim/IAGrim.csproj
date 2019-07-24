@@ -638,6 +638,7 @@
     <Content Include="Resources\login.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\Patreon_Navy.jpg" />
     <Content Include="Resources\static\assets\css\font-awesome.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

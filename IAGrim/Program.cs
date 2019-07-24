@@ -14,6 +14,7 @@ using log4net;
 using StatTranslator;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -162,7 +163,7 @@ namespace IAGrim
             // Settings should be upgraded early, it contains the language pack etc and some services depends on settings.
             var settingsService = StartupService.LoadSettingsService();
             IPlayerItemDao playerItemDao = new PlayerItemRepo(threadExecuter, factory);
-            StartupService.UpgradeSettings();
+            var statUpgradeNeeded = StartupService.UpgradeSettings();
             
             // X
             IDatabaseItemDao databaseItemDao = new DatabaseItemRepo(threadExecuter, factory);

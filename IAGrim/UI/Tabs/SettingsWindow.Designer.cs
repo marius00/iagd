@@ -29,6 +29,10 @@
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelBox4 = new PanelBox();
+            this.buttonPatreon = new System.Windows.Forms.Button();
+            this.helpWhatIsDeleteDuplicates = new System.Windows.Forms.LinkLabel();
+            this.helpWhatIsUsingMultiplePc = new System.Windows.Forms.LinkLabel();
+            this.cbDeleteDuplicates = new FirefoxCheckBox();
             this.helpWhatIsTransferToAnyMod = new System.Windows.Forms.LinkLabel();
             this.helpWhatIsSecureTransfers = new System.Windows.Forms.LinkLabel();
             this.helpWhatIsAugmentAsItem = new System.Windows.Forms.LinkLabel();
@@ -47,8 +51,8 @@
             this.radioBeta = new FirefoxRadioButton();
             this.radioRelease = new FirefoxRadioButton();
             this.panelBox2 = new PanelBox();
+            this.buttonPaypal = new System.Windows.Forms.Button();
             this.buttonDevTools = new FirefoxButton();
-            this.buttonDonate = new FirefoxButton();
             this.buttonForum = new FirefoxButton();
             this.panelBox1 = new PanelBox();
             this.buttonAdvancedSettings = new FirefoxButton();
@@ -57,9 +61,6 @@
             this.buttonLanguageSelect = new FirefoxButton();
             this.buttonViewBackups = new FirefoxButton();
             this.buttonViewLogs = new FirefoxButton();
-            this.cbDeleteDuplicates = new FirefoxCheckBox();
-            this.helpWhatIsUsingMultiplePc = new System.Windows.Forms.LinkLabel();
-            this.helpWhatIsDeleteDuplicates = new System.Windows.Forms.LinkLabel();
             this.contextMenuStrip1.SuspendLayout();
             this.panelBox4.SuspendLayout();
             this.panelBox3.SuspendLayout();
@@ -126,6 +127,61 @@
             this.panelBox4.Tag = "iatag_ui_settings_title";
             this.panelBox4.Text = "Settings";
             this.panelBox4.TextLocation = "8; 5";
+            // 
+            // buttonPatreon
+            // 
+            this.buttonPatreon.BackgroundImage = global::IAGrim.Properties.Resources.Patreon_Navy;
+            this.buttonPatreon.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.buttonPatreon.Location = new System.Drawing.Point(14, 150);
+            this.buttonPatreon.Name = "buttonPatreon";
+            this.buttonPatreon.Size = new System.Drawing.Size(192, 47);
+            this.buttonPatreon.TabIndex = 8;
+            this.buttonPatreon.UseVisualStyleBackColor = true;
+            this.buttonPatreon.Click += new System.EventHandler(this.buttonPatreon_Click);
+            // 
+            // helpWhatIsDeleteDuplicates
+            // 
+            this.helpWhatIsDeleteDuplicates.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.helpWhatIsDeleteDuplicates.AutoSize = true;
+            this.helpWhatIsDeleteDuplicates.BackColor = System.Drawing.Color.Transparent;
+            this.helpWhatIsDeleteDuplicates.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.helpWhatIsDeleteDuplicates.Location = new System.Drawing.Point(259, 325);
+            this.helpWhatIsDeleteDuplicates.Name = "helpWhatIsDeleteDuplicates";
+            this.helpWhatIsDeleteDuplicates.Size = new System.Drawing.Size(18, 13);
+            this.helpWhatIsDeleteDuplicates.TabIndex = 29;
+            this.helpWhatIsDeleteDuplicates.TabStop = true;
+            this.helpWhatIsDeleteDuplicates.Tag = "iatag_ui_questionmark";
+            this.helpWhatIsDeleteDuplicates.Text = " ? ";
+            this.helpWhatIsDeleteDuplicates.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpWhatIsDeleteDuplicates_LinkClicked);
+            // 
+            // helpWhatIsUsingMultiplePc
+            // 
+            this.helpWhatIsUsingMultiplePc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.helpWhatIsUsingMultiplePc.AutoSize = true;
+            this.helpWhatIsUsingMultiplePc.BackColor = System.Drawing.Color.Transparent;
+            this.helpWhatIsUsingMultiplePc.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.helpWhatIsUsingMultiplePc.Location = new System.Drawing.Point(259, 292);
+            this.helpWhatIsUsingMultiplePc.Name = "helpWhatIsUsingMultiplePc";
+            this.helpWhatIsUsingMultiplePc.Size = new System.Drawing.Size(18, 13);
+            this.helpWhatIsUsingMultiplePc.TabIndex = 28;
+            this.helpWhatIsUsingMultiplePc.TabStop = true;
+            this.helpWhatIsUsingMultiplePc.Tag = "iatag_ui_questionmark";
+            this.helpWhatIsUsingMultiplePc.Text = " ? ";
+            this.helpWhatIsUsingMultiplePc.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpWhatIsUsingMultiplePc_LinkClicked);
+            // 
+            // cbDeleteDuplicates
+            // 
+            this.cbDeleteDuplicates.Bold = false;
+            this.cbDeleteDuplicates.EnabledCalc = true;
+            this.cbDeleteDuplicates.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbDeleteDuplicates.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbDeleteDuplicates.Location = new System.Drawing.Point(3, 318);
+            this.cbDeleteDuplicates.Name = "cbDeleteDuplicates";
+            this.cbDeleteDuplicates.Size = new System.Drawing.Size(268, 27);
+            this.cbDeleteDuplicates.TabIndex = 27;
+            this.cbDeleteDuplicates.Tag = "iatag_ui_deleteduplicates";
+            this.cbDeleteDuplicates.Text = "Delete bugged duplicates";
+            this.cbDeleteDuplicates.CheckedChanged += new System.EventHandler(this.cbDeleteDuplicates_CheckedChanged);
             // 
             // helpWhatIsTransferToAnyMod
             // 
@@ -374,8 +430,9 @@
             // 
             // panelBox2
             // 
+            this.panelBox2.Controls.Add(this.buttonPatreon);
+            this.panelBox2.Controls.Add(this.buttonPaypal);
             this.panelBox2.Controls.Add(this.buttonDevTools);
-            this.panelBox2.Controls.Add(this.buttonDonate);
             this.panelBox2.Controls.Add(this.buttonForum);
             this.panelBox2.Font = new System.Drawing.Font("Segoe UI Semibold", 20F);
             this.panelBox2.HeaderHeight = 40;
@@ -388,31 +445,30 @@
             this.panelBox2.Text = "Misc";
             this.panelBox2.TextLocation = "8; 5";
             // 
+            // buttonPaypal
+            // 
+            this.buttonPaypal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonPaypal.BackgroundImage = global::IAGrim.Properties.Resources.donate;
+            this.buttonPaypal.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.buttonPaypal.Location = new System.Drawing.Point(14, 89);
+            this.buttonPaypal.Name = "buttonPaypal";
+            this.buttonPaypal.Size = new System.Drawing.Size(192, 55);
+            this.buttonPaypal.TabIndex = 7;
+            this.buttonPaypal.UseVisualStyleBackColor = true;
+            this.buttonPaypal.Click += new System.EventHandler(this.button1_Click);
+            // 
             // buttonDevTools
             // 
             this.buttonDevTools.EnabledCalc = true;
             this.buttonDevTools.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.buttonDevTools.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
-            this.buttonDevTools.Location = new System.Drawing.Point(14, 125);
+            this.buttonDevTools.Location = new System.Drawing.Point(14, 203);
             this.buttonDevTools.Name = "buttonDevTools";
             this.buttonDevTools.Size = new System.Drawing.Size(192, 32);
             this.buttonDevTools.TabIndex = 6;
             this.buttonDevTools.Tag = "iatag_ui_devtools";
             this.buttonDevTools.Text = "Devtools";
             this.buttonDevTools.Click += new System.EventHandler(this.buttonDevTools_Click);
-            // 
-            // buttonDonate
-            // 
-            this.buttonDonate.EnabledCalc = true;
-            this.buttonDonate.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.buttonDonate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
-            this.buttonDonate.Location = new System.Drawing.Point(14, 87);
-            this.buttonDonate.Name = "buttonDonate";
-            this.buttonDonate.Size = new System.Drawing.Size(192, 32);
-            this.buttonDonate.TabIndex = 5;
-            this.buttonDonate.Tag = "iatag_ui_donatenow";
-            this.buttonDonate.Text = "Donate Now!";
-            this.buttonDonate.Click += new System.EventHandler(this.buttonDonate_Click);
             // 
             // buttonForum
             // 
@@ -521,50 +577,6 @@
             this.buttonViewLogs.Text = "View Logs";
             this.buttonViewLogs.Click += new System.EventHandler(this.buttonViewLogs_Click);
             // 
-            // cbDeleteDuplicates
-            // 
-            this.cbDeleteDuplicates.Bold = false;
-            this.cbDeleteDuplicates.EnabledCalc = true;
-            this.cbDeleteDuplicates.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cbDeleteDuplicates.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbDeleteDuplicates.Location = new System.Drawing.Point(3, 318);
-            this.cbDeleteDuplicates.Name = "cbDeleteDuplicates";
-            this.cbDeleteDuplicates.Size = new System.Drawing.Size(268, 27);
-            this.cbDeleteDuplicates.TabIndex = 27;
-            this.cbDeleteDuplicates.Tag = "iatag_ui_deleteduplicates";
-            this.cbDeleteDuplicates.Text = "Delete bugged duplicates";
-            this.cbDeleteDuplicates.CheckedChanged += new System.EventHandler(this.cbDeleteDuplicates_CheckedChanged);
-            // 
-            // helpWhatIsUsingMultiplePc
-            // 
-            this.helpWhatIsUsingMultiplePc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.helpWhatIsUsingMultiplePc.AutoSize = true;
-            this.helpWhatIsUsingMultiplePc.BackColor = System.Drawing.Color.Transparent;
-            this.helpWhatIsUsingMultiplePc.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.helpWhatIsUsingMultiplePc.Location = new System.Drawing.Point(259, 292);
-            this.helpWhatIsUsingMultiplePc.Name = "helpWhatIsUsingMultiplePc";
-            this.helpWhatIsUsingMultiplePc.Size = new System.Drawing.Size(18, 13);
-            this.helpWhatIsUsingMultiplePc.TabIndex = 28;
-            this.helpWhatIsUsingMultiplePc.TabStop = true;
-            this.helpWhatIsUsingMultiplePc.Tag = "iatag_ui_questionmark";
-            this.helpWhatIsUsingMultiplePc.Text = " ? ";
-            this.helpWhatIsUsingMultiplePc.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpWhatIsUsingMultiplePc_LinkClicked);
-            // 
-            // helpWhatIsDeleteDuplicates
-            // 
-            this.helpWhatIsDeleteDuplicates.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.helpWhatIsDeleteDuplicates.AutoSize = true;
-            this.helpWhatIsDeleteDuplicates.BackColor = System.Drawing.Color.Transparent;
-            this.helpWhatIsDeleteDuplicates.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.helpWhatIsDeleteDuplicates.Location = new System.Drawing.Point(259, 325);
-            this.helpWhatIsDeleteDuplicates.Name = "helpWhatIsDeleteDuplicates";
-            this.helpWhatIsDeleteDuplicates.Size = new System.Drawing.Size(18, 13);
-            this.helpWhatIsDeleteDuplicates.TabIndex = 29;
-            this.helpWhatIsDeleteDuplicates.TabStop = true;
-            this.helpWhatIsDeleteDuplicates.Tag = "iatag_ui_questionmark";
-            this.helpWhatIsDeleteDuplicates.Text = " ? ";
-            this.helpWhatIsDeleteDuplicates.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpWhatIsDeleteDuplicates_LinkClicked);
-            // 
             // SettingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -603,7 +615,6 @@
         private PanelBox panelBox3;
         private FirefoxRadioButton radioBeta;
         private FirefoxRadioButton radioRelease;
-        private FirefoxButton buttonDonate;
         private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
@@ -630,5 +641,7 @@
         private FirefoxCheckBox cbDeleteDuplicates;
         private System.Windows.Forms.LinkLabel helpWhatIsDeleteDuplicates;
         private System.Windows.Forms.LinkLabel helpWhatIsUsingMultiplePc;
+        private System.Windows.Forms.Button buttonPaypal;
+        private System.Windows.Forms.Button buttonPatreon;
     }
 }
