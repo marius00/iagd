@@ -22,9 +22,6 @@ namespace IAGrim.Parsers.Arz {
         private readonly SettingsService _settings;
         private readonly SafeTransferStashWriter _stashWriter;
 
-        [Obsolete]
-        public event EventHandler StashUpdated;
-
         public TransferStashService(IDatabaseItemStatDao dbItemStatDao, SettingsService settings, SafeTransferStashWriter stashWriter) {
             _settings = settings;
             _stashWriter = stashWriter;

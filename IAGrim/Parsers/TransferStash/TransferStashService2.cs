@@ -14,7 +14,6 @@ using IAGrim.Utilities.HelperClasses;
 using log4net;
 
 // ReSharper disable InconsistentlySynchronizedField
-
 namespace IAGrim.Parsers.TransferStash {
     class TransferStashService2 {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(TransferStashService2));

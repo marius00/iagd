@@ -476,9 +476,6 @@ namespace IAGrim.UI
 
             _searchWindow = new SplitSearchWindow(_cefBrowserHandler.BrowserControl, SetFeedback, _playerItemDao, searchController, _itemTagDao, _settingsService);
             addAndShow(_searchWindow, searchPanel);
-            _transferStashService.StashUpdated += (_, __) => {
-                _searchWindow.UpdateListView();
-            };
 
             transferStashService2.OnUpdate += (_, __) => {
                 _searchWindow.UpdateListView();
