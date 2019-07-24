@@ -16,6 +16,7 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
         private readonly IDatabaseItemStatDao _databaseItemStatDao;
         private readonly IItemSkillDao _itemSkillDao;
         private readonly string _localizationFile;
+        public event EventHandler OnParseComplete;
 
 
         public ParsingService(
@@ -85,11 +86,8 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
             }
 
             actions.Add(() => parser.LoadItems(arzFiles, new WinformsProgressBar(form.LoadingItems).Tracker));
-
-            // TODO: 
             actions.Add(() => parser.MapItemNames(new WinformsProgressBar(form.MappingItemNames).Tracker));
             actions.Add(() => parser.RenamePetStats(new WinformsProgressBar(form.MappingPetStats).Tracker));
-
             actions.Add(() => _databaseItemDao.Save(parser.Items, new WinformsProgressBar(form.SavingItems).Tracker));
 
             // TODO: This depends on the DB item name.. which is in english, not localized
@@ -119,6 +117,8 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
 
             t.Start();
             form.ShowDialog();
+
+            OnParseComplete?.Invoke(this, null);
         }
     }
 }

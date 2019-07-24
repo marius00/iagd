@@ -107,11 +107,18 @@ namespace IAGrim.UI {
 
         private void button1_Click(object sender, EventArgs e) {
             System.Diagnostics.Process.Start("http://grimdawn.dreamcrash.org/ia/?donate");
-            
 
             DateTime dt = DateTime.Now.AddDays(62 + new Random().Next(0, 5));
             _settings.GetLocal().LastNagTimestamp = dt.Ticks;
+            this.Close();
+        }
 
+        private void buttonPatreon_Click(object sender, EventArgs e) {
+            System.Diagnostics.Process.Start("https://www.patreon.com/itemassistant");
+
+            DateTime dt = DateTime.Now.AddDays(150 + new Random().Next(0, 5));
+            _settings.GetLocal().LastNagTimestamp = dt.Ticks;
+            this.Close();
         }
     }
 }

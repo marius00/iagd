@@ -54,7 +54,7 @@ namespace IAGrim.Database {
         }
 
 
-        public void Save(DatabaseItem item) {
+        public override void Save(DatabaseItem item) {
 
             using (var session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
@@ -229,6 +229,37 @@ namespace IAGrim.Database {
             public string Name { get; set; }
         }
 
+        // 
+
+        /// <summary>
+        /// Returns "special items" which are stackable, such as Dynamite, Scrap, Blood of Chton, Ancient Brain, etc..
+        /// </summary>
+        public IList<string> GetSpecialStackableRecords() {
+            const string sql = @"select i.baserecord
+                    from databaseitemstat_v2 s, databaseitem_v2 i 
+                    where stat = 'preventEasyDrops' and i.id_databaseitem = s.id_databaseitem";
+
+            using (ISession session = SessionCreator.OpenSession()) {
+                using (session.BeginTransaction()) {
+                    return session.CreateSQLQuery(sql).List<string>();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns the records for potions, components, etc.. typical stackables.
+        /// </summary>
+        public IList<string> GetStackableComponentsPotionsMisc() {
+            const string sql = @"select i.baserecord from databaseitemstat_v2 s, databaseitem_v2 i 
+                where Stat = 'Class' AND TextValue IN ('ItemRelic', 'OneShot_PotionHealth', 'OneShot_PotionMana', 'OneShot_Scroll')
+                and i.id_databaseitem = s.id_databaseitem";
+
+            using (ISession session = SessionCreator.OpenSession()) {
+                using (session.BeginTransaction()) {
+                    return session.CreateSQLQuery(sql).List<string>();
+                }
+            }
+        }
 
         public IList<ItemSetAssociation> GetItemSetAssociations() {
             const string sql = @"SELECT BaseRecord, 
@@ -363,7 +394,7 @@ namespace IAGrim.Database {
 
         public IList<string> ListAllRecords() {
             using (ISession session = SessionCreator.OpenSession()) {
-                using (ITransaction transaction = session.BeginTransaction()) {
+                using (session.BeginTransaction()) {
                     return session.CreateCriteria<DatabaseItem>()
                         .SetProjection(Projections.Property("Record"))
                         .AddOrder(Order.Asc("Record"))

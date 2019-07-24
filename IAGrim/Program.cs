@@ -6,9 +6,7 @@ using IAGrim.Database;
 using IAGrim.Database.Interfaces;
 using IAGrim.Database.Migrations;
 using IAGrim.Database.Synchronizer;
-using IAGrim.Parsers.Arz;
 using IAGrim.Parsers.GameDataParsing.Service;
-using IAGrim.Properties;
 using IAGrim.UI;
 using IAGrim.UI.Misc.CEF;
 using IAGrim.Utilities;
@@ -19,12 +17,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
-using IAGrim.Settings;
-using IAGrim.Settings.Dto;
-
 
 namespace IAGrim
 {
@@ -32,7 +26,7 @@ namespace IAGrim
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(Program));
         private static MainWindow _mw;
-        private static StartupService startupService = new StartupService();
+        private static readonly StartupService StartupService = new StartupService();
 
 #if DEBUG
 
@@ -82,7 +76,7 @@ namespace IAGrim
             AzureUris.Initialize(AzureUris.EnvAzure);
 #endif
 
-            startupService.Init();
+            StartupService.Init();
 
 #if DEBUG
             Test();
@@ -169,7 +163,7 @@ namespace IAGrim
             // Settings should be upgraded early, it contains the language pack etc and some services depends on settings.
             var settingsService = StartupService.LoadSettingsService();
             IPlayerItemDao playerItemDao = new PlayerItemRepo(threadExecuter, factory);
-            StartupService.UpgradeSettings();
+            var statUpgradeNeeded = StartupService.UpgradeSettings();
             
             // X
             IDatabaseItemDao databaseItemDao = new DatabaseItemRepo(threadExecuter, factory);
@@ -246,7 +240,7 @@ namespace IAGrim
 
                 Logger.Info("Checking for database updates..");
 
-                startupService.PerformIconCheck(databaseSettingDao, grimDawnDetector);
+                StartupService.PerformIconCheck(databaseSettingDao, grimDawnDetector);
 
                 _mw.Visible = false;
                 if (new DonateNagScreen(settingsService).CanNag)

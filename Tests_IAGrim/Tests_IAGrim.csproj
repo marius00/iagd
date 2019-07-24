@@ -92,7 +92,6 @@
     <Compile Include="Dao\PlayerItemDaoTests.cs" />
     <Compile Include="ImportExport\IAImportTests.cs" />
     <Compile Include="ImportExport\GDImportTests.cs" />
-    <Compile Include="ParserTests\StastTabTests.cs" />
     <Compile Include="ProgressBarTests\ProgressBarTests.cs" />
     <Compile Include="SessionFactory.cs" />
     <Compile Include="TestItemInjectCallbackProcessor.cs" />

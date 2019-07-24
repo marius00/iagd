@@ -1,67 +1,39 @@
 ﻿using EvilsoftCommons;
-using EvilsoftCommons.Exceptions;
 using IAGrim.Database;
 using IAGrim.Database.Interfaces;
-using IAGrim.Properties;
-using IAGrim.Services;
 using IAGrim.StashFile;
 using IAGrim.Utilities;
-using IAGrim.Utilities.HelperClasses;
 using IAGrim.Utilities.RectanglePacker;
 using log4net;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using IAGrim.Parser.Stash;
+using IAGrim.Parsers.TransferStash;
 using IAGrim.Settings;
-using IAGrim.Settings.Dto;
 
 namespace IAGrim.Parsers.Arz {
     internal class TransferStashService {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(TransferStashService));
 
-        private readonly Action<string, string, string> _setFeedback;
-        private readonly Action _performedLootCallback;
-        private readonly IPlayerItemDao _playerItemDao;
         private readonly ItemSizeService _itemSizeService;
-        private readonly object _fileLock = new object();
-        private readonly SettingsService _settings;
-
-        private ConcurrentBag<Item> _unlootedItems = new ConcurrentBag<Item>();
-
-        /// <summary>
-        /// Used to prevent feedback spam, potentially overriding more important new information from other sources
-        /// </summary>
-        private bool _hasRecentlyUpdatedTimerFeedback;
-
-        public static bool HasLootedItemsOnceThisSession;
-
         public readonly int NumStashTabs;
+        private readonly SettingsService _settings;
+        private readonly SafeTransferStashWriter _stashWriter;
 
-        public IEnumerable<Item> UnlootedItems => _unlootedItems.ToList();
-
+        [Obsolete]
         public event EventHandler StashUpdated;
 
-        public TransferStashService(
-            IPlayerItemDao playerItemDao,
-            IDatabaseItemStatDao dbItemStatDao,
-            Action<string, string, string> setFeedback,
-            Action performedLootCallback, SettingsService settings) {
-            _playerItemDao = playerItemDao;
-            _itemSizeService = new ItemSizeService(dbItemStatDao);
-            _setFeedback = setFeedback;
-            _performedLootCallback = performedLootCallback;
+        public TransferStashService(IDatabaseItemStatDao dbItemStatDao, SettingsService settings, SafeTransferStashWriter stashWriter) {
             _settings = settings;
+            _stashWriter = stashWriter;
+            _itemSizeService = new ItemSizeService(dbItemStatDao);
 
             // TODO: Should also check for transfer.gsh and pick whichever is newest / has the highest number
             var path = Path.Combine(GlobalPaths.SavePath, "transfer.gst");
 
             if (!string.IsNullOrEmpty(path) && File.Exists(path)) {
-                UpdateUnlooted(path);
-
                 var pCrypto = new GDCryptoDataBuffer(DataBuffer.ReadBytesFromDisk(path));
                 var stash = new Stash();
 
@@ -71,132 +43,9 @@ namespace IAGrim.Parsers.Arz {
             }
         }
 
-        public bool TryLootStashFile(string filename) {
-            var secureTransfers = _settings.GetLocal().SecureTransfers ?? true;
-            lock (_fileLock) {
-                var isValid =
-                    (RuntimeSettings.StashStatus == StashAvailability.CLOSED && GrimStateTracker.IsFarFromStash) ||
-                    !secureTransfers;
-
-                if (RuntimeSettings.PreviousStashStatus == StashAvailability.CRAFTING) {
-                    Logger.Debug("Stash is now available for looting, but the previous state was crafting, no new items should have been added");
-
-                    return true;
-                }
-
-                if (!isValid) {
-                    if (!GrimStateTracker.IsFarFromStash) {
-                        if (!_hasRecentlyUpdatedTimerFeedback) {
-                            Logger.Info("Delaying stash loot, too close to stash. (this is to prevent item dupes on quick re-open)");
-                            _setFeedback("Info", RuntimeSettings.Language.GetTag("iatag_feedback_too_close_to_stash"), null);
-                        }
-
-                        _hasRecentlyUpdatedTimerFeedback = true;
-                    }
-                    else {
-                        if (!_hasRecentlyUpdatedTimerFeedback) {
-                            _setFeedback("Info", RuntimeSettings.Language.GetTag("iatag_feedback_delaying_stash_loot_status"), null);
-                            Logger.InfoFormat("Delaying stash loot, stash status {0}.", RuntimeSettings.StashStatus);
-                        }
-
-                        _hasRecentlyUpdatedTimerFeedback = true;
-                    }
-                }
-                else {
-                    _hasRecentlyUpdatedTimerFeedback = false;
-
-                    Logger.InfoFormat("Looting stash, IsStashOpen: {0}, IsFarFromStash: {1}",
-                        RuntimeSettings.StashStatus != StashAvailability.CLOSED, GrimStateTracker.IsFarFromStash);
-
-                    try {
-                        var message = EmptyPageX(filename);
-                        _setFeedback("Info", message, null);
-                    }
-                    catch (NullReferenceException ex) {
-                        Logger.Warn(ex.Message);
-                        Logger.Warn(ex.StackTrace);
-                        _setFeedback("Warning", RuntimeSettings.Language.GetTag("iatag_feedback_unable_to_loot_stash"), null);
-                    }
-                    catch (IOException ex) {
-                        Logger.Warn(ex.Message);
-                        Logger.Warn(ex.StackTrace);
-                        Logger.Info("Exception not reported, IOExceptions are bound to happen.");
-                        _setFeedback("Warning", RuntimeSettings.Language.GetTag("iatag_feedback_unable_to_loot_stash"), null);
-                    }
-                    catch (Exception ex) {
-                        Logger.Warn(ex.Message);
-                        Logger.Warn(ex.StackTrace);
-                        ExceptionReporter.ReportException(ex, "EmptyPageX??");
-                        _setFeedback("Warning", RuntimeSettings.Language.GetTag("iatag_feedback_unable_to_loot_stash"), null);
-                    }
-
-                    return true;
-                }
-
-                return false;
-            }
-        }
-
-        public void UpdateUnlooted(string filename) {
-            var pCrypto = new GDCryptoDataBuffer(DataBuffer.ReadBytesFromDisk(filename));
-            var stash = new Stash();
-
-            if (stash.Read(pCrypto)) {
-                // Update the internal listing of unlooted items (in stash tabs)
-                var unlootedLocal = new List<Item>();
-                foreach (var tab in stash.Tabs) {
-                    unlootedLocal.AddRange(tab.Items);
-                }
-
-                Interlocked.Exchange(ref _unlootedItems, new ConcurrentBag<Item>(unlootedLocal));
-            }
-        }
-
-        public void DeleteItemsInPageX(string filename) {
-            try {
-                var pCrypto = new GDCryptoDataBuffer(DataBuffer.ReadBytesFromDisk(filename));
-                var stash = new Stash();
-
-                if (stash.Read(pCrypto)) {
-                    int lootFromIndex;
-                    
-                    if (_settings.GetLocal().StashToLootFrom == 0) {
-                        lootFromIndex = stash.Tabs.Count - 1;
-                    }
-                    else {
-                        lootFromIndex = (int)_settings.GetLocal().StashToLootFrom - 1;
-                    }
-
-                    Logger.Debug($"Deleting all items in stash #{lootFromIndex}");
-
-                    if (stash.Tabs.Count >= lootFromIndex + 1
-                        && stash.Tabs[lootFromIndex].Items.Count > 0) {
-                        stash.Tabs[lootFromIndex].Items.Clear();
-                        SafelyWriteStash(filename, stash);
-                    }
-                }
-            }
-            catch (IOException ex) {
-                // Unfortunate, but not the end of the world.
-                Logger.Warn(ex);
-            }
-        }
-
-        public static int GetNumStashPages(string filename) {
-            if (File.Exists(filename)) {
-                var pCrypto = new GDCryptoDataBuffer(DataBuffer.ReadBytesFromDisk(filename));
-
-                var stash = new Stash();
-                if (stash.Read(pCrypto)) {
-                    return stash.Tabs.Count;
-                }
-            }
-
-            return 0;
-        }
-
-        private int GetStashToLootFrom(Stash stash) {
+        public int GetStashToLootFrom(Stash stash) {
             if (_settings.GetLocal().StashToLootFrom == 0) {
+
                 return stash.Tabs.Count - 1;
             }
 
@@ -209,116 +58,6 @@ namespace IAGrim.Parsers.Arz {
             }
             
             return (int)_settings.GetLocal().StashToDepositTo - 1;
-        }
-
-        /// <summary>
-        ///     Loot all the items stored on page X, and store them to the local database
-        /// </summary>
-        /// <param name="filename"></param>
-        private string EmptyPageX(string filename) {
-            Logger.InfoFormat("Looting {0}", filename);
-
-            var pCrypto = new GDCryptoDataBuffer(DataBuffer.ReadBytesFromDisk(filename));
-            var stash = new Stash();
-
-            if (stash.Read(pCrypto)) {
-                var lootFromIndex = GetStashToLootFrom(stash);
-                var isHardcore = GlobalPaths.IsHardcore(filename);
-
-#if DEBUG
-                if (stash.Tabs.Count < 5) {
-                    while (stash.Tabs.Count < 5) {
-                        stash.Tabs.Add(new StashTab());
-                    }
-
-                    SafelyWriteStash(filename, stash);
-                    Logger.Info("Upgraded stash to 5 pages.");
-
-                    return string.Empty;
-                }
-#endif
-
-                // Update the internal listing of unlooted items (in other stash tabs)
-                var unlootedLocal = new List<Item>();
-
-                for (var idx = 0; idx < stash.Tabs.Count; idx++) {
-                    if (idx != lootFromIndex) {
-                        unlootedLocal.AddRange(stash.Tabs[idx].Items);
-                    }
-                }
-
-                Interlocked.Exchange(ref _unlootedItems, new ConcurrentBag<Item>(unlootedLocal));
-                StashUpdated?.Invoke(null, null);
-
-                if (stash.Tabs.Count < 2) {
-                    Logger.WarnFormat($"File \"{filename}\" only contains {stash.Tabs.Count} pages. IA requires at least 2 stash pages to function properly.");
-                    return RuntimeSettings.Language.GetTag("iatag_not_enough_stash", filename, stash.Tabs.Count);
-                }
-
-                if (stash.Tabs.Count < lootFromIndex + 1) {
-                    Logger.Warn($"You have configured IA to loot from stash {lootFromIndex + 1} but you only have {stash.Tabs.Count} pages");
-                    return RuntimeSettings.Language.GetTag("iatag_invalid_loot_stash_number", lootFromIndex + 1, stash.Tabs.Count);
-                }
-
-                if (stash.Tabs[lootFromIndex].Items.Count > 0) {
-                    HasLootedItemsOnceThisSession = true;
-
-                    // Grab the items and clear the tab
-                    var items = stash.Tabs[lootFromIndex].Items
-                        .Where(m => m.StackCount <= 1)
-                        .Where(m => !_playerItemDao.Exists(Map(m, stash.ModLabel, isHardcore)))
-                        .ToList();
-                    var notLootedDueToStackSize = stash.Tabs[lootFromIndex].Items.Where(m => m.StackCount > 1).ToList();
-
-                    if (notLootedDueToStackSize.Count > 0) {
-                        notLootedDueToStackSize.ForEach(item => Logger.Debug($"NotLootedStacksize: {item}"));
-                        _setFeedback(
-                            "Warning", 
-                            RuntimeSettings.Language.GetTag("iatag_feedback_stacked_not_looted", notLootedDueToStackSize.Count),
-                            HelpService.GetUrl(HelpService.HelpType.NoStacks)
-                            );
-                    }
-
-                    var notLootedDueToDuplicate = stash.Tabs[lootFromIndex].Items.ToList();
-                    notLootedDueToDuplicate.RemoveAll(m => items.Contains(m) || m.StackCount > 1);
-
-                    if (notLootedDueToDuplicate.Count > 0) {
-                        notLootedDueToDuplicate.ForEach(item => Logger.Debug($"NotLootedDuplicate: {item}"));
-                        _setFeedback(
-                            "Warning",
-                            RuntimeSettings.Language.GetTag("iatag_feedback_duplicates_not_looted", notLootedDueToDuplicate.Count),
-                            HelpService.GetUrl(HelpService.HelpType.DuplicateItem)
-                        );
-                    }
-
-                    stash.Tabs[lootFromIndex].Items.RemoveAll(e => items.Any(m => m.Equals(e)));
-
-                    var storedItems = StoreItemsToDatabase(items, stash.ModLabel, isHardcore, stash.IsExpansion1);
-                    var message = RuntimeSettings.Language.GetTag("iatag_looted_from_stash", items.Count, lootFromIndex + 1);
-
-                    if (storedItems != null) {
-                        Logger.Info(message);
-
-                        // Delete items from IA if we failed to remove them from GD.
-                        if (!SafelyWriteStash(filename, stash)) {
-                            _playerItemDao.Remove(storedItems);
-                        }
-                    }
-
-                    _performedLootCallback();
-
-                    return message;
-                }
-
-                Logger.Info($"Looting of stash {lootFromIndex + 1} halted, no items available.");
-
-                return RuntimeSettings.Language.GetTag("iatag_feedback_no_items_to_loot");
-            }
-
-            Logger.Error("Could not load stash file.");
-            Logger.Error("An update from the developer is most likely required.");
-
-            return string.Empty;
         }
 
         public List<PlayerItem> EmptyStash(string filename) {
@@ -337,7 +76,7 @@ namespace IAGrim.Parsers.Arz {
                     tab.Items.Clear();
                 }
 
-                SafelyWriteStash(filename, stash); // TODO: Ideally we should check if it worked. 
+                _stashWriter.SafelyWriteStash(filename, stash); // TODO: Ideally we should check if it worked. 
                 Logger.InfoFormat("Looted {0} items from stash", items.Count);
 
                 return items.Select(m => Map(m, stash.ModLabel, isHardcore)).ToList();
@@ -372,46 +111,6 @@ namespace IAGrim.Parsers.Arz {
 
             result = string.Empty;
             return false;
-        }
-
-        /// <summary>
-        ///     Write the GD Stash file
-        /// </summary>
-        /// <param name="filename"></param>
-        /// <param name="stash"></param>
-        /// <returns></returns>
-        private bool SafelyWriteStash(string filename, Stash stash) {
-            try {
-                var tempName = $"{filename}.ia";
-
-                // Store the stash file in a temporary location
-                var dataBuffer = new DataBuffer();
-
-                stash.Write(dataBuffer);
-                DataBuffer.WriteBytesToDisk(tempName, dataBuffer.Data);
-
-                // Get the current backup number
-                var backupNumber = _settings.GetLocal().BackupNumber;
-                _settings.GetLocal().BackupNumber = (backupNumber + 1) % 100;
-
-                // Back up the existing stash and replace with new stash file
-                var backupLocation = Path.Combine(GlobalPaths.BackupLocation, $"transfer.{backupNumber:00}.gs_");
-                File.Copy(filename, backupLocation, true);
-                File.Copy(tempName, filename, true);
-
-                // Delete the temporary file
-                if (File.Exists(tempName)) {
-                    File.Delete(tempName);
-                }
-
-                return true;
-            }
-            catch (UnauthorizedAccessException ex) {
-                Logger.Warn(ex.Message);
-                Logger.Warn(ex.StackTrace);
-                ExceptionReporter.ReportException(ex, "SafelyWriteDatabase");
-                return false;
-            }
         }
 
         private Item GetItem(PlayerItem item) {
@@ -539,7 +238,7 @@ namespace IAGrim.Parsers.Arz {
                     }
 
                     // Store to stash
-                    if (!SafelyWriteStash(filename, stash)) {
+                    if (!_stashWriter.SafelyWriteStash(filename, stash)) {
                         Logger.Error("Could not deposit items");
                         throw new DepositException();
                     }
@@ -553,7 +252,7 @@ namespace IAGrim.Parsers.Arz {
             }
         }
 
-        private PlayerItem Map(Item item, string mod, bool isHardcore) {
+        public static PlayerItem Map(Item item, string mod, bool isHardcore) {
             return new PlayerItem {
                 BaseRecord = item.BaseRecord,
                 EnchantmentRecord = item.EnchantmentRecord,
@@ -572,7 +271,6 @@ namespace IAGrim.Parsers.Arz {
                 Mod = mod,
                 IsHardcore = isHardcore,
                 CreationDate = DateTime.UtcNow.ToTimestamp()
-                //IsExpansion1 = isExpansion1
             };
         }
 
@@ -593,33 +291,6 @@ namespace IAGrim.Parsers.Arz {
                 TransmuteRecord = item.TransmuteRecord,
                 UNKNOWN = (uint) item.UNKNOWN
             };
-        }
-
-        /// <summary>
-        /// Store all the items
-        ///  ----UNTRUE?: If an item cannot be stored (missing record), it is returned so it can be re-written to stash.
-        /// </summary>
-        /// <param name="items"></param>
-        /// <returns></returns>
-        private List<PlayerItem> StoreItemsToDatabase(ICollection<Item> items, string mod, bool isHardcore, bool isExpansion1) {
-            var playerItems = new List<PlayerItem>();
-
-            foreach (var item in items) {
-                var newItem = Map(item, mod, isHardcore);
-                playerItems.Add(newItem);
-            }
-
-            try {
-                _playerItemDao.Save(playerItems);
-            }
-            catch (Exception ex) {
-                Logger.Warn(ex.Message);
-                Logger.Warn(ex.StackTrace);
-                ExceptionReporter.ReportException(ex, "StoreItems");
-                return null;
-            }
-
-            return playerItems;
         }
     }
 }

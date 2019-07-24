@@ -67,7 +67,7 @@ namespace IAGrim.UI.Tabs {
             radioRelease.Checked = !_settings.GetPersistent().SubscribeExperimentalUpdates;
             cbDualComputer.Checked = _settings.GetPersistent().UsingDualComputer;
             cbShowAugments.Checked = _settings.GetPersistent().ShowAugmentsAsItems;
-
+            cbDeleteDuplicates.Checked = _settings.GetPersistent().DeleteDuplicates;
         }
 
         private void buttonViewBackups_Click(object sender, EventArgs e) {
@@ -93,20 +93,15 @@ namespace IAGrim.UI.Tabs {
 
         // create bindings and stick these into its own settings class
         // unit testable
-
-
-        private void buttonDonate_Click(object sender, EventArgs e) {
-            _controller.DonateNow();
-        }
-
+        
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
-                System.Diagnostics.Process.Start("https://discord.gg/bKWuaG7");
+                System.Diagnostics.Process.Start("https://discord.gg/vJHp4y");
         }
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e) {
-            Clipboard.SetText("https://discord.gg/bKWuaG7");
+            Clipboard.SetText("https://discord.gg/vJHp4y");
             _tooltipHelper.ShowTooltipForControl("Copied to clipboard", linkLabel1, TooltipHelper.TooltipLocation.TOP);
         }
 
@@ -172,6 +167,26 @@ namespace IAGrim.UI.Tabs {
 
         private void helpWhatIsTransferToAnyMod_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             HelpService.ShowHelp(HelpService.HelpType.TransferToAnyMod);
+        }
+
+        private void helpWhatIsUsingMultiplePc_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            HelpService.ShowHelp(HelpService.HelpType.MultiplePcs);
+        }
+
+        private void helpWhatIsDeleteDuplicates_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            HelpService.ShowHelp(HelpService.HelpType.DeleteDuplicates);
+        }
+
+        private void cbDeleteDuplicates_CheckedChanged(object sender, EventArgs e) {
+            _settings.GetPersistent().DeleteDuplicates = (sender as FirefoxCheckBox).Checked;
+        }
+
+        private void button1_Click(object sender, EventArgs e) {
+            _controller.DonateNow();
+        }
+
+        private void buttonPatreon_Click(object sender, EventArgs e) {
+            Process.Start("https://www.patreon.com/itemassistant");
         }
     }
 }

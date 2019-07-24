@@ -12,14 +12,12 @@ using IAGrim.Parsers;
 using IAGrim.Parsers.Arz;
 using IAGrim.Parsers.Arz.dto;
 using IAGrim.Parsers.GameDataParsing.Service;
-using IAGrim.Properties;
 using IAGrim.Services;
 using IAGrim.Services.MessageProcessor;
 using IAGrim.UI.Controller;
 using IAGrim.UI.Misc;
 using IAGrim.UI.Misc.CEF;
 using IAGrim.UI.Misc.CEF.Dto;
-using IAGrim.UI.Popups;
 using IAGrim.UI.Tabs;
 using IAGrim.Utilities;
 using IAGrim.Utilities.Cloud;
@@ -36,14 +34,15 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using DllInjector;
+using IAGrim.Parsers.TransferStash;
 using IAGrim.Settings;
-using IAGrim.Settings.Dto;
 
 namespace IAGrim.UI
 {
     public partial class MainWindow : Form {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(MainWindow));
-        readonly CefBrowserHandler _cefBrowserHandler;
+        private readonly CefBrowserHandler _cefBrowserHandler;
 
 
         private readonly ISettingsReadController _settingsController;
@@ -57,6 +56,8 @@ namespace IAGrim.UI
 
         private SplitSearchWindow _searchWindow;
         private TransferStashService _transferStashService;
+        private TransferStashWorker _transferStashWorker;
+        
         private BuddySettings _buddySettingsWindow;
         private StashFileMonitor _stashFileMonitor = new StashFileMonitor();
 
@@ -83,6 +84,7 @@ namespace IAGrim.UI
         private readonly AugmentationItemRepo _augmentationItemRepo;
         private AzureAuthService _authAuthService;
         private BackupServiceWorker _backupServiceWorker;
+        private readonly UserFeedbackService _userFeedbackService;
         private readonly SettingsService _settingsService;
         private readonly GrimDawnDetector _grimDawnDetector;
 
@@ -106,13 +108,11 @@ namespace IAGrim.UI
                 else if (e.ProgressPercentage == InjectionHelper.NO_PROCESS_FOUND_ON_STARTUP) {
                     if (RuntimeSettings.StashStatus == StashAvailability.UNKNOWN) {
                         RuntimeSettings.StashStatus = StashAvailability.CLOSED;
-                        RuntimeSettings.GrimDawnRunning = false; // V1.0.4.0 hotfix
                     }
                 }
                 // No grim dawn client, so stash is closed!
                 else if (e.ProgressPercentage == InjectionHelper.NO_PROCESS_FOUND) {
                     RuntimeSettings.StashStatus = StashAvailability.CLOSED;
-                    RuntimeSettings.GrimDawnRunning = false;// V1.0.4.0 hotfix
                 }
             }
         }
@@ -171,6 +171,7 @@ namespace IAGrim.UI
             _itemTagDao = itemTagDao;
             _parsingService = parsingService;
             _augmentationItemRepo = augmentationItemRepo;
+            _userFeedbackService = new UserFeedbackService(_cefBrowserHandler);
             _settingsService = settingsService;
             _grimDawnDetector = grimDawnDetector;
         }
@@ -247,16 +248,9 @@ namespace IAGrim.UI
                 return;
             }
 
-
             MessageType type = (MessageType)bt.Type;
-            
             foreach (IMessageProcessor t in _messageProcessors) {
                 t.Process(type, bt.Data);
-            }
-
-            if (!RuntimeSettings.GrimDawnRunning) {
-                Logger.Debug("GrimDawnRunning flag has been changed from false to true");
-                RuntimeSettings.GrimDawnRunning = true; // V1.0.4.0 hotfix   
             }
 
             switch (type) {
@@ -324,7 +318,7 @@ namespace IAGrim.UI
                 }
                 else {
                     statusLabel.Text = feedback.Replace("\\n", " - ");
-                    _cefBrowserHandler.ShowMessage(feedback, UserFeedbackLevel.Info, helpUrl);
+                    _userFeedbackService.SetFeedback(feedback, level, helpUrl);
                 }
             }
             catch (ObjectDisposedException) {
@@ -339,7 +333,7 @@ namespace IAGrim.UI
                 }
                 else {
                     statusLabel.Text = feedback.Replace("\\n", " - ");
-                    _cefBrowserHandler.ShowMessage(feedback, UserFeedbackLevel.Info);
+                    _userFeedbackService.SetFeedback(feedback);
                 }
             }
             catch (ObjectDisposedException) {
@@ -397,14 +391,19 @@ namespace IAGrim.UI
 
             ExceptionReporter.EnableLogUnhandledOnThread();
             SizeChanged += OnMinimizeWindow;
+            
+            
+            var cacher = new TransferStashServiceCache(_databaseItemDao);
+            _parsingService.OnParseComplete += (o, args) => cacher.Refresh();
 
-            _transferStashService = new TransferStashService(_playerItemDao, _databaseItemStatDao, SetFeedback, ListviewUpdateTrigger, _settingsService);
+            var stashWriter = new SafeTransferStashWriter(_settingsService);
+            _transferStashService = new TransferStashService(_databaseItemStatDao, _settingsService, stashWriter);
+            var transferStashService2 = new TransferStashService2(_playerItemDao, cacher, _transferStashService, stashWriter, _settingsService);
+            _transferStashWorker = new TransferStashWorker(transferStashService2, _userFeedbackService);
+
             _stashFileMonitor.OnStashModified += (_, __) => {
                 StashEventArg args = __ as StashEventArg;
-                if (_transferStashService != null && _transferStashService.TryLootStashFile(args?.Filename)) {
-                    // STOP TIMER
-                    _stashFileMonitor.CancelQueuedNotify();
-                } // TODO: This logic should be changed to 're queue' but only trigger once, if its slow it triggers multiple times.
+                _transferStashWorker.Queue(args?.Filename);
             };
 
             if (!_stashFileMonitor.StartMonitorStashfile(GlobalPaths.SavePath)) {
@@ -481,7 +480,12 @@ namespace IAGrim.UI
                 _searchWindow.UpdateListView();
             };
 
+            transferStashService2.OnUpdate += (_, __) => {
+                _searchWindow.UpdateListView();
+            };
+
             var languagePackPicker = new LanguagePackPicker(_itemTagDao, _playerItemDao, _parsingService, _settingsService);
+
             addAndShow(
                 new SettingsWindow(
                     _cefBrowserHandler,
@@ -542,7 +546,6 @@ namespace IAGrim.UI
             _messageProcessors.Add(new ItemPositionFinder(_dynamicPacker));
             _messageProcessors.Add(new PlayerPositionTracker(Debugger.IsAttached && false));
             _messageProcessors.Add(new StashStatusHandler());
-            _messageProcessors.Add(new ItemReceivedProcessor(_searchWindow, _stashFileMonitor, _playerItemDao));
             _messageProcessors.Add(new ItemInjectCallbackProcessor(_searchWindow.UpdateListViewDelayed, _playerItemDao));
             _messageProcessors.Add(new ItemSpawnedProcessor());
             _messageProcessors.Add(new CloudDetectorProcessor(SetFeedback));

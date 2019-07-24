@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.GameDataParsing.Model;
 using log4net;
-using log4net.Repository.Hierarchy;
 using MoreLinq;
 using NHibernate;
 using NHibernate.Criterion;
@@ -64,7 +61,8 @@ namespace IAGrim.Database.DAO {
                             Name = m.Name,
                             Tag = m.Tag.Replace("tagSkillClassName", "class")
                                 .Replace("tagGDX1Class07SkillName00A", "class07")
-                                .Replace("tagGDX1Class08SkillName00A", "class08") // TODO: A regex or similar to auto detect new classes?
+                                .Replace("tagGDX1Class08SkillName00A", "class08")
+                                .Replace("tagGDX2Class09SkillName00A", "class09") // TODO: A regex or similar to auto detect new classes?
                         })
                         .ToHashSet();
                 }

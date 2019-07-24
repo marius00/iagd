@@ -299,9 +299,6 @@ namespace StatTranslator
             { "iatag_html_augmentation_item", "You may be able to purchase this augment from {0}" },
             { "iatag_html_setbonus", "Set:" },
 
-            // TODO: Merge duplicates, regroup similar to a single one (ie. Language select/change/selection),
-            //       and regroup/reorder tags in blocks
-            // UI, IA Only
             { "iatag_ui_clean", "Clean Database" },
             { "iatag_ui_buddy_userid", "User ID: " },
             { "iatag_ui_buddy_userid_none", "None" },
@@ -320,6 +317,7 @@ namespace StatTranslator
             { "iatag_ui_no", "No" },
             { "iatag_ui_survivalmode", "The Crucible (DLC)" },
             { "iatag_ui_dualcomputer", "Using IA on multiple PCs" },
+            { "iatag_ui_deleteduplicates", "Delete bugged duplicates" },
             { "iatag_ui_backup_service_error", "The backup service is currently experiencing technical difficulties.\nPlease try again later." },
             { "iatag_ui_backup_status", "Backup status" },
             { "iatag_ui_backup_complete", "Backup complete!" },
@@ -462,8 +460,9 @@ namespace StatTranslator
             { "class06", "Shaman" },
             { "class07", "Inquisitor" },
             { "class08", "Necromancer" },
+            { "class09", "Oathkeeper" },
 
-            
+
             { "iatag_ui_questionmark", " ? " },
             { "iatag_ui_howdoifindgrimdawn", "How can I find the Grim Dawn install?" },
             { "iatag_ui_whatisthis", "What is this?" },
@@ -478,7 +477,6 @@ namespace StatTranslator
             { "iatag_deposit_stash_sorted", "Cannot deposit item, please open or close your stash in-game (stash was sorted)" },
             { "iatag_deposit_stash_unknown_tooltip", "Stash status is unknown, open & close stash in-game to resolve." },
             { "iatag_deposit_stash_unknown_feedback", "Cannot deposit item, please open and close your stash in-game" },
-            { "iatag_stash_hotfix_1_0_40_0_rejected", "Transfer rejected due to v1.0.40.0 hotfix - Either use instatransfer or close GrimDawn first" },
             { "iatag_deposit_pipe_success", "Item sent to GD" },
             { "iatag_file_does_not_exist", "The specified file does not exist" },
             { "iatag_file_not_zip", "Specified file is not a zip file!?" },
@@ -499,7 +497,7 @@ namespace StatTranslator
             { "iatag_invalid_deposit_stash_number", "You have configured IA to deposit to stash {0} but you only have {1} pages" },
             { "iatag_invalid_loot_stash_number", "You have configured IA to loot from stash {0} but you only have {1} pages" },
             { "iatag_stash_might_be_full", "Some items not deposited, stash {0} might be full." },
-            { "iatag_not_enough_stash", "File \"{0}\" only contains {1} pages. IA requires at least 2 pages to function properly." },
+            { "iatag_not_enough_stash", "Transfer Stash only contains {0} pages. IA requires at least 2 pages to function properly." },
             { "iatag_no_matching_items_found", "No matching items found" },
             { "iatag_additional_items_found", "An additional {0} items found from your friends" },
 
@@ -515,12 +513,14 @@ namespace StatTranslator
 
             { "iatag_feedback_already_logged_in", "You are already logged in" },
             { "iatag_feedback_too_close_to_stash", "Delaying stash loot - Standing too close to stash!" },
+            { "iatag_feedback_stash_position_unknown", "Cannot loot, stash position still unknown.." },
             { "iatag_feedback_delaying_stash_loot_status", "Waiting for stash to close.." },
             { "iatag_feedback_no_items_to_loot", "No items to loot in SHARED stash tab"},
             { "iatag_feedback_unable_to_loot_stash", "Unable to loot SHARED stash page."},
             { "iatag_feedback_item_does_not_exist", "Cannot deposit item, item does not appear to exist.. (ghost item)"},
             { "iatag_feedback_cloud_save_enabled_ingame", "WARNING - Grim Dawn Cloud saving is active." },
             { "iatag_feedback_stacked_not_looted", "{0} items were not looted due to being a stack" },
+            { "iatag_feedback_unknown_not_looted", "{0} items were not looted due to being unidentified" },
             { "iatag_feedback_duplicates_not_looted", "{0} items were not looted due to being possible duplicates (bugged items)" },
             { "iatag_feedback_unable_to_deposit", "An error occurred depositing items, check the logs." },
             

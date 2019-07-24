@@ -22,6 +22,7 @@ namespace IAGrim.Settings.Dto {
         private bool _transferAnyMod;
         private bool _autoUpdateModSettings;
         private bool _displaySkills;
+        private bool _deleteDuplicates;
 
         // Azure Backups
         private string _azureAuthToken;
@@ -133,5 +134,15 @@ namespace IAGrim.Settings.Dto {
                 OnMutate?.Invoke(null, null);
             }
         }
+
+        public bool DeleteDuplicates {
+            get => _deleteDuplicates;
+            set {
+                _deleteDuplicates = value;
+                OnMutate?.Invoke(null, null);
+            }
+        }
+
+        
     }
 }

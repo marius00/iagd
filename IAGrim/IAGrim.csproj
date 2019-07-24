@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.Net.Compilers.3.0.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.3.0.0\build\Microsoft.Net.Compilers.props')" />
   <Import Project="..\packages\CefSharp.WinForms.63.0.3\build\CefSharp.WinForms.props" Condition="Exists('..\packages\CefSharp.WinForms.63.0.3\build\CefSharp.WinForms.props')" />
   <Import Project="..\packages\CefSharp.Common.63.0.3\build\CefSharp.Common.props" Condition="Exists('..\packages\CefSharp.Common.63.0.3\build\CefSharp.Common.props')" />
   <Import Project="..\packages\cef.redist.x86.3.3239.1723\build\cef.redist.x86.props" Condition="Exists('..\packages\cef.redist.x86.3.3239.1723\build\cef.redist.x86.props')" />
@@ -46,6 +47,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -146,6 +148,9 @@
     <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
@@ -161,6 +166,10 @@
     <Compile Include="Backup\Azure\Dto\AzureLimitsDto.cs" />
     <Compile Include="Database\Model\ItemSetAssociation.cs" />
     <Compile Include="Database\Model\UnlootedStashItem.cs" />
+    <Compile Include="Parsers\TransferStash\SafeTransferStashWriter.cs" />
+    <Compile Include="Parsers\TransferStash\TransferStashService2.cs" />
+    <Compile Include="Parsers\TransferStash\TransferStashServiceCache.cs" />
+    <Compile Include="Parsers\TransferStash\TransferStashWorker.cs" />
     <Compile Include="Services\HelpService.cs" />
     <Compile Include="Settings\Dto\LocalSettings.cs" />
     <Compile Include="Settings\Dto\PersistentSettings.cs" />
@@ -169,6 +178,8 @@
     <Compile Include="StartupService.cs" />
     <Compile Include="UI\Controller\dto\ItemTypeDto.cs" />
     <Compile Include="UI\FilterEventArgs.cs" />
+    <Compile Include="UI\Misc\CEF\UserFeedback.cs" />
+    <Compile Include="UI\Misc\CEF\UserFeedbackService.cs" />
     <Compile Include="Utilities\AutomaticUpdateChecker.cs" />
     <Compile Include="Utilities\HelperClasses\IComboBoxItemToggle.cs" />
     <Compile Include="UI\Misc\CEF\CefRequestHandler.cs" />
@@ -325,7 +336,6 @@
     <Compile Include="Services\MessageProcessor\ItemInjectCallbackProcessor.cs" />
     <Compile Include="Services\MessageProcessor\ItemSpawnedProcessor.cs" />
     <Compile Include="Services\MessageProcessor\ItemPositionFinder.cs" />
-    <Compile Include="Services\MessageProcessor\ItemReceivedProcessor.cs" />
     <Compile Include="Services\MessageProcessor\PlayerPositionTracker.cs" />
     <Compile Include="Services\MessageProcessor\StashStatusHandler.cs" />
     <Compile Include="Theme\ComboBoxItem.cs" />
@@ -628,6 +638,7 @@
     <Content Include="Resources\login.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\Patreon_Navy.jpg" />
     <Content Include="Resources\static\assets\css\font-awesome.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -879,6 +890,7 @@
     <Error Condition="!Exists('..\packages\CefSharp.Common.63.0.3\build\CefSharp.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Common.63.0.3\build\CefSharp.Common.targets'))" />
     <Error Condition="!Exists('..\packages\CefSharp.WinForms.63.0.3\build\CefSharp.WinForms.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.WinForms.63.0.3\build\CefSharp.WinForms.props'))" />
     <Error Condition="!Exists('..\packages\CefSharp.WinForms.63.0.3\build\CefSharp.WinForms.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.WinForms.63.0.3\build\CefSharp.WinForms.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.3.0.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.3.0.0\build\Microsoft.Net.Compilers.props'))" />
   </Target>
   <PropertyGroup>
     <PreBuildEvent>xcopy /Y "$(SolutionDir)iagrim\Listdlls.exe" "$(TargetDir)"</PreBuildEvent>

@@ -17,5 +17,7 @@ namespace IAGrim.Database.Interfaces {
         List<DatabaseItemDto> GetCraftableItems();
         List<DatabaseItemDto> GetByClass(string itemClass);
         IList<ItemSetAssociation> GetItemSetAssociations();
+        IList<string> GetSpecialStackableRecords();
+        IList<string> GetStackableComponentsPotionsMisc();
     }
 }
