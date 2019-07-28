@@ -45,10 +45,11 @@ namespace IAGrim.Database {
 
 
         public void Save(IEnumerable<DatabaseItemStat> objs, ProgressTracker progressTracker) {
-            progressTracker.MaxValue = objs.Count();
+            var databaseItemStats = objs as DatabaseItemStat[] ?? objs.ToArray();
+            progressTracker.MaxValue = databaseItemStats.Length;
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
-                    foreach (var entry in objs) {
+                    foreach (var entry in databaseItemStats) {
                         session.Save(entry);
                         progressTracker.Increment();
                     }

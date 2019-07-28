@@ -97,11 +97,11 @@ namespace IAGrim.UI.Tabs {
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
-                System.Diagnostics.Process.Start("https://discord.gg/vJHp4y");
+                System.Diagnostics.Process.Start("https://discord.gg/5wuCPbB");
         }
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e) {
-            Clipboard.SetText("https://discord.gg/vJHp4y");
+            Clipboard.SetText("https://discord.gg/5wuCPbB");
             _tooltipHelper.ShowTooltipForControl("Copied to clipboard", linkLabel1, TooltipHelper.TooltipLocation.TOP);
         }
 

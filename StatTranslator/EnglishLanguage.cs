@@ -34,6 +34,7 @@ namespace StatTranslator
             // Simply Header stats
             { "offensivePierceRatioMin", "{0}% Armor Piercing"},
             { "defensiveProtection", "{0} Armor"},
+            { "defensiveStun", "{0}% Reduced Stun Duration" },
             { "skillChanceWeight", "{0}% Chance to be Used"},
             { "skillProjectileNumber", "{0} Projectile"},
             { "skillCooldownTime", "{0} Seconds Skill Recharge" },
