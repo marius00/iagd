@@ -42,7 +42,7 @@ namespace IAGrim.Parsers.TransferStash {
                 
                 var backupNumber = _settings.GetLocal().BackupNumber;
 
-                _settings.GetLocal().BackupNumber = (backupNumber + 1) % 100;
+                _settings.GetLocal().BackupNumber = (backupNumber + 1) % 1000;
 
                 // Back up the existing stash and replace with new stash file
                 var backupLocation = Path.Combine(GlobalPaths.BackupLocation, $"transfer.{backupNumber:00}.gs_");

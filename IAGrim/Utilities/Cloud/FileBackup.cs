@@ -22,12 +22,12 @@ namespace IAGrim.Utilities.Cloud {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(FileBackup));
         private Stopwatch _timer;
         private readonly CloudWatcher _provider = new CloudWatcher();
-        private readonly SettingsService settingsService;
+        private readonly SettingsService _settingsService;
         private readonly IPlayerItemDao _playerItemDao;
 
         public FileBackup(IPlayerItemDao playerItemDao, SettingsService settingsService) {
             this._playerItemDao = playerItemDao;
-            this.settingsService = settingsService;
+            this._settingsService = settingsService;
         }
 
         public void Update() {
@@ -45,19 +45,19 @@ namespace IAGrim.Utilities.Cloud {
             try {
                 List<string> paths = new List<string>();
                 
-                if (settingsService.GetLocal().BackupDropbox && _provider.Providers.Any(m => m.Provider == CloudProviderEnum.DROPBOX))
+                if (_settingsService.GetLocal().BackupDropbox && _provider.Providers.Any(m => m.Provider == CloudProviderEnum.DROPBOX))
                     paths.Add(_provider.Providers.First(m => m.Provider == CloudProviderEnum.DROPBOX).Location);
                 
-                if (settingsService.GetLocal().BackupGoogle && _provider.Providers.Any(m => m.Provider == CloudProviderEnum.GOOGLE_DRIVE))
+                if (_settingsService.GetLocal().BackupGoogle && _provider.Providers.Any(m => m.Provider == CloudProviderEnum.GOOGLE_DRIVE))
                     paths.Add(_provider.Providers.First(m => m.Provider == CloudProviderEnum.GOOGLE_DRIVE).Location);
                 
-                if (settingsService.GetLocal().BackupOnedrive && _provider.Providers.Any(m => m.Provider == CloudProviderEnum.ONEDRIVE))
+                if (_settingsService.GetLocal().BackupOnedrive && _provider.Providers.Any(m => m.Provider == CloudProviderEnum.ONEDRIVE))
                     paths.Add(_provider.Providers.First(m => m.Provider == CloudProviderEnum.ONEDRIVE).Location);
                 
                 // God knows what the user has inputted here... lets err on the safe side.
                 try {
-                    string customPath = settingsService.GetLocal().BackupCustomLocation;
-                    if (settingsService.GetLocal().BackupCustom && !string.IsNullOrEmpty(customPath)) {
+                    string customPath = _settingsService.GetLocal().BackupCustomLocation;
+                    if (_settingsService.GetLocal().BackupCustom && !string.IsNullOrEmpty(customPath)) {
                         if (!Directory.Exists(customPath))
                             Directory.CreateDirectory(customPath);
 
@@ -105,7 +105,7 @@ namespace IAGrim.Utilities.Cloud {
 #else
             var suffix = string.Empty;
 #endif
-            string target = Path.Combine(destination, string.Format("{0}{1}.zip", DateTime.Now.DayOfWeek, suffix));
+            string target = Path.Combine(destination, $"{DateTime.Now.DayOfWeek}{suffix}.zip");
 
             // If the file already exists and is newer than 3 days ('not written today'), just skip it.
             if (File.Exists(target) && !forced) {
@@ -129,18 +129,6 @@ namespace IAGrim.Utilities.Cloud {
                     exporter.Write(_playerItemDao.ListAll());
 
                     zip.AddFile(file.filename).FileName = "export.ias";
-
-                    /*
-                    try {
-                        // TODO: This is now redundant, but leaving it in here "for safety" until the IAS format has proven itself.
-                        zip.AddDirectory(GlobalPaths.UserdataFolder, "IAGD");
-                    }
-                    catch (Exception ex) {
-                        Logger.Warn(ex.Message);
-                        Logger.Warn(ex.StackTrace);
-                        ExceptionReporter.ReportException(ex);
-                    }*/
-
 
                     string helpfile = Path.Combine("Resources", "YES THIS FILE IS SUPPOSED TO BE SMALL.txt");
                     if (File.Exists(helpfile))

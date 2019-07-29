@@ -10,7 +10,8 @@ using log4net;
 namespace IAGrim.UI.Misc.CEF {
     public class UserFeedbackService {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(UserFeedbackService));
-        private List<LogHistoryEntry> _history = new List<LogHistoryEntry>();
+        private readonly List<LogHistoryEntry> _history = new List<LogHistoryEntry>();
+        private LogHistoryEntry _previousEntry;
         private readonly CefBrowserHandler _cefBrowserHandler;
 
         public UserFeedbackService(CefBrowserHandler cefBrowserHandler) {
@@ -30,26 +31,29 @@ namespace IAGrim.UI.Misc.CEF {
                         Logger.Info($"Feedback {entry.Message}");
                     }
 
-                    _history.Add(new LogHistoryEntry() {
+                    var stored = new LogHistoryEntry() {
                         Message = entry.Message,
-                        Timestamp = DateTime.UtcNow
-                    });
+                        Timestamp = DateTime.UtcNow.ToTimestamp()
+                    };
+
+                    _history.Add(stored);
+                    _previousEntry = stored;
                 }
             }
         }
 
         private bool IsRecent(UserFeedback entry) {
             ClearRecent();
-            return _history.Any(e => entry.Message == e.Message);
+            return _history.Any(e => entry.Message == e.Message) || entry.Message == _previousEntry?.Message;
         }
 
         private void ClearRecent() {
-            var cutoff = DateTime.UtcNow.ToTimestamp() - 3000;
-            _history.RemoveAll(entry => entry.Timestamp.ToTimestamp() < cutoff);
+            var cutoff = DateTime.UtcNow.ToTimestamp() - 4500;
+            _history.RemoveAll(entry => entry.Timestamp < cutoff);
         }
 
         class LogHistoryEntry {
-            public DateTime Timestamp { get; set; }
+            public long Timestamp { get; set; }
             public string Message { get; set; }
         }
 

@@ -25,8 +25,8 @@ namespace IAGrim.Settings {
         private SettingsService(SettingsTemplate data, string persistentStorage) {
             _data = data;
 
-            if (_data.Local.MachineName != Environment.MachineName) {
-                Logger.Warn($"Local settings are for {_data.Local.MachineName}, expected {Environment.MachineName}. Discarding local settings.");
+            if (_data.Local?.MachineName != Environment.MachineName) {
+                Logger.Warn($"Local settings are for {_data?.Local?.MachineName}, expected {Environment.MachineName}. Discarding local settings.");
                 _data.Local = new LocalSettings {
                     MachineName = Environment.MachineName
                 };
@@ -67,7 +67,10 @@ namespace IAGrim.Settings {
             if (File.Exists(filename)) {
                 try {
                     string json = File.ReadAllText(filename);
-                    return new SettingsService(JsonConvert.DeserializeObject<SettingsTemplate>(json, Settings), filename);
+                    var template = JsonConvert.DeserializeObject<SettingsTemplate>(json, Settings);
+                    if (template != null) {
+                        return new SettingsService(template, filename);
+                    }
                 }
                 catch (IOException ex) {
                     Logger.Error($"Error reading settings from {filename}, discarding settings.", ex);

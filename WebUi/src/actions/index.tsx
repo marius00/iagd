@@ -87,7 +87,7 @@ export function showMessage(message: string, level: NotificationLevel, url: stri
   return show(
     {
       message: message,
-      autoDismiss: 3.5,
+      autoDismiss: 5.0,
       dismissible: false,
       position: 'bc',
       action: action
