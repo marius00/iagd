@@ -595,6 +595,8 @@ namespace StatTranslator
             { "iatag_ui_gdstash", "GD Stash" },
             { "iatag_ui_iastash", "IA Stash" },
             { "iatag_ui_translation", "Item Assistant is available in your language! Go to settings and click \"Language\" to change to English." },
+            { "iatag_ui_database_modified_body", "The Grim Dawn database appears to have been modified.\nIf there has been a recent patch to Grim Dawn:\nGo to \"Database\\Mods\" and parse the database to discover new items and sets." },
+            { "iatag_ui_database_modified_title", "New patch?" },
 
             // These cannot currently be translated.
             // Once the injection code is moved back into the "core" IA, this should be possible.

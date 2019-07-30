@@ -139,6 +139,7 @@ namespace IAGrim.UI
                 // Store the loaded GD path, so we can poll it for updates later.
                 _settingsService.GetLocal().GrimDawnLocation = new List<string> { entry.Path };
                 _settingsService.GetLocal().GrimDawnLocationLastModified = ParsingService.GetHighestTimestamp(entry.Path);
+                _settingsService.GetLocal().HasWarnedGrimDawnUpdate = false;
             }
         }
 

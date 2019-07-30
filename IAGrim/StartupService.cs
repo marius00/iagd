@@ -11,10 +11,12 @@ using EvilsoftCommons.Exceptions;
 using IAGrim.Database;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.Arz;
+using IAGrim.Parsers.GameDataParsing.Service;
 using IAGrim.Settings;
 using IAGrim.Settings.Dto;
 using IAGrim.Utilities;
 using log4net;
+using NHibernate.Util;
 
 namespace IAGrim {
     public class StartupService {
@@ -181,32 +183,71 @@ namespace IAGrim {
             }
         }
 
-        public void PerformIconCheck(IDatabaseSettingDao databaseSettingDao, GrimDawnDetector grimDawnDetector) {
-            // Load the GD database (or mod, if any)
-            string gdPath = databaseSettingDao.GetCurrentDatabasePath();
-            if (string.IsNullOrEmpty(gdPath) || !Directory.Exists(gdPath)) {
-                gdPath = grimDawnDetector.GetGrimLocation();
-            }
-
-            if (!string.IsNullOrEmpty(gdPath) && Directory.Exists(gdPath)) {
-
-                var numFiles = Directory.GetFiles(GlobalPaths.StorageFolder).Length;
-                int numFilesExpected = 2100;
-                if (Directory.Exists(Path.Combine(gdPath, "gdx2"))) {
-                    numFilesExpected += 580;
+        public static void PerformGrimUpdateCheck(SettingsService settingsService) {
+            var location = settingsService.GetLocal().GrimDawnLocation.FirstOrNull()?.ToString();
+            var lastParsed = settingsService.GetLocal().GrimDawnLocationLastModified;
+            if (Directory.Exists(location)) {
+                if (lastParsed > 0) {
+                    var lastModified = ParsingService.GetHighestTimestamp(location);
+                    if (lastModified > lastParsed) {
+                        if (!settingsService.GetLocal().HasWarnedGrimDawnUpdate) {
+                            Logger.Info("Grim Dawn appears to have been updated since last parse, notifying end user.");
+                            var message = RuntimeSettings.Language.GetTag("iatag_ui_database_modified_body");
+                            var title = RuntimeSettings.Language.GetTag("iatag_ui_database_modified_title");
+                            settingsService.GetLocal().HasWarnedGrimDawnUpdate = true;
+                            MessageBox.Show(message, title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+                        else {
+                            Logger.Debug("Grim Dawn appears to have been updated since last parse, end user previously notified.");
+                        }
+                    }
+                    else {
+                        Logger.Debug("Grim dawn appears unmodified since last run, database up to date.");
+                    }
                 }
-                if (Directory.Exists(Path.Combine(gdPath, "gdx1"))) {
-                    numFilesExpected += 890;
+                else {
+                    Logger.Info("Last parsed entry for GD database is unset, skipping update check.");
+                    settingsService.GetLocal().GrimDawnLocationLastModified = ParsingService.GetHighestTimestamp(location);
                 }
-
-                if (numFiles < numFilesExpected) {
-                    Logger.Debug($"Only found {numFiles} in storage, expected ~{numFilesExpected}+, parsing item icons.");
-                    ThreadPool.QueueUserWorkItem((m) => ArzParser.LoadIconsOnly(gdPath));
-                }
-
             }
             else {
-                Logger.Warn("Could not find the Grim Dawn install location");
+                Logger.Info("Grim dawn install is unset, skipping update check.");
+            }
+        }
+
+        public void PerformIconCheck(IDatabaseSettingDao databaseSettingDao, GrimDawnDetector grimDawnDetector) {
+            try {
+                // Load the GD database (or mod, if any)
+                string gdPath = databaseSettingDao.GetCurrentDatabasePath();
+                if (string.IsNullOrEmpty(gdPath) || !Directory.Exists(gdPath)) {
+                    gdPath = grimDawnDetector.GetGrimLocation();
+                }
+
+                if (!string.IsNullOrEmpty(gdPath) && Directory.Exists(gdPath)) {
+
+                    var numFiles = Directory.GetFiles(GlobalPaths.StorageFolder).Length;
+                    int numFilesExpected = 2100;
+                    if (Directory.Exists(Path.Combine(gdPath, "gdx2"))) {
+                        numFilesExpected += 580;
+                    }
+
+                    if (Directory.Exists(Path.Combine(gdPath, "gdx1"))) {
+                        numFilesExpected += 890;
+                    }
+
+                    if (numFiles < numFilesExpected) {
+                        Logger.Debug($"Only found {numFiles} in storage, expected ~{numFilesExpected}+, parsing item icons.");
+                        ThreadPool.QueueUserWorkItem((m) => ArzParser.LoadIconsOnly(gdPath));
+                    }
+
+                }
+                else {
+                    Logger.Warn("Could not find the Grim Dawn install location");
+                }
+            }
+            catch (Exception ex) {
+                // Keep things moving, if icons are messed up its unfortunate, items should still be accessible.
+                Logger.Warn("Error parsing icons", ex);
             }
         }
     }

@@ -248,7 +248,7 @@ namespace IAGrim
 
                 Logger.Info("Running the main application..");
 
-
+                StartupService.PerformGrimUpdateCheck(settingsService);
                 Application.Run(_mw);
             }
 
