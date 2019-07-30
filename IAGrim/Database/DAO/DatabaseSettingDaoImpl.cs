@@ -12,6 +12,7 @@ namespace IAGrim.Database {
     /// Database class for handling internal Grim Dawn items
     /// These are not user owned items
     /// </summary>
+    [Obsolete]
     public class DatabaseSettingDaoImpl : BaseDao<DatabaseSetting>, IDatabaseSettingDao {
         private static ILog logger = LogManager.GetLogger(typeof(DatabaseSettingDaoImpl));
 
@@ -58,6 +59,7 @@ namespace IAGrim.Database {
         /// Mainly just for displaying the currently loaded mod (if any)
         /// </summary>
         /// <param name="path"></param>
+        [Obsolete]
         public void UpdateCurrentDatabase(string path) {
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {

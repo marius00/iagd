@@ -75,6 +75,7 @@ namespace IAGrim.UI
         private readonly IDatabaseItemStatDao _databaseItemStatDao;
         private readonly IPlayerItemDao _playerItemDao;
         private readonly IAzurePartitionDao _azurePartitionDao;
+        [Obsolete]
         private readonly IDatabaseSettingDao _databaseSettingDao;
         private readonly IBuddyItemDao _buddyItemDao;
         private readonly IBuddySubscriptionDao _buddySubscriptionDao;
@@ -466,7 +467,7 @@ namespace IAGrim.UI
             _authAuthService = new AzureAuthService(_cefBrowserHandler, new AuthenticationProvider(_settingsService));
             var backupSettings = new BackupSettings(_playerItemDao, _authAuthService, _settingsService);
             addAndShow(backupSettings, backupPanel);
-            addAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, _playerItemDao, _parsingService, _databaseSettingDao, _grimDawnDetector), modsPanel);
+            addAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, _playerItemDao, _parsingService, _databaseSettingDao, _grimDawnDetector, _settingsService), modsPanel);
             addAndShow(new HelpTab(), panelHelp);            
             addAndShow(new LoggingWindow(), panelLogging);
             var backupService = new BackupService(_authAuthService, _playerItemDao, _azurePartitionDao, () => _settingsService.GetPersistent().UsingDualComputer);

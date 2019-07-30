@@ -64,47 +64,20 @@ namespace IAGrim {
             List<string> paths = new List<string>();
             if (File.Exists(vdf)) {
                 dynamic config = VdfConvert.Deserialize(File.ReadAllText(vdf));
-                var root = config.Value.Software.Valve.Steam;
-
                 try {
+                    var root = config.Value.Software.valve.Steam;
+
                     paths.Add(root.BaseInstallFolder_1.Value.ToString());
-                }
-                catch (KeyNotFoundException) {
-                    Logger.Debug("Key #1 not found, stopping parse of steam config");
-                    return paths;
-                }
-
-                try {
                     paths.Add(root.BaseInstallFolder_2.Value.ToString());
-                }
-                catch (KeyNotFoundException) {
-                    Logger.Debug("Key #2 not found, stopping parse of steam config");
-                    return paths;
-                }
-
-                try {
                     paths.Add(root.BaseInstallFolder_3.Value.ToString());
-                }
-                catch (KeyNotFoundException) {
-                    Logger.Debug("Key #3 not found, stopping parse of steam config");
-                    return paths;
-                }
-
-                try {
                     paths.Add(root.BaseInstallFolder_4.Value.ToString());
-                }
-                catch (KeyNotFoundException) {
-                    Logger.Debug("Key #4 not found, stopping parse of steam config");
-                    return paths;
-                }
-
-                try {
                     paths.Add(root.BaseInstallFolder_5.Value.ToString());
                 }
                 catch (KeyNotFoundException) {
-                    Logger.Debug("Key #5 not found, stopping parse of steam config");
+                    Logger.Debug("Key not found, stopping parse of steam config");
                     return paths;
                 }
+
             }
             return paths;
         }

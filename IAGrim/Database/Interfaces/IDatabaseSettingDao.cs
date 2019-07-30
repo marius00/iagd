@@ -1,4 +1,7 @@
-﻿namespace IAGrim.Database.Interfaces {
+﻿using System;
+
+namespace IAGrim.Database.Interfaces {
+    [Obsolete]
     public interface IDatabaseSettingDao : IBaseDao<DatabaseSetting> {
         long GetLastDatabaseUpdate();
         void UpdateCurrentDatabase(string path);

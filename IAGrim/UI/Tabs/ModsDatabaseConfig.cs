@@ -9,6 +9,7 @@ using System.IO;
 using System.Windows.Forms;
 using IAGrim.Database.Synchronizer;
 using IAGrim.Services;
+using IAGrim.Settings;
 using IAGrim.Utilities;
 
 namespace IAGrim.UI
@@ -21,14 +22,19 @@ namespace IAGrim.UI
         private readonly IPlayerItemDao _playerItemDao;
         private readonly ParsingService _parsingService;
         private readonly DatabaseModSelectionService _databaseModSelectionService;
+        [Obsolete]
         private readonly IDatabaseSettingDao _databaseSettingRepo;
         private readonly GrimDawnDetector _grimDawnDetector;
+        private readonly SettingsService _settingsService;
 
         public ModsDatabaseConfig(
             Action itemViewUpdateTrigger, 
             IPlayerItemDao playerItemDao, 
             ParsingService parsingService,
-            IDatabaseSettingDao databaseSettingRepo, GrimDawnDetector grimDawnDetector)
+            IDatabaseSettingDao databaseSettingRepo, 
+            GrimDawnDetector grimDawnDetector, 
+            SettingsService settingsService
+            )
         {
             InitializeComponent();
             _itemViewUpdateTrigger = itemViewUpdateTrigger;
@@ -36,6 +42,7 @@ namespace IAGrim.UI
             _parsingService = parsingService;
             _databaseSettingRepo = databaseSettingRepo;
             _grimDawnDetector = grimDawnDetector;
+            _settingsService = settingsService;
             _databaseModSelectionService = new DatabaseModSelectionService();
         }
 
@@ -128,6 +135,10 @@ namespace IAGrim.UI
 
                 ForceDatabaseUpdate(entry.Path, mod?.Path);
                 _databaseSettingRepo.UpdateCurrentDatabase(entry.Path);
+
+                // Store the loaded GD path, so we can poll it for updates later.
+                _settingsService.GetLocal().GrimDawnLocation = new List<string> { entry.Path };
+                _settingsService.GetLocal().GrimDawnLocationLastModified = ParsingService.GetHighestTimestamp(entry.Path);
             }
         }
 

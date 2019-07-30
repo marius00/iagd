@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
+using EvilsoftCommons;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.GameDataParsing.Model;
 using IAGrim.Parsers.GameDataParsing.UI;
@@ -33,6 +35,25 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
             _databaseItemStatDao = databaseItemStatDao;
             _itemSkillDao = itemSkillDao;
             _localizationFile = localizationFile;
+        }
+
+        public static long GetHighestTimestamp(string install) {
+            List<string> arzFiles = new List<string> {
+                GrimFolderUtility.FindArzFile(install)
+            };
+
+            foreach (string path in GrimFolderUtility.GetGrimExpansionFolders(install)) {
+                string expansionItems = GrimFolderUtility.FindArzFile(path);
+
+                if (!string.IsNullOrEmpty(expansionItems)) {
+                    arzFiles.Add(GrimFolderUtility.FindArzFile(expansionItems));
+                }
+            }
+
+            return arzFiles
+                .Select(File.GetLastWriteTimeUtc)
+                .Select(ts => ts.ToTimestamp())
+                .Max();
         }
 
         public void Update(string install, string mod) {

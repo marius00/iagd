@@ -140,6 +140,7 @@ namespace IAGrim {
                 return SettingsService.Load(settingsFile);
             }
             else {
+                Logger.Info("No settings file found, creating new settings file from legacy settings.");
                 var p = Properties.Settings.Default;
                 var service = SettingsService.Load(settingsFile);
                 service.GetLocal().GrimDawnLocation = new List<string> { p.GrimDawnLocation };

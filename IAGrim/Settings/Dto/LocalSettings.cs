@@ -36,6 +36,8 @@ namespace IAGrim.Settings.Dto {
             }
         }
 
+        public long? _grimDawnLocationLastModified;
+
         public int BackupNumber {
             get => _backupNumber;
             set {
@@ -162,6 +164,14 @@ namespace IAGrim.Settings.Dto {
             get => _optOutOfBackups;
             set {
                 _optOutOfBackups = value;
+                OnMutate?.Invoke(null, null);
+            }
+        }
+
+        public long GrimDawnLocationLastModified {
+            get => _grimDawnLocationLastModified ?? 0;
+            set {
+                _grimDawnLocationLastModified = value;
                 OnMutate?.Invoke(null, null);
             }
         }
