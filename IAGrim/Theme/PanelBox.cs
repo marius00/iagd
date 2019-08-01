@@ -14,41 +14,35 @@ internal class PanelBox : ScrollableControl {
         this.AllowTransparent();
     }
 
-    private PointF _TextLocation = new PointF(8, 5);
+    private PointF _textLocation = new PointF(8, 5);
     public String TextLocation {
-        get {
-            return string.Format("{0}; {1}", _TextLocation.X, _TextLocation.Y);
-        }
+        get => $"{_textLocation.X}; {_textLocation.Y}";
         set {
             var values = value.Split(';');
             float x, y;
             if (values.Length == 2 && float.TryParse(values[0], out x) && float.TryParse(values[1], out y)) {
-                _TextLocation.X = x;
-                _TextLocation.Y = y;
+                _textLocation.X = x;
+                _textLocation.Y = y;
             }
             else {
-                _TextLocation.X = 0;
-                _TextLocation.Y = 0;
+                _textLocation.X = 0;
+                _textLocation.Y = 0;
             }
 
             Invalidate();
         }
     }
 
-    private int _HeaderHeight = 29;
+    private int _headerHeight = 29;
     public int HeaderHeight {
-        get {
-            return _HeaderHeight;
-        }
+        get => _headerHeight;
         set {
-            _HeaderHeight = value;
+            _headerHeight = value;
             Invalidate();
         }
     }
 
     public void PaintHook() {
-        //this.Font = new Font("Tahoma", 10f);
-        //this.ForeColor = Color.FromArgb(40, 40, 40);
         G.SmoothingMode = SmoothingMode.AntiAlias;
 
 
@@ -80,7 +74,7 @@ internal class PanelBox : ScrollableControl {
                     G.SmoothingMode = SmoothingMode.HighQuality;
                     //G.TextRenderingHint = TextRenderingHint.SingleBitPerPixelGridFit;
                     G.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
-                    G.DrawString(this.Text, this.Font, brush, _TextLocation);
+                    G.DrawString(this.Text, this.Font, brush, _textLocation);
                 }
 
             }
@@ -119,7 +113,7 @@ internal class PanelBox : ScrollableControl {
     }
 
 
-    protected sealed override void OnPaint(PaintEventArgs e) {
+    protected override void OnPaint(PaintEventArgs e) {
         if (this.Width != 0) {
             if (this.Height == 0) {
                 return;
@@ -136,31 +130,6 @@ internal class PanelBox : ScrollableControl {
             this.Invalidate();
         }
         base.OnSizeChanged(e);
-    }
-
-    protected void DrawCorners(Color c, Rectangle rect) {
-        if (this._NoRounding) {
-            return;
-        }
-        this.B.SetPixel(rect.X, rect.Y, c);
-        checked {
-            this.B.SetPixel(rect.X + (rect.Width - 1), rect.Y, c);
-            this.B.SetPixel(rect.X, rect.Y + (rect.Height - 1), c);
-            this.B.SetPixel(rect.X + (rect.Width - 1), rect.Y + (rect.Height - 1), c);
-        }
-    }
-
-    protected void DrawBorders(Pen p1, Pen p2, Rectangle rect) {
-        checked {
-            this.G.DrawRectangle(p1, rect.X, rect.Y, rect.Width - 1, rect.Height - 1);
-            this.G.DrawRectangle(p2, rect.X + 1, rect.Y + 1, rect.Width - 3, rect.Height - 3);
-        }
-    }
-
-    protected void DrawGradient(Color c1, Color c2, int x, int y, int width, int height, float angle) {
-        this._Rectangle = new Rectangle(x, y, width, height);
-        this._Gradient = new LinearGradientBrush(this._Rectangle, c1, c2, angle);
-        this.G.FillRectangle(this._Gradient, this._Rectangle);
     }
 }
 

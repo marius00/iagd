@@ -5,11 +5,11 @@ using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using IAGrim.Theme;
 
 namespace IAGrim.UI
 {
-    partial class DesiredSkills : Form
-    {
+    partial class DesiredSkills : AutoSizeForm {
         private readonly IItemTagDao _itemTagDao;
         private readonly Dictionary<string, FirefoxCheckBox> _classes;
 
@@ -143,8 +143,8 @@ namespace IAGrim.UI
                         {
                             $"offensive{damageType}",
                             $"offensive{damageType}Modifier",
-                            string.Format("offensiveElemental", damageType),
-                            string.Format("offensiveElementalModifier", damageType),
+                            "offensiveElemental",
+                            "offensiveElementalModifier",
                             $"offensiveSlow{damageType}",
                             $"offensiveSlow{damageType}Modifier"
                         });
@@ -403,7 +403,7 @@ namespace IAGrim.UI
             }
         }
 
-        private void ClearFilters(System.Windows.Forms.Control.ControlCollection coll)
+        private void ClearFilters(Control.ControlCollection coll)
         {
             foreach (Control c in coll)
             {

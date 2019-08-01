@@ -88,6 +88,13 @@ static class Helpers {
 
     }
 
+    public static void DrawCircle(Graphics G, Rectangle R, Color C) {
+        using (Pen P = new Pen(C)) {
+            G.DrawEllipse(P, R);
+        }
+
+    }
+
 
     public static void CenterStringTab(Graphics G, string text, Font font, Brush brush, Rectangle rect, bool shadow = false, int yOffset = 0) {
         SizeF textSize = G.MeasureString(text, font);

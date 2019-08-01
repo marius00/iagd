@@ -176,6 +176,12 @@
     <Compile Include="Settings\Dto\SettingsTemplate.cs" />
     <Compile Include="Settings\SettingsService.cs" />
     <Compile Include="StartupService.cs" />
+    <Compile Include="Theme\AutoSizeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Theme\CollapseablePanelBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\Controller\dto\ItemTypeDto.cs" />
     <Compile Include="UI\FilterEventArgs.cs" />
     <Compile Include="UI\Misc\CEF\UserFeedback.cs" />
@@ -629,6 +635,8 @@
     <EmbeddedResource Include="Database\Model\UnlootedStashItem.h_b_m.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <None Include="Resources\arrow.bmp" />
+    <None Include="Resources\arrow.png" />
     <Content Include="Resources\bootstrap-social.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
