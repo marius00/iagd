@@ -471,6 +471,7 @@ namespace StatTranslator
             { "iatag_no_stash_abort", "No stash chosen. Aborting transfer." },
             { "iatag_stash_status_error", "Could not inject into Grim Dawn, are you sure the bank is CLOSED?" },
             { "iatag_ui_recentonly", "Recent Only" },
+            { "iatag_ui_grants_skill", "Grants Skill" },
             { "iatag_stash3_failure", "Cannot deposit item, please ensure SHARED Stash tab is empty." },
             { "iatag_stash3_success", "Successfully deposited {0} out of {1} items" },
             { "iatag_deposit_stash_open", "Cannot deposit item, please close your stash in-game" },

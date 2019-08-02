@@ -141,7 +141,8 @@ namespace IAGrim.UI.Tabs
                 IsHardcore = transferFile.IsHardcore,
                 Classes = filters.DesiredClass,
                 SocketedOnly = filters.SocketedOnly,
-                RecentOnly = filters.RecentOnly
+                RecentOnly = filters.RecentOnly,
+                WithGrantSkillsOnly = filters.GrantsSkill
             };
 
             

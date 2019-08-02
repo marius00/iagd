@@ -17,6 +17,8 @@ namespace IAGrim.UI
 
         public bool RecentOnly { get; set; }
 
+        public bool GrantsSkill { get; set; }
+
         public List<string> DesiredClass { get; set; }
     }
 }
