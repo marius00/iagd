@@ -184,6 +184,36 @@
     </Compile>
     <Compile Include="UI\Controller\dto\ItemTypeDto.cs" />
     <Compile Include="UI\FilterEventArgs.cs" />
+    <Compile Include="UI\Filters\Classes.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Filters\Classes.Designer.cs">
+      <DependentUpon>Classes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Filters\Damage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Filters\Damage.Designer.cs">
+      <DependentUpon>Damage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Filters\DamageOverTime.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Filters\DamageOverTime.Designer.cs">
+      <DependentUpon>DamageOverTime.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Filters\Misc.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Filters\Misc.Designer.cs">
+      <DependentUpon>Misc.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Filters\Resistances.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Filters\Resistances.Designer.cs">
+      <DependentUpon>Resistances.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Misc\CEF\UserFeedback.cs" />
     <Compile Include="UI\Misc\CEF\UserFeedbackService.cs" />
     <Compile Include="Utilities\AutomaticUpdateChecker.cs" />
@@ -564,6 +594,21 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Filters\Classes.resx">
+      <DependentUpon>Classes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Filters\Damage.resx">
+      <DependentUpon>Damage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Filters\DamageOverTime.resx">
+      <DependentUpon>DamageOverTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Filters\Misc.resx">
+      <DependentUpon>Misc.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Filters\Resistances.resx">
+      <DependentUpon>Resistances.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Popups\ImportExport\ImportExportContainer.resx">
       <DependentUpon>ImportExportContainer.cs</DependentUpon>
