@@ -37,7 +37,8 @@ namespace IAGrim.Database {
             "levelRequirement", "itemSkillName", "skillDisplayName", "petSkillName", "buffSkillName",
             "characterBaseAttackSpeedTag", "conversionInType", "conversionOutType", "racialBonusRace", "itemText", "MasteryEnumeration",
 
-            "modifiedSkillName1", "modifiedSkillName2", "modifierSkillName1", "modifierSkillName2"
+            "modifiedSkillName1", "modifiedSkillName2", "modifierSkillName1", "modifierSkillName2",
+            "modifiedSkillName3", "modifiedSkillName4", "modifierSkillName3", "modifierSkillName4"
         };
 
         public DatabaseItemStatDaoImpl(ISessionCreator sessionCreator) : base(sessionCreator) {
@@ -100,6 +101,23 @@ namespace IAGrim.Database {
                 string result = session.CreateSQLQuery(sql)
                     .SetParameter("record", skillRecord)
                     .UniqueResult<string>();
+
+                
+                if (string.IsNullOrEmpty(result)) {
+                    // The skill actually triggers a buff, and the buff is the one containing the name.
+                    string deepQuery = sql.Replace(":record",
+                        $@" (SELECT {DatabaseItemStatTable.TextValue} FROM {DatabaseItemTable.Table} i, {DatabaseItemStatTable.Table} s
+	                        WHERE {DatabaseItemStatTable.Stat} = 'buffSkillName'
+	                        AND s.{DatabaseItemStatTable.Item} = i.{DatabaseItemTable.Id} 
+	                        AND i.{DatabaseItemTable.Record} = :record
+	                        LIMIT 1
+	                        )
+                    ");
+
+                    result = session.CreateSQLQuery(deepQuery)
+                        .SetParameter("record", skillRecord)
+                        .UniqueResult<string>();
+                }
 
                 return result;
             }

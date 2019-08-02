@@ -709,6 +709,16 @@ namespace IAGrim.Database {
                 queryFragments.Add($"PI.baserecord IN (SELECT PlayerItemRecord from ({ItemSkillDaoImpl.ListItemsQuery}) y)");
             }
 
+            if (query.WithSummonerSkillOnly) {
+                queryFragments.Add(@"PI.baserecord IN (SELECT p.baserecord as PlayerItemRecord
+                    from itemskill_v2 s, itemskill_mapping map, DatabaseItem_v2 db,  playeritem p, DatabaseItemStat_v2 stat  
+                    where s.id_skill = map.id_skill 
+                    and map.id_databaseitem = db.id_databaseitem  
+                    and db.baserecord = p.baserecord 
+                    and stat.id_databaseitem = s.id_databaseitem
+                    and stat.stat = 'spawnObjects')");
+            }
+
 
             List<string> sql = new List<string>();
             sql.Add($@"select name as Name, 

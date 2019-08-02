@@ -24,6 +24,8 @@
         /// </summary>
         private void InitializeComponent() {
             this.miscPanel = new IAGrim.Theme.CollapseablePanelBox();
+            this.cbSummonerSkill = new FirefoxCheckBox();
+            this.cbGrantsSkill = new FirefoxCheckBox();
             this.cbRecentOnly = new FirefoxCheckBox();
             this.cbSocketed = new FirefoxCheckBox();
             this.cbDuplicates = new FirefoxCheckBox();
@@ -39,7 +41,6 @@
             this.cbRunspeed = new FirefoxCheckBox();
             this.cbDefense = new FirefoxCheckBox();
             this.exp = new FirefoxCheckBox();
-            this.cbGrantsSkill = new FirefoxCheckBox();
             this.miscPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -47,6 +48,7 @@
             // 
             this.miscPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.miscPanel.Controls.Add(this.cbSummonerSkill);
             this.miscPanel.Controls.Add(this.cbGrantsSkill);
             this.miscPanel.Controls.Add(this.cbRecentOnly);
             this.miscPanel.Controls.Add(this.cbSocketed);
@@ -68,11 +70,43 @@
             this.miscPanel.Location = new System.Drawing.Point(3, 3);
             this.miscPanel.Name = "miscPanel";
             this.miscPanel.NoRounding = false;
-            this.miscPanel.Size = new System.Drawing.Size(293, 570);
+            this.miscPanel.Size = new System.Drawing.Size(293, 606);
             this.miscPanel.TabIndex = 40;
             this.miscPanel.Tag = "iatag_ui_misc";
             this.miscPanel.Text = "Misc";
             this.miscPanel.TextLocation = "8; 5";
+            // 
+            // cbSummonerSkill
+            // 
+            this.cbSummonerSkill.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbSummonerSkill.Bold = false;
+            this.cbSummonerSkill.EnabledCalc = true;
+            this.cbSummonerSkill.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbSummonerSkill.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbSummonerSkill.Location = new System.Drawing.Point(3, 571);
+            this.cbSummonerSkill.Name = "cbSummonerSkill";
+            this.cbSummonerSkill.Size = new System.Drawing.Size(272, 27);
+            this.cbSummonerSkill.TabIndex = 16;
+            this.cbSummonerSkill.Tag = "iatag_ui_grants_summon_skill";
+            this.cbSummonerSkill.Text = "Grants Summon Skill";
+            this.cbSummonerSkill.UseVisualStyleBackColor = true;
+            // 
+            // cbGrantsSkill
+            // 
+            this.cbGrantsSkill.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbGrantsSkill.Bold = false;
+            this.cbGrantsSkill.EnabledCalc = true;
+            this.cbGrantsSkill.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbGrantsSkill.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbGrantsSkill.Location = new System.Drawing.Point(3, 538);
+            this.cbGrantsSkill.Name = "cbGrantsSkill";
+            this.cbGrantsSkill.Size = new System.Drawing.Size(272, 27);
+            this.cbGrantsSkill.TabIndex = 15;
+            this.cbGrantsSkill.Tag = "iatag_ui_grants_skill";
+            this.cbGrantsSkill.Text = "Grants Skill";
+            this.cbGrantsSkill.UseVisualStyleBackColor = true;
             // 
             // cbRecentOnly
             // 
@@ -302,29 +336,13 @@
             this.exp.Tag = "iatag_ui_experience";
             this.exp.Text = "Experience";
             // 
-            // cbGrantsSkill
-            // 
-            this.cbGrantsSkill.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbGrantsSkill.Bold = false;
-            this.cbGrantsSkill.EnabledCalc = true;
-            this.cbGrantsSkill.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cbGrantsSkill.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbGrantsSkill.Location = new System.Drawing.Point(3, 538);
-            this.cbGrantsSkill.Name = "cbGrantsSkill";
-            this.cbGrantsSkill.Size = new System.Drawing.Size(272, 27);
-            this.cbGrantsSkill.TabIndex = 15;
-            this.cbGrantsSkill.Tag = "iatag_ui_grants_skill";
-            this.cbGrantsSkill.Text = "Grants Skill";
-            this.cbGrantsSkill.UseVisualStyleBackColor = true;
-            // 
             // Misc
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.miscPanel);
             this.Name = "Misc";
-            this.Size = new System.Drawing.Size(299, 576);
+            this.Size = new System.Drawing.Size(299, 612);
             this.Load += new System.EventHandler(this.Misc_Load);
             this.miscPanel.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -350,5 +368,6 @@
         private FirefoxCheckBox cbDefense;
         private FirefoxCheckBox exp;
         private FirefoxCheckBox cbGrantsSkill;
+        private FirefoxCheckBox cbSummonerSkill;
     }
 }

@@ -30,6 +30,8 @@ namespace IAGrim.Database.Dto {
         /// </summary>
         public bool WithGrantSkillsOnly { get; set; }
 
+        public bool WithSummonerSkillOnly { get; set; }
+
         public bool IsEmpty {
             get {
                 if (!String.IsNullOrEmpty(Wildcard))

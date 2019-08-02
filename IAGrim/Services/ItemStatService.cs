@@ -123,22 +123,24 @@ namespace IAGrim.Services {
         private void ApplyMythicalBonuses(List<PlayerHeldItem> items) {
             var itemsWithXpacStat = items.Where(m => m.Tags.Any(s => s.Stat == "modifiedSkillName1"));
             foreach (var item in itemsWithXpacStat) {
-                var affectedSkill = item.Tags.FirstOrDefault(m => m.Stat == "modifiedSkillName1");
-                var recordForStats = item.Tags.FirstOrDefault(m => m.Stat == "modifierSkillName1")?.TextValue;
+                for (int i = 0; i < 5; i++) {
+                    var affectedSkill = item.Tags.FirstOrDefault(m => m.Stat == $"modifiedSkillName{i}");
+                    var recordForStats = item.Tags.FirstOrDefault(m => m.Stat == $"modifierSkillName{i}")?.TextValue;
 
-                if (recordForStats == null || !_xpacSkills.ContainsKey(recordForStats)) {
-                    Logger.Warn($"Could not find stats for the skill {recordForStats}");
-                    continue;
-                }
+                    if (recordForStats == null || !_xpacSkills.ContainsKey(recordForStats)) {
+                        continue;
+                    }
 
-                var name = affectedSkill?.TextValue;
-                if (!string.IsNullOrEmpty(name)) {
-                    name = _databaseItemStatDao.GetSkillName(name);
+                    var name = affectedSkill?.TextValue;
+                    if (!string.IsNullOrEmpty(name)) {
+                        name = _databaseItemStatDao.GetSkillName(name);
+                    }
+
+                    item.ModifiedSkills.Add(new SkillModifierStat {
+                        Tags = _xpacSkills[recordForStats],
+                        Name = name
+                    });
                 }
-                item.ModifiedSkills.Add(new SkillModifierStat {
-                    Tags = _xpacSkills[recordForStats],
-                    Name = name
-                });
             }
         }
 

@@ -142,7 +142,8 @@ namespace IAGrim.UI.Tabs
                 Classes = filters.DesiredClass,
                 SocketedOnly = filters.SocketedOnly,
                 RecentOnly = filters.RecentOnly,
-                WithGrantSkillsOnly = filters.GrantsSkill
+                WithGrantSkillsOnly = filters.GrantsSkill,
+                WithSummonerSkillOnly = filters.WithSummonerSkillOnly
             };
 
             

@@ -23,6 +23,7 @@ namespace IAGrim.UI.Filters {
         public bool PetBonuses => cbPetBonuses.Checked;
         public bool RecentOnly => cbRecentOnly.Checked;
         public bool GrantsSkill => cbGrantsSkill.Checked;
+        public bool WithSummonerSkillOnly => cbSummonerSkill.Checked;
 
         public List<string[]> Filters {
             get {

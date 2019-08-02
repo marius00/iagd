@@ -19,6 +19,8 @@ namespace IAGrim.UI
 
         public bool GrantsSkill { get; set; }
 
+        public bool WithSummonerSkillOnly { get; set; }
+
         public List<string> DesiredClass { get; set; }
     }
 }

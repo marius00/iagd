@@ -57,7 +57,8 @@ namespace IAGrim.UI
                 SocketedOnly = _miscFilter.SocketedOnly,
                 RecentOnly = _miscFilter.RecentOnly,
                 DesiredClass = _classesFilters.DesiredClasses,
-                GrantsSkill = _miscFilter.GrantsSkill
+                GrantsSkill = _miscFilter.GrantsSkill,
+                WithSummonerSkillOnly = _miscFilter.WithSummonerSkillOnly
             };
 
         public event EventHandler<FilterEventArgs> OnChanged;

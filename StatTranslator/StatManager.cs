@@ -758,6 +758,8 @@ namespace StatTranslator
             AddSimpleStat("offensiveTauntMin", "customtag_xpac_modif_offensiveTaunt", stats, skill, result);
             AddSimpleStat("characterOffensiveAbilityModifier", "customtag_xpac_modif_offensiveAbilityBuff", stats, skill, result);
             AddSimpleStat("retaliationTotalDamageModifier", "customtag_xpac_modif_retaliationTotalDamageModifier", stats, skill, result);
+            AddSimpleStat("characterAttackSpeedModifier", "customtag_xpac_modif_characterAttackSpeedModifier", stats, skill, result);
+            // 
 
             var projectileLaunchNumber = stats.FirstOrDefault(m => m.Stat == "projectileLaunchNumber");
             if (projectileLaunchNumber != null)
