@@ -25,6 +25,11 @@ namespace IAGrim.Database.Dto {
 
         public bool RecentOnly { get; set; }
 
+        /// <summary>
+        /// Items which grants a skill that can be placed on the hotbar and triggered.
+        /// </summary>
+        public bool WithGrantSkillsOnly { get; set; }
+
         public bool IsEmpty {
             get {
                 if (!String.IsNullOrEmpty(Wildcard))

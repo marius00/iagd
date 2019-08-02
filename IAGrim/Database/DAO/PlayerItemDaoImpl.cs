@@ -659,7 +659,7 @@ namespace IAGrim.Database {
             
             if (!string.IsNullOrEmpty(query.Wildcard)) {
                 queryFragments.Add("LOWER(PI.namelowercase) LIKE :name");
-                queryParams.Add("name", string.Format("%{0}%", query.Wildcard.Replace(' ', '%').ToLower()));
+                queryParams.Add("name", $"%{query.Wildcard.Replace(' ', '%').ToLower()}%");
             }
 
             // Filter by mod/hc
@@ -670,7 +670,6 @@ namespace IAGrim.Database {
                 queryFragments.Add("PI.IsHardcore");
             else
                 queryFragments.Add("NOT PI.IsHardcore");
-
 
             if (!string.IsNullOrEmpty(query.Rarity)) {
                 queryFragments.Add("PI.Rarity = :rarity");
@@ -702,6 +701,13 @@ namespace IAGrim.Database {
             if (query.RecentOnly) {
                 queryFragments.Add("created_at > :filter_recentOnly");
                 queryParams.Add("filter_recentOnly", DateTime.UtcNow.AddHours(-12).ToTimestamp());
+            }
+
+            // Only items which grants new skills
+            if (query.WithGrantSkillsOnly || true) {
+                // TODO: Are there any prefixes or suffixes which grants skills?
+                queryFragments.Add($"PI.baserecord IN (SELECT PlayerItemRecord from ({ItemSkillDaoImpl.ListItemsQuery}) y)");
+                
             }
 
 

@@ -13,6 +13,21 @@ namespace IAGrim.Database.DAO {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ItemSkillDaoImpl));
         private readonly ISessionCreator _sessionCreator;
 
+        // TODO: Store this query elsewhere? Unfortunate dependency.
+        public static readonly string ListItemsQuery = string.Join(" ",
+            $"SELECT p.{PlayerItemTable.Record} as PlayerItemRecord, ",
+            $"s.{SkillTable.Description}, ",
+            $"s.{SkillTable.Level}, ",
+            $"s.{SkillTable.Name}, ",
+            $"s.{SkillTable.Trigger} as TriggerRecord, ",
+            $"s.{SkillTable.StatsId} as StatsId, ",
+            $"s.{SkillTable.Record} as Record",
+            $"from {SkillTable.Table} s, {SkillMappingTable.Table} map, {DatabaseItemTable.Table} db, {PlayerItemTable.Table} p ",
+            $"where s.{SkillTable.Id} = map.{SkillMappingTable.Skill} ",
+            $"and map.{SkillMappingTable.Item} = db.{DatabaseItemTable.Id} ",
+            $"and db.{DatabaseItemTable.Record} = p.{PlayerItemTable.Record} "
+        );
+
         public ItemSkillDaoImpl(ISessionCreator sessionCreator) {
             _sessionCreator = sessionCreator;
         }
@@ -63,26 +78,9 @@ namespace IAGrim.Database.DAO {
         }
 
         public IList<PlayerItemSkill> List() {
-            var sql =
-                string.Join(" ",
-                    $"SELECT p.{PlayerItemTable.Record} as PlayerItemRecord, ",
-                    $"s.{SkillTable.Description}, ",
-                    $"s.{SkillTable.Level}, ",
-                    $"s.{SkillTable.Name}, ",
-                    $"s.{SkillTable.Trigger} as TriggerRecord, ",
-                    $"s.{SkillTable.StatsId} as StatsId, ",
-                    $"s.{SkillTable.Record} as Record",
-                    $"from {SkillTable.Table} s, {SkillMappingTable.Table} map, {DatabaseItemTable.Table} db, {PlayerItemTable.Table} p ",
-                    $"where s.{SkillTable.Id} = map.{SkillMappingTable.Skill} ",
-                    $"and map.{SkillMappingTable.Item} = db.{DatabaseItemTable.Id} ",
-                    $"and db.{DatabaseItemTable.Record} = p.{PlayerItemTable.Record} "
-            );
-
-            Logger.Debug(sql);
-            
             using (ISession session = _sessionCreator.OpenSession()) {
-                using (ITransaction transaction = session.BeginTransaction()) {
-                    return session.CreateSQLQuery(sql)
+                using (session.BeginTransaction()) {
+                    return session.CreateSQLQuery(ListItemsQuery)
                         .SetResultTransformer(Transformers.AliasToBean<PlayerItemSkill>())
                         .List<PlayerItemSkill>();
                 }

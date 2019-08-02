@@ -36,8 +36,8 @@ namespace IAGrim.Theme {
             }
         }
 
-        public void ToggleState() {
-            _panelState = _panelState == PanelState.Expanded ? PanelState.Collapsed : PanelState.Expanded;
+        public void SetState(PanelState state) {
+            _panelState = state;
             _arrow = _panelState == PanelState.Collapsed ? _arrowImageUp : _arrowImageDown;
 
             if (_panelState == PanelState.Collapsed) {
@@ -49,6 +49,10 @@ namespace IAGrim.Theme {
             }
 
             OnSizeChanged(EventArgs.Empty);
+        }
+
+        public void ToggleState() {
+            SetState(_panelState == PanelState.Expanded ? PanelState.Collapsed : PanelState.Expanded);
         }
 
         protected override void OnMouseUp(MouseEventArgs e) {

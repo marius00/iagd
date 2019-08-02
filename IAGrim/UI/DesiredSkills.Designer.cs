@@ -109,7 +109,7 @@
             this.miscPanel.Tag = "iatag_ui_misc";
             this.miscPanel.Text = "Misc";
             this.miscPanel.TextLocation = "8; 5";
-            this.miscPanel.ToggleState();
+
             // 
             // cbRecentOnly
             // 
@@ -551,7 +551,7 @@
             this.dotPanel.Tag = "iatag_ui_dot";
             this.dotPanel.Text = "Damage over Time";
             this.dotPanel.TextLocation = "8; 5";
-            this.dotPanel.ToggleState();
+
             // 
             // cbLifeLeech
             // 

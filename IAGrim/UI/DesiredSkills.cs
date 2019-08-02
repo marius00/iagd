@@ -382,6 +382,9 @@ namespace IAGrim.UI
             };
 
             InitControlsRecursive(Controls);
+
+            dotPanel.ToggleState();
+            miscPanel.ToggleState();
         }
 
         private void InitControlsRecursive(Control.ControlCollection coll)
