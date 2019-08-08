@@ -19,6 +19,7 @@ namespace IAGrim.Parsers.Arz {
 
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public bool StartMonitorStashfile(string path) {
+            Logger.Debug($"Activating monitor for save path \"{path}\"");
             if (!string.IsNullOrEmpty(path) && Directory.Exists(path)) {
 
                 _watcher = new FileSystemWatcher();
@@ -33,6 +34,14 @@ namespace IAGrim.Parsers.Arz {
 
                 Logger.InfoFormat("Monitoring stashfiles at: {0}", _watcher.Path);
                 return true;
+            }
+            else {
+                if (string.IsNullOrEmpty(path)) {
+                    Logger.Warn("Attempted to run IA with stash path being null or empty.");
+                }
+                else {
+                    Logger.Warn($"Attempted to run IA but the directory \"{path}\" does not appear to exist.");
+                }
             }
 
             return false;

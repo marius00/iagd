@@ -124,6 +124,7 @@ namespace IAGrim
             }
 
             Logger.Info("IA Exited");
+            LogManager.Shutdown();
         }
 
 

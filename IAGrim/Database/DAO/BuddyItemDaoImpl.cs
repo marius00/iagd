@@ -9,6 +9,7 @@ using NHibernate.Transform;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using IAGrim.Database.DAO;
 
 namespace IAGrim.Database
 {
@@ -469,6 +470,22 @@ namespace IAGrim.Database
                     AND db.{DatabaseItemTable.Id} = dbs.{DatabaseItemStatTable.Item})"
                 );
                 queryParamsList.Add("class", query.Slot);
+            }
+
+            // Only items which grants new skills
+            if (query.WithGrantSkillsOnly) {
+                // TODO: Are there any prefixes or suffixes which grants skills?
+                queryFragments.Add($"{BuddyItemsTable.BaseRecord} IN (SELECT PlayerItemRecord from ({ItemSkillDaoImpl.ListItemsQuery}) y)");
+            }
+
+            if (query.WithSummonerSkillOnly) {
+                queryFragments.Add($@"{BuddyItemsTable.BaseRecord} IN (SELECT p.baserecord as PlayerItemRecord
+                    from itemskill_v2 s, itemskill_mapping map, DatabaseItem_v2 db,  playeritem p, DatabaseItemStat_v2 stat  
+                    where s.id_skill = map.id_skill 
+                    and map.id_databaseitem = db.id_databaseitem  
+                    and db.baserecord = p.baserecord 
+                    and stat.id_databaseitem = s.id_databaseitem
+                    and stat.stat = 'spawnObjects')");
             }
 
             if (queryFragments.Count > 0) {

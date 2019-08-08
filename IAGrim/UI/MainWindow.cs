@@ -411,6 +411,8 @@ namespace IAGrim.UI
                 MessageBox.Show("Ooops!\nIt seems you are synchronizing your saves to steam cloud..\nThis tool is unfortunately not compatible.\n");
                 HelpService.ShowHelp(HelpService.HelpType.CloudSavesEnabled);
 
+                Logger.Warn("Shutting down IA, unable to monitor stash files.");
+
                 if (!Debugger.IsAttached)
                     Close();
             }
