@@ -9,100 +9,112 @@ using IAGrim.Database.Dto;
 
 namespace IAGrim.Database.Synchronizer {
     class PlayerItemRepo : BasicSynchronizer<PlayerItem>, IPlayerItemDao {
-        private readonly IPlayerItemDao repo;
+        private readonly IPlayerItemDao _repo;
         public PlayerItemRepo(ThreadExecuter threadExecuter, ISessionCreator sessionCreator) : base(threadExecuter, sessionCreator) {
-            this.repo = new PlayerItemDaoImpl(sessionCreator, new DatabaseItemStatDaoImpl(sessionCreator));
-            this.BaseRepo = repo;
+            this._repo = new PlayerItemDaoImpl(sessionCreator, new DatabaseItemStatDaoImpl(sessionCreator));
+            this.BaseRepo = _repo;
         }
 
         public void Import(List<PlayerItem> items) {
             ThreadExecuter.Execute(
-                () => repo.Import(items)
+                () => _repo.Import(items)
             );
         }
 
         public int ClearItemsMarkedForOnlineDeletion() {
             return ThreadExecuter.Execute(
-                () => repo.ClearItemsMarkedForOnlineDeletion()
+                () => _repo.ClearItemsMarkedForOnlineDeletion()
+            );
+        }
+
+        public void ResetOnlineSyncState() {
+            ThreadExecuter.Execute(
+                () => _repo.ResetOnlineSyncState()
             );
         }
 
         public void Delete(List<AzureItemDeletionDto> items) {
             ThreadExecuter.Execute(
-                () => repo.Delete(items)
+                () => _repo.Delete(items)
             );
         }
 
         public Dictionary<string, int> GetCountByRecord(string mod) {
             return ThreadExecuter.Execute(
-                () => repo.GetCountByRecord(mod)
+                () => _repo.GetCountByRecord(mod)
             );
         }
 
         public IList<PlayerItem> GetByRecord(string prefixRecord, string baseRecord, string suffixRecord, string materiaRecord) {
             return ThreadExecuter.Execute(
-                () => repo.GetByRecord(prefixRecord, baseRecord, suffixRecord, materiaRecord)
+                () => _repo.GetByRecord(prefixRecord, baseRecord, suffixRecord, materiaRecord)
             );
         }
 
         public IList<DeletedPlayerItem> GetItemsMarkedForOnlineDeletion() {
             return ThreadExecuter.Execute(
-                () => repo.GetItemsMarkedForOnlineDeletion()
+                () => _repo.GetItemsMarkedForOnlineDeletion()
             );
         }
 
         public IList<ModSelection> GetModSelection() {
             return ThreadExecuter.Execute(
-                () => repo.GetModSelection()
+                () => _repo.GetModSelection()
             );
         }
 
         public bool Exists(PlayerItem item) {
             return ThreadExecuter.Execute(
-                () => repo.Exists(item)
+                () => _repo.Exists(item)
             );
         }
 
         public IList<PlayerItem> GetUnsynchronizedItems() {
             return ThreadExecuter.Execute(
-                () => repo.GetUnsynchronizedItems()
+                () => _repo.GetUnsynchronizedItems()
             );
         }
 
-        public void SetAzureIds(List<AzureUploadedItem> mappings) {
+        public void SetAsSynchronized(IList<PlayerItem> items) {
             ThreadExecuter.Execute(
-                () => repo.SetAzureIds(mappings)
+                () => _repo.SetAsSynchronized(items)
+            );
+        }
+
+        public long GetNumItems(string backupPartition) {
+            return ThreadExecuter.Execute(
+                () => _repo.GetNumItems()
             );
         }
 
         public IList<string> ListAllRecords() {
             return ThreadExecuter.Execute(
-                () => repo.ListAllRecords()
+                () => _repo.ListAllRecords()
             );
         }
 
 
         public bool RequiresStatUpdate() {
             return ThreadExecuter.Execute(
-                () => repo.RequiresStatUpdate()
+                () => _repo.RequiresStatUpdate()
             );
         }
 
         public List<PlayerItem> SearchForItems(ItemSearchRequest query) {
             return ThreadExecuter.Execute(
-                () => repo.SearchForItems(query)
+                () => _repo.SearchForItems(query)
             );
         }
 
         public void Update(IList<PlayerItem> items, bool clearOnlineId) {
             ThreadExecuter.Execute(
-                () => repo.Update(items, clearOnlineId)
+                () => _repo.Update(items, clearOnlineId)
             );
         }
 
         public void UpdateAllItemStats(IList<PlayerItem> items, Action<int> progress) {
             ThreadExecuter.Execute(
-                () => repo.UpdateAllItemStats(items, progress)
+                () => _repo.UpdateAllItemStats(items, progress)
             );
         }
     }

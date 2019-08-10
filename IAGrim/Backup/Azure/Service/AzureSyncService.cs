@@ -12,7 +12,7 @@ using log4net;
 using Newtonsoft.Json;
 
 namespace IAGrim.Backup.Azure.Service {
-    class AzureSyncService {
+    public class AzureSyncService {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(AzureSyncService));
         private readonly RestService _restService;
 
@@ -48,9 +48,13 @@ namespace IAGrim.Backup.Azure.Service {
             return _restService.Get<ItemDownloadDto>(url);
         }
 
-        public AzureUploadResult Save(List<AzureUploadItem> items) {
+        public bool DeleteAccount() {
+            return _restService.Post(AzureUris.DeleteAccountUrl, "{}");
+        }
+
+        public bool Save(List<AzureUploadItem> items) {
             var json = JsonConvert.SerializeObject(items);
-            return _restService.Post<AzureUploadResult>(AzureUris.UploadItemsUrl, json);
+            return _restService.Post(AzureUris.UploadItemsUrl, json);
         }
 
         public AzureLimitsDto GetLimitations() {

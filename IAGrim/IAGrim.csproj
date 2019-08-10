@@ -224,7 +224,6 @@
     <Compile Include="Backup\Azure\Constants\AzureUris.cs" />
     <Compile Include="Backup\Azure\Dto\AzureItemDeletionDto.cs" />
     <Compile Include="Backup\Azure\Dto\AzureUploadedItem.cs" />
-    <Compile Include="Backup\Azure\Dto\AzureUploadResult.cs" />
     <Compile Include="Backup\Azure\Dto\CommonItem.cs" />
     <Compile Include="Backup\Azure\Dto\ItemDownloadDto.cs" />
     <Compile Include="Backup\Azure\Service\AuthenticationProvider.cs" />
@@ -369,7 +368,6 @@
     <Compile Include="Services\MessageProcessor\LogMessageProcessor.cs" />
     <Compile Include="Services\MessageProcessor\DebugMessageProcessor.cs" />
     <Compile Include="Services\MessageProcessor\IMessageProcessor.cs" />
-    <Compile Include="Services\MessageProcessor\ItemInjectCallbackProcessor.cs" />
     <Compile Include="Services\MessageProcessor\ItemSpawnedProcessor.cs" />
     <Compile Include="Services\MessageProcessor\ItemPositionFinder.cs" />
     <Compile Include="Services\MessageProcessor\PlayerPositionTracker.cs" />
@@ -682,6 +680,7 @@
     </EmbeddedResource>
     <None Include="Resources\arrow.bmp" />
     <None Include="Resources\arrow.png" />
+    <None Include="Resources\2_Arrow_circle_history_refresh-512.png" />
     <Content Include="Resources\bootstrap-social.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

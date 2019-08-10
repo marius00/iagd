@@ -546,7 +546,6 @@ namespace IAGrim.UI
             _messageProcessors.Add(new ItemPositionFinder(_dynamicPacker));
             _messageProcessors.Add(new PlayerPositionTracker(Debugger.IsAttached && false));
             _messageProcessors.Add(new StashStatusHandler());
-            _messageProcessors.Add(new ItemInjectCallbackProcessor(_searchWindow.UpdateListViewDelayed, _playerItemDao));
             _messageProcessors.Add(new ItemSpawnedProcessor());
             _messageProcessors.Add(new CloudDetectorProcessor(SetFeedback));
             _messageProcessors.Add(new GenericErrorHandler());

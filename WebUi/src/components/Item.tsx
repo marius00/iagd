@@ -231,7 +231,7 @@ class Item extends React.PureComponent<Props, object> {
           : ''
         }
 
-        {item.type === IItemType.Player && this.props.item.numItems > 50 && <div className="unknownitem"><a onClick={() => this.openItemSite()}>You may be experiencing issues..</a></div>}
+        {item.type === IItemType.Player && this.props.item.numItems > 50 && <div className="unknownitem"><a onClick={() => this.openItemSite()}>You may be experiencing issues.. Click here for more information.</a></div>}
       </div>
     );
   }

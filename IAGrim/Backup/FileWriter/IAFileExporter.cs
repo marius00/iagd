@@ -34,26 +34,26 @@ namespace IAGrim.Backup.FileWriter {
                 Logger.Warn($"Parsing a legacy IA file of version v{fileVer}, the latest is version v{_supportedFileVer.Max()}");
             }
 
-            Func<string> readString = () => {
+            string ReadString() {
                 var s = IOHelper.GetBytePrefixedString(bytes, pos);
                 pos += 1 + s?.Length ?? 0;
                 return s;
-            };
+            }
 
             int numItems = IOHelper.GetInt(bytes, pos); pos += 4;
             for (int i = 0; i < numItems; i++) {
                 PlayerItem pi = new PlayerItem();
 
-                pi.BaseRecord = readString();
-                pi.PrefixRecord = readString();
-                pi.SuffixRecord = readString();
-                pi.ModifierRecord = readString();
-                pi.TransmuteRecord = readString();
+                pi.BaseRecord = ReadString();
+                pi.PrefixRecord = ReadString();
+                pi.SuffixRecord = ReadString();
+                pi.ModifierRecord = ReadString();
+                pi.TransmuteRecord = ReadString();
                 pi.Seed = IOHelper.GetUInt(bytes, pos); pos += 4;
-                pi.MateriaRecord = readString();
-                pi.RelicCompletionBonusRecord = readString();
+                pi.MateriaRecord = ReadString();
+                pi.RelicCompletionBonusRecord = ReadString();
                 pi.RelicSeed = IOHelper.GetUInt(bytes, pos); pos += 4;
-                pi.EnchantmentRecord = readString();
+                pi.EnchantmentRecord = ReadString();
 
                 //seed is ok, stack count is not
                 pi.UNKNOWN = IOHelper.GetUInt(bytes, pos); pos += 4;
@@ -65,15 +65,19 @@ namespace IAGrim.Backup.FileWriter {
                 pos++; // isExpansion
                 //pi.IsExpansion1 = bytes[pos++] == 1;
 
-                pi.Mod = readString();
+                pi.Mod = ReadString();
 
                 if (fileVer == 1) {
                     // Old OID
                     pos += 8;
                 }
                 else if (fileVer == 2) {
-                    pi.AzurePartition = readString();
-                    pi.AzureUuid = readString();
+                    pi.AzurePartition = ReadString();
+                    pi.AzureUuid = ReadString();
+                    pi.AzureHasSynchronized = !string.IsNullOrEmpty(pi.AzurePartition);
+                }
+                else if (fileVer == 3) {
+                    pi.AzureHasSynchronized = bytes[pos++] == 1; // TODO: Notify mamba
                 }
 
 
@@ -85,7 +89,7 @@ namespace IAGrim.Backup.FileWriter {
 
         public void Write(IList<PlayerItem> items) {
             using (FileStream fs = new FileStream(filename, FileMode.Create)) {
-                IOHelper.Write(fs, (short)2);
+                IOHelper.Write(fs, (short)3);
                 IOHelper.Write(fs, (int)items.Count);
 
                 foreach (PlayerItem pi in items) {
@@ -114,6 +118,7 @@ namespace IAGrim.Backup.FileWriter {
 
                     IOHelper.WriteBytePrefixed(fs, pi.AzurePartition);
                     IOHelper.WriteBytePrefixed(fs, pi.AzureUuid);
+                    IOHelper.Write(fs, pi.AzureHasSynchronized);
                 }
             }
         }

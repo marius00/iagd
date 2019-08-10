@@ -73,7 +73,6 @@ namespace IAGrim.Parsers.TransferStash {
         }
 
         public (bool, List<UserFeedback>) IsTransferStashLootable() {
-            
             if (!(_settings.GetLocal().SecureTransfers ?? true)) {
                 Logger.Debug("Secure transfers are disabled, ignoring stash loot safety checks.");
                 return (true, new List<UserFeedback>());
@@ -153,22 +152,22 @@ namespace IAGrim.Parsers.TransferStash {
                     // The items we can actually loot (or delete duplicates)
                     if (classifiedItems.Remaining.Count > 0) {
                         OnUpdate?.Invoke(this, null);
-                        
+
                         stash.Tabs[lootFromStashIdx].Items.RemoveAll(e => classifiedItems.Remaining.Any(m => m.Equals(e)));
 
                         var isHardcore = GlobalPaths.IsHardcore(transferFile);
                         if (StoreItemsToDatabase(classifiedItems.Remaining, stash.ModLabel, isHardcore)) {
                             feedbacks.Add(new UserFeedback(RuntimeSettings.Language.GetTag("iatag_looted_from_stash", classifiedItems.Remaining.Count, lootFromStashIdx + 1)));
-                            
+
                             if (!_stashWriter.SafelyWriteStash(transferFile, stash)) {
                                 Logger.Error("Fatal error deleting items from Grim Dawn, items has been duplicated.");
                             }
 
                             // TODO: Do a quick check to see if the items are TRUUUULY gone from the stash?
-                        } else {
+                        }
+                        else {
                             feedbacks.Add(UserFeedback.FromTag("iatag_feedback_unable_to_loot_stash")); // TODO: Not sure what to report here.. 
                         }
-
                     }
                 }
                 else {
@@ -218,8 +217,25 @@ namespace IAGrim.Parsers.TransferStash {
         }
 
 
+        private string GetUploadPartition() {
+            var currentPartition = _settings.GetPersistent().AzureUploadPartition;
+            var numItems = _playerItemDao.GetNumItems(currentPartition);
+            if (numItems > 100 || string.IsNullOrEmpty(currentPartition)) {
+                _settings.GetPersistent().AzureUploadPartition = Guid.NewGuid().ToString().Replace("-", "");
+            }
+
+            return _settings.GetPersistent().AzureUploadPartition;
+        }
+
         private bool StoreItemsToDatabase(ICollection<Item> items, string mod, bool isHardcore) {
-            var playerItems = items.Select(item => TransferStashService.Map(item, mod, isHardcore)).ToList();
+            var uploadPartition = GetUploadPartition();
+
+            // Convert the items and set the upload partition
+            var playerItems = items.Select(item => TransferStashService.Map(item, mod, isHardcore))
+                .Select(p => {
+                    p.AzurePartition = uploadPartition;
+                    return p;
+                }).ToList();
 
             try {
                 _playerItemDao.Save(playerItems);

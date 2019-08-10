@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -29,8 +30,8 @@ namespace IAGrim.Backup.Azure.Service {
         public event EventHandler OnUploadComplete;
 
         public BackupService(
-            AzureAuthService azureAuthService, 
-            IPlayerItemDao playerItemDao, 
+            AzureAuthService azureAuthService,
+            IPlayerItemDao playerItemDao,
             IAzurePartitionDao azurePartitionDao,
             Func<bool> isDualComputerInstance
         ) {
@@ -96,54 +97,80 @@ namespace IAGrim.Backup.Azure.Service {
             }
         }
 
+        private static void EnsureLegacyCompatible(IList<PlayerItem> items) {
+            // Set values on fallback items (v1/v2 backwards compatability)
+            var fallbackPartition = Guid.NewGuid().ToString().Replace("-", ""); // TODO: We may be sticking thousands of items into this partition.
+            foreach (var item in items.Where(item => string.IsNullOrEmpty(item.AzureUuid) || string.IsNullOrEmpty(item.AzurePartition))) {
+                // Legacy items did not have a UUID prior to sync (v1 & v2 sync)
+                if (string.IsNullOrEmpty(item.AzureUuid)) {
+                    item.AzureUuid = Guid.NewGuid().ToString().Replace("-", "");
+                }
 
-        private void SyncUp() {
-            var items = _playerItemDao.GetUnsynchronizedItems();
-            if (items.Count > 0) {
-                int numRemaining = items.Count;
+                // Legacy items did not have a partition prior to sync (v1 & v2 sync)
+                if (string.IsNullOrEmpty(item.AzurePartition)) {
+                    item.AzurePartition = fallbackPartition;
+                }
+            }
+        }
 
-                Logger.Info($"There are {numRemaining} items remaining to be synchronized to azure");
-                while (numRemaining > 0) {
-                    int numTaken = Math.Min(items.Count, 100);
-                    var batch = items
-                        .Skip(items.Count - numRemaining)
-                        .Take(numTaken)
-                        .Select(ItemConverter.ToUpload)
-                        .ToList();
+        private static List<List<PlayerItem>> ToBatches(IList<PlayerItem> items) {
+            var previousPartition = string.Empty;
+            List<PlayerItem> currentBatch = new List<PlayerItem>();
+            List<List<PlayerItem>> batches = new List<List<PlayerItem>>();
 
-                    Logger.Info($"Synchronizing {numTaken} items to azure");
-                    try {
-                        var mapping = _azureSyncService.Save(batch);
-                        _playerItemDao.SetAzureIds(mapping.Items);
+            EnsureLegacyCompatible(items);
 
-                        if (mapping.IsClosed) {
-                            _azurePartitionDao.Save(new AzurePartition {
-                                Id = mapping.Partition,
-                                IsActive = false
-                            });
-
-                            Logger.Debug($"Storing partition {mapping.Partition} as closed.");
-                        }
-
-                        numRemaining -= numTaken;
-                    }
-                    catch (AggregateException ex) {
-                        Logger.Warn(ex.Message, ex);
-                        return;
-                    }
-                    catch (WebException ex) {
-                        Logger.Warn(ex.Message, ex);
-                        return;
-                    }
-                    catch (Exception ex) {
-                        ExceptionReporter.ReportException(ex, "SyncUp");
-                        return;
+            // Max 100 items per batch, no mix of partitions in a batch.
+            foreach (var item in items.OrderBy(item => item.AzurePartition)) {
+                if (item.AzurePartition != previousPartition || currentBatch.Count > 99) {
+                    if (currentBatch.Count > 0) {
+                        batches.Add(currentBatch);
+                        currentBatch = new List<PlayerItem>();
                     }
                 }
 
-                Logger.Info("Upload complete");
-                OnUploadComplete?.Invoke(this, null);
+                currentBatch.Add(item);
+                previousPartition = item.AzurePartition;
             }
+
+            if (currentBatch.Count > 0) {
+                batches.Add(currentBatch);
+            }
+
+            return batches;
+        }
+
+        private void SyncUp() {
+            var items = _playerItemDao.GetUnsynchronizedItems();
+            var batches = ToBatches(items);
+
+            foreach (var batch in batches) {
+                Logger.Info($"Synchronizing batch {batch.First().AzurePartition} with {batch.Count} items to azure");
+                try {
+                    if (_azureSyncService.Save(batch.Select(ItemConverter.ToUpload).ToList())) {
+                        Logger.Info($"Upload successful, marking {batch.Count} as synchronized");
+                        _playerItemDao.SetAsSynchronized(batch);
+                    }
+                    else {
+                        Logger.Info($"Upload of {batch.Count} items unsuccessful");
+                    }
+                }
+                catch (AggregateException ex) {
+                    Logger.Warn(ex.Message, ex);
+                    return;
+                }
+                catch (WebException ex) {
+                    Logger.Warn(ex.Message, ex);
+                    return;
+                }
+                catch (Exception ex) {
+                    ExceptionReporter.ReportException(ex, "SyncUp");
+                    return;
+                }
+            }
+
+            Logger.Info("Upload complete");
+            OnUploadComplete?.Invoke(this, null);
         }
 
         private void SyncDown() {
@@ -155,7 +182,9 @@ namespace IAGrim.Backup.Azure.Service {
                 // Filter out existing "closed" partitions
                 var localPartitions = new HashSet<AzurePartition>(_azurePartitionDao.ListAll());
                 var remotePartitions = _azureSyncService.GetPartitions();
+
                 var partitions = remotePartitions
+                    .Where(p => !string.IsNullOrEmpty(p.Partition))
                     .Where(p => !localPartitions.Any(m => m.Id == p.Partition && !m.IsActive))
                     .ToList();
 
@@ -232,6 +261,4 @@ namespace IAGrim.Backup.Azure.Service {
             }
         }
     }
-
-
 }

@@ -117,9 +117,8 @@ namespace IAGrim.Backup.Azure.Service {
         /// Logout
         /// </summary>
         public void UnAuthenticate(/* args: This <-> All */) {
-            throw new NotImplementedException();
-
-            _authenticationProvider.SetToken(String.Empty);
+            _authenticationProvider.SetToken(string.Empty);
+            MemoryCache.Default.Set(CacheKey, AccessStatus.Unauthorized, DateTimeOffset.Now.AddDays(1));
         }
 
         public RestService GetRestService() {

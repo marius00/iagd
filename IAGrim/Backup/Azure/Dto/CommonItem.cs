@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace IAGrim.Backup.Azure.Dto {
-    class CommonItem {
+    public class CommonItem {
         public string Mod { get; set; }
         public virtual bool IsHardcore { get; set; }
 

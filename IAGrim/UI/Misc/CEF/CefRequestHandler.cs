@@ -22,7 +22,7 @@ namespace IAGrim.UI.Misc.CEF {
         }
 
         public bool OnBeforeBrowse(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request, bool isRedirect) {
-            if (request.Url.StartsWith("https://auth.iagd.dreamcrash.org/token/")) {
+            if (request.Url.StartsWith("https://auth.iagd.dreamcrash.org/token/") || request.Url.StartsWith("http://localhost:7071/api/Authenticate")) {
                 var token = ExtractToken(request.Url);
                 OnAuthentication?.Invoke(browser, new AuthResultEvent { Token = token});
                 return true;

@@ -23,6 +23,7 @@ namespace IAGrim.Settings.Dto {
         private bool _autoUpdateModSettings;
         private bool _displaySkills;
         private bool _deleteDuplicates;
+        private string _azureUploadPartition;
 
         // Azure Backups
         private string _azureAuthToken;
@@ -143,6 +144,15 @@ namespace IAGrim.Settings.Dto {
             }
         }
 
-        
+        public string AzureUploadPartition {
+            get => _azureUploadPartition;
+            set {
+                _azureUploadPartition = value;
+                OnMutate?.Invoke(null, null);
+            }
+        }
+
+
+
     }
 }
