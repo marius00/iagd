@@ -21,5 +21,6 @@ namespace IAGrim.Database.DAO.Table {
 
         public const string AzurePartition = "azpartition_v2";
         public const string AzureUuid = "azuuid_v2";
+        public const string AzureHasSynchronized = "azuresynchronized_v2";
     }
 }

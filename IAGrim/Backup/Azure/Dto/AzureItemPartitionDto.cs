@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace IAGrim.Backup.Azure.Dto {
-    class AzureItemPartitionDto {
+    public class AzureItemPartitionDto {
         /// <summary>
         /// If this is an active or archived partition
         /// Archived partitions may be edited server-side, but no further action is required by the client.

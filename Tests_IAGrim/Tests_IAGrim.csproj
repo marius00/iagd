@@ -94,7 +94,6 @@
     <Compile Include="ImportExport\GDImportTests.cs" />
     <Compile Include="ProgressBarTests\ProgressBarTests.cs" />
     <Compile Include="SessionFactory.cs" />
-    <Compile Include="TestItemInjectCallbackProcessor.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

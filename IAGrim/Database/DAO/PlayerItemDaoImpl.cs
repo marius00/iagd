@@ -148,21 +148,30 @@ namespace IAGrim.Database {
         
         public IList<PlayerItem> GetUnsynchronizedItems() {
             using (var session = SessionCreator.OpenSession()) {
-                return session.QueryOver<PlayerItem>()
-                    .Where(m => m.AzureUuid == null)
-                    //.Where(m => string.IsNullOrEmpty(m.AzureUuid))
+                var req = Restrictions.Or(
+                    Restrictions.Eq(nameof(PlayerItem.AzureUuid), ""), 
+                    Restrictions.Eq(nameof(PlayerItem.AzureHasSynchronized), false)
+                    );
+
+                return session.CreateCriteria<PlayerItem>()
+                    .Add(req)
                     .List<PlayerItem>();
             }
         }
 
-        public void SetAzureIds(List<AzureUploadedItem> mappings) {
+        public void SetAsSynchronized(IList<PlayerItem> items) {
             using (var session = SessionCreator.OpenSession()) {
                 using (var transaction = session.BeginTransaction()) {
-                    foreach (var entry in mappings) {
-                        session.CreateQuery($"UPDATE PlayerItem SET {PlayerItemTable.AzureUuid} = :uuid, {PlayerItemTable.AzurePartition} = :partition WHERE Id = :id")
-                            .SetParameter("uuid", entry.Id)
-                            .SetParameter("partition", entry.Partition)
-                            .SetParameter("id", entry.LocalId)
+                    foreach (var item in items) {
+                        session.CreateQuery($"UPDATE PlayerItem SET " +
+                                            $" {PlayerItemTable.AzureHasSynchronized} = true, " +
+                                            // Should not be needed for new items, required for legacy items which had no partition.
+                                            $" {PlayerItemTable.AzureUuid} = :uuid, " +
+                                            $" {PlayerItemTable.AzurePartition} = :partition " +
+                                            $"WHERE Id = :id")
+                            .SetParameter("id", item.Id)
+                            .SetParameter("uuid", item.AzureUuid)
+                            .SetParameter("partition", item.AzurePartition)
                             .ExecuteUpdate();
                     }
 
@@ -171,8 +180,18 @@ namespace IAGrim.Database {
             }
         }
 
+        public long GetNumItems(string backupPartition) {
+            using (ISession session = SessionCreator.OpenSession()) {
+                using (session.BeginTransaction()) {
+                    return session.CreateSQLQuery($"SELECT COUNT(*) FROM {PlayerItemTable.Table} WHERE {PlayerItemTable.AzurePartition} = :partition")
+                        .SetParameter("partition", backupPartition)
+                        .UniqueResult<long>();
+                }
+            }
+        }
 
-        private IEnumerable<string> GetPetBonusRecords(Dictionary<String, List<DBSTatRow>> stats, List<string> records) {
+
+        private IEnumerable<string> GetPetBonusRecords(Dictionary<string, List<DBSTatRow>> stats, List<string> records) {
             var relevant = stats.Where(m => records.Contains(m.Key));
             return relevant.SelectMany(m => m.Value)
                 .Where(m => m.Stat == "petBonusName")
@@ -233,10 +252,24 @@ namespace IAGrim.Database {
             Update(new List<PlayerItem> { item }, false);
         }
 
+        public void ResetOnlineSyncState() {
+            using (var session = SessionCreator.OpenSession()) {
+                using (var transaction = session.BeginTransaction()) {
+                    session.CreateQuery($"UPDATE PlayerItem SET {PlayerItemTable.AzureHasSynchronized} = false")
+                        .ExecuteUpdate();
+                    session.CreateQuery($"DELETE FROM {nameof(AzurePartition)}")
+                        .ExecuteUpdate();
+
+                    transaction.Commit();
+                }
+            }
+
+        }
+
         public void Update(IList<PlayerItem> items, bool clearOnlineId) {
 
-            var table = nameof(PlayerItem);
-            var stack = nameof(PlayerItem.StackCount);
+            const string table = nameof(PlayerItem);
+            const string stack = nameof(PlayerItem.StackCount);
             var id = nameof(PlayerItem.Id);
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
@@ -569,7 +602,7 @@ namespace IAGrim.Database {
         /// <returns></returns>
         public bool RequiresStatUpdate() {
             using (ISession session = SessionCreator.OpenSession()) {
-                using (ITransaction transaction = session.BeginTransaction()) {
+                using (session.BeginTransaction()) {
                     var itemsLackingRarity = session.CreateCriteria<PlayerItem>().Add(Restrictions.IsNull("Rarity")).List().Count;
                     if (session.CreateCriteria<PlayerItem>().Add(Restrictions.IsNull("Rarity")).List().Count > 50) {
                         Logger.Debug($"A stat parse is required, there are {itemsLackingRarity} items lacking rarity");

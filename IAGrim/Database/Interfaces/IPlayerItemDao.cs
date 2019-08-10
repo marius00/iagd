@@ -10,7 +10,8 @@ namespace IAGrim.Database.Interfaces {
         Dictionary<string, int> GetCountByRecord(string mod);
 
         IList<PlayerItem> GetUnsynchronizedItems();
-        void SetAzureIds(List<AzureUploadedItem> mappings);
+        void SetAsSynchronized(IList<PlayerItem> items);
+        long GetNumItems(string backupPartition);
 
 
         void UpdateAllItemStats(IList<PlayerItem> items, Action<int> progress);
@@ -24,6 +25,7 @@ namespace IAGrim.Database.Interfaces {
 
         IList<DeletedPlayerItem> GetItemsMarkedForOnlineDeletion();
         int ClearItemsMarkedForOnlineDeletion();
+        void ResetOnlineSyncState();
 
         void Update(IList<PlayerItem> items, bool clearOnlineId);
 

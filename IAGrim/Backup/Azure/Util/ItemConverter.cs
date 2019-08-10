@@ -14,7 +14,6 @@ namespace IAGrim.Backup.Azure.Util {
                 EnchantmentRecord = pi.EnchantmentRecord,
                 EnchantmentSeed = pi.EnchantmentSeed,
                 IsHardcore = pi.IsHardcore,
-                LocalId = pi.Id,
                 MateriaCombines = pi.MateriaCombines,
                 MateriaRecord = pi.MateriaRecord,
                 Mod = pi.Mod,
@@ -25,7 +24,9 @@ namespace IAGrim.Backup.Azure.Util {
                 Seed = pi.Seed,
                 StackCount = pi.StackCount,
                 SuffixRecord = pi.SuffixRecord,
-                TransmuteRecord = pi.TransmuteRecord
+                TransmuteRecord = pi.TransmuteRecord,
+                RemoteId = pi.AzureUuid,
+                RemotePartition = pi.AzurePartition
             };
         }
 
@@ -47,7 +48,8 @@ namespace IAGrim.Backup.Azure.Util {
                 SuffixRecord = item.SuffixRecord,
                 TransmuteRecord = item.TransmuteRecord,
                 AzureUuid = item.Id,
-                AzurePartition = item.Partition
+                AzurePartition = item.Partition,
+                AzureHasSynchronized = true
             };
         }
     }

@@ -24,6 +24,12 @@
         /// </summary>
         private void InitializeComponent() {
             this.onlineBackup = new PanelBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnRefreshBackupDetails = new System.Windows.Forms.Button();
+            this.linkLogout = new System.Windows.Forms.LinkLabel();
+            this.linkDeleteBackup = new System.Windows.Forms.LinkLabel();
+            this.labelStatus = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.cbDontWantBackups = new FirefoxCheckBox();
             this.buttonLogin = new FirefoxButton();
             this.panelBox5 = new PanelBox();
@@ -40,6 +46,7 @@
             this.pbGoogle = new System.Windows.Forms.PictureBox();
             this.cbGoogle = new FirefoxCheckBox();
             this.onlineBackup.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.panelBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbSkydrive)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbDropbox)).BeginInit();
@@ -50,6 +57,7 @@
             // 
             this.onlineBackup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.onlineBackup.Controls.Add(this.groupBox1);
             this.onlineBackup.Controls.Add(this.cbDontWantBackups);
             this.onlineBackup.Controls.Add(this.buttonLogin);
             this.onlineBackup.Font = new System.Drawing.Font("Segoe UI Semibold", 20F);
@@ -57,11 +65,88 @@
             this.onlineBackup.Location = new System.Drawing.Point(12, 12);
             this.onlineBackup.Name = "onlineBackup";
             this.onlineBackup.NoRounding = false;
-            this.onlineBackup.Size = new System.Drawing.Size(329, 174);
+            this.onlineBackup.Size = new System.Drawing.Size(614, 174);
             this.onlineBackup.TabIndex = 12;
             this.onlineBackup.Tag = "iatag_ui_online_backup";
             this.onlineBackup.Text = "Online Backup";
             this.onlineBackup.TextLocation = "8; 5";
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.btnRefreshBackupDetails);
+            this.groupBox1.Controls.Add(this.linkLogout);
+            this.groupBox1.Controls.Add(this.linkDeleteBackup);
+            this.groupBox1.Controls.Add(this.labelStatus);
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Location = new System.Drawing.Point(398, 46);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(213, 125);
+            this.groupBox1.TabIndex = 17;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Tag = "iatag_ui_backup_details";
+            this.groupBox1.Text = "Details";
+            // 
+            // btnRefreshBackupDetails
+            // 
+            this.btnRefreshBackupDetails.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRefreshBackupDetails.BackgroundImage = global::IAGrim.Properties.Resources.refresh;
+            this.btnRefreshBackupDetails.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnRefreshBackupDetails.Location = new System.Drawing.Point(191, 23);
+            this.btnRefreshBackupDetails.Name = "btnRefreshBackupDetails";
+            this.btnRefreshBackupDetails.Size = new System.Drawing.Size(16, 16);
+            this.btnRefreshBackupDetails.TabIndex = 4;
+            this.btnRefreshBackupDetails.UseVisualStyleBackColor = true;
+            this.btnRefreshBackupDetails.Click += new System.EventHandler(this.btnRefreshBackupDetails_Click);
+            // 
+            // linkLogout
+            // 
+            this.linkLogout.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.linkLogout.AutoSize = true;
+            this.linkLogout.Font = new System.Drawing.Font("Segoe UI", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.linkLogout.Location = new System.Drawing.Point(152, 100);
+            this.linkLogout.Name = "linkLogout";
+            this.linkLogout.Size = new System.Drawing.Size(32, 11);
+            this.linkLogout.TabIndex = 3;
+            this.linkLogout.TabStop = true;
+            this.linkLogout.Tag = "iatag_ui_backup_logout";
+            this.linkLogout.Text = "Logout";
+            this.linkLogout.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+            // 
+            // linkDeleteBackup
+            // 
+            this.linkDeleteBackup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.linkDeleteBackup.AutoSize = true;
+            this.linkDeleteBackup.Font = new System.Drawing.Font("Segoe UI", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.linkDeleteBackup.Location = new System.Drawing.Point(152, 111);
+            this.linkDeleteBackup.Name = "linkDeleteBackup";
+            this.linkDeleteBackup.Size = new System.Drawing.Size(57, 11);
+            this.linkDeleteBackup.TabIndex = 2;
+            this.linkDeleteBackup.TabStop = true;
+            this.linkDeleteBackup.Tag = "iatag_ui_backup_delete";
+            this.linkDeleteBackup.Text = "Delete backup";
+            this.linkDeleteBackup.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkDeleteBackup_LinkClicked);
+            // 
+            // labelStatus
+            // 
+            this.labelStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelStatus.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.labelStatus.Location = new System.Drawing.Point(62, 42);
+            this.labelStatus.Name = "labelStatus";
+            this.labelStatus.Size = new System.Drawing.Size(145, 19);
+            this.labelStatus.TabIndex = 1;
+            this.labelStatus.Text = "-----";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.label1.Location = new System.Drawing.Point(6, 42);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(50, 19);
+            this.label1.TabIndex = 0;
+            this.label1.Tag = "iatag_ui_backup_status_label";
+            this.label1.Text = "Status:";
             // 
             // cbDontWantBackups
             // 
@@ -73,7 +158,7 @@
             this.cbDontWantBackups.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.cbDontWantBackups.Location = new System.Drawing.Point(41, 100);
             this.cbDontWantBackups.Name = "cbDontWantBackups";
-            this.cbDontWantBackups.Size = new System.Drawing.Size(285, 27);
+            this.cbDontWantBackups.Size = new System.Drawing.Size(351, 27);
             this.cbDontWantBackups.TabIndex = 16;
             this.cbDontWantBackups.Tag = "iatag_ui_dontwantbackups";
             this.cbDontWantBackups.Text = "I don\'t want backups, stop asking me!";
@@ -114,7 +199,7 @@
             this.panelBox5.Location = new System.Drawing.Point(12, 192);
             this.panelBox5.Name = "panelBox5";
             this.panelBox5.NoRounding = false;
-            this.panelBox5.Size = new System.Drawing.Size(329, 363);
+            this.panelBox5.Size = new System.Drawing.Size(614, 363);
             this.panelBox5.TabIndex = 10;
             this.panelBox5.Tag = "iatag_ui_backup_location";
             this.panelBox5.Text = "Local Backup";
@@ -268,7 +353,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(353, 564);
+            this.ClientSize = new System.Drawing.Size(638, 564);
             this.Controls.Add(this.onlineBackup);
             this.Controls.Add(this.panelBox5);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -280,6 +365,8 @@
             this.Text = "Backup Settings";
             this.Load += new System.EventHandler(this.BackupSettings_Load);
             this.onlineBackup.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.panelBox5.ResumeLayout(false);
             this.panelBox5.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbSkydrive)).EndInit();
@@ -307,5 +394,11 @@
         private System.Windows.Forms.LinkLabel helpWhyGdriveDisabled;
         private System.Windows.Forms.LinkLabel helpWhyOnedriveDisabled;
         private System.Windows.Forms.LinkLabel helpWhyDropboxDisabled;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Label labelStatus;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.LinkLabel linkDeleteBackup;
+        private System.Windows.Forms.LinkLabel linkLogout;
+        private System.Windows.Forms.Button btnRefreshBackupDetails;
     }
 }

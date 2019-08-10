@@ -18,11 +18,10 @@ namespace IAGrim.Database {
 
         public virtual string AzurePartition { get; set; }
         public virtual string AzureUuid { get; set; }
+        public virtual bool AzureHasSynchronized { get; set; }
 
         public virtual bool IsKnown => Tags != null && Tags.Count > 0;
-
-        //public virtual DatabaseItemSkill Skill { get; set; }
-
+        
         public virtual string Bitmap => Parser.Helperclasses.ParserHelpers<DBSTatRow>.GetBitmap(Tags);
 
         public virtual string Rarity { get; set; }

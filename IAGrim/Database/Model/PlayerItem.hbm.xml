@@ -34,6 +34,8 @@
     
     <property name="AzurePartition" column="azpartition_v2" />
     <property name="AzureUuid" column="azuuid_v2" />
+    <property name="AzureHasSynchronized" column="azuresynchronized_v2" />
+    
     <property name="CreationDate" column="created_at" />
 
     <!--  cascade="all-delete-orphan"  -->

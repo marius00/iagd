@@ -267,7 +267,8 @@ namespace IAGrim.Parsers.Arz {
                 UNKNOWN = item.UNKNOWN,
                 Mod = mod,
                 IsHardcore = isHardcore,
-                CreationDate = DateTime.UtcNow.ToTimestamp()
+                CreationDate = DateTime.UtcNow.ToTimestamp(),
+                AzureUuid = Guid.NewGuid().ToString() 
             };
         }
 
