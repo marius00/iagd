@@ -1,20 +1,15 @@
 ﻿using EvilsoftCommons.Cloud;
 using EvilsoftCommons.Exceptions;
 using IAGrim.Backup.FileWriter;
-using IAGrim.Database;
 using IAGrim.Database.Interfaces;
 using Ionic.Zip;
 using log4net;
-using NHibernate;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using IAGrim.Settings;
-using IAGrim.Settings.Dto;
 
 namespace IAGrim.Utilities.Cloud {
 
@@ -118,8 +113,18 @@ namespace IAGrim.Utilities.Cloud {
                 using (ZipFile zip = new ZipFile { UseZip64WhenSaving = Zip64Option.AsNecessary }) {
                     Logger.Info("Backing up characters..");
                     string gameSaves = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "Grim Dawn", "Save");
-                    if (Directory.Exists(gameSaves)) {
-                        zip.AddDirectory(gameSaves, "Save");
+                    string[] files = Directory.GetFiles(gameSaves, "*.*", SearchOption.AllDirectories);
+                    foreach (var f in files) {
+                        if (f.EndsWith(".zip") || f.EndsWith(".ias") || f.EndsWith(".gds") || f.EndsWith(".rar")) {
+                            continue;
+                        }
+
+                        // Max 10MB
+                        if (new FileInfo(f).Length > 1024 * 1024 * 10) {
+                            continue;
+                        }
+
+                        zip.AddFile(f);
                     }
 
                     Logger.Info("Backing up items..");
