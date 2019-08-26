@@ -54,7 +54,7 @@ namespace IAGrim.Database.DAO {
             }
 
             using (ISession session = SessionCreator.OpenSession()) {
-                using (ITransaction transaction = session.BeginTransaction()) {
+                using (session.BeginTransaction()) {
                     ICriteria criterias = session.CreateCriteria<AugmentationItem>();
 
 
@@ -73,6 +73,8 @@ namespace IAGrim.Database.DAO {
         }
 
         private void Populate(ISession session) {
+            session.CreateSQLQuery("DELETE FROM AugmentationItem").ExecuteUpdate();
+
             string sql = @"
                     INSERT OR IGNORE INTO AugmentationItem (id_databaseitem, baserecord, name, rarity, minimumlevel) 
                     select db.id_databaseitem, baserecord, name, null, null 

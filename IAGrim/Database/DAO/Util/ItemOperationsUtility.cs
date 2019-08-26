@@ -98,7 +98,7 @@ namespace IAGrim.Database.DAO.Util {
         /// <summary>
         /// Update the item name to include suffix/affix/etc
         /// </summary>
-        public static string GetItemName(ISession session, Dictionary<String, List<DBSTatRow>> stats, RecordCollection item) {
+        public static string GetItemName(ISession session, Dictionary<string, List<DBSTatRow>> stats, RecordCollection item) {
             // Grab tags
 
             var records = new string[] { item.PrefixRecord, item.BaseRecord, item.SuffixRecord, item.MateriaRecord };
