@@ -39,6 +39,7 @@ namespace IAGrim.Database {
 
         public uint Count { get; set; }
 
+        public virtual long CreationDate { get; set; }
 
 
         public int CompareTo(object obj) {

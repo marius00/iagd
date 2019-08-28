@@ -56,11 +56,6 @@ namespace IAGrim.BuddyShare {
                     
                     var compressedJson = GzipCompressionHandler.CompressAndConvertToBase64(json);
                     var encodedCompressedJson = HttpUtility.UrlEncode(compressedJson);
-                    /*var uncompressedSize = Encoding.ASCII.GetByteCount(json);
-                    var compressedSize = Encoding.ASCII.GetByteCount(compressedJson);
-                    var compressedEncodedSize = Encoding.ASCII.GetByteCount(encodedCompressedJson);
-
-                    Logger.Debug($"Transmitting buddy items, {uncompressedSize} before compression, {compressedSize} after compression and {compressedEncodedSize} after URL encoding.");*/
                     var result = UploadBuddyData($"json={encodedCompressedJson}", UrlBuddyUpload);
 
                     // Access denied, we'll need a new user id it seems.

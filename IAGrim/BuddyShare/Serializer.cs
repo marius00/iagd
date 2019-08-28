@@ -99,7 +99,8 @@ namespace IAGrim.BuddyShare {
                 PrefixRecord = item.PrefixRecord,
                 StackCount = item.StackCount,
                 SuffixRecord = item.SuffixRecord,
-                TransmuteRecord = item.TransmuteRecord
+                TransmuteRecord = item.TransmuteRecord,
+                CreationDate = item.CreationDate ?? 0L
             };
         }
 

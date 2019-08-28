@@ -15,5 +15,6 @@ namespace IAGrim.BuddyShare.dto {
         public string MateriaRecord { get; set; }
         public long StackCount { get; set; }
         public string Mod { get; set; }
+        public long CreationDate { get; set; }
     }
 }

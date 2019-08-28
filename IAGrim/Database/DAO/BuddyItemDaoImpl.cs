@@ -9,6 +9,7 @@ using NHibernate.Transform;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using EvilsoftCommons;
 using IAGrim.Database.DAO;
 
 namespace IAGrim.Database
@@ -266,11 +267,8 @@ namespace IAGrim.Database
         private BuddyItem ToDomainObject(object ob) {
             object[] obj = (object[]) ob;
             var count = (long) obj[10];
-            var minimumLevel = obj[8] as float?;
-            if (!minimumLevel.HasValue) {
-                minimumLevel = obj[8] as long?;
-            }
-            
+            var minimumLevel = obj[8] as float? ?? obj[8] as long?;
+
             var id = (long) obj[9];
             return new BuddyItem {
                 BaseRecord = obj[0] as string,
@@ -311,7 +309,7 @@ namespace IAGrim.Database
             
             using (ISession session = SessionCreator.OpenSession()) {
                 return session.CreateSQLQuery(sql)
-                    .List<Object>()
+                    .List<object>()
                     .Select(ToDomainObject)
                     .ToList();
             }
@@ -334,18 +332,19 @@ namespace IAGrim.Database
         }
 
         public void SetItems(long userid, string description, List<JsonBuddyItem> items) {
-            string sql = string.Join(" ", 
-                $"INSERT INTO {BuddyItemsTable.Table} (",
-                    $"{BuddyItemsTable.BuddyId}, ",
-                    $"{BuddyItemsTable.RemoteItemId}, ",
-                    $"{BuddyItemsTable.BaseRecord}, ",
-                    $"{BuddyItemsTable.PrefixRecord},",
-                    $"{BuddyItemsTable.SuffixRecord},",
-                    $"{BuddyItemsTable.ModifierRecord},",
-                    $"{BuddyItemsTable.TransmuteRecord},",
-                    $"{BuddyItemsTable.MateriaRecord},",
-                    $"{BuddyItemsTable.StackCount},",
-                    $"{BuddyItemsTable.Mod}) VALUES (:buddy, :remoteId, :base, :pre, :suff, :modif, :transmute, :materia, :stacksize, :mod);");
+            string sql = $@"INSERT INTO {BuddyItemsTable.Table} (
+                    {BuddyItemsTable.BuddyId},
+                    {BuddyItemsTable.RemoteItemId}, 
+                    {BuddyItemsTable.BaseRecord}, 
+                    {BuddyItemsTable.PrefixRecord},
+                    {BuddyItemsTable.SuffixRecord},
+                    {BuddyItemsTable.ModifierRecord},
+                    {BuddyItemsTable.TransmuteRecord},
+                    {BuddyItemsTable.MateriaRecord},
+                    {BuddyItemsTable.StackCount},
+                    {BuddyItemsTable.Mod},
+                    {BuddyItemsTable.CreatedAt}) 
+            VALUES (:buddy, :remoteId, :base, :pre, :suff, :modif, :transmute, :materia, :stacksize, :mod, :createdAt);";
 
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
@@ -387,6 +386,7 @@ namespace IAGrim.Database
                             .SetParameter("materia", item.MateriaRecord)
                             .SetParameter("stacksize", item.StackCount)
                             .SetParameter("mod", item.Mod)
+                            .SetParameter("createdAt", item.CreationDate)
                             .ExecuteUpdate();
                     }
 
@@ -425,9 +425,10 @@ namespace IAGrim.Database
 
 
         class DatabaseItemStatQuery {
-            public String SQL;
+            public string SQL;
             public Dictionary<string, string[]> Parameters;
         }
+
         private static DatabaseItemStatQuery CreateDatabaseStatQueryParams(ItemSearchRequest query) {
             List<string> queryFragments = new List<string>();
             Dictionary<string, string[]> queryParamsList = new Dictionary<string, string[]>();
@@ -509,22 +510,6 @@ namespace IAGrim.Database
 
         }
 
-        class BuddyItemDto {
-            public long Id { get; set; }
-
-            public float MinimumLevel { get; set; }
-            public string Rarity { get; set; }
-            public string BaseRecord { get; set; }
-            public string PrefixRecord { get; set; }
-            public string SuffixRecord { get; set; }
-            public string ModifierRecord { get; set; }
-            public string TransmuteRecord { get; set; }
-            public long BuddyId { get; set; }
-            public virtual string MateriaRecord { get; set; }
-            public virtual string EnchantmentRecord { get; set; }
-            public uint Count { get; set; }
-        }
-
         public IList<BuddyItem> FindBy(ItemSearchRequest query) {
             List<string> queryFragments = new List<string>();
             Dictionary<string, object> queryParams = new Dictionary<string, object>();
@@ -538,17 +523,14 @@ namespace IAGrim.Database
             queryFragments.Add($"(LOWER({BuddyItemsTable.Mod}) = LOWER( :mod ) OR {BuddyItemsTable.Mod} IS NULL)");
             queryParams.Add("mod", query.Mod);
 
-            /*
-            if (query.IsHardcore)
-                queryFragments.Add("PI.IsHardcore");
-            else
-                queryFragments.Add("NOT PI.IsHardcore");
-            */
-
-
             if (!string.IsNullOrEmpty(query.Rarity)) {
                 queryFragments.Add($"{BuddyItemsTable.Rarity} = :rarity");
                 queryParams.Add("rarity", query.Rarity);
+            }
+
+            if (query.RecentOnly) {
+                queryFragments.Add($"{BuddyItemsTable.CreatedAt} > :filter_recentOnly");
+                queryParams.Add("filter_recentOnly", DateTime.UtcNow.AddHours(-12).ToTimestamp());
             }
 
             // Add the MINIMUM level requirement (if any)
@@ -562,7 +544,6 @@ namespace IAGrim.Database
                 queryFragments.Add($"{BuddyItemsTable.LevelRequirement} <= :maxlevel");
                 queryParams.Add("maxlevel", query.MaximumLevel);
             }
-
 
             List<string> sql = new List<string>();
             sql.Add($@"SELECT
@@ -593,7 +574,7 @@ namespace IAGrim.Database
 
 
             using (ISession session = SessionCreator.OpenSession()) {
-                using (ITransaction transaction = session.BeginTransaction()) {
+                using (session.BeginTransaction()) {
                     Logger.Debug(string.Join(" ", sql));
                     var q = session.CreateSQLQuery(string.Join(" ", sql));
                     q.AddScalar("BaseRecord", NHibernateUtil.String);
