@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using IAGrim.Services;
 using IAGrim.Utilities;
+using Ionic.Zip;
 
 namespace IAGrim.UI.Popups.ImportExport.Panels {
     partial class ImportMode : Form {
@@ -67,7 +68,7 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
                 }
                 else if (radioIAStash.Checked) {
                     diag.DefaultExt = "ias";
-                    diag.Filter = "IA Stash exports (*.ias)|*.ias";
+                    diag.Filter = "IA Stash exports (*.ias)|*.ias;*.zip|Zipped IA Stash exports (*.zip)|*.zip";
                 }
                 else {
                     diag.DefaultExt = "gst";
@@ -85,6 +86,24 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
             }
         }
 
+        private static byte[] Read(string filename) {
+            // Attempt to read ias/gds from zip file
+            if (filename.ToLowerInvariant().EndsWith(".zip")) {
+                using (ZipFile zip = ZipFile.Read(filename)) {
+                    var candidates = zip.EntryFileNames.Where(fn => fn.EndsWith(".ias") || fn.EndsWith(".gds")).ToList();
+                    foreach (var candidate in candidates) {
+                        using (var ms = new MemoryStream()) {
+                            zip[candidate].Extract(ms);
+                            return ms.GetBuffer();
+                        }
+                    }
+                }
+            }
+
+            // Regular ias/gds file
+            return File.ReadAllBytes(filename);
+        }
+
         private void buttonImport_Click(object sender, EventArgs e) {
             if (buttonImport.Enabled) {
                 FileExporter io;
@@ -94,20 +113,15 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
                 }
                 else if (radioGDStash.Checked) {
                     GDTransferFile settings = cbItemSelection.SelectedItem as GDTransferFile;
-                    if (settings == null) {
-                        io = new GDFileExporter(_filename, false, string.Empty);
-                    }
-                    else {
-                        io = new GDFileExporter(_filename, settings.IsExpansion1, settings.Mod);
-                    }
+                    io = new GDFileExporter(_filename, settings?.Mod ?? string.Empty);
                 }
                 else {
                     _playerItemDao.Save(_sm.EmptyStash(_filename));
                     MessageBox.Show("Items imported", "Items imported!", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
-
-                var items = io.Read();
+                
+                var items = io.Read(Read(_filename));
                 _playerItemDao.Import(items);
 
                 MessageBox.Show("Items imported\nIf you already had items, you may have gotten duplicates.", "Items imported!", MessageBoxButtons.OK, MessageBoxIcon.Information);

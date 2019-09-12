@@ -29,7 +29,6 @@
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelBox4 = new PanelBox();
-            this.buttonPatreon = new System.Windows.Forms.Button();
             this.helpWhatIsDeleteDuplicates = new System.Windows.Forms.LinkLabel();
             this.helpWhatIsUsingMultiplePc = new System.Windows.Forms.LinkLabel();
             this.cbDeleteDuplicates = new FirefoxCheckBox();
@@ -47,6 +46,7 @@
             this.cbSecureTransfers = new FirefoxCheckBox();
             this.cbMergeDuplicates = new FirefoxCheckBox();
             this.cbMinimizeToTray = new FirefoxCheckBox();
+            this.buttonPatreon = new System.Windows.Forms.Button();
             this.panelBox3 = new PanelBox();
             this.radioBeta = new FirefoxRadioButton();
             this.radioRelease = new FirefoxRadioButton();
@@ -127,17 +127,6 @@
             this.panelBox4.Tag = "iatag_ui_settings_title";
             this.panelBox4.Text = "Settings";
             this.panelBox4.TextLocation = "8; 5";
-            // 
-            // buttonPatreon
-            // 
-            this.buttonPatreon.BackgroundImage = global::IAGrim.Properties.Resources.Patreon_Navy;
-            this.buttonPatreon.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.buttonPatreon.Location = new System.Drawing.Point(14, 150);
-            this.buttonPatreon.Name = "buttonPatreon";
-            this.buttonPatreon.Size = new System.Drawing.Size(192, 47);
-            this.buttonPatreon.TabIndex = 8;
-            this.buttonPatreon.UseVisualStyleBackColor = true;
-            this.buttonPatreon.Click += new System.EventHandler(this.buttonPatreon_Click);
             // 
             // helpWhatIsDeleteDuplicates
             // 
@@ -367,7 +356,6 @@
             this.cbMergeDuplicates.TabIndex = 9;
             this.cbMergeDuplicates.Tag = "iatag_ui_mergeduplicates";
             this.cbMergeDuplicates.Text = "Merge Duplicates";
-            this.cbMergeDuplicates.Visible = false;
             this.cbMergeDuplicates.CheckedChanged += new System.EventHandler(this.cbMergeDuplicates_CheckedChanged);
             // 
             // cbMinimizeToTray
@@ -382,6 +370,17 @@
             this.cbMinimizeToTray.TabIndex = 8;
             this.cbMinimizeToTray.Tag = "iatag_ui_minimizetotray";
             this.cbMinimizeToTray.Text = "Minimize to Tray";
+            // 
+            // buttonPatreon
+            // 
+            this.buttonPatreon.BackgroundImage = global::IAGrim.Properties.Resources.Patreon_Navy;
+            this.buttonPatreon.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.buttonPatreon.Location = new System.Drawing.Point(14, 150);
+            this.buttonPatreon.Name = "buttonPatreon";
+            this.buttonPatreon.Size = new System.Drawing.Size(192, 47);
+            this.buttonPatreon.TabIndex = 8;
+            this.buttonPatreon.UseVisualStyleBackColor = true;
+            this.buttonPatreon.Click += new System.EventHandler(this.buttonPatreon_Click);
             // 
             // panelBox3
             // 

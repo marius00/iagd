@@ -8,19 +8,17 @@ namespace IAGrim.Backup.FileWriter {
 
     public class GDFileExporter : FileExporter {
         const int SUPPORTED_FILE_VER = 1;
-        private readonly string filename;
-        private readonly bool isExpansion1;
-        private readonly string mod;
+        private readonly string _filename;
+        private readonly string _mod;
 
-        public GDFileExporter(string filename, bool isExpansion1, string mod) {
-            this.filename = filename;
-            this.isExpansion1 = isExpansion1;
-            this.mod = mod;
+        public GDFileExporter(string filename, string mod) {
+            this._filename = filename;
+            this._mod = mod;
         }
 
-        public List<PlayerItem> Read() {
+        public List<PlayerItem> Read(byte[] bytes) {
             List<PlayerItem> items = new List<PlayerItem>();
-            byte[] bytes = File.ReadAllBytes(filename);
+            
             int pos = 0;
 
             int file_ver = IOHelper.GetInt(bytes, pos); pos += 4;
@@ -54,7 +52,7 @@ namespace IAGrim.Backup.FileWriter {
                 pi.StackCount = IOHelper.GetUInt(bytes, pos); pos += 4;
                 pi.IsHardcore = bytes[pos++] == 1;
                 //pi.IsExpansion1 = this.isExpansion1;
-                pi.Mod = this.mod;
+                pi.Mod = this._mod;
                 string charName = ReadString();
 
                 items.Add(pi);
@@ -64,7 +62,7 @@ namespace IAGrim.Backup.FileWriter {
         }
 
         public void Write(IList<PlayerItem> items) {
-            using (FileStream fs = new FileStream(filename, FileMode.Create)) {
+            using (FileStream fs = new FileStream(_filename, FileMode.Create)) {
 
                 IOHelper.Write(fs, SUPPORTED_FILE_VER);
                 IOHelper.Write(fs, (int)items.Count);

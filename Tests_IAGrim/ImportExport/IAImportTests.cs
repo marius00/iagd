@@ -15,6 +15,7 @@ namespace Tests_IAGrim.ImportExport {
     public class IAImportTests {
         private static FileExporter importer;
         private const string SourceFile = @"ImportExport\test123.ias";
+        private readonly byte[] _sourceData = File.ReadAllBytes(SourceFile);
 
         [ClassInitialize]
         public static void Setup(TestContext context) {
@@ -24,13 +25,13 @@ namespace Tests_IAGrim.ImportExport {
         [TestMethod]
         public void CanLoadFile() {
             Executing.This(() => {
-                importer.Read();
+                importer.Read(_sourceData);
             }).Should().NotThrow();
         }
 
         [TestMethod]
         public void CanReadItems() {
-            var items = importer.Read();
+            var items = importer.Read(_sourceData);
             items.Count.Should().Be.EqualTo(1562);
         }
 
@@ -56,7 +57,7 @@ namespace Tests_IAGrim.ImportExport {
             exporter.Write(items);
 
 
-            var verifiy = exporter.Read();
+            var verifiy = exporter.Read(_sourceData);
             verifiy.Count.Should().Be.EqualTo(items.Count);
         }
 
@@ -83,7 +84,7 @@ namespace Tests_IAGrim.ImportExport {
                 }*/
 
                 // TOOD: Is this proper? its read related testing..
-                var verifiy = exporter.Read();
+                var verifiy = exporter.Read(_sourceData);
                 verifiy.Count.Should().Be.EqualTo(items.Count);
 
                 foreach (var item in verifiy) {

@@ -10,16 +10,15 @@ namespace IAGrim.Backup.FileWriter {
 
     public class IAFileExporter : FileExporter {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(IAFileExporter));
-        readonly List<int> _supportedFileVer = new List<int> { 1, 2 };
-        private readonly string filename;
+        readonly List<int> _supportedFileVer = new List<int> { 1, 2, 3 };
+        private readonly string _filename;
 
         public IAFileExporter(string filename) {
-            this.filename = filename;
+            this._filename = filename;
         }
 
-        public List<PlayerItem> Read() {
+        public List<PlayerItem> Read(byte[] bytes) {
             List<PlayerItem> items = new List<PlayerItem>();
-            byte[] bytes = File.ReadAllBytes(filename);
             int pos = 0;
 
             int fileVer = IOHelper.GetShort(bytes, pos); pos += 2;
@@ -71,15 +70,14 @@ namespace IAGrim.Backup.FileWriter {
                     // Old OID
                     pos += 8;
                 }
-                else if (fileVer == 2) {
+                else if (fileVer >= 2) {
                     pi.AzurePartition = ReadString();
                     pi.AzureUuid = ReadString();
                     pi.AzureHasSynchronized = !string.IsNullOrEmpty(pi.AzurePartition);
                 }
-                else if (fileVer == 3) {
-                    pi.AzureHasSynchronized = bytes[pos++] == 1; // TODO: Notify mamba
+                if (fileVer >= 3) {
+                    pi.AzureHasSynchronized = bytes[pos++] == 1;
                 }
-
 
                 items.Add(pi);
             }
@@ -88,8 +86,8 @@ namespace IAGrim.Backup.FileWriter {
         }
 
         public void Write(IList<PlayerItem> items) {
-            using (FileStream fs = new FileStream(filename, FileMode.Create)) {
-                IOHelper.Write(fs, (short)3);
+            using (FileStream fs = new FileStream(_filename, FileMode.Create)) {
+                IOHelper.Write(fs, (short)_supportedFileVer.Max());
                 IOHelper.Write(fs, (int)items.Count);
 
                 foreach (PlayerItem pi in items) {

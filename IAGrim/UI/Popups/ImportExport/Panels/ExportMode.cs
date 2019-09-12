@@ -70,7 +70,7 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
         private void buttonExport_Click(object sender, EventArgs e) {
             if (buttonExport.Enabled) {
                 if (_isGdstashFormat) {
-                    var io = new GDFileExporter(_filename, false, string.Empty); // Params are not used for writing
+                    var io = new GDFileExporter(_filename, string.Empty); // Params are not used for writing
 
                     GDTransferFile settings = cbItemSelection.SelectedItem as GDTransferFile;
                     if (settings == null) {
