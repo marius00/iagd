@@ -9,10 +9,10 @@ using System.Text;
 using System.Windows.Forms;
 using IAGrim.Settings;
 using IAGrim.Settings.Dto;
+using IAGrim.Utilities;
 using IAGrim.Utilities.HelperClasses;
 
 namespace IAGrim.UI.Controller {
-
     class SettingsController : INotifyPropertyChanged, ISettingsController, ISettingsReadController {
         private readonly SettingsService _settings;
 
@@ -23,7 +23,6 @@ namespace IAGrim.UI.Controller {
 
 
         public void LoadDefaults() {
-
             MinimizeToTray = _settings.GetPersistent().MinimizeToTray;
             MergeDuplicates = _settings.GetPersistent().MergeDuplicates;
             TransferAnyMod = _settings.GetPersistent().TransferAnyMod;
@@ -37,6 +36,7 @@ namespace IAGrim.UI.Controller {
         public event PropertyChangedEventHandler PropertyChanged;
 
         #region Properties
+
         private void OnPropertyChanged([CallerMemberName] string propertyName = "") {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -114,16 +114,16 @@ namespace IAGrim.UI.Controller {
         public bool SecureTransfers {
             get => _settings.GetLocal().SecureTransfers ?? true;
             set {
-                if (value || MessageBox.Show("Are you sure you wish to disable secure transfers?\n\nIt will be YOUR responsibility to make sure the bank is closed when transferring.", "Are you sure?", MessageBoxButtons.YesNo) == DialogResult.Yes) {
+                if (value || MessageBox.Show(
+                        RuntimeSettings.Language.GetTag("iatag_ui_settings_securetransferdsable_body"),
+                        RuntimeSettings.Language.GetTag("iatag_ui_settings_securetransferdsable_title"),
+                        MessageBoxButtons.YesNo
+                    ) == DialogResult.Yes) {
                     _settings.GetLocal().SecureTransfers = value;
                     OnPropertyChanged();
                 }
             }
         }
-
-
-
-
 
         #endregion
 

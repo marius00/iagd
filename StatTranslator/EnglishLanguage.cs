@@ -625,6 +625,16 @@ namespace StatTranslator {
             {"iatag_ui_avast3", "In order to keep using IA, you must first whitelist it in whichever anti virus/similar software, and then reinstall IA to restore the missing files.!"},
             {"iatag_ui_avast_ok", "OK"},
             {"iatag_ui_avastlink", "Click here for more information"},
+
+            {"iatag_ui_copiedclipboard", "Copied to clipboard" },
+            {"iatag_ui_importexport_nothinginzip_body", "This zip file does not contain any .ias backup files" },
+            {"iatag_ui_importexport_nothinginzip_title", "Error" },
+            {"iatag_ui_importexport_import_success", "Items imported!" },
+            {"iatag_ui_importexport_import_success_body", "Items imported\nIf you already had items, you may have gotten duplicates." },
+            {"iatag_ui_importexport_selectfile", "Select the file to import" },
+            {"iatag_ui_settings_securetransferdsable_body", "Are you sure you wish to disable secure transfers?\n\nIt will be YOUR responsibility to make sure the bank is closed when transferring." },
+            {"iatag_ui_settings_securetransferdsable_title", "Are you sure?" },
+
         };
 
         private const string English = "{%_s0}{%_s1}{%_s2}{%_s3}{%_s4}";

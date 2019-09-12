@@ -178,17 +178,6 @@ namespace IAGrim
             IItemTagDao itemTagDao = new ItemTagRepo(threadExecuter, factory);
 
 
-#if !DEBUG
-            if (statUpgradeNeeded) {
-
-                // If we don't also update item stats, a lot of whining will ensue.
-                // This accounts for most database updates (new fields added that needs to get populated etc)
-                UpdatingPlayerItemsScreen x = new UpdatingPlayerItemsScreen(playerItemDao);
-                x.ShowDialog();
-            }
-#endif
-
-
             IBuddyItemDao buddyItemDao = new BuddyItemRepo(threadExecuter, factory);
             IBuddySubscriptionDao buddySubscriptionDao = new BuddySubscriptionRepo(threadExecuter, factory);
             IRecipeItemDao recipeItemDao = new RecipeItemRepo(threadExecuter, factory);

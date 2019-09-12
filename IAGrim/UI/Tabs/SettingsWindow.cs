@@ -11,6 +11,7 @@ using IAGrim.Settings.Dto;
 using IAGrim.UI.Controller;
 using IAGrim.UI.Misc.CEF;
 using IAGrim.UI.Popups;
+using IAGrim.Utilities;
 using IAGrim.Utilities.HelperClasses;
 
 namespace IAGrim.UI.Tabs {
@@ -102,7 +103,12 @@ namespace IAGrim.UI.Tabs {
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e) {
             Clipboard.SetText("https://discord.gg/5wuCPbB");
-            _tooltipHelper.ShowTooltipForControl("Copied to clipboard", linkLabel1, TooltipHelper.TooltipLocation.TOP);
+            
+            _tooltipHelper.ShowTooltipForControl(
+                RuntimeSettings.Language.GetTag("iatag_ui_copiedclipboard"), 
+                linkLabel1, 
+                TooltipHelper.TooltipLocation.TOP
+                );
         }
 
         private void contextMenuStrip1_Opening(object sender, CancelEventArgs e) {

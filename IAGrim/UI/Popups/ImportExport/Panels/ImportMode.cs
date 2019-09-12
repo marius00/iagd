@@ -48,6 +48,7 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
         private void radioGDStash_CheckedChanged(object sender, EventArgs e) {
             cbItemSelection.Visible = (sender as Control).Enabled;
         }
+
         private void radioGameStash_CheckedChanged(object sender, EventArgs e) {
             cbItemSelection.Visible = !(sender as Control).Enabled;
         }
@@ -59,7 +60,7 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
                     CheckPathExists = true,
                     InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "Grim Dawn", "Save"),
                     Multiselect = false,
-                    Title = "Select the file to import"
+                    Title = RuntimeSettings.Language.GetTag("iatag_ui_importexport_selectfile")
                 };
 
                 if (radioGDStash.Checked) {
@@ -68,7 +69,7 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
                 }
                 else if (radioIAStash.Checked) {
                     diag.DefaultExt = "ias";
-                    diag.Filter = "IA Stash exports (*.ias)|*.ias;*.zip|Zipped IA Stash exports (*.zip)|*.zip";
+                    diag.Filter = "IA Stash exports (*.ias)|*.ias;*.zip";
                 }
                 else {
                     diag.DefaultExt = "gst";
@@ -77,13 +78,35 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
                 }
 
                 if (diag.ShowDialog() == DialogResult.OK) {
-                    radioGDStash.Enabled = false;
-                    radioIAStash.Enabled = false;
-                    buttonImport.Enabled = true;
-                    cbItemSelection.Enabled = true;
-                    this._filename = diag.FileName;
+                    if (IsValid(diag.FileName)) {
+                        radioGDStash.Enabled = false;
+                        radioIAStash.Enabled = false;
+                        buttonImport.Enabled = true;
+                        cbItemSelection.Enabled = true;
+                        this._filename = diag.FileName;
+                    }
+                    else {
+                        MessageBox.Show(
+                            RuntimeSettings.Language.GetTag("iatag_ui_importexport_nothinginzip_body"), 
+                            RuntimeSettings.Language.GetTag("iatag_ui_importexport_nothinginzip_title"), 
+                            MessageBoxButtons.OK, 
+                            MessageBoxIcon.Asterisk
+                        );
+                    }
                 }
             }
+        }
+
+        private static bool IsValid(string filename) {
+            // Attempt to read ias/gds from zip file
+            if (filename.ToLowerInvariant().EndsWith(".zip")) {
+                using (ZipFile zip = ZipFile.Read(filename)) {
+                    return zip.EntryFileNames.Any(fn => fn.EndsWith(".ias") || fn.EndsWith(".gds"));
+                }
+            }
+
+            // Regular ias/gds file
+            return true;
         }
 
         private static byte[] Read(string filename) {
@@ -117,15 +140,25 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
                 }
                 else {
                     _playerItemDao.Save(_sm.EmptyStash(_filename));
-                    MessageBox.Show("Items imported", "Items imported!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    MessageBox.Show(
+                        RuntimeSettings.Language.GetTag("iatag_ui_importexport_import_success"),
+                        RuntimeSettings.Language.GetTag("iatag_ui_importexport_import_success"),
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
                     return;
                 }
-                
+
                 var items = io.Read(Read(_filename));
                 _playerItemDao.Import(items);
 
-                MessageBox.Show("Items imported\nIf you already had items, you may have gotten duplicates.", "Items imported!", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
+                MessageBox.Show(
+                    RuntimeSettings.Language.GetTag("iatag_ui_importexport_import_success_body"),
+                    RuntimeSettings.Language.GetTag("iatag_ui_importexport_import_success"),
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
             }
         }
 
