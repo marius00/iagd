@@ -42,29 +42,6 @@ namespace IAGrim {
             }
         }
 
-        /// <summary>
-        /// Upgrade any settings if required
-        /// This happens for just about every compile
-        /// </summary>
-        public static bool UpgradeSettings() {
-            try {
-                if (Properties.Settings.Default.CallUpgrade) {
-                    Properties.Settings.Default.Upgrade();
-                    Properties.Settings.Default.CallUpgrade = false;
-                    Logger.Info("Settings upgraded..");
-
-                    return true;
-                }
-            }
-            catch (Exception ex) {
-                Logger.Warn(ex.Message);
-                Logger.Warn(ex.StackTrace);
-                ExceptionReporter.ReportException(ex);
-            }
-
-            return false;
-        }
-
 
         // TODO: This creates another session instance, should be executed inside the ThreadExecuter
         public static void PrintStartupInfo(SessionFactory factory, SettingsService settings) {
@@ -137,50 +114,7 @@ namespace IAGrim {
 
 
         public static SettingsService LoadSettingsService() {
-            string settingsFile = GlobalPaths.SettingsFile;
-            if (File.Exists(settingsFile)) {
-                return SettingsService.Load(settingsFile);
-            }
-            else {
-                Logger.Info("No settings file found, creating new settings file from legacy settings.");
-                var p = Properties.Settings.Default;
-                var service = SettingsService.Load(settingsFile);
-                service.GetLocal().GrimDawnLocation = new List<string> { p.GrimDawnLocation };
-                service.GetLocal().BackupNumber = p.BackupNumber;
-                service.GetLocal().HasSuggestedLanguageChange = p.HasSuggestedLanguageChange;
-
-
-                service.GetPersistent().BuddySyncUserIdV2 = p.BuddySyncUserIdV2;
-                service.GetPersistent().BuddySyncDescription = p.BuddySyncDescription;
-                service.GetPersistent().BuddySyncEnabled = p.BuddySyncEnabled;
-
-                service.GetPersistent().SubscribeExperimentalUpdates = p.SubscribeExperimentalUpdates;
-                service.GetPersistent().ShowRecipesAsItems = p.ShowRecipesAsItems;
-                service.GetLocal().LastNagTimestamp = p.LastNagTimestamp;
-                service.GetPersistent().MinimizeToTray = p.MinimizeToTray;
-                service.GetPersistent().UsingDualComputer = p.UsingDualComputer;
-                service.GetPersistent().ShowAugmentsAsItems = p.ShowAugmentsAsItems;
-                service.GetPersistent().MergeDuplicates = p.MergeDuplicates;
-                service.GetPersistent().TransferAnyMod = p.TransferAnyMod;
-                service.GetLocal().SecureTransfers = p.SecureTransfers;
-                service.GetPersistent().AutoUpdateModSettings = p.AutoUpdateModSettings;
-                service.GetPersistent().DisplaySkills = p.DisplaySkills;
-                service.GetLocal().StashToDepositTo = p.StashToDepositTo;
-                service.GetLocal().StashToLootFrom = p.StashToLootFrom;
-                service.GetLocal().LocalizationFile = p.LocalizationFile;
-
-                service.GetLocal().BackupDropbox = p.BackupDropbox;
-                service.GetLocal().BackupGoogle = p.BackupGoogle;
-                service.GetLocal().BackupOnedrive = p.BackupOnedrive;
-                service.GetLocal().BackupCustom = p.BackupCustom;
-                service.GetLocal().BackupCustomLocation = p.BackupCustomLocation;
-
-                service.GetPersistent().AzureAuthToken = p.AzureAuthToken;
-
-                service.GetLocal().WindowPositionSettings = null;
-
-                return service;
-            }
+            return SettingsService.Load(GlobalPaths.SettingsFile);
         }
 
         public static void PerformGrimUpdateCheck(SettingsService settingsService) {

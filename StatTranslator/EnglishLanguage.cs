@@ -294,6 +294,15 @@ namespace StatTranslator {
             {"iatag_html_augmentation_item", "You may be able to purchase this augment from {0}"},
             {"iatag_html_setbonus", "Set:"},
 
+
+            {"iatag_ui_nagscreen1_button", "Maybe later..."},
+            {"iatag_ui_nagscreen2_button", "Hah, as if!"},
+            {"iatag_ui_nagscreen3_button", "Never! Muhaha!"},
+            {"iatag_ui_nagscreen4_button", "Why would I?"},
+            {"iatag_ui_nagscreen5_button", "Stop nagging me!"},
+            {"iatag_ui_nagscreen_title", "Would you like to donate to the developer of Item Assistant?"},
+            {"iatag_ui_nagscreen_header", "IA : Would you like to donate?"},
+
             {"iatag_ui_clean", "Clean Database"},
             {"iatag_ui_buddy_userid", "User ID: "},
             {"iatag_ui_buddy_userid_none", "None"},

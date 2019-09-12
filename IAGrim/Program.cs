@@ -164,9 +164,7 @@ namespace IAGrim
             // Settings should be upgraded early, it contains the language pack etc and some services depends on settings.
             var settingsService = StartupService.LoadSettingsService();
             IPlayerItemDao playerItemDao = new PlayerItemRepo(threadExecuter, factory);
-            var statUpgradeNeeded = StartupService.UpgradeSettings();
             
-            // X
             IDatabaseItemDao databaseItemDao = new DatabaseItemRepo(threadExecuter, factory);
             RuntimeSettings.InitializeLanguage(settingsService.GetLocal().LocalizationFile, databaseItemDao.GetTagDictionary());
             DumpTranslationTemplate();
