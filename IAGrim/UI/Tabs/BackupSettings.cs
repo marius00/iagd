@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -78,6 +79,8 @@ namespace IAGrim.UI.Tabs {
             cbGoogle.Checked = _settings.GetLocal().BackupGoogle;
             cbOneDrive.Checked = _settings.GetLocal().BackupOnedrive;
             cbCustom.Checked = _settings.GetLocal().BackupCustom;
+            lbOpenCustomBackupFolder.Visible = cbCustom.Checked;
+
             cbDontWantBackups.Checked = _settings.GetLocal().OptOutOfBackups;
             buttonLogin.Enabled = !_settings.GetLocal().OptOutOfBackups;
 
@@ -125,6 +128,7 @@ namespace IAGrim.UI.Tabs {
         private void cbCustom_CheckedChanged(object sender, EventArgs e) {
             var cb = sender as FirefoxCheckBox;
             _settings.GetLocal().BackupCustom = cb.Checked;
+            lbOpenCustomBackupFolder.Visible = cb.Checked;
         }
 
         private void buttonCustom_Click(object sender, EventArgs e) {
@@ -251,6 +255,10 @@ namespace IAGrim.UI.Tabs {
 
         private void btnRefreshBackupDetails_Click(object sender, EventArgs e) {
             UpdateUi();
+        }
+
+        private void lbOpenCustomBackupFolder_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            Process.Start(_settings.GetLocal().BackupCustomLocation); // TODO: Should open the \evilsoft\iagd folder.. but not this class` responsibility to know that..
         }
     }
 }

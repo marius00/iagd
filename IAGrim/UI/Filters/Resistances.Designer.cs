@@ -35,6 +35,7 @@
             this.resistLightning = new FirefoxCheckBox();
             this.resistVitality = new FirefoxCheckBox();
             this.resistAether = new FirefoxCheckBox();
+            this.resistStun = new FirefoxCheckBox();
             this.resistancePanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -42,6 +43,7 @@
             // 
             this.resistancePanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.resistancePanel.Controls.Add(this.resistStun);
             this.resistancePanel.Controls.Add(this.resistBleeding);
             this.resistancePanel.Controls.Add(this.resistElemental);
             this.resistancePanel.Controls.Add(this.resistFire);
@@ -58,7 +60,7 @@
             this.resistancePanel.Location = new System.Drawing.Point(3, 3);
             this.resistancePanel.Name = "resistancePanel";
             this.resistancePanel.NoRounding = false;
-            this.resistancePanel.Size = new System.Drawing.Size(310, 411);
+            this.resistancePanel.Size = new System.Drawing.Size(310, 437);
             this.resistancePanel.TabIndex = 41;
             this.resistancePanel.Tag = "iatag_ui_resistances";
             this.resistancePanel.Text = "Resistances";
@@ -229,13 +231,28 @@
             this.resistAether.Tag = "iatag_ui_resistance_aether";
             this.resistAether.Text = "Aether";
             // 
+            // resistStun
+            // 
+            this.resistStun.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.resistStun.Bold = false;
+            this.resistStun.EnabledCalc = true;
+            this.resistStun.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.resistStun.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.resistStun.Location = new System.Drawing.Point(3, 400);
+            this.resistStun.Name = "resistStun";
+            this.resistStun.Size = new System.Drawing.Size(291, 27);
+            this.resistStun.TabIndex = 11;
+            this.resistStun.Tag = "iatag_ui_resistance_stun";
+            this.resistStun.Text = "Stun";
+            // 
             // Resistances
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.resistancePanel);
             this.Name = "Resistances";
-            this.Size = new System.Drawing.Size(316, 418);
+            this.Size = new System.Drawing.Size(316, 446);
             this.resistancePanel.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -255,5 +272,6 @@
         private FirefoxCheckBox resistLightning;
         private FirefoxCheckBox resistVitality;
         private FirefoxCheckBox resistAether;
+        private FirefoxCheckBox resistStun;
     }
 }

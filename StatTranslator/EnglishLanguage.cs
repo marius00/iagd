@@ -380,6 +380,8 @@ namespace StatTranslator {
             {"iatag_ui_resistance_lightning", "Lightning"},
             {"iatag_ui_resistance_vitality", "Vitality"},
             {"iatag_ui_resistance_aether", "Aether"},
+            {"iatag_ui_resistance_stun", "Stun"},
+            
             {"iatag_ui_dot", "Damage over Time"},
             {"iatag_ui_lifeleech", "Life Leech"},
             {"iatag_ui_decay", "Decay"},
@@ -634,6 +636,7 @@ namespace StatTranslator {
             {"iatag_ui_importexport_selectfile", "Select the file to import" },
             {"iatag_ui_settings_securetransferdsable_body", "Are you sure you wish to disable secure transfers?\n\nIt will be YOUR responsibility to make sure the bank is closed when transferring." },
             {"iatag_ui_settings_securetransferdsable_title", "Are you sure?" },
+            {"iatag_ui_opencustombackup", "Open folder" },
 
         };
 

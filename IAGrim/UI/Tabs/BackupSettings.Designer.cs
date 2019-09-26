@@ -45,6 +45,7 @@
             this.pbDropbox = new System.Windows.Forms.PictureBox();
             this.pbGoogle = new System.Windows.Forms.PictureBox();
             this.cbGoogle = new FirefoxCheckBox();
+            this.lbOpenCustomBackupFolder = new System.Windows.Forms.LinkLabel();
             this.onlineBackup.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panelBox5.SuspendLayout();
@@ -182,6 +183,7 @@
             // 
             this.panelBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelBox5.Controls.Add(this.lbOpenCustomBackupFolder);
             this.panelBox5.Controls.Add(this.helpWhyOnedriveDisabled);
             this.panelBox5.Controls.Add(this.helpWhyDropboxDisabled);
             this.panelBox5.Controls.Add(this.helpWhyGdriveDisabled);
@@ -349,6 +351,20 @@
             this.cbGoogle.Size = new System.Drawing.Size(29, 27);
             this.cbGoogle.TabIndex = 0;
             // 
+            // lbOpenCustomBackupFolder
+            // 
+            this.lbOpenCustomBackupFolder.AutoSize = true;
+            this.lbOpenCustomBackupFolder.BackColor = System.Drawing.Color.Transparent;
+            this.lbOpenCustomBackupFolder.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbOpenCustomBackupFolder.Location = new System.Drawing.Point(133, 233);
+            this.lbOpenCustomBackupFolder.Name = "lbOpenCustomBackupFolder";
+            this.lbOpenCustomBackupFolder.Size = new System.Drawing.Size(70, 13);
+            this.lbOpenCustomBackupFolder.TabIndex = 17;
+            this.lbOpenCustomBackupFolder.TabStop = true;
+            this.lbOpenCustomBackupFolder.Tag = "iatag_ui_opencustombackup";
+            this.lbOpenCustomBackupFolder.Text = "Open folder";
+            this.lbOpenCustomBackupFolder.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lbOpenCustomBackupFolder_LinkClicked);
+            // 
             // BackupSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -400,5 +416,6 @@
         private System.Windows.Forms.LinkLabel linkDeleteBackup;
         private System.Windows.Forms.LinkLabel linkLogout;
         private System.Windows.Forms.Button btnRefreshBackupDetails;
+        private System.Windows.Forms.LinkLabel lbOpenCustomBackupFolder;
     }
 }

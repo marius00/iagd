@@ -59,6 +59,10 @@ namespace IAGrim.UI.Filters {
                     resistTypes.Add("Bleeding");
                 }
 
+                if (resistStun.Checked) {
+                    resistTypes.Add("Stun");
+                }
+
                 var filters = new List<string[]>();
                 if (resistElemental.Checked) {
                     filters.Add(new[] { "defensiveElementalResistance" });
