@@ -83,7 +83,9 @@ namespace IAGrim.Settings {
             Logger.Info("Could not find settings JSON, defaulting to no settings.");
             return new SettingsService(new SettingsTemplate {
                 Local = new LocalSettings { MachineName = Environment.MachineName },
-                Persistent = new PersistentSettings()
+                Persistent = new PersistentSettings {
+                    DeleteDuplicates = true
+                }
             }, filename);
         }
     }

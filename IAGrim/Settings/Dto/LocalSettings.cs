@@ -31,7 +31,7 @@ namespace IAGrim.Settings.Dto {
         public string MachineName { get; set; }
 
         public List<string> GrimDawnLocation {
-            get => _grimDawnLocation;
+            get => _grimDawnLocation ?? new List<string>(0);
             set {
                 _grimDawnLocation = value;
                 OnMutate?.Invoke(null, null);
