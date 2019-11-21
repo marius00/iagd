@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace IAGrim.Parser.Helperclasses {
-    public class ParserHelpersR<T> where T : IItemStatR {
+    public class ParserHelpersR<T> where T : IItemStat {
 
-
+        
         public static string GetRootSkillRecord(Func<string, IEnumerable<T>> statLoader, string skillRecord) {
             //var skill = allRecords.Where(m => m.Record.Equals(skillRecord));
             var skill = statLoader(skillRecord);
@@ -57,9 +57,10 @@ namespace IAGrim.Parser.Helperclasses {
 
         }
     }
-    public class ParserHelpers<T> where T : IItemStatI {
 
+    public class ParserHelpers<T> where T : IItemStat {
 
+        /*
         public static long GetRootSkillRecord(Func<string, IEnumerable<T>> statLoader, string skillRecord) {
             //var skill = allRecords.Where(m => m.Record.Equals(skillRecord));
             var skill = statLoader(skillRecord);
@@ -81,7 +82,7 @@ namespace IAGrim.Parser.Helperclasses {
                 return GetRootSkillRecord(statLoader, buffSkillName.FirstOrDefault().TextValue);
 
             return -1;
-        }
+        }*/
 
 
         public static string GetBitmap(IEnumerable<T> Tags) {

@@ -7,7 +7,7 @@ namespace IAGrim.Database.Model {
         public long? Level { get; set; }
         public string Name { get; set; }
         public string Record { get; set; }
-        public List<DBSTatRow> Stats { get; set; }
+        public List<DBStatRow> Stats { get; set; }
         public long? StatsId { get; set; }
         public string Trigger { get; set; }
     }

@@ -36,7 +36,7 @@ namespace IAGrim.Database.Interfaces {
 
         string Bitmap { get; }
 
-        ISet<DBSTatRow> Tags {
+        ISet<DBStatRow> Tags {
             get;
             set;
         }

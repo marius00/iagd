@@ -25,7 +25,7 @@ namespace IAGrim.Database.Model {
 
         public TranslatedStat Trigger => TriggerRecord == null ? null : RuntimeSettings.StatManager.TranslateSkillAutoController(TriggerRecord);
 
-        public ISet<DBSTatRow> Tags {
+        public ISet<DBStatRow> Tags {
             get;
             set;
         }

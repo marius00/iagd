@@ -6,19 +6,12 @@ using System.Threading.Tasks;
 
 namespace DataAccess {
     public interface IItemStat {
-        //long Id { get; set; }
 
+        string Record { get; set; }
         string Stat { get; set; }
         float Value { get; set; }
         string TextValue { get; set; }
 
     }
-    public interface IItemStatI : IItemStat {
-        long Id { get; set; }
 
-    }
-    public interface IItemStatR : IItemStat {
-        string Record { get; set; }
-
-    }
 }

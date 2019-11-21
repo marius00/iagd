@@ -6,9 +6,10 @@ using System.Linq;
 using System.Text;
 
 namespace IAGrim.Database {
-    public class DatabaseItemStat : IItemStatI {
+    public class DatabaseItemStat : IItemStat {
         public virtual long Id { get; set; }
 
+        public virtual string Record { get; set; }
         public virtual string Stat { get; set; }
 
         public virtual float Value { get; set; }

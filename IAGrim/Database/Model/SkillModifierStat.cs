@@ -20,6 +20,6 @@ namespace IAGrim.Database.Model {
             }
         }
 
-        public ISet<DBSTatRow> Tags { get; set; }
+        public ISet<DBStatRow> Tags { get; set; }
     }
 }

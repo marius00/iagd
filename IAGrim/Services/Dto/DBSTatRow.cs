@@ -8,20 +8,16 @@ using System.Threading.Tasks;
 
 namespace IAGrim.Services.Dto {
 
-    public class DBSTatRow : IItemStatI {
+    public class DBStatRow : IItemStat {
         public string Record { get; set; }
         public string Stat { get; set; }
         public double Value { get; set; }
         public string TextValue { get; set; }
 
         float IItemStat.Value {
-            get {
-                return (float)Value;
-            }
+            get => (float)Value;
 
-            set {
-                this.Value = value;
-            }
+            set => this.Value = value;
         }
 
         public long Id { get; set; }

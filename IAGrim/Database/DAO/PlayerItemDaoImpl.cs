@@ -1,20 +1,15 @@
 ﻿using EvilsoftCommons.Exceptions;
-using IAGrim.Database;
 using IAGrim.Database.DAO.Dto;
 using IAGrim.Database.Dto;
 using IAGrim.Database.Interfaces;
-using IAGrim.Parser.Helperclasses;
 using IAGrim.Services.Dto;
-using IAGrim.Utilities;
 using log4net;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Transform;
-using StatTranslator;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using EvilsoftCommons;
 using IAGrim.Backup.Azure.Dto;
 using IAGrim.Database.DAO;
@@ -104,7 +99,7 @@ namespace IAGrim.Database {
         /// <param name="stats"></param>
         /// <param name="records"></param>
         /// <returns></returns>
-        private int GetGreenQualityLevelForRecords(Dictionary<string, List<DBSTatRow>> stats, List<string> records) {
+        private int GetGreenQualityLevelForRecords(Dictionary<string, List<DBStatRow>> stats, List<string> records) {
             var classifications = stats.Where(m => records.Contains(m.Key))
                 .SelectMany(m => m.Value.Where(v => v.Stat == "itemClassification"))
                 .Select(m => m.TextValue)
@@ -191,7 +186,7 @@ namespace IAGrim.Database {
         }
 
 
-        private IEnumerable<string> GetPetBonusRecords(Dictionary<string, List<DBSTatRow>> stats, List<string> records) {
+        private IEnumerable<string> GetPetBonusRecords(Dictionary<string, List<DBStatRow>> stats, List<string> records) {
             var relevant = stats.Where(m => records.Contains(m.Key));
             return relevant.SelectMany(m => m.Value)
                 .Where(m => m.Stat == "petBonusName")
@@ -358,7 +353,7 @@ namespace IAGrim.Database {
             }
         }
 
-        private void UpdatePetRecords(ISession session, PlayerItem item, Dictionary<String, List<DBSTatRow>> stats) {
+        private void UpdatePetRecords(ISession session, PlayerItem item, Dictionary<String, List<DBStatRow>> stats) {
             var records = GetRecordsForItem(item);
 
             var table = nameof(PlayerItemRecord);
@@ -374,7 +369,7 @@ namespace IAGrim.Database {
 
         }
 
-        private void UpdateItemDetails(ISession session, PlayerItem item, Dictionary<String, List<DBSTatRow>> stats) {
+        private void UpdateItemDetails(ISession session, PlayerItem item, Dictionary<String, List<DBStatRow>> stats) {
             var table = nameof(PlayerItem);
             var rarity = nameof(PlayerItem.Rarity);
             var levelReq = nameof(PlayerItem.LevelRequirement);

@@ -22,7 +22,7 @@ namespace IAGrim.Database {
 
         public virtual bool IsKnown => Tags != null && Tags.Count > 0;
         
-        public virtual string Bitmap => Parser.Helperclasses.ParserHelpers<DBSTatRow>.GetBitmap(Tags);
+        public virtual string Bitmap => Parser.Helperclasses.ParserHelpers<DBStatRow>.GetBitmap(Tags);
 
         public virtual string Rarity { get; set; }
         public string Mod { get; set; }

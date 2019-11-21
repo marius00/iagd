@@ -137,7 +137,7 @@ namespace Tests_IAGrim.Dao {
                 IsHardcore = false,
                 MinimumLevel = 15,
                 Name = "Some item" + n,
-                Tags = new HashSet<DBSTatRow>()
+                Tags = new HashSet<DBStatRow>()
             };
         }
 
