@@ -19,7 +19,7 @@ namespace IAGrim.Database.Model {
         public virtual string MateriaRecord { get; set; }
         public virtual string EnchantmentRecord { get; set; }
 
-        public virtual ISet<DBSTatRow> Tags {
+        public virtual ISet<DBStatRow> Tags {
             get;
             set;
         }

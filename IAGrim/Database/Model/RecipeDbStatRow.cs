@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace IAGrim.Database.Model {
-    public class RecipeDbStatRow : DBSTatRow {
+    public class RecipeDbStatRow : DBStatRow {
         public DatabaseItemDto Parent { get; set; }
     }
 }

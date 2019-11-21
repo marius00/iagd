@@ -16,7 +16,7 @@ namespace IAGrim.Services {
         private readonly IDatabaseItemStatDao _databaseItemStatDao;
         private readonly IItemSkillDao _itemSkillDao;
         private bool _displaySkills => _settings.GetPersistent().DisplaySkills;
-        private readonly Dictionary<string, ISet<DBSTatRow>> _xpacSkills;
+        private readonly Dictionary<string, ISet<DBStatRow>> _xpacSkills;
         private readonly SettingsService _settings;
 
 
@@ -94,17 +94,17 @@ namespace IAGrim.Services {
         private void ApplyStatsToDbItems(List<PlayerHeldItem> items, StatFetch type) {
 
             var records = GetRecordsForItems(items);
-            Dictionary<string, List<DBSTatRow>> statMap = _databaseItemStatDao.GetStats(records, type);
+            Dictionary<string, List<DBStatRow>> statMap = _databaseItemStatDao.GetStats(records, type);
 
             foreach (PlayerHeldItem phi in items) {
-                List<DBSTatRow> stats = new List<DBSTatRow>();
+                List<DBStatRow> stats = new List<DBStatRow>();
                 if (statMap.ContainsKey(phi.BaseRecord))
                     stats.AddRange(Filter(statMap[phi.BaseRecord]));
 
                 var statsWithText = Filter(stats.Where(m => !string.IsNullOrEmpty(m.TextValue)));
-                List<DBSTatRow> statsWithNumerics = stats.Where(m => string.IsNullOrEmpty(m.TextValue))
+                List<DBStatRow> statsWithNumerics = stats.Where(m => string.IsNullOrEmpty(m.TextValue))
                     .GroupBy(r => r.Stat)
-                    .Select(g => new DBSTatRow {
+                    .Select(g => new DBStatRow {
                         Record = g.FirstOrDefault()?.Record,
                         TextValue = g.FirstOrDefault()?.TextValue,
                         Stat = g.FirstOrDefault()?.Stat,
@@ -114,7 +114,7 @@ namespace IAGrim.Services {
 
                 statsWithNumerics.AddRange(statsWithText);
 
-                phi.Tags = new HashSet<DBSTatRow>(statsWithNumerics);
+                phi.Tags = new HashSet<DBStatRow>(statsWithNumerics);
             }
 
             Logger.Debug($"Applied stats to {items.Count()} items");
@@ -186,7 +186,7 @@ namespace IAGrim.Services {
             var itemsWithSkills = items.Where(m => m.Skill != null).Select(m => m.Skill.StatsId).ToList();
             if (itemsWithSkills.Count > 0) {
                 Logger.Debug($"Applying stats to skills for {itemsWithSkills.Count} items");
-                Dictionary<long, List<DBSTatRow>> statMap =
+                Dictionary<long, List<DBStatRow>> statMap =
                     _databaseItemStatDao.GetStats(itemsWithSkills, StatFetch.Skills);
 
                 foreach (var item in items.Where(m => m.Skill != null)) {
@@ -209,7 +209,7 @@ namespace IAGrim.Services {
             if (items.Count > 0) {
                 Logger.Debug($"Applying stats to {items.Count} items");
                 var records = items.SelectMany(GetRecordsForItem).Distinct();
-                Dictionary<string, List<DBSTatRow>> statMap = _databaseItemStatDao.GetStats(records, StatFetch.BuddyItems);
+                Dictionary<string, List<DBStatRow>> statMap = _databaseItemStatDao.GetStats(records, StatFetch.BuddyItems);
                 
                 // TODO: Add skill support?
                 /*
@@ -218,7 +218,7 @@ namespace IAGrim.Services {
                     */
 
                 foreach (var pi in items) {
-                    List<DBSTatRow> stats = new List<DBSTatRow>();
+                    List<DBStatRow> stats = new List<DBStatRow>();
                     if (statMap.ContainsKey(pi.BaseRecord))
                         stats.AddRange(Filter(statMap[pi.BaseRecord]));
 
@@ -242,18 +242,20 @@ namespace IAGrim.Services {
             }
         }
 
+        // augmentSkillLevel1, augmentSkillName1, augmentSkill1Extras
+
         public void ApplyStatsToPlayerItems(List<PlayerItem> items) {
             if (items.Count > 0) {
                 Logger.Debug($"Applying stats to {items.Count} items");
                 var records = items.SelectMany(GetRecordsForItem).Distinct();
-                Dictionary<string, List<DBSTatRow>> statMap = _databaseItemStatDao.GetStats(records, StatFetch.PlayerItems);
+                Dictionary<string, List<DBStatRow>> statMap = _databaseItemStatDao.GetStats(records, StatFetch.PlayerItems);
 
                 if (_displaySkills) {
                     ApplySkills(items);
                 }
 
                 foreach (PlayerItem pi in items) {
-                    List<DBSTatRow> stats = new List<DBSTatRow>();
+                    List<DBStatRow> stats = new List<DBStatRow>();
                     if (statMap.ContainsKey(pi.BaseRecord))
                         stats.AddRange(Filter(statMap[pi.BaseRecord]));
 
@@ -270,6 +272,7 @@ namespace IAGrim.Services {
                         stats.AddRange(Filter(statMap[pi.PetRecord]));
                     // TODO: Don't do this, use PlayerItemRecords.. somehow.. those contain pet bonuses
 
+                    var tmp = stats.Where(s => s.Stat.StartsWith("augment")).ToList();
                     pi.Tags = process(stats);
                 }
 
@@ -278,12 +281,11 @@ namespace IAGrim.Services {
         }
 
 
-        private HashSet<DBSTatRow> process(List<DBSTatRow> stats) {
-
-            var statsWithText = Filter(stats.Where(m => !string.IsNullOrEmpty(m.TextValue)));
-            List<DBSTatRow> statsWithNumerics = stats.Where(m => string.IsNullOrEmpty(m.TextValue))
+        private HashSet<DBStatRow> process(List<DBStatRow> stats) {
+            var statsWithText = stats.Where(m => !string.IsNullOrEmpty(m.TextValue));
+            List<DBStatRow> statsWithNumerics = stats.Where(m => string.IsNullOrEmpty(m.TextValue))
                 .GroupBy(r => r.Stat)
-                .Select(g => new DBSTatRow {
+                .Select(g => new DBStatRow {
                     Record = g.FirstOrDefault().Record,
                     TextValue = g.FirstOrDefault().TextValue,
                     Stat = g.FirstOrDefault().Stat,
@@ -292,10 +294,10 @@ namespace IAGrim.Services {
                 .ToList();
 
             statsWithNumerics.AddRange(statsWithText);
-            return new HashSet<DBSTatRow>(statsWithNumerics);
+            return new HashSet<DBStatRow>(statsWithNumerics);
         }
 
-        private IEnumerable<DBSTatRow> Filter(IEnumerable<DBSTatRow> stats) {
+        private IEnumerable<DBStatRow> Filter(IEnumerable<DBStatRow> stats) {
             return stats.GroupBy(r => r.Stat)
                     .Select(g => g.OrderByDescending(m => {
                         return m.Value;

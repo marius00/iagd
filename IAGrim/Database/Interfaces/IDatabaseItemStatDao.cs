@@ -6,13 +6,13 @@ using NHibernate;
 
 namespace IAGrim.Database.Interfaces {
     public interface IDatabaseItemStatDao : IBaseDao<DatabaseItemStat> {
-        Dictionary<string, List<DBSTatRow>> GetStats(ISession session, StatFetch fetchMode);
-        Dictionary<string, List<DBSTatRow>> GetStats(IEnumerable<string> records, StatFetch fetchMode);
-        Dictionary<long, List<DBSTatRow>> GetStats(List<long> records, StatFetch fetchMode);
+        Dictionary<string, List<DBStatRow>> GetStats(ISession session, StatFetch fetchMode);
+        Dictionary<string, List<DBStatRow>> GetStats(IEnumerable<string> records, StatFetch fetchMode);
+        Dictionary<long, List<DBStatRow>> GetStats(List<long> records, StatFetch fetchMode);
         Dictionary<string, string> MapItemBitmaps(List<string> records);
         void Save(IEnumerable<DatabaseItemStat> objs, ProgressTracker progressTracker);
 
-        Dictionary<string, ISet<DBSTatRow>> GetExpacSkillModifierSkills();
+        Dictionary<string, ISet<DBStatRow>> GetExpacSkillModifierSkills();
 
         string GetSkillName(string skillRecord);
     }

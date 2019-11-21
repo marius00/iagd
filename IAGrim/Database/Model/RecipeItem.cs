@@ -22,7 +22,7 @@ namespace IAGrim.Database {
         
         public virtual bool IsKnown { get { return Internal != null; } }
 
-        public virtual ISet<DBSTatRow> Tags {
+        public virtual ISet<DBStatRow> Tags {
             get;
             set;
         }

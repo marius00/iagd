@@ -16,7 +16,7 @@ namespace IAGrim.Database.DAO.Util {
         /// </summary>
         /// <param name="records"></param>
         /// <returns></returns>
-        public static string GetRarityForRecords(Dictionary<string, List<DBSTatRow>> stats, List<string> records) {
+        public static string GetRarityForRecords(Dictionary<string, List<DBStatRow>> stats, List<string> records) {
             var classifications = stats.Where(m => records.Contains(m.Key))
                 .SelectMany(m => m.Value.Where(v => v.Stat == "itemClassification"))
                 .Select(m => m.TextValue);
@@ -24,7 +24,7 @@ namespace IAGrim.Database.DAO.Util {
             return TranslateClassification(classifications);
         }
 
-        public static string GetRarityForRecord(Dictionary<string, List<DBSTatRow>> stats, string record) {
+        public static string GetRarityForRecord(Dictionary<string, List<DBStatRow>> stats, string record) {
             var classifications = stats.Where(m => record.Equals(m.Key))
                 .SelectMany(m => m.Value.Where(v => v.Stat == "itemClassification"))
                 .Select(m => m.TextValue);
@@ -76,13 +76,13 @@ namespace IAGrim.Database.DAO.Util {
             }
         }
 
-        public static float GetMinimumLevelForRecord(Dictionary<string, List<DBSTatRow>> stats, string record) {
+        public static float GetMinimumLevelForRecord(Dictionary<string, List<DBStatRow>> stats, string record) {
             return GetMinimumLevelForRecords(stats, new List<string> {
                 record
             });
         }
 
-        public static float GetMinimumLevelForRecords(Dictionary<string, List<DBSTatRow>> stats, List<string> records) {
+        public static float GetMinimumLevelForRecords(Dictionary<string, List<DBStatRow>> stats, List<string> records) {
             var levels = stats.Where(m => records.Contains(m.Key))
                 .SelectMany(m => m.Value.Where(v => v.Stat == "levelRequirement"))
                 .Select(m => m.Value)
@@ -98,7 +98,7 @@ namespace IAGrim.Database.DAO.Util {
         /// <summary>
         /// Update the item name to include suffix/affix/etc
         /// </summary>
-        public static string GetItemName(ISession session, Dictionary<string, List<DBSTatRow>> stats, RecordCollection item) {
+        public static string GetItemName(ISession session, Dictionary<string, List<DBStatRow>> stats, RecordCollection item) {
             // Grab tags
 
             var records = new string[] { item.PrefixRecord, item.BaseRecord, item.SuffixRecord, item.MateriaRecord };

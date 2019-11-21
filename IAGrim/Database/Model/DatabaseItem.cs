@@ -31,7 +31,7 @@ namespace IAGrim.Database {
                 GetTag(fallback);
         }
 
-        public static float GetMinimumLevel(IEnumerable<DBSTatRow> Stats) {
+        public static float GetMinimumLevel(IEnumerable<DBStatRow> Stats) {
             if (Stats.Any(m => "levelRequirement".Equals(m.Stat)))
                 return (float)Stats.Where(m => "levelRequirement".Equals(m.Stat)).FirstOrDefault().Value;
             else
@@ -41,7 +41,7 @@ namespace IAGrim.Database {
         /// <summary>
         /// Get the reference to this items bitmap
         /// </summary>
-        public static string GetBitmap(ISet<DBSTatRow> stats) {
+        public static string GetBitmap(ISet<DBStatRow> stats) {
             string result = string.Empty;
             if (stats != null) {
                 if (stats.Any(m => "bitmap".Equals(m.Stat)))
@@ -64,7 +64,7 @@ namespace IAGrim.Database {
             return $"{Path.GetFileName(result?.Replace(".dbr", ".tex"))}.png";
         }
 
-        public static string GetSlot(IEnumerable<DBSTatRow> Stats) {
+        public static string GetSlot(IEnumerable<DBStatRow> Stats) {
             if (Stats.Any(m => "Class".Equals(m.Stat)))
                 return Stats.Where(m => "Class".Equals(m.Stat)).FirstOrDefault().TextValue;
             else
@@ -81,7 +81,7 @@ namespace IAGrim.Database {
             }
         }
 
-        public static string GetRarity(IEnumerable<DBSTatRow> Stats) {
+        public static string GetRarity(IEnumerable<DBStatRow> Stats) {
             if (Stats.Any(m => "artifactClassification".Equals(m.Stat))) {
                 return "Blue";
             }

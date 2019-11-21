@@ -61,7 +61,7 @@ namespace IAGrim.Database {
             progressTracker.MaxProgress();
         }
 
-        public Dictionary<string, ISet<DBSTatRow>> GetExpacSkillModifierSkills() {
+        public Dictionary<string, ISet<DBStatRow>> GetExpacSkillModifierSkills() {
             string sql = $"SELECT {DatabaseItemTable.Record} AS Record, " +
                          $"{DatabaseItemStatTable.Stat} AS Stat, " +
                          $"{DatabaseItemStatTable.TextValue} AS TextValue, " +
@@ -70,13 +70,13 @@ namespace IAGrim.Database {
                          $"WHERE {DatabaseItemTable.Record} LIKE '%/itemskillsgdx%' " +
                          $"AND stat.{DatabaseItemStatTable.Item} = item.{DatabaseItemTable.Id} ORDER BY item.{DatabaseItemTable.Id}";
 
-            Dictionary<string, ISet<DBSTatRow>> stats = new Dictionary<string, ISet<DBSTatRow>>();
+            Dictionary<string, ISet<DBStatRow>> stats = new Dictionary<string, ISet<DBStatRow>>();
 
             using (var session = SessionCreator.OpenSession()) {
-                IQuery query = session.CreateSQLQuery(sql).SetResultTransformer(Transformers.AliasToBean<DBSTatRow>());
-                foreach (DBSTatRow row in query.List()) {
+                IQuery query = session.CreateSQLQuery(sql).SetResultTransformer(Transformers.AliasToBean<DBStatRow>());
+                foreach (DBStatRow row in query.List()) {
                     if (!stats.ContainsKey(row.Record)) {
-                        stats[row.Record] = new HashSet<DBSTatRow>();
+                        stats[row.Record] = new HashSet<DBStatRow>();
                     }
 
                     stats[row.Record].Add(row);
@@ -124,19 +124,19 @@ namespace IAGrim.Database {
         }
 
 
-        public Dictionary<String, List<DBSTatRow>> GetStats(ISession session, StatFetch fetchMode) {
+        public Dictionary<String, List<DBStatRow>> GetStats(ISession session, StatFetch fetchMode) {
             return GetStats(session, new List<string>(), fetchMode);
         }
 
-        public Dictionary<String, List<DBSTatRow>> GetStats(IEnumerable<string> records, StatFetch fetchMode) {
+        public Dictionary<String, List<DBStatRow>> GetStats(IEnumerable<string> records, StatFetch fetchMode) {
             using (var session = SessionCreator.OpenSession()) {
                 return GetStats(session, records, fetchMode);
             }
         }
 
-        public Dictionary<long, List<DBSTatRow>> GetStats(List<long> records, StatFetch fetchMode) {
+        public Dictionary<long, List<DBStatRow>> GetStats(List<long> records, StatFetch fetchMode) {
             using (var session = SessionCreator.OpenSession()) {
-                var statMap = new Dictionary<long, List<DBSTatRow>>();
+                var statMap = new Dictionary<long, List<DBStatRow>>();
 
                 if (fetchMode != StatFetch.Skills)
                     throw new ArgumentException(nameof(fetchMode));
@@ -159,7 +159,7 @@ namespace IAGrim.Database {
                 IQuery query = session.CreateSQLQuery(sql)
                     .SetParameterList("whitelist", SpecialStats)
                     .SetParameterList("blacklist", SpecialIgnores)
-                    .SetResultTransformer(Transformers.AliasToBean<DBSTatRow>());
+                    .SetResultTransformer(Transformers.AliasToBean<DBStatRow>());
 
                 Logger.Debug(sql);
                 if (records.Count > 0) {
@@ -167,9 +167,9 @@ namespace IAGrim.Database {
                 }
 
 
-                foreach (DBSTatRow row in query.List<DBSTatRow>()) {
+                foreach (DBStatRow row in query.List<DBStatRow>()) {
                     if (!statMap.ContainsKey(row.Id))
-                        statMap[row.Id] = new List<DBSTatRow>();
+                        statMap[row.Id] = new List<DBStatRow>();
 
                     statMap[row.Id].Add(row);
                 }
@@ -191,8 +191,8 @@ namespace IAGrim.Database {
             }
         }
 
-        private Dictionary<string, List<DBSTatRow>> GetStats(ISession session, IEnumerable<string> records, StatFetch fetchMode) {
-            Dictionary<string, List<DBSTatRow>> statMap = new Dictionary<string, List<DBSTatRow>>();
+        private Dictionary<string, List<DBStatRow>> GetStats(ISession session, IEnumerable<string> records, StatFetch fetchMode) {
+            Dictionary<string, List<DBStatRow>> statMap = new Dictionary<string, List<DBStatRow>>();
 
             Logger.Debug($"Fetching all stats for {records.Count()} items, fetchMode={fetchMode}");
 
@@ -202,7 +202,6 @@ namespace IAGrim.Database {
                 FROM {DatabaseItemTable.Table} db, databaseitemstat_v2 s where s.id_databaseitem = db.{DatabaseItemTable.Id}",
 
                 "AND (val1 > 0 or stat in ( :whitelist ))",
-                //"AND (val1 > 0 or NOT stat IN ( :blacklist ))",
                     fetchMode == StatFetch.PlayerItems ? $"AND baserecord IN (SELECT record FROM playeritemrecord)" : "",
                     fetchMode == StatFetch.AugmentItems ? $"AND db.{DatabaseItemTable.Id} IN (SELECT a.{AugmentationItemTable.Id} FROM {AugmentationItemTable.Table} a)" : "",
                     fetchMode == StatFetch.BuddyItems ? $"AND {DatabaseItemTable.Record} IN (SELECT {BuddyItemRecordTable.Record} FROM {BuddyItemRecordTable.Table})" : "",
@@ -217,7 +216,7 @@ namespace IAGrim.Database {
             IQuery query = session.CreateSQLQuery(sql)
                 .SetParameterList("whitelist", SpecialStats)
                 .SetParameterList("blacklist", SpecialIgnores)
-                .SetResultTransformer(Transformers.AliasToBean<DBSTatRow>());
+                .SetResultTransformer(Transformers.AliasToBean<DBStatRow>());
 
             Logger.Debug(sql);
             if (records.Count() > 0) {
@@ -226,10 +225,10 @@ namespace IAGrim.Database {
             }
 
 
-            statMap[string.Empty] = new List<DBSTatRow>();
-            foreach (DBSTatRow row in query.List<DBSTatRow>()) {
+            statMap[string.Empty] = new List<DBStatRow>();
+            foreach (DBStatRow row in query.List<DBStatRow>()) {
                 if (!statMap.ContainsKey(row.Record))
-                    statMap[row.Record] = new List<DBSTatRow>();
+                    statMap[row.Record] = new List<DBStatRow>();
 
                 statMap[row.Record].Add(row);
             }

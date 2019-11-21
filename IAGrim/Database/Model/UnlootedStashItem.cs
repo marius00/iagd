@@ -41,7 +41,7 @@ namespace IAGrim.Database.Model {
 
         public virtual bool IsKnown => true;
         public virtual List<SkillModifierStat> ModifiedSkills => new List<SkillModifierStat>();
-        public virtual string Bitmap => Parser.Helperclasses.ParserHelpers<DBSTatRow>.GetBitmap(Tags);
+        public virtual string Bitmap => Parser.Helperclasses.ParserHelpers<DBStatRow>.GetBitmap(Tags);
         public virtual PlayerItemSkill Skill => null;
 
         private DatabaseItem Internal { get; set; } // Its used - Check HBM

@@ -69,14 +69,14 @@ namespace StatTranslator
         /// </summary>
         /// <param name="stats"></param>
         /// <param name="result"></param>
-        private void ProcessAddSkill(ISet<IItemStat> stats, List<TranslatedStat> result)
-        {
+        private void ProcessAddSkill(ISet<IItemStat> stats, List<TranslatedStat> result) {
+            var skillCandidates = stats.Where(m => m.Stat.StartsWith("augmentSkill") && m.Stat.Length == "augmentSkill".Length+1).ToList();
             // "augmentSkill1", "augmentSkill2",
-            for (int i = 1; i <= 4; i++)
-            {
-                var statName = "augmentSkill" + i;
-                var stat = stats.FirstOrDefault(m => m.Stat == statName);
-                var statExtras = stats.FirstOrDefault(m => m.Stat == statName + "Extras");
+            foreach (var stat in skillCandidates) {
+                var statName = stat.Stat;
+                // Record is requires as we may have "augmentSkill1" multiple times, from different records.
+                IItemStat statExtras = stats.FirstOrDefault(m => m.Stat == statName + "Extras" && m.Record == stat.Record);
+                
                 TranslatedStat extraStat = null;
                 if (statExtras != null)
                 {
@@ -942,7 +942,6 @@ namespace StatTranslator
                     ProcessHeaderDamage(stats, result);
                     MapSimpleHeaderEntries(stats, result);
                     ProcessAttackSpeed(stats, result);
-                    //ProcessSkillTrigger(stats, result); //
                     break;
                 case TranslatedStatType.PET:
                     {
@@ -954,7 +953,8 @@ namespace StatTranslator
                             {
                                 Stat = m.Stat.Remove(0, 3),
                                 TextValue = m.TextValue,
-                                Value = m.Value
+                                Value = m.Value,
+                                Record = m.Record
                             }));
 
                         ProcessShieldBlock(petStats, petResults);
