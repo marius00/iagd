@@ -35,7 +35,8 @@ namespace IAGrim.UI.Tabs
         private ScrollPanelMessageFilter _scrollableFilterView;
         private ToolStripContainer _toolStripContainer;
         private readonly SettingsService _settings;
-
+        private ToolTip toolTip1;
+        private System.ComponentModel.IContainer components;
         private const int FilterPanelMinSize = 250;
 
         /// <summary>
@@ -350,6 +351,7 @@ namespace IAGrim.UI.Tabs
 
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this._mainSplitter = new System.Windows.Forms.SplitContainer();
             this._toolStripContainer = new System.Windows.Forms.ToolStripContainer();
             this._flowPanelFilter = new System.Windows.Forms.FlowLayoutPanel();
@@ -361,6 +363,7 @@ namespace IAGrim.UI.Tabs
             this._levelRequirementGroup = new System.Windows.Forms.GroupBox();
             this._minLevel = new System.Windows.Forms.TextBox();
             this._maxLevel = new System.Windows.Forms.TextBox();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this._mainSplitter)).BeginInit();
             this._mainSplitter.Panel2.SuspendLayout();
             this._mainSplitter.SuspendLayout();
@@ -369,13 +372,13 @@ namespace IAGrim.UI.Tabs
             this._levelRequirementGroup.SuspendLayout();
             this.SuspendLayout();
             // 
-            // mainSplitter
+            // _mainSplitter
             // 
             this._mainSplitter.Dock = System.Windows.Forms.DockStyle.Fill;
             this._mainSplitter.Location = new System.Drawing.Point(0, 0);
             this._mainSplitter.Name = "_mainSplitter";
             // 
-            // mainSplitter.Panel2
+            // _mainSplitter.Panel2
             // 
             this._mainSplitter.Panel2.Controls.Add(this._toolStripContainer);
             this._mainSplitter.Panel2.Controls.Add(this._flowPanelFilter);
@@ -385,11 +388,11 @@ namespace IAGrim.UI.Tabs
             this._mainSplitter.TabIndex = 0;
             this._mainSplitter.TabStop = false;
             // 
-            // toolStripContainer
+            // _toolStripContainer
             // 
             this._toolStripContainer.BottomToolStripPanelVisible = false;
             // 
-            // toolStripContainer.ContentPanel
+            // _toolStripContainer.ContentPanel
             // 
             this._toolStripContainer.ContentPanel.Size = new System.Drawing.Size(1106, 576);
             this._toolStripContainer.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -401,7 +404,7 @@ namespace IAGrim.UI.Tabs
             this._toolStripContainer.TabIndex = 48;
             this._toolStripContainer.Text = "toolStripContainer1";
             // 
-            // flowPanelFilter
+            // _flowPanelFilter
             // 
             this._flowPanelFilter.AutoSize = true;
             this._flowPanelFilter.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
@@ -417,7 +420,7 @@ namespace IAGrim.UI.Tabs
             this._flowPanelFilter.Size = new System.Drawing.Size(1106, 49);
             this._flowPanelFilter.TabIndex = 52;
             // 
-            // searchBox
+            // _searchBox
             // 
             this._searchBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -426,8 +429,9 @@ namespace IAGrim.UI.Tabs
             this._searchBox.Name = "_searchBox";
             this._searchBox.Size = new System.Drawing.Size(304, 20);
             this._searchBox.TabIndex = 41;
+            this.toolTip1.SetToolTip(this._searchBox, "The item name, partially works fine.");
             // 
-            // orderByLevel
+            // _orderByLevel
             // 
             this._orderByLevel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this._orderByLevel.AutoSize = true;
@@ -440,9 +444,10 @@ namespace IAGrim.UI.Tabs
             this._orderByLevel.TabIndex = 42;
             this._orderByLevel.Tag = "iatag_ui_orderbylevel";
             this._orderByLevel.Text = "Order By Level";
+            this.toolTip1.SetToolTip(this._orderByLevel, "If items should be ordered by level, instead of alphabetically.");
             this._orderByLevel.UseVisualStyleBackColor = true;
             // 
-            // itemQuality
+            // _itemQuality
             // 
             this._itemQuality.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this._itemQuality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -452,8 +457,9 @@ namespace IAGrim.UI.Tabs
             this._itemQuality.Name = "_itemQuality";
             this._itemQuality.Size = new System.Drawing.Size(59, 21);
             this._itemQuality.TabIndex = 43;
+            this.toolTip1.SetToolTip(this._itemQuality, "The minimum item quality");
             // 
-            // slotFilter
+            // _slotFilter
             // 
             this._slotFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this._slotFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -463,8 +469,9 @@ namespace IAGrim.UI.Tabs
             this._slotFilter.Name = "_slotFilter";
             this._slotFilter.Size = new System.Drawing.Size(120, 21);
             this._slotFilter.TabIndex = 44;
+            this.toolTip1.SetToolTip(this._slotFilter, "Slot/Type");
             // 
-            // modFilter
+            // _modFilter
             // 
             this._modFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this._modFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -474,8 +481,9 @@ namespace IAGrim.UI.Tabs
             this._modFilter.Name = "_modFilter";
             this._modFilter.Size = new System.Drawing.Size(102, 21);
             this._modFilter.TabIndex = 45;
+            this.toolTip1.SetToolTip(this._modFilter, "Mod / Hardcore / Vanilla");
             // 
-            // levelRequirementGroup
+            // _levelRequirementGroup
             // 
             this._levelRequirementGroup.Controls.Add(this._minLevel);
             this._levelRequirementGroup.Controls.Add(this._maxLevel);
@@ -486,8 +494,9 @@ namespace IAGrim.UI.Tabs
             this._levelRequirementGroup.TabStop = false;
             this._levelRequirementGroup.Tag = "iatag_ui_level_requirement";
             this._levelRequirementGroup.Text = "Level";
+            this.toolTip1.SetToolTip(this._levelRequirementGroup, "Level requirements for the item");
             // 
-            // minLevel
+            // _minLevel
             // 
             this._minLevel.Location = new System.Drawing.Point(5, 15);
             this._minLevel.MaxLength = 3;
@@ -496,9 +505,10 @@ namespace IAGrim.UI.Tabs
             this._minLevel.TabIndex = 46;
             this._minLevel.Text = "0";
             this._minLevel.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.toolTip1.SetToolTip(this._minLevel, "The minimum level required to use this item");
             this._minLevel.WordWrap = false;
             // 
-            // maxLevel
+            // _maxLevel
             // 
             this._maxLevel.Location = new System.Drawing.Point(40, 15);
             this._maxLevel.MaxLength = 3;
@@ -507,7 +517,12 @@ namespace IAGrim.UI.Tabs
             this._maxLevel.TabIndex = 47;
             this._maxLevel.Text = "110";
             this._maxLevel.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.toolTip1.SetToolTip(this._maxLevel, "The maximum level required to use this item");
             this._maxLevel.WordWrap = false;
+            // 
+            // toolTip1
+            // 
+            this.toolTip1.ToolTipTitle = "This is:";
             // 
             // SplitSearchWindow
             // 
