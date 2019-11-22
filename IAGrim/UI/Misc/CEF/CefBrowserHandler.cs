@@ -6,6 +6,7 @@ using CefSharp.WinForms;
 using IAGrim.Backup.Azure.CefSharp;
 using IAGrim.Utilities;
 using log4net;
+using NHibernate;
 
 namespace IAGrim.UI.Misc.CEF {
     public class CefBrowserHandler : IDisposable, ICefBackupAuthentication, IUserFeedbackHandler {
@@ -53,9 +54,36 @@ namespace IAGrim.UI.Misc.CEF {
                 _browser.ExecuteScriptAsync("data.globalStore.dispatch(data.globalSetIsLoading(true));");
             }
         }
+
+        /// <summary>
+        /// Attempt to execute javascript code with 100ms retries until the browser is ready.
+        /// Compensates for C# executing .js code before the page is fully loaded.
+        /// Eg, the browser is loaded but the page is not.
+        /// </summary>
+        /// <param name="mustExist"></param>
+        /// <param name="script"></param>
+        private void SafeExecute(string mustExist, string script) {
+            string js = @"
+            function safeExecute(mustExist, func) {
+                if (eval('typeof ' + mustExist) === 'undefined') {
+                    setTimeout(() => safeExecute(mustExist, func), 100);
+                } else {
+                    func();
+                }
+            }
+";
+
+            js += "\n safeExecute({mustExist}, () => { {script}; });"
+                .Replace("{mustExist}", mustExist)
+                .Replace("{script}", script);
+
+            _browser.ExecuteScriptAsync(js);
+        }
+
         public void RefreshItems() {
             if (_browser.IsBrowserInitialized) {
-                _browser.ExecuteScriptAsync("setItemsFromGlobalItems();");
+                SafeExecute("'setItemsFromGlobalItems'", "setItemsFromGlobalItems();");
+                //_browser.ExecuteScriptAsync("setItemsFromGlobalItems();");
             }
             else {
                 Logger.Warn("Attempted to update items but CEF not yet initialized.");
