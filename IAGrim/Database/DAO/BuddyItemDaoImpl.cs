@@ -342,9 +342,10 @@ namespace IAGrim.Database
                     {BuddyItemsTable.TransmuteRecord},
                     {BuddyItemsTable.MateriaRecord},
                     {BuddyItemsTable.StackCount},
+                    {BuddyItemsTable.IsHardcore},
                     {BuddyItemsTable.Mod},
                     {BuddyItemsTable.CreatedAt}) 
-            VALUES (:buddy, :remoteId, :base, :pre, :suff, :modif, :transmute, :materia, :stacksize, :mod, :createdAt);";
+            VALUES (:buddy, :remoteId, :base, :pre, :suff, :modif, :transmute, :materia, :stacksize, :isHardcore, :mod, :createdAt);";
 
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
@@ -385,6 +386,7 @@ namespace IAGrim.Database
                             .SetParameter("transmute", item.TransmuteRecord)
                             .SetParameter("materia", item.MateriaRecord)
                             .SetParameter("stacksize", item.StackCount)
+                            .SetParameter("isHardcore", item.IsHardcore)
                             .SetParameter("mod", item.Mod)
                             .SetParameter("createdAt", item.CreationDate)
                             .ExecuteUpdate();
@@ -527,6 +529,8 @@ namespace IAGrim.Database
                 queryFragments.Add($"{BuddyItemsTable.Rarity} = :rarity");
                 queryParams.Add("rarity", query.Rarity);
             }
+
+            queryFragments.Add(query.IsHardcore ? "IsHardcore" : "NOT IsHardcore");
 
             if (query.RecentOnly) {
                 queryFragments.Add($"{BuddyItemsTable.CreatedAt} > :filter_recentOnly");

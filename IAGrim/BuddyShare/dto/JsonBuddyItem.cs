@@ -14,6 +14,7 @@ namespace IAGrim.BuddyShare.dto {
         public string TransmuteRecord { get; set; }
         public string MateriaRecord { get; set; }
         public long StackCount { get; set; }
+        public bool IsHardcore { get; set; }
         public string Mod { get; set; }
         public long CreationDate { get; set; }
     }

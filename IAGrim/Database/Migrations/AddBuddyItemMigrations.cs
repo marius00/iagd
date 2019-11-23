@@ -13,7 +13,7 @@ namespace IAGrim.Database.Migrations {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(AddSkillTables));
 
         private readonly string[] Sql = {
-            $@"CREATE TABLE IF NOT EXISTS `buddyitems_v4` (
+            $@"CREATE TABLE IF NOT EXISTS `buddyitems_v5` (
 	            `id_buddyitem`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 	            `id_buddy`	INTEGER NOT NULL,
                 `id_buddy_remote`	INTEGER NOT NULL,
@@ -24,6 +24,7 @@ namespace IAGrim.Database.Migrations {
 	            `transmuterecord`	TEXT,
 	            `materiarecord`	TEXT,
 	            `stackcount`	INTEGER NOT NULL,
+                `IsHardcore` BOOL,
 	            `mod`	TEXT,
 	            `name`	TEXT,
 	            `levelrequirement`	INTEGER,
@@ -31,6 +32,7 @@ namespace IAGrim.Database.Migrations {
 	            `rarity`	TEXT
             );",
 
+            @"DROP TABLE IF EXISTS buddyitems_v4;",
             @"DROP TABLE IF EXISTS buddyitems_v3;",
             @"DROP TABLE IF EXISTS buddyitems_v2;",
             @"DROP TABLE IF EXISTS BuddyItem;",

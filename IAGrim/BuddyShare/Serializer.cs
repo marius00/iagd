@@ -100,6 +100,7 @@ namespace IAGrim.BuddyShare {
                 StackCount = item.StackCount,
                 SuffixRecord = item.SuffixRecord,
                 TransmuteRecord = item.TransmuteRecord,
+                IsHardcore = item.IsHardcore,
                 CreationDate = item.CreationDate ?? 0L
             };
         }
