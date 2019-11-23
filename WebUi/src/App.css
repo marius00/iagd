@@ -3,7 +3,13 @@
   align-items: stretch;
 }
 
-.tab-list {
+#content {
+  position: relative;
+  margin-top: 35px;
+  width: 100%;
+}
+
+.header {
   position: fixed;
   top: 0px;
   left: 0px;
@@ -12,23 +18,20 @@
   min-width: 100vw;
   background-color: white;
 }
-.react-tabs__tab-list {
-  margin-bottom: 2px;
+
+
+.header a {
+  margin-left: 50px;
 }
 
-#content {
-  position: relative;
-  margin-top: 35px;
-  width: 100%;
-}
-
-.tab-control {
-  margin: 5px;
+.header a:hover {
+  text-decoration: underline !important;
 }
 
 .cursor-help {
   cursor: help !important;
 }
+
 .clipboard-link {
   position: fixed;
   right: 14px;

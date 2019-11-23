@@ -11,7 +11,6 @@
     "@types/react-notification-system-redux": "^1.1.5",
     "@types/react-redux": "^5.0.19",
     "@types/react-select": "^1.2.6",
-    "@types/react-tabs": "^1.0.4",
     "@types/react-tooltip": "^3.3.4",
     "guid": "0.0.12",
     "jest-cli": "^22.4.3",
@@ -25,7 +24,6 @@
     "react-redux": "^5.0.7",
     "react-scripts-ts": "^4.0.8",
     "react-select": "^1.2.1",
-    "react-tabs": "^2.2.2",
     "react-textfit": "^1.1.0",
     "react-tooltip": "^3.5.1",
     "redux": "^3.7.2"
