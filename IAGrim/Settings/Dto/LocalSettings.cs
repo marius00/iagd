@@ -30,8 +30,20 @@ namespace IAGrim.Settings.Dto {
 
         public string MachineName { get; set; }
 
+        public void AddGrimDawnLocation(string location) {
+            if (_grimDawnLocation == null) {
+                _grimDawnLocation = new List<string>(1);
+            }
+
+            if (!_grimDawnLocation.Contains(location)) {
+                _grimDawnLocation.Add(location);
+            }
+
+            OnMutate?.Invoke(null, null);
+        }
+
         public List<string> GrimDawnLocation {
-            get => _grimDawnLocation ?? new List<string>(0);
+            get => _grimDawnLocation;
             set {
                 _grimDawnLocation = value;
                 OnMutate?.Invoke(null, null);

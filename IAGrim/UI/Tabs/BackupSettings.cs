@@ -132,11 +132,12 @@ namespace IAGrim.UI.Tabs {
         }
 
         private void buttonCustom_Click(object sender, EventArgs e) {
-            var folderBrowserDialog = new FolderBrowserDialog();
+            using (var folderBrowserDialog = new FolderBrowserDialog()) {
 
-            if (folderBrowserDialog.ShowDialog() == DialogResult.OK) {
-                DialogResult = DialogResult.None;
-                _settings.GetLocal().BackupCustomLocation = folderBrowserDialog.SelectedPath;
+                if (folderBrowserDialog.ShowDialog() == DialogResult.OK) {
+                    DialogResult = DialogResult.None;
+                    _settings.GetLocal().BackupCustomLocation = folderBrowserDialog.SelectedPath;
+                }
             }
         }
 

@@ -86,7 +86,7 @@ namespace IAGrim.Parsers.TransferStash {
             if (!GrimStateTracker.IsFarFromStash) {
                 var distance = GrimStateTracker.Distance;
                 if (distance.HasValue) {
-                    Logger.Info($"Delaying stash loot, too close to stash. ({distance.Value}m away, minimum is {GrimStateTracker.MinDistance}m)");
+                    //Logger.Info($"Delaying stash loot, too close to stash. ({distance.Value}m away, minimum is {GrimStateTracker.MinDistance}m)");
                     return (false, UserFeedback.FromTagSingleton("iatag_feedback_too_close_to_stash"));
                 }
                 else {

@@ -55,43 +55,44 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
 
         private void buttonBrowse_Click(object sender, EventArgs e) {
             if (buttonBrowse.Enabled) {
-                OpenFileDialog diag = new OpenFileDialog {
+                using (OpenFileDialog diag = new OpenFileDialog {
                     CheckFileExists = true,
                     CheckPathExists = true,
                     InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "Grim Dawn", "Save"),
                     Multiselect = false,
                     Title = RuntimeSettings.Language.GetTag("iatag_ui_importexport_selectfile")
-                };
+                }) {
 
-                if (radioGDStash.Checked) {
-                    diag.DefaultExt = "gds";
-                    diag.Filter = "GD Stash exports (*.gds)|*.gds";
-                }
-                else if (radioIAStash.Checked) {
-                    diag.DefaultExt = "ias";
-                    diag.Filter = "IA Stash exports (*.ias)|*.ias;*.zip";
-                }
-                else {
-                    diag.DefaultExt = "gst";
-                    diag.Filter = "Grim Dawn Stash files (*.gst)|*.gst|HD Hardcore Stash files (*.gsh)|*.gsh";
-                    diag.FileName = "transfer.gst";
-                }
-
-                if (diag.ShowDialog() == DialogResult.OK) {
-                    if (IsValid(diag.FileName)) {
-                        radioGDStash.Enabled = false;
-                        radioIAStash.Enabled = false;
-                        buttonImport.Enabled = true;
-                        cbItemSelection.Enabled = true;
-                        this._filename = diag.FileName;
+                    if (radioGDStash.Checked) {
+                        diag.DefaultExt = "gds";
+                        diag.Filter = "GD Stash exports (*.gds)|*.gds";
+                    }
+                    else if (radioIAStash.Checked) {
+                        diag.DefaultExt = "ias";
+                        diag.Filter = "IA Stash exports (*.ias)|*.ias;*.zip";
                     }
                     else {
-                        MessageBox.Show(
-                            RuntimeSettings.Language.GetTag("iatag_ui_importexport_nothinginzip_body"), 
-                            RuntimeSettings.Language.GetTag("iatag_ui_importexport_nothinginzip_title"), 
-                            MessageBoxButtons.OK, 
-                            MessageBoxIcon.Asterisk
-                        );
+                        diag.DefaultExt = "gst";
+                        diag.Filter = "Grim Dawn Stash files (*.gst)|*.gst|HD Hardcore Stash files (*.gsh)|*.gsh";
+                        diag.FileName = "transfer.gst";
+                    }
+
+                    if (diag.ShowDialog() == DialogResult.OK) {
+                        if (IsValid(diag.FileName)) {
+                            radioGDStash.Enabled = false;
+                            radioIAStash.Enabled = false;
+                            buttonImport.Enabled = true;
+                            cbItemSelection.Enabled = true;
+                            this._filename = diag.FileName;
+                        }
+                        else {
+                            MessageBox.Show(
+                                RuntimeSettings.Language.GetTag("iatag_ui_importexport_nothinginzip_body"),
+                                RuntimeSettings.Language.GetTag("iatag_ui_importexport_nothinginzip_title"),
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Asterisk
+                            );
+                        }
                     }
                 }
             }

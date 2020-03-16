@@ -303,6 +303,9 @@ namespace StatTranslator {
             {"iatag_ui_nagscreen_title", "Would you like to donate to the developer of Item Assistant?"},
             {"iatag_ui_nagscreen_header", "IA : Would you like to donate?"},
 
+            {"iatag_ui_db_invalidlocation_body", "This folder does not contain an installation of Grim Dawn"},
+            {"iatag_ui_db_invalidlocation_title", "Invalid folder"},
+            {"iatag_ui_manual_db", "Configure"},
             {"iatag_ui_clean", "Clean Database"},
             {"iatag_ui_buddy_userid", "User ID: "},
             {"iatag_ui_buddy_userid_none", "None"},

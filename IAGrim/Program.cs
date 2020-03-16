@@ -70,8 +70,8 @@ namespace IAGrim
             ExceptionReporter.EnableLogUnhandledOnThread();
 
 #if DEBUG
-            //AzureUris.Initialize(AzureUris.EnvAzure);
-            AzureUris.Initialize(AzureUris.EnvDev);
+            AzureUris.Initialize(AzureUris.EnvAzure);
+            //AzureUris.Initialize(AzureUris.EnvDev);
 #else
             AzureUris.Initialize(AzureUris.EnvAzure);
 #endif

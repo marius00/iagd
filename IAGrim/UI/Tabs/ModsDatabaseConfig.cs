@@ -90,6 +90,11 @@ namespace IAGrim.UI
 
             var paths = _grimDawnDetector.GetGrimLocations();
 
+            // Ensure that we store all known paths.
+            foreach (var path in paths) {
+                _settingsService.GetLocal().AddGrimDawnLocation(path);
+            }
+
             if (paths.Count == 0)
             {
                 listViewInstalls.Enabled = false;
@@ -137,7 +142,7 @@ namespace IAGrim.UI
                 _databaseSettingRepo.UpdateCurrentDatabase(entry.Path);
 
                 // Store the loaded GD path, so we can poll it for updates later.
-                _settingsService.GetLocal().GrimDawnLocation = new List<string> { entry.Path };
+                //_settingsService.GetLocal().GrimDawnLocation = new List<string> { entry.Path }; // TODO: Wtf is this? Why overwrite any existing?
                 _settingsService.GetLocal().GrimDawnLocationLastModified = ParsingService.GetHighestTimestamp(entry.Path);
                 _settingsService.GetLocal().HasWarnedGrimDawnUpdate = false;
             }
@@ -163,6 +168,22 @@ namespace IAGrim.UI
             _databaseSettingRepo.Clean();
             buttonUpdateItemStats_Click(sender, e);
             MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_clean_body"), RuntimeSettings.Language.GetTag("iatag_ui_clean_caption"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+
+        private void buttonConfigure_Click(object sender, EventArgs e) {
+            using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog()) {
+                if (folderBrowserDialog.ShowDialog() == DialogResult.OK) {
+                    if (File.Exists(Path.Combine(folderBrowserDialog.SelectedPath, "Grim Dawn.exe"))) {
+                        _settingsService.GetLocal().AddGrimDawnLocation(folderBrowserDialog.SelectedPath);
+                        Logger.Info($"Added {folderBrowserDialog.SelectedPath} to the known Grim Dawn locations");
+                        ModsDatabaseConfig_Load(sender, e);
+                    } else {
+                        var text = RuntimeSettings.Language.GetTag("iatag_ui_db_invalidlocation_body");
+                        var title = RuntimeSettings.Language.GetTag("iatag_ui_db_invalidlocation_title");
+                        MessageBox.Show(text, title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                }
+            }
         }
     }
 }

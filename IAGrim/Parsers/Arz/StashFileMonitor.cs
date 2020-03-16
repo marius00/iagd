@@ -26,7 +26,7 @@ namespace IAGrim.Parsers.Arz {
                 _watcher.Path = path;
                 _watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName |
                                         NotifyFilters.DirectoryName;
-                _watcher.Filter = "transfer.gs?";
+                _watcher.Filter = "transfer.???";
                 _watcher.IncludeSubdirectories = true;
                 _watcher.Renamed += OnRenamed;
                 _watcher.Error += Watcher_Error;

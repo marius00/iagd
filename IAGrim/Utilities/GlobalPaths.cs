@@ -60,7 +60,7 @@ namespace IAGrim.Utilities {
 
 
         public static bool IsHardcore(string filename) {
-            return filename.EndsWith(".gsh");
+            return filename.EndsWith(".gsh") || filename.EndsWith(".csh") || filename.EndsWith(".bsh");
         }
 
         public static string SavePath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "Grim Dawn", "Save");
@@ -76,6 +76,7 @@ namespace IAGrim.Utilities {
 
                     // Generate a list of the interesting files
                     List<string> files = new List<string>();
+                    // transfer.bst / transfer.cst / transfer.csh
                     foreach (string filename in new string[] { "transfer.gst", "transfer.gsh" }) {
                         string vanilla = Path.Combine(documents, filename);
                         if (File.Exists(vanilla) && !ParsedFiles.Contains(vanilla)) {
