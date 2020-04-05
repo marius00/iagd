@@ -118,7 +118,7 @@ namespace IAGrim {
         }
 
         public static void PerformGrimUpdateCheck(SettingsService settingsService) {
-            var location = settingsService.GetLocal().GrimDawnLocation.FirstOrNull()?.ToString();
+            var location = settingsService.GetLocal().GrimDawnLocation?.FirstOrNull()?.ToString();
             var lastParsed = settingsService.GetLocal().GrimDawnLocationLastModified;
             if (Directory.Exists(location)) {
                 if (lastParsed > 0) {

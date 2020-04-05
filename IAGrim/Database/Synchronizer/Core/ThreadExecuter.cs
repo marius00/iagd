@@ -17,7 +17,7 @@ namespace IAGrim.Database.Synchronizer {
         private readonly ConcurrentQueue<QueuedExecution> _queue = new ConcurrentQueue<QueuedExecution>();
         private Thread _thread;
         private volatile bool _isCancelled;
-        public const int ThreadTimeout = 1000 * 60 * 10;
+        public const int ThreadTimeout = 1000 * 60 * 30;
 
         public ThreadExecuter() {
             _isCancelled = false;
@@ -55,11 +55,7 @@ namespace IAGrim.Database.Synchronizer {
         }
 
 
-        public void Execute(Action func) {
-            Execute(func, ThreadTimeout);
-        }
-
-        public void Execute(Action func, int timeout) {
+        public void Execute(Action func, int timeout = ThreadTimeout) {
             if (_thread == null)
                 throw new InvalidOperationException("Object has been disposed");
             AutoResetEvent ev = new AutoResetEvent(false);
