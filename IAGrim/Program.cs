@@ -229,6 +229,7 @@ namespace IAGrim
                 Logger.Info("Checking for database updates..");
 
                 StartupService.PerformIconCheck(databaseSettingDao, grimDawnDetector);
+                playerItemDao.DeleteDuplidates();
 
                 _mw.Visible = false;
                 if (new DonateNagScreen(settingsService).CanNag)

@@ -871,7 +871,47 @@ namespace IAGrim.Database {
                     return Exists(session, item);
                 }
             }
+        }
 
+        /// <summary>
+        /// Delete duplicate items (items duplicated via bugs, not simply similar items)
+        /// </summary>
+        public void DeleteDuplidates() {
+
+            using (ISession session = SessionCreator.OpenSession()) {
+                using (ITransaction transaction = session.BeginTransaction()) {
+                    // Mark all duplicates for deletion from online backups
+                    session.CreateSQLQuery(@"
+insert into deletedplayeritem_v2(id,partition)
+select azpartition_v2, azuuid_v2 FROM playeritem WHERE ID NOT IN (
+SELECT id FROM (
+	SELECT COUNT(*) c, baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed as UQ, * FROM PlayerItem
+	WHERE StackCount < 2
+	AND baserecord NOT LIKE '%materia%'
+	AND baserecord NOT LIKE '%questitems%'
+	AND baserecord NOT LIKE '%potions%'
+	AND baserecord NOT LIKE '%crafting%'
+	group by UQ
+	) x
+)
+").ExecuteUpdate();
+                    // Delete all duplicates
+                    int duplicatesDeleted = session.CreateSQLQuery(@"
+         DELETE FROM PlayerItem WHERE Id NOT IN (
+SELECT Id from (
+	SELECT COUNT(*) c, baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed as UQ, * FROM PlayerItem
+	WHERE StackCount < 2
+	AND baserecord NOT LIKE '%materia%'
+	AND baserecord NOT LIKE '%questitems%'
+	AND baserecord NOT LIKE '%potions%'
+	AND baserecord NOT LIKE '%crafting%'
+	group by UQ
+) X
+)").ExecuteUpdate();
+
+                    transaction.Commit();
+                }
+            }
         }
     }
 }

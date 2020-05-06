@@ -36,5 +36,7 @@ namespace IAGrim.Database.Interfaces {
         IList<ModSelection> GetModSelection();
 
         bool Exists(PlayerItem item);
+
+        void DeleteDuplidates();
     }
 }

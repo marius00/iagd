@@ -69,6 +69,12 @@ namespace IAGrim.Database.Synchronizer {
             );
         }
 
+        public void DeleteDuplidates() {
+            ThreadExecuter.Execute(
+                () => _repo.DeleteDuplidates()
+            );
+        }
+
         public IList<PlayerItem> GetUnsynchronizedItems() {
             return ThreadExecuter.Execute(
                 () => _repo.GetUnsynchronizedItems()
