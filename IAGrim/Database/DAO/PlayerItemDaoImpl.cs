@@ -892,8 +892,8 @@ SELECT id FROM (
 	AND baserecord NOT LIKE '%potions%'
 	AND baserecord NOT LIKE '%crafting%'
 	group by UQ
-	) x
-)
+	) x 
+) AND azpartition_v2 IS NOT NULL AND azuuid_v2 IS NOT NULL AND azuuid_v2 NOT IN (SELECT azuuid_v2 FROM deletedplayeritem_v2)
 ").ExecuteUpdate();
                     // Delete all duplicates
                     int duplicatesDeleted = session.CreateSQLQuery(@"
