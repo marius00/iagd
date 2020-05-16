@@ -883,8 +883,8 @@ namespace IAGrim.Database {
                     // Mark all duplicates for deletion from online backups
                     session.CreateSQLQuery(@"
 insert into deletedplayeritem_v2(id,partition)
-select azpartition_v2, azuuid_v2 FROM playeritem WHERE ID NOT IN (
-SELECT id FROM (
+select azpartition_v2, azuuid_v2 FROM playeritem WHERE Id IN (
+select Id from (
 	SELECT COUNT(*) c, baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed as UQ, * FROM PlayerItem
 	WHERE StackCount < 2
 	AND baserecord NOT LIKE '%materia%'
@@ -892,13 +892,15 @@ SELECT id FROM (
 	AND baserecord NOT LIKE '%potions%'
 	AND baserecord NOT LIKE '%crafting%'
 	group by UQ
-	) x 
+	Order By Id desc
+) x 
+WHERE c >= 2
 ) AND azpartition_v2 IS NOT NULL AND azuuid_v2 IS NOT NULL AND azuuid_v2 NOT IN (SELECT azuuid_v2 FROM deletedplayeritem_v2)
 ").ExecuteUpdate();
-                    // Delete all duplicates
+                    // Delete duplicates (if there are multiple, only one will be deleted)
                     int duplicatesDeleted = session.CreateSQLQuery(@"
-         DELETE FROM PlayerItem WHERE Id NOT IN (
-SELECT Id from (
+DELETE FROM PlayerItem WHERE Id IN (
+select Id from (
 	SELECT COUNT(*) c, baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed as UQ, * FROM PlayerItem
 	WHERE StackCount < 2
 	AND baserecord NOT LIKE '%materia%'
@@ -906,7 +908,9 @@ SELECT Id from (
 	AND baserecord NOT LIKE '%potions%'
 	AND baserecord NOT LIKE '%crafting%'
 	group by UQ
-) X
+	Order By Id desc
+) x 
+WHERE c >= 2
 )").ExecuteUpdate();
 
                     transaction.Commit();
