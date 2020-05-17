@@ -7,6 +7,11 @@ For a binary download, see https://www.nexusmods.com/grimdawn/mods/43/
 ## Issues running this project?
 
 
+## Dependencies missing
+This project uses Nuget for external dependencies. To reinstall these, simply run `Update-Package -reinstall` in the package manager console.
+
+
+
 Error    CS0246    The type or namespace name 'AutoUpdaterDotNET' could not be found (are you missing a using directive or an assembly reference?)    IAGrim    X:\Y\Z\iagd\IAGrim\UI\MainWindow.cs    13    Active
 
 This means you're missing the AutoUpdater.NET.dll file that IA uses for automatic updates.
