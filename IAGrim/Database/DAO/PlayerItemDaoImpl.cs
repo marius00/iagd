@@ -882,7 +882,7 @@ namespace IAGrim.Database {
                 using (ITransaction transaction = session.BeginTransaction()) {
                     // Mark all duplicates for deletion from online backups
                     session.CreateSQLQuery(@"
-insert into deletedplayeritem_v2(id,partition)
+insert into deletedplayeritem_v2(partition, id)
 select azpartition_v2, azuuid_v2 FROM playeritem WHERE Id IN (
 select Id from (
 	SELECT COUNT(*) c, baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed as UQ, * FROM PlayerItem
@@ -894,8 +894,11 @@ select Id from (
 	group by UQ
 	Order By Id desc
 ) x 
-WHERE c >= 2
-) AND azpartition_v2 IS NOT NULL AND azuuid_v2 IS NOT NULL AND azuuid_v2 NOT IN (SELECT azuuid_v2 FROM deletedplayeritem_v2)
+WHERE c >= 2) 
+AND azpartition_v2 IS NOT NULL 
+AND azuuid_v2 IS NOT NULL 
+AND azuuid_v2 NOT IN (SELECT azuuid_v2 FROM deletedplayeritem_v2)
+AND azuuid_v2 != ''
 ").ExecuteUpdate();
                     // Delete duplicates (if there are multiple, only one will be deleted)
                     int duplicatesDeleted = session.CreateSQLQuery(@"
