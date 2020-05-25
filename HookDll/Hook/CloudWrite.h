@@ -9,8 +9,8 @@ class CloudWrite : public BaseMethodHook {
 public:
 	CloudWrite();
 	CloudWrite(DataQueue* dataQueue, HANDLE hEvent);
-	void EnableHook();
-	void DisableHook();
+	void EnableHook() override;
+	void DisableHook() override;
 
 private:
 

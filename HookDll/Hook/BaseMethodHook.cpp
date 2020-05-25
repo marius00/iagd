@@ -3,7 +3,7 @@
 #include "MessageType.h"
 #include <detours.h>
 
-BaseMethodHook::BaseMethodHook() {}
+BaseMethodHook::BaseMethodHook() = default;
 BaseMethodHook::BaseMethodHook(DataQueue* dataQueue, HANDLE hEvent) {}
 void BaseMethodHook::EnableHook() {}
 void BaseMethodHook::DisableHook() {}

@@ -28,9 +28,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseMethodHook.h" />
+    <ClInclude Include="CanUseDismantle.h" />
     <ClInclude Include="CloudGetNumFiles.h" />
     <ClInclude Include="CloudRead.h" />
     <ClInclude Include="CloudWrite.h" />
+    <ClInclude Include="NpcEnchanterDetectionHook.h" />
+    <ClInclude Include="NpcTransmuteDetectionHook.h" />
     <ClInclude Include="StateRequestNpcAction.h" />
     <ClInclude Include="StateRequestMoveAction.h" />
     <ClInclude Include="DataQueue.h" />
@@ -50,9 +53,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseMethodHook.cpp" />
+    <ClCompile Include="CanUseDismantle.cpp" />
     <ClCompile Include="CloudGetNumFiles.cpp" />
     <ClCompile Include="CloudRead.cpp" />
     <ClCompile Include="CloudWrite.cpp" />
+    <ClCompile Include="NpcEnchanterDetectionHook.cpp" />
+    <ClCompile Include="NpcTransmuteDetectionHook.cpp" />
     <ClCompile Include="StateRequestNpcAction.cpp" />
     <ClCompile Include="StateRequestMoveAction.cpp" />
     <ClCompile Include="DataQueue.cpp" />
@@ -157,8 +163,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>n:\boost_1_61_0;..\Detours-master\src;..\;$(IncludePath)</IncludePath>
-    <LibraryPath>n:\boost_1_61_0\lib64-msvc-14.0;..\Detours-master\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>n:\boost_1_61_0-x64;..\Detours-master\src;..\;$(IncludePath)</IncludePath>
+    <LibraryPath>n:\boost_1_61_0-x64\lib64-msvc-14.0;..\Detours-master\x64;$(LibraryPath)</LibraryPath>
     <TargetName>ItemAssistantHook_x64</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-Instaloot|Win32'">

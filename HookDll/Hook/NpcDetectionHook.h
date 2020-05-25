@@ -7,8 +7,8 @@ class NpcDetectionHook : public BaseMethodHook {
 public:
 	NpcDetectionHook();
 	NpcDetectionHook(DataQueue* dataQueue, HANDLE hEvent);
-	void EnableHook();
-	void DisableHook();
+	void EnableHook() override;
+	void DisableHook() override;
 
 private:
 	typedef void* (__thiscall *OriginalMethodPtr)(void* This, void* uk0, void* uk1, void* uk2, void* uk3, bool a, bool b);

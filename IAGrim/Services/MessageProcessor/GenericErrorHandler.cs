@@ -21,7 +21,7 @@ namespace IAGrim.Services.MessageProcessor {
             }
             else if (type == MessageType.TYPE_SUCCESS_HOOKING_GENERIC) {
                 int method = IOHelper.GetInt(data, 0);
-                _logger.Debug($"Hooking method \"{(MessageType)method}\" ({method})");
+                _logger.Debug($"Success hooking method \"{(MessageType)method}\" ({method})");
             }
         }
     }

@@ -69,5 +69,7 @@ namespace IAGrim.UI.Misc {
         TYPE_SUCCESS_HOOKING_GENERIC = 52,
         TYPE_LoadPlayerTransfer = 53,
         TYPE_ReadPlayerTransfer = 54,
+        TYPE_Display_Transmute = 55,
+        TYPE_CAN_USE_DISMANTLE = 56,
     };
 }

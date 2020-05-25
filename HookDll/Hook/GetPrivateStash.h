@@ -13,8 +13,8 @@ class GetPrivateStash : public BaseMethodHook {
 public:
 	GetPrivateStash();
 	GetPrivateStash(DataQueue* dataQueue, HANDLE hEvent);
-	void EnableHook();
-	void DisableHook();
+	void EnableHook() override;
+	void DisableHook() override;
 
 	void* GetPrivateStashInventorySack();
 

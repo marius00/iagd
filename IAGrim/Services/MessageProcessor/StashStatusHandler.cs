@@ -65,6 +65,27 @@ namespace IAGrim.Services.MessageProcessor {
                         }
                         break;
 
+                    case MessageType.TYPE_DISPLAY_CARAVAN:
+                    case MessageType.TYPE_DISPLAY_ENCHANTER:
+                        logger.Debug(type);
+                        break;
+
+                    case MessageType.TYPE_CAN_USE_DISMANTLE:
+                        if (PrivateStashStatus != InternalStashStatus.Open) {
+                            PrivateStashStatus = InternalStashStatus.Crafting;
+                            RuntimeSettings.StashStatus = StashAvailability.CRAFTING;
+                        }
+                        break;
+
+                    case MessageType.TYPE_Display_Transmute:
+                        if (PrivateStashStatus != InternalStashStatus.Open) {
+                            PrivateStashStatus = InternalStashStatus.Crafting;
+                            RuntimeSettings.StashStatus = StashAvailability.CRAFTING;
+                        }
+
+                        logger.Debug("TYPE_Display_Transmute");
+                        break;
+                        
                     case MessageType.TYPE_OPEN_CLOSE_TRANSFER_STASH:
                         bool isOpen = ((int)data[0]) != 0;
                         TransferStashStatus = isOpen ? InternalStashStatus.Open : InternalStashStatus.Closed;

@@ -65,8 +65,8 @@ class InventorySack_AddItem : public BaseMethodHook {
 public:
 	InventorySack_AddItem();
 	InventorySack_AddItem(DataQueue* dataQueue, HANDLE hEvent);
-	void EnableHook();
-	void DisableHook();
+	void EnableHook() override;
+	void DisableHook() override;
 
 private:
 	struct Vec2f {

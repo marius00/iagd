@@ -43,7 +43,7 @@ namespace IAGrim.Services.MessageProcessor {
                  }
 
                  case MessageType.TYPE_ControllerRequestRotateAction: {
-                     var vec = new GrimStateTracker.WorldVector {
+                     /*var vec = new GrimStateTracker.WorldVector {
                          X = IOHelper.GetFloat(data, 4),
                          Y = IOHelper.GetFloat(data, 8),
                          Z = IOHelper.GetFloat(data, 12),
@@ -53,7 +53,7 @@ namespace IAGrim.Services.MessageProcessor {
                      if (_debugPlayerPositions) {
                          Logger.Debug($"RotateTo: {vec}");
                      }
-
+                     */
                      break;
                  }
 

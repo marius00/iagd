@@ -43,6 +43,10 @@
 
 #define GET_PLAYER_ITEM_COUNT_IN_STASHES "?GetItemCountInStashes@Player@GAME@@UEBAHAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV?$vector@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@mem@@1AEAV?$vector@I@6@_N3@Z"
 
+#define NPC_TRANSMUTE_ON_PLAYER_INTERACT "?OnPlayerInteract@NpcTransmuter@GAME@@UEAAXI_N0@Z"
+#define NPC_ENCHANTER_ON_PLAYER_INTERACT "?OnPlayerInteract@NpcEnchanter@GAME@@UEAAXI_N0@Z"
+#define CAN_USE_DISMANTLE "?MainPlayerCanUseDismantle@GameEngine@GAME@@QEBA_NXZ"
+
 #define CLOUD_WRITE "?CloudWrite@Steamworks@GAME@@QEBA_NAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PEBXI_N@Z"
 #define CLOUD_READ "?CloudRead@Steamworks@GAME@@QEBA_NAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PEAXI@Z"
 #define CLOUD_GET_NUM_FILES "?CloudGetNumFiles@Steamworks@GAME@@QEBAIXZ"

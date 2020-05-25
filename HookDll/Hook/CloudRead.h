@@ -9,8 +9,8 @@ class CloudRead : public BaseMethodHook {
 public:
 	CloudRead();
 	CloudRead(DataQueue* dataQueue, HANDLE hEvent);
-	void EnableHook();
-	void DisableHook();
+	void EnableHook() override;
+	void DisableHook() override;
 
 private:
 	typedef bool (__thiscall *OriginalMethodPtr)(void*, void* str_filename, void* unknown0, unsigned int unknown1);

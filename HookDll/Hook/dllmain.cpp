@@ -16,6 +16,9 @@
 #include "ReadPlayerTransfer.h"
 #include "LoadPlayerTransfer.h"
 #include "Exports.h"
+#include "NpcEnchanterDetectionHook.h"
+#include "NpcTransmuteDetectionHook.h"
+#include "CanUseDismantle.h"
 
 #if defined _M_X64
 #elif defined _M_IX86
@@ -166,6 +169,10 @@ static void ConfigureCloudDetectionHooks(std::vector<BaseMethodHook*>& hooks) {
 static void ConfigureStashDetectionHooks(std::vector<BaseMethodHook*>& hooks) {
 	// Stash detection hooks
 	hooks.push_back(new NpcDetectionHook(&g_dataQueue, g_hEvent));
+	hooks.push_back(new NpcEnchanterDetectionHook(&g_dataQueue, g_hEvent));
+	hooks.push_back(new NpcTransmuteDetectionHook(&g_dataQueue, g_hEvent));
+	hooks.push_back(new CanUseDismantle(&g_dataQueue, g_hEvent));
+	
 	hooks.push_back(new SaveTransferStash(&g_dataQueue, g_hEvent));
 	hooks.push_back(new InventorySack_AddItem(&g_dataQueue, g_hEvent)); // Includes GetPrivateStash internally
 }

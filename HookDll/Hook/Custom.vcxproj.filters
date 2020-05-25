@@ -84,6 +84,15 @@
     <ClInclude Include="StateRequestRotateAction.h">
       <Filter>CoreHooks\PlayerPosition</Filter>
     </ClInclude>
+    <ClInclude Include="NpcTransmuteDetectionHook.h">
+      <Filter>CoreHooks\StashDetection</Filter>
+    </ClInclude>
+    <ClInclude Include="NpcEnchanterDetectionHook.h">
+      <Filter>CoreHooks\StashDetection</Filter>
+    </ClInclude>
+    <ClInclude Include="CanUseDismantle.h">
+      <Filter>CoreHooks\StashDetection</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -139,6 +148,15 @@
     </ClCompile>
     <ClCompile Include="StateRequestRotateAction.cpp">
       <Filter>CoreHooks\PlayerPosition</Filter>
+    </ClCompile>
+    <ClCompile Include="NpcTransmuteDetectionHook.cpp">
+      <Filter>CoreHooks\StashDetection</Filter>
+    </ClCompile>
+    <ClCompile Include="NpcEnchanterDetectionHook.cpp">
+      <Filter>CoreHooks\StashDetection</Filter>
+    </ClCompile>
+    <ClCompile Include="CanUseDismantle.cpp">
+      <Filter>CoreHooks\StashDetection</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
