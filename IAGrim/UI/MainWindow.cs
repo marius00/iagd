@@ -609,21 +609,13 @@ namespace IAGrim.UI
         }
 
         void TransferSingleItem(object ignored, EventArgs args) {
+            ItemTransferEvent searchEvent = args as ItemTransferEvent;
+            StashTransferEventArgs transferArgs = new StashTransferEventArgs {
+                Count = 1,
+                InternalId = searchEvent.Request.Split(';')
+            };
 
-            if (InvokeRequired) {
-                Invoke((MethodInvoker)delegate {
-                    this.TransferSingleItem(ignored, args);
-                });
-            }
-            else {
-                ItemTransferEvent searchEvent = args as ItemTransferEvent;
-                StashTransferEventArgs transferArgs = new StashTransferEventArgs {
-                    Count = 1,
-                    InternalId = searchEvent.Request.Split(';')
-                };
-
-                _transferController.TransferItem(ignored, transferArgs);
-            }
+            _transferController.TransferItem(transferArgs);
         }
 
         void TransferAllItems(object ignored, EventArgs args) {
@@ -639,7 +631,7 @@ namespace IAGrim.UI
                     InternalId = searchEvent.Request.Split(';')
                 };
 
-                _transferController.TransferItem(ignored, transferArgs);
+                _transferController.TransferItem(transferArgs);
             }
         }
 
@@ -661,16 +653,6 @@ namespace IAGrim.UI
             _injector = new InjectionHelper(new BackgroundWorker(), _injectorCallbackDelegate, false, "Grim Dawn", string.Empty, dllname);
         }
 
-        void TransferItem(object ignored, EventArgs args) {
-            if (InvokeRequired) {
-                Invoke((MethodInvoker)delegate {
-                    _transferController.TransferItem(ignored, args);
-                });
-            }
-            else {
-                _transferController.TransferItem(ignored, args);
-            }
-        }
 
         private void GlobalSettings_StashStatusChanged(object sender, EventArgs e) {
             if (InvokeRequired) {

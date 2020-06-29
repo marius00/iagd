@@ -158,8 +158,7 @@ namespace IAGrim.UI.Controller {
         /// Transfer item request from sub control
         /// MUST BE CALLED ON SQL THREAD
         /// </summary>
-        public void TransferItem(object ignored, EventArgs _args) {
-            StashTransferEventArgs args = _args as StashTransferEventArgs;
+        public void TransferItem(StashTransferEventArgs args) {
             Logger.Debug($"Item transfer requested, arguments: {args}");
 
             if (CanTransfer()) {

@@ -7,9 +7,11 @@ using EvilsoftCommons;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.GameDataParsing.Model;
 using IAGrim.Parsers.GameDataParsing.UI;
+using log4net;
 
 namespace IAGrim.Parsers.GameDataParsing.Service {
     public class ParsingService {
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(ParsingService));
         private string _grimdawnLocation;
         private string _modLocation;
 
@@ -38,22 +40,28 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
         }
 
         public static long GetHighestTimestamp(string install) {
-            List<string> arzFiles = new List<string> {
-                GrimFolderUtility.FindArzFile(install)
-            };
+            try {
+                List<string> arzFiles = new List<string> {
+                    GrimFolderUtility.FindArzFile(install)
+                };
 
-            foreach (string path in GrimFolderUtility.GetGrimExpansionFolders(install)) {
-                string expansionItems = GrimFolderUtility.FindArzFile(path);
+                foreach (string path in GrimFolderUtility.GetGrimExpansionFolders(install)) {
+                    string expansionItems = GrimFolderUtility.FindArzFile(path);
 
-                if (!string.IsNullOrEmpty(expansionItems)) {
-                    arzFiles.Add(GrimFolderUtility.FindArzFile(expansionItems));
+                    if (!string.IsNullOrEmpty(expansionItems)) {
+                        arzFiles.Add(GrimFolderUtility.FindArzFile(expansionItems));
+                    }
                 }
-            }
 
-            return arzFiles
-                .Select(File.GetLastWriteTimeUtc)
-                .Select(ts => ts.ToTimestamp())
-                .Max();
+                return arzFiles
+                    .Select(File.GetLastWriteTimeUtc)
+                    .Select(ts => ts.ToTimestamp())
+                    .Max();
+            }
+            catch (Exception e) {
+                Logger.Warn("Error fetching timestamp, defaulting to unchanged", e);
+                return 0;
+            }
         }
 
         public void Update(string install, string mod) {
