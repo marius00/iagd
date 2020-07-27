@@ -56,35 +56,7 @@ namespace IAGrim.Parsers.Arz {
             
             return (int)_settings.GetLocal().StashToDepositTo - 1;
         }
-
-        public List<PlayerItem> EmptyStash(string filename) {
-            Logger.InfoFormat("Looting {0}", filename);
-
-            var pCrypto = new GDCryptoDataBuffer(DataBuffer.ReadBytesFromDisk(filename));
-            var items = new List<Item>();
-            var stash = new Stash();
-
-            if (stash.Read(pCrypto)) {
-                var isHardcore = GlobalPaths.IsHardcore(filename);
-
-                foreach (var tab in stash.Tabs) {
-                    // Grab the items and clear the tab
-                    items.AddRange(tab.Items);
-                    tab.Items.Clear();
-                }
-
-                _stashWriter.SafelyWriteStash(filename, stash); // TODO: Ideally we should check if it worked. 
-                Logger.InfoFormat("Looted {0} items from stash", items.Count);
-
-                return items.Select(m => Map(m, stash.ModLabel, isHardcore)).ToList();
-            }
-
-            Logger.Error("Could not load stash file.");
-            Logger.Error("An update from the developer is most likely required.");
-
-            return new List<PlayerItem>();
-        }
-
+        
         /// <summary>
         /// Attempt to get the name of the current mod
         /// Vanilla leaves this tag empty

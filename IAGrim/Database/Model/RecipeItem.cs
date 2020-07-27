@@ -14,7 +14,7 @@ namespace IAGrim.Database {
         public virtual long Id { get; set; }
 
         public virtual string BaseRecord { get; set; }
-        public virtual int PrefixRarity => 0;
+        public virtual long PrefixRarity => 0;
 
         private DatabaseItem Internal { get; set; }
         public virtual bool IsHardcore { get; set; }
@@ -62,7 +62,7 @@ namespace IAGrim.Database {
 
         public virtual List<string> Buddies { get; set; } = new List<string>();
 
-        public virtual uint Count {
+        public virtual ulong Count {
             get { return 1; }
             set { }
         }

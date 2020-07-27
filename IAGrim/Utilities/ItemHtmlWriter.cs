@@ -79,7 +79,7 @@ namespace IAGrim.Utilities {
                 Quality = item.Rarity ?? string.Empty,
                 Level = item.MinimumLevel,
                 Socket = GetSocketFromItem(item?.Name) ?? string.Empty,
-                NumItems = item.Count,
+                NumItems = (uint)item.Count,
                 PetStats = item.PetStats.Select(m => new JsonStat { Label = m.ToString(), Extras = m.Extra?.ToString() }).ToList(),
                 BodyStats = item.BodyStats.Select(m => new JsonStat { Label = m.ToString(), Extras = m.Extra?.ToString() }).ToList(),
                 HeaderStats = item.HeaderStats.Select(m => new JsonStat { Label = m.ToString(), Extras = m.Extra?.ToString() }).ToList(),
@@ -87,7 +87,7 @@ namespace IAGrim.Utilities {
                 HasRecipe = item.HasRecipe,
                 Buddies = item.Buddies.ToArray(),
                 Skill = item.Skill != null ? GetJsonSkill(item.Skill) : null,
-                GreenRarity = item.PrefixRarity,
+                GreenRarity = (int)item.PrefixRarity,
                 HasCloudBackup = isCloudSynced,
                 Slot = SlotTranslator.Translate(RuntimeSettings.Language, item.Slot ?? ""),
                 Extras = extras

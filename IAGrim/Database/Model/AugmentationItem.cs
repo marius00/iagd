@@ -30,8 +30,8 @@ namespace IAGrim.Database.Model {
         public virtual bool IsRecipe => false;
         public virtual bool HasRecipe { get; set; } = false;
         public virtual List<string> Buddies { get; set; } = new List<string>();
-        public virtual uint Count { get; set; } = 0;
-        public virtual int PrefixRarity => 0;
+        public virtual ulong Count { get; set; } = 0;
+        public virtual long PrefixRarity => 0;
 
         public virtual string Slot => Tags.FirstOrDefault(m => "Class".Equals(m.Stat))?.TextValue ?? string.Empty;
 

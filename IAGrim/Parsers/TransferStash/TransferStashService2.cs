@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using EvilsoftCommons.Exceptions;
+using IAGrim.Database;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parser.Stash;
 using IAGrim.Parsers.Arz;
@@ -99,6 +100,7 @@ namespace IAGrim.Parsers.TransferStash {
             return (true, new List<UserFeedback>());
         }
 
+
         public List<UserFeedback> Loot(string transferFile) {
             Logger.Info($"Checking {transferFile} for items to loot");
             lock (_fileLock) {
@@ -181,6 +183,34 @@ namespace IAGrim.Parsers.TransferStash {
 
         private bool HasItems(Stash stash, int tab) => stash.Tabs[tab].Items.Count > 0;
 
+
+        public List<PlayerItem> EmptyStash(string filename) {
+            Logger.InfoFormat("Looting {0}", filename);
+
+            var pCrypto = new GDCryptoDataBuffer(DataBuffer.ReadBytesFromDisk(filename));
+            var items = new List<Item>();
+            var stash = new Stash();
+
+            if (stash.Read(pCrypto)) {
+                var isHardcore = GlobalPaths.IsHardcore(filename);
+
+                foreach (var tab in stash.Tabs) {
+                    // Grab the items and clear the tab
+                    items.AddRange(Classify(tab).Remaining);
+                    tab.Items.Clear();
+                }
+
+                _stashWriter.SafelyWriteStash(filename, stash); // TODO: Ideally we should check if it worked. 
+                Logger.InfoFormat("Looted {0} items from stash", items.Count);
+
+                return items.Select(m => TransferStashService.Map(m, stash.ModLabel, isHardcore)).ToList();
+            }
+
+            Logger.Error("Could not load stash file.");
+            Logger.Error("An update from the developer is most likely required.");
+
+            return new List<PlayerItem>();
+        }
 
         private ClassifiedItems Classify(StashTab tab) {
             var stacked = tab.Items.Where(item =>

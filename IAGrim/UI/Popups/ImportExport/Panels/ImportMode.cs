@@ -13,6 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using IAGrim.Parsers.TransferStash;
 using IAGrim.Services;
 using IAGrim.Utilities;
 using Ionic.Zip;
@@ -22,9 +23,9 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
         private readonly GDTransferFile[] _modSelection;
         private readonly IPlayerItemDao _playerItemDao;
         private string _filename;
-        private readonly TransferStashService _sm;
+        private readonly TransferStashService2 _sm;
 
-        public ImportMode(GDTransferFile[] modSelection, IPlayerItemDao playerItemDao, TransferStashService sm) {
+        public ImportMode(GDTransferFile[] modSelection, IPlayerItemDao playerItemDao, TransferStashService2 sm) {
             InitializeComponent();
             this._modSelection = modSelection;
             this._playerItemDao = playerItemDao;

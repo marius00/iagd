@@ -3,6 +3,7 @@ using IAGrim.Parsers.Arz;
 using IAGrim.Utilities.HelperClasses;
 using System;
 using System.Windows.Forms;
+using IAGrim.Parsers.TransferStash;
 using IAGrim.Utilities;
 
 namespace IAGrim.UI.Popups.ImportExport.Panels {
@@ -11,14 +12,14 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
         private readonly Control.ControlCollection parentContainer;
         private readonly IPlayerItemDao playerItemDao;
         private readonly GDTransferFile[] modFilter;
-        private readonly TransferStashService sm;
+        private readonly TransferStashService2 sm;
         private readonly Action onClose;
 
         public ImportExportModePicker(
             GDTransferFile[] modFilter, 
             IPlayerItemDao playerItemDao, 
             Control.ControlCollection parentContainer, 
-            TransferStashService sm,
+            TransferStashService2 sm,
             Action onClose
             ) {
             InitializeComponent();

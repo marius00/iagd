@@ -31,13 +31,13 @@ namespace IAGrim.Database {
 
         public List<SkillModifierStat> ModifiedSkills { get; } = new List<SkillModifierStat>();
         
-        public virtual int PrefixRarity => 0;
+        public virtual long PrefixRarity => 0;
 
         public virtual string Stash { get; set; }
 
         public string Name { get; set; }
 
-        public uint Count { get; set; }
+        public ulong Count { get; set; }
 
         public virtual long CreationDate { get; set; }
 

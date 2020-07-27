@@ -162,11 +162,6 @@ namespace IAGrim.UI
                     },
                     new ComboBoxItem
                     {
-                        Text = language.GetTag("iatag_slot_component"),
-                        Filter = new[] {"ItemRelic"}
-                    },
-                    new ComboBoxItem
-                    {
                         Text = language.GetTag("iatag_slot_relic"),
                         Filter = new[] {"ItemArtifact"}
                     }

@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using EvilsoftCommons;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.Arz;
+using IAGrim.Parsers.TransferStash;
 using IAGrim.Services;
 using IAGrim.Settings;
 using IAGrim.Settings.Dto;
@@ -23,6 +24,7 @@ namespace IAGrim.UI.Tabs {
         private readonly IPlayerItemDao _playerItemDao;
         private readonly GDTransferFile[] _modFilter;
         private readonly TransferStashService _transferStashService;
+        private readonly TransferStashService2 _transferStashService2;
         private readonly CefBrowserHandler _cefBrowserHandler;
         private readonly LanguagePackPicker _languagePackPicker;
         private readonly SettingsService _settings;
@@ -34,7 +36,8 @@ namespace IAGrim.UI.Tabs {
             Action itemViewUpdateTrigger, 
             IPlayerItemDao playerItemDao,
             GDTransferFile[] modFilter,
-            TransferStashService transferStashService, 
+            TransferStashService transferStashService,
+            TransferStashService2 transferStashService2,
             LanguagePackPicker languagePackPicker, 
             SettingsService settings, GrimDawnDetector grimDawnDetector) {            
             InitializeComponent();
@@ -45,13 +48,13 @@ namespace IAGrim.UI.Tabs {
             this._playerItemDao = playerItemDao;
             this._modFilter = modFilter;
             this._transferStashService = transferStashService;
+            this._transferStashService2 = transferStashService2;
             _languagePackPicker = languagePackPicker;
             _settings = settings;
             _grimDawnDetector = grimDawnDetector;
 
             _controller.BindCheckbox(cbMinimizeToTray);
 
-            _controller.BindCheckbox(cbMergeDuplicates);
             _controller.BindCheckbox(cbTransferAnyMod);
             _controller.BindCheckbox(cbSecureTransfers);
             _controller.BindCheckbox(cbShowRecipesAsItems);
@@ -62,7 +65,6 @@ namespace IAGrim.UI.Tabs {
 
         private void SettingsWindow_Load(object sender, EventArgs e) {
             this.Dock = DockStyle.Fill;
-            
             
             radioBeta.Checked = _settings.GetPersistent().SubscribeExperimentalUpdates;
             radioRelease.Checked = !_settings.GetPersistent().SubscribeExperimentalUpdates;
@@ -130,7 +132,7 @@ namespace IAGrim.UI.Tabs {
 
 
         private void buttonImportExport_Click(object sender, EventArgs e) {
-            new Popups.ImportExport.ImportExportContainer(_modFilter, _playerItemDao, _transferStashService).ShowDialog();
+            new Popups.ImportExport.ImportExportContainer(_modFilter, _playerItemDao, _transferStashService2).ShowDialog();
         }
 
         private void cbDisplaySkills_CheckedChanged(object sender, EventArgs e) {

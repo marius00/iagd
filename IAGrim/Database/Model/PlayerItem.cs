@@ -14,7 +14,7 @@ using IAGrim.Services.Dto;
 
 namespace IAGrim.Database {
     public class PlayerItem : BaseItem, PlayerHeldItem, IComparable, ICloneable, RecordCollection {
-        public virtual long Id { get; set; }
+        public virtual Int64 Id { get; set; }
 
         public virtual string AzurePartition { get; set; }
         public virtual string AzureUuid { get; set; }
@@ -76,14 +76,14 @@ namespace IAGrim.Database {
         public virtual long StackCount { get; set; }
         public virtual string Name { get; set; }
         public virtual string NameLowercase { get; set; } // To help with case insensitive search on non-ascii characters
-        public virtual int PrefixRarity { get; set; }
+        public virtual long PrefixRarity { get; set; }
 
         public virtual string Stash => string.Empty;
 
 
-        public virtual uint Count {
-            get { return (uint) StackCount; }
-            set { StackCount = value; }
+        public virtual ulong Count {
+            get { return (ulong) StackCount; }
+            set { StackCount = (long)value; }
         }
 
 

@@ -162,7 +162,7 @@ namespace IAGrim {
                     var numFiles = Directory.GetFiles(GlobalPaths.StorageFolder).Length;
                     int numFilesExpected = 2100;
                     if (Directory.Exists(Path.Combine(gdPath, "gdx2"))) {
-                        numFilesExpected += 580;
+                        numFilesExpected += 850;
                     }
 
                     if (Directory.Exists(Path.Combine(gdPath, "gdx1"))) {

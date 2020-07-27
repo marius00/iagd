@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 namespace IAGrim.UI.Controller {
     interface ISettingsController {
         bool MinimizeToTray { get; set; }
-        bool MergeDuplicates { get; set; }
         bool TransferAnyMod { get; set; }
         bool SecureTransfers { get; set; }
         bool ShowRecipesAsItems { get; set; }

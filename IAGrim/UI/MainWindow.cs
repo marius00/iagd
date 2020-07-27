@@ -494,6 +494,7 @@ namespace IAGrim.UI
                     _playerItemDao,
                     _searchWindow.ModSelectionHandler.GetAvailableModSelection(),
                     _transferStashService,
+                    transferStashService2,
                     languagePackPicker,
                     _settingsService,
                     _grimDawnDetector

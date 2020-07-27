@@ -130,7 +130,7 @@ namespace IAGrim.UI.Controller
                 items = items.Where(m => m.Count > 1).ToList();
             }
 
-            personalCount = items.Sum(i => i.Count);
+            personalCount = items.Sum(i => (long)i.Count);
 
             if (includeBuddyItems && !query.SocketedOnly)
             {

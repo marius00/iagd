@@ -8,18 +8,18 @@ using IAGrim.Database.Model;
 
 namespace IAGrim.Database.Interfaces {
     public interface PlayerHeldItem : IComparable {
-        long Id { get; }
+        Int64 Id { get; }
         string Stash { get; }
         bool IsRecipe { get; }
         bool HasRecipe { get; set;}
 
         // The names of buddies who has this item
         List<string> Buddies { get; set; }
-        uint Count { get; set; }
+        ulong Count { get; set; }
         string Name { get; }
         string BaseRecord { get; }
 
-        int PrefixRarity { get; }
+        long PrefixRarity { get; }
 
 
         string Rarity { get; }

@@ -11,14 +11,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using IAGrim.Parsers.TransferStash;
 
 namespace IAGrim.UI.Popups.ImportExport {
     partial class ImportExportContainer : Form {
         private readonly GDTransferFile[] modFilter;
         private readonly IPlayerItemDao playerItemDao;
-        private readonly TransferStashService sm;
+        private readonly TransferStashService2 sm;
 
-        public ImportExportContainer(GDTransferFile[] modFilter, IPlayerItemDao playerItemDao, TransferStashService sm) {
+        public ImportExportContainer(GDTransferFile[] modFilter, IPlayerItemDao playerItemDao, TransferStashService2 sm) {
             InitializeComponent();
             this.modFilter = modFilter;
             this.playerItemDao = playerItemDao;

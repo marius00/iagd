@@ -44,7 +44,6 @@
             this.cbTransferAnyMod = new FirefoxCheckBox();
             this.cbShowRecipesAsItems = new FirefoxCheckBox();
             this.cbSecureTransfers = new FirefoxCheckBox();
-            this.cbMergeDuplicates = new FirefoxCheckBox();
             this.cbMinimizeToTray = new FirefoxCheckBox();
             this.buttonPatreon = new System.Windows.Forms.Button();
             this.panelBox3 = new PanelBox();
@@ -115,7 +114,6 @@
             this.panelBox4.Controls.Add(this.cbTransferAnyMod);
             this.panelBox4.Controls.Add(this.cbShowRecipesAsItems);
             this.panelBox4.Controls.Add(this.cbSecureTransfers);
-            this.panelBox4.Controls.Add(this.cbMergeDuplicates);
             this.panelBox4.Controls.Add(this.cbMinimizeToTray);
             this.panelBox4.Font = new System.Drawing.Font("Segoe UI Semibold", 20F);
             this.panelBox4.HeaderHeight = 40;
@@ -343,20 +341,6 @@
             this.cbSecureTransfers.TabIndex = 12;
             this.cbSecureTransfers.Tag = "iatag_ui_securetransfers";
             this.cbSecureTransfers.Text = "Secure Transfers";
-            // 
-            // cbMergeDuplicates
-            // 
-            this.cbMergeDuplicates.Bold = false;
-            this.cbMergeDuplicates.EnabledCalc = true;
-            this.cbMergeDuplicates.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cbMergeDuplicates.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbMergeDuplicates.Location = new System.Drawing.Point(3, 403);
-            this.cbMergeDuplicates.Name = "cbMergeDuplicates";
-            this.cbMergeDuplicates.Size = new System.Drawing.Size(268, 27);
-            this.cbMergeDuplicates.TabIndex = 9;
-            this.cbMergeDuplicates.Tag = "iatag_ui_mergeduplicates";
-            this.cbMergeDuplicates.Text = "Merge Duplicates";
-            this.cbMergeDuplicates.CheckedChanged += new System.EventHandler(this.cbMergeDuplicates_CheckedChanged);
             // 
             // cbMinimizeToTray
             // 
@@ -618,7 +602,6 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
         private FirefoxCheckBox cbMinimizeToTray;
-        private FirefoxCheckBox cbMergeDuplicates;
         private FirefoxCheckBox cbSecureTransfers;
         private FirefoxCheckBox cbShowRecipesAsItems;
         private FirefoxCheckBox cbTransferAnyMod;

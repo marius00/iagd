@@ -821,6 +821,7 @@ namespace IAGrim.Database {
                     Logger.Debug(q.QueryString);
                     q.SetResultTransformer(new AliasToBeanResultTransformer(typeof(PlayerItem)));
                     List<PlayerItem> items = new List<PlayerItem>();
+                    
                     foreach (PlayerItem pi in q.List()) {
                         items.Add(pi);
                     }
