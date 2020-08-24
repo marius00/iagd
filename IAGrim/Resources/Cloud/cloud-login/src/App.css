@@ -1,5 +1,9 @@
 
-footer { position: absolute; bottom: 2px; }
+footer {
+  position: absolute;
+  bottom: 2px;
+  margin-bottom: 30px;
+}
 
 .disclaimer { font-size: 10px; }
 

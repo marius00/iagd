@@ -48,8 +48,7 @@ class App extends React.Component {
         <br/><br/>
 
         <footer>
-          <i><b>If you wish to permanently delete your items and stop using Item Assistant, please contact
-            itemassistant@gmail.com</b></i>
+          <i><b>If you run into issues, hop unto the <a href="https://discord.com/invite/5wuCPbB" rel="noopener noreferrer" target="_blank">IA discord.</a></b></i>
         </footer>
       </div>
     );

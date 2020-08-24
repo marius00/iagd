@@ -30,16 +30,6 @@ class EmailLoginModal extends React.Component<Props> {
     this.state = {stage: Stage.Email};
   }
 
-  validateEmail(email: string) {
-    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase());
-  }
-
-  isCodeValid() {
-    let re = /^\d+$/;
-    return this.state.code !== undefined && this.state.code.length === 9 && re.test(this.state.code);
-  }
-
   renderInvalidCode() {
     return (
       <div>
@@ -57,7 +47,6 @@ class EmailLoginModal extends React.Component<Props> {
   }
 
   onCodeStageComplete(success: boolean, token?: string) {
-    console.log('yay?', success, token);
     if (success) {
       document.location.href = `https://auth.iagd.dreamcrash.org/token/${token}`;
     } else {
