@@ -57,6 +57,13 @@ namespace IAGrim.Parsers.TransferStash {
 
                 return true;
             }
+            catch (FileNotFoundException ex) {
+                Logger.Warn("Could not locate the temporary stash file, this is usually caused by write protections, such as Windows 10 anti ransomware and similar issues denying IA permission to write to files.");
+                Logger.Warn(ex.Message);
+                Logger.Warn(ex.StackTrace);
+                ExceptionReporter.ReportException(ex, "SafelyWriteDatabase");
+                return false;
+            }
             catch (UnauthorizedAccessException ex) {
                 Logger.Warn(ex.Message);
                 Logger.Warn(ex.StackTrace);
