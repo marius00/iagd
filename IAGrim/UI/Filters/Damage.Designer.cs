@@ -24,6 +24,7 @@
         /// </summary>
         private void InitializeComponent() {
             this.damagePanel = new IAGrim.Theme.CollapseablePanelBox();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.totalDamage = new FirefoxCheckBox();
             this.dmgRetaliation = new FirefoxCheckBox();
             this.dmgElemental = new FirefoxCheckBox();
@@ -37,24 +38,14 @@
             this.dmgVitality = new FirefoxCheckBox();
             this.dmgChaos = new FirefoxCheckBox();
             this.damagePanel.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // damagePanel
             // 
             this.damagePanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.damagePanel.Controls.Add(this.totalDamage);
-            this.damagePanel.Controls.Add(this.dmgRetaliation);
-            this.damagePanel.Controls.Add(this.dmgElemental);
-            this.damagePanel.Controls.Add(this.dmgPhysical);
-            this.damagePanel.Controls.Add(this.dmgPiercing);
-            this.damagePanel.Controls.Add(this.dmgFire);
-            this.damagePanel.Controls.Add(this.dmgAether);
-            this.damagePanel.Controls.Add(this.dmgCold);
-            this.damagePanel.Controls.Add(this.dmgPoison);
-            this.damagePanel.Controls.Add(this.dmgLightning);
-            this.damagePanel.Controls.Add(this.dmgVitality);
-            this.damagePanel.Controls.Add(this.dmgChaos);
+            this.damagePanel.Controls.Add(this.panel1);
             this.damagePanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.damagePanel.HeaderHeight = 29;
             this.damagePanel.Location = new System.Drawing.Point(3, 3);
@@ -66,6 +57,25 @@
             this.damagePanel.Text = "Damage";
             this.damagePanel.TextLocation = "8; 5";
             // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.totalDamage);
+            this.panel1.Controls.Add(this.dmgRetaliation);
+            this.panel1.Controls.Add(this.dmgElemental);
+            this.panel1.Controls.Add(this.dmgPhysical);
+            this.panel1.Controls.Add(this.dmgPiercing);
+            this.panel1.Controls.Add(this.dmgFire);
+            this.panel1.Controls.Add(this.dmgAether);
+            this.panel1.Controls.Add(this.dmgCold);
+            this.panel1.Controls.Add(this.dmgPoison);
+            this.panel1.Controls.Add(this.dmgLightning);
+            this.panel1.Controls.Add(this.dmgVitality);
+            this.panel1.Controls.Add(this.dmgChaos);
+            this.panel1.Location = new System.Drawing.Point(0, 33);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(290, 401);
+            this.panel1.TabIndex = 0;
+            // 
             // totalDamage
             // 
             this.totalDamage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -74,10 +84,10 @@
             this.totalDamage.EnabledCalc = true;
             this.totalDamage.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.totalDamage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.totalDamage.Location = new System.Drawing.Point(3, 396);
+            this.totalDamage.Location = new System.Drawing.Point(8, 368);
             this.totalDamage.Name = "totalDamage";
             this.totalDamage.Size = new System.Drawing.Size(275, 27);
-            this.totalDamage.TabIndex = 11;
+            this.totalDamage.TabIndex = 23;
             this.totalDamage.Tag = "iatag_ui_totaldmg";
             this.totalDamage.Text = "Total Damage";
             // 
@@ -89,10 +99,10 @@
             this.dmgRetaliation.EnabledCalc = true;
             this.dmgRetaliation.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.dmgRetaliation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.dmgRetaliation.Location = new System.Drawing.Point(3, 363);
+            this.dmgRetaliation.Location = new System.Drawing.Point(8, 335);
             this.dmgRetaliation.Name = "dmgRetaliation";
             this.dmgRetaliation.Size = new System.Drawing.Size(275, 27);
-            this.dmgRetaliation.TabIndex = 10;
+            this.dmgRetaliation.TabIndex = 22;
             this.dmgRetaliation.Tag = "iatag_ui_retaliation";
             this.dmgRetaliation.Text = "Retaliation";
             // 
@@ -104,10 +114,10 @@
             this.dmgElemental.EnabledCalc = true;
             this.dmgElemental.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.dmgElemental.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.dmgElemental.Location = new System.Drawing.Point(3, 330);
+            this.dmgElemental.Location = new System.Drawing.Point(8, 302);
             this.dmgElemental.Name = "dmgElemental";
             this.dmgElemental.Size = new System.Drawing.Size(275, 27);
-            this.dmgElemental.TabIndex = 9;
+            this.dmgElemental.TabIndex = 21;
             this.dmgElemental.Tag = "iatag_ui_elemental";
             this.dmgElemental.Text = "Elemental";
             // 
@@ -119,10 +129,10 @@
             this.dmgPhysical.EnabledCalc = true;
             this.dmgPhysical.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.dmgPhysical.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.dmgPhysical.Location = new System.Drawing.Point(3, 33);
+            this.dmgPhysical.Location = new System.Drawing.Point(8, 5);
             this.dmgPhysical.Name = "dmgPhysical";
             this.dmgPhysical.Size = new System.Drawing.Size(275, 27);
-            this.dmgPhysical.TabIndex = 0;
+            this.dmgPhysical.TabIndex = 12;
             this.dmgPhysical.Tag = "iatag_ui_physical";
             this.dmgPhysical.Text = "Physical";
             // 
@@ -134,10 +144,10 @@
             this.dmgPiercing.EnabledCalc = true;
             this.dmgPiercing.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.dmgPiercing.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.dmgPiercing.Location = new System.Drawing.Point(3, 66);
+            this.dmgPiercing.Location = new System.Drawing.Point(8, 38);
             this.dmgPiercing.Name = "dmgPiercing";
             this.dmgPiercing.Size = new System.Drawing.Size(275, 27);
-            this.dmgPiercing.TabIndex = 1;
+            this.dmgPiercing.TabIndex = 13;
             this.dmgPiercing.Tag = "iatag_ui_piercing";
             this.dmgPiercing.Text = "Piercing";
             // 
@@ -149,10 +159,10 @@
             this.dmgFire.EnabledCalc = true;
             this.dmgFire.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.dmgFire.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.dmgFire.Location = new System.Drawing.Point(3, 99);
+            this.dmgFire.Location = new System.Drawing.Point(8, 71);
             this.dmgFire.Name = "dmgFire";
             this.dmgFire.Size = new System.Drawing.Size(275, 27);
-            this.dmgFire.TabIndex = 2;
+            this.dmgFire.TabIndex = 14;
             this.dmgFire.Tag = "iatag_ui_fire";
             this.dmgFire.Text = "Fire";
             // 
@@ -164,10 +174,10 @@
             this.dmgAether.EnabledCalc = true;
             this.dmgAether.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.dmgAether.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.dmgAether.Location = new System.Drawing.Point(3, 198);
+            this.dmgAether.Location = new System.Drawing.Point(8, 170);
             this.dmgAether.Name = "dmgAether";
             this.dmgAether.Size = new System.Drawing.Size(275, 27);
-            this.dmgAether.TabIndex = 5;
+            this.dmgAether.TabIndex = 17;
             this.dmgAether.Tag = "iatag_ui_aether";
             this.dmgAether.Text = "Aether";
             // 
@@ -179,10 +189,10 @@
             this.dmgCold.EnabledCalc = true;
             this.dmgCold.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.dmgCold.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.dmgCold.Location = new System.Drawing.Point(3, 132);
+            this.dmgCold.Location = new System.Drawing.Point(8, 104);
             this.dmgCold.Name = "dmgCold";
             this.dmgCold.Size = new System.Drawing.Size(275, 27);
-            this.dmgCold.TabIndex = 3;
+            this.dmgCold.TabIndex = 15;
             this.dmgCold.Tag = "iatag_ui_cold";
             this.dmgCold.Text = "Cold";
             // 
@@ -194,10 +204,10 @@
             this.dmgPoison.EnabledCalc = true;
             this.dmgPoison.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.dmgPoison.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.dmgPoison.Location = new System.Drawing.Point(3, 297);
+            this.dmgPoison.Location = new System.Drawing.Point(8, 269);
             this.dmgPoison.Name = "dmgPoison";
             this.dmgPoison.Size = new System.Drawing.Size(275, 27);
-            this.dmgPoison.TabIndex = 8;
+            this.dmgPoison.TabIndex = 20;
             this.dmgPoison.Tag = "iatag_ui_poison";
             this.dmgPoison.Text = "Poison";
             // 
@@ -209,10 +219,10 @@
             this.dmgLightning.EnabledCalc = true;
             this.dmgLightning.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.dmgLightning.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.dmgLightning.Location = new System.Drawing.Point(3, 165);
+            this.dmgLightning.Location = new System.Drawing.Point(8, 137);
             this.dmgLightning.Name = "dmgLightning";
             this.dmgLightning.Size = new System.Drawing.Size(275, 27);
-            this.dmgLightning.TabIndex = 4;
+            this.dmgLightning.TabIndex = 16;
             this.dmgLightning.Tag = "iatag_ui_lightning";
             this.dmgLightning.Text = "Lightning";
             // 
@@ -224,10 +234,10 @@
             this.dmgVitality.EnabledCalc = true;
             this.dmgVitality.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.dmgVitality.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.dmgVitality.Location = new System.Drawing.Point(3, 231);
+            this.dmgVitality.Location = new System.Drawing.Point(8, 203);
             this.dmgVitality.Name = "dmgVitality";
             this.dmgVitality.Size = new System.Drawing.Size(275, 27);
-            this.dmgVitality.TabIndex = 6;
+            this.dmgVitality.TabIndex = 18;
             this.dmgVitality.Tag = "iatag_ui_vitality";
             this.dmgVitality.Text = "Vitality";
             // 
@@ -239,10 +249,10 @@
             this.dmgChaos.EnabledCalc = true;
             this.dmgChaos.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.dmgChaos.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.dmgChaos.Location = new System.Drawing.Point(3, 264);
+            this.dmgChaos.Location = new System.Drawing.Point(8, 236);
             this.dmgChaos.Name = "dmgChaos";
             this.dmgChaos.Size = new System.Drawing.Size(275, 27);
-            this.dmgChaos.TabIndex = 7;
+            this.dmgChaos.TabIndex = 19;
             this.dmgChaos.Tag = "iatag_ui_chaos";
             this.dmgChaos.Text = "Chaos";
             // 
@@ -254,6 +264,7 @@
             this.Name = "Damage";
             this.Size = new System.Drawing.Size(299, 441);
             this.damagePanel.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -261,6 +272,7 @@
         #endregion
 
         private Theme.CollapseablePanelBox damagePanel;
+        private System.Windows.Forms.Panel panel1;
         private FirefoxCheckBox totalDamage;
         private FirefoxCheckBox dmgRetaliation;
         private FirefoxCheckBox dmgElemental;

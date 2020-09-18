@@ -20,7 +20,6 @@ DataQueue* InventorySack_AddItem::m_dataQueue;
 InventorySack_AddItem::GameEngine_GetTransferSack InventorySack_AddItem::dll_GameEngine_GetTransferSack;
 InventorySack_AddItem::GameEngine_SetTransferOpen InventorySack_AddItem::dll_GameEngine_SetTransferOpen;
 InventorySack_AddItem::GameInfo_GameInfo_Param InventorySack_AddItem::dll_GameInfo_GameInfo_Param;
-InventorySack_AddItem::GameInfo_GameInfo InventorySack_AddItem::dll_GameInfo_GameInfo;
 InventorySack_AddItem::GameInfo_SetHardcore InventorySack_AddItem::dll_GameInfo_SetHardcore;
 InventorySack_AddItem::GameInfo_GetHardcore InventorySack_AddItem::dll_GameInfo_GetHardcore;
 InventorySack_AddItem::GameEngine_GetGameInfo InventorySack_AddItem::dll_GameEngine_GetGameInfo;
@@ -74,12 +73,6 @@ void InventorySack_AddItem::EnableHook() {
 	DetourAttach((PVOID*)&dll_GameInfo_GameInfo_Param, Hooked_GameInfo_GameInfo_Param);
 	DetourTransactionCommit();
 
-	dll_GameInfo_GameInfo = (GameInfo_GameInfo)GetProcAddress(::GetModuleHandle("Engine.dll"), GAMEINFO_CONSTRUCTOR);
-	DetourTransactionBegin();
-	DetourUpdateThread(GetCurrentThread());
-	DetourAttach((PVOID*)&dll_GameInfo_GameInfo, Hooked_GameInfo_GameInfo);
-	DetourTransactionCommit();
-
 	dll_GameInfo_SetHardcore = (GameInfo_SetHardcore)GetProcAddress(::GetModuleHandle("Engine.dll"), SET_IS_HARDCORE);
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
@@ -126,7 +119,6 @@ void InventorySack_AddItem::DisableHook() {
 	DetourDetach((PVOID*)&dll_GameEngine_SetTransferOpen, Hooked_GameEngine_SetTransferOpen);
 
 	DetourDetach((PVOID*)&dll_GameInfo_GameInfo_Param, Hooked_GameInfo_GameInfo_Param);
-	DetourDetach((PVOID*)&dll_GameInfo_GameInfo, Hooked_GameInfo_GameInfo);
 	DetourDetach((PVOID*)&dll_GameInfo_SetHardcore, Hooked_GameInfo_SetHardcore);
 
 	DetourDetach((PVOID*)&dll_InventorySack_Sort, Hooked_InventorySack_Sort);
@@ -148,23 +140,6 @@ void __fastcall InventorySack_AddItem::Hooked_GameEngine_SetTransferOpen(void* T
 
 }
 
-int InventorySack_AddItem::GetStashIndex(void* stash) {
-	if (stash == privateStashHook.GetPrivateStashInventorySack())
-		return STASH_PRIVATE;
-	else if (IsTransferStash(stash, STASH_1))
-		return STASH_1;
-	else if (IsTransferStash(stash, STASH_2))
-		return STASH_2;
-	else if (IsTransferStash(stash, STASH_3))
-		return STASH_3;
-	else if (IsTransferStash(stash, STASH_4))
-		return STASH_4;
-	else if (IsTransferStash(stash, STASH_5))
-		return STASH_5;
-
-	return -1;
-}
-
 // Since were creating from an existing object we'll need to call Get() on isHardcore and ModLabel
 void* __fastcall InventorySack_AddItem::Hooked_GameInfo_GameInfo_Param(void* This , void* info) {
 	void* result = dll_GameInfo_GameInfo_Param(This, info);
@@ -177,16 +152,6 @@ void* __fastcall InventorySack_AddItem::Hooked_GameInfo_GameInfo_Param(void* Thi
 
 	return result;
 }
-void* __fastcall InventorySack_AddItem::Hooked_GameInfo_GameInfo(void* This ) {
-	void* result = dll_GameInfo_GameInfo(This);
-
-	DataItemPtr dataEvent(new DataItem(TYPE_GameInfo_IsHardcore_via_init_2, 0, 0));
-	m_dataQueue->push(dataEvent);
-	SetEvent(m_hEvent);
-
-	return result;
-}
-
 
 //void GAME::GameInfo::SetHardcore(bool)
 void* __fastcall InventorySack_AddItem::Hooked_GameInfo_SetHardcore(void* This , bool isHardcore) {
@@ -212,11 +177,6 @@ bool __fastcall InventorySack_AddItem::Hooked_InventorySack_Sort(void* This , un
 
 int* __fastcall InventorySack_AddItem::Hooked_GameEngine_GetTransferSack(void* This , int idx
 ) {
-	if (idx == STASH_PRIVATE || idx == STASH_1 || idx == STASH_2 || idx == STASH_3 || idx == STASH_4 || idx == STASH_5) {
-		DataItemPtr dataEvent(new DataItem(TYPE_RequestRestrictedSack, sizeof(idx), (char*)&idx));
-		m_dataQueue->push(dataEvent);
-		SetEvent(m_hEvent);
-	}
 	int* result = dll_GameEngine_GetTransferSack(This, idx);
 	return result;
 }

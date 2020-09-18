@@ -79,7 +79,6 @@ private:
 	static GetPrivateStash privateStashHook;
 
 	static bool IsTransferStash(void* stash, int idx);
-	static int GetStashIndex(void* stash);
 
 	static int m_isHardcore;
 	static int m_stashToLootFrom;
@@ -128,7 +127,6 @@ private:
 	// Game info is used to monitor IsHardcore and ModLabel
 	//GAME::GameInfo::GameInfo(class GAME::GameInfo const &)
 	static void* __fastcall Hooked_GameInfo_GameInfo_Param(void* This, void* info);
-	static void* __fastcall Hooked_GameInfo_GameInfo(void* This);
 
 	//void GAME::GameInfo::SetHardcore(bool)
 	static void* __fastcall Hooked_GameInfo_SetHardcore(void* This, bool isHardcore);

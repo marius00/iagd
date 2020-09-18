@@ -361,10 +361,7 @@
     <Compile Include="Services\ItemStatService.cs" />
     <Compile Include="Services\MessageProcessor\CloudDetectorProcessor.cs" />
     <Compile Include="Services\MessageProcessor\GenericErrorHandler.cs" />
-    <Compile Include="Services\MessageProcessor\LogMessageProcessor.cs" />
-    <Compile Include="Services\MessageProcessor\DebugMessageProcessor.cs" />
     <Compile Include="Services\MessageProcessor\IMessageProcessor.cs" />
-    <Compile Include="Services\MessageProcessor\ItemSpawnedProcessor.cs" />
     <Compile Include="Services\MessageProcessor\ItemPositionFinder.cs" />
     <Compile Include="Services\MessageProcessor\PlayerPositionTracker.cs" />
     <Compile Include="Services\MessageProcessor\StashStatusHandler.cs" />

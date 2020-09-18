@@ -255,18 +255,10 @@ namespace IAGrim.UI
             }
 
             switch (type) {
-                case MessageType.TYPE_DetectedStashToLootFrom: {
-                    int stashToLootFrom = IOHelper.GetInt(bt.Data, 0);
-                        Logger.Info($"Grim Dawn hook reports it will be looting from stash tab: {stashToLootFrom}");
-                    }
-                break;
+   
 
                 case MessageType.TYPE_REPORT_WORKER_THREAD_LAUNCHED:
                     Logger.Info("Grim Dawn hook reports successful launch.");
-                    break;
-
-                case MessageType.TYPE_REPORT_WORKER_THREAD_EXPERIMENTAL_LAUNCHED:
-                    Logger.Info("Grim Dawn exp-hook reports successful launch");
                     break;
 
 
@@ -279,10 +271,6 @@ namespace IAGrim.UI
 
                     break;
 
-                case MessageType.TYPE_GameInfo_IsHardcore_via_init_2:
-                    Logger.Debug("GameInfo object created");
-                    break;
-
                 case MessageType.TYPE_GameInfo_SetModName:
                     Logger.InfoFormat("TYPE_GameInfo_SetModName({0})", IOHelper.GetPrefixString(bt.Data, 0));
                     if (_settingsController.AutoUpdateModSettings) {
@@ -291,15 +279,6 @@ namespace IAGrim.UI
                     break;
 
             }
-
-            if (bt.Type == 1011) {
-                Logger.Debug("dll_GameInfo_SetModNameWideString");
-                
-            }
-            else if (bt.Type == 1010) {
-                Logger.Debug($"Hooked_GameInfo_SetModName {IOHelper.GetPrefixString(bt.Data, 0)}");
-            }
-
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
@@ -310,21 +289,6 @@ namespace IAGrim.UI
 
             // Call the base class
             return base.ProcessCmdKey(ref msg, keyData);
-        }
-
-        private void SetFeedback(string level, string feedback, string helpUrl) {
-            try {
-                if (InvokeRequired) {
-                    Invoke((MethodInvoker)delegate { SetFeedback(level, feedback, helpUrl); });
-                }
-                else {
-                    statusLabel.Text = feedback.Replace("\\n", " - ");
-                    _userFeedbackService.SetFeedback(feedback, level, helpUrl);
-                }
-            }
-            catch (ObjectDisposedException) {
-                Logger.Debug("Attempted to set feedback, but UI already disposed. (Probably shutting down)");
-            }
         }
 
         private void SetFeedback(string feedback) {
@@ -547,13 +511,9 @@ namespace IAGrim.UI
             _messageProcessors.Add(new ItemPositionFinder(_dynamicPacker));
             _messageProcessors.Add(new PlayerPositionTracker(Debugger.IsAttached && false));
             _messageProcessors.Add(new StashStatusHandler());
-            _messageProcessors.Add(new ItemSpawnedProcessor());
             _messageProcessors.Add(new CloudDetectorProcessor(SetFeedback));
             _messageProcessors.Add(new GenericErrorHandler());
-            //messageProcessors.Add(new LogMessageProcessor());
-#if DEBUG
-            _messageProcessors.Add(new DebugMessageProcessor());
-#endif
+
 
             RuntimeSettings.StashStatusChanged += GlobalSettings_StashStatusChanged;
 

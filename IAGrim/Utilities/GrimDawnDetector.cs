@@ -236,9 +236,7 @@ namespace IAGrim {
             try {
                 try {
                     var steamPath = GetSteamDirectory();
-                    var locations =
-                        GetGrimFolderFromSteamLibrary(
-                            ExtractSteamLibraryPaths(Path.Combine(steamPath, "config", "config.vdf")));
+                    var locations = GetGrimFolderFromSteamLibrary(ExtractSteamLibraryPaths(Path.Combine(steamPath, "config", "config.vdf")));
                     if (locations.Count > 0)
                         location = locations[0];
                 }
@@ -286,8 +284,7 @@ namespace IAGrim {
                 var steamPath = GetSteamDirectory();
                 var steamInstallPaths = ExtractSteamLibraryPaths(Path.Combine(steamPath, "config", "config.vdf"));
                 steamInstallPaths.Add(steamPath); // May not be included in the VDF
-                GetGrimFolderFromSteamLibrary(steamInstallPaths)
-                    .ForEach(loc => locations.Add(CleanInvertedSlashes(loc)));
+                GetGrimFolderFromSteamLibrary(steamInstallPaths).ForEach(loc => locations.Add(CleanInvertedSlashes(loc)));
             }
             catch (Exception ex) {
                 Logger.Warn(ex.Message);
