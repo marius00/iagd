@@ -4,9 +4,6 @@
     <Filter Include="CoreHooks">
       <UniqueIdentifier>{d7793ae7-36e6-4b2d-b13b-a96817b4219d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ExperimentalHooks">
-      <UniqueIdentifier>{10e94856-d61b-4d87-838f-e8c2e7dc8f4f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="CoreHooks\PlayerPosition">
       <UniqueIdentifier>{8a5bd2b3-81da-4e92-92a4-b733b453fa30}</UniqueIdentifier>
     </Filter>
@@ -57,9 +54,6 @@
     <ClInclude Include="BaseMethodHook.h">
       <Filter>CoreHooks</Filter>
     </ClInclude>
-    <ClInclude Include="SaveManager.h">
-      <Filter>ExperimentalHooks</Filter>
-    </ClInclude>
     <ClInclude Include="Exports.h">
       <Filter>CoreHooks</Filter>
     </ClInclude>
@@ -69,26 +63,11 @@
     <ClInclude Include="GetPrivateStash.h">
       <Filter>CoreHooks\StashDetection</Filter>
     </ClInclude>
-    <ClInclude Include="LoadPlayerTransfer.h">
-      <Filter>ExperimentalHooks</Filter>
-    </ClInclude>
-    <ClInclude Include="ReadPlayerTransfer.h">
-      <Filter>ExperimentalHooks</Filter>
-    </ClInclude>
     <ClInclude Include="StateRequestNpcAction.h">
       <Filter>CoreHooks\PlayerPosition</Filter>
     </ClInclude>
     <ClInclude Include="StateRequestMoveAction.h">
       <Filter>CoreHooks\PlayerPosition</Filter>
-    </ClInclude>
-    <ClInclude Include="StateRequestRotateAction.h">
-      <Filter>CoreHooks\PlayerPosition</Filter>
-    </ClInclude>
-    <ClInclude Include="NpcTransmuteDetectionHook.h">
-      <Filter>CoreHooks\StashDetection</Filter>
-    </ClInclude>
-    <ClInclude Include="NpcEnchanterDetectionHook.h">
-      <Filter>CoreHooks\StashDetection</Filter>
     </ClInclude>
     <ClInclude Include="CanUseDismantle.h">
       <Filter>CoreHooks\StashDetection</Filter>
@@ -128,32 +107,14 @@
     <ClCompile Include="BaseMethodHook.cpp">
       <Filter>CoreHooks</Filter>
     </ClCompile>
-    <ClCompile Include="SaveManager.cpp">
-      <Filter>ExperimentalHooks</Filter>
-    </ClCompile>
     <ClCompile Include="GetPrivateStash.cpp">
       <Filter>CoreHooks\StashDetection</Filter>
-    </ClCompile>
-    <ClCompile Include="LoadPlayerTransfer.cpp">
-      <Filter>ExperimentalHooks</Filter>
-    </ClCompile>
-    <ClCompile Include="ReadPlayerTransfer.cpp">
-      <Filter>ExperimentalHooks</Filter>
     </ClCompile>
     <ClCompile Include="StateRequestNpcAction.cpp">
       <Filter>CoreHooks\PlayerPosition</Filter>
     </ClCompile>
     <ClCompile Include="StateRequestMoveAction.cpp">
       <Filter>CoreHooks\PlayerPosition</Filter>
-    </ClCompile>
-    <ClCompile Include="StateRequestRotateAction.cpp">
-      <Filter>CoreHooks\PlayerPosition</Filter>
-    </ClCompile>
-    <ClCompile Include="NpcTransmuteDetectionHook.cpp">
-      <Filter>CoreHooks\StashDetection</Filter>
-    </ClCompile>
-    <ClCompile Include="NpcEnchanterDetectionHook.cpp">
-      <Filter>CoreHooks\StashDetection</Filter>
     </ClCompile>
     <ClCompile Include="CanUseDismantle.cpp">
       <Filter>CoreHooks\StashDetection</Filter>

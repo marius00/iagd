@@ -12,18 +12,8 @@
 #include "InventorySack_AddItem.h"
 #include "NpcDetectionHook.h"
 #include "SaveTransferStash.h"
-#include "SaveManager.h"
-#include "ReadPlayerTransfer.h"
-#include "LoadPlayerTransfer.h"
 #include "Exports.h"
-#include "NpcEnchanterDetectionHook.h"
-#include "NpcTransmuteDetectionHook.h"
 #include "CanUseDismantle.h"
-
-#if defined _M_X64
-#elif defined _M_IX86
-#endif
-
 
 #pragma region Variables
 // Switches hook logging on/off
@@ -128,7 +118,6 @@ void EndWorkerThread() {
 #pragma endregion
 
 static void ConfigurePlayerPositionHooks(std::vector<BaseMethodHook*>& hooks) {
-
 	hooks.push_back(new StateRequestMoveAction(&g_dataQueue, g_hEvent, REQUEST_MOVE_ACTION_MOVETO));
 	hooks.push_back(new StateRequestMoveAction(&g_dataQueue, g_hEvent, REQUEST_MOVE_ACTION_IDLE));
 	hooks.push_back(new StateRequestMoveAction(&g_dataQueue, g_hEvent, REQUEST_MOVE_ACTION_LONG_IDLE));
@@ -140,7 +129,6 @@ static void ConfigurePlayerPositionHooks(std::vector<BaseMethodHook*>& hooks) {
 	hooks.push_back(new StateRequestMoveAction(&g_dataQueue, g_hEvent, REQUEST_MOVE_ACTION_TALK_TO_NPC));
 	hooks.push_back(new StateRequestMoveAction(&g_dataQueue, g_hEvent, REQUEST_MOVE_ACTION_SKILL));
 
-
 	// For these, the target position could actually be the smuggler.
 	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_IDLE));
 	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_MOVETO));
@@ -151,12 +139,7 @@ static void ConfigurePlayerPositionHooks(std::vector<BaseMethodHook*>& hooks) {
 	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_MOVE_TO_SKILL));
 	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_PICKUP_ITEM));
 	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_TALK_TO_NPC));
-	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_MOVE_TO_NPC));
-	
-	// Unsure about the rotation, could be random locations under the mouse pointer
-	//hooks.push_back(new StateRequestRotateAction(&g_dataQueue, g_hEvent, REQUEST_ROTATE_ACTION_IDLE));
-	//hooks.push_back(new StateRequestRotateAction(&g_dataQueue, g_hEvent, REQUEST_ROTATE_ACTION_LONG_IDLE));
-	
+	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_MOVE_TO_NPC));	
 }
 
 // Cloud detection (is cloud enabled?) hooks
@@ -169,19 +152,9 @@ static void ConfigureCloudDetectionHooks(std::vector<BaseMethodHook*>& hooks) {
 static void ConfigureStashDetectionHooks(std::vector<BaseMethodHook*>& hooks) {
 	// Stash detection hooks
 	hooks.push_back(new NpcDetectionHook(&g_dataQueue, g_hEvent));
-	hooks.push_back(new NpcEnchanterDetectionHook(&g_dataQueue, g_hEvent));
-	hooks.push_back(new NpcTransmuteDetectionHook(&g_dataQueue, g_hEvent));
-	hooks.push_back(new CanUseDismantle(&g_dataQueue, g_hEvent));
-	
+	hooks.push_back(new CanUseDismantle(&g_dataQueue, g_hEvent));	
 	hooks.push_back(new SaveTransferStash(&g_dataQueue, g_hEvent));
 	hooks.push_back(new InventorySack_AddItem(&g_dataQueue, g_hEvent)); // Includes GetPrivateStash internally
-}
-
-static void ConfigureExperimentalHooks(std::vector<BaseMethodHook*>& hooks) {
-	// Experimental hooks
-	hooks.push_back(new SaveManager(&g_dataQueue, g_hEvent));
-	hooks.push_back(new ReadPlayerTransfer(&g_dataQueue, g_hEvent));
-	hooks.push_back(new LoadPlayerTransfer(&g_dataQueue, g_hEvent));
 }
 
 std::vector<BaseMethodHook*> hooks;
@@ -194,9 +167,6 @@ int ProcessAttach(HINSTANCE _hModule) {
 	ConfigurePlayerPositionHooks(hooks);
 	ConfigureCloudDetectionHooks(hooks);
 	ConfigureStashDetectionHooks(hooks);
-
-	// TODO: Feature toggle on build
-	ConfigureExperimentalHooks(hooks);
 
 	std::stringstream msg;
 	msg << "Starting hook enabling.. " << hooks.size() << " hooks.";
@@ -218,11 +188,6 @@ int ProcessAttach(HINSTANCE _hModule) {
 int ProcessDetach( HINSTANCE _hModule ) {
 	// Signal that we are shutting down
 	// This message is not at all guaranteed to get sent.
-	char b[1]{ 0 };
-	DataItemPtr dataEvent(new DataItem(TYPE_HookUnload, 1, (char*)b));
-	g_dataQueue.push(dataEvent);
-	SetEvent(g_hEvent);
-
 
 	OutputDebugString("ProcessDetach");
 
@@ -244,12 +209,6 @@ BOOL APIENTRY DllMain(HINSTANCE hModule, DWORD  ul_reason_for_call, LPVOID lpRes
 
 	case DLL_PROCESS_DETACH:
         return ProcessDetach( hModule );
-
-	case DLL_THREAD_ATTACH:
-        break;
-
-	case DLL_THREAD_DETACH:
-        break;
 	}
     return TRUE;
 }

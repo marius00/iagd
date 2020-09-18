@@ -2,7 +2,6 @@
 using IAGrim.Database.Dto;
 using IAGrim.Database.Interfaces;
 using IAGrim.Database.Synchronizer;
-using IAGrim.Parsers.Arz;
 using IAGrim.Services;
 using IAGrim.UI.Controller.dto;
 using IAGrim.UI.Misc;
@@ -13,7 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using IAGrim.Settings;
-using IAGrim.Settings.Dto;
 
 namespace IAGrim.UI.Controller
 {
@@ -114,7 +112,6 @@ namespace IAGrim.UI.Controller
         {
             OnSearch?.Invoke(this, null);
             string message;
-            long personalCount = 0;
 
 
             Logger.Info("Searching for items..");
@@ -130,7 +127,7 @@ namespace IAGrim.UI.Controller
                 items = items.Where(m => m.Count > 1).ToList();
             }
 
-            personalCount = items.Sum(i => (long)i.Count);
+            var personalCount = items.Sum(i => (long)i.Count);
 
             if (includeBuddyItems && !query.SocketedOnly)
             {
