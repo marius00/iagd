@@ -27,10 +27,10 @@ export const SET_RECIPE_COMPONENTS = 'SET_RECIPE_COMPONENTS';
 export type SET_RECIPE_COMPONENTS = typeof SET_RECIPE_COMPONENTS;
 
 // tslint:disable-next-line
-declare abstract class cefsharp_CreatePromise {
+declare abstract class cefSharp {
 }
 
-export const isEmbedded = typeof cefsharp_CreatePromise === 'function';
+export const isEmbedded = typeof cefSharp === 'object';
 
 // https://palantir.github.io/tslint/usage/rule-flags/
 /* tslint:disable */

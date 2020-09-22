@@ -34,6 +34,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using CefSharp.WinForms;
 using DllInjector;
 using IAGrim.Parsers.TransferStash;
 using IAGrim.Settings;
@@ -126,9 +127,9 @@ namespace IAGrim.UI
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Browser_IsBrowserInitializedChanged(object sender, IsBrowserInitializedChangedEventArgs e) {
-            if (e.IsBrowserInitialized) {
-
+        private void Browser_IsBrowserInitializedChanged(object sender, EventArgs e) {
+            ChromiumWebBrowser browser = sender as ChromiumWebBrowser;
+            if (browser?.CanExecuteJavascriptInMainFrame ?? true) {
                 if (InvokeRequired) {
                     Invoke((MethodInvoker)delegate { _searchWindow?.UpdateListViewDelayed(); });
                 } else {
@@ -542,7 +543,7 @@ namespace IAGrim.UI
             if (_authAuthService.CheckAuthentication() == AzureAuthService.AccessStatus.Unauthorized && !_settingsService.GetLocal().OptOutOfBackups) {
                 var t = new System.Windows.Forms.Timer {Interval = 100};
                 t.Tick += (o, args) => {
-                    if (_cefBrowserHandler.BrowserControl.IsBrowserInitialized) {
+                    if (_cefBrowserHandler.BrowserControl.CanExecuteJavascriptInMainFrame) {
                         _authAuthService.Authenticate();
                         t.Stop();
                     }

@@ -81,11 +81,6 @@ namespace IAGrim.UI.Tabs {
             _controller.OpenLogFolder();
         }
 
-        private void buttonForum_Click(object sender, EventArgs e) {
-            System.Diagnostics.Process.Start("http://www.grimdawn.com/forums/showthread.php?t=35240");
-        }
-
-
         private void radioRelease_CheckedChanged(object sender, EventArgs e) {
             _settings.GetPersistent().SubscribeExperimentalUpdates = false;
         }

@@ -17,7 +17,6 @@ namespace IAGrim.UI.Misc {
         // Movement
         TYPE_ControllerRequestNpcAction = 7,
         TYPE_ControllerRequestMoveAction = 8,
-        TYPE_ControllerRequestRotateAction = 55,
 
         TYPE_CloudGetNumFiles = 11,
         TYPE_CloudRead = 12,
