@@ -323,8 +323,7 @@ namespace IAGrim.UI
 
                 // Attempt to force a database update
                 foreach (Control c in modsPanel.Controls) {
-                    ModsDatabaseConfig config = c as ModsDatabaseConfig;
-                    if (config != null) {
+                    if (c is ModsDatabaseConfig config) {
                         config.ForceDatabaseUpdate(gdPath, string.Empty);
                         break;
                     }

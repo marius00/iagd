@@ -93,10 +93,6 @@ internal class PanelBox : ScrollableControl {
 
     private bool _NoRounding;
 
-    private Rectangle _Rectangle;
-
-    private LinearGradientBrush _Gradient;
-
     public bool NoRounding {
         get {
             return this._NoRounding;

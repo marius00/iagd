@@ -229,9 +229,14 @@ namespace IAGrim {
         /// </summary>
         /// <returns></returns>
         public string GetGrimLocation() {
-            string location = _settingsService.GetLocal().GrimDawnLocation?.FirstOrDefault();
-            if (!string.IsNullOrEmpty(location) && Directory.Exists(location) && !location.Contains(".arz"))
-                return location;
+            if (_settingsService.GetLocal().GrimDawnLocation != null) {
+                foreach (var loc in _settingsService.GetLocal().GrimDawnLocation) {
+                    if (!string.IsNullOrEmpty(loc) && Directory.Exists(loc) && !loc.Contains(".arz"))
+                        return loc;
+                }
+            }
+
+            string location = string.Empty;
 
             try {
                 try {

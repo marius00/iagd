@@ -177,6 +177,8 @@ namespace IAGrim.UI
                         _settingsService.GetLocal().AddGrimDawnLocation(folderBrowserDialog.SelectedPath);
                         Logger.Info($"Added {folderBrowserDialog.SelectedPath} to the known Grim Dawn locations");
                         ModsDatabaseConfig_Load(sender, e);
+                        // TODO: Kill the task that keeps looking for GD.
+
                     } else {
                         var text = RuntimeSettings.Language.GetTag("iatag_ui_db_invalidlocation_body");
                         var title = RuntimeSettings.Language.GetTag("iatag_ui_db_invalidlocation_title");

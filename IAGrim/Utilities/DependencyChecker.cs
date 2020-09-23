@@ -13,14 +13,14 @@ namespace IAGrim.Utilities {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(DependencyChecker));
 
         // http://stackoverflow.com/questions/951856/is-there-an-easy-way-to-check-the-net-framework-version
-        public static bool CheckNet452Installed() {
-            Logger.Debug("Checking if .Net Framework v4.52 is installed");
+        public static bool CheckNet461Installed() {
+            Logger.Debug("Checking if .Net Framework v4.6.1 is installed");
             using (RegistryKey ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey("SOFTWARE\\Microsoft\\NET Framework Setup\\NDP\\v4\\Full\\")) {
                 if (ndpKey == null)
                     return false;
 
                 int releaseKey = Convert.ToInt32(ndpKey.GetValue("Release"));
-                return releaseKey >= 379893;
+                return releaseKey >= 394254; // https://docs.microsoft.com/en-us/dotnet/framework/migration-guide/how-to-determine-which-versions-are-installed
             }
         }
 
@@ -53,7 +53,7 @@ namespace IAGrim.Utilities {
             return false;
         }
 
-        // TODO: What uses this? Anything?
+        // TODO: What uses this? Anything? -- Might have been old chromium
         public static bool CheckVs2013Installed() {
             Logger.Debug("Checking if VC++ 2013 Runtimes are installed");
             using (RegistryKey registryKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Classes\Installer\Dependencies\{f65db027-aff3-4070-886a-0d87064aabb1}")) {

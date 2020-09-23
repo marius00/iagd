@@ -30,8 +30,8 @@ namespace IAGrim {
 
             Logger.InfoFormat("Running version {0}.{1}.{2}.{3} from {4}", version.Major, version.Minor, version.Build, version.Revision, buildDate.ToString("dd/MM/yyyy"));
 
-            if (!DependencyChecker.CheckNet452Installed()) {
-                MessageBox.Show("It appears .Net Framework 4.5.2 is not installed.\nIA May not function correctly", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            if (!DependencyChecker.CheckNet461Installed()) {
+                MessageBox.Show("It appears .Net Framework 4.6.1 is not installed.\nIA May not function correctly", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             if (!DependencyChecker.CheckVs2015Installed()) {
                 MessageBox.Show("It appears VS 2015 (x86) redistributable is not installed.\nPlease install it to continue using IA", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);

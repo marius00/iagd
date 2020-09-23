@@ -116,10 +116,6 @@ namespace IAGrim.UI.Tabs {
             _itemViewUpdateTrigger?.Invoke();
         }
 
-        private void cbMergeDuplicates_CheckedChanged(object sender, EventArgs e) {
-            _itemViewUpdateTrigger?.Invoke();
-        }
-
         private void buttonLanguageSelect_Click(object sender, EventArgs e) {
             _languagePackPicker.Show(_grimDawnDetector.GetGrimLocations());
             _itemViewUpdateTrigger?.Invoke();
