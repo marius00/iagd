@@ -6,12 +6,12 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace IAGrim.Database.Synchronizer {
-    public class BasicSynchronizer<T> : IBaseDao<T> {
+    public abstract class BasicSynchronizer<T> : IBaseDao<T> {
         protected readonly ThreadExecuter ThreadExecuter;
         protected readonly ISessionCreator SessionCreator;
         protected IBaseDao<T> BaseRepo;
 
-        public BasicSynchronizer(ThreadExecuter threadExecuter, ISessionCreator sessionCreator) {
+        protected BasicSynchronizer(ThreadExecuter threadExecuter, ISessionCreator sessionCreator) {
             this.ThreadExecuter = threadExecuter;
             this.SessionCreator = sessionCreator;
         }

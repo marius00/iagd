@@ -34,7 +34,7 @@ namespace IAGrim {
                 MessageBox.Show("It appears .Net Framework 4.6.1 is not installed.\nIA May not function correctly", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             if (!DependencyChecker.CheckVs2015Installed()) {
-                MessageBox.Show("It appears VS 2015 (x86) redistributable is not installed.\nPlease install it to continue using IA", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("It appears VS 2015 (x86) redistributable may not be installed.\nInstall VS 2015 (x86) runtimes manually if you experience issues running IA", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
             if (!DependencyChecker.CheckVs2013Installed()) {

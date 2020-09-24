@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using CefSharp;
 using CefSharp.WinForms;
 using IAGrim.Backup.Azure.CefSharp;
+using IAGrim.Database.Model;
 using IAGrim.Utilities;
 using log4net;
 using NHibernate;
@@ -83,7 +85,6 @@ namespace IAGrim.UI.Misc.CEF {
         public void RefreshItems() {
             if (_browser.CanExecuteJavascriptInMainFrame) {
                 SafeExecute("'setItemsFromGlobalItems'", "setItemsFromGlobalItems();");
-                //_browser.ExecuteScriptAsync("setItemsFromGlobalItems();");
             }
             else {
                 Logger.Warn("Attempted to update items but CEF not yet initialized.");
@@ -108,7 +109,6 @@ namespace IAGrim.UI.Misc.CEF {
                 Logger.Warn("Attempted to update items but CEF not yet initialized.");
             }
         }
-
 
         public void ShowMessage(string message, UserFeedbackLevel level, string helpUrl = null) {
             string levelLowercased = level.ToString().ToLowerInvariant();

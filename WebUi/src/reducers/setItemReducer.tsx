@@ -5,9 +5,10 @@ import {
   SET_MOCK_DATA,
   SET_LOADING_STATUS,
   isEmbedded,
-  REQUEST_INITIAL_ITEMS
+  REQUEST_INITIAL_ITEMS, SET_MOCK_COLLECTION_DATA, ACTION_SET_COLLECTIONITEMS
 } from '../constants';
 import { ApplicationState } from '../types';
+import * as ReactTooltip from 'react-tooltip';
 
 // tslint:disable-next-line
 declare abstract class data {
@@ -17,6 +18,7 @@ declare abstract class data {
 const initialState = {
   clickCounter: 1,
   items: [],
+  collectionItems: [],
   isLoading: false
 };
 
@@ -37,6 +39,19 @@ export function setItemReducer(state: ApplicationState = initialState, action: A
     const items = JSON.parse(action.items);
     console.log('Setting mock items');
     return {...state, items: items, isLoading: false};
+  }
+
+  else if (action.type === SET_MOCK_COLLECTION_DATA ) {
+    const items = JSON.parse(action.items);
+    console.log('Setting mock collection items');
+    setTimeout(() => ReactTooltip.rebuild(), 250); // TODO: This seems like a stupid way to solve tooltip issues.
+    return {...state, collectionItems: items, isLoading: false};
+  }
+
+  else if (action.type === ACTION_SET_COLLECTIONITEMS) {
+    console.log('Setting collection items to:', action.items);
+    setTimeout(() => ReactTooltip.rebuild(), 1250); // TODO: This seems like a stupid way to solve tooltip issues.
+    return {...state, collectionItems: action.items, isLoading: false};
   }
 
   else if (action.type === SET_LOADING_STATUS) {

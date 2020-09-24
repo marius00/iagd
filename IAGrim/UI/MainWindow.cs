@@ -53,6 +53,7 @@ namespace IAGrim.UI
         private readonly DynamicPacker _dynamicPacker;
         private readonly UsageStatisticsReporter _usageStatisticsReporter = new UsageStatisticsReporter();
         private readonly AutomaticUpdateChecker _automaticUpdateChecker;
+        private readonly IItemCollectionDao _itemCollectionRepo;
         private readonly List<IMessageProcessor> _messageProcessors = new List<IMessageProcessor>();
 
         private SplitSearchWindow _searchWindow;
@@ -153,7 +154,8 @@ namespace IAGrim.UI
             ParsingService parsingService, 
             AugmentationItemRepo augmentationItemRepo, 
             SettingsService settingsService, 
-            GrimDawnDetector grimDawnDetector
+            GrimDawnDetector grimDawnDetector,
+            IItemCollectionDao itemCollectionRepo
             ) {
             _cefBrowserHandler = browser;
             InitializeComponent();
@@ -176,6 +178,7 @@ namespace IAGrim.UI
             _userFeedbackService = new UserFeedbackService(_cefBrowserHandler);
             _settingsService = settingsService;
             _grimDawnDetector = grimDawnDetector;
+            _itemCollectionRepo = itemCollectionRepo;
         }
 
         /// <summary>
@@ -389,7 +392,8 @@ namespace IAGrim.UI
                 _itemSkillDao, 
                 _buddyItemDao,
                 _augmentationItemRepo,
-                _settingsService
+                _settingsService,
+                _itemCollectionRepo
             );
 
             searchController.JsBind.SetItemSetAssociations(_databaseItemDao.GetItemSetAssociations());
@@ -566,6 +570,7 @@ namespace IAGrim.UI
                     _settingsService.GetLocal().HasSuggestedLanguageChange = true;
                 }
             }
+
             Logger.Debug("UI initialization complete");
         }
 

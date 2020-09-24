@@ -29,7 +29,8 @@ namespace IAGrim.UI.Controller
         private readonly ItemPaginatorService _itemPaginatorService;
         private readonly AugmentationItemRepo _augmentationItemRepo;
         private readonly SettingsService _settings;
-        
+        private readonly IItemCollectionDao _itemCollectionRepo;
+
 
         public CefBrowserHandler Browser;
         public readonly JSWrapper JsBind = new JSWrapper { IsTimeToShowNag = -1 };
@@ -41,7 +42,7 @@ namespace IAGrim.UI.Controller
             IDatabaseItemStatDao databaseItemStatDao,
             IItemSkillDao itemSkillDao,
             IBuddyItemDao buddyItemDao,
-            AugmentationItemRepo augmentationItemRepo, SettingsService settings)
+            AugmentationItemRepo augmentationItemRepo, SettingsService settings, IItemCollectionDao itemCollectionRepo)
         {
             _dbItemDao = databaseItemDao;
             _playerItemDao = playerItemDao;
@@ -50,6 +51,7 @@ namespace IAGrim.UI.Controller
             _buddyItemDao = buddyItemDao;
             _augmentationItemRepo = augmentationItemRepo;
             _settings = settings;
+            _itemCollectionRepo = itemCollectionRepo;
 
             // Just make sure it writes .css/.html files before displaying anything to the browser
             // 
@@ -86,6 +88,7 @@ namespace IAGrim.UI.Controller
             else
             {
                 JsBind.UpdateItems(new List<JsonItem>());
+                JsBind.UpdateCollectionItems(_itemCollectionRepo.GetItemCollection());
                 Browser.RefreshItems();
             }
 
@@ -105,6 +108,7 @@ namespace IAGrim.UI.Controller
 
             var convertedItems = ItemHtmlWriter.ToJsonSerializeable(items);
             JsBind.UpdateItems(convertedItems);
+            JsBind.UpdateCollectionItems(_itemCollectionRepo.GetItemCollection());
             return true;
         }
 

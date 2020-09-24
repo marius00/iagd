@@ -1,8 +1,9 @@
 import Button from '../components/Button';
-import { AnyAction, setLoadingStatus, setMockItems } from '../actions';
+import { AnyAction, setLoadingStatus, setMockCollectionItems, setMockItems } from '../actions';
 import { ApplicationState } from '../types/index';
 import { connect, Dispatch } from 'react-redux';
 import IItem from '../interfaces/IItem';
+import ICollectionItem from '../interfaces/ICollectionItem';
 
 interface MagicButtonProps {
   label: string;
@@ -5958,6 +5959,45 @@ export const addTodo3 = (text: string): IItem[] => {
   }
 };
 
+const collectionItemsTestData = [
+  {
+    "name": "Arcane Shard of Agrivix",
+    "numOwned": 0,
+    "icon": "a00f_torso002.tex.png",
+    "baseRecord": "a"
+  },
+  {
+    "name": "Beastcaller's Cowl",
+    "numOwned": 0,
+    "icon": "a01_axe000.tex.png",
+    "baseRecord": "b"
+  },
+  {
+    "name": "Bladetwister Signet",
+    "numOwned": 0,
+    "icon": "a00f_torso002.tex.png",
+    "baseRecord": "c"
+  },
+  {
+    "name": "Celestial Stone of Halakor",
+    "numOwned": 3,
+    "icon": "a01_feet02.tex.png",
+    "baseRecord": "d"
+  },
+  {
+    "name": "Combustion Band",
+    "numOwned": 0,
+    "icon": "a01_gun1h002.tex.png",
+    "baseRecord": "e"
+  },
+  {
+    "name": "Dagallon's Destroyer",
+    "numOwned": 5,
+    "icon": "a02_feet02.tex.png",
+    "baseRecord": "f"
+  },
+] as ICollectionItem[];
+
 export function mapStateToProps({items}: ApplicationState, {label}: MagicButtonProps): MagicButtonState {
   return {
     count: 1,
@@ -5971,6 +6011,7 @@ export function mapDispatchToProps(dispatch: Dispatch<AnyAction>): MagicButtonDi
     onClick: () => {
       dispatch(setLoadingStatus(true));
       setTimeout(() => dispatch(setMockItems(JSON.stringify(addTodo3('')))), 750);
+      setTimeout(() => dispatch(setMockCollectionItems(JSON.stringify(collectionItemsTestData))), 750);
     }
   };
 }

@@ -173,8 +173,12 @@
   <ItemGroup>
     <Compile Include="Backup\Azure\Dto\AzureLimitEntry.cs" />
     <Compile Include="Backup\Azure\Dto\AzureLimitsDto.cs" />
+    <Compile Include="Database\DAO\ItemCollectionDaoImpl.cs" />
+    <Compile Include="Database\Interfaces\IItemCollectionDao.cs" />
+    <Compile Include="Database\Model\CollectionItem.cs" />
     <Compile Include="Database\Model\ItemSetAssociation.cs" />
     <Compile Include="Database\Model\UnlootedStashItem.cs" />
+    <Compile Include="Database\Synchronizer\ItemCollectionRepo.cs" />
     <Compile Include="Parsers\TransferStash\SafeTransferStashWriter.cs" />
     <Compile Include="Parsers\TransferStash\TransferStashService2.cs" />
     <Compile Include="Parsers\TransferStash\TransferStashServiceCache.cs" />
