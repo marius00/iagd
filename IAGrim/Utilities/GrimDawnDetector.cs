@@ -331,6 +331,25 @@ namespace IAGrim {
             return paths;
         }
 
+        [DllImport("kernel32.dll")]
+        static extern IntPtr OpenProcess(UInt32 dwDesiredAccess, Int32 bInheritHandle, UInt32 dwProcessId);
+
+        [DllImport("psapi.dll")]
+        static extern uint GetModuleFileNameEx(IntPtr hProcess, IntPtr hModule, [Out] StringBuilder lpBaseName, [In] [MarshalAs(UnmanagedType.U4)] int nSize);
+
+        [DllImport("kernel32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool CloseHandle(IntPtr hObject);
+
+
+        private static string GetWindowModuleFileName(uint pid) {
+            const int nChars = 1024;
+            StringBuilder filename = new StringBuilder(nChars);
+            IntPtr hProcess = OpenProcess(1040, 0, pid);
+            GetModuleFileNameEx(hProcess, IntPtr.Zero, filename, nChars);
+            CloseHandle(hProcess);
+            return (filename.ToString());
+        }
 
         /// <summary>
         /// Attempt to get the path for a process
@@ -338,8 +357,13 @@ namespace IAGrim {
         /// <param name="pid"></param>
         /// <returns></returns>
         private static string GetProcessPath(uint pid) {
+            Process proc = Process.GetProcessById((int)pid);
             try {
-                Process proc = Process.GetProcessById((int)pid);
+                // TODO: See https://github.com/cefsharp/CefSharp/issues/1714 for adding 'any cpu' support to IA.
+                if (EvilsoftCommons.DllInjector.DllInjector.Is64BitProcess(proc)) {
+                    return GetWindowModuleFileName(pid);
+                }
+
                 return proc.MainModule?.FileName;
             }	
             catch (ArgumentException ex) {
@@ -366,7 +390,6 @@ namespace IAGrim {
 
         [DllImport("user32.dll", SetLastError = true)]
         static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
-
 
         /// <summary>
         /// Find all processes for a given window class (HWND class)
