@@ -110,6 +110,12 @@ namespace DllInjector {
                 var p = System.Diagnostics.Process.GetProcessById(pid);
                 return EvilsoftCommons.DllInjector.DllInjector.Is64BitProcess(p);
             }
+            catch (Win32Exception ex) {
+                Logger.Warn("Error checking 32/64bit status of GD, if this was an access denied error, try running as administrator.");
+                Logger.Warn(ex.Message);
+                Logger.Warn(ex.StackTrace);
+                return false;
+            }
             catch (ArgumentException) {
                 return false;
             }

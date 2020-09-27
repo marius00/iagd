@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using CefSharp;
 using CefSharp.WinForms;
 using IAGrim.Backup.Azure.CefSharp;
+using IAGrim.Database.Model;
 using IAGrim.Utilities;
 using log4net;
 using NHibernate;
@@ -50,7 +52,7 @@ namespace IAGrim.UI.Misc.CEF {
         }
 
         public void ShowLoadingAnimation() {
-            if (_browser.IsBrowserInitialized) {
+            if (_browser.CanExecuteJavascriptInMainFrame) {
                 _browser.ExecuteScriptAsync("data.globalStore.dispatch(data.globalSetIsLoading(true));");
             }
         }
@@ -81,9 +83,8 @@ namespace IAGrim.UI.Misc.CEF {
         }
 
         public void RefreshItems() {
-            if (_browser.IsBrowserInitialized) {
+            if (_browser.CanExecuteJavascriptInMainFrame) {
                 SafeExecute("'setItemsFromGlobalItems'", "setItemsFromGlobalItems();");
-                //_browser.ExecuteScriptAsync("setItemsFromGlobalItems();");
             }
             else {
                 Logger.Warn("Attempted to update items but CEF not yet initialized.");
@@ -91,7 +92,7 @@ namespace IAGrim.UI.Misc.CEF {
         }
 
         public void JsCallback(string method, string json) {
-            if (_browser.IsBrowserInitialized) {
+            if (_browser.CanExecuteJavascriptInMainFrame) {
                 _browser.ExecuteScriptAsync($"{method}({json});");
             }
             else {
@@ -100,7 +101,7 @@ namespace IAGrim.UI.Misc.CEF {
         }
 
         public void AddItems() {
-            if (_browser.IsBrowserInitialized) {
+            if (_browser.CanExecuteJavascriptInMainFrame) {
                 // TODO: This may not be available yet, better the .js ask us for data, and then we deliver it.
                 _browser.ExecuteScriptAsync($"addItemsFromGlobalItems();");
             }
@@ -109,12 +110,11 @@ namespace IAGrim.UI.Misc.CEF {
             }
         }
 
-
         public void ShowMessage(string message, UserFeedbackLevel level, string helpUrl = null) {
             string levelLowercased = level.ToString().ToLowerInvariant();
             var m = message.Replace("\n", "\\n").Replace("'", "\\'");
             if (!string.IsNullOrEmpty(message)) {
-                if (_browser.IsBrowserInitialized) {
+                if (_browser.CanExecuteJavascriptInMainFrame) {
                     if (!string.IsNullOrEmpty(helpUrl)) {
                         _browser.ExecuteScriptAsync($"{Dispatch}(data.showMessage('{m}', '{levelLowercased}', '{helpUrl}'));");
                     }
@@ -133,14 +133,15 @@ namespace IAGrim.UI.Misc.CEF {
         }
 
 
-        public void InitializeChromium(object bindeable, EventHandler<IsBrowserInitializedChangedEventArgs> Browser_IsBrowserInitializedChanged) {
+        public void InitializeChromium(object bindeable, EventHandler browserIsBrowserInitializedChanged) {
             try {
                 Logger.Info("Creating Chromium instance..");
                 Cef.EnableHighDPISupport();
 
                 //var settings = new CefSettings();
                 //settings.CefCommandLineArgs.Add("disable-gpu", "1");
-                if (!Cef.Initialize()) {
+                CefSettingsBase settings = new CefSettings {};
+                if (!Cef.Initialize(settings)) {
                     Logger.Fatal("Could not initialize Chromium");
                     MessageBox.Show("Fatal error - Could not initialize chromium", "Fatal error", MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
@@ -150,8 +151,9 @@ namespace IAGrim.UI.Misc.CEF {
 
                 // TODO: Read and analyze https://github.com/cefsharp/CefSharp/issues/2246 -- Is this the correct way to do things in the future?
                 CefSharpSettings.LegacyJavascriptBindingEnabled = true;
-                _browser.RegisterJsObject("data", bindeable, BindingOptions.DefaultBinder);
-                _browser.IsBrowserInitializedChanged += Browser_IsBrowserInitializedChanged;
+                CefSharpSettings.WcfEnabled = true;
+                _browser.JavascriptObjectRepository.Register("data", bindeable, isAsync: false, options: BindingOptions.DefaultBinder);
+                _browser.IsBrowserInitializedChanged += browserIsBrowserInitializedChanged;
 
                 var requestHandler = new CefRequestHandler();
                 requestHandler.TransferSingleRequested += (sender, args) => this.TransferSingleRequested?.Invoke(sender, args);

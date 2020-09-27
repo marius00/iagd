@@ -8,16 +8,11 @@
 #define REQUEST_MOVE_ACTION_MOVE_ACTOR "?RequestMoveAction@ControllerPlayerStateMoveToActorBase@GAME@@MEAAX_N0AEBVWorldVec3@2@@Z"
 #define REQUEST_MOVE_ACTION_MOVE_TO_SKILL "?RequestMoveAction@ControllerPlayerStateMoveToUseSkill@GAME@@MEAAX_N0AEBVWorldVec3@2@@Z"
 #define REQUEST_MOVE_ACTION_PICKUP "?RequestMoveAction@ControllerPlayerStatePickupItem@GAME@@MEAAX_N0AEBVWorldVec3@2@@Z"
-//#define REQUEST_MOVE_ACTION_SLEEP "?RequestMoveAction@ControllerPlayerStateSleep@GAME@@MEAAX_N0AEBVWorldVec3@2@@Z" // This crashes the game
 #define REQUEST_MOVE_ACTION_TALK_TO_NPC "?RequestMoveAction@ControllerPlayerStateTalkToNpc@GAME@@MEAAX_N0AEBVWorldVec3@2@@Z"
 #define REQUEST_MOVE_ACTION_SKILL "?RequestMoveAction@ControllerPlayerStateUseSkill@GAME@@MEAAX_N0AEBVWorldVec3@2@@Z"
 
 #define REQUEST_ROTATE_ACTION_IDLE "?RequestRotateAction@ControllerPlayerStateIdle@GAME@@MEAAXAEBVWorldVec3@2@@Z"
 #define REQUEST_ROTATE_ACTION_LONG_IDLE "?RequestRotateAction@ControllerPlayerStateLongIdle@GAME@@MEAAXAEBVWorldVec3@2@@Z"
-//#define REQUEST_ROTATE_ACTION_MOVE_TO "?RequestRotateAction@ControllerPlayerStateMoveTo@GAME@@MEAAXAEBVWorldVec3@2@@Z"
-//#define REQUEST_ROTATE_ACTION_PICKUP "?RequestRotateAction@ControllerPlayerStatePickupItem@GAME@@MEAAXAEBVWorldVec3@2@@Z"
-//#define REQUEST_ROTATE_ACTION_SLEEP "?RequestRotateAction@ControllerPlayerStateSleep@GAME@@MEAAXAEBVWorldVec3@2@@Z" // This crashes the game
-//#define REQUEST_ROTATE_ACTION_TALK_TO_NPC "?RequestRotateAction@ControllerPlayerStateTalkToNpc@GAME@@MEAAXAEBVWorldVec3@2@@Z"
 
 #define GET_TRANSFER_SACK "?GetTransferSack@GameEngine@GAME@@QEAAPEAVInventorySack@2@H@Z"
 #define SET_TRANSFER_OPEN "?SetTransferOpen@GameEngine@GAME@@QEAAX_N@Z"

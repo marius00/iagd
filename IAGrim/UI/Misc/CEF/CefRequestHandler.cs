@@ -7,7 +7,6 @@ using IAGrim.UI.Misc.CEF.Dto;
 namespace IAGrim.UI.Misc.CEF {
     // https://github.com/cefsharp/CefSharp/blob/master/CefSharp.Example/RequestHandler.cs
     public class CefRequestHandler : IRequestHandler {
-
         public event EventHandler TransferSingleRequested;
         public event EventHandler TransferAllRequested;
         public event EventHandler OnAuthentication;
@@ -21,10 +20,10 @@ namespace IAGrim.UI.Misc.CEF {
             return token;
         }
 
-        public bool OnBeforeBrowse(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request, bool isRedirect) {
+        public bool OnBeforeBrowse(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, bool userGesture, bool isRedirect) {
             if (request.Url.StartsWith("https://auth.iagd.dreamcrash.org/token/") || request.Url.StartsWith("http://localhost:7071/api/Authenticate")) {
                 var token = ExtractToken(request.Url);
-                OnAuthentication?.Invoke(browser, new AuthResultEvent { Token = token});
+                OnAuthentication?.Invoke(browser, new AuthResultEvent {Token = token});
                 return true;
             }
 
@@ -47,14 +46,24 @@ namespace IAGrim.UI.Misc.CEF {
                 return true;
             }
 
-            
 
             return false;
+        }
+
+        public void OnDocumentAvailableInMainFrame(IWebBrowser chromiumWebBrowser, IBrowser browser) {
         }
 
         public bool OnOpenUrlFromTab(IWebBrowser browserControl, IBrowser browser, IFrame frame, string targetUrl,
             WindowOpenDisposition targetDisposition, bool userGesture) {
             return false;
+        }
+
+        public IResourceRequestHandler GetResourceRequestHandler(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, bool isNavigation, bool isDownload, string requestInitiator, ref bool disableDefaultHandling) {
+            return null;
+        }
+
+        public bool GetAuthCredentials(IWebBrowser chromiumWebBrowser, IBrowser browser, string originUrl, bool isProxy, string host, int port, string realm, string scheme, IAuthCallback callback) {
+            return true;
         }
 
         public bool OnCertificateError(IWebBrowser browserControl, IBrowser browser, CefErrorCode errorCode, string requestUrl,
@@ -81,7 +90,6 @@ namespace IAGrim.UI.Misc.CEF {
         }
 
         public void OnRenderProcessTerminated(IWebBrowser browserControl, IBrowser browser, CefTerminationStatus status) {
-
         }
 
         public bool OnQuotaRequest(IWebBrowser browserControl, IBrowser browser, string originUrl, long newSize,
@@ -91,7 +99,6 @@ namespace IAGrim.UI.Misc.CEF {
 
         public void OnResourceRedirect(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request,
             IResponse response, ref string newUrl) {
-
         }
 
         public void OnResourceRedirect(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request,
@@ -103,7 +110,6 @@ namespace IAGrim.UI.Misc.CEF {
         }
 
         public void OnRenderViewReady(IWebBrowser browserControl, IBrowser browser) {
-
         }
 
         public bool OnResourceResponse(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request,

@@ -50,7 +50,7 @@
             </h4>
         </div>
         <div class="panel-collapse collapse" role="tabpanel" data-bind="attr: {aria_labelledby: 'qh' + $index(), id: 'qc' + $index()}">
-            <div class="panel-body" data-bind="html: solution" class="answer-body">
+            <div class="panel-body answer-body" data-bind="html: solution">
                 Answer
             </div>
         </div>
@@ -128,33 +128,33 @@
             (Win is the Windows button on your keyboard)
         </div>
     </div>
-<div>
     <div>
-        My item names are missing
+        <div>
+            My item names are missing
+        </div>
+        <div>
+            <ol>
+                <li>Open IA</li>
+                <li>Click the "Mods" tab</li>
+                <li>Select "Vanilla" (or Forgotten Gods/AoM)</li>
+                <li>Click "Load Database"</li>
+                <li>Click "Update Item Stats"</li>
+            </ol>
+            <i>If this did not resolve your issue, try restarting IA.</i><br>
+        </div>
     </div>
-    <div>
-        <ol>
-            <li>Open IA</li>
-            <li>Click the "Mods" tab</li>
-            <li>Select "Vanilla" (or Forgotten Gods/AoM)</li>
-            <li>Click "Load Database"</li>
-            <li>Click "Update Item Stats"</li>
-        </ol>
-        <i>If this did not resolve your issue, try restarting IA.</i><br>
+    <div name="WrongStash">
+        <div>
+            IA is not looting or transferring items!
+        </div>
+        <div>
+            This is probably the most common issue with IA. <br />
+            9/10 times, you've just forgotten that <u>private stash</u> and <u>transfer stash</u> are two separate things.<br />
+            IA works with the <u>transfer stash</u>.<br />
+            <br />
+            If you've already verified and you're using you're using the correct stash, check the log file for any errors.<br />
+        </div>
     </div>
-</div>
-<div name="WrongStash">
-    <div>
-        IA is not looting or transferring items!
-    </div>
-    <div>
-        This is probably the most common issue with IA. <br />
-        9/10 times, you've just forgotten that <u>private stash</u> and <u>transfer stash</u> are two separate things.<br />
-        IA works with the <u>transfer stash</u>.<br />
-        <br />
-        If you've already verified and you're using you're using the correct stash, check the log file for any errors.<br />
-    </div>
-</div>
     <div>
         <div>
             My item are named funny stuff like gdxTag0134
@@ -180,23 +180,33 @@
             But the short answer is, go to database/mods, and load the database.
         </div>
     </div>
+<div>
     <div>
-        <div>
-            My icons are missing!
-        </div>
-        <div>
-            <ol>
-                <li>Open IA</li>
-                <li>
-                    <b>Close Grim Dawn</b>
-                </li>
-                <li>Click the "Mods" tab</li>
-                <li>Select the install</li>
-                <li>Click "Load Database"</li>
-            </ol>
-            IA will also attempt to load icons when starting up.
-        </div>
+        My icons are missing!
     </div>
+    <div>
+        <ol>
+            <li>Open IA</li>
+            <li>
+                <b>Close Grim Dawn</b>
+            </li>
+            <li>Click the "Mods" tab</li>
+            <li>Select the install</li>
+            <li>Click "Load Database"</li>
+        </ol>
+        IA will also attempt to load icons when starting up.
+    </div>
+</div>
+<div>
+    <div>
+        There has just been a patch to GD, and IA is not looting the new items.
+    </div>
+    <div>
+        You simply need to load the GD database again, for IA to recognize these items. <br />
+        It's highly unlikely that you'll need a an update to IA for it to recognize new items. <br /> <br />
+        Database/mods => Load database.
+    </div>
+</div>
 
     <div>
         <div>
@@ -226,30 +236,41 @@
     </div>
 
 
-<div name="MultiplePcs">
-    <div>
-        What does it mean to use IA on multiple PCs?
+    <div name="MultiplePcs">
+        <div>
+            What does it mean to use IA on multiple PCs?
+        </div>
+        <div>
+            If you have online backups enabled via the email login (backup tab)<br />
+            Then IA can synchronize your items between installs, if you're playing GD on two different computers.<br />
+            IA will not synchronize your characters, only your items.<br />
+            The checkbox essentially trades bandwidth usage for more frequent updates.
+        </div>
     </div>
-    <div>
-        If you have online backups enabled via the email login (backup tab)<br />
-        Then IA can synchronize your items between installs, if you're playing GD on two different computers.<br/>
-        IA will not synchronize your characters, only your items.<br/>
-        The checkbox essentially trades bandwidth usage for more frequent updates.
-    </div>
-</div>
 
 
-<div name="DeleteDuplicates">
-    <div>
-        What does it mean for IA to delete duplicates?
+    <div name="ShowingItemsIDontHave">
+        <div>
+            Why does IA show me items I don't have?
+        </div>
+        <div>
+            Go to settings and disable "Show recipes as items" and "Show augments as items" if this is an issue. <br />
+            It's merely a "convenience feature" to have IA list things you 'might' have or be able to make.
+        </div>
     </div>
-    <div>
-        For a detailed description of what a "duplicate" item is, see the entries on "bugged or duplicate items".<br/>
-        <b>The short version is:</b> IA has already looted the item, but a copy remains in-game. You only found one, but you now have two of the exact same item.<br/>
-        These are not items which happens to have the same stats, they are duplicates which were created due to a bug.<br/><br/>
-        Enabling this option will cause IA to simply delete them, instead of just warning you and refuse to loot them.
+
+
+    <div name="DeleteDuplicates">
+        <div>
+            What does it mean for IA to delete duplicates?
+        </div>
+        <div>
+            For a detailed description of what a "duplicate" item is, see the entries on "bugged or duplicate items".<br />
+            <b>The short version is:</b> IA has already looted the item, but a copy remains in-game. You only found one, but you now have two of the exact same item.<br />
+            These are not items which happens to have the same stats, they are duplicates which were created due to a bug.<br /><br />
+            Enabling this option will cause IA to simply delete them, instead of just warning you and refuse to loot them.
+        </div>
     </div>
-</div>
 
     <div>
         <div>
@@ -426,66 +447,66 @@
         </div>
     </div>
 
-<div name="Avasted">
-    <div>
-        Item Assistant says some files are missing, and that Avast may be to blame!?
+    <div name="Avasted">
+        <div>
+            Item Assistant says some files are missing, and that Avast may be to blame!?
+        </div>
+        <div>
+            The way Item Assistant detects if your stash is open or closed, is by injecting code into Grim Dawn.<br />
+            Some super paranoid anti virus / anti malware programs tends to handle this by simply deleting Item Assistant.<br />
+            They never tell you, so you never realize what the cause is.<br /><br />
+            The main culprit here is Avast, but other anti virus programs has been known to sometimes freak out as well. <br />
+            The only way to notice is by going into the logs of the anti virus and see that it has interferred without notifying you.<br /><br />
+            In order to continue using IA, you must whitelist it in whatever god forsaken anti virus program you're using, and then completely reinstall IA.<br />
+            If you are reading this message, your "anti" virus program has already wiped out half the things IA needs to keep working properly.<br /><br />
+            Good luck, don't blame me. The problem is not IA.
+        </div>
     </div>
-    <div>
-        The way Item Assistant detects if your stash is open or closed, is by injecting code into Grim Dawn.<br />
-        Some super paranoid anti virus / anti malware programs tends to handle this by simply deleting Item Assistant.<br />
-        They never tell you, so you never realize what the cause is.<br /><br />
-        The main culprit here is Avast, but other anti virus programs has been known to sometimes freak out as well. <br />
-        The only way to notice is by going into the logs of the anti virus and see that it has interferred without notifying you.<br /><br />
-        In order to continue using IA, you must whitelist it in whatever god forsaken anti virus program you're using, and then completely reinstall IA.<br />
-        If you are reading this message, your "anti" virus program has already wiped out half the things IA needs to keep working properly.<br /><br />
-        Good luck, don't blame me. The problem is not IA.
-    </div>
-</div>
 
-<div name="StartFromZero">
-    <div>
-        I want to delete all my items! Start from scratch!
+    <div name="StartFromZero">
+        <div>
+            I want to delete all my items! Start from scratch!
+        </div>
+        <div>
+            1. Go to settings and click "View data". <br />
+            2. Close IA<br />
+            3. Delete the file called "userdata.db" <br />
+            4. Watch the world burn <br />
+            5. Open IA and cry, as you see all your items forever gone.<br /><br /><br />
+            If you happen to use IA online backups, you might wish to delete these as well. There's a link for that on the backup tab.
+        </div>
     </div>
-    <div>
-        1. Go to settings and click "View data". <br />
-        2. Close IA<br />
-        3. Delete the file called "userdata.db" <br />
-        4. Watch the world burn <br />
-        5. Open IA and cry, as you see all your items forever gone.<br /><br /><br />
-        If you happen to use IA online backups, you might wish to delete these as well. There's a link for that on the backup tab.
-    </div>
-</div>
 
-<div>
     <div>
-        Everything is messed up after restoring from a backup!
+        <div>
+            Everything is messed up after restoring from a backup!
+        </div>
+        <div>
+            <p class="text-warning">
+                <b>DON'T PANIC! IT WILL BE OKAY.</b>
+            </p>
+            <ol>
+                <li>Open IA</li>
+                <li>Click the "Mods" tab</li>
+                <li>Select "Vanilla"</li>
+                <li>Click "Load Database"</li>
+            </ol>
+            <i>If this did not resolve your issue, try restarting IA.</i><br>
+        </div>
     </div>
-    <div>
-        <p class="text-warning">
-            <b>DON'T PANIC! IT WILL BE OKAY.</b>
-        </p>
-        <ol>
-            <li>Open IA</li>
-            <li>Click the "Mods" tab</li>
-            <li>Select "Vanilla"</li>
-            <li>Click "Load Database"</li>
-        </ol>
-        <i>If this did not resolve your issue, try restarting IA.</i><br>
+
+    <div name="SoftcoreToHardcore">
+        <div>
+            Can I move items from Hardcore to Softcore? (or vice versa)
+        </div>
+        <div>
+            By default this is not enabled, however, if you enable the "Transfer to any mod", it is possible to transfer items anywhere you'd like.
+        </div>
     </div>
-</div>
-
-<div name="SoftcoreToHardcore">
-    <div>
-        Can I move items from Hardcore to Softcore? (or vice versa)
-    </div>
-    <div>
-        By default this is not enabled, however, if you enable the "Transfer to any mod", it is possible to transfer items anywhere you'd like.
-    </div>
-</div>
 
 
 
-<div name="SecureTransfers">
+    <div name="SecureTransfers">
         <div>
             Settings: Whare are secure transfers?
         </div>
@@ -567,7 +588,6 @@
     }
 
     function _VM() {
-        var self = this;
         this.questions = ko.observableArray([{ issue: '', solution: '', name: Math.random().toString() },]);
         this.noCollapse = ko.observable(q ? true : false);
         this.postRender = function() {

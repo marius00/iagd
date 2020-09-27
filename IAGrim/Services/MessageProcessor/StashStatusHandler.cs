@@ -19,8 +19,8 @@ namespace IAGrim.Services.MessageProcessor {
             MessageType.TYPE_SAVE_TRANSFER_STASH,
             MessageType.TYPE_ERROR_HOOKING_SAVETRANSFER_STASH,
             MessageType.TYPE_DISPLAY_CRAFTER,
-            MessageType.TYPE_RequestRestrictedSack
         };
+
         private readonly MessageType[] Errors = new MessageType[] {
             MessageType.TYPE_ERROR_HOOKING_PRIVATE_STASH,
             MessageType.TYPE_ERROR_HOOKING_TRANSFER_STASH,
@@ -63,11 +63,6 @@ namespace IAGrim.Services.MessageProcessor {
                             PrivateStashStatus = InternalStashStatus.Crafting;
                             RuntimeSettings.StashStatus = StashAvailability.CRAFTING;
                         }
-                        break;
-
-                    case MessageType.TYPE_DISPLAY_CARAVAN:
-                    case MessageType.TYPE_DISPLAY_ENCHANTER:
-                        logger.Debug(type);
                         break;
 
                     case MessageType.TYPE_CAN_USE_DISMANTLE:

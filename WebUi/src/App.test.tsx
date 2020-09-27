@@ -10,6 +10,7 @@ it('renders without crashing', () => {
   const store = mockStore({
     clickCounter: 1,
     items: [],
+    collectionItems: [],
     isLoading: false
   });
   const div = document.createElement('div');

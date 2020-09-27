@@ -42,22 +42,6 @@ namespace IAGrim.Services.MessageProcessor {
                      break;
                  }
 
-                 case MessageType.TYPE_ControllerRequestRotateAction: {
-                     /*var vec = new GrimStateTracker.WorldVector {
-                         X = IOHelper.GetFloat(data, 4),
-                         Y = IOHelper.GetFloat(data, 8),
-                         Z = IOHelper.GetFloat(data, 12),
-                         Zone = IOHelper.GetInt(data, 0)
-                     };
-
-                     if (_debugPlayerPositions) {
-                         Logger.Debug($"RotateTo: {vec}");
-                     }
-                     */
-                     break;
-                 }
-
-
                 case MessageType.TYPE_OPEN_PRIVATE_STASH:
                 case MessageType.TYPE_OPEN_CLOSE_TRANSFER_STASH:
                     if (data.Length == 1) {

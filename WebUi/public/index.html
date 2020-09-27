@@ -48,6 +48,7 @@
         if (typeof data !== 'undefined' && typeof data.globalStore !== 'undefined') {
           const event = data.globalSetItems(JSON.parse(data.items));
           data.globalStore.dispatch(event);
+          data.globalStore.dispatch(data.globalSetCollectionItems(JSON.parse(data.collectionItems)));
         }
     }
     function addItemsFromGlobalItems() {

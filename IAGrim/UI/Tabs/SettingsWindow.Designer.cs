@@ -52,7 +52,6 @@
             this.panelBox2 = new PanelBox();
             this.buttonPaypal = new System.Windows.Forms.Button();
             this.buttonDevTools = new FirefoxButton();
-            this.buttonForum = new FirefoxButton();
             this.panelBox1 = new PanelBox();
             this.buttonAdvancedSettings = new FirefoxButton();
             this.buttonImportExport = new FirefoxButton();
@@ -132,7 +131,7 @@
             this.helpWhatIsDeleteDuplicates.AutoSize = true;
             this.helpWhatIsDeleteDuplicates.BackColor = System.Drawing.Color.Transparent;
             this.helpWhatIsDeleteDuplicates.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.helpWhatIsDeleteDuplicates.Location = new System.Drawing.Point(259, 325);
+            this.helpWhatIsDeleteDuplicates.Location = new System.Drawing.Point(259, 292);
             this.helpWhatIsDeleteDuplicates.Name = "helpWhatIsDeleteDuplicates";
             this.helpWhatIsDeleteDuplicates.Size = new System.Drawing.Size(18, 13);
             this.helpWhatIsDeleteDuplicates.TabIndex = 29;
@@ -147,7 +146,7 @@
             this.helpWhatIsUsingMultiplePc.AutoSize = true;
             this.helpWhatIsUsingMultiplePc.BackColor = System.Drawing.Color.Transparent;
             this.helpWhatIsUsingMultiplePc.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.helpWhatIsUsingMultiplePc.Location = new System.Drawing.Point(259, 292);
+            this.helpWhatIsUsingMultiplePc.Location = new System.Drawing.Point(259, 259);
             this.helpWhatIsUsingMultiplePc.Name = "helpWhatIsUsingMultiplePc";
             this.helpWhatIsUsingMultiplePc.Size = new System.Drawing.Size(18, 13);
             this.helpWhatIsUsingMultiplePc.TabIndex = 28;
@@ -162,7 +161,7 @@
             this.cbDeleteDuplicates.EnabledCalc = true;
             this.cbDeleteDuplicates.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbDeleteDuplicates.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbDeleteDuplicates.Location = new System.Drawing.Point(3, 318);
+            this.cbDeleteDuplicates.Location = new System.Drawing.Point(3, 285);
             this.cbDeleteDuplicates.Name = "cbDeleteDuplicates";
             this.cbDeleteDuplicates.Size = new System.Drawing.Size(268, 27);
             this.cbDeleteDuplicates.TabIndex = 27;
@@ -359,7 +358,7 @@
             // 
             this.buttonPatreon.BackgroundImage = global::IAGrim.Properties.Resources.Patreon_Navy;
             this.buttonPatreon.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.buttonPatreon.Location = new System.Drawing.Point(14, 150);
+            this.buttonPatreon.Location = new System.Drawing.Point(14, 111);
             this.buttonPatreon.Name = "buttonPatreon";
             this.buttonPatreon.Size = new System.Drawing.Size(192, 47);
             this.buttonPatreon.TabIndex = 8;
@@ -416,7 +415,6 @@
             this.panelBox2.Controls.Add(this.buttonPatreon);
             this.panelBox2.Controls.Add(this.buttonPaypal);
             this.panelBox2.Controls.Add(this.buttonDevTools);
-            this.panelBox2.Controls.Add(this.buttonForum);
             this.panelBox2.Font = new System.Drawing.Font("Segoe UI Semibold", 20F);
             this.panelBox2.HeaderHeight = 40;
             this.panelBox2.Location = new System.Drawing.Point(260, 12);
@@ -433,7 +431,7 @@
             this.buttonPaypal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonPaypal.BackgroundImage = global::IAGrim.Properties.Resources.donate;
             this.buttonPaypal.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.buttonPaypal.Location = new System.Drawing.Point(14, 89);
+            this.buttonPaypal.Location = new System.Drawing.Point(14, 51);
             this.buttonPaypal.Name = "buttonPaypal";
             this.buttonPaypal.Size = new System.Drawing.Size(192, 55);
             this.buttonPaypal.TabIndex = 7;
@@ -445,26 +443,13 @@
             this.buttonDevTools.EnabledCalc = true;
             this.buttonDevTools.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.buttonDevTools.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
-            this.buttonDevTools.Location = new System.Drawing.Point(14, 203);
+            this.buttonDevTools.Location = new System.Drawing.Point(14, 165);
             this.buttonDevTools.Name = "buttonDevTools";
             this.buttonDevTools.Size = new System.Drawing.Size(192, 32);
             this.buttonDevTools.TabIndex = 6;
             this.buttonDevTools.Tag = "iatag_ui_devtools";
             this.buttonDevTools.Text = "Devtools";
             this.buttonDevTools.Click += new System.EventHandler(this.buttonDevTools_Click);
-            // 
-            // buttonForum
-            // 
-            this.buttonForum.EnabledCalc = true;
-            this.buttonForum.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.buttonForum.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
-            this.buttonForum.Location = new System.Drawing.Point(14, 49);
-            this.buttonForum.Name = "buttonForum";
-            this.buttonForum.Size = new System.Drawing.Size(192, 32);
-            this.buttonForum.TabIndex = 4;
-            this.buttonForum.Tag = "iatag_ui_openforum";
-            this.buttonForum.Text = "Open Forum";
-            this.buttonForum.Click += new System.EventHandler(this.buttonForum_Click);
             // 
             // panelBox1
             // 
@@ -594,7 +579,6 @@
         private PanelBox panelBox2;
         private FirefoxButton buttonViewBackups;
         private FirefoxButton buttonViewLogs;
-        private FirefoxButton buttonForum;
         private PanelBox panelBox3;
         private FirefoxRadioButton radioBeta;
         private FirefoxRadioButton radioRelease;

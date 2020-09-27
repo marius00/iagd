@@ -191,6 +191,7 @@ namespace IAGrim.Database {
             }
         }
 
+
         private Dictionary<string, List<DBStatRow>> GetStats(ISession session, IEnumerable<string> records, StatFetch fetchMode) {
             Dictionary<string, List<DBStatRow>> statMap = new Dictionary<string, List<DBStatRow>>();
 

@@ -229,16 +229,19 @@ namespace IAGrim {
         /// </summary>
         /// <returns></returns>
         public string GetGrimLocation() {
-            string location = _settingsService.GetLocal().GrimDawnLocation?.FirstOrDefault();
-            if (!string.IsNullOrEmpty(location) && Directory.Exists(location) && !location.Contains(".arz"))
-                return location;
+            if (_settingsService.GetLocal().GrimDawnLocation != null) {
+                foreach (var loc in _settingsService.GetLocal().GrimDawnLocation) {
+                    if (!string.IsNullOrEmpty(loc) && Directory.Exists(loc) && !loc.Contains(".arz"))
+                        return loc;
+                }
+            }
+
+            string location = string.Empty;
 
             try {
                 try {
                     var steamPath = GetSteamDirectory();
-                    var locations =
-                        GetGrimFolderFromSteamLibrary(
-                            ExtractSteamLibraryPaths(Path.Combine(steamPath, "config", "config.vdf")));
+                    var locations = GetGrimFolderFromSteamLibrary(ExtractSteamLibraryPaths(Path.Combine(steamPath, "config", "config.vdf")));
                     if (locations.Count > 0)
                         location = locations[0];
                 }
@@ -286,8 +289,7 @@ namespace IAGrim {
                 var steamPath = GetSteamDirectory();
                 var steamInstallPaths = ExtractSteamLibraryPaths(Path.Combine(steamPath, "config", "config.vdf"));
                 steamInstallPaths.Add(steamPath); // May not be included in the VDF
-                GetGrimFolderFromSteamLibrary(steamInstallPaths)
-                    .ForEach(loc => locations.Add(CleanInvertedSlashes(loc)));
+                GetGrimFolderFromSteamLibrary(steamInstallPaths).ForEach(loc => locations.Add(CleanInvertedSlashes(loc)));
             }
             catch (Exception ex) {
                 Logger.Warn(ex.Message);
@@ -329,6 +331,25 @@ namespace IAGrim {
             return paths;
         }
 
+        [DllImport("kernel32.dll")]
+        static extern IntPtr OpenProcess(UInt32 dwDesiredAccess, Int32 bInheritHandle, UInt32 dwProcessId);
+
+        [DllImport("psapi.dll")]
+        static extern uint GetModuleFileNameEx(IntPtr hProcess, IntPtr hModule, [Out] StringBuilder lpBaseName, [In] [MarshalAs(UnmanagedType.U4)] int nSize);
+
+        [DllImport("kernel32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool CloseHandle(IntPtr hObject);
+
+
+        private static string GetWindowModuleFileName(uint pid) {
+            const int nChars = 1024;
+            StringBuilder filename = new StringBuilder(nChars);
+            IntPtr hProcess = OpenProcess(1040, 0, pid);
+            GetModuleFileNameEx(hProcess, IntPtr.Zero, filename, nChars);
+            CloseHandle(hProcess);
+            return (filename.ToString());
+        }
 
         /// <summary>
         /// Attempt to get the path for a process
@@ -336,8 +357,13 @@ namespace IAGrim {
         /// <param name="pid"></param>
         /// <returns></returns>
         private static string GetProcessPath(uint pid) {
+            Process proc = Process.GetProcessById((int)pid);
             try {
-                Process proc = Process.GetProcessById((int)pid);
+                // TODO: See https://github.com/cefsharp/CefSharp/issues/1714 for adding 'any cpu' support to IA.
+                if (EvilsoftCommons.DllInjector.DllInjector.Is64BitProcess(proc)) {
+                    return GetWindowModuleFileName(pid);
+                }
+
                 return proc.MainModule?.FileName;
             }	
             catch (ArgumentException ex) {
@@ -364,7 +390,6 @@ namespace IAGrim {
 
         [DllImport("user32.dll", SetLastError = true)]
         static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
-
 
         /// <summary>
         /// Find all processes for a given window class (HWND class)

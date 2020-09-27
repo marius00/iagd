@@ -223,7 +223,8 @@ namespace IAGrim
                     parsingService,
                     augmentationItemRepo,
                     settingsService,
-                    grimDawnDetector
+                    grimDawnDetector,
+                    new ItemCollectionRepo(threadExecuter, factory)
                 );
 
                 Logger.Info("Checking for database updates..");

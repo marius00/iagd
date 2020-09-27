@@ -9,13 +9,17 @@ import './App.css';
 import { requestInitialItems } from './actions';
 import NotificationContainer from './containers/NotificationContainer';
 import translate from './translations/EmbeddedTranslator';
+import CollectionItemContainer from './containers/CollectionItemContainer';
+import { bool } from 'prop-types';
 
 export interface Props {
   store: Store<ApplicationState> | MockStore<ApplicationState>;
 }
 
 class App extends React.PureComponent<Props, object> {
-  loading: boolean = false;
+  state = {
+    primary: bool
+  };
 
   constructor(props: Props) {
     super(props);
@@ -38,6 +42,8 @@ class App extends React.PureComponent<Props, object> {
         <div className="App wrapper">
           <div id="content">
             <div className="header">
+              <a onClick={() => this.setState({primary: true})} className={this.state.primary ? 'selected' : ''}>Items</a>
+              <a onClick={() => this.setState({primary: false})} className={this.state.primary ? '' : 'selected'}>Collections</a>
                 <a onClick={() => this.openUrl('http://dev.dreamcrash.org/enchantments/')}>{translate('app.tab.components')}</a>
                 {translate('app.tab.videoGuide').length > 0 &&
                   <a onClick={() => this.openUrl(translate('app.tab.videoGuideUrl'))}>{translate('app.tab.videoGuide')}</a>
@@ -46,7 +52,8 @@ class App extends React.PureComponent<Props, object> {
             </div>
 
             {!isEmbedded ? <MagicButton label="Load mock items"/> : ''}
-            <ItemContainer/>
+            {!this.state.primary && <CollectionItemContainer />}
+            {this.state.primary && <ItemContainer/>}
 
 
           </div>

@@ -34,6 +34,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using CefSharp.WinForms;
 using DllInjector;
 using IAGrim.Parsers.TransferStash;
 using IAGrim.Settings;
@@ -52,6 +53,7 @@ namespace IAGrim.UI
         private readonly DynamicPacker _dynamicPacker;
         private readonly UsageStatisticsReporter _usageStatisticsReporter = new UsageStatisticsReporter();
         private readonly AutomaticUpdateChecker _automaticUpdateChecker;
+        private readonly IItemCollectionDao _itemCollectionRepo;
         private readonly List<IMessageProcessor> _messageProcessors = new List<IMessageProcessor>();
 
         private SplitSearchWindow _searchWindow;
@@ -126,9 +128,9 @@ namespace IAGrim.UI
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Browser_IsBrowserInitializedChanged(object sender, IsBrowserInitializedChangedEventArgs e) {
-            if (e.IsBrowserInitialized) {
-
+        private void Browser_IsBrowserInitializedChanged(object sender, EventArgs e) {
+            ChromiumWebBrowser browser = sender as ChromiumWebBrowser;
+            if (browser?.CanExecuteJavascriptInMainFrame ?? true) {
                 if (InvokeRequired) {
                     Invoke((MethodInvoker)delegate { _searchWindow?.UpdateListViewDelayed(); });
                 } else {
@@ -152,7 +154,8 @@ namespace IAGrim.UI
             ParsingService parsingService, 
             AugmentationItemRepo augmentationItemRepo, 
             SettingsService settingsService, 
-            GrimDawnDetector grimDawnDetector
+            GrimDawnDetector grimDawnDetector,
+            IItemCollectionDao itemCollectionRepo
             ) {
             _cefBrowserHandler = browser;
             InitializeComponent();
@@ -175,6 +178,7 @@ namespace IAGrim.UI
             _userFeedbackService = new UserFeedbackService(_cefBrowserHandler);
             _settingsService = settingsService;
             _grimDawnDetector = grimDawnDetector;
+            _itemCollectionRepo = itemCollectionRepo;
         }
 
         /// <summary>
@@ -255,18 +259,10 @@ namespace IAGrim.UI
             }
 
             switch (type) {
-                case MessageType.TYPE_DetectedStashToLootFrom: {
-                    int stashToLootFrom = IOHelper.GetInt(bt.Data, 0);
-                        Logger.Info($"Grim Dawn hook reports it will be looting from stash tab: {stashToLootFrom}");
-                    }
-                break;
+   
 
                 case MessageType.TYPE_REPORT_WORKER_THREAD_LAUNCHED:
                     Logger.Info("Grim Dawn hook reports successful launch.");
-                    break;
-
-                case MessageType.TYPE_REPORT_WORKER_THREAD_EXPERIMENTAL_LAUNCHED:
-                    Logger.Info("Grim Dawn exp-hook reports successful launch");
                     break;
 
 
@@ -279,10 +275,6 @@ namespace IAGrim.UI
 
                     break;
 
-                case MessageType.TYPE_GameInfo_IsHardcore_via_init_2:
-                    Logger.Debug("GameInfo object created");
-                    break;
-
                 case MessageType.TYPE_GameInfo_SetModName:
                     Logger.InfoFormat("TYPE_GameInfo_SetModName({0})", IOHelper.GetPrefixString(bt.Data, 0));
                     if (_settingsController.AutoUpdateModSettings) {
@@ -291,15 +283,6 @@ namespace IAGrim.UI
                     break;
 
             }
-
-            if (bt.Type == 1011) {
-                Logger.Debug("dll_GameInfo_SetModNameWideString");
-                
-            }
-            else if (bt.Type == 1010) {
-                Logger.Debug($"Hooked_GameInfo_SetModName {IOHelper.GetPrefixString(bt.Data, 0)}");
-            }
-
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
@@ -310,21 +293,6 @@ namespace IAGrim.UI
 
             // Call the base class
             return base.ProcessCmdKey(ref msg, keyData);
-        }
-
-        private void SetFeedback(string level, string feedback, string helpUrl) {
-            try {
-                if (InvokeRequired) {
-                    Invoke((MethodInvoker)delegate { SetFeedback(level, feedback, helpUrl); });
-                }
-                else {
-                    statusLabel.Text = feedback.Replace("\\n", " - ");
-                    _userFeedbackService.SetFeedback(feedback, level, helpUrl);
-                }
-            }
-            catch (ObjectDisposedException) {
-                Logger.Debug("Attempted to set feedback, but UI already disposed. (Probably shutting down)");
-            }
         }
 
         private void SetFeedback(string feedback) {
@@ -358,8 +326,7 @@ namespace IAGrim.UI
 
                 // Attempt to force a database update
                 foreach (Control c in modsPanel.Controls) {
-                    ModsDatabaseConfig config = c as ModsDatabaseConfig;
-                    if (config != null) {
+                    if (c is ModsDatabaseConfig config) {
                         config.ForceDatabaseUpdate(gdPath, string.Empty);
                         break;
                     }
@@ -425,7 +392,8 @@ namespace IAGrim.UI
                 _itemSkillDao, 
                 _buddyItemDao,
                 _augmentationItemRepo,
-                _settingsService
+                _settingsService,
+                _itemCollectionRepo
             );
 
             searchController.JsBind.SetItemSetAssociations(_databaseItemDao.GetItemSetAssociations());
@@ -547,13 +515,9 @@ namespace IAGrim.UI
             _messageProcessors.Add(new ItemPositionFinder(_dynamicPacker));
             _messageProcessors.Add(new PlayerPositionTracker(Debugger.IsAttached && false));
             _messageProcessors.Add(new StashStatusHandler());
-            _messageProcessors.Add(new ItemSpawnedProcessor());
             _messageProcessors.Add(new CloudDetectorProcessor(SetFeedback));
             _messageProcessors.Add(new GenericErrorHandler());
-            //messageProcessors.Add(new LogMessageProcessor());
-#if DEBUG
-            _messageProcessors.Add(new DebugMessageProcessor());
-#endif
+
 
             RuntimeSettings.StashStatusChanged += GlobalSettings_StashStatusChanged;
 
@@ -582,7 +546,7 @@ namespace IAGrim.UI
             if (_authAuthService.CheckAuthentication() == AzureAuthService.AccessStatus.Unauthorized && !_settingsService.GetLocal().OptOutOfBackups) {
                 var t = new System.Windows.Forms.Timer {Interval = 100};
                 t.Tick += (o, args) => {
-                    if (_cefBrowserHandler.BrowserControl.IsBrowserInitialized) {
+                    if (_cefBrowserHandler.BrowserControl.CanExecuteJavascriptInMainFrame) {
                         _authAuthService.Authenticate();
                         t.Stop();
                     }
@@ -606,6 +570,7 @@ namespace IAGrim.UI
                     _settingsService.GetLocal().HasSuggestedLanguageChange = true;
                 }
             }
+
             Logger.Debug("UI initialization complete");
         }
 

@@ -2,7 +2,6 @@
 using IAGrim.Database.Dto;
 using IAGrim.Database.Interfaces;
 using IAGrim.Database.Synchronizer;
-using IAGrim.Parsers.Arz;
 using IAGrim.Services;
 using IAGrim.UI.Controller.dto;
 using IAGrim.UI.Misc;
@@ -13,7 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using IAGrim.Settings;
-using IAGrim.Settings.Dto;
 
 namespace IAGrim.UI.Controller
 {
@@ -31,7 +29,8 @@ namespace IAGrim.UI.Controller
         private readonly ItemPaginatorService _itemPaginatorService;
         private readonly AugmentationItemRepo _augmentationItemRepo;
         private readonly SettingsService _settings;
-        
+        private readonly IItemCollectionDao _itemCollectionRepo;
+
 
         public CefBrowserHandler Browser;
         public readonly JSWrapper JsBind = new JSWrapper { IsTimeToShowNag = -1 };
@@ -43,7 +42,7 @@ namespace IAGrim.UI.Controller
             IDatabaseItemStatDao databaseItemStatDao,
             IItemSkillDao itemSkillDao,
             IBuddyItemDao buddyItemDao,
-            AugmentationItemRepo augmentationItemRepo, SettingsService settings)
+            AugmentationItemRepo augmentationItemRepo, SettingsService settings, IItemCollectionDao itemCollectionRepo)
         {
             _dbItemDao = databaseItemDao;
             _playerItemDao = playerItemDao;
@@ -52,6 +51,7 @@ namespace IAGrim.UI.Controller
             _buddyItemDao = buddyItemDao;
             _augmentationItemRepo = augmentationItemRepo;
             _settings = settings;
+            _itemCollectionRepo = itemCollectionRepo;
 
             // Just make sure it writes .css/.html files before displaying anything to the browser
             // 
@@ -88,6 +88,7 @@ namespace IAGrim.UI.Controller
             else
             {
                 JsBind.UpdateItems(new List<JsonItem>());
+                JsBind.UpdateCollectionItems(_itemCollectionRepo.GetItemCollection());
                 Browser.RefreshItems();
             }
 
@@ -107,6 +108,7 @@ namespace IAGrim.UI.Controller
 
             var convertedItems = ItemHtmlWriter.ToJsonSerializeable(items);
             JsBind.UpdateItems(convertedItems);
+            JsBind.UpdateCollectionItems(_itemCollectionRepo.GetItemCollection());
             return true;
         }
 
@@ -114,7 +116,6 @@ namespace IAGrim.UI.Controller
         {
             OnSearch?.Invoke(this, null);
             string message;
-            long personalCount = 0;
 
 
             Logger.Info("Searching for items..");
@@ -130,7 +131,7 @@ namespace IAGrim.UI.Controller
                 items = items.Where(m => m.Count > 1).ToList();
             }
 
-            personalCount = items.Sum(i => (long)i.Count);
+            var personalCount = items.Sum(i => (long)i.Count);
 
             if (includeBuddyItems && !query.SocketedOnly)
             {

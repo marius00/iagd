@@ -82,6 +82,10 @@ namespace IAGrim.UI.Misc {
             this.Items = JsonConvert.SerializeObject(items, _settings);
         }
 
+        public void UpdateCollectionItems(IList<CollectionItem> items) {
+            this.CollectionItems = JsonConvert.SerializeObject(items, _settings);
+        }
+
 
         public void SetClipboard(string data) {
             if (!string.IsNullOrWhiteSpace(data)) {
@@ -97,6 +101,7 @@ namespace IAGrim.UI.Misc {
         public HtmlTranslation translation { get; private set; }
 
         public string Items { get; set; }
+        public string CollectionItems { get; set; }
         public bool ItemSourceExhausted { get; set; }
 
         public int IsTimeToShowNag { get; set; }

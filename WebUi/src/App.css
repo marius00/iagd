@@ -25,7 +25,7 @@
 .header a {
   margin-left: 50px;
   display: inline-block;
-  padding-top: 5px;
+  padding: 5px 5px 0px 5px;
 }
 
 .header a:hover {
@@ -43,4 +43,8 @@
   text-decoration: underline;
   cursor: pointer;
   z-index: 100000;
+}
+
+.header .selected {
+  background: #80808033;
 }
