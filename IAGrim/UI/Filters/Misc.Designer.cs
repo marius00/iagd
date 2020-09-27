@@ -1,4 +1,6 @@
-﻿namespace IAGrim.UI.Filters {
+﻿using IAGrim.Theme.Firefox;
+
+namespace IAGrim.UI.Filters {
     partial class Misc {
         /// <summary> 
         /// Required designer variable.
@@ -41,6 +43,8 @@
             this.cbRunspeed = new FirefoxCheckBox();
             this.cbDefense = new FirefoxCheckBox();
             this.exp = new FirefoxCheckBox();
+            this.cbEnergyRegen = new FirefoxCheckBox();
+            this.cbWeaponLifeLeech = new FirefoxCheckBox();
             this.miscPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -48,6 +52,8 @@
             // 
             this.miscPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.miscPanel.Controls.Add(this.cbWeaponLifeLeech);
+            this.miscPanel.Controls.Add(this.cbEnergyRegen);
             this.miscPanel.Controls.Add(this.cbSummonerSkill);
             this.miscPanel.Controls.Add(this.cbGrantsSkill);
             this.miscPanel.Controls.Add(this.cbRecentOnly);
@@ -70,7 +76,7 @@
             this.miscPanel.Location = new System.Drawing.Point(3, 3);
             this.miscPanel.Name = "miscPanel";
             this.miscPanel.NoRounding = false;
-            this.miscPanel.Size = new System.Drawing.Size(293, 606);
+            this.miscPanel.Size = new System.Drawing.Size(293, 669);
             this.miscPanel.TabIndex = 40;
             this.miscPanel.Tag = "iatag_ui_misc";
             this.miscPanel.Text = "Misc";
@@ -336,13 +342,45 @@
             this.exp.Tag = "iatag_ui_experience";
             this.exp.Text = "Experience";
             // 
+            // cbEnergyRegen
+            // 
+            this.cbEnergyRegen.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbEnergyRegen.Bold = false;
+            this.cbEnergyRegen.EnabledCalc = true;
+            this.cbEnergyRegen.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbEnergyRegen.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbEnergyRegen.Location = new System.Drawing.Point(4, 604);
+            this.cbEnergyRegen.Name = "cbEnergyRegen";
+            this.cbEnergyRegen.Size = new System.Drawing.Size(272, 27);
+            this.cbEnergyRegen.TabIndex = 17;
+            this.cbEnergyRegen.Tag = "iatag_ui_energy_regen";
+            this.cbEnergyRegen.Text = "Energy Regeneration";
+            this.cbEnergyRegen.UseVisualStyleBackColor = true;
+            // 
+            // cbWeaponLifeLeech
+            // 
+            this.cbWeaponLifeLeech.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbWeaponLifeLeech.Bold = false;
+            this.cbWeaponLifeLeech.EnabledCalc = true;
+            this.cbWeaponLifeLeech.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbWeaponLifeLeech.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbWeaponLifeLeech.Location = new System.Drawing.Point(4, 637);
+            this.cbWeaponLifeLeech.Name = "cbWeaponLifeLeech";
+            this.cbWeaponLifeLeech.Size = new System.Drawing.Size(272, 27);
+            this.cbWeaponLifeLeech.TabIndex = 18;
+            this.cbWeaponLifeLeech.Tag = "iatag_ui_weapon_life_leech";
+            this.cbWeaponLifeLeech.Text = "Weapon Life Leech";
+            this.cbWeaponLifeLeech.UseVisualStyleBackColor = true;
+            // 
             // Misc
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.miscPanel);
             this.Name = "Misc";
-            this.Size = new System.Drawing.Size(299, 612);
+            this.Size = new System.Drawing.Size(299, 674);
             this.Load += new System.EventHandler(this.Misc_Load);
             this.miscPanel.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -351,7 +389,7 @@
 
         #endregion
 
-        private Theme.CollapseablePanelBox miscPanel;
+        private IAGrim.Theme.CollapseablePanelBox miscPanel;
         private FirefoxCheckBox cbRecentOnly;
         private FirefoxCheckBox cbSocketed;
         private FirefoxCheckBox cbDuplicates;
@@ -369,5 +407,7 @@
         private FirefoxCheckBox exp;
         private FirefoxCheckBox cbGrantsSkill;
         private FirefoxCheckBox cbSummonerSkill;
+        private FirefoxCheckBox cbEnergyRegen;
+        private FirefoxCheckBox cbWeaponLifeLeech;
     }
 }

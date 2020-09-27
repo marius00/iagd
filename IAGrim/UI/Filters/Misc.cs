@@ -82,6 +82,16 @@ namespace IAGrim.UI.Filters {
                     filters.Add(new[] {"petBonusName"});
                 }
 
+                if (cbEnergyRegen.Checked)
+                {
+                    filters.Add(new[] {"characterManaRegen", "characterManaRegenModifier"});
+                }
+
+                if(cbWeaponLifeLeech.Checked)
+                {
+                    filters.Add(new[] {"offensiveLifeLeechMin"});
+                }
+
                 return filters;
             }
         }
