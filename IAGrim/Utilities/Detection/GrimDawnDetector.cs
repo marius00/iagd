@@ -3,6 +3,7 @@ using IAGrim.Utilities;
 using log4net;
 using Microsoft.Win32;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -13,6 +14,7 @@ using System.Text;
 using Gameloop.Vdf;
 using IAGrim.Settings;
 using IAGrim.Settings.Dto;
+using IAGrim.Utilities.Detection;
 using NHibernate.Util;
 
 namespace IAGrim {
@@ -22,78 +24,6 @@ namespace IAGrim {
 
         public GrimDawnDetector(SettingsService settingsService) {
             _settingsService = settingsService;
-        }
-
-        private static bool IsSteamDirectory(string path) {
-            return !string.IsNullOrEmpty(path) && File.Exists(Path.Combine(path, "config", "config.vdf"));
-        }
-
-        private static string GetSteamDirectory() {
-            using (RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(@"Software\Valve\Steam")) {
-                Logger.Debug("Looking for steam registry key..");
-                if (registryKey != null) {
-                    string location = (string)registryKey.GetValue("SteamPath");
-                    if (IsSteamDirectory(location)) {
-                        Logger.Info("Steam config location located");
-                        return location;
-                    }
-                }
-                Logger.Debug("Steam registry key not found");
-            }
-
-            // Attempt to locate steam via the shell command, registry entry "Computer\HKEY_CLASSES_ROOT\steam\Shell\Open\Command"
-            using (RegistryKey registryKey = Registry.ClassesRoot.OpenSubKey(@"steam\Shell\Open\Command")) {
-                string content = (string) registryKey?.GetValue("");
-                if (!string.IsNullOrEmpty(content) && content.Contains(".exe")) {
-                    var sub = content.Substring(0, 4 + content.IndexOf(".exe", StringComparison.InvariantCultureIgnoreCase)).Replace("\"", "");
-                    var exe = Path.GetFullPath(sub);
-                    if (File.Exists(exe)) {
-                        var candidate = Directory.GetParent(exe).FullName;
-                        if (IsSteamDirectory(candidate)) {
-                            return candidate;
-                        }
-                    }
-                }
-            }
-
-            return string.Empty;
-        }
-
-
-        private static List<string> ExtractSteamLibraryPaths(string vdf) {
-            List<string> paths = new List<string>();
-            if (File.Exists(vdf)) {
-                dynamic config = VdfConvert.Deserialize(File.ReadAllText(vdf));
-                try {
-                    var root = config.Value.Software.valve.Steam;
-
-                    paths.Add(root.BaseInstallFolder_1.Value.ToString());
-                    paths.Add(root.BaseInstallFolder_2.Value.ToString());
-                    paths.Add(root.BaseInstallFolder_3.Value.ToString());
-                    paths.Add(root.BaseInstallFolder_4.Value.ToString());
-                    paths.Add(root.BaseInstallFolder_5.Value.ToString());
-                }
-                catch (KeyNotFoundException) {
-                    Logger.Debug("Key not found, stopping parse of steam config");
-                    return paths;
-                }
-
-            }
-            return paths;
-        }
-
-        private static List<string> GetGrimFolderFromSteamLibrary(List<string> libraryPaths) {
-            List<string> validPaths = new List<string>();
-            foreach (var path in libraryPaths) {
-                var subPath = Path.Combine(path, "steamapps", "common", "Grim Dawn");
-                if (Directory.Exists(subPath)) {
-                    if (File.Exists(Path.Combine(subPath, "database", "database.arz"))) {
-                        validPaths.Add(subPath);
-                    }
-                }
-            }
-
-            return validPaths;
         }
 
         /// <summary>
@@ -197,27 +127,32 @@ namespace IAGrim {
         /// </summary>
         /// <returns></returns>
         private static string FindByWindow() {
-            HashSet<string> possibles;
-
             try {
-                possibles = FindProcessForWindow("Grim Dawn");
-            }
-            catch (Exception) {
-                possibles = FindViaManagmentSearch();
-            }
+                HashSet<string> possibles;
 
-
-            foreach (string possible in possibles) {
-                var p = Path.Combine(Path.GetDirectoryName(possible), "database", "database.arz");
-                if (File.Exists(p)) {
-                    return Path.GetDirectoryName(possible);
+                try {
+                    possibles = FindProcessForWindow("Grim Dawn");
                 }
-                else {
-                    var x64 = Path.Combine(Path.GetDirectoryName(possible), "..", "database", "database.arz");
-                    if (File.Exists(x64)) {
-                        return Path.GetDirectoryName(Path.GetFullPath(Path.Combine(possible, "..")));
+                catch (Exception) {
+                    possibles = FindViaManagmentSearch();
+                }
+
+
+                foreach (string possible in possibles) {
+                    var p = Path.Combine(Path.GetDirectoryName(possible), "database", "database.arz");
+                    if (File.Exists(p)) {
+                        return Path.GetDirectoryName(possible);
+                    }
+                    else {
+                        var x64 = Path.Combine(Path.GetDirectoryName(possible), "..", "database", "database.arz");
+                        if (File.Exists(x64)) {
+                            return Path.GetDirectoryName(Path.GetFullPath(Path.Combine(possible, "..")));
+                        }
                     }
                 }
+            }
+            catch (ArgumentException ex) { // No idea whats up, some messed up path? Doesn't really matter, we didn't manage to find a valid path.
+                Logger.Warn(ex.Message, ex);
             }
 
             return string.Empty;
@@ -228,6 +163,7 @@ namespace IAGrim {
         /// Get the location of Grim Dawn
         /// </summary>
         /// <returns></returns>
+        [Obsolete("Use the pluralized version instead")]
         public string GetGrimLocation() {
             if (_settingsService.GetLocal().GrimDawnLocation != null) {
                 foreach (var loc in _settingsService.GetLocal().GrimDawnLocation) {
@@ -240,8 +176,12 @@ namespace IAGrim {
 
             try {
                 try {
-                    var steamPath = GetSteamDirectory();
-                    var locations = GetGrimFolderFromSteamLibrary(ExtractSteamLibraryPaths(Path.Combine(steamPath, "config", "config.vdf")));
+                    // Horrible copy from pluralized version.
+                    var steamPath = SteamDetection.GetSteamDirectory();
+                    var steamInstallPaths = SteamDetection.ExtractSteamLibraryPaths(Path.Combine(steamPath, "config", "config.vdf"));
+                    steamInstallPaths.Add(steamPath); // May not be included in the VDF
+                    var locations = new List<string>();
+                    SteamDetection.GetGrimFolderFromSteamLibrary(steamInstallPaths).ForEach(loc => locations.Add(CleanInvertedSlashes(loc)));
                     if (locations.Count > 0)
                         location = locations[0];
                 }
@@ -274,6 +214,19 @@ namespace IAGrim {
                 return input.Replace("/", @"\").ToLowerInvariant();
         }
 
+        public static void AppendSteamPaths(ICollection<string> locations) {
+            try {
+                var steamPath = SteamDetection.GetSteamDirectory();
+                var steamInstallPaths = SteamDetection.ExtractSteamLibraryPaths(Path.Combine(steamPath, "config", "config.vdf"));
+                steamInstallPaths.Add(steamPath); // May not be included in the VDF
+                SteamDetection.GetGrimFolderFromSteamLibrary(steamInstallPaths).ForEach(loc => locations.Add(CleanInvertedSlashes(loc)));
+            }
+            catch (Exception ex) {
+                Logger.Warn(ex.Message);
+                Logger.Warn(ex.StackTrace);
+            }
+        }
+
         public ISet<string> GetGrimLocations() {
             var locations = new HashSet<string>();
 
@@ -284,17 +237,7 @@ namespace IAGrim {
                 }
             }
 
-
-            try {
-                var steamPath = GetSteamDirectory();
-                var steamInstallPaths = ExtractSteamLibraryPaths(Path.Combine(steamPath, "config", "config.vdf"));
-                steamInstallPaths.Add(steamPath); // May not be included in the VDF
-                GetGrimFolderFromSteamLibrary(steamInstallPaths).ForEach(loc => locations.Add(CleanInvertedSlashes(loc)));
-            }
-            catch (Exception ex) {
-                Logger.Warn(ex.Message);
-                Logger.Warn(ex.StackTrace);
-            }
+            AppendSteamPaths(locations);
 
             var location = FindGogByRegistry();
             if (!string.IsNullOrEmpty(location)) {

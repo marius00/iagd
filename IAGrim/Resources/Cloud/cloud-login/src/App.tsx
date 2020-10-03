@@ -40,10 +40,8 @@ class App extends React.Component {
             <li>The date/time each item were uploaded</li>
             <li>Your IP address for up to 72 hours (for security purposes and throttling excess traffic)</li>
           </ul>
-          Some login methods may request additional information such as gender, etc because it is included in the
-          minimum amount of information, but only the email will be utilized. <br/>
           Your email may in rare cases be utilized to contact you to help diagnose issues detected.<br/>
-          No information will be shared with any third parties unless legally required to do so by law.
+          No information will be shared with any third parties except where/if legally required to do so by law.
         </div>
         <br/><br/>
 

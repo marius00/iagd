@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\EntityFramework.6.3.0\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.props')" />
   <Import Project="..\packages\CefSharp.WinForms.84.4.10\build\CefSharp.WinForms.props" Condition="Exists('..\packages\CefSharp.WinForms.84.4.10\build\CefSharp.WinForms.props')" />
@@ -230,6 +230,7 @@
     <Compile Include="UI\Misc\CEF\UserFeedback.cs" />
     <Compile Include="UI\Misc\CEF\UserFeedbackService.cs" />
     <Compile Include="Utilities\AutomaticUpdateChecker.cs" />
+    <Compile Include="Utilities\Detection\SteamDetection.cs" />
     <Compile Include="Utilities\HelperClasses\IComboBoxItemToggle.cs" />
     <Compile Include="UI\Misc\CEF\CefRequestHandler.cs" />
     <Compile Include="Backup\Azure\CefSharp\AzureOnClosePopupHijack.cs" />
@@ -526,7 +527,7 @@
     <Compile Include="Utilities\EasterEgg.cs" />
     <Compile Include="Utilities\GlobalPaths.cs" />
     <Compile Include="Utilities\RuntimeSettings.cs" />
-    <Compile Include="Utilities\GrimDawnDetector.cs" />
+    <Compile Include="Utilities\Detection\GrimDawnDetector.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\MainWindow.cs">
