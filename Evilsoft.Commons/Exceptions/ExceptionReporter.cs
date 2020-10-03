@@ -23,7 +23,7 @@ namespace EvilsoftCommons.Exceptions {
         static readonly ILog Logger = LogManager.GetLogger(typeof(ExceptionReporter));
 
         public static string Uuid { protected get; set; }
-
+        
         //public static string URL_HOST { get; set; }
         public static string UrlCrashreport {
             get;
@@ -47,7 +47,7 @@ namespace EvilsoftCommons.Exceptions {
         private static List<long> ReportTicks = new List<long>();
         private static bool CanReport {
             get {
-                return ReportTicks.Count(m => m + ReportCooldownMs > Timestamp) < MaxReportsPerCooldown;
+                return ReportTicks.Count(m => m + ReportCooldownMs > Timestamp) < MaxReportsPerCooldown && LogExceptions; 
             }
         }
 
@@ -89,103 +89,99 @@ namespace EvilsoftCommons.Exceptions {
 
         //[System.Diagnostics.Conditional("RELEASE")]
         public static void ReportUsage() {
+            if (LogExceptions) {
+                try {
+                    string postData = string.Format("version={0}&winver=0&uuid={1}",
+                        Uri.EscapeDataString(VersionString),
+                        Uuid);
 
-            try {
-                string postData = string.Format("version={0}&winver=0&uuid={1}",
-                    Uri.EscapeDataString(VersionString),
-                    Uuid);
 
 
+                    HttpWebRequest httpWReq = (HttpWebRequest) WebRequest.Create(UrlStats);
 
-                HttpWebRequest httpWReq = (HttpWebRequest)WebRequest.Create(UrlStats);
+                    Encoding encoding = new UTF8Encoding();
 
-                Encoding encoding = new UTF8Encoding();
+                    byte[] data = encoding.GetBytes(postData);
 
-                byte[] data = encoding.GetBytes(postData);
+                    httpWReq.Method = "POST";
+                    httpWReq.ContentType = "application/x-www-form-urlencoded";
+                    httpWReq.ContentLength = data.Length;
 
-                httpWReq.Method = "POST";
-                httpWReq.ContentType = "application/x-www-form-urlencoded";
-                httpWReq.ContentLength = data.Length;
-
-                using (Stream stream = httpWReq.GetRequestStream()) {
-                    stream.Write(data, 0, data.Length);
-                }
-                // threshold
-                using (HttpWebResponse response = (HttpWebResponse)httpWReq.GetResponse()) {
-                    if (response.StatusCode != HttpStatusCode.OK) {
-                        Logger.Info("Failed to send anonymous usage statistics to developer.");
-                        return;
+                    using (Stream stream = httpWReq.GetRequestStream()) {
+                        stream.Write(data, 0, data.Length);
                     }
 
-                    string responseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
+                    // threshold
+                    using (HttpWebResponse response = (HttpWebResponse) httpWReq.GetResponse()) {
+                        if (response.StatusCode != HttpStatusCode.OK) {
+                            Logger.Info("Failed to send anonymous usage statistics to developer.");
+                            return;
+                        }
 
-                    Logger.Info("Sent anonymous usage statistics to developer.");
+                        string responseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
 
-                    AddReportTick();
+                        Logger.Info("Sent anonymous usage statistics to developer.");
+
+                        AddReportTick();
+                    }
+                }
+                catch (Exception ex) {
+                    Logger.Fatal(ex.Message);
+                    Logger.Fatal(ex.StackTrace);
                 }
             }
-            catch (Exception ex) {
-                Logger.Fatal(ex.Message);
-                Logger.Fatal(ex.StackTrace);
-            }
-
         }
 
         //[System.Diagnostics.Conditional("RELEASE")]
         public static void ReportException(Exception e, string extra = "", bool forced = false) {
-            // Try to get English error messages..
-            var culture = Thread.CurrentThread.CurrentCulture;
-            Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
+            if (LogExceptions) {
+                // Try to get English error messages..
+                var culture = Thread.CurrentThread.CurrentCulture;
+                Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
 
-            try {
-                string innerMessage = string.Empty;
-                string innerStacktrace = string.Empty;
-
-                if (e.InnerException != null) {
-                    innerMessage = CleanUsername(e.InnerException.Message);
-                    innerStacktrace = CleanUsername(e.InnerException.StackTrace);
-                }
-
-
-                string postData = string.Join(
-                    "&",
-                    new [] {
-                        "message=" + Uri.EscapeDataString(string.Format("{0} {1} {2}", e.GetType(), CleanUsername(e.Message), extra)),
-                        "stacktrace=" + Uri.EscapeDataString(CleanUsername(e.StackTrace)),
-                        "version=" + Uri.EscapeDataString(VersionString),
-                        "winver=" + string.Format("{0}.{1}", Environment.OSVersion.Version.Major, Environment.OSVersion.Version.Minor),
-                        "uuid=" + Uuid,
-                        "running=" + TimeApplicationRunning,
-                        "innerMessage=" + innerMessage,
-                        "innerStacktrace=" + innerStacktrace,
-                        "thread=" + Thread.CurrentThread.Name
-                    }
-                    );
-                /*
-                string postData = String.Format("message={0}&stacktrace={1}&version={2}&winver={3}&uuid={4}&running={5}&innerMessage={6}&innerStacktrace={7}",
-                    Uri.EscapeDataString(string.Format("{0} {1} {2}", e.GetType(), CleanUsername(e.Message), extra)),
-                    Uri.EscapeDataString(CleanUsername(e.StackTrace)),
-                    Uri.EscapeDataString(VersionString),
-                    string.Format("{0}.{1}", Environment.OSVersion.Version.Major, Environment.OSVersion.Version.Minor),
-                    UUID.Value, TimeApplicationRunning, innerMessage, innerStacktrace);*/
-
-                if (forced && _maxForcedReports-- > 0)
-                    RemoveOneTick();
-
-                if (LogExceptions) {
-                    Logger.Info(string.Format("Outer exception: ", e.Message));
-                    Logger.Info(e.StackTrace);
+                try {
+                    string innerMessage = string.Empty;
+                    string innerStacktrace = string.Empty;
 
                     if (e.InnerException != null) {
-                        Logger.Info(string.Format("Inner exception: ", innerMessage));
-                        Logger.Info(innerStacktrace);
+                        innerMessage = CleanUsername(e.InnerException.Message);
+                        innerStacktrace = CleanUsername(e.InnerException.StackTrace);
                     }
-                }
 
-                ReportCrash(postData);
-            }
-            finally {
-                Thread.CurrentThread.CurrentCulture = culture;
+
+                    string postData = string.Join(
+                        "&",
+                        new[] {
+                            "message=" + Uri.EscapeDataString(string.Format("{0} {1} {2}", e.GetType(), CleanUsername(e.Message), extra)),
+                            "stacktrace=" + Uri.EscapeDataString(CleanUsername(e.StackTrace)),
+                            "version=" + Uri.EscapeDataString(VersionString),
+                            "winver=" + string.Format("{0}.{1}", Environment.OSVersion.Version.Major, Environment.OSVersion.Version.Minor),
+                            "uuid=" + Uuid,
+                            "running=" + TimeApplicationRunning,
+                            "innerMessage=" + innerMessage,
+                            "innerStacktrace=" + innerStacktrace,
+                            "thread=" + Thread.CurrentThread.Name
+                        }
+                    );
+
+                    if (forced && _maxForcedReports-- > 0)
+                        RemoveOneTick();
+
+                    if (LogExceptions) {
+                        Logger.Info(string.Format("Outer exception: ", e.Message));
+                        Logger.Info(e.StackTrace);
+
+                        if (e.InnerException != null) {
+                            Logger.Info(string.Format("Inner exception: ", innerMessage));
+                            Logger.Info(innerStacktrace);
+                        }
+                    }
+
+                    ReportCrash(postData);
+                }
+                finally {
+                    Thread.CurrentThread.CurrentCulture = culture;
+                }
             }
         }
 

@@ -17,8 +17,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Windows.Forms;
+using IAGrim.Utilities.Detection;
 
 namespace IAGrim
 {
@@ -52,18 +54,25 @@ namespace IAGrim
 
         public static MainWindow MainWindow => _mw;
 
+
         [STAThread]
         private static void Main(string[] args)
         {
             if (Thread.CurrentThread.Name == null)
                 Thread.CurrentThread.Name = "Main";
 
+
             Logger.Info("Starting IA:GD..");
-            ExceptionReporter.UrlCrashreport = "http://ribbs.dreamcrash.org/iagd/crashreport.php";
-            ExceptionReporter.UrlStats = "http://ribbs.dreamcrash.org/iagd/stats.php";
+            if (BlockedLogsDetection.DreamcrashBlocked()) {
+                Logger.Debug("Crash report server blocked, disabling reporting");
+            }
+            else {
+                ExceptionReporter.UrlCrashreport = "http://ribbs.dreamcrash.org/iagd/crashreport.php";
+                ExceptionReporter.UrlStats = "http://ribbs.dreamcrash.org/iagd/stats.php";
 #if !DEBUG
             ExceptionReporter.LogExceptions = true;
 #endif
+            }
 
             Logger.Info("Starting exception monitor for bug reports.."); // Phrased this way since people took it as a 'bad' thing.
             Logger.Debug("Crash reports can be seen at http://ribbs.dreamcrash.org/iagd/logs.html");

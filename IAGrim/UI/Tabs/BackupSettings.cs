@@ -11,6 +11,7 @@ using IAGrim.Settings;
 using IAGrim.Settings.Dto;
 using IAGrim.Utilities;
 using IAGrim.Utilities.Cloud;
+using IAGrim.Utilities.Detection;
 using log4net;
 using log4net.Repository.Hierarchy;
 
@@ -22,16 +23,19 @@ namespace IAGrim.UI.Tabs {
         private readonly SettingsService _settings;
         private readonly AzureSyncService _azureSyncService;
 
-        public BackupSettings(IPlayerItemDao playerItemDao, AzureAuthService authAuthService, SettingsService settings) {
+        public BackupSettings(IPlayerItemDao playerItemDao, AzureAuthService authAuthService, SettingsService settings, bool onlineBackupsEnabled) {
             InitializeComponent();
             _playerItemDao = playerItemDao;
-            _authAuthService = authAuthService;
             _settings = settings;
-            _azureSyncService = new AzureSyncService(authAuthService.GetRestService());
+            if (onlineBackupsEnabled) {
+                _authAuthService = authAuthService;
+                _azureSyncService = new AzureSyncService(authAuthService.GetRestService());
+            }
+
         }
 
         private void UpdateUi() {
-            if (_authAuthService.CheckAuthentication() == AzureAuthService.AccessStatus.Authorized) {
+            if (_authAuthService?.CheckAuthentication() == AzureAuthService.AccessStatus.Authorized) {
                 labelStatus.Text = RuntimeSettings.Language.GetTag("iatag_ui_backup_loggedinas", "emailhere");
                 buttonLogin.Enabled = false;
             }
@@ -42,6 +46,7 @@ namespace IAGrim.UI.Tabs {
 
             linkLogout.Enabled = !buttonLogin.Enabled;
             linkDeleteBackup.Enabled = !buttonLogin.Enabled;
+            buttonLogin.Visible = !BlockedLogsDetection.DreamcrashBlocked();
         }
 
 
@@ -215,7 +220,7 @@ namespace IAGrim.UI.Tabs {
                     MessageBoxIcon.Exclamation,
                     MessageBoxDefaultButton.Button2) == DialogResult.Yes) {
                 try {
-                    if (_azureSyncService.DeleteAccount()) {
+                    if (_azureSyncService != null && _azureSyncService.DeleteAccount()) {
                         MessageBox.Show(
                             RuntimeSettings.Language.GetTag("iatag_ui_backup_deleteaccount_success_body"),
                             RuntimeSettings.Language.GetTag("iatag_ui_backup_deleteaccount_success_header"),

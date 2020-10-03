@@ -38,6 +38,7 @@ using CefSharp.WinForms;
 using DllInjector;
 using IAGrim.Parsers.TransferStash;
 using IAGrim.Settings;
+using IAGrim.Utilities.Detection;
 
 namespace IAGrim.UI
 {
@@ -435,11 +436,15 @@ namespace IAGrim.UI
             addAndShow(_buddySettingsWindow, buddyPanel);
             
             _authAuthService = new AzureAuthService(_cefBrowserHandler, new AuthenticationProvider(_settingsService));
-            var backupSettings = new BackupSettings(_playerItemDao, _authAuthService, _settingsService);
+            var backupSettings = new BackupSettings(_playerItemDao, _authAuthService, _settingsService, !BlockedLogsDetection.DreamcrashBlocked());
             addAndShow(backupSettings, backupPanel);
             addAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, _playerItemDao, _parsingService, _databaseSettingDao, _grimDawnDetector, _settingsService), modsPanel);
-            addAndShow(new HelpTab(), panelHelp);            
-            addAndShow(new LoggingWindow(), panelLogging);
+            
+            addAndShow(new HelpTab(), panelHelp);
+        
+            if (!BlockedLogsDetection.DreamcrashBlocked()) {
+                addAndShow(new LoggingWindow(), panelLogging);
+            }
             var backupService = new BackupService(_authAuthService, _playerItemDao, _azurePartitionDao, () => _settingsService.GetPersistent().UsingDualComputer);
             _backupServiceWorker = new BackupServiceWorker(backupService);
             backupService.OnUploadComplete += (o, args) => _searchWindow.UpdateListView();
@@ -470,8 +475,10 @@ namespace IAGrim.UI
                 settingsPanel);
 
 #if !DEBUG
-            ThreadPool.QueueUserWorkItem(m => ExceptionReporter.ReportUsage());
-            _automaticUpdateChecker.CheckForUpdates();
+            if (!BlockedLogsDetection.DreamcrashBlocked()) { // Uses dreamcrash server
+                ThreadPool.QueueUserWorkItem(m => ExceptionReporter.ReportUsage());
+                _automaticUpdateChecker.CheckForUpdates();
+            }
 #endif
 
             Shown += (_, __) => { StartInjector(); };
@@ -544,14 +551,16 @@ namespace IAGrim.UI
             // Popup login diag
             
             if (_authAuthService.CheckAuthentication() == AzureAuthService.AccessStatus.Unauthorized && !_settingsService.GetLocal().OptOutOfBackups) {
-                var t = new System.Windows.Forms.Timer {Interval = 100};
-                t.Tick += (o, args) => {
-                    if (_cefBrowserHandler.BrowserControl.CanExecuteJavascriptInMainFrame) {
-                        _authAuthService.Authenticate();
-                        t.Stop();
-                    }
-                };
-                t.Start();
+                if (!BlockedLogsDetection.DreamcrashBlocked()) { // Backup login wont work
+                    var t = new System.Windows.Forms.Timer {Interval = 100};
+                    t.Tick += (o, args) => {
+                        if (_cefBrowserHandler.BrowserControl.CanExecuteJavascriptInMainFrame) {
+                            _authAuthService.Authenticate();
+                            t.Stop();
+                        }
+                    };
+                    t.Start();
+                }
             }
 
 
