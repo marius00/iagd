@@ -463,6 +463,9 @@ namespace StatTranslator {
             {"iatag_ui_language_change_warning", "WARNING: Some controls might not appear correctly upon changing the display language. It is suggested to close and reopen GDIA."},
             {"iatag_ui_level_requirement", "Level"},
 
+            {"iatag_ui_javascript_not_ready_title", "Loading.."},
+            {"iatag_ui_javascript_not_ready_body", "IA is still loading resources, please try again in a few moments.."},
+
             //Classes
             {"iatag_ui_soldier", "Soldier"},
             {"iatag_ui_demolitionist", "Demolitionist"},

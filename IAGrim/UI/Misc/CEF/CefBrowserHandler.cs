@@ -184,7 +184,17 @@ namespace IAGrim.UI.Misc.CEF {
 
         /* Start CefBackupAuthentication Start */
         public void Open(string url) {
-            _browser.ExecuteScriptAsync($"window.open('{url}');");
+            if (_browser.CanExecuteJavascriptInMainFrame) {
+                _browser.ExecuteScriptAsync($"window.open('{url}');");
+            }
+            else {
+                MessageBox.Show(
+                    RuntimeSettings.Language.GetTag("iatag_ui_javascript_not_ready_body"),
+                    RuntimeSettings.Language.GetTag("iatag_ui_javascript_not_ready_title"),
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+            }
         }
 
         public event EventHandler OnSuccess;

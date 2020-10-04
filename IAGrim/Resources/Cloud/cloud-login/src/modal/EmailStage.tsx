@@ -21,9 +21,7 @@ class EmailStage extends React.Component<Props> {
   onSendEmail() {
     const email = this.state.email as string;
 
-    if (this.isGmail(email)) {
-      this.setState({errorMessage: 'Gmail blocks these emails :sadface: -- Hop unto the IA discord if you need help recovering past items.'});
-    } else if (this.validateEmail(email)) {
+    if (this.validateEmail(email)) {
       let self = this;
       const uri = 'https://iagd.azurewebsites.net/api/ValidateEmail';
 
@@ -71,10 +69,6 @@ class EmailStage extends React.Component<Props> {
     else {
       this.setState({email: email});
     }
-  }
-
-  isGmail(email: string) {
-    return email.toLowerCase().indexOf('@gmail.com') !== -1;
   }
 
   validateEmail(email: string) {
