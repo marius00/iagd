@@ -40,23 +40,45 @@ namespace IAGrim.UI.Filters {
             // 3,70
             var cbNum = 1;
 
+            // Handle hardcoded classes
+            foreach (var c in classesPanelBox.Controls) {
+                if (c is FirefoxCheckBox cb) {
+                    cbNum++;
+                }
+            }
+
+            _classes["class01"] = cbSoldier;
+            _classes["class02"] = cbDemolitionist;
+            _classes["class03"] = cbOccultist;
+            _classes["class04"] = cbNightblade;
+            _classes["class05"] = cbArcanist;
+            _classes["class06"] = cbShaman;
+            _classes["class07"] = cbInquisitor;
+            _classes["class08"] = cbNecromancer;
+            _classes["class09"] = cbOathkeeper;
+
+            // Hardcoded classes from the base game -- Helps a bit with 4k scaling to not create these dynamically.
+            var prefilled = new[] {"iatag_ui_soldier", "iatag_ui_demolitionist", "iatag_ui_occultist", "iatag_ui_nightblade", "iatag_ui_arcanist", "iatag_ui_shaman", "iatag_ui_inquisitor", "iatag_ui_necromancer", "iatag_ui_oathkeeper"};
+            int yOffsetHeight = cbDemolitionist.Location.Y - cbSoldier.Location.Y;
+            int cbHeight = cbDemolitionist.Height;
             foreach (var tag in _classTags) {
+                var translationTag = $"iatag_ui_{tag.Name.ToLowerInvariant()}";
+                if (!prefilled.Contains(translationTag)) {
+                    var cb = new FirefoxCheckBox {
+                        Size = new Size {Height = cbHeight, Width = 121},
+                        Tag = translationTag,
+                        Text = tag.Name,
+                        Location = new Point {X = 3, Y = 3 + cbNum * yOffsetHeight }
+                    };
 
-                var cb = new FirefoxCheckBox {
-                    Size = new Size { Height = 27, Width = 121 },
-                    Tag = $"iatag_ui_{tag.Name.ToLowerInvariant()}",
-                    Text = tag.Name,
-                    Location = new Point { X = 3, Y = 3 + cbNum * 33 }
-                };
-
-                _classes[tag.Tag] = cb;
-                classesPanelBox.Controls.Add(cb);
-
-                cbNum++;
+                    _classes[tag.Tag] = cb;
+                    classesPanelBox.Controls.Add(cb);
+                    cbNum++;
+                }
             }
 
             classesPanelBox.Size = new Size {
-                Height = 10 + cbNum * 33,
+                Height = 10 + cbNum * yOffsetHeight,
                 Width = classesPanelBox.Size.Width
             };
         }

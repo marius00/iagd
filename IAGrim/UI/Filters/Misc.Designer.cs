@@ -26,6 +26,8 @@ namespace IAGrim.UI.Filters {
         /// </summary>
         private void InitializeComponent() {
             this.miscPanel = new IAGrim.Theme.CollapseablePanelBox();
+            this.cbWeaponLifeLeech = new FirefoxCheckBox();
+            this.cbEnergyRegen = new FirefoxCheckBox();
             this.cbSummonerSkill = new FirefoxCheckBox();
             this.cbGrantsSkill = new FirefoxCheckBox();
             this.cbRecentOnly = new FirefoxCheckBox();
@@ -43,8 +45,6 @@ namespace IAGrim.UI.Filters {
             this.cbRunspeed = new FirefoxCheckBox();
             this.cbDefense = new FirefoxCheckBox();
             this.exp = new FirefoxCheckBox();
-            this.cbEnergyRegen = new FirefoxCheckBox();
-            this.cbWeaponLifeLeech = new FirefoxCheckBox();
             this.miscPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -81,6 +81,38 @@ namespace IAGrim.UI.Filters {
             this.miscPanel.Tag = "iatag_ui_misc";
             this.miscPanel.Text = "Misc";
             this.miscPanel.TextLocation = "8; 5";
+            // 
+            // cbWeaponLifeLeech
+            // 
+            this.cbWeaponLifeLeech.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbWeaponLifeLeech.Bold = false;
+            this.cbWeaponLifeLeech.EnabledCalc = true;
+            this.cbWeaponLifeLeech.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbWeaponLifeLeech.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbWeaponLifeLeech.Location = new System.Drawing.Point(4, 637);
+            this.cbWeaponLifeLeech.Name = "cbWeaponLifeLeech";
+            this.cbWeaponLifeLeech.Size = new System.Drawing.Size(272, 27);
+            this.cbWeaponLifeLeech.TabIndex = 18;
+            this.cbWeaponLifeLeech.Tag = "iatag_ui_weapon_life_leech";
+            this.cbWeaponLifeLeech.Text = "Weapon Life Leech";
+            this.cbWeaponLifeLeech.UseVisualStyleBackColor = true;
+            // 
+            // cbEnergyRegen
+            // 
+            this.cbEnergyRegen.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbEnergyRegen.Bold = false;
+            this.cbEnergyRegen.EnabledCalc = true;
+            this.cbEnergyRegen.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbEnergyRegen.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbEnergyRegen.Location = new System.Drawing.Point(4, 604);
+            this.cbEnergyRegen.Name = "cbEnergyRegen";
+            this.cbEnergyRegen.Size = new System.Drawing.Size(272, 27);
+            this.cbEnergyRegen.TabIndex = 17;
+            this.cbEnergyRegen.Tag = "iatag_ui_energy_regen";
+            this.cbEnergyRegen.Text = "Energy Regeneration";
+            this.cbEnergyRegen.UseVisualStyleBackColor = true;
             // 
             // cbSummonerSkill
             // 
@@ -159,8 +191,9 @@ namespace IAGrim.UI.Filters {
             this.cbDuplicates.Size = new System.Drawing.Size(272, 27);
             this.cbDuplicates.TabIndex = 12;
             this.cbDuplicates.Tag = "iatag_ui_duplicatesonly";
-            this.cbDuplicates.Text = "Duplicates Only";
+            this.cbDuplicates.Text = "[Broken] Duplicates Only";
             this.cbDuplicates.UseVisualStyleBackColor = true;
+            this.cbDuplicates.Visible = false;
             // 
             // cbReflect
             // 
@@ -341,38 +374,6 @@ namespace IAGrim.UI.Filters {
             this.exp.TabIndex = 3;
             this.exp.Tag = "iatag_ui_experience";
             this.exp.Text = "Experience";
-            // 
-            // cbEnergyRegen
-            // 
-            this.cbEnergyRegen.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbEnergyRegen.Bold = false;
-            this.cbEnergyRegen.EnabledCalc = true;
-            this.cbEnergyRegen.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cbEnergyRegen.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbEnergyRegen.Location = new System.Drawing.Point(4, 604);
-            this.cbEnergyRegen.Name = "cbEnergyRegen";
-            this.cbEnergyRegen.Size = new System.Drawing.Size(272, 27);
-            this.cbEnergyRegen.TabIndex = 17;
-            this.cbEnergyRegen.Tag = "iatag_ui_energy_regen";
-            this.cbEnergyRegen.Text = "Energy Regeneration";
-            this.cbEnergyRegen.UseVisualStyleBackColor = true;
-            // 
-            // cbWeaponLifeLeech
-            // 
-            this.cbWeaponLifeLeech.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbWeaponLifeLeech.Bold = false;
-            this.cbWeaponLifeLeech.EnabledCalc = true;
-            this.cbWeaponLifeLeech.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cbWeaponLifeLeech.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbWeaponLifeLeech.Location = new System.Drawing.Point(4, 637);
-            this.cbWeaponLifeLeech.Name = "cbWeaponLifeLeech";
-            this.cbWeaponLifeLeech.Size = new System.Drawing.Size(272, 27);
-            this.cbWeaponLifeLeech.TabIndex = 18;
-            this.cbWeaponLifeLeech.Tag = "iatag_ui_weapon_life_leech";
-            this.cbWeaponLifeLeech.Text = "Weapon Life Leech";
-            this.cbWeaponLifeLeech.UseVisualStyleBackColor = true;
             // 
             // Misc
             // 
