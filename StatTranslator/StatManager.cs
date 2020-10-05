@@ -274,19 +274,29 @@ namespace StatTranslator
 
         }
 
-        private void ProcessAttackSpeed(ISet<IItemStat> stats, List<TranslatedStat> result)
-        {
+        private void ProcessAttackSpeed(ISet<IItemStat> stats, List<TranslatedStat> result) {
             var characterBaseAttackSpeed = stats.FirstOrDefault(m => m.Stat == "characterBaseAttackSpeed");
-            if (characterBaseAttackSpeed != null)
-            {
+            if (characterBaseAttackSpeed != null) {
                 var tag = stats.Where(m => m.Stat == "characterBaseAttackSpeedTag").FirstOrDefault()?.TextValue;
                 tag = tag != null ? _language.GetTag(tag) : "Unknown";
 
-                result.Add(new TranslatedStat
-                {
+                result.Add(new TranslatedStat {
                     Text = _language.GetTag("customtag_speed"),
                     Param0 = characterBaseAttackSpeed.Value,
                     Param3 = tag
+                });
+            }
+        }
+
+        // TODO: Surely there can be some generic way to do this? Input 2 stats and a translation string?
+        private void ProcessSlowRetaliation(ISet<IItemStat> stats, List<TranslatedStat> result) {
+            var duration = stats.FirstOrDefault(m => m.Stat == "retaliationSlowAttackSpeedDurationMin");
+            var amount = stats.FirstOrDefault(m => m.Stat == "retaliationSlowAttackSpeedMin");
+            if (duration != null && amount != null) {
+                result.Add(new TranslatedStat {
+                    Text = _language.GetTag("customtag_slow_retaliation"),
+                    Param0 = amount.Value,
+                    Param1 = duration.Value
                 });
             }
         }
@@ -623,6 +633,7 @@ namespace StatTranslator
             }
         }
 
+
         public List<TranslatedStat> ProcessSkillModifierStats(ISet<IItemStat> stats, string skill)
         {
             List<TranslatedStat> result = new List<TranslatedStat>();
@@ -934,6 +945,7 @@ namespace StatTranslator
                     ProcessStun(stats, result);
                     ProcessAngleDamage(stats, result);
                     ProcessChainDamage(stats, result);
+                    ProcessSlowRetaliation(stats, result);
                     ProcessAddSkill(stats, result);
 
                     break;

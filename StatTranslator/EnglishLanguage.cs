@@ -135,6 +135,7 @@ namespace StatTranslator {
             {"customtag_013_retaliation", "{0}-{1} {3} Retaliation"},
             {"customtag_03_retaliation", "{0} {3} Retaliation"},
             {"customtag_retaliation_delay", " over {4} Seconds"},
+            {"customtag_slow_retaliation", "{0}% reduced attack speed for {1}s"},
 
             // Damage
             {"customtag_damage_chanceof", "{0}% Chance of "},
