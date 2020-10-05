@@ -61,6 +61,7 @@ namespace StatTranslator {
             {"defensivePetrify", "{0}% Reduced Petrify Duration"},
             {"offensiveCritDamageModifier", "+{0}% Crit Damage"},
             {"characterRunSpeedModifier", "+{0}% Movement Speed"},
+            {"characterIncreasedExperience", "+{0}% Experience Gain"},
             {"characterIntelligenceModifier", "+{0}% Spirit"},
             {"skillCooldownReduction", "-{0}% Skill Cooldown Reduction"},
             {"retaliationTotalDamageModifier", "+{0}% Total Retaliation Damage"}, // not caught by the .replace("Modifier") for some reason..
@@ -368,7 +369,7 @@ namespace StatTranslator {
             {"iatag_ui_attackspeed", "Attack Speed"},
             {"iatag_ui_health", "Health"},
             {"iatag_ui_offensive", "Offensive"},
-            {"iatag_ui_runspeed", "Runspeed"},
+            {"iatag_ui_runspeed", "Movement Speed"},
             {"iatag_ui_defensive", "Defensive"},
             {"iatag_ui_experience", "Experience"},
             {"iatag_ui_resistances", "Resistances"},

@@ -551,6 +551,7 @@ namespace StatTranslator
                 "defensivePetrify",
                 "offensiveCritDamageModifier",
                 "characterRunSpeedModifier",
+                "characterIncreasedExperience",
                 "characterIntelligenceModifier",
                 "skillCooldownReduction",
                 "retaliationTotalDamageModifier",

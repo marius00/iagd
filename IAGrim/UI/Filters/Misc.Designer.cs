@@ -191,9 +191,8 @@ namespace IAGrim.UI.Filters {
             this.cbDuplicates.Size = new System.Drawing.Size(272, 27);
             this.cbDuplicates.TabIndex = 12;
             this.cbDuplicates.Tag = "iatag_ui_duplicatesonly";
-            this.cbDuplicates.Text = "[Broken] Duplicates Only";
+            this.cbDuplicates.Text = "Duplicates Only";
             this.cbDuplicates.UseVisualStyleBackColor = true;
-            this.cbDuplicates.Visible = false;
             // 
             // cbReflect
             // 
@@ -343,7 +342,7 @@ namespace IAGrim.UI.Filters {
             this.cbRunspeed.Size = new System.Drawing.Size(272, 27);
             this.cbRunspeed.TabIndex = 4;
             this.cbRunspeed.Tag = "iatag_ui_runspeed";
-            this.cbRunspeed.Text = "Runspeed";
+            this.cbRunspeed.Text = "Movement Speed";
             // 
             // cbDefense
             // 
