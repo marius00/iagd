@@ -23,7 +23,9 @@ namespace IAGrim.Services {
             BackupAutodetectDisabled,
             NotLootingUnidentified,
             DeleteDuplicates,
-            MultiplePcs
+            MultiplePcs,
+            RegularUpdates,
+            ExperimentalUpdates
 
         }
 

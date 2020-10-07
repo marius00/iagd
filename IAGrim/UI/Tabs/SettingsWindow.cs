@@ -187,5 +187,13 @@ namespace IAGrim.UI.Tabs {
         private void buttonPatreon_Click(object sender, EventArgs e) {
             Process.Start("https://www.patreon.com/itemassistant");
         }
+
+        private void helpWhatIsRegularUpdates_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            HelpService.ShowHelp(HelpService.HelpType.RegularUpdates);
+        }
+
+        private void helpWhatIsExperimentalUpdates_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            HelpService.ShowHelp(HelpService.HelpType.ExperimentalUpdates);
+        }
     }
 }

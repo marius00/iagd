@@ -59,6 +59,8 @@
             this.buttonLanguageSelect = new FirefoxButton();
             this.buttonViewBackups = new FirefoxButton();
             this.buttonViewLogs = new FirefoxButton();
+            this.helpWhatIsRegularUpdates = new System.Windows.Forms.LinkLabel();
+            this.helpWhatIsExperimentalUpdates = new System.Windows.Forms.LinkLabel();
             this.contextMenuStrip1.SuspendLayout();
             this.panelBox4.SuspendLayout();
             this.panelBox3.SuspendLayout();
@@ -367,6 +369,8 @@
             // 
             // panelBox3
             // 
+            this.panelBox3.Controls.Add(this.helpWhatIsExperimentalUpdates);
+            this.panelBox3.Controls.Add(this.helpWhatIsRegularUpdates);
             this.panelBox3.Controls.Add(this.radioBeta);
             this.panelBox3.Controls.Add(this.radioRelease);
             this.panelBox3.Font = new System.Drawing.Font("Segoe UI Semibold", 20F);
@@ -545,6 +549,36 @@
             this.buttonViewLogs.Text = "View Logs";
             this.buttonViewLogs.Click += new System.EventHandler(this.buttonViewLogs_Click);
             // 
+            // helpWhatIsRegularUpdates
+            // 
+            this.helpWhatIsRegularUpdates.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.helpWhatIsRegularUpdates.AutoSize = true;
+            this.helpWhatIsRegularUpdates.BackColor = System.Drawing.Color.Transparent;
+            this.helpWhatIsRegularUpdates.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.helpWhatIsRegularUpdates.Location = new System.Drawing.Point(143, 60);
+            this.helpWhatIsRegularUpdates.Name = "helpWhatIsRegularUpdates";
+            this.helpWhatIsRegularUpdates.Size = new System.Drawing.Size(18, 13);
+            this.helpWhatIsRegularUpdates.TabIndex = 30;
+            this.helpWhatIsRegularUpdates.TabStop = true;
+            this.helpWhatIsRegularUpdates.Tag = "iatag_ui_questionmark";
+            this.helpWhatIsRegularUpdates.Text = " ? ";
+            this.helpWhatIsRegularUpdates.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpWhatIsRegularUpdates_LinkClicked);
+            // 
+            // helpWhatIsExperimentalUpdates
+            // 
+            this.helpWhatIsExperimentalUpdates.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.helpWhatIsExperimentalUpdates.AutoSize = true;
+            this.helpWhatIsExperimentalUpdates.BackColor = System.Drawing.Color.Transparent;
+            this.helpWhatIsExperimentalUpdates.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.helpWhatIsExperimentalUpdates.Location = new System.Drawing.Point(170, 93);
+            this.helpWhatIsExperimentalUpdates.Name = "helpWhatIsExperimentalUpdates";
+            this.helpWhatIsExperimentalUpdates.Size = new System.Drawing.Size(18, 13);
+            this.helpWhatIsExperimentalUpdates.TabIndex = 31;
+            this.helpWhatIsExperimentalUpdates.TabStop = true;
+            this.helpWhatIsExperimentalUpdates.Tag = "iatag_ui_questionmark";
+            this.helpWhatIsExperimentalUpdates.Text = " ? ";
+            this.helpWhatIsExperimentalUpdates.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpWhatIsExperimentalUpdates_LinkClicked);
+            // 
             // SettingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -567,6 +601,7 @@
             this.panelBox4.ResumeLayout(false);
             this.panelBox4.PerformLayout();
             this.panelBox3.ResumeLayout(false);
+            this.panelBox3.PerformLayout();
             this.panelBox2.ResumeLayout(false);
             this.panelBox1.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -609,5 +644,7 @@
         private System.Windows.Forms.LinkLabel helpWhatIsUsingMultiplePc;
         private System.Windows.Forms.Button buttonPaypal;
         private System.Windows.Forms.Button buttonPatreon;
+        private System.Windows.Forms.LinkLabel helpWhatIsExperimentalUpdates;
+        private System.Windows.Forms.LinkLabel helpWhatIsRegularUpdates;
     }
 }
