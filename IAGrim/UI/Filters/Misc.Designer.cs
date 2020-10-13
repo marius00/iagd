@@ -45,6 +45,7 @@ namespace IAGrim.UI.Filters {
             this.cbRunspeed = new FirefoxCheckBox();
             this.cbDefense = new FirefoxCheckBox();
             this.exp = new FirefoxCheckBox();
+            this.cbDamageConversion = new FirefoxCheckBox();
             this.miscPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -52,6 +53,7 @@ namespace IAGrim.UI.Filters {
             // 
             this.miscPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.miscPanel.Controls.Add(this.cbDamageConversion);
             this.miscPanel.Controls.Add(this.cbWeaponLifeLeech);
             this.miscPanel.Controls.Add(this.cbEnergyRegen);
             this.miscPanel.Controls.Add(this.cbSummonerSkill);
@@ -76,7 +78,7 @@ namespace IAGrim.UI.Filters {
             this.miscPanel.Location = new System.Drawing.Point(3, 3);
             this.miscPanel.Name = "miscPanel";
             this.miscPanel.NoRounding = false;
-            this.miscPanel.Size = new System.Drawing.Size(293, 669);
+            this.miscPanel.Size = new System.Drawing.Size(293, 706);
             this.miscPanel.TabIndex = 40;
             this.miscPanel.Tag = "iatag_ui_misc";
             this.miscPanel.Text = "Misc";
@@ -374,13 +376,29 @@ namespace IAGrim.UI.Filters {
             this.exp.Tag = "iatag_ui_experience";
             this.exp.Text = "Experience";
             // 
+            // cbDamageConversion
+            // 
+            this.cbDamageConversion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbDamageConversion.Bold = false;
+            this.cbDamageConversion.EnabledCalc = true;
+            this.cbDamageConversion.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbDamageConversion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbDamageConversion.Location = new System.Drawing.Point(4, 668);
+            this.cbDamageConversion.Name = "cbDamageConversion";
+            this.cbDamageConversion.Size = new System.Drawing.Size(272, 27);
+            this.cbDamageConversion.TabIndex = 19;
+            this.cbDamageConversion.Tag = "iatag_ui_weapon_damage_conversion";
+            this.cbDamageConversion.Text = "Damage Conversion";
+            this.cbDamageConversion.UseVisualStyleBackColor = true;
+            // 
             // Misc
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.miscPanel);
             this.Name = "Misc";
-            this.Size = new System.Drawing.Size(299, 674);
+            this.Size = new System.Drawing.Size(299, 711);
             this.Load += new System.EventHandler(this.Misc_Load);
             this.miscPanel.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -409,5 +427,6 @@ namespace IAGrim.UI.Filters {
         private FirefoxCheckBox cbSummonerSkill;
         private FirefoxCheckBox cbEnergyRegen;
         private FirefoxCheckBox cbWeaponLifeLeech;
+        private FirefoxCheckBox cbDamageConversion;
     }
 }

@@ -87,9 +87,12 @@ namespace IAGrim.UI.Filters {
                     filters.Add(new[] {"characterManaRegen", "characterManaRegenModifier"});
                 }
 
-                if(cbWeaponLifeLeech.Checked)
-                {
-                    filters.Add(new[] {"offensiveLifeLeechMin"});
+                if (cbWeaponLifeLeech.Checked) {
+                    filters.Add(new[] { "offensiveLifeLeechMin" });
+                }
+
+                if (cbDamageConversion.Checked) {
+                    filters.Add(new[] { "conversionPercentage" });
                 }
 
                 return filters;

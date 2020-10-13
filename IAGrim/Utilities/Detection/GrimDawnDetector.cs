@@ -139,6 +139,7 @@ namespace IAGrim {
 
 
                 foreach (string possible in possibles) {
+                    Logger.Debug($"Checking {possible}...");
                     var p = Path.Combine(Path.GetDirectoryName(possible), "database", "database.arz");
                     if (File.Exists(p)) {
                         return Path.GetDirectoryName(possible);

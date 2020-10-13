@@ -502,6 +502,7 @@ namespace StatTranslator {
             {"iatag_ui_grants_summon_skill", "Grants Summon Skill"},
             {"iatag_ui_energy_regen", "Energy Regeneration"},
             {"iatag_ui_weapon_life_leech", "Weapon Life Leech"},
+            {"iatag_ui_weapon_damage_conversion", "Damage Conversion"},
             {"iatag_stash3_failure", "Cannot deposit item, please ensure SHARED Stash tab is empty."},
             {"iatag_stash3_success", "Successfully deposited {0} out of {1} items"},
             {"iatag_deposit_stash_open", "Cannot deposit item, please close your stash in-game"},
