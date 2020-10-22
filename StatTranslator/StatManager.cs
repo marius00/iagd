@@ -601,7 +601,8 @@ namespace StatTranslator
                 "projectilePiercingChance",
                 "skillProjectileNumber",
                 "projectileExplosionRadius",
-                "defensiveStun"
+                "defensiveStun",
+                "offensiveTotalDamageModifier"
             };
 
             Dictionary<string, string> translationTable = new Dictionary<string, string>();

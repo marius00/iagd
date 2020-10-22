@@ -21,7 +21,6 @@ namespace IAGrim.UI.Controller {
             _settings = settings;
         }
 
-
         public void LoadDefaults() {
             MinimizeToTray = _settings.GetPersistent().MinimizeToTray;
             MergeDuplicates = _settings.GetPersistent().MergeDuplicates;
