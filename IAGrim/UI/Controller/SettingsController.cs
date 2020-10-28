@@ -28,7 +28,7 @@ namespace IAGrim.UI.Controller {
             SecureTransfers = _settings.GetLocal().SecureTransfers ?? true;
             ShowRecipesAsItems = _settings.GetPersistent().ShowRecipesAsItems;
             AutoUpdateModSettings = _settings.GetPersistent().AutoUpdateModSettings;
-            DisplaySkills = _settings.GetPersistent().DisplaySkills;
+            HideSkills = _settings.GetPersistent().HideSkills;
         }
 
 
@@ -63,10 +63,10 @@ namespace IAGrim.UI.Controller {
             }
         }
 
-        public bool DisplaySkills {
-            get => _settings.GetPersistent().DisplaySkills;
+        public bool HideSkills {
+            get => _settings.GetPersistent().HideSkills;
             set {
-                _settings.GetPersistent().DisplaySkills = value;
+                _settings.GetPersistent().HideSkills = value;
                 OnPropertyChanged();
             }
         }

@@ -15,7 +15,7 @@ namespace IAGrim.Services {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ItemStatService));
         private readonly IDatabaseItemStatDao _databaseItemStatDao;
         private readonly IItemSkillDao _itemSkillDao;
-        private bool _displaySkills => _settings.GetPersistent().DisplaySkills;
+        private bool _hideSkills => _settings.GetPersistent().HideSkills;
         private readonly Dictionary<string, ISet<DBStatRow>> _xpacSkills;
         private readonly SettingsService _settings;
 
@@ -222,12 +222,6 @@ namespace IAGrim.Services {
                 var records = items.SelectMany(GetRecordsForItem).Distinct();
                 Dictionary<string, List<DBStatRow>> statMap = _databaseItemStatDao.GetStats(records, StatFetch.BuddyItems);
                 
-                // TODO: Add skill support?
-                /*
-                if (_displaySkills)
-                    ApplySkills(items);
-                    */
-
                 foreach (var pi in items) {
                     List<DBStatRow> stats = new List<DBStatRow>();
                     if (statMap.ContainsKey(pi.BaseRecord))
@@ -261,7 +255,7 @@ namespace IAGrim.Services {
                 var records = items.SelectMany(GetRecordsForItem).Distinct();
                 Dictionary<string, List<DBStatRow>> statMap = _databaseItemStatDao.GetStats(records, StatFetch.PlayerItems);
 
-                if (_displaySkills) {
+                if (!_hideSkills) {
                     ApplySkills(items);
                 }
 

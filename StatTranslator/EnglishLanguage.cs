@@ -411,7 +411,7 @@ namespace StatTranslator {
             {"iatag_ui_tab_settings", "Settings"},
             {"iatag_ui_settings_title", "Settings"},
             {"iatag_ui_showaugments", "Show augments as Items"},
-            {"iatag_ui_showskills", "Show Skills"},
+            {"iatag_ui_hideskills", "Hide Skills"},
             {"iatag_ui_autoselectmod", "Auto Select Mod"},
             {"iatag_ui_autosearch", "Auto Search"},
             {"iatag_ui_transferanymod", "Transfer to any mod"},

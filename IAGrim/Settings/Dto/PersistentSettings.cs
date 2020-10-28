@@ -21,7 +21,7 @@ namespace IAGrim.Settings.Dto {
         private bool _mergeDuplicates;
         private bool _transferAnyMod;
         private bool _autoUpdateModSettings;
-        private bool _displaySkills;
+        private bool _hideSkills;
         private bool _deleteDuplicates;
         private string _azureUploadPartition;
 
@@ -119,10 +119,10 @@ namespace IAGrim.Settings.Dto {
             }
         }
 
-        public bool DisplaySkills {
-            get => _displaySkills;
+        public bool HideSkills {
+            get => _hideSkills;
             set {
-                _displaySkills = value;
+                _hideSkills = value;
                 OnMutate?.Invoke(null, null);
             }
         }

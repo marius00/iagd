@@ -39,7 +39,7 @@
             this.cbShowAugments = new FirefoxCheckBox();
             this.cbDualComputer = new FirefoxCheckBox();
             this.linkSourceCode = new System.Windows.Forms.LinkLabel();
-            this.cbDisplaySkills = new FirefoxCheckBox();
+            this.cbHideSkills = new FirefoxCheckBox();
             this.cbAutoUpdateModSettings = new FirefoxCheckBox();
             this.cbTransferAnyMod = new FirefoxCheckBox();
             this.cbShowRecipesAsItems = new FirefoxCheckBox();
@@ -47,6 +47,8 @@
             this.cbMinimizeToTray = new FirefoxCheckBox();
             this.buttonPatreon = new System.Windows.Forms.Button();
             this.panelBox3 = new PanelBox();
+            this.helpWhatIsExperimentalUpdates = new System.Windows.Forms.LinkLabel();
+            this.helpWhatIsRegularUpdates = new System.Windows.Forms.LinkLabel();
             this.radioBeta = new FirefoxRadioButton();
             this.radioRelease = new FirefoxRadioButton();
             this.panelBox2 = new PanelBox();
@@ -59,8 +61,6 @@
             this.buttonLanguageSelect = new FirefoxButton();
             this.buttonViewBackups = new FirefoxButton();
             this.buttonViewLogs = new FirefoxButton();
-            this.helpWhatIsRegularUpdates = new System.Windows.Forms.LinkLabel();
-            this.helpWhatIsExperimentalUpdates = new System.Windows.Forms.LinkLabel();
             this.contextMenuStrip1.SuspendLayout();
             this.panelBox4.SuspendLayout();
             this.panelBox3.SuspendLayout();
@@ -110,7 +110,7 @@
             this.panelBox4.Controls.Add(this.cbShowAugments);
             this.panelBox4.Controls.Add(this.cbDualComputer);
             this.panelBox4.Controls.Add(this.linkSourceCode);
-            this.panelBox4.Controls.Add(this.cbDisplaySkills);
+            this.panelBox4.Controls.Add(this.cbHideSkills);
             this.panelBox4.Controls.Add(this.cbAutoUpdateModSettings);
             this.panelBox4.Controls.Add(this.cbTransferAnyMod);
             this.panelBox4.Controls.Add(this.cbShowRecipesAsItems);
@@ -273,19 +273,19 @@
             this.linkSourceCode.Text = "Source code";
             this.linkSourceCode.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkSourceCode_LinkClicked);
             // 
-            // cbDisplaySkills
+            // cbHideSkills
             // 
-            this.cbDisplaySkills.Bold = false;
-            this.cbDisplaySkills.EnabledCalc = true;
-            this.cbDisplaySkills.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cbDisplaySkills.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbDisplaySkills.Location = new System.Drawing.Point(3, 186);
-            this.cbDisplaySkills.Name = "cbDisplaySkills";
-            this.cbDisplaySkills.Size = new System.Drawing.Size(268, 27);
-            this.cbDisplaySkills.TabIndex = 17;
-            this.cbDisplaySkills.Tag = "iatag_ui_showskills";
-            this.cbDisplaySkills.Text = "Show Skills";
-            this.cbDisplaySkills.CheckedChanged += new System.EventHandler(this.cbDisplaySkills_CheckedChanged);
+            this.cbHideSkills.Bold = false;
+            this.cbHideSkills.EnabledCalc = true;
+            this.cbHideSkills.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbHideSkills.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbHideSkills.Location = new System.Drawing.Point(3, 186);
+            this.cbHideSkills.Name = "cbHideSkills";
+            this.cbHideSkills.Size = new System.Drawing.Size(268, 27);
+            this.cbHideSkills.TabIndex = 17;
+            this.cbHideSkills.Tag = "iatag_ui_hideskills";
+            this.cbHideSkills.Text = "Hide Skills";
+            this.cbHideSkills.CheckedChanged += new System.EventHandler(this.cbDisplaySkills_CheckedChanged);
             // 
             // cbAutoUpdateModSettings
             // 
@@ -383,6 +383,36 @@
             this.panelBox3.Tag = "iatag_ui_update_title";
             this.panelBox3.Text = "Automatic Updates";
             this.panelBox3.TextLocation = "8; 5";
+            // 
+            // helpWhatIsExperimentalUpdates
+            // 
+            this.helpWhatIsExperimentalUpdates.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.helpWhatIsExperimentalUpdates.AutoSize = true;
+            this.helpWhatIsExperimentalUpdates.BackColor = System.Drawing.Color.Transparent;
+            this.helpWhatIsExperimentalUpdates.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.helpWhatIsExperimentalUpdates.Location = new System.Drawing.Point(170, 93);
+            this.helpWhatIsExperimentalUpdates.Name = "helpWhatIsExperimentalUpdates";
+            this.helpWhatIsExperimentalUpdates.Size = new System.Drawing.Size(18, 13);
+            this.helpWhatIsExperimentalUpdates.TabIndex = 31;
+            this.helpWhatIsExperimentalUpdates.TabStop = true;
+            this.helpWhatIsExperimentalUpdates.Tag = "iatag_ui_questionmark";
+            this.helpWhatIsExperimentalUpdates.Text = " ? ";
+            this.helpWhatIsExperimentalUpdates.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpWhatIsExperimentalUpdates_LinkClicked);
+            // 
+            // helpWhatIsRegularUpdates
+            // 
+            this.helpWhatIsRegularUpdates.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.helpWhatIsRegularUpdates.AutoSize = true;
+            this.helpWhatIsRegularUpdates.BackColor = System.Drawing.Color.Transparent;
+            this.helpWhatIsRegularUpdates.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.helpWhatIsRegularUpdates.Location = new System.Drawing.Point(143, 60);
+            this.helpWhatIsRegularUpdates.Name = "helpWhatIsRegularUpdates";
+            this.helpWhatIsRegularUpdates.Size = new System.Drawing.Size(18, 13);
+            this.helpWhatIsRegularUpdates.TabIndex = 30;
+            this.helpWhatIsRegularUpdates.TabStop = true;
+            this.helpWhatIsRegularUpdates.Tag = "iatag_ui_questionmark";
+            this.helpWhatIsRegularUpdates.Text = " ? ";
+            this.helpWhatIsRegularUpdates.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpWhatIsRegularUpdates_LinkClicked);
             // 
             // radioBeta
             // 
@@ -549,36 +579,6 @@
             this.buttonViewLogs.Text = "View Logs";
             this.buttonViewLogs.Click += new System.EventHandler(this.buttonViewLogs_Click);
             // 
-            // helpWhatIsRegularUpdates
-            // 
-            this.helpWhatIsRegularUpdates.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.helpWhatIsRegularUpdates.AutoSize = true;
-            this.helpWhatIsRegularUpdates.BackColor = System.Drawing.Color.Transparent;
-            this.helpWhatIsRegularUpdates.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.helpWhatIsRegularUpdates.Location = new System.Drawing.Point(143, 60);
-            this.helpWhatIsRegularUpdates.Name = "helpWhatIsRegularUpdates";
-            this.helpWhatIsRegularUpdates.Size = new System.Drawing.Size(18, 13);
-            this.helpWhatIsRegularUpdates.TabIndex = 30;
-            this.helpWhatIsRegularUpdates.TabStop = true;
-            this.helpWhatIsRegularUpdates.Tag = "iatag_ui_questionmark";
-            this.helpWhatIsRegularUpdates.Text = " ? ";
-            this.helpWhatIsRegularUpdates.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpWhatIsRegularUpdates_LinkClicked);
-            // 
-            // helpWhatIsExperimentalUpdates
-            // 
-            this.helpWhatIsExperimentalUpdates.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.helpWhatIsExperimentalUpdates.AutoSize = true;
-            this.helpWhatIsExperimentalUpdates.BackColor = System.Drawing.Color.Transparent;
-            this.helpWhatIsExperimentalUpdates.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.helpWhatIsExperimentalUpdates.Location = new System.Drawing.Point(170, 93);
-            this.helpWhatIsExperimentalUpdates.Name = "helpWhatIsExperimentalUpdates";
-            this.helpWhatIsExperimentalUpdates.Size = new System.Drawing.Size(18, 13);
-            this.helpWhatIsExperimentalUpdates.TabIndex = 31;
-            this.helpWhatIsExperimentalUpdates.TabStop = true;
-            this.helpWhatIsExperimentalUpdates.Tag = "iatag_ui_questionmark";
-            this.helpWhatIsExperimentalUpdates.Text = " ? ";
-            this.helpWhatIsExperimentalUpdates.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpWhatIsExperimentalUpdates_LinkClicked);
-            // 
             // SettingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -629,7 +629,7 @@
         private FirefoxButton buttonLanguageSelect;
         private FirefoxButton buttonMigratePostgres;
         private FirefoxButton buttonImportExport;
-        private FirefoxCheckBox cbDisplaySkills;
+        private FirefoxCheckBox cbHideSkills;
         private FirefoxButton buttonAdvancedSettings;
         private System.Windows.Forms.LinkLabel linkSourceCode;
         private FirefoxCheckBox cbDualComputer;

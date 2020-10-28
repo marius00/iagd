@@ -59,7 +59,7 @@ namespace IAGrim.UI.Tabs {
             _controller.BindCheckbox(cbSecureTransfers);
             _controller.BindCheckbox(cbShowRecipesAsItems);
             _controller.BindCheckbox(cbAutoUpdateModSettings);
-            _controller.BindCheckbox(cbDisplaySkills);
+            _controller.BindCheckbox(cbHideSkills);
             _controller.LoadDefaults();
         }
 
