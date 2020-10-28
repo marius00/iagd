@@ -136,22 +136,16 @@ namespace IAGrim.UI.Misc.CEF {
         public void InitializeChromium(object bindeable, EventHandler browserIsBrowserInitializedChanged) {
             try {
                 Logger.Info("Creating Chromium instance..");
+
+                // Useful: https://github.com/cefsharp/CefSharp/blob/cefsharp/79/CefSharp.Example/CefExample.cs#L208
                 Cef.EnableHighDPISupport();
 
-                //var settings = new CefSettings();
-                //settings.CefCommandLineArgs.Add("disable-gpu", "1");
-                CefSettingsBase settings = new CefSettings {};
-                if (!Cef.Initialize(settings)) {
-                    Logger.Fatal("Could not initialize Chromium");
-                    MessageBox.Show("Fatal error - Could not initialize chromium", "Fatal error", MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
-                }
-
-                _browser = new ChromiumWebBrowser(GlobalPaths.ItemsHtmlFile);
 
                 // TODO: Read and analyze https://github.com/cefsharp/CefSharp/issues/2246 -- Is this the correct way to do things in the future?
                 CefSharpSettings.LegacyJavascriptBindingEnabled = true;
                 CefSharpSettings.WcfEnabled = true;
+                _browser = new ChromiumWebBrowser(GlobalPaths.ItemsHtmlFile);
+
                 _browser.JavascriptObjectRepository.Register("data", bindeable, isAsync: false, options: BindingOptions.DefaultBinder);
                 _browser.IsBrowserInitializedChanged += browserIsBrowserInitializedChanged;
 
@@ -162,7 +156,7 @@ namespace IAGrim.UI.Misc.CEF {
                 _browser.RequestHandler = requestHandler;
                 
                 _browser.LifeSpanHandler = new AzureOnClosePopupHijack();
-
+                
                 Logger.Info("Chromium created..");
             } catch (System.IO.FileNotFoundException ex) {
                 MessageBox.Show("Error \"File Not Found\" loading Chromium, did you forget to install Visual C++ runtimes?\n\nvc_redist86 in the IA folder.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
