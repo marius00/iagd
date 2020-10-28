@@ -136,6 +136,17 @@ namespace IAGrim.Services {
                         name = _databaseItemStatDao.GetSkillName(name);
                     }
 
+                    // For pet skills we got another layer to hop trough
+                    var petSkillRecord = _xpacSkills[recordForStats].Where(s => s.Stat == "petSkillName").Select(s => s.TextValue).FirstOrDefault();
+                    if (petSkillRecord != null) {
+                        if (_xpacSkills.ContainsKey(petSkillRecord)) {
+                            item.ModifiedSkills.Add(new SkillModifierStat {
+                                Tags = _xpacSkills[petSkillRecord],
+                                Name = name
+                            });
+                        }
+                    }
+
                     item.ModifiedSkills.Add(new SkillModifierStat {
                         Tags = _xpacSkills[recordForStats],
                         Name = name
