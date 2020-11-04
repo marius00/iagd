@@ -52,13 +52,6 @@ HowTo:
 * deploy.cmd
 
 
-## Building a release of IAGrim
-When building in "Release mode" the compilation will fail on the first attempt due to an issue with Stamp.Fody.
-
-Running the release mode again should result in a successful build. [Stamp.Fody embeds the git branch/hash into the iagrim.exe file]
-
-
-
 # Trouble understanding the code?
 
 ## The Web View
