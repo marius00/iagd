@@ -543,6 +543,7 @@ namespace StatTranslator {
             {"iatag_rarity_green_p2", "Green (+2)"},
             {"iatag_rarity_blue", "Blue"},
             {"iatag_rarity_epic", "Epic"},
+            {"TagQualityOld", "Obsolete" },
 
             {"iatag_feedback_already_logged_in", "You are already logged in"},
             {"iatag_feedback_too_close_to_stash", "Delaying stash loot - Standing too close to stash!"},

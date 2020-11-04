@@ -197,7 +197,7 @@ namespace IAGrim.Backup.Azure.Service {
                         .ToList();
 
                     if (items.Count == 0 && sync.Removed.Count == 0) {
-                        Logger.Debug("No remote change to items");
+                        Logger.Debug($"No remote change to items for {partition}");
                     }
                     else if (partialPartition) {
                         _playerItemDao.Save(items);
