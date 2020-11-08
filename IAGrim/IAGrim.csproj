@@ -548,6 +548,7 @@
     <Compile Include="Utilities\RectanglePacker\PackerMode.cs" />
     <Compile Include="Utilities\RectanglePacker\Shape.cs" />
     <Compile Include="Utilities\Registry\RegistryHelper.cs" />
+    <Compile Include="Utilities\SeqGuid.cs" />
     <Compile Include="Utilities\TempFile.cs" />
     <Compile Include="Utilities\TemporaryCopy.cs" />
     <Compile Include="Utilities\UsageStatisticsReporter.cs" />

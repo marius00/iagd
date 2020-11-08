@@ -1,5 +1,4 @@
 ﻿using EvilsoftCommons.Exceptions;
-using EvilsoftCommons.Exceptions.UUIDGenerator;
 using EvilsoftCommons.SingleInstance;
 using IAGrim.Backup.Azure.Constants;
 using IAGrim.Database;
@@ -42,9 +41,7 @@ namespace IAGrim
             string uuid = dao.GetUuid();
             if (string.IsNullOrEmpty(uuid))
             {
-                UuidGenerator g = Guid.NewGuid();
-                uuid = g.ToString().Replace("-", "");
-                dao.SetUuid(uuid);
+                dao.SetUuid(Guid.NewGuid().ToString().Replace("-", ""));
             }
 
             RuntimeSettings.Uuid = uuid;

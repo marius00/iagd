@@ -53,7 +53,6 @@
   <ItemGroup>
     <Compile Include="DateTimeEpochExtension.cs" />
     <Compile Include="Exceptions\ExceptionReporter.cs" />
-    <Compile Include="Exceptions\UUIDGenerator\UuidGenerator.cs" />
     <Compile Include="IOHelper.cs" />
     <Compile Include="Misc\BasicBackgroundWorker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -79,6 +78,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Exceptions\UUIDGenerator\" />
     <Folder Include="SQL\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
