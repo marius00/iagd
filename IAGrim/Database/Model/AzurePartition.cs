@@ -24,5 +24,8 @@ namespace IAGrim.Database {
         public override int GetHashCode() {
             return Id.GetHashCode();
         }
+        public override string ToString() {
+            return $"AzurePartition[{Id}, {IsActive}]";
+        }
     }
 }

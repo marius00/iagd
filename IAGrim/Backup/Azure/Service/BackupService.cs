@@ -198,12 +198,20 @@ namespace IAGrim.Backup.Azure.Service {
                         .ToList();
 
                     if (items.Count == 0 && sync.Removed.Count == 0) {
+                        var localPartition = localPartitions.FirstOrDefault(p => p.Id == partition.Partition);
                         if (sync.DisableNow) {
-                            var localPartition = localPartitions.FirstOrDefault(p => p.Id == partition.Partition);
                             if (localPartition != null) {
                                 localPartition.IsActive = false;
                                 _azurePartitionDao.Update(localPartition);
                             }
+                        }
+
+                        // Empty remote partition. TODO: Should have been removed server-side.
+                        if (localPartition == null) {
+                            _azurePartitionDao.Save(new AzurePartition {
+                                Id = partition.Partition,
+                                IsActive = false
+                            });
                         }
 
                         Logger.Debug($"No remote change to items for {partition}");
