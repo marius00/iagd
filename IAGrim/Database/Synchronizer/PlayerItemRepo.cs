@@ -89,7 +89,7 @@ namespace IAGrim.Database.Synchronizer {
 
         public long GetNumItems(string backupPartition) {
             return ThreadExecuter.Execute(
-                () => _repo.GetNumItems()
+                () => _repo.GetNumItems(backupPartition)
             );
         }
 
