@@ -170,7 +170,7 @@ namespace IAGrim.Backup.Azure.Service {
                 }
             }
 
-            Logger.Info("Upload complete");
+            Logger.Info($"Upload complete ({items.Count} items)");
             OnUploadComplete?.Invoke(this, null);
         }
 
@@ -186,7 +186,7 @@ namespace IAGrim.Backup.Azure.Service {
 
                 var partitions = remotePartitions
                     .Where(p => !string.IsNullOrEmpty(p.Partition))
-                    .Where(p => !localPartitions.Any(m => m.Id == p.Partition && !m.IsActive))
+                    .Where(p => !localPartitions.Any(m => m.Id == p.Partition && !p.IsActive))
                     .ToList();
 
                 var deletedItems = _playerItemDao.GetItemsMarkedForOnlineDeletion();
@@ -194,24 +194,40 @@ namespace IAGrim.Backup.Azure.Service {
                     var partialPartition = localPartitions.Any(p => p.Id == partition.Partition);
                     var sync = _azureSyncService.GetItems(partition.Partition);
                     var items = sync.Items.Select(ItemConverter.ToPlayerItem)
+                        // !IMPORTANT Beware when rewriting this. On the new service remote should be "master", and it should "lock" partitions for new uploads.
                         .Where(m => !deletedItems.Any(d => d.Id == m.AzureUuid && d.Partition == m.AzurePartition))
                         .ToList();
 
-                    if (items.Count == 0 && sync.Removed.Count == 0) {
-                        var localPartition = localPartitions.FirstOrDefault(p => p.Id == partition.Partition);
-                        if (sync.DisableNow) {
-                            if (localPartition != null) {
-                                localPartition.IsActive = false;
-                                _azurePartitionDao.Update(localPartition);
-                            }
-                        }
+                    // *********************
+                    var localPartition = localPartitions.FirstOrDefault(p => p.Id == partition.Partition);
 
+                    // Update partition listing
+                    if (localPartition != null) {
+                        var v = partition.IsActive && !sync.DisableNow;
+                        if (v != localPartition.IsActive) {
+                            localPartition.IsActive = v;
+                            _azurePartitionDao.Update(localPartition);
+                            Logger.Debug($"Updated partition {localPartition} to isActive={v}");
+                        }
+                    }
+                    else {
+                        var p = new AzurePartition {
+                            Id = partition.Partition,
+                            IsActive = partition.IsActive && !sync.DisableNow
+                        };
+                        _azurePartitionDao.Save(p);
+                        Logger.Debug($"Inserted new partition {p}");
+                    }
+
+                    if (items.Count == 0 && sync.Removed.Count == 0) {
                         // Empty remote partition. TODO: Should have been removed server-side.
                         if (localPartition == null) {
                             _azurePartitionDao.Save(new AzurePartition {
                                 Id = partition.Partition,
                                 IsActive = false
                             });
+
+                            Logger.Debug($"Adding dangling partition {partition}");
                         }
 
                         Logger.Debug($"No remote change to items for {partition}");
@@ -220,23 +236,11 @@ namespace IAGrim.Backup.Azure.Service {
                         _playerItemDao.Save(items);
                         _playerItemDao.Delete(sync.Removed);
 
-                        // Update partition
-                        var localPartition = localPartitions.FirstOrDefault(p => p.Id == partition.Partition);
-                        if (localPartition != null) {
-                            localPartition.IsActive = partition.IsActive && !sync.DisableNow;
-                            _azurePartitionDao.Update(localPartition);
-                        }
-
                         Logger.Debug($"Updated/Merged in {items.Count} items");
                     }
                     else {
                         _playerItemDao.Save(items);
                         _playerItemDao.Delete(sync.Removed);
-
-                        _azurePartitionDao.Save(new AzurePartition {
-                            Id = partition.Partition,
-                            IsActive = partition.IsActive && !sync.DisableNow
-                        });
 
                         Logger.Debug($"Received {items.Count} new items, and {sync.Removed.Count} removed");
                     }

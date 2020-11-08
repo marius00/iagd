@@ -364,8 +364,27 @@ namespace IAGrim.UI
 
             ExceptionReporter.EnableLogUnhandledOnThread();
             SizeChanged += OnMinimizeWindow;
-            
-            
+
+
+
+            // Chicken and the egg..
+            SearchController searchController = new SearchController(
+                _databaseItemDao,
+                _playerItemDao,
+                _databaseItemStatDao,
+                _itemSkillDao,
+                _buddyItemDao,
+                _augmentationItemRepo,
+                _settingsService,
+                _itemCollectionRepo
+            );
+
+            searchController.JsBind.SetItemSetAssociations(_databaseItemDao.GetItemSetAssociations());
+            _cefBrowserHandler.InitializeChromium(searchController.JsBind, Browser_IsBrowserInitializedChanged);
+            searchController.Browser = _cefBrowserHandler;
+            searchController.JsBind.OnClipboard += SetItemsClipboard;
+
+
             var cacher = new TransferStashServiceCache(_databaseItemDao);
             _parsingService.OnParseComplete += (o, args) => cacher.Refresh();
 
@@ -388,23 +407,6 @@ namespace IAGrim.UI
                 if (!Debugger.IsAttached)
                     Close();
             }
-
-            // Chicken and the egg..
-            SearchController searchController = new SearchController(
-                _databaseItemDao,
-                _playerItemDao, 
-                _databaseItemStatDao, 
-                _itemSkillDao, 
-                _buddyItemDao,
-                _augmentationItemRepo,
-                _settingsService,
-                _itemCollectionRepo
-            );
-
-            searchController.JsBind.SetItemSetAssociations(_databaseItemDao.GetItemSetAssociations());
-            _cefBrowserHandler.InitializeChromium(searchController.JsBind, Browser_IsBrowserInitializedChanged);
-            searchController.Browser = _cefBrowserHandler;
-            searchController.JsBind.OnClipboard += SetItemsClipboard;
 
             // Load the grim database
             string gdPath = _grimDawnDetector.GetGrimLocation();

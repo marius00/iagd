@@ -251,7 +251,7 @@ namespace IAGrim.Parsers.TransferStash {
             var currentPartition = _settings.GetPersistent().AzureUploadPartition;
             var numItems = _playerItemDao.GetNumItems(currentPartition);
             if (numItems > 100 || string.IsNullOrEmpty(currentPartition)) {
-                _settings.GetPersistent().AzureUploadPartition = Guid.NewGuid().ToString().Replace("-", "");
+                _settings.GetPersistent().AzureUploadPartition = SeqGuid.Create().ToString();
             }
 
             return _settings.GetPersistent().AzureUploadPartition;
