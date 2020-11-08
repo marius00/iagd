@@ -8,5 +8,6 @@ namespace IAGrim.Backup.Azure.Dto {
     public class ItemDownloadDto {
         public List<AzureItem> Items { get; set; }
         public List<AzureItemDeletionDto> Removed { get; set; }
+        public bool DisableNow { get; set; }
     }
 }

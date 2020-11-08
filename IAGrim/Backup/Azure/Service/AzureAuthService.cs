@@ -61,6 +61,7 @@ namespace IAGrim.Backup.Azure.Service {
                 }
                 else if (result == HttpStatusCode.InternalServerError) {
                     ExceptionReporter.ReportIssue("Server response 500 verifying access token");
+                    Logger.Warn("Server response 500 verifying access token towards backup service");
                     return AccessStatus.Unknown;
                 }
                 else {

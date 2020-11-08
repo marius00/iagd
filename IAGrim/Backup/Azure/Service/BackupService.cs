@@ -14,6 +14,7 @@ using IAGrim.Database.Model;
 using IAGrim.Utilities;
 using log4net;
 using NHibernate.Criterion;
+using NHibernate.Util;
 
 namespace IAGrim.Backup.Azure.Service {
     public class BackupService {
@@ -197,6 +198,14 @@ namespace IAGrim.Backup.Azure.Service {
                         .ToList();
 
                     if (items.Count == 0 && sync.Removed.Count == 0) {
+                        if (sync.DisableNow) {
+                            var localPartition = localPartitions.FirstOrDefault(p => p.Id == partition.Partition);
+                            if (localPartition != null) {
+                                localPartition.IsActive = false;
+                                _azurePartitionDao.Update(localPartition);
+                            }
+                        }
+
                         Logger.Debug($"No remote change to items for {partition}");
                     }
                     else if (partialPartition) {
@@ -204,9 +213,11 @@ namespace IAGrim.Backup.Azure.Service {
                         _playerItemDao.Delete(sync.Removed);
 
                         // Update partition
-                        var localPartition = localPartitions.First(p => p.Id == partition.Partition);
-                        localPartition.IsActive = partition.IsActive;
-                        _azurePartitionDao.Update(localPartition);
+                        var localPartition = localPartitions.FirstOrDefault(p => p.Id == partition.Partition);
+                        if (localPartition != null) {
+                            localPartition.IsActive = partition.IsActive && !sync.DisableNow;
+                            _azurePartitionDao.Update(localPartition);
+                        }
 
                         Logger.Debug($"Updated/Merged in {items.Count} items");
                     }
@@ -216,7 +227,7 @@ namespace IAGrim.Backup.Azure.Service {
 
                         _azurePartitionDao.Save(new AzurePartition {
                             Id = partition.Partition,
-                            IsActive = partition.IsActive
+                            IsActive = partition.IsActive && !sync.DisableNow
                         });
 
                         Logger.Debug($"Received {items.Count} new items, and {sync.Removed.Count} removed");
@@ -235,6 +246,7 @@ namespace IAGrim.Backup.Azure.Service {
             }
             catch (Exception ex) {
                 ExceptionReporter.ReportException(ex, "SyncDown");
+                Logger.Warn(ex);
                 return;
             }
         }
