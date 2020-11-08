@@ -93,12 +93,12 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabPageItems);
-            this.tabControl1.Controls.Add(this.tabPageSettings);
+            this.tabControl1.Controls.Add(this.tabPageHelp);
             this.tabControl1.Controls.Add(this.tabPageMods);
             this.tabControl1.Controls.Add(this.tabPageBackups);
             this.tabControl1.Controls.Add(this.tabPageBuddy);
+            this.tabControl1.Controls.Add(this.tabPageSettings);
             this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPageHelp);
             this.tabControl1.Location = new System.Drawing.Point(0, 1);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -160,7 +160,7 @@
             this.tabPageMods.Size = new System.Drawing.Size(1098, 560);
             this.tabPageMods.TabIndex = 4;
             this.tabPageMods.Tag = "iatag_ui_tab_mods";
-            this.tabPageMods.Text = "Database/Mods";
+            this.tabPageMods.Text = "Grim Dawn";
             this.tabPageMods.UseVisualStyleBackColor = true;
             // 
             // modsPanel
@@ -274,13 +274,13 @@
             this.trayContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.exitToolStripMenuItem});
             this.trayContextMenuStrip.Name = "trayContextMenuStrip";
-            this.trayContextMenuStrip.Size = new System.Drawing.Size(93, 26);
+            this.trayContextMenuStrip.Size = new System.Drawing.Size(94, 26);
             this.trayContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.trayContextMenuStrip_Opening);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(93, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
