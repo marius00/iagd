@@ -312,7 +312,11 @@ namespace IAGrim.UI
         }
 
         private void SetTooltipAtmouse(string message) {
-            _tooltipHelper.ShowTooltipAtMouse(message, _cefBrowserHandler.BrowserControl);
+            if (InvokeRequired) {
+                Invoke((MethodInvoker) delegate { SetTooltipAtmouse(message); });
+            } else {
+                _tooltipHelper.ShowTooltipAtMouse(message, _cefBrowserHandler.BrowserControl);
+            }
         }
 
 
