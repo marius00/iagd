@@ -10,7 +10,7 @@ namespace IAGrim.Backup.FileWriter {
 
     public class IAFileExporter : FileExporter {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(IAFileExporter));
-        readonly List<int> _supportedFileVer = new List<int> { 1, 2, 3 };
+        readonly List<int> _supportedFileVer = new List<int> { 1, 2, 3, 4 };
         private readonly string _filename;
 
         public IAFileExporter(string filename) {
@@ -30,7 +30,7 @@ namespace IAGrim.Backup.FileWriter {
             }
 
             if (_supportedFileVer.Max() != fileVer) {
-                Logger.Warn($"Parsing a legacy IA file of version v{fileVer}, the latest is version v{_supportedFileVer.Max()}");
+                Logger.Debug($"Parsing a legacy IA file of version v{fileVer}, the latest is version v{_supportedFileVer.Max()}");
             }
 
             string ReadString() {
@@ -77,6 +77,11 @@ namespace IAGrim.Backup.FileWriter {
                 }
                 if (fileVer >= 3) {
                     pi.AzureHasSynchronized = bytes[pos++] == 1;
+                }
+                if (fileVer >= 4) {
+                    ReadString(); // Reserved
+                    ReadString(); // Reserved
+                    pos++; // Boolean
                 }
 
                 items.Add(pi);
