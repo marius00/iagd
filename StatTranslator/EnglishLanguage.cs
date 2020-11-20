@@ -359,7 +359,7 @@ namespace StatTranslator {
             {"iatag_ui_tab_items", "Items"},
             {"iatag_ui_devtools", "Devtools"},
             {"iatag_ui_misc", "Misc"},
-            {"iatag_ui_socketedonly", "Socketed"},
+            {"iatag_ui_socketedonly", "Has components"},
             {"iatag_ui_duplicatesonly", "Duplicates Only"},
             {"iatag_ui_reflect", "Reflect"},
             {"iatag_ui_block", "Block"},

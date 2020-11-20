@@ -25,7 +25,7 @@ namespace IAGrim.Backup.Azure.Service {
         private readonly IAzurePartitionDao _azurePartitionDao;
         private Limitations _cooldowns;
         private readonly Func<bool> _isDualComputerInstance;
-        private bool _hasSyncedDownOnce = false;
+        private bool _hasSyncedDownOnce = false; // When not using DualPC enabled, IA will only download items once per session. They won't be updating anyways.
         private DateTimeOffset _lastSearchDt = DateTimeOffset.UtcNow;
 
         public event EventHandler OnUploadComplete;

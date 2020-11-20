@@ -10,7 +10,8 @@ namespace IAGrim.Backup.FileWriter {
 
     public class IAFileExporter : FileExporter {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(IAFileExporter));
-        readonly List<int> _supportedFileVer = new List<int> { 1, 2, 3, 4 };
+        private readonly short _currentFileVer = 4;
+        readonly List<int> _supportedFileVer = new List<int> { 1, 2, 3, 4, 5 };
         private readonly string _filename;
 
         public IAFileExporter(string filename) {
@@ -78,7 +79,8 @@ namespace IAGrim.Backup.FileWriter {
                 if (fileVer >= 3) {
                     pi.AzureHasSynchronized = bytes[pos++] == 1;
                 }
-                if (fileVer >= 4) {
+                // File v4 is identical to v3
+                if (fileVer >= 5) {
                     ReadString(); // Reserved
                     ReadString(); // Reserved
                     pos++; // Boolean
@@ -92,7 +94,7 @@ namespace IAGrim.Backup.FileWriter {
 
         public void Write(IList<PlayerItem> items) {
             using (FileStream fs = new FileStream(_filename, FileMode.Create)) {
-                IOHelper.Write(fs, (short)_supportedFileVer.Max());
+                IOHelper.Write(fs, (short)_currentFileVer);
                 IOHelper.Write(fs, (int)items.Count);
 
                 foreach (PlayerItem pi in items) {

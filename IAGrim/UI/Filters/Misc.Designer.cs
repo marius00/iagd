@@ -26,6 +26,7 @@ namespace IAGrim.UI.Filters {
         /// </summary>
         private void InitializeComponent() {
             this.miscPanel = new IAGrim.Theme.CollapseablePanelBox();
+            this.cbDamageConversion = new FirefoxCheckBox();
             this.cbWeaponLifeLeech = new FirefoxCheckBox();
             this.cbEnergyRegen = new FirefoxCheckBox();
             this.cbSummonerSkill = new FirefoxCheckBox();
@@ -45,7 +46,6 @@ namespace IAGrim.UI.Filters {
             this.cbRunspeed = new FirefoxCheckBox();
             this.cbDefense = new FirefoxCheckBox();
             this.exp = new FirefoxCheckBox();
-            this.cbDamageConversion = new FirefoxCheckBox();
             this.miscPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -83,6 +83,22 @@ namespace IAGrim.UI.Filters {
             this.miscPanel.Tag = "iatag_ui_misc";
             this.miscPanel.Text = "Misc";
             this.miscPanel.TextLocation = "8; 5";
+            // 
+            // cbDamageConversion
+            // 
+            this.cbDamageConversion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbDamageConversion.Bold = false;
+            this.cbDamageConversion.EnabledCalc = true;
+            this.cbDamageConversion.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbDamageConversion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbDamageConversion.Location = new System.Drawing.Point(4, 668);
+            this.cbDamageConversion.Name = "cbDamageConversion";
+            this.cbDamageConversion.Size = new System.Drawing.Size(272, 27);
+            this.cbDamageConversion.TabIndex = 19;
+            this.cbDamageConversion.Tag = "iatag_ui_weapon_damage_conversion";
+            this.cbDamageConversion.Text = "Damage Conversion";
+            this.cbDamageConversion.UseVisualStyleBackColor = true;
             // 
             // cbWeaponLifeLeech
             // 
@@ -177,7 +193,7 @@ namespace IAGrim.UI.Filters {
             this.cbSocketed.Size = new System.Drawing.Size(272, 27);
             this.cbSocketed.TabIndex = 13;
             this.cbSocketed.Tag = "iatag_ui_socketedonly";
-            this.cbSocketed.Text = "Socketed";
+            this.cbSocketed.Text = "With components";
             this.cbSocketed.UseVisualStyleBackColor = true;
             // 
             // cbDuplicates
@@ -375,22 +391,6 @@ namespace IAGrim.UI.Filters {
             this.exp.TabIndex = 3;
             this.exp.Tag = "iatag_ui_experience";
             this.exp.Text = "Experience";
-            // 
-            // cbDamageConversion
-            // 
-            this.cbDamageConversion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbDamageConversion.Bold = false;
-            this.cbDamageConversion.EnabledCalc = true;
-            this.cbDamageConversion.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cbDamageConversion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbDamageConversion.Location = new System.Drawing.Point(4, 668);
-            this.cbDamageConversion.Name = "cbDamageConversion";
-            this.cbDamageConversion.Size = new System.Drawing.Size(272, 27);
-            this.cbDamageConversion.TabIndex = 19;
-            this.cbDamageConversion.Tag = "iatag_ui_weapon_damage_conversion";
-            this.cbDamageConversion.Text = "Damage Conversion";
-            this.cbDamageConversion.UseVisualStyleBackColor = true;
             // 
             // Misc
             // 
