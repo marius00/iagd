@@ -13,7 +13,7 @@ const buddyIcon = require('./img/buddy.png');
 const recipeIcon = require('./img/recipe.png');
 const cloudErrIcon = require('./img/cloud-err.png');
 const cloudOkIcon = require('./img/cloud-ok.png');
-const purchaseableItem = require('./img/gold-coins-sm.png');
+const purchasableItem = require('./img/gold-coins-sm.png');
 
 interface Props {
   item: IItem;
@@ -22,7 +22,6 @@ interface Props {
 }
 
 class Item extends React.PureComponent<Props, object> {
-
   openItemSite() {
     let url = `http://www.grimtools.com/db/search?query=${this.props.item.name}`;
     if (this.props.item.numItems > 50) {
@@ -73,7 +72,7 @@ class Item extends React.PureComponent<Props, object> {
         <span>
           <img
             className="cursor-help"
-            src={purchaseableItem}
+            src={purchasableItem}
             data-tip={translate('item.augmentPurchasable', item.extras)}
           />
 
