@@ -6,6 +6,7 @@ using IAGrim.UI.Misc.CEF.Dto;
 
 namespace IAGrim.UI.Misc.CEF {
     // https://github.com/cefsharp/CefSharp/blob/master/CefSharp.Example/RequestHandler.cs
+    // Overrides links inside the embedded webview.
     public class CefRequestHandler : IRequestHandler {
         public event EventHandler TransferSingleRequested;
         public event EventHandler TransferAllRequested;

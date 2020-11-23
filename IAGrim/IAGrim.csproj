@@ -227,6 +227,7 @@
     <Compile Include="UI\Filters\Resistances.Designer.cs">
       <DependentUpon>Resistances.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Misc\CEF\JavascriptIntegration.cs" />
     <Compile Include="UI\Misc\CEF\UserFeedback.cs" />
     <Compile Include="UI\Misc\CEF\UserFeedbackService.cs" />
     <Compile Include="Utilities\AutomaticUpdateChecker.cs" />

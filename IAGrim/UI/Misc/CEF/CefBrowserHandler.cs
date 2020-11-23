@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Windows.Forms;
 using CefSharp;
 using CefSharp.WinForms;
@@ -8,6 +9,7 @@ using IAGrim.Backup.Azure.CefSharp;
 using IAGrim.Database.Model;
 using IAGrim.Utilities;
 using log4net;
+using log4net.Repository.Hierarchy;
 using NHibernate;
 
 namespace IAGrim.UI.Misc.CEF {
@@ -110,6 +112,23 @@ namespace IAGrim.UI.Misc.CEF {
             }
         }
 
+        private string GetSiteUri() {
+#if DEBUG
+            var client = new WebClient();
+            try {
+                Logger.Debug("Checking if NodeJS is running...");
+                client.DownloadString("http://localhost:3000/");
+                Logger.Debug("NodeJS running");
+                return "http://localhost:3000/";
+            }
+            catch (System.Net.WebException) {
+                Logger.Debug("NodeJS not running, defaulting to standard view");
+            }
+#endif
+            return GlobalPaths.ItemsHtmlFile;
+        }
+
+
         public void ShowMessage(string message, UserFeedbackLevel level, string helpUrl = null) {
             string levelLowercased = level.ToString().ToLowerInvariant();
             var m = message.Replace("\n", "\\n").Replace("'", "\\'");
@@ -133,7 +152,7 @@ namespace IAGrim.UI.Misc.CEF {
         }
 
 
-        public void InitializeChromium(object bindeable, EventHandler browserIsBrowserInitializedChanged) {
+        public void InitializeChromium(object legacyBindeable, object bindable, EventHandler browserIsBrowserInitializedChanged) {
             try {
                 Logger.Info("Creating Chromium instance..");
 
@@ -144,9 +163,11 @@ namespace IAGrim.UI.Misc.CEF {
                 // TODO: Read and analyze https://github.com/cefsharp/CefSharp/issues/2246 -- Is this the correct way to do things in the future?
                 CefSharpSettings.LegacyJavascriptBindingEnabled = true;
                 CefSharpSettings.WcfEnabled = true;
-                _browser = new ChromiumWebBrowser(GlobalPaths.ItemsHtmlFile);
+                _browser = new ChromiumWebBrowser(GetSiteUri());
 
-                _browser.JavascriptObjectRepository.Register("data", bindeable, isAsync: false, options: BindingOptions.DefaultBinder);
+                // TODO: browser.JavascriptObjectRepository.ObjectBoundInJavascript += (sender, e) =>
+                _browser.JavascriptObjectRepository.Register("data", legacyBindeable, isAsync: false, options: BindingOptions.DefaultBinder);
+                _browser.JavascriptObjectRepository.Register("core", bindable, isAsync: true, options: BindingOptions.DefaultBinder);
                 _browser.IsBrowserInitializedChanged += browserIsBrowserInitializedChanged;
 
                 var requestHandler = new CefRequestHandler();

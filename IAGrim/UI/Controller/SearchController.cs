@@ -33,7 +33,8 @@ namespace IAGrim.UI.Controller
 
 
         public CefBrowserHandler Browser;
-        public readonly JSWrapper JsBind = new JSWrapper { IsTimeToShowNag = -1 };
+        public readonly JSWrapper LegacyJsBind = new JSWrapper { IsTimeToShowNag = -1 };
+        public readonly JavascriptIntegration JsIntegration = new JavascriptIntegration();
         public event EventHandler OnSearch;
 
         public SearchController(
@@ -56,12 +57,12 @@ namespace IAGrim.UI.Controller
             // Just make sure it writes .css/.html files before displaying anything to the browser
             // 
             ItemHtmlWriter.ToJsonSerializeable(new List<PlayerHeldItem>()); // TODO: is this not a NOOP?
-            JsBind.OnRequestItems += JsBind_OnRequestItems;
+            LegacyJsBind.OnRequestItems += JsBind_OnRequestItems;
         }
 
         private void JsBind_OnRequestItems(object sender, EventArgs e)
         {
-            if (!JsBind.ItemSourceExhausted)
+            if (!LegacyJsBind.ItemSourceExhausted)
             {
                 if (ApplyItems())
                 {
@@ -74,7 +75,7 @@ namespace IAGrim.UI.Controller
 
         public string Search(ItemSearchRequest query, bool duplicatesOnly, bool includeBuddyItems, bool orderByLevel)
         {
-            JsBind.ItemSourceExhausted = false;
+            LegacyJsBind.ItemSourceExhausted = false;
 
             // Signal that we are loading items
             Browser.ShowLoadingAnimation();
@@ -87,8 +88,8 @@ namespace IAGrim.UI.Controller
             }
             else
             {
-                JsBind.UpdateItems(new List<JsonItem>());
-                JsBind.UpdateCollectionItems(_itemCollectionRepo.GetItemCollection());
+                LegacyJsBind.UpdateItems(new List<JsonItem>());
+                LegacyJsBind.UpdateCollectionItems(_itemCollectionRepo.GetItemCollection());
                 Browser.RefreshItems();
             }
 
@@ -100,15 +101,15 @@ namespace IAGrim.UI.Controller
             var items = _itemPaginatorService.Fetch();
             if (items.Count == 0)
             {
-                JsBind.ItemSourceExhausted = true;
+                LegacyJsBind.ItemSourceExhausted = true;
                 return false;
             }
 
             _itemStatService.ApplyStats(items);
 
             var convertedItems = ItemHtmlWriter.ToJsonSerializeable(items);
-            JsBind.UpdateItems(convertedItems);
-            JsBind.UpdateCollectionItems(_itemCollectionRepo.GetItemCollection());
+            LegacyJsBind.UpdateItems(convertedItems);
+            LegacyJsBind.UpdateCollectionItems(_itemCollectionRepo.GetItemCollection());
             return true;
         }
 
@@ -153,7 +154,7 @@ namespace IAGrim.UI.Controller
             }
 
             _itemPaginatorService.Update(items, orderByLevel);
-            JsBind.ItemSourceExhausted = items.Count == 0;
+            LegacyJsBind.ItemSourceExhausted = items.Count == 0;
 
             return message;
         }

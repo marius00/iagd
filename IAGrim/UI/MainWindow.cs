@@ -379,10 +379,10 @@ namespace IAGrim.UI
                 _itemCollectionRepo
             );
 
-            searchController.JsBind.SetItemSetAssociations(_databaseItemDao.GetItemSetAssociations());
-            _cefBrowserHandler.InitializeChromium(searchController.JsBind, Browser_IsBrowserInitializedChanged);
+            searchController.LegacyJsBind.SetItemSetAssociations(_databaseItemDao.GetItemSetAssociations());
+            _cefBrowserHandler.InitializeChromium(searchController.LegacyJsBind, searchController.JsIntegration, Browser_IsBrowserInitializedChanged);
             searchController.Browser = _cefBrowserHandler;
-            searchController.JsBind.OnClipboard += SetItemsClipboard;
+            searchController.LegacyJsBind.OnClipboard += SetItemsClipboard;
 
 
             var cacher = new TransferStashServiceCache(_databaseItemDao);
