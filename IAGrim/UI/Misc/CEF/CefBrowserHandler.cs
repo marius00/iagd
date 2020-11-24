@@ -35,6 +35,7 @@ namespace IAGrim.UI.Misc.CEF {
         ~CefBrowserHandler() {
             Dispose();
         }
+
         public void Dispose() {
             try {
                 lock (_lockObj) {
@@ -67,30 +68,6 @@ namespace IAGrim.UI.Misc.CEF {
 
         }
 
-        /// <summary>
-        /// Attempt to execute javascript code with 100ms retries until the browser is ready.
-        /// Compensates for C# executing .js code before the page is fully loaded.
-        /// Eg, the browser is loaded but the page is not.
-        /// </summary>
-        /// <param name="mustExist"></param>
-        /// <param name="script"></param>
-        private void SafeExecute(string mustExist, string script) {
-            string js = @"
-            function safeExecute(mustExist, func) {
-                if (eval('typeof ' + mustExist) === 'undefined') {
-                    setTimeout(() => safeExecute(mustExist, func), 100);
-                } else {
-                    func();
-                }
-            }
-";
-
-            js += "\n safeExecute({mustExist}, () => { {script}; });"
-                .Replace("{mustExist}", mustExist)
-                .Replace("{script}", script);
-            
-            BrowserControl.ExecuteScriptAsync(js);
-        }
 
         public void SetItems(List<JsonItem> items) {
             if (BrowserControl.CanExecuteJavascriptInMainFrame) {
@@ -101,11 +78,9 @@ namespace IAGrim.UI.Misc.CEF {
             }
         }
 
-        // TODO: Redo
-        public void AddItems() {
+        public void AddItems(List<JsonItem> items) {
             if (BrowserControl.CanExecuteJavascriptInMainFrame) {
-                // TODO: This may not be available yet, better the .js ask us for data, and then we deliver it.
-                BrowserControl.ExecuteScriptAsync($"addItemsFromGlobalItems();");
+                BrowserControl.ExecuteScriptAsync("window.addItems", JsonConvert.SerializeObject(items, _settings));
             }
             else {
                 Logger.Warn("Attempted to update items but CEF not yet initialized.");
@@ -166,8 +141,8 @@ namespace IAGrim.UI.Misc.CEF {
                 BrowserControl = new ChromiumWebBrowser(GetSiteUri());
 
                 // TODO: browser.JavascriptObjectRepository.ObjectBoundInJavascript += (sender, e) =>
-                BrowserControl.JavascriptObjectRepository.Register("data", legacyBindeable, isAsync: false, options: BindingOptions.DefaultBinder);
-                BrowserControl.JavascriptObjectRepository.Register("core", bindable, isAsync: true, options: BindingOptions.DefaultBinder);
+                //BrowserControl.JavascriptObjectRepository.Register("data", legacyBindeable, isAsync: false, options: BindingOptions.DefaultBinder);
+                BrowserControl.JavascriptObjectRepository.Register("core", bindable, isAsync: false, options: BindingOptions.DefaultBinder);
                 BrowserControl.IsBrowserInitializedChanged += browserIsBrowserInitializedChanged;
 
                 var requestHandler = new CefRequestHandler();

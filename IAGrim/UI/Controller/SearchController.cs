@@ -33,41 +33,35 @@ namespace IAGrim.UI.Controller
 
 
         public CefBrowserHandler Browser;
-        public readonly JSWrapper LegacyJsBind = new JSWrapper { IsTimeToShowNag = -1 };
+        public readonly JSWrapper LegacyJsBind = new JSWrapper();
         public readonly JavascriptIntegration JsIntegration = new JavascriptIntegration();
         public event EventHandler OnSearch;
 
         public SearchController(
             IDatabaseItemDao databaseItemDao,
             IPlayerItemDao playerItemDao,
-            IDatabaseItemStatDao databaseItemStatDao,
-            IItemSkillDao itemSkillDao,
+            ItemStatService itemStatService,
             IBuddyItemDao buddyItemDao,
-            AugmentationItemRepo augmentationItemRepo, SettingsService settings, IItemCollectionDao itemCollectionRepo)
-        {
+            AugmentationItemRepo augmentationItemRepo,
+            SettingsService settings, 
+            IItemCollectionDao itemCollectionRepo) {
             _dbItemDao = databaseItemDao;
             _playerItemDao = playerItemDao;
-            _itemStatService = new ItemStatService(databaseItemStatDao, itemSkillDao, settings);
+            _itemStatService = itemStatService;
             _itemPaginatorService = new ItemPaginatorService(TakeSize);
             _buddyItemDao = buddyItemDao;
             _augmentationItemRepo = augmentationItemRepo;
             _settings = settings;
             _itemCollectionRepo = itemCollectionRepo;
 
-            // Just make sure it writes .css/.html files before displaying anything to the browser
-            // 
-            ItemHtmlWriter.ToJsonSerializeable(new List<PlayerHeldItem>()); // TODO: is this not a NOOP?
             LegacyJsBind.OnRequestItems += JsBind_OnRequestItems;
         }
 
+        // TODO: Redo! Infiscroll
         private void JsBind_OnRequestItems(object sender, EventArgs e)
         {
-            if (!LegacyJsBind.ItemSourceExhausted)
-            {
-                if (ApplyItems())
-                {
-                    Browser.AddItems();
-                }
+            if (!LegacyJsBind.ItemSourceExhausted) {
+                ApplyItems(true);
             }
 
             OnSearch?.Invoke(this, null);
@@ -82,7 +76,7 @@ namespace IAGrim.UI.Controller
 
             var message = Search_(query, duplicatesOnly, includeBuddyItems, orderByLevel);
 
-            if (!ApplyItems()) {
+            if (!ApplyItems(false)) {
                 LegacyJsBind.UpdateCollectionItems(_itemCollectionRepo.GetItemCollection());
                 Browser.SetItems(new List<JsonItem>());
             }
@@ -90,7 +84,7 @@ namespace IAGrim.UI.Controller
             return message;
         }
 
-        private bool ApplyItems()
+        private bool ApplyItems(bool append)
         {
             var items = _itemPaginatorService.Fetch();
             if (items.Count == 0) {
@@ -101,7 +95,11 @@ namespace IAGrim.UI.Controller
             _itemStatService.ApplyStats(items);
 
             var convertedItems = ItemHtmlWriter.ToJsonSerializeable(items);
-            Browser.SetItems(convertedItems);
+            if (append)
+                Browser.AddItems(convertedItems);
+            else
+                Browser.SetItems(convertedItems);
+
             LegacyJsBind.UpdateCollectionItems(_itemCollectionRepo.GetItemCollection());
             return true;
         }

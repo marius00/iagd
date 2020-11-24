@@ -29,6 +29,15 @@ class App extends React.PureComponent<{}, object> {
         items: items
       });
     };
+    // @ts-ignore: setItems doesn't exist on window
+    window.addItems = (data: any) => {
+      const items = typeof data === 'string' ? JSON.parse(data) : data;
+
+      this.setState({
+        isLoading: false,
+        items: {...this.state.items, items}
+      });
+    };
 
     // @ts-ignore: setIsLoading doesn't exist on window
     window.setIsLoading = (isLoading: boolean) => {

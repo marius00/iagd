@@ -371,8 +371,7 @@ namespace IAGrim.UI
             SearchController searchController = new SearchController(
                 _databaseItemDao,
                 _playerItemDao,
-                _databaseItemStatDao,
-                _itemSkillDao,
+                new ItemStatService(_databaseItemStatDao, _itemSkillDao, _settingsService),
                 _buddyItemDao,
                 _augmentationItemRepo,
                 _settingsService,

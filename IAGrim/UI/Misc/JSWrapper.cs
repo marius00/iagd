@@ -91,8 +91,6 @@ namespace IAGrim.UI.Misc {
         public string CollectionItems { get; set; }
         public bool ItemSourceExhausted { get; set; }
 
-        public int IsTimeToShowNag { get; set; }
-
         public event EventHandler OnClipboard;
         public event EventHandler OnRequestItems;
 
