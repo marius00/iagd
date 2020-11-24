@@ -3,7 +3,11 @@ import './App.css';
 import IItem from './interfaces/IItem';
 import MockItemsButton from './containers/MockItemsButton';
 import { isEmbedded } from './integration/integration';
-import ItemContainer from './containers/ItemContainer'
+import ItemContainer from './containers/ItemContainer';
+import { store } from 'react-notifications-component';
+import ReactNotification from 'react-notifications-component';
+import 'react-notifications-component/dist/theme.css';
+
 
 export interface ApplicationState {
   items: IItem[];
@@ -12,6 +16,13 @@ export interface ApplicationState {
 
 const StoreContext = React.createContext({items: [], isLoading: true} as ApplicationState);
 
+// TODO: Message support
+// TODO: Collection tab
+// TODO: Tabs [and maybe improve discord link, and merge in help tab?]
+// TODO: Dark mode
+// TODO: Tooltips broken inside IA?
+// TODO: Prevent multiple clicks on transfer? or non-issue?
+// TODO: Crafting support??
 
 class App extends React.PureComponent<{}, object> {
   state = {
@@ -20,6 +31,7 @@ class App extends React.PureComponent<{}, object> {
   } as ApplicationState;
 
   componentDidMount() {
+    // Set the items to show
     // @ts-ignore: setItems doesn't exist on window
     window.setItems = (data: any) => {
       const items = typeof data === 'string' ? JSON.parse(data) : data;
@@ -30,6 +42,7 @@ class App extends React.PureComponent<{}, object> {
       });
     };
 
+    // Add more items (typically scrolling)
     // @ts-ignore: setItems doesn't exist on window
     window.addItems = (data: any) => {
       const items = typeof data === 'string' ? JSON.parse(data) : data;
@@ -40,11 +53,19 @@ class App extends React.PureComponent<{}, object> {
       });
     };
 
+    // Start showing the loading spinner
     // @ts-ignore: setIsLoading doesn't exist on window
     window.setIsLoading = (isLoading: boolean) => {
       this.setState({
         isLoading: isLoading
       });
+    };
+
+    // Show a notification message such as "Item transferred" or "Too close to stash"
+    // @ts-ignore: showMessage doesn't exist on window
+    window.showMessage = (input: string) => {
+      let s = JSON.parse(input);
+      ShowMessage(s.message, s.type);
     };
   }
 
@@ -60,7 +81,6 @@ class App extends React.PureComponent<{}, object> {
     if (item !== undefined) {
       item.numItems -= numItems;
       this.setState({items: items});
-      console.log(item);
     } else {
       console.warn("Attempted to reduce item count, but item could not be found", url);
     }
@@ -69,6 +89,7 @@ class App extends React.PureComponent<{}, object> {
   render() {
     return (
       <div className="App">
+        <ReactNotification />
         <StoreContext.Provider value={this.state}>
           <header className="">
           </header>
@@ -81,5 +102,21 @@ class App extends React.PureComponent<{}, object> {
     );
   }
 };
+
+function ShowMessage(message: string, type: 'success' | 'danger' | 'info' | 'default' | 'warning') {
+  store.addNotification({
+    title: type,
+    message: message,
+    type: type,
+    insert: "top",
+    container: "bottom-center",
+    animationIn: ["animate__animated", "animate__fadeIn"],
+    animationOut: ["animate__animated", "animate__fadeOut"],
+    dismiss: {
+      duration: 2500,
+      onScreen: true
+    }
+  });
+}
 
 export default App;

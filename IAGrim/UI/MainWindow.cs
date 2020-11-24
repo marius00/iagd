@@ -380,7 +380,7 @@ namespace IAGrim.UI
             searchController.LegacyJsBind.SetItemSetAssociations(_databaseItemDao.GetItemSetAssociations());
             _cefBrowserHandler.InitializeChromium(searchController.LegacyJsBind, searchController.JsIntegration, Browser_IsBrowserInitializedChanged);
             searchController.Browser = _cefBrowserHandler;
-            searchController.LegacyJsBind.OnClipboard += SetItemsClipboard;
+            searchController.JsIntegration.OnClipboard += SetItemsClipboard;
 
 
             var cacher = new TransferStashServiceCache(_databaseItemDao);

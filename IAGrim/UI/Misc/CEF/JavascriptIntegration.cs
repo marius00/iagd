@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using IAGrim.Utilities;
 using Newtonsoft.Json;
 
+// Methods are called from Javascript, Resharper cannot detect usage.
+// ReSharper disable UnusedMember.Global
+
 namespace IAGrim.UI.Misc.CEF {
     class JavascriptIntegration {
         private readonly JsonSerializerSettings _settings = new JsonSerializerSettings {
@@ -16,6 +19,7 @@ namespace IAGrim.UI.Misc.CEF {
         };
 
         public event EventHandler ItemTransferEvent;
+        public event EventHandler OnClipboard;
 
         public string TransferItem(object[] identifier, int numItems) {
             var args = new StashTransferEventArgs {
@@ -73,6 +77,13 @@ namespace IAGrim.UI.Misc.CEF {
 
             // Attempting to return a Dictionary<..> object will only work if this object is bound with "async: true"
             return JsonConvert.SerializeObject(translations, _settings);
+        }
+
+
+        public void SetClipboard(string data) {
+            if (!string.IsNullOrWhiteSpace(data)) {
+                OnClipboard?.Invoke(this, new ClipboardEventArg { Text = data });
+            }
         }
     }
 }

@@ -35,19 +35,9 @@ namespace IAGrim.UI.Misc {
             this.CollectionItems = JsonConvert.SerializeObject(items, _settings);
         }
 
-
-        public void SetClipboard(string data) {
-            if (!string.IsNullOrWhiteSpace(data)) {
-                if (OnClipboard != null)
-                    OnClipboard(this, new ClipboardEventArg { Text = data });
-            }
-        }
-
-
         public string CollectionItems { get; set; }
         public bool ItemSourceExhausted { get; set; }
 
-        public event EventHandler OnClipboard;
         public event EventHandler OnRequestItems;
 
         public void RequestMoreItems() {

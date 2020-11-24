@@ -14,17 +14,14 @@ using Newtonsoft.Json;
 namespace IAGrim.UI.Misc.CEF {
     public class CefBrowserHandler : IDisposable, ICefBackupAuthentication, IUserFeedbackHandler {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(CefBrowserHandler));
+        public ChromiumWebBrowser BrowserControl { get; private set; }
+        private readonly object _lockObj = new object();
         private readonly JsonSerializerSettings _settings = new JsonSerializerSettings {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
             Culture = System.Globalization.CultureInfo.InvariantCulture,
             ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver(),
             NullValueHandling = NullValueHandling.Ignore
         };
-        private const string Dispatch = "data.globalStore.dispatch";
-
-        public ChromiumWebBrowser BrowserControl { get; private set; }
-
-        private readonly object _lockObj = new object();
 
         ~CefBrowserHandler() {
             Dispose();
@@ -102,13 +99,14 @@ namespace IAGrim.UI.Misc.CEF {
             string levelLowercased = level.ToString().ToLowerInvariant();
             var m = message.Replace("\n", "\\n").Replace("'", "\\'");
             if (!string.IsNullOrEmpty(message)) {
+
                 if (BrowserControl.CanExecuteJavascriptInMainFrame) {
-                    if (!string.IsNullOrEmpty(helpUrl)) {
-                        BrowserControl.ExecuteScriptAsync($"{Dispatch}(data.showMessage('{m}', '{levelLowercased}', '{helpUrl}'));");
-                    }
-                    else {
-                        BrowserControl.ExecuteScriptAsync($"{Dispatch}(data.showMessage('{m}', '{levelLowercased}', undefined));");
-                    }
+                    var ret = new Dictionary<string, string> {
+                        {"message", m},
+                        {"type", levelLowercased}
+                    };
+
+                    BrowserControl.ExecuteScriptAsync("window.showMessage", JsonConvert.SerializeObject(ret, _settings));
                 }
                 else {
                     Logger.Warn($"Attempted to display message \"{message}\" but browser is not yet initialized");

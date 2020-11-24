@@ -5,7 +5,7 @@ import './ItemContainer.css';
 import ReactTooltip from 'react-tooltip';
 import Spinner from '../components/Spinner';
 import translate from '../translations/EmbeddedTranslator';
-import { transferItem } from '../integration/integration';
+import { setClipboard, transferItem } from '../integration/integration';
 
 interface Props {
   items: IItem[];
@@ -32,11 +32,6 @@ class ItemContainer extends React.PureComponent<Props, object> {
     setTimeout(() => ReactTooltip.rebuild(), 1250); // TODO: This seems like a stupid way to solve tooltip issues.
   }
 
-
-  copyToClipboard(stuff: string) {
-    // TODO: REDO, move to integration
-  }
-
   getClipboardContent() {
     const colors: {[index: string]:string} = { Epic: 'DarkOrchid', Blue: 'RoyalBlue', Green: 'SeaGreen', Unknown: '', Yellow: 'Yellow' };
     const entries = this.props.items.map(item => {
@@ -56,7 +51,7 @@ class ItemContainer extends React.PureComponent<Props, object> {
     else if (items.length > 0) {
       return (
         <div className="items">
-          <span className="clipboard-link" onClick={() => this.copyToClipboard(this.getClipboardContent())}>
+          <span className="clipboard-link" onClick={() => setClipboard(this.getClipboardContent())}>
             {translate('app.copyToClipboard')}
           </span>
 

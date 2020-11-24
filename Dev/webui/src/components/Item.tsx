@@ -25,7 +25,7 @@ class Item extends React.PureComponent<Props, object> {
   openItemSite() {
     let url = `http://www.grimtools.com/db/search?query=${this.props.item.name}`;
     if (this.props.item.numItems > 50) {
-      console.log('Unknown item, redirecting to help page.');
+      console.warn('Unknown item, redirecting to help page.');
       window.open('http://grimdawn.dreamcrash.org/ia/help.html?q=UnknownItem', "_blank");
     } else if (isEmbedded) {
       document.location.href = url;
