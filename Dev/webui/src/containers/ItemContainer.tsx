@@ -3,7 +3,7 @@ import Item from '../components/Item';
 import IItem from '../interfaces/IItem';
 import './ItemContainer.css';
 import ReactTooltip from 'react-tooltip';
-import { isEmbedded } from '../integration/integration';
+import { isEmbedded, transferItem } from '../integration/integration';
 import Spinner from '../components/Spinner';
 import translate from '../translations/EmbeddedTranslator';
 
@@ -19,21 +19,11 @@ class ItemContainer extends React.PureComponent<Props, object> {
   }
 
   transferSingle(url: object[]) {
-    const id = url.join(';');
-    if (isEmbedded) {
-      document.location.href = `transfer://single/${id}`; // TODO: Redo
-    } else {
-      console.log('Transfer Single', id);
-    }
+    transferItem(url, 1);
   }
 
   transferAll(url: object[]) {
-    const id = url.join(';');
-    if (isEmbedded) {
-      document.location.href = `transfer://all/${id}`; // TODO: Redo
-    } else {
-      console.log('Transfer All', id);
-    }
+    transferItem(url, 9999);
   }
 
   copyToClipboard(stuff: string) {

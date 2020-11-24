@@ -2,14 +2,11 @@
 using System.Security.Cryptography.X509Certificates;
 using CefSharp;
 using IAGrim.Backup.Azure.CefSharp.Events;
-using IAGrim.UI.Misc.CEF.Dto;
 
 namespace IAGrim.UI.Misc.CEF {
     // https://github.com/cefsharp/CefSharp/blob/master/CefSharp.Example/RequestHandler.cs
     // Overrides links inside the embedded webview.
     public class CefRequestHandler : IRequestHandler {
-        public event EventHandler TransferSingleRequested;
-        public event EventHandler TransferAllRequested;
         public event EventHandler OnAuthentication;
 
         private static string ExtractToken(string url) {

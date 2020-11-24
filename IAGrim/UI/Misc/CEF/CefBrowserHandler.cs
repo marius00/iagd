@@ -6,13 +6,10 @@ using System.Windows.Forms;
 using CefSharp;
 using CefSharp.WinForms;
 using IAGrim.Backup.Azure.CefSharp;
-using IAGrim.Database.Model;
 using IAGrim.UI.Controller.dto;
 using IAGrim.Utilities;
 using log4net;
-using log4net.Repository.Hierarchy;
 using Newtonsoft.Json;
-using NHibernate;
 
 namespace IAGrim.UI.Misc.CEF {
     public class CefBrowserHandler : IDisposable, ICefBackupAuthentication, IUserFeedbackHandler {
@@ -24,9 +21,6 @@ namespace IAGrim.UI.Misc.CEF {
             NullValueHandling = NullValueHandling.Ignore
         };
         private const string Dispatch = "data.globalStore.dispatch";
-
-        public event EventHandler TransferSingleRequested;
-        public event EventHandler TransferAllRequested;
 
         public ChromiumWebBrowser BrowserControl { get; private set; }
 
@@ -141,13 +135,11 @@ namespace IAGrim.UI.Misc.CEF {
                 BrowserControl = new ChromiumWebBrowser(GetSiteUri());
 
                 // TODO: browser.JavascriptObjectRepository.ObjectBoundInJavascript += (sender, e) =>
-                //BrowserControl.JavascriptObjectRepository.Register("data", legacyBindeable, isAsync: false, options: BindingOptions.DefaultBinder);
+                BrowserControl.JavascriptObjectRepository.Register("data", legacyBindeable, isAsync: false, options: BindingOptions.DefaultBinder);
                 BrowserControl.JavascriptObjectRepository.Register("core", bindable, isAsync: false, options: BindingOptions.DefaultBinder);
                 BrowserControl.IsBrowserInitializedChanged += browserIsBrowserInitializedChanged;
 
                 var requestHandler = new CefRequestHandler();
-                requestHandler.TransferSingleRequested += (sender, args) => this.TransferSingleRequested?.Invoke(sender, args);
-                requestHandler.TransferAllRequested += (sender, args) => this.TransferAllRequested?.Invoke(sender, args);
                 requestHandler.OnAuthentication += (sender, args) => OnSuccess?.Invoke(sender, args);
                 BrowserControl.RequestHandler = requestHandler;
                 

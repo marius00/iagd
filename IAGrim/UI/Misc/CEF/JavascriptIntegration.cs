@@ -15,6 +15,25 @@ namespace IAGrim.UI.Misc.CEF {
             NullValueHandling = NullValueHandling.Ignore
         };
 
+        public event EventHandler ItemTransferEvent;
+
+        public string TransferItem(object[] identifier, int numItems) {
+            var args = new StashTransferEventArgs {
+                Count = numItems,
+                InternalId = identifier
+            };
+
+            ItemTransferEvent?.Invoke(this, args);
+
+            // Frontend expects a reply on success/failure
+            var ret = new Dictionary<string, object> {
+                {"success", args.IsSuccessful},
+                {"numTransferred", args.NumTransferred}
+            };
+
+            return JsonConvert.SerializeObject(ret, _settings);
+        }
+
         public string RequestStats() {
             return "stuff";
         }

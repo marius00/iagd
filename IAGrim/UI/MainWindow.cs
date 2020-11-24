@@ -17,7 +17,6 @@ using IAGrim.Services.MessageProcessor;
 using IAGrim.UI.Controller;
 using IAGrim.UI.Misc;
 using IAGrim.UI.Misc.CEF;
-using IAGrim.UI.Misc.CEF.Dto;
 using IAGrim.UI.Tabs;
 using IAGrim.Utilities;
 using IAGrim.Utilities.Cloud;
@@ -569,13 +568,11 @@ namespace IAGrim.UI
             }
 
 
-            _cefBrowserHandler.TransferSingleRequested += TransferSingleItem;
-            _cefBrowserHandler.TransferAllRequested += TransferAllItems;
+            searchController.JsIntegration.ItemTransferEvent += TransferItem;
             new WindowSizeManager(this, _settingsService);
 
 
             // Suggest translation packs if available
-            
             if (!string.IsNullOrEmpty(_settingsService.GetLocal().LocalizationFile) && !_settingsService.GetLocal().HasSuggestedLanguageChange) {
                 if (LocalizationLoader.HasSupportedTranslations(_grimDawnDetector.GetGrimLocations())) {
                     Logger.Debug("A new language pack has been detected, informing end user..");
@@ -588,32 +585,10 @@ namespace IAGrim.UI
             Logger.Debug("UI initialization complete");
         }
 
-        void TransferSingleItem(object ignored, EventArgs args) {
-            ItemTransferEvent searchEvent = args as ItemTransferEvent;
-            StashTransferEventArgs transferArgs = new StashTransferEventArgs {
-                Count = 1,
-                InternalId = searchEvent.Request.Split(';')
-            };
-
-            _transferController.TransferItem(transferArgs);
+        void TransferItem(object ignored, EventArgs args) {
+            _transferController.TransferItem(args as StashTransferEventArgs);
         }
 
-        void TransferAllItems(object ignored, EventArgs args) {
-            if (InvokeRequired) {
-                Invoke((MethodInvoker)delegate {
-                    this.TransferAllItems(ignored, args);
-                });
-            }
-            else {
-                ItemTransferEvent searchEvent = args as ItemTransferEvent;
-                StashTransferEventArgs transferArgs = new StashTransferEventArgs {
-                    Count = int.MaxValue,
-                    InternalId = searchEvent.Request.Split(';')
-                };
-
-                _transferController.TransferItem(transferArgs);
-            }
-        }
 
         private void StartInjector() {
             // Start looking for GD processes!

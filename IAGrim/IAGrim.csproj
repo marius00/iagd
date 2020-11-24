@@ -399,10 +399,8 @@
     <Compile Include="Theme\ScrollPanelMessageFilter.cs" />
     <Compile Include="Theme\Theme.cs" />
     <Compile Include="UI\Misc\CEF\CefBackupAuthentication.cs" />
-    <Compile Include="UI\Misc\CEF\Dto\ItemTransferEvent.cs" />
     <Compile Include="UI\Misc\CEF\IUserFeedbackHandler.cs" />
     <Compile Include="UI\Misc\CEF\UserFeedbackLevel.cs" />
-    <Compile Include="UI\Misc\HtmlTranslation.cs" />
     <Compile Include="UI\Misc\TextboxHoverFocusHighlight.cs" />
     <Compile Include="UI\Misc\WindowSizeManager.cs" />
     <Compile Include="UI\Model\ListViewEntry.cs" />

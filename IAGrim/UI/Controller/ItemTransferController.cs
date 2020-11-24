@@ -174,8 +174,9 @@ namespace IAGrim.UI.Controller {
                     Logger.Debug($"Found {items.Count} items to transfer");
                     var result = TransferItems(file, items, (int) args.Count);
 
-                    Logger.InfoFormat("Successfully deposited {0} out of {1} items", result.NumItemsTransferred,
-                        result.NumItemsRequested);
+                    Logger.InfoFormat("Successfully deposited {0} out of {1} items", result.NumItemsTransferred, result.NumItemsRequested);
+                    args.NumTransferred = result.NumItemsTransferred;
+                    args.IsSuccessful = true;
                     try {
                         var message = string.Format(RuntimeSettings.Language.GetTag("iatag_stash3_success"),
                             result.NumItemsTransferred, result.NumItemsRequested);
