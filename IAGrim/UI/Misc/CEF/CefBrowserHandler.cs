@@ -7,39 +7,43 @@ using CefSharp;
 using CefSharp.WinForms;
 using IAGrim.Backup.Azure.CefSharp;
 using IAGrim.Database.Model;
+using IAGrim.UI.Controller.dto;
 using IAGrim.Utilities;
 using log4net;
 using log4net.Repository.Hierarchy;
+using Newtonsoft.Json;
 using NHibernate;
 
 namespace IAGrim.UI.Misc.CEF {
     public class CefBrowserHandler : IDisposable, ICefBackupAuthentication, IUserFeedbackHandler {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(CefBrowserHandler));
+        private readonly JsonSerializerSettings _settings = new JsonSerializerSettings {
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            Culture = System.Globalization.CultureInfo.InvariantCulture,
+            ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver(),
+            NullValueHandling = NullValueHandling.Ignore
+        };
         private const string Dispatch = "data.globalStore.dispatch";
-        private ChromiumWebBrowser _browser;
+
         public event EventHandler TransferSingleRequested;
         public event EventHandler TransferAllRequested;
 
-        public ChromiumWebBrowser BrowserControl {
-            get {
-                return _browser;
-            }
-        }
+        public ChromiumWebBrowser BrowserControl { get; private set; }
 
-        private object lockObj = new object();
+        private readonly object _lockObj = new object();
 
         ~CefBrowserHandler() {
             Dispose();
         }
         public void Dispose() {
             try {
-                lock (lockObj) {
-                    if (_browser != null) {
+                lock (_lockObj) {
+                    if (BrowserControl != null) {
                         CefSharpSettings.WcfTimeout = TimeSpan.Zero;
-                        _browser.Dispose();
+                        BrowserControl.Dispose();
 
                         Cef.Shutdown();
-                        _browser = null;
+                        BrowserControl = null;
                     }
                 }
             }
@@ -50,13 +54,17 @@ namespace IAGrim.UI.Misc.CEF {
         }
 
         public void ShowDevTools() {
-            _browser.ShowDevTools();
+            BrowserControl.ShowDevTools();
         }
 
         public void ShowLoadingAnimation() {
-            if (_browser.CanExecuteJavascriptInMainFrame) {
-                _browser.ExecuteScriptAsync("data.globalStore.dispatch(data.globalSetIsLoading(true));");
+            if (BrowserControl.CanExecuteJavascriptInMainFrame) {
+                BrowserControl.ExecuteScriptAsync("window.setIsLoading", true);
             }
+            else {
+                Logger.Warn("Attempted to update items but CEF not yet initialized.");
+            }
+
         }
 
         /// <summary>
@@ -80,32 +88,24 @@ namespace IAGrim.UI.Misc.CEF {
             js += "\n safeExecute({mustExist}, () => { {script}; });"
                 .Replace("{mustExist}", mustExist)
                 .Replace("{script}", script);
-
-            _browser.ExecuteScriptAsync(js);
+            
+            BrowserControl.ExecuteScriptAsync(js);
         }
 
-        public void RefreshItems() {
-            if (_browser.CanExecuteJavascriptInMainFrame) {
-                SafeExecute("'setItemsFromGlobalItems'", "setItemsFromGlobalItems();");
+        public void SetItems(List<JsonItem> items) {
+            if (BrowserControl.CanExecuteJavascriptInMainFrame) {
+                BrowserControl.ExecuteScriptAsync("window.setItems", JsonConvert.SerializeObject(items, _settings));
             }
             else {
                 Logger.Warn("Attempted to update items but CEF not yet initialized.");
             }
         }
 
-        public void JsCallback(string method, string json) {
-            if (_browser.CanExecuteJavascriptInMainFrame) {
-                _browser.ExecuteScriptAsync($"{method}({json});");
-            }
-            else {
-                Logger.Warn("Attempted to execute a callback but CEF not yet initialized.");
-            }
-        }
-
+        // TODO: Redo
         public void AddItems() {
-            if (_browser.CanExecuteJavascriptInMainFrame) {
+            if (BrowserControl.CanExecuteJavascriptInMainFrame) {
                 // TODO: This may not be available yet, better the .js ask us for data, and then we deliver it.
-                _browser.ExecuteScriptAsync($"addItemsFromGlobalItems();");
+                BrowserControl.ExecuteScriptAsync($"addItemsFromGlobalItems();");
             }
             else {
                 Logger.Warn("Attempted to update items but CEF not yet initialized.");
@@ -133,12 +133,12 @@ namespace IAGrim.UI.Misc.CEF {
             string levelLowercased = level.ToString().ToLowerInvariant();
             var m = message.Replace("\n", "\\n").Replace("'", "\\'");
             if (!string.IsNullOrEmpty(message)) {
-                if (_browser.CanExecuteJavascriptInMainFrame) {
+                if (BrowserControl.CanExecuteJavascriptInMainFrame) {
                     if (!string.IsNullOrEmpty(helpUrl)) {
-                        _browser.ExecuteScriptAsync($"{Dispatch}(data.showMessage('{m}', '{levelLowercased}', '{helpUrl}'));");
+                        BrowserControl.ExecuteScriptAsync($"{Dispatch}(data.showMessage('{m}', '{levelLowercased}', '{helpUrl}'));");
                     }
                     else {
-                        _browser.ExecuteScriptAsync($"{Dispatch}(data.showMessage('{m}', '{levelLowercased}', undefined));");
+                        BrowserControl.ExecuteScriptAsync($"{Dispatch}(data.showMessage('{m}', '{levelLowercased}', undefined));");
                     }
                 }
                 else {
@@ -163,20 +163,20 @@ namespace IAGrim.UI.Misc.CEF {
                 // TODO: Read and analyze https://github.com/cefsharp/CefSharp/issues/2246 -- Is this the correct way to do things in the future?
                 CefSharpSettings.LegacyJavascriptBindingEnabled = true;
                 CefSharpSettings.WcfEnabled = true;
-                _browser = new ChromiumWebBrowser(GetSiteUri());
+                BrowserControl = new ChromiumWebBrowser(GetSiteUri());
 
                 // TODO: browser.JavascriptObjectRepository.ObjectBoundInJavascript += (sender, e) =>
-                _browser.JavascriptObjectRepository.Register("data", legacyBindeable, isAsync: false, options: BindingOptions.DefaultBinder);
-                _browser.JavascriptObjectRepository.Register("core", bindable, isAsync: true, options: BindingOptions.DefaultBinder);
-                _browser.IsBrowserInitializedChanged += browserIsBrowserInitializedChanged;
+                BrowserControl.JavascriptObjectRepository.Register("data", legacyBindeable, isAsync: false, options: BindingOptions.DefaultBinder);
+                BrowserControl.JavascriptObjectRepository.Register("core", bindable, isAsync: true, options: BindingOptions.DefaultBinder);
+                BrowserControl.IsBrowserInitializedChanged += browserIsBrowserInitializedChanged;
 
                 var requestHandler = new CefRequestHandler();
                 requestHandler.TransferSingleRequested += (sender, args) => this.TransferSingleRequested?.Invoke(sender, args);
                 requestHandler.TransferAllRequested += (sender, args) => this.TransferAllRequested?.Invoke(sender, args);
                 requestHandler.OnAuthentication += (sender, args) => OnSuccess?.Invoke(sender, args);
-                _browser.RequestHandler = requestHandler;
+                BrowserControl.RequestHandler = requestHandler;
                 
-                _browser.LifeSpanHandler = new AzureOnClosePopupHijack();
+                BrowserControl.LifeSpanHandler = new AzureOnClosePopupHijack();
                 
                 Logger.Info("Chromium created..");
             } catch (System.IO.FileNotFoundException ex) {
@@ -199,8 +199,8 @@ namespace IAGrim.UI.Misc.CEF {
 
         /* Start CefBackupAuthentication Start */
         public void Open(string url) {
-            if (_browser.CanExecuteJavascriptInMainFrame) {
-                _browser.ExecuteScriptAsync($"window.open('{url}');");
+            if (BrowserControl.CanExecuteJavascriptInMainFrame) {
+                BrowserControl.ExecuteScriptAsync($"window.open('{url}');");
             }
             else {
                 MessageBox.Show(

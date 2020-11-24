@@ -5,7 +5,6 @@
   "private": true,
   "dependencies": {
     "@types/guid": "^1.0.0",
-    "@types/lodash": "^4.14.108",
     "@types/react-bootstrap": "^0.31.9",
     "@types/react-notification-system": "^0.2.37",
     "@types/react-notification-system-redux": "^1.1.5",
@@ -13,7 +12,7 @@
     "@types/react-select": "^1.2.6",
     "@types/react-tooltip": "^3.3.4",
     "guid": "0.0.12",
-    "jest-cli": "^22.4.3",
+    "jest-cli": "^26.6.3",
     "lodash": "^4.17.20",
     "react": "^17.0.1",
     "react-bootstrap": "^0.31.5",
@@ -35,12 +34,14 @@
     "eject": "react-scripts-ts eject"
   },
   "devDependencies": {
+    "@types/babel__core": "^7.1.12",
     "@types/enzyme": "^3.1.10",
     "@types/jest": "^22.2.3",
+    "@types/lodash": "^4.14.165",
     "@types/node": "^10.0.4",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
     "@types/redux-mock-store": "0.0.13",
-    "@types/react": "^16.3.13",
-    "@types/react-dom": "^16.0.5",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
     "react-addons-test-utils": "^15.6.2",

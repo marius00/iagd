@@ -28,19 +28,11 @@ namespace IAGrim.UI.Misc.CEF {
                 return true;
             }
 
-            else if (request.Url.StartsWith("transfer://single/")) {
-                TransferSingleRequested?.Invoke(this, new ItemTransferEvent {
-                    Request = request.Url.Replace("transfer://single/", "")
-                });
-                return true;
+            // Allow localdev
+            else if (request.Url.StartsWith("http://localhost:3000")) {
+                return false;
             }
 
-            else if (request.Url.StartsWith("transfer://all/")) {
-                TransferAllRequested?.Invoke(this, new ItemTransferEvent {
-                    Request = request.Url.Replace("transfer://all/", "")
-                });
-                return true;
-            }
 
             else if (!request.Url.Contains("grimdawn.dreamcrash") && !frame.Url.Contains("dreamcrash.org") && (request.Url.StartsWith("http://") || request.Url.StartsWith("https://"))) {
                 System.Diagnostics.Process.Start(request.Url);

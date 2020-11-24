@@ -82,15 +82,9 @@ namespace IAGrim.UI.Controller
 
             var message = Search_(query, duplicatesOnly, includeBuddyItems, orderByLevel);
 
-            if (ApplyItems())
-            {
-                Browser.RefreshItems();
-            }
-            else
-            {
-                LegacyJsBind.UpdateItems(new List<JsonItem>());
+            if (!ApplyItems()) {
                 LegacyJsBind.UpdateCollectionItems(_itemCollectionRepo.GetItemCollection());
-                Browser.RefreshItems();
+                Browser.SetItems(new List<JsonItem>());
             }
 
             return message;
@@ -99,8 +93,7 @@ namespace IAGrim.UI.Controller
         private bool ApplyItems()
         {
             var items = _itemPaginatorService.Fetch();
-            if (items.Count == 0)
-            {
+            if (items.Count == 0) {
                 LegacyJsBind.ItemSourceExhausted = true;
                 return false;
             }
@@ -108,7 +101,7 @@ namespace IAGrim.UI.Controller
             _itemStatService.ApplyStats(items);
 
             var convertedItems = ItemHtmlWriter.ToJsonSerializeable(items);
-            LegacyJsBind.UpdateItems(convertedItems);
+            Browser.SetItems(convertedItems);
             LegacyJsBind.UpdateCollectionItems(_itemCollectionRepo.GetItemCollection());
             return true;
         }

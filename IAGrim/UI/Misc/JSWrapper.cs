@@ -73,14 +73,6 @@ namespace IAGrim.UI.Misc {
             };
         }
 
-        public string Serialize(object o) {
-            return JsonConvert.SerializeObject(o, _settings);
-        }
-
-
-        public void UpdateItems(List<JsonItem> items) {
-            this.Items = JsonConvert.SerializeObject(items, _settings);
-        }
 
         public void UpdateCollectionItems(IList<CollectionItem> items) {
             this.CollectionItems = JsonConvert.SerializeObject(items, _settings);
@@ -94,13 +86,8 @@ namespace IAGrim.UI.Misc {
             }
         }
 
-        public void globalRequestInitialItems() {
-            OnRequestItems?.Invoke(this, null);
-        }
-
         public HtmlTranslation translation { get; private set; }
 
-        public string Items { get; set; }
         public string CollectionItems { get; set; }
         public bool ItemSourceExhausted { get; set; }
 
