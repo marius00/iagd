@@ -11,6 +11,7 @@ export default interface IItem {
   level: number;
   url: Array<number | string>;
   numItems: number;
+  initialNumItems: number;
   type: IItemType;
   buddies: string[];
   hasRecipe: boolean;

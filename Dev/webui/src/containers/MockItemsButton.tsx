@@ -3,7 +3,7 @@ import IItem from '../interfaces/IItem';
 
 /* tslint:disable */
 export const mockDataItems = (text: string): IItem[] => {
-  if (Math.random() < 0.5) {
+  // if (Math.random() < 0.5) {
     const dummyData = [
       {
         baseRecord: 'records\/items\/gearaccessories\/rings\/c008_ring.dbr',
@@ -20,6 +20,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [
           't.o',
@@ -92,6 +93,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 100,
+        initialNumItems: 100,
         type: 2,
         buddies: [],
         hasRecipe: true,
@@ -143,6 +145,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 5,
+        initialNumItems: 5,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -212,6 +215,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 5,
+        initialNumItems: 5,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -261,6 +265,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -338,6 +343,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -382,6 +388,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 7,
+        initialNumItems: 7,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -447,6 +454,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 2,
+        initialNumItems: 2,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -502,6 +510,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -545,6 +554,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -590,6 +600,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -634,6 +645,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -678,6 +690,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 3,
+        initialNumItems: 3,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -744,6 +757,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 2,
+        initialNumItems: 2,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -781,6 +795,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 4,
+        initialNumItems: 4,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -854,6 +869,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -926,6 +942,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 2,
+        initialNumItems: 2,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -963,6 +980,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 2,
+        initialNumItems: 2,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -1007,6 +1025,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -1086,6 +1105,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -1151,6 +1171,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -1237,6 +1258,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -1299,6 +1321,7 @@ export const mockDataItems = (text: string): IItem[] => {
           'records\/items\/materia\/compa_chilledsteel.dbr'
         ],
         numItems: 2,
+        initialNumItems: 2,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -1361,6 +1384,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 3,
+        initialNumItems: 3,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -1446,6 +1470,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -1495,6 +1520,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 3,
+        initialNumItems: 3,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -1562,6 +1588,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -1629,6 +1656,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 2,
+        initialNumItems: 2,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -1681,6 +1709,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -1735,6 +1764,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -1779,6 +1809,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -1842,6 +1873,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 2,
+        initialNumItems: 2,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -1893,6 +1925,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -1948,6 +1981,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -2031,6 +2065,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 4,
+        initialNumItems: 4,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -2086,6 +2121,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 2,
+        initialNumItems: 2,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -2154,6 +2190,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -2204,6 +2241,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -2276,6 +2314,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -2352,6 +2391,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 2,
+        initialNumItems: 2,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -2398,6 +2438,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 3,
+        initialNumItems: 3,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -2475,6 +2516,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -2519,6 +2561,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -2557,6 +2600,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -2594,6 +2638,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 2,
+        initialNumItems: 2,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -2633,6 +2678,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -2670,6 +2716,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 2,
+        initialNumItems: 2,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -2714,6 +2761,7 @@ export const mockDataItems = (text: string): IItem[] => {
           'records\/items\/materia\/compa_scalyhide.dbr'
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -2798,6 +2846,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 4,
+        initialNumItems: 4,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -2854,6 +2903,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -2898,6 +2948,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 2,
+        initialNumItems: 2,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -2961,6 +3012,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -3006,6 +3058,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -3048,6 +3101,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 4,
+        initialNumItems: 4,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -3102,6 +3156,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 2,
+        initialNumItems: 2,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -3179,6 +3234,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 4,
+        initialNumItems: 4,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -3229,6 +3285,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 2,
+        initialNumItems: 2,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -3277,6 +3334,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 2,
+        initialNumItems: 2,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -3328,6 +3386,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -3388,6 +3447,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 4,
+        initialNumItems: 4,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -3444,6 +3504,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 2,
+        initialNumItems: 2,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -3505,6 +3566,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 5,
+        initialNumItems: 5,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -3560,6 +3622,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 2,
+        initialNumItems: 2,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -3648,6 +3711,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -3703,6 +3767,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 2,
+        initialNumItems: 2,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -3750,6 +3815,7 @@ export const mockDataItems = (text: string): IItem[] => {
           'records\/items\/materia\/compa_rottenheart.dbr'
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -3797,6 +3863,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 2,
+        initialNumItems: 2,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -3852,6 +3919,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -3929,6 +3997,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 3,
+        initialNumItems: 3,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -4009,6 +4078,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 2,
+        initialNumItems: 2,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -4072,6 +4142,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 4,
+        initialNumItems: 4,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -4142,6 +4213,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 2,
+        initialNumItems: 2,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -4229,6 +4301,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 2,
+        initialNumItems: 2,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -4284,6 +4357,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 2,
+        initialNumItems: 2,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -4354,6 +4428,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -4399,6 +4474,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -4474,6 +4550,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 2,
+        initialNumItems: 2,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -4521,6 +4598,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 3,
+        initialNumItems: 3,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -4574,6 +4652,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 2,
+        initialNumItems: 2,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -4628,6 +4707,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -4682,6 +4762,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 2,
+        initialNumItems: 2,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -4706,6 +4787,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 2,
+        initialNumItems: 2,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -4744,6 +4826,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -4791,6 +4874,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -4871,6 +4955,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 3,
+        initialNumItems: 3,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -4919,6 +5004,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -5002,6 +5088,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -5075,6 +5162,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -5127,6 +5215,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 7,
+        initialNumItems: 7,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -5172,6 +5261,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 7,
+        initialNumItems: 7,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -5220,6 +5310,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 2,
+        initialNumItems: 2,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -5271,6 +5362,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 2,
+        initialNumItems: 2,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -5350,6 +5442,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 3,
+        initialNumItems: 3,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -5432,6 +5525,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -5526,6 +5620,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -5614,6 +5709,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 2,
+        initialNumItems: 2,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -5690,6 +5786,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -5748,6 +5845,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -5834,6 +5932,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 1,
+        initialNumItems: 1,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -5875,6 +5974,7 @@ export const mockDataItems = (text: string): IItem[] => {
           ''
         ],
         numItems: 2,
+        initialNumItems: 2,
         type: 2,
         buddies: [],
         hasRecipe: false,
@@ -5934,11 +6034,11 @@ export const mockDataItems = (text: string): IItem[] => {
     ];
 
     return dummyData;
-  }
+  /*}
   else {
     const dummyData = [{"baseRecord":"records/items/gearweapons/blunt1h/c019_blunt.dbr","icon":"c002_blunt.tex.png","quality":"Blue","name":"Empowered Anarchy","socket":"","slot":"Mace (1h)","level":65.0,"url":[73,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[],"bodyStats":[{"label":"10% Chance of 86-314 Chaos Damage"},{"label":"83-118 Physical Damage"},{"label":"9-15 Pierce Damage"},{"label":"+80% Chaos Damage"},{"label":"+28 Cunning"},{"label":"15% Physical Damage converted to Chaos"},{"label":"+2 to Doom Bolt","extras":"Tier 8 Occultist skill"},{"label":"+2 to Solael's Witchfire","extras":"Tier 2 Occultist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/guns1h/c033_gun1h.dbr","icon":"c016_gun1h.tex.png","quality":"Blue","name":"Empowered Apothecary's Injector","socket":"","slot":"Ranged (1h)","level":65.0,"url":[322,"","","",""],"numItems":2,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"20% Armor Piercing"}],"bodyStats":[{"label":"54-65 Physical Damage"},{"label":"+42% to All Damage"},{"label":"+48 Defensive Ability"},{"label":"+206 Health"},{"label":"+16% Casting Speed"},{"label":"+2 to Field Command","extras":"Tier 5 Soldier skill"},{"label":"+2 to Mend Flesh","extras":"Tier 2 Occultist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearhands/c034_hands.dbr","icon":"c013_hands.tex.png","quality":"Blue","name":"Empowered Apothecary's Touch","socket":"","slot":"Hands","level":65.0,"url":[82,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"501 Armor"}],"bodyStats":[{"label":"+20 Spirit"},{"label":"+14 Health/s"},{"label":"+15% Health/s"},{"label":"25% Elemental Resistance"},{"label":"+2 to Field Command","extras":"Tier 5 Soldier skill"},{"label":"+2 to Mend Flesh","extras":"Tier 2 Occultist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/guns2h/c032_gun2h.dbr","icon":"c011_gun2h.tex.png","quality":"Blue","name":"Empowered Arachnid's Embrace","socket":"","slot":"Ranged (2h)","level":75.0,"url":[140,"","","",""],"numItems":2,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"30% Armor Piercing"}],"bodyStats":[{"label":"156-246 Physical Damage"},{"label":"24 Acid Damage"},{"label":"+135% Acid Damage"},{"label":"+40 Cunning"},{"label":"+50 Spirit"},{"label":"+26% Energy Regenerated per second"},{"label":"45% Acid Resistance"},{"label":"45% Physical Damage converted to Acid"},{"label":"+3 to Aspect of the Guardian","extras":"Tier 7 Occultist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearaccessories/rings/c048_ring.dbr","icon":"c06_ring_blackwatch_seal.tex.png","quality":"Blue","name":"Empowered Blackwatch Seal","socket":"","slot":"Ring","level":65.0,"url":[376,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[],"bodyStats":[{"label":"6-10 Pierce Damage"},{"label":"+50% Physical Damage"},{"label":"+30% Pierce Damage"},{"label":"+60 Offensive Ability"},{"label":"10% Bleeding Resistance"},{"label":"27% Pierce Resistance"},{"label":"+2 to Belgothian's Shears","extras":"Tier 2 Nightblade skill"},{"label":"+1 to Execution","extras":"Tier 9 Nightblade skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearhands/c025_hands.dbr","icon":"c003_hands.tex.png","quality":"Blue","name":"Empowered Bladedancer's Handguards","socket":"","slot":"Hands","level":65.0,"url":[108,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"798 Armor"}],"bodyStats":[{"label":"+32% Physical Damage"},{"label":"+22% Pierce Damage"},{"label":"+56 Cunning"},{"label":"12% Elemental Resistance"},{"label":"4% Physical Resistance"},{"label":"+2 to Zolhan's Technique","extras":"Tier 3 Soldier skill"},{"label":"+1 to Amarasta's Quick Cut","extras":"Tier 4 Nightblade skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearfeet/c019_feet.dbr","icon":"c006_feet.tex.png","quality":"Blue","name":"Empowered Bloodhound Greaves","socket":"","slot":"Feet","level":65.0,"url":[408,"","","",""],"numItems":3,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"605 Armor"}],"bodyStats":[{"label":"+25% Pierce Damage"},{"label":"+38% Bleeding Damage"},{"label":"+2% Chance to Avoid Projectiles"},{"label":"+30 Cunning"},{"label":"+11% Movement Speed"},{"label":"12% Vitality Resistance"},{"label":"35% Slow Resistance"},{"label":"+2 to Circle of Slaughter","extras":"Tier 8 Nightblade skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/swords1h/c027_sword.dbr","icon":"c006_bloodreapersclaw.tex.png","quality":"Blue","name":"Empowered Bloodreaper's Claw","socket":"","slot":"Sword (1h)","level":65.0,"url":[145,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"45% Armor Piercing"}],"bodyStats":[{"label":"68-94 Physical Damage"},{"label":"48 Bleeding Damage over 3 Seconds"},{"label":"+80% Bleeding Damage"},{"label":"+7% Attack Speed"},{"label":"+7% Casting Speed"},{"label":"+2 to Phantasmal Blades","extras":"Tier 2 Nightblade skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/geartorso/c043_torso.dbr","icon":"c008_torso.tex.png","quality":"Blue","name":"Empowered Bloodreaper's Coat","socket":"","slot":"Chest","level":65.0,"url":[88,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"840 Armor"}],"bodyStats":[{"label":"+445 Health"},{"label":"+13% Health/s"},{"label":"+4% Offensive Ability"},{"label":"35% Pierce Resistance"},{"label":"+2 to Phantasmal Blades","extras":"Tier 2 Nightblade skill"},{"label":"+2 to Heart Seeker","extras":"Tier 4 Nightblade skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearhead/c044_head.dbr","icon":"c009_head.tex.png","quality":"Blue","name":"Empowered Bloodreaper's Cowl","socket":"","slot":"Head","level":65.0,"url":[328,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"739 Armor"}],"bodyStats":[{"label":"+32% Bleeding Damage"},{"label":"690-317 Bleeding Retaliation over 3 Seconds"},{"label":"+64 Cunning"},{"label":"18% Vitality Resistance"},{"label":"4% Physical Resistance"},{"label":"+2 to Heart Seeker","extras":"Tier 4 Nightblade skill"},{"label":"+1 to Phantasmal Blades","extras":"Tier 2 Nightblade skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearaccessories/medals/c038_medal.dbr","icon":"c03_medal_bloodreapersmark.tex.png","quality":"Blue","name":"Empowered Bloodreaper's Mark","socket":"","slot":"Medal","level":65.0,"url":[352,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[],"bodyStats":[{"label":"27 Bleeding Damage over 3 Seconds"},{"label":"+45% Pierce Damage"},{"label":"+55% Bleeding Damage"},{"label":"+2 Energy Regenerated per second"},{"label":"+4% Offensive Ability"},{"label":"26% Bleeding Resistance"},{"label":"4% of Attack Damage converted to Health"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearfeet/c017_feet.dbr","icon":"c003_feet.tex.png","quality":"Blue","name":"Empowered Boots of Unseeing Swiftness","socket":"","slot":"Feet","level":65.0,"url":[404,"","","",""],"numItems":2,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"605 Armor"}],"bodyStats":[{"label":"+4% Chance to Avoid Projectiles"},{"label":"+4% Chance to Avoid Melee Attacks"},{"label":"+20% Movement Speed"},{"label":"+40 Physique"},{"label":"22% Elemental Resistance"},{"label":"30% Reduced Entrapment Duration"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearaccessories/necklaces/c062_necklace.dbr","icon":"c29_necklace_bramblewoodamulet.tex.png","quality":"Blue","name":"Empowered Bramblewood Amulet","socket":"","slot":"Amulet/Neck","level":65.0,"url":[50,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[],"bodyStats":[{"label":"+50% Lightning Damage"},{"label":"354 Pierce Retaliation"},{"label":"+355 Health"},{"label":"60% Acid Resistance"},{"label":"5% to Maximum Acid Resistance"},{"label":"+30% Total Retaliation Damage"},{"label":"+1 to All Skills in Shaman"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/caster/c032_scepter.dbr","icon":"c009_scepter001.tex.png","quality":"Blue","name":"Empowered Coldsnap","socket":"","slot":"Scepter (1h)","level":65.0,"url":[37,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"52-58 Cold Damage"}],"bodyStats":[{"label":"+101% Cold Damage"},{"label":"+77% Frost Damage"},{"label":"+2 Energy Regenerated per second"},{"label":"+35 Offensive Ability"},{"label":"-4% Skill Cooldown Reduction"},{"label":"+2 to Absolute Zero","extras":"Tier 5 Arcanist skill"},{"label":"+2 to Star Pact","extras":"Tier 9 Arcanist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/melee2h/c027_sword2h.dbr","icon":"c006_sword2h.tex.png","quality":"Blue","name":"Empowered Conduit","socket":"","slot":"Sword (2h)","level":65.0,"url":[367,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"40-60 Cold Damage"},{"label":"40-60 Fire Damage"},{"label":"40-60 Lightning Damage"},{"label":"30% Armor Piercing"}],"bodyStats":[{"label":"33-44 Elemental Damage"},{"label":"115-134 Physical Damage"},{"label":"+102% Aether Damage"},{"label":"+130% Elemental Damage"},{"label":"40% Energy Absorption From Enemy Spells"},{"label":"+48 Spirit"},{"label":"+2 Energy Regenerated per second"},{"label":"+3 to Iskandra's Elemental Exchange","extras":"Tier 1 Arcanist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearaccessories/waist/c033_waist.dbr","icon":"c10_waist_cord_of_the_ancestor.tex.png","quality":"Blue","name":"Empowered Cord of the Ancestor","socket":"","slot":"Belt","level":75.0,"url":[427,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"64 Armor"}],"bodyStats":[{"label":"+40% Cold Damage"},{"label":"+60% Vitality Damage"},{"label":"+50% Constitution"},{"label":"50% Energy Absorption From Enemy Spells"},{"label":"+28 Spirit"},{"label":"+36 Offensive Ability"},{"label":"20% Vitality Resistance"},{"label":"+2 to Devouring Swarm","extras":"Tier 1 Shaman skill"},{"label":"+2 to Heart Seeker","extras":"Tier 4 Nightblade skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/caster/c031_scepter.dbr","icon":"c008_scepter001.tex.png","quality":"Blue","name":"Empowered Cortosian Invoker","socket":"","slot":"Scepter (1h)","level":75.0,"url":[380,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"17-22 Cold Damage"},{"label":"17-22 Fire Damage"},{"label":"17-22 Lightning Damage"}],"bodyStats":[{"label":"+102% Elemental Damage"},{"label":"+30 Spirit"},{"label":"+8% Casting Speed"},{"label":"17% Elemental Resistance"},{"label":"+2 to Distortion","extras":"Tier 4 Arcanist skill"},{"label":"+2 to Supercharged","extras":"Tier 6 Arcanist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/shields/c023_shield.dbr","icon":"c005_shield.tex.png","quality":"Blue","name":"Empowered Devil's Grin","socket":"","slot":"Shield","level":75.0,"url":[144,"","","",""],"numItems":3,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"35% Chance to Block 790 Damage (100% Absorption)"}],"bodyStats":[{"label":"105 Physical Damage"},{"label":"+70% Chaos Damage"},{"label":"0.7 second Block Recovery"},{"label":"+48 Cunning"},{"label":"+780 Health"},{"label":"+2 Energy Regenerated per second"},{"label":"+1 to All Skills in Occultist"},{"label":"+2 to Hellfire Mine","extras":"Tier 9 Demolitionist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/geartorso/c036_torso.dbr","icon":"c005_torso.tex.png","quality":"Blue","name":"Empowered Doomforged Breastplate","socket":"","slot":"Chest","level":58.0,"url":[318,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"858 Armor"}],"bodyStats":[{"label":"+36% Chaos Damage"},{"label":"+28% Vitality Damage"},{"label":"+6% Health"},{"label":"+42 Physique"},{"label":"15% Aether Resistance"},{"label":"28% Vitality Resistance"},{"label":"+2 to Cadence","extras":"Tier 1 Soldier skill"},{"label":"+2 to Solael's Witchfire","extras":"Tier 2 Occultist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/axe1h/c022_axe.dbr","icon":"c008_axe.tex.png","quality":"Blue","name":"Empowered Doomsaw of Gluttony","socket":"","slot":"Axe (1h)","level":65.0,"url":[332,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"15% Armor Piercing"}],"bodyStats":[{"label":"13 Vitality Damage"},{"label":"77-96 Physical Damage"},{"label":"+38% Vitality Damage"},{"label":"+28% Physical Damage"},{"label":"+6% Attack Speed"},{"label":"14% of Attack Damage converted to Health"},{"label":"15% Physical Damage converted to Vitality"},{"label":"+2 to Blood Pact","extras":"Tier 8 Shaman skill"},{"label":"+2 to Drain Essence","extras":"Tier 1 Necromancer skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/focus/c027_focus.dbr","icon":"c009_focus.tex.png","quality":"Blue","name":"Empowered Edrick's Backscratcher","socket":"","slot":"Offhand","level":75.0,"url":[133,"","","",""],"numItems":2,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[],"bodyStats":[{"label":"60 Poison Damage over 5 Seconds"},{"label":"+90% Poison Damage"},{"label":"4500 Poison Retaliation over 5 Seconds"},{"label":"+64 Spirit"},{"label":"+65% Energy Regenerated per second"},{"label":"+15% Casting Speed"},{"label":"28% Aether Resistance"},{"label":"30% Vitality Resistance"},{"label":"-16% Skill Cooldown Reduction"},{"label":"+3 to Dreeg's Evil Eye","extras":"Tier 1 Occultist skill"},{"label":"+2 to Ravenous Earth","extras":"Tier 4 Necromancer skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearhead/c038_head.dbr","icon":"c010_head.tex.png","quality":"Blue","name":"Empowered Eye of the Beholder","socket":"","slot":"Head","level":75.0,"url":[416,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"736 Armor"}],"bodyStats":[{"label":"+45% Chaos Damage"},{"label":"+45% Poison Damage"},{"label":"+8% Chance to Avoid Projectiles"},{"label":"+47 Spirit"},{"label":"+3.5 Energy Regenerated per second"},{"label":"20% Aether Resistance"},{"label":"+3 to Terrifying Gaze","extras":"Tier 5 Occultist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearhead/c046_head.dbr","icon":"c025_head.tex.png","quality":"Blue","name":"Empowered Eyes of Flame","socket":"","slot":"Head","level":65.0,"url":[57,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"739 Armor"}],"bodyStats":[{"label":"30 Burn Damage over 3 Seconds"},{"label":"+44% Fire Damage"},{"label":"+44% Burn Damage"},{"label":"+35 Offensive Ability"},{"label":"+3% Offensive Ability"},{"label":"14% Chaos Resistance"},{"label":"+2 to Fire Strike","extras":"Tier 1 Demolitionist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearhead/c049_head.dbr","icon":"c018_head.tex.png","quality":"Blue","name":"Empowered Faceguard of Perdition","socket":"","slot":"Head","level":65.0,"url":[403,"","","",""],"numItems":3,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"908 Armor"}],"bodyStats":[{"label":"+40% Acid Damage"},{"label":"264 Acid Retaliation"},{"label":"+42 Physique"},{"label":"25% Pierce Resistance"},{"label":"38% Acid Resistance"},{"label":"Increases Armor by 5%"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/geartorso/c037_torso.dbr","icon":"c009_torso.tex.png","quality":"Blue","name":"Empowered Fanatic's Overcoat","socket":"","slot":"Chest","level":75.0,"url":[511,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"991 Armor"}],"bodyStats":[{"label":"+695 Health"},{"label":"+13 Health/s"},{"label":"+14% Health/s"},{"label":"+6% Total Speed"},{"label":"12% Aether Resistance"},{"label":"25% Chaos Resistance"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/melee2h/c031_axe2h.dbr","icon":"c010_axe2h.tex.png","quality":"Blue","name":"Empowered Farmstead Liberator","socket":"","slot":"Axe (2h)","level":65.0,"url":[131,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"10% Armor Piercing"}],"bodyStats":[{"label":"160-260 Physical Damage"},{"label":"240 Bleeding Damage over 3 Seconds"},{"label":"+64% Physical Damage"},{"label":"+170% Bleeding Damage"},{"label":"55% Bleeding Resistance"},{"label":"+15% Crit Damage"},{"label":"+3 to Blade Arc","extras":"Tier 3 Soldier skill"},{"label":"+3 to Laceration","extras":"Tier 7 Soldier skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/caster/c036_dagger.dbr","icon":"c015_dagger001.tex.png","quality":"Blue","name":"Empowered Fiendblood Spellblade","socket":"","slot":"Dagger (1h)","level":75.0,"url":[113,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"44-64 Chaos Damage"}],"bodyStats":[{"label":"+40% Chaos Damage"},{"label":"+50 Defensive Ability"},{"label":"+380 Health"},{"label":"+2 to Ember Claw","extras":"Tier 5 Occultist skill"},{"label":"+2 to Mend Flesh","extras":"Tier 2 Occultist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearfeet/c020_feet.dbr","icon":"c007_feet.tex.png","quality":"Blue","name":"Empowered Final March","socket":"","slot":"Feet","level":58.0,"url":[288,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"665 Armor"}],"bodyStats":[{"label":"+44 Defensive Ability"},{"label":"+6% Movement Speed"},{"label":"+50 Physique"},{"label":"15% Aether Resistance"},{"label":"5% Physical Resistance"},{"label":"30% Slow Resistance"},{"label":"+2 to Blitz","extras":"Tier 3 Soldier skill"},{"label":"+2 to Rune of Kalastor","extras":"Tier 4 Inquisitor skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/swords1h/c026_sword.dbr","icon":"c009_flamebrand.tex.png","quality":"Blue","name":"Empowered Flamebrand","socket":"","slot":"Sword (1h)","level":75.0,"url":[87,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"25% Armor Piercing"}],"bodyStats":[{"label":"58-80 Physical Damage"},{"label":"120 Burn Damage over 3 Seconds"},{"label":"+60% Fire Damage"},{"label":"+60% Burn Damage"},{"label":"+20 Spirit"},{"label":"+28 Offensive Ability"},{"label":"15% Physical Damage converted to Fire"},{"label":"+2 to Fire Strike","extras":"Tier 1 Demolitionist skill"},{"label":"+2 to Flames of Ignaffar","extras":"Tier 3 Inquisitor skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/shields/c021_shield.dbr","icon":"c004_shield.tex.png","quality":"Blue","name":"Empowered Flamebreaker","socket":"","slot":"Shield","level":58.0,"url":[315,"","","",""],"numItems":2,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"32% Chance to Block 506 Damage (100% Absorption)"}],"bodyStats":[{"label":"8-18 Fire Damage"},{"label":"86 Physical Damage"},{"label":"+45% Fire Damage"},{"label":"360 Fire Retaliation"},{"label":"0.5 second Block Recovery"},{"label":"60% Fire Resistance"},{"label":"+1 to All Skills in Demolitionist"},{"label":"+2 to Vindictive Flame","extras":"Tier 3 Demolitionist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearaccessories/waist/c026_waist.dbr","icon":"c03_waist_frizzicksutilitybelt.tex.png","quality":"Blue","name":"Empowered Frizzick's Utility Pack","socket":"","slot":"Belt","level":65.0,"url":[84,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"55 Armor"}],"bodyStats":[{"label":"+26% to All Damage"},{"label":"+35 Defensive Ability"},{"label":"+8 Health/s"},{"label":"+30% Health/s"},{"label":"+30% Energy Regenerated per second"},{"label":"+48 Offensive Ability"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/axe1h/c018_axe.dbr","icon":"c003_axe.tex.png","quality":"Blue","name":"Empowered Gorefeast","socket":"","slot":"Axe (1h)","level":58.0,"url":[291,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[],"bodyStats":[{"label":"45-87 Physical Damage"},{"label":"141 Bleeding Damage over 3 Seconds"},{"label":"15% Chance of +550% Bleeding Damage"},{"label":"+10% Attack Speed"},{"label":"+18 Cunning"},{"label":"8% of Attack Damage converted to Health"},{"label":"+1 to All Skills in Shaman"},{"label":"+2 to Blood Boil","extras":"Tier 8 Necromancer skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/blunt1h/c025_blunt.dbr","icon":"c004_blunt.tex.png","quality":"Blue","name":"Empowered Guardsman's Hammer","socket":"","slot":"Mace (1h)","level":65.0,"url":[35,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[],"bodyStats":[{"label":"78-112 Physical Damage"},{"label":"+70% Physical Damage"},{"label":"+242 Health"},{"label":"+36 Physique"},{"label":"+18% Shield Damage Blocked"},{"label":"+2 to Blitz","extras":"Tier 3 Soldier skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearaccessories/medals/c033_medal.dbr","icon":"c18_bloody_seal.tex.png","quality":"Blue","name":"Empowered Gutworm's Bloody Seal","socket":"","slot":"Medal","level":65.0,"url":[353,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[],"bodyStats":[{"label":"27 Bleeding Damage over 3 Seconds"},{"label":"+52% Bleeding Damage"},{"label":"+44% Internal Trauma Damage"},{"label":"15% Vitality Resistance"},{"label":"15% Pierce Resistance"},{"label":"+2 to Laceration","extras":"Tier 7 Soldier skill"},{"label":"+2 to Circle of Slaughter","extras":"Tier 8 Nightblade skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/melee2h/c022_sword2h.dbr","icon":"c001_sword2h.tex.png","quality":"Blue","name":"Empowered Gutwrench Eviscerator","socket":"","slot":"Sword (2h)","level":58.0,"url":[240,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"25% Armor Piercing"}],"bodyStats":[{"label":"157-277 Physical Damage"},{"label":"12-16 Pierce Damage"},{"label":"255 Bleeding Damage over 3 Seconds"},{"label":"+65% Pierce Damage"},{"label":"15% Chance of +1000% Bleeding Damage"},{"label":"+15% Attack Speed"},{"label":"+3 to Savagery","extras":"Tier 1 Shaman skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearhands/c035_hands.dbr","icon":"c014_hands.tex.png","quality":"Blue","name":"Empowered Handguards of Perdition","socket":"","slot":"Hands","level":65.0,"url":[413,"","","",""],"numItems":2,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"798 Armor"}],"bodyStats":[{"label":"264 Acid Retaliation"},{"label":"+305 Health"},{"label":"+75 Offensive Ability"},{"label":"+25 Physique"},{"label":"20% Elemental Resistance"},{"label":"Increases Armor by 5%"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearaccessories/waist/c029_waist.dbr","icon":"c04_waist_headhunterstrophy.tex.png","quality":"Blue","name":"Empowered Headhunter's Trophy","socket":"","slot":"Belt","level":65.0,"url":[21,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"60 Armor"}],"bodyStats":[{"label":"30 Bleeding Damage over 3 Seconds"},{"label":"+50% Bleeding Damage"},{"label":"+23 Offensive Ability"},{"label":"15% Vitality Resistance"},{"label":"+7% Crit Damage"},{"label":"8% of Attack Damage converted to Health"},{"label":"+2 to Anatomy of Murder","extras":"Tier 5 Nightblade skill"},{"label":"+2 to Wendigo Totem","extras":"Tier 5 Shaman skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/guns2h/c036_gun2h.dbr","icon":"c007_gun2h.tex.png","quality":"Blue","name":"Empowered Hellmaw Shotgun","socket":"","slot":"Ranged (2h)","level":75.0,"url":[394,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"91-128 Fire Damage"}],"bodyStats":[{"label":"93-117 Physical Damage"},{"label":"72 Burn Damage over 3 Seconds"},{"label":"+125% Fire Damage"},{"label":"+125% Burn Damage"},{"label":"+20% Attack Speed"},{"label":"45% Physical Damage converted to Fire"},{"label":"+3 to Blackwater Cocktail","extras":"Tier 2 Demolitionist skill"},{"label":"+4 to Infernal Purge","extras":"Tier 7 Inquisitor skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/geartorso/c046_torso.dbr","icon":"c017_torso.tex.png","quality":"Blue","name":"Empowered Herald's Jacket","socket":"","slot":"Chest","level":65.0,"url":[41,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"840 Armor"}],"bodyStats":[{"label":"+30% Constitution"},{"label":"-15% Cunning Req. for Ranged Weapons"},{"label":"+400 Health"},{"label":"+55 Physique"},{"label":"30% Pierce Resistance"},{"label":"30% Acid Resistance"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearaccessories/medals/c029_medal.dbr","icon":"c05_medal_insigniaofjustice.tex.png","quality":"Blue","name":"Empowered Insignia of Justice","socket":"","slot":"Medal","level":65.0,"url":[90,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[],"bodyStats":[{"label":"8 Pierce Damage"},{"label":"+35% Pierce Damage"},{"label":"+29 Cunning"},{"label":"+35 Offensive Ability"},{"label":"18% Bleeding Resistance"},{"label":"+2 to Shadow Strike","extras":"Tier 3 Nightblade skill"},{"label":"+2 to Blade Barrier","extras":"Tier 5 Nightblade skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/guns1h/c021_gun1h.dbr","icon":"c001_gun1h.tex.png","quality":"Blue","name":"Empowered Leander Greene's Hand Cannon","socket":"","slot":"Ranged (1h)","level":50.0,"url":[102,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"20% Armor Piercing"}],"bodyStats":[{"label":"17-51 Physical Damage"},{"label":"99 Burn Damage over 3 Seconds"},{"label":"+38% Fire Damage"},{"label":"+60% Burn Damage"},{"label":"+30 Cunning"},{"label":"15% Physical Damage converted to Fire"},{"label":"+1 to All Skills in Demolitionist"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearlegs/c022_legs.dbr","icon":"c008_legs.tex.png","quality":"Blue","name":"Empowered Legplates of Valor","socket":"","slot":"Legs","level":75.0,"url":[490,"","","",""],"numItems":2,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"1218 Armor"}],"bodyStats":[{"label":"+2% Defensive Ability"},{"label":"+450 Health"},{"label":"50% Bleeding Resistance"},{"label":"5% Physical Resistance"},{"label":"34% Pierce Resistance"},{"label":"+2 to Scars of Battle","extras":"Tier 8 Soldier skill"},{"label":"+1 to War Cry","extras":"Tier 5 Soldier skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearaccessories/rings/c042_ring.dbr","icon":"c02_ring_lorekeepersband.tex.png","quality":"Blue","name":"Empowered Lorekeeper's Band","socket":"","slot":"Ring","level":65.0,"url":[320,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[],"bodyStats":[{"label":"+40% Elemental Damage"},{"label":"+1.2 Energy Regenerated per second"},{"label":"+10% Casting Speed"},{"label":"15% Aether Resistance"},{"label":"35% Lightning Resistance"},{"label":"+2 to Inner Focus","extras":"Tier 1 Arcanist skill"},{"label":"+1 to Ulzuin's Chosen","extras":"Tier 9 Demolitionist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/swords1h/c021_sword.dbr","icon":"c004_madness.tex.png","quality":"Blue","name":"Empowered Madness","socket":"","slot":"Sword (1h)","level":75.0,"url":[141,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"35% Armor Piercing"}],"bodyStats":[{"label":"1-24 Chaos Damage"},{"label":"75-92 Physical Damage"},{"label":"+75% Chaos Damage"},{"label":"+36 Spirit"},{"label":"+44 Offensive Ability"},{"label":"15% Physical Damage converted to Chaos"},{"label":"+2 to Possession","extras":"Tier 9 Occultist skill"},{"label":"+2 to Blood of Dreeg","extras":"Tier 4 Occultist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/focus/c029_focus.dbr","icon":"c003_focus.tex.png","quality":"Blue","name":"Empowered Maiven's Tome","socket":"","slot":"Offhand","level":65.0,"url":[122,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[],"bodyStats":[{"label":"+80% Elemental Damage"},{"label":"+485 Energy"},{"label":"+5 Energy Regenerated per second"},{"label":"+40 Offensive Ability"},{"label":"+20% Casting Speed"},{"label":"25% Elemental Resistance"},{"label":"-16% Skill Cooldown Reduction"},{"label":"+2 to Mental Alacrity","extras":"Tier 7 Arcanist skill"},{"label":"+2 to Nullification","extras":"Tier 5 Arcanist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/guns2h/c027_gun2h.dbr","icon":"c002_gun2h.tex.png","quality":"Blue","name":"Empowered Malady","socket":"","slot":"Ranged (2h)","level":58.0,"url":[109,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"30% Armor Piercing"}],"bodyStats":[{"label":"96-138 Physical Damage"},{"label":"450 Poison Damage over 5 Seconds"},{"label":"+72% Poison Damage"},{"label":"+40 Spirit"},{"label":"30% Chance of 20% Reduced target's Resistance For 5 Seconds"},{"label":"+1 to All Skills in Occultist"},{"label":"+2 to Vulnerability","extras":"Tier 3 Occultist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/geartorso/c035_torso.dbr","icon":"c004_torso.tex.png","quality":"Blue","name":"Empowered Malduin's Cloth","socket":"","slot":"Chest","level":58.0,"url":[250,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"592 Armor"}],"bodyStats":[{"label":"+26% Poison Damage"},{"label":"+70 Spirit"},{"label":"+200 Health"},{"label":"+5.9 Energy Regenerated per second"},{"label":"15% Aether Resistance"},{"label":"44% Acid Resistance"},{"label":"+2 to Blood of Dreeg","extras":"Tier 4 Occultist skill"},{"label":"+2 to Solael's Witchfire","extras":"Tier 2 Occultist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/guns1h/c031_gun1h.dbr","icon":"c004_gun1h.tex.png","quality":"Blue","name":"Empowered Marauder's Fury","socket":"","slot":"Ranged (1h)","level":65.0,"url":[46,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"25% Armor Piercing"}],"bodyStats":[{"label":"8-12 Fire Damage"},{"label":"42-79 Physical Damage"},{"label":"+70% Cold Damage"},{"label":"+70% Fire Damage"},{"label":"+8% Attack Speed"},{"label":"30% Fire Resistance"},{"label":"15% Physical Damage converted to Fire"},{"label":"+2 to Explosive Strike","extras":"Tier 3 Demolitionist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearaccessories/medals/c108_medal.dbr","icon":"c104_medal_markofbrokenoaths.tex.png","quality":"Blue","name":"Empowered Mark of Broken Oaths","socket":"","slot":"Medal","level":72.0,"url":[640,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[],"bodyStats":[{"label":"+68% Chaos Damage"},{"label":"+400 Energy"},{"label":"+1.8 Energy Regenerated per second"},{"label":"36% Acid Resistance"},{"label":"+2 to Flames of Ignaffar","extras":"Tier 3 Inquisitor skill"},{"label":"+2 to Summon Hellhound","extras":"Tier 3 Occultist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/melee2h/c023_axe2h.dbr","icon":"c002_axe2h.tex.png","quality":"Blue","name":"Empowered Massacre","socket":"","slot":"Axe (2h)","level":58.0,"url":[54,"","","",""],"numItems":2,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"10% Armor Piercing"}],"bodyStats":[{"label":"18-28 Fire Damage"},{"label":"177-386 Physical Damage"},{"label":"+44% Fire Damage"},{"label":"10% Chance of +450% Physical Damage"},{"label":"+98 Offensive Ability"},{"label":"+12% Crit Damage"},{"label":"45% Physical Damage converted to Fire"},{"label":"+3 to Forcewave","extras":"Tier 1 Soldier skill"},{"label":"+3 to Temper","extras":"Tier 5 Demolitionist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/geartorso/c044_torso.dbr","icon":"c023_torso.tex.png","quality":"Blue","name":"Empowered Miasma Robes","socket":"","slot":"Chest","level":65.0,"url":[120,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"787 Armor"}],"bodyStats":[{"label":"+50% Acid Damage"},{"label":"+50% Poison Damage"},{"label":"+55 Spirit"},{"label":"+4% Health"},{"label":"+5 Energy Regenerated per second"},{"label":"18% Chaos Resistance"},{"label":"+2 to Black Death","extras":"Tier 8 Occultist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearlegs/c016_legs.dbr","icon":"c001_legs.tex.png","quality":"Blue","name":"Empowered Mistwalker Leggings","socket":"","slot":"Legs","level":58.0,"url":[346,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"858 Armor"}],"bodyStats":[{"label":"+18 Spirit"},{"label":"+4% Movement Speed"},{"label":"+35 Physique"},{"label":"24% Aether Resistance"},{"label":"50% Lightning Resistance"},{"label":"+2 to Maiven's Sphere of Protection","extras":"Tier 4 Arcanist skill"},{"label":"+2 to Searing Light","extras":"Tier 3 Demolitionist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearfeet/c015_feet.dbr","icon":"c001_feet.tex.png","quality":"Blue","name":"Empowered Molten Walkers","socket":"","slot":"Feet","level":58.0,"url":[330,"","","",""],"numItems":2,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"506 Armor"}],"bodyStats":[{"label":"+25% Fire Damage"},{"label":"+24 Spirit"},{"label":"+5% Movement Speed"},{"label":"40% Fire Resistance"},{"label":"+2 to Blackwater Cocktail","extras":"Tier 2 Demolitionist skill"},{"label":"+1 to Vindictive Flame","extras":"Tier 3 Demolitionist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/guns1h/c026_gun1h.dbr","icon":"c008_gun1h.tex.png","quality":"Blue","name":"Empowered Mutiny","socket":"","slot":"Ranged (1h)","level":50.0,"url":[218,"","","",""],"numItems":3,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"30% Armor Piercing"}],"bodyStats":[{"label":"43-57 Physical Damage"},{"label":"10 Acid Damage"},{"label":"10% Chance of 425 Poison Damage over 5 Seconds"},{"label":"+65% Acid Damage"},{"label":"+35% Poison Damage"},{"label":"+55 Offensive Ability"},{"label":"+25% Damage to Human"},{"label":"15% Physical Damage converted to Acid"},{"label":"+2 to Dreeg's Evil Eye","extras":"Tier 1 Occultist skill"},{"label":"+2 to Vile Eruption","extras":"Tier 8 Occultist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/geartorso/c033_torso.dbr","icon":"c002_torso.tex.png","quality":"Blue","name":"Empowered Nighthunter's Chestguard","socket":"","slot":"Chest","level":65.0,"url":[324,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"840 Armor"}],"bodyStats":[{"label":"+36% Cold Damage"},{"label":"+5% Attack Speed"},{"label":"+15 Defensive Ability"},{"label":"+72 Cunning"},{"label":"+204 Health"},{"label":"25% Cold Resistance"},{"label":"20% Vitality Resistance"},{"label":"+2 to Night's Chill","extras":"Tier 4 Nightblade skill"},{"label":"+2 to Nightfall","extras":"Tier 9 Nightblade skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/guns1h/c034_gun1h.dbr","icon":"c017_gun1h.tex.png","quality":"Blue","name":"Empowered Oathbreaker","socket":"","slot":"Ranged (1h)","level":65.0,"url":[347,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"20% Armor Piercing"}],"bodyStats":[{"label":"4-12 Chaos Damage"},{"label":"8-24 Fire Damage"},{"label":"45-77 Physical Damage"},{"label":"+40% Chaos Damage"},{"label":"+40% Fire Damage"},{"label":"+16% Attack Speed"},{"label":"+2 to Brimstone","extras":"Tier 9 Demolitionist skill"},{"label":"+2 to Fire Strike","extras":"Tier 1 Demolitionist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/shields/c030_shield.dbr","icon":"c012_shield.tex.png","quality":"Blue","name":"Empowered Oathbreaker's Guard","socket":"","slot":"Shield","level":65.0,"url":[370,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"32% Chance to Block 766 Damage (100% Absorption)"}],"bodyStats":[{"label":"16 Fire Damage"},{"label":"100 Physical Damage"},{"label":"+40% Chaos Damage"},{"label":"+40% Fire Damage"},{"label":"0.8 second Block Recovery"},{"label":"+78 Physique"},{"label":"Increases Shield Block Chance by 12%"},{"label":"16% Physical Resistance"},{"label":"+3 to Vindictive Flame","extras":"Tier 3 Demolitionist skill"},{"label":"+3 to Fire Strike","extras":"Tier 1 Demolitionist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearaccessories/rings/c041_ring.dbr","icon":"c05_ring_wardensseal.tex.png","quality":"Blue","name":"Empowered Obsidian Seal","socket":"","slot":"Ring","level":58.0,"url":[252,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"42 Armor"}],"bodyStats":[{"label":"+60 Defensive Ability"},{"label":"+220 Health"},{"label":"27% Chaos Resistance"},{"label":"55% Fire Resistance"},{"label":"+2 to Aspect of the Guardian","extras":"Tier 7 Occultist skill"},{"label":"+1 to Shield Training","extras":"Tier 3 Soldier skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearaccessories/waist/c025_waist.dbr","icon":"c06_waist_oldenarsstabilizer.tex.png","quality":"Blue","name":"Empowered Oldenar's Stabilizer","socket":"","slot":"Belt","level":58.0,"url":[335,"","","",""],"numItems":2,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"64 Armor"}],"bodyStats":[{"label":"+70 Defensive Ability"},{"label":"+4% Defensive Ability"},{"label":"20% Aether Resistance"},{"label":"20% Bleeding Resistance"},{"label":"6% to Maximum Bleeding Resistance"},{"label":"+2 to Military Conditioning","extras":"Tier 2 Soldier skill"},{"label":"+2 to Shield Training","extras":"Tier 3 Soldier skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/swords1h/c020_sword.dbr","icon":"c003_omen01.tex.png","quality":"Blue","name":"Empowered Omen","socket":"","slot":"Sword (1h)","level":65.0,"url":[281,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"30% Armor Piercing"}],"bodyStats":[{"label":"14-20 Vitality Damage"},{"label":"76-88 Physical Damage"},{"label":"+50% Vitality Damage"},{"label":"+13% Attack Speed"},{"label":"+2% Spirit"},{"label":"+150 Health"},{"label":"6% of Attack Damage converted to Health"},{"label":"15% Physical Damage converted to Vitality"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/guns1h/c027_gun1h.dbr","icon":"c009_gun1h.tex.png","quality":"Blue","name":"Empowered Outlaw's Retribution","socket":"","slot":"Ranged (1h)","level":75.0,"url":[137,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"20% Armor Piercing"}],"bodyStats":[{"label":"52-74 Physical Damage"},{"label":"+42% Fire Damage"},{"label":"+42% Physical Damage"},{"label":"+66 Offensive Ability"},{"label":"+10% Crit Damage"},{"label":"+2 to Explosive Strike","extras":"Tier 3 Demolitionist skill"},{"label":"+2 to Grenado","extras":"Tier 4 Demolitionist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/melee2h/c033_axe2h.dbr","icon":"c012_axe2h.tex.png","quality":"Blue","name":"Empowered Prismatic Eviscerator","socket":"","slot":"Axe (2h)","level":75.0,"url":[29,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"27-70 Cold Damage"},{"label":"27-70 Fire Damage"},{"label":"27-70 Lightning Damage"}],"bodyStats":[{"label":"38-50 Elemental Damage"},{"label":"135-198 Physical Damage"},{"label":"5% Chance of 600 Frost Damage over 3 Seconds"},{"label":"5% Chance of 600 Burn Damage over 3 Seconds"},{"label":"5% Chance of 600 Electrocute Damage over 3 Seconds"},{"label":"+155% Elemental Damage"},{"label":"+12% Attack Speed"},{"label":"+8% Casting Speed"},{"label":"+1 to All Skills in Arcanist"},{"label":"+3 to Callidor's Tempest","extras":"Tier 2 Arcanist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearlegs/c105_legs.dbr","icon":"c101_legs.tex.png","quality":"Blue","name":"Empowered Scorchrune Legwraps","socket":"","slot":"Legs","level":65.0,"url":[387,"","","",""],"numItems":2,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"831 Armor"}],"bodyStats":[{"label":"+33% Fire Damage"},{"label":"+40% Vitality Damage"},{"label":"+33% Burn Damage"},{"label":"+40% Vitality Decay Damage"},{"label":"+390 Health"},{"label":"+5% Movement Speed"},{"label":"16% Chaos Resistance"},{"label":"14% Elemental Resistance"},{"label":"+2 to Ravenous Earth","extras":"Tier 4 Necromancer skill"},{"label":"+2 to Sigil of Consumption","extras":"Tier 3 Occultist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearaccessories/rings/c054_ring.dbr","icon":"c23_ring_seal_of_the_blazing_inferno.tex.png","quality":"Blue","name":"Empowered Seal of the Blazing Inferno","socket":"","slot":"Ring","level":65.0,"url":[53,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[],"bodyStats":[{"label":"+26% Fire Damage"},{"label":"+35% Burn Damage"},{"label":"690 Burn Retaliation over 3 Seconds"},{"label":"+86 Offensive Ability"},{"label":"15% Chaos Resistance"},{"label":"+2 to Vindictive Flame","extras":"Tier 3 Demolitionist skill"},{"label":"+1 to Ulzuin's Wrath","extras":"Tier 5 Demolitionist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearfeet/c106_feet.dbr","icon":"c103_feet.tex.png","quality":"Blue","name":"Empowered Sellecor's March","socket":"","slot":"Feet","level":65.0,"url":[331,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"584 Armor"}],"bodyStats":[{"label":"+34% Cold Damage"},{"label":"+34% Fire Damage"},{"label":"+34% Frost Damage"},{"label":"+34% Burn Damage"},{"label":"+10% Movement Speed"},{"label":"+3% Physique"},{"label":"12% Chaos Resistance"},{"label":"22% Pierce Resistance"},{"label":"+2 to Bursting Round","extras":"Tier 2 Inquisitor skill"},{"label":"+2 to Amarasta's Blade Burst","extras":"Tier 1 Nightblade skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearaccessories/necklaces/c061_necklace.dbr","icon":"c28_necklace_shard_of_menhir.tex.png","quality":"Blue","name":"Empowered Shard of Menhir","socket":"","slot":"Amulet/Neck","level":58.0,"url":[361,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[],"bodyStats":[{"label":"+38% Physical Damage"},{"label":"+485 Health"},{"label":"+15 Health/s"},{"label":"+3 to Menhir's Will","extras":"Tier 2 Soldier skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearshoulders/c029_shoulder.dbr","icon":"c010_shoulder.tex.png","quality":"Blue","name":"Empowered Shoulderguards of Perdition","socket":"","slot":"Shoulder","level":65.0,"url":[373,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"908 Armor"}],"bodyStats":[{"label":"+40% Acid Damage"},{"label":"264 Acid Retaliation"},{"label":"+305 Health"},{"label":"+36 Offensive Ability"},{"label":"18% Chaos Resistance"},{"label":"Increases Armor by 5%"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearaccessories/rings/c108_ring.dbr","icon":"c104_ring_signetoftherunefather.tex.png","quality":"Blue","name":"Empowered Signet of the Runefather","socket":"","slot":"Ring","level":72.0,"url":[382,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[],"bodyStats":[{"label":"+40% Elemental Damage"},{"label":"+15% to All Damage"},{"label":"+192 Health"},{"label":"24% Chaos Resistance"},{"label":"12% Vitality Resistance"},{"label":"3% to Maximum Vitality Resistance"},{"label":"16% Pierce Resistance"},{"label":"+2 to Death Sentence","extras":"Tier 6 Inquisitor skill"},{"label":"+2 to Inquisitor Seal","extras":"Tier 6 Inquisitor skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/melee2h/c024_sword2h.dbr","icon":"c003_sword2h.tex.png","quality":"Blue","name":"Empowered Slithbane","socket":"","slot":"Sword (2h)","level":58.0,"url":[338,"","","",""],"numItems":4,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"18% Armor Piercing"}],"bodyStats":[{"label":"195-342 Physical Damage"},{"label":"12-34 Acid Damage"},{"label":"+95% Physical Damage"},{"label":"+95% Acid Damage"},{"label":"+42 Cunning"},{"label":"+540 Health"},{"label":"+35% Damage to Beastkin"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearlegs/c020_legs.dbr","icon":"c006_legs.tex.png","quality":"Blue","name":"Empowered Slithscale Legwraps","socket":"","slot":"Legs","level":58.0,"url":[249,"","","",""],"numItems":2,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"776 Armor"}],"bodyStats":[{"label":"+27% Cold Damage"},{"label":"+27% Frost Damage"},{"label":"+38% Poison Damage"},{"label":"+68 Cunning"},{"label":"+5% Chance to Avoid Melee Attacks"},{"label":"20% Aether Resistance"},{"label":"+22% Damage to Beastkin"},{"label":"+2 to Shadow Strike","extras":"Tier 3 Nightblade skill"},{"label":"+1 to Heart of the Wild","extras":"Tier 4 Shaman skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearlegs/c019_legs.dbr","icon":"c005_legs.tex.png","quality":"Blue","name":"Empowered Soiled Trousers","socket":"","slot":"Legs","level":75.0,"url":[142,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"1101 Armor"}],"bodyStats":[{"label":"+53% Poison Damage"},{"label":"1200 Poison Retaliation over 5 Seconds"},{"label":"+260 Health"},{"label":"10% Vitality Resistance"},{"label":"30% Acid Resistance"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/guns1h/c029_gun1h.dbr","icon":"c011_gun1h.tex.png","quality":"Blue","name":"Empowered Soulflayer","socket":"","slot":"Ranged (1h)","level":75.0,"url":[480,"","","",""],"numItems":4,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"30% Armor Piercing"}],"bodyStats":[{"label":"12 Aether Damage"},{"label":"55-64 Physical Damage"},{"label":"+72% Aether Damage"},{"label":"+3% Spirit"},{"label":"+15% Casting Speed"},{"label":"18% Vitality Resistance"},{"label":"15% Physical Damage converted to Aether"},{"label":"+1 to All Skills in Arcanist"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearhands/c027_hands.dbr","icon":"c006_hands.tex.png","quality":"Blue","name":"Empowered Soul's Touch","socket":"","slot":"Hands","level":65.0,"url":[48,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"419 Armor"}],"bodyStats":[{"label":"4-9 Aether Damage"},{"label":"+42% Aether Damage"},{"label":"+36 Spirit"},{"label":"+64 Offensive Ability"},{"label":"15% Vitality Resistance"},{"label":"+2 to Callidor's Tempest","extras":"Tier 2 Arcanist skill"},{"label":"+2 to Mirror of Ereoctes","extras":"Tier 3 Arcanist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/blunt1h/c024_blunt.dbr","icon":"c008_blunt.tex.png","quality":"Blue","name":"Empowered Spiritcrusher","socket":"","slot":"Mace (1h)","level":75.0,"url":[95,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[],"bodyStats":[{"label":"14 Vitality Damage"},{"label":"85-116 Physical Damage"},{"label":"+78% Vitality Damage"},{"label":"+42 Offensive Ability"},{"label":"30% Vitality Resistance"},{"label":"15% Physical Damage converted to Vitality"},{"label":"+1 to All Skills in Necromancer"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/shields/c020_shield.dbr","icon":"c002_shield.tex.png","quality":"Blue","name":"Empowered Spiriteater Bulwark","socket":"","slot":"Shield","level":58.0,"url":[236,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"33% Chance to Block 668 Damage (100% Absorption)"}],"bodyStats":[{"label":"10 Vitality Damage"},{"label":"86 Physical Damage"},{"label":"0.6 second Block Recovery"},{"label":"+540 Health"},{"label":"+15% Health/s"},{"label":"80% Vitality Resistance"},{"label":"12% of Attack Damage converted to Health"},{"label":"+2 to Menhir's Bulwark","extras":"Tier 9 Soldier skill"},{"label":"+2 to Wendigo Totem","extras":"Tier 5 Shaman skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/guns2h/c031_gun2h.dbr","icon":"c010_gun2h.tex.png","quality":"Blue","name":"Empowered Stake-Thrower","socket":"","slot":"Ranged (2h)","level":65.0,"url":[383,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"50% Armor Piercing"}],"bodyStats":[{"label":"168-210 Physical Damage"},{"label":"165 Bleeding Damage over 3 Seconds"},{"label":"+70% Pierce Damage"},{"label":"+76% Bleeding Damage"},{"label":"+66 Offensive Ability"},{"label":"+10% Crit Damage"},{"label":"+3 to Blood Pact","extras":"Tier 8 Shaman skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearaccessories/waist/c108_waist.dbr","icon":"c104_waist_starseerscord.tex.png","quality":"Blue","name":"Empowered Star Seer's Cord","socket":"","slot":"Belt","level":72.0,"url":[374,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"70 Armor"}],"bodyStats":[{"label":"+56% Aether Damage"},{"label":"+56% Lightning Damage"},{"label":"+56% Electrocute Damage"},{"label":"+4% Offensive Ability"},{"label":"14% Chaos Resistance"},{"label":"24% Elemental Resistance"},{"label":"+4% Crit Damage"},{"label":"+3 to Lightning Tether","extras":"Tier 4 Inquisitor skill"},{"label":"+2 to Shattered Star","extras":"Tier 8 Arcanist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearfeet/c018_feet.dbr","icon":"c004_feet.tex.png","quality":"Blue","name":"Empowered Stonewrought Groundbreakers","socket":"","slot":"Feet","level":58.0,"url":[316,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"665 Armor"}],"bodyStats":[{"label":"+44 Physique"},{"label":"20% Bleeding Resistance"},{"label":"50% Reduced Petrify Duration"},{"label":"5% Physical Resistance"},{"label":"+1 to Brute Force","extras":"Tier 1 Shaman skill"},{"label":"+1 to Forcewave","extras":"Tier 1 Soldier skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/focus/c028_focus.dbr","icon":"c015_focus.tex.png","quality":"Blue","name":"Empowered Storm Scion","socket":"","slot":"Offhand","level":75.0,"url":[434,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[],"bodyStats":[{"label":"1-20 Lightning Damage"},{"label":"+96% Lightning Damage"},{"label":"+2.5 Energy Regenerated per second"},{"label":"+65% Energy Regenerated per second"},{"label":"22% Lightning Resistance"},{"label":"+8% Crit Damage"},{"label":"-16% Skill Cooldown Reduction"},{"label":"+2 to Storm Touched","extras":"Tier 7 Shaman skill"},{"label":"+2 to Maelstrom","extras":"Tier 8 Shaman skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/focus/c023_focus.dbr","icon":"c014_focus.tex.png","quality":"Blue","name":"Empowered Stormcaller's Effigy","socket":"","slot":"Offhand","level":58.0,"url":[289,"","","",""],"numItems":3,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[],"bodyStats":[{"label":"1-20 Lightning Damage"},{"label":"+80% Lightning Damage"},{"label":"+50% Electrocute Damage"},{"label":"+60% Energy Regenerated per second"},{"label":"+10% Crit Damage"},{"label":"-16% Skill Cooldown Reduction"},{"label":"+1 to All Skills in Shaman"},{"label":"+2 to Raging Tempest","extras":"Tier 5 Shaman skill"},{"label":"+1 to Star Pact","extras":"Tier 9 Arcanist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/axe1h/c019_axe.dbr","icon":"c005_axe.tex.png","quality":"Blue","name":"Empowered Storm's Edge","socket":"","slot":"Axe (1h)","level":65.0,"url":[135,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[],"bodyStats":[{"label":"1-30 Lightning Damage"},{"label":"72-113 Physical Damage"},{"label":"+55% Lightning Damage"},{"label":"621-343 Electrocute Retaliation over 3 Seconds"},{"label":"+20% Casting Speed"},{"label":"+50% Total Retaliation Damage"},{"label":"15% Physical Damage converted to Lightning"},{"label":"+2 to Stun Jacks","extras":"Tier 1 Demolitionist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearhead/c037_head.dbr","icon":"c005_head.tex.png","quality":"Blue","name":"Empowered Templar's Headguard","socket":"","slot":"Head","level":58.0,"url":[232,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"756 Armor"}],"bodyStats":[{"label":"+40 Defensive Ability"},{"label":"+400 Health"},{"label":"15% Chaos Resistance"},{"label":"60% Fire Resistance"},{"label":"+2 to Menhir's Bulwark","extras":"Tier 9 Soldier skill"},{"label":"+2 to Blast Shield","extras":"Tier 7 Demolitionist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearlegs/c021_legs.dbr","icon":"c007_legs.tex.png","quality":"Blue","name":"Empowered Templar's Leg Armor","socket":"","slot":"Legs","level":65.0,"url":[260,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"1032 Armor"}],"bodyStats":[{"label":"448-925 Lightning Retaliation"},{"label":"+62 Defensive Ability"},{"label":"+8% Health"},{"label":"15% Chaos Resistance"},{"label":"26% Fire Resistance"},{"label":"33% Lightning Resistance"},{"label":"+2 to Vindictive Flame","extras":"Tier 3 Demolitionist skill"},{"label":"+2 to Storm Touched","extras":"Tier 7 Shaman skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/focus/c030_focus.dbr","icon":"c013_focus.tex.png","quality":"Blue","name":"Empowered Tome of Plagues","socket":"","slot":"Offhand","level":65.0,"url":[412,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[],"bodyStats":[{"label":"+95% Vitality Damage"},{"label":"+95% Poison Damage"},{"label":"+275 Health"},{"label":"+5 Energy Regenerated per second"},{"label":"+44 Offensive Ability"},{"label":"-16% Skill Cooldown Reduction"},{"label":"+2 to Bloody Pox","extras":"Tier 2 Occultist skill"},{"label":"+2 to Dreeg's Evil Eye","extras":"Tier 1 Occultist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/blunt1h/c020_blunt.dbr","icon":"c003_blunt.tex.png","quality":"Blue","name":"Empowered Touch of Malice","socket":"","slot":"Mace (1h)","level":75.0,"url":[30,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[],"bodyStats":[{"label":"77-119 Physical Damage"},{"label":"+38% Physical Damage"},{"label":"+33 Offensive Ability"},{"label":"+26 Physique"},{"label":"10% chance to Stun target for 3 Seconds"},{"label":"+2 to Counter Strike","extras":"Tier 8 Soldier skill"},{"label":"+2 to Shield Training","extras":"Tier 3 Soldier skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/caster/c028_dagger.dbr","icon":"c005_dagger001.tex.png","quality":"Blue","name":"Empowered Voidblade","socket":"","slot":"Dagger (1h)","level":58.0,"url":[9,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"38-66 Chaos Damage"}],"bodyStats":[{"label":"+109% Chaos Damage"},{"label":"+40 Spirit"},{"label":"+15% Energy Regenerated per second"},{"label":"25% Chaos Resistance"},{"label":"-4% Skill Cooldown Reduction"},{"label":"+3 to Doom Bolt","extras":"Tier 8 Occultist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/melee2h/c035_axe2h.dbr","icon":"c017_axe2h.tex.png","quality":"Blue","name":"Empowered Wildcaller's Decapitator","socket":"","slot":"Axe (2h)","level":65.0,"url":[302,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[],"bodyStats":[{"label":"10-54 Lightning Damage"},{"label":"272-322 Physical Damage"},{"label":"+150% Lightning Damage"},{"label":"+208 Health"},{"label":"+65 Offensive Ability"},{"label":"+10% Crit Damage"},{"label":"45% Physical Damage converted to Lightning"},{"label":"+3 to Primal Strike","extras":"Tier 2 Shaman skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/geartorso/c045_torso.dbr","icon":"c025_torso.tex.png","quality":"Blue","name":"Empowered Wildcaller's Skins","socket":"","slot":"Chest","level":65.0,"url":[336,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"840 Armor"}],"bodyStats":[{"label":"+45% Lightning Damage"},{"label":"+3% Movement Speed"},{"label":"+44 Physique"},{"label":"18% Vitality Resistance"},{"label":"30% Acid Resistance"},{"label":"+20% Damage to Beastkin"},{"label":"+2 to Primal Strike","extras":"Tier 2 Shaman skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/swords1h/c023_sword.dbr","icon":"c016_williesrazor01.tex.png","quality":"Blue","name":"Empowered Willie's Razor","socket":"","slot":"Sword (1h)","level":50.0,"url":[254,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"35% Armor Piercing"}],"bodyStats":[{"label":"58-78 Physical Damage"},{"label":"16 Pierce Damage"},{"label":"+44% Physical Damage"},{"label":"+32% Pierce Damage"},{"label":"+80 Offensive Ability"},{"label":"+1 to All Skills in Nightblade"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearfeet/c016_feet.dbr","icon":"c002_feet.tex.png","quality":"Blue","name":"Empowered Windborne Greaves","socket":"","slot":"Feet","level":65.0,"url":[26,"","","",""],"numItems":2,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"605 Armor"}],"bodyStats":[{"label":"+30% Cold Damage"},{"label":"+9% Movement Speed"},{"label":"36% Cold Resistance"},{"label":"30% Slow Resistance"},{"label":"+1 to Absolute Zero","extras":"Tier 5 Arcanist skill"},{"label":"+1 to Shadow Strike","extras":"Tier 3 Nightblade skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/melee2h/c030_sword2h.dbr","icon":"c009_sword2h.tex.png","quality":"Blue","name":"Empowered Wrathblade","socket":"","slot":"Sword (2h)","level":75.0,"url":[44,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"22% Armor Piercing"}],"bodyStats":[{"label":"35 Vitality Damage"},{"label":"218-367 Physical Damage"},{"label":"+120% Vitality Damage"},{"label":"+14% Attack Speed"},{"label":"+3% Spirit"},{"label":"+2 Energy Regenerated per second"},{"label":"+24% Casting Speed"},{"label":"28% Vitality Resistance"},{"label":"45% Physical Damage converted to Vitality"},{"label":"+1 to All Skills in Occultist"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/focus/c025_focus.dbr","icon":"c007_focus.tex.png","quality":"Blue","name":"Empowered Wyrmclaw","socket":"","slot":"Offhand","level":65.0,"url":[262,"","","",""],"numItems":2,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[],"bodyStats":[{"label":"+88% Fire Damage"},{"label":"+62% Energy Regenerated per second"},{"label":"+42 Offensive Ability"},{"label":"50% Acid Resistance"},{"label":"-16% Skill Cooldown Reduction"},{"label":"+2 to Summon Hellhound","extras":"Tier 3 Occultist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearaccessories/medals/c014_medal.dbr","icon":"c14_acolytes_insignia.tex.png","quality":"Blue","name":"Enchanter's Insignia","socket":"","slot":"Medal","level":22.0,"url":[585,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[],"bodyStats":[{"label":"+12% Fire Damage"},{"label":"+12% Lightning Damage"},{"label":"+34 Offensive Ability"},{"label":"+2 to Flame Touched","extras":"Tier 2 Demolitionist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearaccessories/rings/c009_ring.dbr","icon":"c09_ring_eternal_band.tex.png","quality":"Blue","name":"Eternal Band","socket":"","slot":"Ring","level":50.0,"url":[350,"","","",""],"numItems":2,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[],"bodyStats":[{"label":"+30% Elemental Damage"},{"label":"+10% Casting Speed"},{"label":"10% Elemental Resistance"},{"label":"+2 to Death Sentence","extras":"Tier 6 Inquisitor skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearhead/c007_head.dbr","icon":"c007_head.tex.png","quality":"Blue","name":"Explorer's Cover","socket":"","slot":"Head","level":20.0,"url":[615,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"120 Armor"}],"bodyStats":[{"label":"+22 Physique"},{"label":"16% Pierce Resistance"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearfeet/c005_feet.dbr","icon":"c005_feet.tex.png","quality":"Blue","name":"Explorer's Footpads","socket":"","slot":"Feet","level":20.0,"url":[622,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"100 Armor"}],"bodyStats":[{"label":"+12% Movement Speed"},{"label":"20% Fire Resistance"},{"label":"20% Slow Resistance"},{"label":"50% Reduced Entrapment Duration"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/guns1h/d004_gun1h.dbr","icon":"d004_gun1h.tex.png","quality":"Epic","name":"Exterminus","socket":"","slot":"Ranged (1h)","level":65.0,"url":[419,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"20% Armor Piercing"}],"bodyStats":[{"label":"9-15 Chaos Damage"},{"label":"55-72 Physical Damage"},{"label":"+75% Chaos Damage"},{"label":"+75% Fire Damage"},{"label":"+75% Burn Damage"},{"label":"+10% Attack Speed"},{"label":"15% Physical Damage converted to Chaos"},{"label":"+1 to All Skills in Occultist"},{"label":"+3 to Brimstone","extras":"Tier 9 Demolitionist skill"},{"label":"+2 to Explosive Strike","extras":"Tier 3 Demolitionist skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearhead/c018_head.dbr","icon":"c018_head.tex.png","quality":"Blue","name":"Faceguard of Perdition","socket":"","slot":"Head","level":40.0,"url":[211,"","","",""],"numItems":2,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"356 Armor"}],"bodyStats":[{"label":"+15% Acid Damage"},{"label":"125 Acid Retaliation"},{"label":"+27 Physique"},{"label":"12% Pierce Resistance"},{"label":"20% Acid Resistance"},{"label":"Increases Armor by 4%"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/gearweapons/melee2h/c004_axe2h.dbr","icon":"c004_axe2h.tex.png","quality":"Blue","name":"Falcon's Claw","socket":"","slot":"Axe (2h)","level":19.0,"url":[158,"","","",""],"numItems":1,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[],"bodyStats":[{"label":"3-27 Lightning Damage"},{"label":"72-203 Physical Damage"},{"label":"+60% Lightning Damage"},{"label":"+35% Electrocute Damage"},{"label":"45% Physical Damage converted to Lightning"},{"label":"+2 to Primal Strike","extras":"Tier 2 Shaman skill"},{"label":"+1 to Torrent","extras":"Tier 4 Shaman skill"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""},{"baseRecord":"records/items/geartorso/c009_torso.dbr","icon":"c009_torso.tex.png","quality":"Blue","name":"Fanatic's Overcoat","socket":"","slot":"Chest","level":35.0,"url":[611,"","","",""],"numItems":4,"type":1,"buddies":["Snygg"],"hasRecipe":false,"headerStats":[{"label":"271 Armor"}],"bodyStats":[{"label":"+380 Health"},{"label":"+9 Health/s"},{"label":"+14% Health/s"},{"label":"+6% Total Speed"},{"label":"16% Chaos Resistance"}],"petStats":[],"hasCloudBackup":false,"greenRarity":0,"extras":""}];
     return dummyData;
-  }
+  }*/
 };
 
 

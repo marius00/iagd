@@ -16,7 +16,6 @@ export interface ApplicationState {
 
 const StoreContext = React.createContext({items: [], isLoading: true} as ApplicationState);
 
-// TODO: Message support
 // TODO: Collection tab
 // TODO: Tabs [and maybe improve discord link, and merge in help tab?]
 // TODO: Dark mode
