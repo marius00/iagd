@@ -54,6 +54,7 @@
   bottom: 0;
   padding: 10px;
   margin: 0;
+  -webkit-user-select: none; /* Chrome/Safari */
 }
 .items .item .buddy-item-mix {
   position: absolute;

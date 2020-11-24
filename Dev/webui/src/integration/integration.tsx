@@ -24,5 +24,4 @@ export function transferItem(url: object[], numItems: number): TransferResult {
     console.log('Transfer Single', id);
     return {success: true, numTransferred: numItems};
   }
-  // JSON.parse(core.transferItem(["", "", "", "", ""], 1));
 }

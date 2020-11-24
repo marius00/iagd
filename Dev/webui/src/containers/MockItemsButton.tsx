@@ -91,7 +91,7 @@ export const mockDataItems = (text: string): IItem[] => {
           '',
           ''
         ],
-        numItems: 1,
+        numItems: 100,
         type: 2,
         buddies: [],
         hasRecipe: true,

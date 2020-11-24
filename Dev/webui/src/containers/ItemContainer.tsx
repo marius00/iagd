@@ -3,28 +3,35 @@ import Item from '../components/Item';
 import IItem from '../interfaces/IItem';
 import './ItemContainer.css';
 import ReactTooltip from 'react-tooltip';
-import { isEmbedded, transferItem } from '../integration/integration';
 import Spinner from '../components/Spinner';
 import translate from '../translations/EmbeddedTranslator';
+import { transferItem } from '../integration/integration';
 
 interface Props {
   items: IItem[];
   isLoading: boolean;
+  onItemReduce(url: object[], numItems: number): void;
 }
 
 class ItemContainer extends React.PureComponent<Props, object> {
-
-  constructor(props: Props) {
-    super(props);
-  }
-
   transferSingle(url: object[]) {
-    transferItem(url, 1);
+    var r = transferItem(url, 1);
+    if (r.success) {
+      this.props.onItemReduce(url, r.numTransferred);
+    }
   }
 
   transferAll(url: object[]) {
-    transferItem(url, 9999);
+    var r = transferItem(url, 99999);
+    if (r.success) {
+      this.props.onItemReduce(url, r.numTransferred);
+    }
   }
+
+  componentDidUpdate(props: Props) {
+    setTimeout(() => ReactTooltip.rebuild(), 1250); // TODO: This seems like a stupid way to solve tooltip issues.
+  }
+
 
   copyToClipboard(stuff: string) {
     // TODO: REDO, move to integration

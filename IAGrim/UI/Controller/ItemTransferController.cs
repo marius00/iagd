@@ -193,9 +193,6 @@ namespace IAGrim.UI.Controller {
                         _browser.ShowMessage(RuntimeSettings.Language.GetTag("iatag_stash3_failure"), UserFeedbackLevel.Warning);
 
                     }
-
-                    // Lets do this last, to make sure feedback reaches the user as fast as possible
-                    _searchWindow.UpdateListView();
                 }
                 else {
                     Logger.Warn("Could not find any items for the requested transfer");

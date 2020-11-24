@@ -216,16 +216,23 @@ class Item extends React.PureComponent<Props, object> {
           <p>{translate('item.label.levelRequirement', item.level > 1 ? String(item.level) : translate('item.label.levelRequirementAny'))}</p>
         </div>
 
-        {item.numItems > 1 && item.type === IItemType.Player ?
+        {item.numItems >= 1 && item.type === IItemType.Player ?
           <div className="link-container-all">
             <a onClick={() => this.props.transferAll(item.url)}>{translate('item.label.transferAll')} ({item.numItems})</a>
           </div>
           : ''
         }
 
-        {item.type === IItemType.Player ?
+        {item.numItems >= 1 && item.type === IItemType.Player ?
           <div className="link-container">
             <a onClick={() => this.props.transferSingle(item.url)}>{translate('item.label.transferSingle')}</a>
+          </div>
+          : ''
+        }
+
+        {item.numItems <= 0 && item.type === IItemType.Player ?
+          <div className="link-container">
+            {translate('item.label.noMoreItems')}
           </div>
           : ''
         }

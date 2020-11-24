@@ -29,6 +29,7 @@ class App extends React.PureComponent<{}, object> {
         items: items
       });
     };
+
     // @ts-ignore: setItems doesn't exist on window
     window.addItems = (data: any) => {
       const items = typeof data === 'string' ? JSON.parse(data) : data;
@@ -49,7 +50,20 @@ class App extends React.PureComponent<{}, object> {
 
   // Used primarily for setting mock items for testing
   setItems(items: IItem[]) {
-    this.setState({...this.state, items: items, isLoading: false});
+    this.setState({items: items, isLoading: false})
+  }
+
+  // reduceItemCount will reduce the number of items displayed, generally after an item has been transferred out.
+  reduceItemCount(url: object[], numItems: number) {
+    let items = [...this.state.items];
+    var item = items.filter(e => e.url.join(':') === url.join(':'))[0];
+    if (item !== undefined) {
+      item.numItems -= numItems;
+      this.setState({items: items});
+      console.log(item);
+    } else {
+      console.warn("Attempted to reduce item count, but item could not be found", url);
+    }
   }
 
   render() {
@@ -61,7 +75,7 @@ class App extends React.PureComponent<{}, object> {
 
           {!isEmbedded ? <MockItemsButton onClick={(items) => this.setItems(items)} /> : ''}
 
-          <ItemContainer items={this.state.items} isLoading={this.state.isLoading} />
+          <ItemContainer items={this.state.items} isLoading={this.state.isLoading} onItemReduce={(url, numItems) => this.reduceItemCount(url, numItems)} />
         </StoreContext.Provider>
       </div>
     );

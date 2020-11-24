@@ -68,6 +68,7 @@ namespace IAGrim.UI.Misc.CEF {
                 {"item.augmentPurchasable", lang.GetTag("iatag_html_augmentation_item")},
                 {"app.copyToClipboard", lang.GetTag("iatag_html_copytoclipboard")},
                 {"item.label.setbonus", lang.GetTag("iatag_html_setbonus")},
+                {"item.label.noMoreItems", lang.GetTag("iatag_html_nomoreitems")},
             };
 
             // Attempting to return a Dictionary<..> object will only work if this object is bound with "async: true"

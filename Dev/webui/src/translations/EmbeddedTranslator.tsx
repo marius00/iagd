@@ -35,7 +35,8 @@ class EmbeddedTranslator {
     'crafting.header.currentlyLacking': 'You are currently lacking:',
     'item.augmentPurchasable': 'You may be able to purchase this augment from {0}',
     'app.copyToClipboard': 'Copy to clipboard',
-    'item.label.setbonus': 'Set:'
+    'item.label.setbonus': 'Set:',
+    'item.label.noMoreItems': 'No more items'
   };
 
 
@@ -43,7 +44,7 @@ class EmbeddedTranslator {
 
   public translate(id: string): string {
     // Fetch data from host
-    if (Object.getOwnPropertyNames(EmbeddedTranslator.translation).length === 0) {
+    if (Object.getOwnPropertyNames(EmbeddedTranslator.translation).length === 0 && typeof core !== 'undefined') {
       const d = core.getTranslationStrings();
       EmbeddedTranslator.translation = typeof d === 'string' ? JSON.parse(d) : d;
     }
