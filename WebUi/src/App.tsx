@@ -23,11 +23,15 @@ const StoreContext = React.createContext({items: [], isLoading: true, activeTab:
 
 // TODO: Dark mode
 // TODO: Prevent multiple clicks on transfer? or non-issue?
+// TODO: Basic tab-usage analytics, determine if collection or crafting is being used
+// TODO: Discord like 'feature discovery'
+// TODO: Move help tab into WebUI?
 // TODO: Crafting support??
 // TODO: A no more matches message when scrolling too far?
 // TODO: A commit redoing all the damn bracket styles in C# -- do this last.. sigh.
 // TODO: Ensure loading works correctly.. no duplicates, in expected order..
 // TODO: Look into the duplicate key errors -- seems to be for items with&without a component. dupe item but with comp.
+// TODO: Salt Bag: 5% Less Damage from Aetherials
 
 class App extends React.PureComponent<{}, object> {
   state = {
@@ -134,6 +138,14 @@ class App extends React.PureComponent<{}, object> {
           /></div>
 
           {this.state.activeTab === 1 && <CollectionItemContainer items={this.state.collectionItems} />}
+
+          {this.state.activeTab === 2 && <div className="legacy-crafting">
+            <h2>Legacy functionality</h2>
+            <p>This used to be a part of IA, automagically detecting which components you already had. <br/>
+            If you'd like to see to see the functionality return, give a shout out!</p>
+            <iframe title="Crafting tab" src="https://items.dreamcrash.org/ComponentAssembler?record=d009_relic.dbr" style={{width: "100%", height: "100%", overflow: "hidden", position: "absolute"}}  scrolling="yes" frameBorder={0} />
+          </div>
+          }
 
         </StoreContext.Provider>
       </div>

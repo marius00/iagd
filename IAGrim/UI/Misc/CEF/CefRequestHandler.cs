@@ -30,6 +30,9 @@ namespace IAGrim.UI.Misc.CEF {
                 return false;
             }
 
+            else if (request.Url.StartsWith("https://items.dreamcrash.org")) {
+                return false;
+            }
 
             else if (!request.Url.Contains("grimdawn.dreamcrash") && !frame.Url.Contains("dreamcrash.org") && (request.Url.StartsWith("http://") || request.Url.StartsWith("https://"))) {
                 System.Diagnostics.Process.Start(request.Url);
