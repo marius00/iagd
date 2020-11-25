@@ -9,11 +9,6 @@ import translate from '../translations/EmbeddedTranslator';
 import IItemType from '../interfaces/IItemType';
 import GetSetName from '../integration/ItemSetService';
 
-const buddyIcon = require('./img/buddy.png');
-const recipeIcon = require('./img/recipe.png');
-const cloudErrIcon = require('./img/cloud-err.png');
-const cloudOkIcon = require('./img/cloud-ok.png');
-const purchasableItem = require('./img/gold-coins-sm.png');
 
 interface Props {
   item: IItem;
@@ -72,7 +67,7 @@ class Item extends React.PureComponent<Props, object> {
         <span>
           <img
             className="cursor-help"
-            src={purchasableItem}
+            src="static/gold-coins-sm.png"
             data-tip={translate('item.augmentPurchasable', item.extras)}
             alt="You can purchase this item"
           />
@@ -83,7 +78,7 @@ class Item extends React.PureComponent<Props, object> {
         {showCloudOkIcon &&
           <img
             className="cursor-help"
-            src={cloudOkIcon}
+            src="static/cloud-ok.png"
             data-tip={translate('items.label.cloudOk')}
             alt={"Synced to the cloud"}
           />
@@ -92,7 +87,7 @@ class Item extends React.PureComponent<Props, object> {
         {showCloudErrorIcon &&
         <img
           className="cursor-help"
-          src={cloudErrIcon}
+          src="static/cloud-err.png"
           data-tip={translate('items.label.cloudError')}
           alt={"Not synced to the cloud"}
         />
@@ -102,7 +97,7 @@ class Item extends React.PureComponent<Props, object> {
         <span>
             <img
               className="cursor-help"
-              src={buddyIcon}
+              src="static/buddy.png"
               data-tip={translate('item.buddies.singular', item.buddies[0])}
               alt={"One of your buddies has this item"}
             />
@@ -114,7 +109,7 @@ class Item extends React.PureComponent<Props, object> {
         <span>
             <img
               className="cursor-help"
-              src={buddyIcon}
+              src="static/buddy.png"
               data-tip={translate('item.buddies.plural', item.buddies.join('\n'))}
               alt={"Several of your buddies has this item"}
             />
@@ -127,7 +122,7 @@ class Item extends React.PureComponent<Props, object> {
           <img
             className="cursor-help"
             data-bind="click: function(item) { jumpToCraft(item.baseRecord); }"
-            src={recipeIcon}
+            src="static\recipe.png"
             alt={"You can create this item (recipe)"}
           />
           </span>
@@ -201,7 +196,7 @@ class Item extends React.PureComponent<Props, object> {
           <span>
             <a data-tip={translate('items.label.youCanCraftThisItem')}>
               <div className="recipe-item-corner">
-                <img className="cursor-help" src={recipeIcon}/>
+                <img className="cursor-help" src="static\recipe.png"/>
               </div>
             </a>
           </span>
@@ -212,7 +207,7 @@ class Item extends React.PureComponent<Props, object> {
 
         {item.hasRecipe && item.type === IItemType.Recipe ?
           <div className="recipe-item">
-            <img src={recipeIcon}/>
+            <img src="static\recipe.png"/>
             <span className="craft-link" data-bind="click: function(item) { jumpToCraft(item.baseRecord); }">
               &nbsp;<span>{translate('items.label.youCanCraftThisItem')}</span>
             </span>
