@@ -282,6 +282,7 @@ namespace StatTranslator {
             {"iatag_html_bonustopets", "Bonus to All Pets"},
             {"iatag_html_copytoclipboard", "Copy to Clipboard"},
             {"iatag_html_tab_header_items", "Items"},
+            {"iatag_html_tab_header_collections", "Collections"},
             {"iatag_html_tab_header_crafting", "Crafting"},
             {"iatag_html_tab_header_components", "Components"},
             {"iatag_html_tab_header_videoguide", "Video Guide"},

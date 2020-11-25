@@ -582,6 +582,7 @@ namespace IAGrim.UI
                 }
             }
 
+            // DarkMode.Activate(this); // Needs a lot more work before its ready, for example custom components uses Draw and does not respect coloring.
             Logger.Debug("UI initialization complete");
         }
 

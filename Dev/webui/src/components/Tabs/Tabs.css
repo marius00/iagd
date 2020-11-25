@@ -6,12 +6,12 @@ h1, h2, h3, h4, h5, h6 {
 
 .fancyTab {
   text-align: center;
-  padding: 15px 0;
+  padding: 8px 0 0 0;
   background-color: #eee;
   box-shadow: 0 0 0 1px #ddd;
   top: 15px;
   transition: top .2s;
-  width: 20%; /* TODO*/
+  width: 100px;
 }
 
 .fancyTab.active {
@@ -35,7 +35,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .fancyTab a {
   font-family: 'Source Sans Pro';
-  font-size: 1.50em;
+  font-size: 1.20em;
   font-weight: 300;
   transition: .2s;
   color: #555;
@@ -46,7 +46,7 @@ h1, h2, h3, h4, h5, h6 {
 }*/
 
 .fancyTabs {
-  border-bottom: 2px solid #ddd;
+  border-bottom: 0px;
   margin: 2px 0 0 0;
 }
 
@@ -62,12 +62,12 @@ li.fancyTab.active a {
 
 .fancyTab .fa {
   width: 100%;
-  padding: 15px 0 5px;
+  padding: 15px 0 0px;
   color: #666;
   display: block;
 }
 .fancyTab .fa svg {
-  font-size: 60px;
+  font-size: 30px;
 }
 
 .fancyTab.active .fa {
@@ -76,14 +76,6 @@ li.fancyTab.active a {
 
 .fancyTab a:focus {
   outline: none;
-}
-
-.fancyTabContent {
-  border-color: transparent;
-  padding: 0px 15px 15px;
-  margin-right: -2px;
-  position: relative;
-  background-color: var(--background-color);
 }
 
 .nav-tabs > li.fancyTab.active > a,
@@ -144,7 +136,6 @@ li.fancyTab.active a {
 .fancyTab.active {
   background: #fff;
   box-shadow: 1px 1px 0 1px var(--background-color), 0 0px 0 1px #ddd, -1px 1px 0 0px #ddd inset;
-  padding-bottom: 30px;
 }
 
 .arrow-down {
@@ -179,58 +170,6 @@ li.fancyTab.active a {
   text-decoration: none;
 }
 
-@media (max-width: 1200px) {
-
-  .fancyTab .fa {
-    font-size: 36px;
-  }
-
-  .fancyTab .hidden-xs {
-    font-size: 22px;
-  }
-
-}
-
-@media (max-width: 992px) {
-
-  .fancyTab .fa {
-    font-size: 33px;
-  }
-
-  .fancyTab .hidden-xs {
-    font-size: 18px;
-    font-weight: normal;
-  }
-
-}
-
-@media (max-width: 768px) {
-
-  .fancyTab > a {
-    font-size: 18px;
-  }
-
-  .nav > li.fancyTab > a {
-    padding: 15px 0;
-    margin-bottom: inherit;
-  }
-
-  .fancyTab .fa {
-    font-size: 30px;
-  }
-
-  .nav-tabs > li.fancyTab > a {
-    border-right: 1px solid transparent;
-    padding-bottom: 0;
-  }
-
-  .fancyTab.active .fa {
-    color: #333;
-  }
-
-}
-
-
 .nav-tabs > li {
   float: left;
   margin-bottom: -1px;
@@ -257,4 +196,5 @@ li.fancyTab.active a {
   margin-left: 0;
   margin-right: 0;
   padding: 0;
+  height: 100px;
 }

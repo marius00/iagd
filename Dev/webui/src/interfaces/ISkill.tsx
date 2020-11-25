@@ -9,5 +9,5 @@ export interface ISkill {
   headerStats: IStat[];
   bodyStats: IStat[];
 
-  trigger: string | null;
+  trigger?: string | null;
 }

@@ -1,13 +1,13 @@
 import * as React from 'react';
 import ItemStat from './ItemStat';
-import IItem from '../interfaces/IItem';
+import IItem from '../../interfaces/IItem';
 import Skill from './Skill';
-import { isEmbedded, openUrl } from '../integration/integration';
+import { isEmbedded, openUrl } from '../../integration/integration';
 // @ts-ignore: Missing @types
 import { Textfit } from 'react-textfit';
-import translate from '../translations/EmbeddedTranslator';
-import IItemType from '../interfaces/IItemType';
-import GetSetName from '../integration/ItemSetService';
+import translate from '../../translations/EmbeddedTranslator';
+import IItemType from '../../interfaces/IItemType';
+import GetSetName from '../../integration/ItemSetService';
 
 
 interface Props {
@@ -153,30 +153,32 @@ class Item extends React.PureComponent<Props, object> {
     return (
       <div className="item">
         <span>
-          <img src={icon} className="item-icon" data-tip={item.slot}/>
+          <img src={icon} className={"item-icon item-icon-" + item.quality.toLowerCase() } data-tip={item.slot}/>
         </span>
         <div className="text">
           <Textfit mode="multi" max={15} min={10}>
             <span>
               <a onClick={() => this.openItemSite()} className={this.translateQualityToClass(item.quality)}>{name}</a>
             </span>
-              {item.greenRarity === 3 ? <span className="cursor-help" data-tip={translate('items.label.tripleGreen')}>(+2)</span> : ''}
-              {item.greenRarity === 2 ? <span className="cursor-help" data-tip={translate('items.label.doubleGreen')}>(+1)</span> : ''}
+              {item.greenRarity === 3 ? <span className="cursor-help supergreen" data-tip={translate('items.label.tripleGreen')}> (3)</span> : ''}
+              {item.greenRarity === 2 ? <span className="cursor-help supergreen" data-tip={translate('items.label.doubleGreen')}> (2)</span> : ''}
           </Textfit>
           {item.socket && item.socket.length > 0 &&
           <span className="item-socket-label">{item.socket}</span>
           }
 
-          <ul>
+          <ul className="headerStats">
             {headerStats}
           </ul>
+
+          <br/>
 
           <ul className="bodystats">
             {bodyStats}
           </ul>
 
           {petStats.length > 0 ? (
-            <div>
+            <div className="pet-stats">
               <div className="pet-header">{translate('item.label.bonusToAllPets')}</div>
               {petStats}
             </div>

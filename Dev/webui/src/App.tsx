@@ -41,6 +41,7 @@ class App extends React.PureComponent<{}, object> {
     // @ts-ignore: setItems doesn't exist on window
     window.setItems = (data: any) => {
       const items = typeof data === 'string' ? JSON.parse(data) : data;
+      console.log(data);
 
       this.setState({
         isLoading: false,
@@ -107,7 +108,7 @@ class App extends React.PureComponent<{}, object> {
         <StoreContext.Provider value={this.state}>
           <div className={'container'}>
             <Tabs activeTab={this.state.activeTab} setActiveTab={(idx: number) => this.setState({activeTab: idx})} />
-            <div id="myTabContent" className="tab-content fancyTabContent" aria-live="polite">
+            <div id="myTabContent" className="tab-content" aria-live="polite">
             </div>
           </div>
           {this.state.activeTab === 0 && !isEmbedded ? <MockItemsButton onClick={(items) => this.setItems(items)} /> : ''}

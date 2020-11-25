@@ -1,16 +1,83 @@
+/*
+   Old/Light theme
+body {
+  --item-background: #e8d5b6;
+  --item-background-hover: #e8d5b6;
+  --item-stat-label: 000000;
+  --item-stat-modifier: 000000;
+  --item-skill-trigger: black;
+  --item-border: #896947;
+  --item-transfer: #ffffff;
+  --item-misc-info: #008B8B;
+  --item-header-info: #ffffff;
+  --item-grantskill-label: inherit;
+  --item-grantskill-content: inherit;
+}
+*/
+
+.item {
+  --item-background: #171614;
+  --item-background-hover: #232220;
+  --item-stat-label: #a88054;
+  --item-stat-modifier: #dec2a3;
+  --item-skill-trigger: gray;
+  --item-border: #211e1c;
+  --item-transfer: #ffffff;
+  --item-misc-info: #999999;
+  --item-header-info: #ffffff;
+  --item-grantskill-label: #e3ba6b;
+  --item-grantskill-content: #6699ff;
+  --item-supergreen: #3eea4a;
+  --item-socket: #dec2a3;
+  --item-set: #e3ba6b;
+  --item-pet: #e3ba6b;
+  --item-pet-bullet: white;
+}
+
+.item-icon-blue {
+  background-image: url(../components/Item/rarity-Blue.png);
+}
+.item-icon-epic {
+  background-image: url(../components/Item/rarity-Epic.png);
+}
+.item-icon-green {
+  background-image: url(../components/Item/rarity-Green.png);
+}
+.item .supergreen {
+  color: var(--item-supergreen);
+}
+
+.pet-stats li::marker {
+  color: var(--item-pet-bullet);
+}
+
+.bodystats .label, .skill .label, .pet-stats .label {
+  color: var(--item-stat-label);
+}
+
+.bodystats .modifier, .skill .modifier, .pet-stats .modifier {
+  color: var(--item-stat-modifier);
+}
+
+.headerStats .label, .headerStats .modifier {
+  color: var(--item-header-info);
+}
+
 .items {
   display: flex;
   flex-wrap: wrap;
   color: #000;
 }
+
 .items .item {
   position: relative;
   border-radius: 15px;
   padding: 20px;
   padding-bottom: 65px;
-  border: 1px solid #896947;
+
+  border: 1px solid var(--item-border);
   margin: 10px;
-  background: #e8d5b6;
+  background: var(--item-background);
   -webkit-box-sizing: border-box;
   /* Safari/Chrome, other WebKit */
   -moz-box-sizing: border-box;
@@ -45,6 +112,11 @@
 .recipe-item-corner img {
   margin-left: 4px;
 }
+
+.level {
+  color: var(--item-misc-info);
+}
+
 .items .item .level,
 .items .item .recipe-item,
 .items .item .buddy-item,
@@ -77,7 +149,7 @@
 .items .item .link-container-all a,
 .items .item .link-container a {
   text-decoration: none;
-  color: #008B8B;
+  color: var(--item-transfer);
 }
 .items .item .level a:hover,
 .items .item .recipe-item a:hover,
@@ -119,7 +191,7 @@ a { cursor: pointer; }
   float: left;
 }
 .items .item:hover {
-  background: #e2caa3;
+  background: var(--item-background-hover);
 }
 .items .item .text {
   padding-left: 70px;
@@ -146,16 +218,16 @@ a { cursor: pointer; }
 
 /* Item-level colors */
 .item-quality-unknown {
-  color: #81551a !important;;
+  color: #81551a !important;
 }
 .item-quality-epic {
-  color: #9400d3 !important;
+  color: #a638ff !important;
 }
 .item-quality-blue {
-  color: #008b8b !important;;
+  color: #338cce !important;
 }
 .item-quality-green {
-  color: #006400 !important;;
+  color: #006400 !important;
 }
 
 
@@ -164,12 +236,19 @@ a { cursor: pointer; }
 /* Item Styling */
 .skill-header {
   font-weight: bold;
+  color: var(--item-grantskill-label)
 }
+
+.skill-content {
+  color: var(--item-grantskill-content);
+}
+
 .skill {
   margin-top: 15px;
 }
 .skill-trigger {
   text-decoration: underline !important;
+  color: var(--item-skill-trigger) !important;
 }
 .item-name-header {
   margin-bottom: 0px;
@@ -180,10 +259,13 @@ a { cursor: pointer; }
 .bodystats {
   padding-top: 15px;
 }
+
 .pet-header {
   font-weight: bold;
   padding-top: 15px;
+  color: var(--item-pet);
 }
+
 .pet-content {
   padding-left: 10px;
 }
@@ -204,10 +286,12 @@ a { cursor: pointer; }
 .item-socket-label {
   font-size: 10px;
   margin-top: 0px;
+  color: var(--item-socket);
 }
 .set-name {
   text-decoration: underline;
-  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+  color: var(--item-set);
 }
 
 .unknownitem {

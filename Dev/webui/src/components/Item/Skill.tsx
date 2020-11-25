@@ -1,7 +1,7 @@
 import * as React from 'react';
 import ItemStat from './ItemStat';
-import { ISkill } from '../interfaces/ISkill';
-import translate from '../translations/EmbeddedTranslator';
+import { ISkill } from '../../interfaces/ISkill';
+import translate from '../../translations/EmbeddedTranslator';
 
 interface Props {
   skill: ISkill;
@@ -30,7 +30,7 @@ class Skill extends React.PureComponent<Props, object> {
         <span className="skill-header">
           {translate('item.label.grantsSkill')}
         </span>
-        {skill.name} {skill.level && skill.level > 0 ? `(${translate('item.label.grantsSkillLevel', String(skill.level))})` : ''}
+        <span className="skill-content">{skill.name} {skill.level && skill.level > 0 ? `(${translate('item.label.grantsSkillLevel', String(skill.level))})` : ''}</span>
         <div>
           <ul>
             {headerStats}

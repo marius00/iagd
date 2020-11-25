@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Item from '../components/Item';
+import Item from '../components/Item/Item';
 import IItem from '../interfaces/IItem';
 import './ItemContainer.css';
 import ReactTooltip from 'react-tooltip';

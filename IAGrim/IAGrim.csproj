@@ -230,6 +230,7 @@
     <Compile Include="UI\Misc\CEF\JavascriptIntegration.cs" />
     <Compile Include="UI\Misc\CEF\UserFeedback.cs" />
     <Compile Include="UI\Misc\CEF\UserFeedbackService.cs" />
+    <Compile Include="UI\DarkMode.cs" />
     <Compile Include="Utilities\AutomaticUpdateChecker.cs" />
     <Compile Include="Utilities\Detection\BlockedLogsDetection.cs" />
     <Compile Include="Utilities\Detection\SteamDetection.cs" />
