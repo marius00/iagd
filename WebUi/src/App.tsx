@@ -1,67 +1,161 @@
 import * as React from 'react';
-import { Provider, Store } from 'react-redux';
-import { ApplicationState } from './types/index';
-import MagicButton from './containers/MagicButton';
-import { MockStore } from 'redux-mock-store';
-import ItemContainer from './containers/ItemContainer';
-import { isEmbedded } from './constants/index';
 import './App.css';
-import { requestInitialItems } from './actions';
-import NotificationContainer from './containers/NotificationContainer';
-import translate from './translations/EmbeddedTranslator';
+import 'react-notifications-component/dist/theme.css';
+import IItem from './interfaces/IItem';
+import MockItemsButton from './containers/MockItemsButton';
+import { isEmbedded, requestMoreItems } from './integration/integration';
+import ItemContainer from './containers/ItemContainer';
+import { store } from 'react-notifications-component';
+import ReactNotification from 'react-notifications-component';
+import Tabs from './components/Tabs/Tabs';
 import CollectionItemContainer from './containers/CollectionItemContainer';
-import { bool } from 'prop-types';
+import ICollectionItem from './interfaces/ICollectionItem';
 
-export interface Props {
-  store: Store<ApplicationState> | MockStore<ApplicationState>;
+
+export interface ApplicationState {
+  items: IItem[];
+  isLoading: boolean;
+  activeTab: number;
+  collectionItems: ICollectionItem[];
 }
 
-class App extends React.PureComponent<Props, object> {
-  state = {
-    primary: bool
-  };
+const StoreContext = React.createContext({items: [], isLoading: true, activeTab: 0, collectionItems: []} as ApplicationState);
 
-  constructor(props: Props) {
-    super(props);
-    this.props.store.dispatch(requestInitialItems());
+// TODO: Dark mode
+// TODO: Prevent multiple clicks on transfer? or non-issue?
+// TODO: Crafting support??
+// TODO: A no more matches message when scrolling too far?
+// TODO: A commit redoing all the damn bracket styles in C# -- do this last.. sigh.
+// TODO: Ensure loading works correctly.. no duplicates, in expected order..
+// TODO: Look into the duplicate key errors -- seems to be for items with&without a component. dupe item but with comp.
+
+class App extends React.PureComponent<{}, object> {
+  state = {
+    items: [],
+    isLoading: true,
+    activeTab: 0,
+    collectionItems: []
+  } as ApplicationState;
+
+  componentDidMount() {
+    // Set the items to show
+    // @ts-ignore: setItems doesn't exist on window
+    window.setItems = (data: any) => {
+      const items = typeof data === 'string' ? JSON.parse(data) : data;
+
+      this.setState({
+        isLoading: false,
+        items: items
+      });
+    };
+
+    // Add more items (typically scrolling)
+    // @ts-ignore: setItems doesn't exist on window
+    window.addItems = (data: any) => {
+      const items = [...this.state.items];
+      const newItems = typeof data === 'string' ? JSON.parse(data) : data;
+
+      this.setState({
+        isLoading: false,
+        items: items.concat(newItems)
+      });
+    };
+
+    // Set collection items
+    // @ts-ignore: setCollectionItems doesn't exist on window
+    window.setCollectionItems = (data: any) => {
+      const collectionItems = typeof data === 'string' ? JSON.parse(data) : data;
+
+      this.setState({
+        collectionItems: collectionItems
+      });
+    };
+
+
+
+    // Start showing the loading spinner
+    // @ts-ignore: setIsLoading doesn't exist on window
+    window.setIsLoading = (isLoading: boolean) => {
+      this.setState({
+        isLoading: isLoading
+      });
+    };
+
+    // Show a notification message such as "Item transferred" or "Too close to stash"
+    // @ts-ignore: showMessage doesn't exist on window
+    window.showMessage = (input: string) => {
+      let s = JSON.parse(input);
+      ShowMessage(s.message, s.type);
+    };
   }
 
-  openUrl(url: string) {
-    if (isEmbedded) {
-      document.location.href = url;
+  // Used primarily for setting mock items for testing
+  setItems(items: IItem[]) {
+    this.setState({items: items, isLoading: false})
+  }
+
+  // reduceItemCount will reduce the number of items displayed, generally after an item has been transferred out.
+  reduceItemCount(url: object[], numItems: number) {
+    let items = [...this.state.items];
+    var item = items.filter(e => e.url.join(':') === url.join(':'))[0];
+    if (item !== undefined) {
+      item.numItems -= numItems;
+      this.setState({items: items});
     } else {
-      window.open(url);
+      console.warn("Attempted to reduce item count, but item could not be found", url);
     }
   }
 
+  requestMoreItems() {
+    console.log("More items it wantssssss?");
+    this.setState({isLoading: true});
+    requestMoreItems();
+    // TODO: Fix this weird loop? This one will request more items.. which will end up in a call from C# to window.addItems().. is that how we wanna do this?
+  }
+
   render() {
-    const {store} = this.props;
-
     return (
-      <Provider store={store}>
-        <div className="App wrapper">
-          <div id="content">
-            <div className="header">
-              <a onClick={() => this.setState({primary: true})} className={this.state.primary ? 'selected' : ''}>Items</a>
-              <a onClick={() => this.setState({primary: false})} className={this.state.primary ? '' : 'selected'}>Collections</a>
-                <a onClick={() => this.openUrl('http://dev.dreamcrash.org/enchantments/')}>{translate('app.tab.components')}</a>
-                {translate('app.tab.videoGuide').length > 0 &&
-                  <a onClick={() => this.openUrl(translate('app.tab.videoGuideUrl'))}>{translate('app.tab.videoGuide')}</a>
-                }
-                <a onClick={() => this.openUrl('https://discord.gg/5wuCPbB')}>{translate('app.tab.discord')}</a>
+      <div className="App">
+        <ReactNotification />
+        <StoreContext.Provider value={this.state}>
+          <div className={'container'}>
+            <Tabs activeTab={this.state.activeTab} setActiveTab={(idx: number) => this.setState({activeTab: idx})} />
+            <div id="myTabContent" className="tab-content" aria-live="polite">
             </div>
-
-            {!isEmbedded ? <MagicButton label="Load mock items"/> : ''}
-            {!this.state.primary && <CollectionItemContainer />}
-            {this.state.primary && <ItemContainer/>}
-
-
           </div>
-          <NotificationContainer/>
-        </div>
-      </Provider>
+          {this.state.activeTab === 0 && !isEmbedded ? <MockItemsButton onClick={(items) => this.setItems(items)} /> : ''}
+
+
+          <div style={this.state.activeTab === 0 ? {display: 'block'}: {display: 'none'}}><ItemContainer
+            items={this.state.items}
+            isLoading={this.state.isLoading}
+            onItemReduce={(url, numItems) => this.reduceItemCount(url, numItems)}
+            onRequestMoreItems={() => this.requestMoreItems()}
+          /></div>
+
+          {this.state.activeTab === 1 && <CollectionItemContainer items={this.state.collectionItems} />}
+
+        </StoreContext.Provider>
+      </div>
     );
   }
+
+};
+
+function ShowMessage(message: string, type: 'success' | 'danger' | 'info' | 'default' | 'warning') {
+  store.addNotification({
+    title: type,
+    message: message,
+    type: type,
+    insert: "top",
+    container: "bottom-center",
+    animationIn: ["animate__animated", "animate__fadeIn"],
+    animationOut: ["animate__animated", "animate__fadeOut"],
+    dismiss: {
+      duration: 2500,
+      onScreen: true
+    }
+  });
 }
 
 export default App;

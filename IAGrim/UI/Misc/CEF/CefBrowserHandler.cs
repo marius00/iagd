@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using CefSharp;
 using CefSharp.WinForms;
 using IAGrim.Backup.Azure.CefSharp;
+using IAGrim.Database.Model;
 using IAGrim.UI.Controller.dto;
 using IAGrim.Utilities;
 using log4net;
@@ -58,11 +59,19 @@ namespace IAGrim.UI.Misc.CEF {
             }
 
         }
-
-
+        
         public void SetItems(List<JsonItem> items) {
             if (BrowserControl.CanExecuteJavascriptInMainFrame) {
                 BrowserControl.ExecuteScriptAsync("window.setItems", JsonConvert.SerializeObject(items, _settings));
+            }
+            else {
+                Logger.Warn("Attempted to update items but CEF not yet initialized.");
+            }
+        }
+
+        public void SetCollectionItems(IList<CollectionItem> items) {
+            if (BrowserControl.CanExecuteJavascriptInMainFrame) {
+                BrowserControl.ExecuteScriptAsync("window.setCollectionItems", JsonConvert.SerializeObject(items, _settings));
             }
             else {
                 Logger.Warn("Attempted to update items but CEF not yet initialized.");
@@ -119,7 +128,7 @@ namespace IAGrim.UI.Misc.CEF {
         }
 
 
-        public void InitializeChromium(object legacyBindeable, object bindable, EventHandler browserIsBrowserInitializedChanged) {
+        public void InitializeChromium(object bindable, EventHandler browserIsBrowserInitializedChanged) {
             try {
                 Logger.Info("Creating Chromium instance..");
 
@@ -133,7 +142,6 @@ namespace IAGrim.UI.Misc.CEF {
                 BrowserControl = new ChromiumWebBrowser(GetSiteUri());
 
                 // TODO: browser.JavascriptObjectRepository.ObjectBoundInJavascript += (sender, e) =>
-                BrowserControl.JavascriptObjectRepository.Register("data", legacyBindeable, isAsync: false, options: BindingOptions.DefaultBinder);
                 BrowserControl.JavascriptObjectRepository.Register("core", bindable, isAsync: false, options: BindingOptions.DefaultBinder);
                 BrowserControl.IsBrowserInitializedChanged += browserIsBrowserInitializedChanged;
 

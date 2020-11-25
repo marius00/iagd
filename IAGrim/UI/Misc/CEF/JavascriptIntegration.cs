@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using IAGrim.Database.Model;
 using IAGrim.Utilities;
 using Newtonsoft.Json;
 
@@ -17,8 +18,8 @@ namespace IAGrim.UI.Misc.CEF {
 
         public event EventHandler ItemTransferEvent;
         public event EventHandler OnClipboard;
-
         public event EventHandler OnRequestItems;
+        public event EventHandler OnRequestSetItemAssociations;
 
         public string TransferItem(object[] identifier, int numItems) {
             var args = new StashTransferEventArgs {
@@ -90,5 +91,13 @@ namespace IAGrim.UI.Misc.CEF {
         public void RequestMoreItems() {
             OnRequestItems?.Invoke(this, null);
         }
+
+        public string GetItemSetAssociations() {
+            GetSetItemAssociationsEventArgs args = new GetSetItemAssociationsEventArgs();
+            OnRequestSetItemAssociations?.Invoke(this, args);
+            return JsonConvert.SerializeObject(args.Elements, _settings);
+        }
+
+
     }
 }

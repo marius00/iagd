@@ -377,8 +377,10 @@ namespace IAGrim.UI
                 _itemCollectionRepo
             );
 
-            searchController.LegacyJsBind.SetItemSetAssociations(_databaseItemDao.GetItemSetAssociations());
-            _cefBrowserHandler.InitializeChromium(searchController.LegacyJsBind, searchController.JsIntegration, Browser_IsBrowserInitializedChanged);
+
+            searchController.JsIntegration.OnRequestSetItemAssociations += (s, evvv) => { (evvv as GetSetItemAssociationsEventArgs).Elements = _databaseItemDao.GetItemSetAssociations(); };
+
+            _cefBrowserHandler.InitializeChromium(searchController.JsIntegration, Browser_IsBrowserInitializedChanged);
             searchController.Browser = _cefBrowserHandler;
             searchController.JsIntegration.OnClipboard += SetItemsClipboard;
 

@@ -14,6 +14,7 @@ interface IntegrationInterface {
   transferItem(id: object[], numItems: number): string;
   setClipboard(text: string): void;
   requestMoreItems(): void;
+  getItemSetAssociations(): string;
 }
 declare let core: IntegrationInterface;
 
@@ -37,6 +38,14 @@ export function requestMoreItems(): void {
     core.requestMoreItems();
   } else {
     console.debug("It wants itemsss doesss itssss? no more have it doessssss");
+  }
+}
+
+export function getItemSetAssociations(): string {
+  if (isEmbedded) {
+    return core.getItemSetAssociations();
+  } else {
+    return "[]";
   }
 }
 

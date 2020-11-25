@@ -1,11 +1,9 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import './ItemContainer.css';
-import * as ReactTooltip from 'react-tooltip';
-import { GlobalReducerState } from '../types';
+import ReactTooltip from 'react-tooltip';
 import ICollectionItem from '../interfaces/ICollectionItem';
 import './CollectionItemContainer.css';
-import { isEmbedded } from '../constants';
+import { openUrl } from '../integration/integration';
 
 interface Props {
   items: ICollectionItem[];
@@ -23,13 +21,8 @@ class CollectionItemContainer extends React.PureComponent<Props, object> {
 
   openItemSite(item: ICollectionItem) {
     let url = `http://www.grimtools.com/db/search?query=${item.name}`;
-    if (isEmbedded) {
-      document.location.href = url;
-    } else {
-      window.open(url);
-    }
+    openUrl(url);
   }
-
 
   render() {
     const items = this.props.items;
@@ -92,10 +85,4 @@ class CollectionItemContainer extends React.PureComponent<Props, object> {
   }
 }
 
-export function mapStateToProps(state: GlobalReducerState): Props {
-  return {
-    items: state.setItemReducer.collectionItems
-  };
-}
-
-export default connect<Props>(mapStateToProps)(CollectionItemContainer);
+export default CollectionItemContainer;

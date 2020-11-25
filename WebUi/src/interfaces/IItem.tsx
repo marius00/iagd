@@ -11,6 +11,7 @@ export default interface IItem {
   level: number;
   url: Array<number | string>;
   numItems: number;
+  initialNumItems: number;
   type: IItemType;
   buddies: string[];
   hasRecipe: boolean;
@@ -19,8 +20,8 @@ export default interface IItem {
   bodyStats: IStat[];
   petStats: IStat[];
   skill?: ISkill | null;
-  hasCloudBackup?: boolean; // TODO: Should be mandatory, optional due to test data not including it
-  slot?: string; // TODO: See above
+  hasCloudBackup?: boolean;
+  slot?: string;
   extras?: string | undefined;
 }
 

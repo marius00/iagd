@@ -1,51 +1,44 @@
 import * as React from 'react';
-import Item from '../components/Item';
+import Item from '../components/Item/Item';
 import IItem from '../interfaces/IItem';
-import { connect } from 'react-redux';
 import './ItemContainer.css';
-import * as ReactTooltip from 'react-tooltip';
-import { isEmbedded } from '../constants';
+import ReactTooltip from 'react-tooltip';
 import Spinner from '../components/Spinner';
-import OnScrollLoader from './InfiniteItemLoader';
-import { GlobalReducerState } from '../types';
 import translate from '../translations/EmbeddedTranslator';
-import { copyToClipboard } from '../logic/CopyToClipboard';
+import { setClipboard, transferItem } from '../integration/integration';
+import OnScrollLoader from '../components/OnScrollLoader';
 
 interface Props {
   items: IItem[];
   isLoading: boolean;
+  onItemReduce(url: object[], numItems: number): void;
+  onRequestMoreItems(): void;
 }
 
 class ItemContainer extends React.PureComponent<Props, object> {
-
-  constructor(props: Props) {
-    super(props);
-  }
-
   transferSingle(url: object[]) {
-    const id = url.join(';');
-    if (isEmbedded) {
-      document.location.href = `transfer://single/${id}`;
-    } else {
-      console.log('Transfer Single', id);
+    var r = transferItem(url, 1);
+    if (r.success) {
+      this.props.onItemReduce(url, r.numTransferred);
     }
   }
 
   transferAll(url: object[]) {
-    const id = url.join(';');
-    if (isEmbedded) {
-      document.location.href = `transfer://all/${id}`;
-    } else {
-      console.log('Transfer All', id);
+    var r = transferItem(url, 99999);
+    if (r.success) {
+      this.props.onItemReduce(url, r.numTransferred);
     }
   }
 
+  componentDidUpdate(props: Props) {
+    setTimeout(() => ReactTooltip.rebuild(), 1250); // TODO: This seems like a stupid way to solve tooltip issues.
+  }
+
   getClipboardContent() {
-    const colors = { Epic: 'DarkOrchid', Blue: 'RoyalBlue', Green: 'SeaGreen', Unknown: '', Yellow: 'Yellow' };
+    const colors: {[index: string]:string} = { Epic: 'DarkOrchid', Blue: 'RoyalBlue', Green: 'SeaGreen', Unknown: '', Yellow: 'Yellow' };
     const entries = this.props.items.map(item => {
       const name = item.name.replace('"', '');
-      const entry = `[URL="http://www.grimtools.com/db/search?query=${name}"][COLOR="${colors[item.quality]}"]${item.name}[/COLOR][/URL]`;
-      return entry;
+      return `[URL="http://www.grimtools.com/db/search?query=${name}"][COLOR="${colors[item.quality]}"]${item.name}[/COLOR][/URL]`;
     });
 
     return entries.join('\n');
@@ -54,13 +47,11 @@ class ItemContainer extends React.PureComponent<Props, object> {
   render() {
     const items = this.props.items;
 
-    if (this.props.isLoading) {
-      return <Spinner/>;
-    }
-    else if (items.length > 0) {
+    if (items.length > 0) {
       return (
         <div className="items">
-          <span className="clipboard-link" onClick={() => copyToClipboard(this.getClipboardContent())}>
+          {this.props.isLoading && <Spinner />}
+          <span className="clipboard-link" onClick={() => setClipboard(this.getClipboardContent())}>
             {translate('app.copyToClipboard')}
           </span>
 
@@ -68,13 +59,13 @@ class ItemContainer extends React.PureComponent<Props, object> {
             <Item
               item={item}
               key={'item-' + item.url.join(':')}
-              transferAll={(url) => this.transferAll(url)}
-              transferSingle={(url) => this.transferSingle(url)}
+              transferAll={(url: object[]) => this.transferAll(url)}
+              transferSingle={(url: object[]) => this.transferSingle(url)}
             />
           )}
           <ReactTooltip />
+          <OnScrollLoader onTrigger={this.props.onRequestMoreItems} />
 
-          <OnScrollLoader/>
         </div>
       );
     }
@@ -89,11 +80,4 @@ class ItemContainer extends React.PureComponent<Props, object> {
 
 }
 
-export function mapStateToProps(state: GlobalReducerState): Props {
-  return {
-    items: state.setItemReducer.items,
-    isLoading: state.setItemReducer.isLoading
-  };
-}
-
-export default connect<Props>(mapStateToProps)(ItemContainer);
+export default ItemContainer;

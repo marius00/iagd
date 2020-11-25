@@ -1,42 +1,16 @@
-import { isEmbedded } from '../constants';
+import { isEmbedded } from '../integration/integration';
 
-/* tslint:disable */
-declare abstract class data {
-  public static translation: {[id: string] : string};
+interface IntegrationInterface {
+  getTranslationStrings(): { [index: string]: string };
 }
+declare let core: IntegrationInterface;
 
+
+// Applies translations provided by the parent application
 class EmbeddedTranslator {
-  static tagTranslation = {
-    'app.tab.items': 'iatag_html_tab_header_items',
-    'app.tab.crafting': 'iatag_html_tab_header_crafting',
-    'app.tab.components': 'iatag_html_tab_header_components',
-    'app.tab.videoGuide': 'iatag_html_tab_header_videoguide',
-    'app.tab.videoGuideUrl': 'iatag_html_tab_header_videoguide_url',
-    'app.tab.discord': 'iatag_html_tab_header_discord',
-    'items.label.noItemsFound': 'iatag_html_items_no_items',
-    'items.label.youCanCraftThisItem': 'iatag_html_items_youcancraftthisitem',
-    'items.label.cloudOk': 'iatag_html_cloud_ok',
-    'items.label.cloudError': 'iatag_html_cloud_err',
-    'item.buddies.singular': 'iatag_html_items_buddy_alsohasthisitem1',
-    'item.buddies.plural': 'iatag_html_items_buddy_alsohasthisitem3',
-    'item.buddies.singularOnly': 'iatag_html_items_buddy_alsohasthisitem4',
-    'items.label.doubleGreen': 'iatag_html_items_affix2',
-    'items.label.tripleGreen': 'iatag_html_items_affix3',
-    'item.label.bonusToAllPets': 'iatag_html_bonustopets',
-    'item.label.grantsSkill': 'iatag_html_items_grantsskill',
-    'item.label.grantsSkillLevel': 'iatag_html_items_level',
-    'item.label.levelRequirement': 'iatag_html_levlerequirement',
-    'item.label.levelRequirementAny': 'iatag_html_any',
-    'item.label.transferSingle': 'iatag_html_transfer',
-    'item.label.transferAll': 'iatag_html_transferall',
-    'crafting.header.recipeName': 'iatag_html_badstate_title', // TODO:
-    'crafting.header.currentlyLacking': 'iatag_html_crafting_lacking',
-    'item.augmentPurchasable': 'iatag_html_augmentation_item',
-    'app.copyToClipboard': 'iatag_html_copytoclipboard',
-    'item.label.setbonus': 'iatag_html_setbonus'
-  };
-  static defaults = {
+  static defaults: { [index: string]: string } = {
     'app.tab.items': 'Items',
+    'app.tab.collections': 'Collections',
     'app.tab.crafting': 'Crafting',
     'app.tab.components': 'Components',
     'app.tab.videoGuide': 'Video Guide',
@@ -62,23 +36,34 @@ class EmbeddedTranslator {
     'crafting.header.currentlyLacking': 'You are currently lacking:',
     'item.augmentPurchasable': 'You may be able to purchase this augment from {0}',
     'app.copyToClipboard': 'Copy to clipboard',
-    'item.label.setbonus': 'Set:'
+    'item.label.setbonus': 'Set:',
+    'item.label.noMoreItems': 'No more items'
   };
 
+
+  static translation = {} as { [index: string]: string };
+
   public translate(id: string): string {
-    let iaTag = EmbeddedTranslator.tagTranslation[id];
-    if (isEmbedded && data.translation.hasOwnProperty(iaTag)) {
-      if (data.translation[iaTag]) {
-        return data.translation[iaTag];
-      }
-    } else if (EmbeddedTranslator.defaults.hasOwnProperty(id)){
+    // Fetch data from host
+    if (Object.getOwnPropertyNames(EmbeddedTranslator.translation).length === 0 && typeof core !== 'undefined') {
+      const d = core.getTranslationStrings();
+      EmbeddedTranslator.translation = typeof d === 'string' ? JSON.parse(d) : d;
+    }
+
+    if (isEmbedded && EmbeddedTranslator.translation.hasOwnProperty(id) && EmbeddedTranslator.translation[id] !== '') {
+      return EmbeddedTranslator.translation[id];
+    } else if (EmbeddedTranslator.defaults.hasOwnProperty(id)) {
       return EmbeddedTranslator.defaults[id];
     }
 
     return id;
   }
 }
+
+
+
 const t = new EmbeddedTranslator();
+
 function translate(id: string, arg1?: string, arg2?: string, arg3?: string): string {
   let translation = t.translate(id);
 
@@ -103,4 +88,5 @@ function translate(id: string, arg1?: string, arg2?: string, arg3?: string): str
 
   return translation;
 }
+
 export default translate;

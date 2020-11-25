@@ -41,12 +41,11 @@ export default function Tabs({ activeTab, setActiveTab }: Props) {
       <div className="whiteBlock"></div>
     </li>;
 
-  // TODO: Translations
   return <section id="fancyTabWidget" className="tabs t-tabs">
     <ul className="nav nav-tabs fancyTabs" role="tablist">
 
-      {renderTabEntry(translate('app.tab.items'), 0, <Home/>, activeTab == 0)}
-      {renderTabEntry(translate('app.tab.collections'), 1, <Web/>, activeTab == 1)}
+      {renderTabEntry(translate('app.tab.items'), 0, <Home/>, activeTab === 0)}
+      {renderTabEntry(translate('app.tab.collections'), 1, <Web/>, activeTab === 1)}
       {renderLinkEntry(translate('app.tab.components'), 2, <OpenInNew/>, 'http://dev.dreamcrash.org/enchantments/')}
       {translate('app.tab.videoGuide').length > 0 && renderLinkEntry(translate('app.tab.videoGuide'), 3, <VideoLibrary/>, translate('app.tab.videoGuideUrl'))}
       {renderLinkEntry(translate('app.tab.discord'), 4, <LiveHelp/>, 'https://discord.gg/5wuCPbB')}

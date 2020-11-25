@@ -33,7 +33,6 @@ namespace IAGrim.UI.Controller
 
 
         public CefBrowserHandler Browser;
-        public readonly JSWrapper LegacyJsBind = new JSWrapper();
         public readonly JavascriptIntegration JsIntegration = new JavascriptIntegration();
         public event EventHandler OnSearch;
 
@@ -71,7 +70,7 @@ namespace IAGrim.UI.Controller
             var message = Search_(query, duplicatesOnly, includeBuddyItems, orderByLevel);
 
             if (!ApplyItems(false)) {
-                LegacyJsBind.UpdateCollectionItems(_itemCollectionRepo.GetItemCollection());
+                Browser.SetCollectionItems(_itemCollectionRepo.GetItemCollection());
                 Browser.SetItems(new List<JsonItem>());
             }
 
@@ -89,12 +88,14 @@ namespace IAGrim.UI.Controller
             _itemStatService.ApplyStats(items);
 
             var convertedItems = ItemHtmlWriter.ToJsonSerializeable(items);
-            if (append)
+            if (append) {
                 Browser.AddItems(convertedItems);
-            else
+            }
+            else {
                 Browser.SetItems(convertedItems);
+            }
 
-            LegacyJsBind.UpdateCollectionItems(_itemCollectionRepo.GetItemCollection());
+            Browser.SetCollectionItems(_itemCollectionRepo.GetItemCollection());
             return true;
         }
 

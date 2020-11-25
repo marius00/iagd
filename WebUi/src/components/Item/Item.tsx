@@ -1,19 +1,14 @@
 import * as React from 'react';
-import 'react-select/dist/react-select.css';
 import ItemStat from './ItemStat';
-import IItem from '../interfaces/IItem';
+import IItem from '../../interfaces/IItem';
 import Skill from './Skill';
-import { isEmbedded } from '../constants/index';
+import { isEmbedded, openUrl } from '../../integration/integration';
+// @ts-ignore: Missing @types
 import { Textfit } from 'react-textfit';
-import translate from '../translations/EmbeddedTranslator';
-import IItemType from '../interfaces/IItemType';
-import GetSetName from '../logic/ItemSetLookupService';
+import translate from '../../translations/EmbeddedTranslator';
+import IItemType from '../../interfaces/IItemType';
+import GetSetName from '../../integration/ItemSetService';
 
-const buddyIcon = require('./img/buddy.png');
-const recipeIcon = require('./img/recipe.png');
-const cloudErrIcon = require('./img/cloud-err.png');
-const cloudOkIcon = require('./img/cloud-ok.png');
-const purchasableItem = require('./img/gold-coins-sm.png');
 
 interface Props {
   item: IItem;
@@ -25,13 +20,11 @@ class Item extends React.PureComponent<Props, object> {
   openItemSite() {
     let url = `http://www.grimtools.com/db/search?query=${this.props.item.name}`;
     if (this.props.item.numItems > 50) {
-      console.log('Unknown item, redirecting to help page.');
-      window.open('http://grimdawn.dreamcrash.org/ia/help.html?q=UnknownItem');
-    } else if (isEmbedded) {
-      document.location.href = url;
-    } else {
-      window.open(url);
+      console.warn('Unknown item, redirecting to help page.');
+      url = 'http://grimdawn.dreamcrash.org/ia/help.html?q=UnknownItem';
     }
+
+    openUrl(url);
   }
 
   renderBuddyItem(item: IItem) {
@@ -72,8 +65,9 @@ class Item extends React.PureComponent<Props, object> {
         <span>
           <img
             className="cursor-help"
-            src={purchasableItem}
+            src="static/gold-coins-sm.png"
             data-tip={translate('item.augmentPurchasable', item.extras)}
+            alt="You can purchase this item"
           />
 
         </span>
@@ -82,16 +76,18 @@ class Item extends React.PureComponent<Props, object> {
         {showCloudOkIcon &&
           <img
             className="cursor-help"
-            src={cloudOkIcon}
+            src="static/cloud-ok.png"
             data-tip={translate('items.label.cloudOk')}
+            alt={"Synced to the cloud"}
           />
         }
 
         {showCloudErrorIcon &&
         <img
           className="cursor-help"
-          src={cloudErrIcon}
+          src="static/cloud-err.png"
           data-tip={translate('items.label.cloudError')}
+          alt={"Not synced to the cloud"}
         />
         }
 
@@ -99,8 +95,9 @@ class Item extends React.PureComponent<Props, object> {
         <span>
             <img
               className="cursor-help"
-              src={buddyIcon}
+              src="static/buddy.png"
               data-tip={translate('item.buddies.singular', item.buddies[0])}
+              alt={"One of your buddies has this item"}
             />
 
           </span>
@@ -110,8 +107,9 @@ class Item extends React.PureComponent<Props, object> {
         <span>
             <img
               className="cursor-help"
-              src={buddyIcon}
+              src="static/buddy.png"
               data-tip={translate('item.buddies.plural', item.buddies.join('\n'))}
+              alt={"Several of your buddies has this item"}
             />
 
             </span>
@@ -122,7 +120,8 @@ class Item extends React.PureComponent<Props, object> {
           <img
             className="cursor-help"
             data-bind="click: function(item) { jumpToCraft(item.baseRecord); }"
-            src={recipeIcon}
+            src="static\recipe.png"
+            alt={"You can create this item (recipe)"}
           />
           </span>
         }
@@ -130,21 +129,23 @@ class Item extends React.PureComponent<Props, object> {
     );
   }
 
+
   render() {
     const item = this.props.item;
     const icon = (item.icon && item.icon.length) > 0 ? item.icon : 'weapon1h_focus02a.tex.png';
     const name = item.name.length > 0 ? item.name : 'Unknown';
+    const socket = item.socket.replace(" ", "");
 
     const headerStats = item.headerStats.map((stat) =>
-      <ItemStat label={stat.label} extras={stat.extras} key={'stat-head-' + item.url.join(':') + stat.label}/>
+      <ItemStat label={stat.label} extras={stat.extras} key={'stat-head-' + item.url.join(':') + socket + stat.label}/>
     );
 
     const bodyStats = item.bodyStats.map((stat) =>
-      <ItemStat label={stat.label} extras={stat.extras} key={'stat-body-' + item.url.join(':') + stat.label}/>
+      <ItemStat label={stat.label} extras={stat.extras} key={'stat-body-' + item.url.join(':') + socket + stat.label}/>
     );
 
     const petStats = item.petStats.map((stat) =>
-      <ItemStat label={stat.label} extras={stat.extras} key={'stat-pets-' + item.url.join(':') + stat.label}/>
+      <ItemStat label={stat.label} extras={stat.extras} key={'stat-pets-' + item.url.join(':') + socket + stat.label}/>
     );
 
     const setName = GetSetName(item.baseRecord);
@@ -152,37 +153,40 @@ class Item extends React.PureComponent<Props, object> {
     return (
       <div className="item">
         <span>
-          <img src={icon} className="item-icon" data-tip={item.slot}/>
+          <img src={icon} className={"item-icon item-icon-" + item.quality.toLowerCase() } data-tip={item.slot}/>
         </span>
         <div className="text">
           <Textfit mode="multi" max={15} min={10}>
             <span>
               <a onClick={() => this.openItemSite()} className={this.translateQualityToClass(item.quality)}>{name}</a>
             </span>
-              {item.greenRarity === 3 ? <span className="cursor-help" data-tip={translate('items.label.tripleGreen')}>(+2)</span> : ''}
-              {item.greenRarity === 2 ? <span className="cursor-help" data-tip={translate('items.label.doubleGreen')}>(+1)</span> : ''}
+              {item.greenRarity === 3 ? <span className="cursor-help supergreen" data-tip={translate('items.label.tripleGreen')}> (3)</span> : ''}
+              {item.greenRarity === 2 ? <span className="cursor-help supergreen" data-tip={translate('items.label.doubleGreen')}> (2)</span> : ''}
           </Textfit>
           {item.socket && item.socket.length > 0 &&
           <span className="item-socket-label">{item.socket}</span>
           }
 
-          <ul>
+          <ul className="headerStats">
             {headerStats}
           </ul>
+
+          <br/>
 
           <ul className="bodystats">
             {bodyStats}
           </ul>
 
           {petStats.length > 0 ? (
-            <div>
+            <div className="pet-stats">
               <div className="pet-header">{translate('item.label.bonusToAllPets')}</div>
               {petStats}
             </div>
           ) : ''
           }
 
-          {setName !== undefined && <div><br />{translate('item.label.setbonus')} <span className="set-name">{setName}</span></div>}
+          {setName !== undefined && <div><br />
+            <span className="set-name">{translate('item.label.setbonus')}</span> <span className="set-name">{setName}</span></div>}
 
           {item.skill ? <Skill skill={item.skill} keyPrefix={item.url.join(':')}/> : ''}
 
@@ -190,10 +194,10 @@ class Item extends React.PureComponent<Props, object> {
         {item.buddies.length > 0 ? this.renderBuddyItem(item) : ''}
 
         {item.hasRecipe && item.type !== IItemType.Recipe ?
-          <span>
+          <span className="informative">
             <a data-tip={translate('items.label.youCanCraftThisItem')}>
               <div className="recipe-item-corner">
-                <img className="cursor-help" src={recipeIcon}/>
+                <img className="cursor-help" src="static\recipe.png"/>
               </div>
             </a>
           </span>
@@ -204,8 +208,8 @@ class Item extends React.PureComponent<Props, object> {
 
         {item.hasRecipe && item.type === IItemType.Recipe ?
           <div className="recipe-item">
-            <img src={recipeIcon}/>
-            <span className="craft-link" data-bind="click: function(item) { jumpToCraft(item.baseRecord); }">
+            <img src="static\recipe.png"/>
+            <span className="craft-link">
               &nbsp;<span>{translate('items.label.youCanCraftThisItem')}</span>
             </span>
           </div>
@@ -216,16 +220,23 @@ class Item extends React.PureComponent<Props, object> {
           <p>{translate('item.label.levelRequirement', item.level > 1 ? String(item.level) : translate('item.label.levelRequirementAny'))}</p>
         </div>
 
-        {item.numItems > 1 && item.type === IItemType.Player ?
+        {item.initialNumItems > 1 && item.numItems >= 1 && item.type === IItemType.Player ?
           <div className="link-container-all">
             <a onClick={() => this.props.transferAll(item.url)}>{translate('item.label.transferAll')} ({item.numItems})</a>
           </div>
           : ''
         }
 
-        {item.type === IItemType.Player ?
+        {item.numItems >= 1 && item.type === IItemType.Player ?
           <div className="link-container">
             <a onClick={() => this.props.transferSingle(item.url)}>{translate('item.label.transferSingle')}</a>
+          </div>
+          : ''
+        }
+
+        {item.numItems <= 0 && item.type === IItemType.Player ?
+          <div className="link-container">
+            {translate('item.label.noMoreItems')}
           </div>
           : ''
         }
