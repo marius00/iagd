@@ -2,7 +2,7 @@ import * as React from 'react';
 import ItemStat from './ItemStat';
 import IItem from '../../interfaces/IItem';
 import Skill from './Skill';
-import { isEmbedded, openUrl } from '../../integration/integration';
+import { openUrl } from '../../integration/integration';
 // @ts-ignore: Missing @types
 import { Textfit } from 'react-textfit';
 import translate from '../../translations/EmbeddedTranslator';
@@ -151,7 +151,7 @@ class Item extends React.PureComponent<Props, object> {
     const setName = GetSetName(item.baseRecord);
 
     return (
-      <div className="item">
+      <div className={"item " + (item.numItems <= 0 && item.type === IItemType.Player ?' item-disabled':"")}>
         <span>
           <img src={icon} className={"item-icon item-icon-" + item.quality.toLowerCase() } data-tip={item.slot}/>
         </span>
@@ -235,7 +235,7 @@ class Item extends React.PureComponent<Props, object> {
         }
 
         {item.numItems <= 0 && item.type === IItemType.Player ?
-          <div className="link-container">
+          <div className="link-container no-more-items">
             {translate('item.label.noMoreItems')}
           </div>
           : ''

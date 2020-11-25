@@ -32,10 +32,15 @@ body {
   --item-set: #dbb284;
   --item-pet: #dbb284;
   --item-pet-bullet: white;
+  --item-disabled: gray;
 }
 
 .item .informative, .recipe-item, .buddy-item-mix {
   color: var(--item-set);
+}
+
+.item-disabled {
+  text-decoration: line-through !important;
 }
 
 .item-icon-blue {
@@ -54,6 +59,9 @@ body {
   color: var(--item-supergreen);
 }
 
+.no-more-items {
+  color: var(--item-disabled);
+}
 
 .pet-stats li::marker {
   color: var(--item-pet-bullet);
