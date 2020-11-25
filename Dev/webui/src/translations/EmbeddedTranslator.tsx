@@ -49,7 +49,7 @@ class EmbeddedTranslator {
       EmbeddedTranslator.translation = typeof d === 'string' ? JSON.parse(d) : d;
     }
 
-    if (isEmbedded && EmbeddedTranslator.translation.hasOwnProperty(id)) {
+    if (isEmbedded && EmbeddedTranslator.translation.hasOwnProperty(id) && EmbeddedTranslator.translation[id] !== '') {
       return EmbeddedTranslator.translation[id];
     } else if (EmbeddedTranslator.defaults.hasOwnProperty(id)) {
       return EmbeddedTranslator.defaults[id];

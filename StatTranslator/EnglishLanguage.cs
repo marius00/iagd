@@ -268,6 +268,8 @@ namespace StatTranslator {
             {"iatag_html_transferall", "Transfer all"},
             {"iatag_html_transfer", "Transfer to Stash"},
             {"iatag_html_items_youcancraftthisitem", "You can craft this item."},
+            {"iatag_html_cloud_ok", "This item has been backed up to the cloud"},
+            {"iatag_html_cloud_err", "This item has not been backed up to the cloud"},
             {"iatag_html_items_buddy_alsohasthisitem1", "«{0}» also has this item"},
             {"iatag_html_items_buddy_alsohasthisitem2", "These buddies also have this item: {0}"},
             {"iatag_html_items_buddy_alsohasthisitem3", "of your Buddies have this item"},

@@ -10,6 +10,7 @@ export const mockDataItems = (text: string): IItem[] => {
         icon: 'c08_ring_aetherlords_signet.tex.png',
         quality: 'Blue',
         name: 'Mock data  ',
+        slot: "Its not broken",
         socket: '',
         level: 40,
         url: [

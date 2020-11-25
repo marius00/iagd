@@ -19,7 +19,6 @@ const StoreContext = React.createContext({items: [], isLoading: true} as Applica
 // TODO: Collection tab
 // TODO: Tabs [and maybe improve discord link, and merge in help tab?]
 // TODO: Dark mode
-// TODO: Tooltips broken inside IA? src="[object Module]"
 // TODO: Prevent multiple clicks on transfer? or non-issue?
 // TODO: Crafting support??
 // TODO: A no more matches message when scrolling too far?
