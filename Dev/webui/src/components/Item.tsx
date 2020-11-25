@@ -2,7 +2,7 @@ import * as React from 'react';
 import ItemStat from './ItemStat';
 import IItem from '../interfaces/IItem';
 import Skill from './Skill';
-import { isEmbedded } from '../integration/integration';
+import { isEmbedded, openUrl } from '../integration/integration';
 // @ts-ignore: Missing @types
 import { Textfit } from 'react-textfit';
 import translate from '../translations/EmbeddedTranslator';
@@ -21,12 +21,10 @@ class Item extends React.PureComponent<Props, object> {
     let url = `http://www.grimtools.com/db/search?query=${this.props.item.name}`;
     if (this.props.item.numItems > 50) {
       console.warn('Unknown item, redirecting to help page.');
-      window.open('http://grimdawn.dreamcrash.org/ia/help.html?q=UnknownItem', "_blank");
-    } else if (isEmbedded) {
-      document.location.href = url;
-    } else {
-      window.open(url, "_blank");
+      url = 'http://grimdawn.dreamcrash.org/ia/help.html?q=UnknownItem';
     }
+
+    openUrl(url);
   }
 
   renderBuddyItem(item: IItem) {

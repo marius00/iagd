@@ -1,21 +1,24 @@
 import * as React from 'react';
 import './App.css';
+import 'react-notifications-component/dist/theme.css';
 import IItem from './interfaces/IItem';
 import MockItemsButton from './containers/MockItemsButton';
 import { isEmbedded, requestMoreItems } from './integration/integration';
 import ItemContainer from './containers/ItemContainer';
 import { store } from 'react-notifications-component';
 import ReactNotification from 'react-notifications-component';
-import 'react-notifications-component/dist/theme.css';
+import Tabs from './components/Tabs/Tabs';
 
 
 export interface ApplicationState {
   items: IItem[];
   isLoading: boolean;
+  activeTab: number;
 }
 
-const StoreContext = React.createContext({items: [], isLoading: true} as ApplicationState);
+const StoreContext = React.createContext({items: [], isLoading: true, activeTab: 0} as ApplicationState);
 
+// TODO: Move bootstrap shit.css into IA?
 // TODO: Collection tab
 // TODO: Tabs [and maybe improve discord link, and merge in help tab?]
 // TODO: Dark mode
@@ -29,7 +32,8 @@ const StoreContext = React.createContext({items: [], isLoading: true} as Applica
 class App extends React.PureComponent<{}, object> {
   state = {
     items: [],
-    isLoading: true
+    isLoading: true,
+    activeTab: 0
   } as ApplicationState;
 
   componentDidMount() {
@@ -101,21 +105,25 @@ class App extends React.PureComponent<{}, object> {
       <div className="App">
         <ReactNotification />
         <StoreContext.Provider value={this.state}>
-          <header className="">
-          </header>
+          <div className={'container'}>
+            <Tabs activeTab={this.state.activeTab} setActiveTab={(idx: number) => this.setState({activeTab: idx})} />
+            <div id="myTabContent" className="tab-content fancyTabContent" aria-live="polite">
+            </div>
+          </div>
+          {this.state.activeTab === 0 && !isEmbedded ? <MockItemsButton onClick={(items) => this.setItems(items)} /> : ''}
 
-          {!isEmbedded ? <MockItemsButton onClick={(items) => this.setItems(items)} /> : ''}
-
-          <ItemContainer
+          {this.state.activeTab === 0 && <ItemContainer
             items={this.state.items}
             isLoading={this.state.isLoading}
             onItemReduce={(url, numItems) => this.reduceItemCount(url, numItems)}
             onRequestMoreItems={() => this.requestMoreItems()}
-          />
+          />}
+
         </StoreContext.Provider>
       </div>
     );
   }
+
 };
 
 function ShowMessage(message: string, type: 'success' | 'danger' | 'info' | 'default' | 'warning') {

@@ -10,6 +10,7 @@ declare let core: IntegrationInterface;
 class EmbeddedTranslator {
   static defaults: { [index: string]: string } = {
     'app.tab.items': 'Items',
+    'app.tab.collections': 'Collections',
     'app.tab.crafting': 'Crafting',
     'app.tab.components': 'Components',
     'app.tab.videoGuide': 'Video Guide',

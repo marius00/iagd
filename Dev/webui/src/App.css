@@ -1,37 +1,3 @@
-.wrapper {
-  display: flex;
-  align-items: stretch;
-}
-
-#content {
-  position: relative;
-  margin-top: 35px;
-  width: 100%;
-}
-
-.header {
-  position: fixed;
-  top: 0px;
-  left: 0px;
-  text-align: left;
-  z-index: 1001;
-  min-width: 100vw;
-  background-color: #F0F0F0;
-  height: 26px;
-
-}
-
-
-.header a {
-  margin-left: 50px;
-  display: inline-block;
-  padding: 5px 5px 0px 5px;
-}
-
-.header a:hover {
-  text-decoration: underline !important;
-}
-
 .cursor-help {
   cursor: help !important;
 }
@@ -43,8 +9,4 @@
   text-decoration: underline;
   cursor: pointer;
   z-index: 100000;
-}
-
-.header .selected {
-  background: #80808033;
 }

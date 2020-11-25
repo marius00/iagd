@@ -198,7 +198,7 @@ a { cursor: pointer; }
   color: black;
 }
 .items {
-  background: rgb(85,68,96);
+  background: var(--background-color);
   width: 100%;
 }
 .item-socket-label {

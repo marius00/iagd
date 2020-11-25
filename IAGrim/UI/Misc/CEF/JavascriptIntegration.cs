@@ -45,6 +45,7 @@ namespace IAGrim.UI.Misc.CEF {
             var lang = RuntimeSettings.Language;
             Dictionary<string, string> translations = new Dictionary<string, string> {
                 {"app.tab.items", lang.GetTag("iatag_html_tab_header_items")},
+                {"app.tab.collections", lang.GetTag("iatag_html_tab_header_collections")},
                 {"app.tab.crafting", lang.GetTag("iatag_html_tab_header_crafting")},
                 {"app.tab.components", lang.GetTag("iatag_html_tab_header_components")},
                 {"app.tab.videoGuide", lang.GetTag("iatag_html_tab_header_videoguide")},

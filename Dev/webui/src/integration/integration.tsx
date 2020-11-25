@@ -40,3 +40,11 @@ export function requestMoreItems(): void {
   }
 }
 
+
+export function openUrl(url: string) {
+  if (isEmbedded) {
+    document.location.href = url;
+  } else {
+    window.open(url, "_blank");
+  }
+}
