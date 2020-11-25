@@ -82,6 +82,7 @@ namespace IAGrim.UI.Controller
         {
             var items = _itemPaginatorService.Fetch();
             if (items.Count == 0) {
+                Browser.AddItems(new List<JsonItem>());
                 return false;
             }
 

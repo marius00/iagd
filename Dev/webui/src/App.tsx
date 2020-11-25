@@ -16,15 +16,16 @@ export interface ApplicationState {
 
 const StoreContext = React.createContext({items: [], isLoading: true} as ApplicationState);
 
-// TODO: infiscroll
 // TODO: Collection tab
 // TODO: Tabs [and maybe improve discord link, and merge in help tab?]
 // TODO: Dark mode
-// TODO: Tooltips broken inside IA?
+// TODO: Tooltips broken inside IA? src="[object Module]"
 // TODO: Prevent multiple clicks on transfer? or non-issue?
 // TODO: Crafting support??
 // TODO: A no more matches message when scrolling too far?
 // TODO: A commit redoing all the damn bracket styles in C# -- do this last.. sigh.
+// TODO: Ensure loading works correctly.. no duplicates, in expected order..
+// TODO: Look into the duplicate key errors -- seems to be for items with&without a component. dupe item but with comp.
 
 class App extends React.PureComponent<{}, object> {
   state = {

@@ -74,6 +74,7 @@ class Item extends React.PureComponent<Props, object> {
             className="cursor-help"
             src={purchasableItem}
             data-tip={translate('item.augmentPurchasable', item.extras)}
+            alt="You can purchase this item"
           />
 
         </span>
@@ -84,6 +85,7 @@ class Item extends React.PureComponent<Props, object> {
             className="cursor-help"
             src={cloudOkIcon}
             data-tip={translate('items.label.cloudOk')}
+            alt={"Synced to the cloud"}
           />
         }
 
@@ -92,6 +94,7 @@ class Item extends React.PureComponent<Props, object> {
           className="cursor-help"
           src={cloudErrIcon}
           data-tip={translate('items.label.cloudError')}
+          alt={"Not synced to the cloud"}
         />
         }
 
@@ -101,6 +104,7 @@ class Item extends React.PureComponent<Props, object> {
               className="cursor-help"
               src={buddyIcon}
               data-tip={translate('item.buddies.singular', item.buddies[0])}
+              alt={"One of your buddies has this item"}
             />
 
           </span>
@@ -112,6 +116,7 @@ class Item extends React.PureComponent<Props, object> {
               className="cursor-help"
               src={buddyIcon}
               data-tip={translate('item.buddies.plural', item.buddies.join('\n'))}
+              alt={"Several of your buddies has this item"}
             />
 
             </span>
@@ -123,6 +128,7 @@ class Item extends React.PureComponent<Props, object> {
             className="cursor-help"
             data-bind="click: function(item) { jumpToCraft(item.baseRecord); }"
             src={recipeIcon}
+            alt={"You can create this item (recipe)"}
           />
           </span>
         }
@@ -130,21 +136,23 @@ class Item extends React.PureComponent<Props, object> {
     );
   }
 
+
   render() {
     const item = this.props.item;
     const icon = (item.icon && item.icon.length) > 0 ? item.icon : 'weapon1h_focus02a.tex.png';
     const name = item.name.length > 0 ? item.name : 'Unknown';
+    const socket = item.socket.replace(" ", "");
 
     const headerStats = item.headerStats.map((stat) =>
-      <ItemStat label={stat.label} extras={stat.extras} key={'stat-head-' + item.url.join(':') + stat.label}/>
+      <ItemStat label={stat.label} extras={stat.extras} key={'stat-head-' + item.url.join(':') + socket + stat.label}/>
     );
 
     const bodyStats = item.bodyStats.map((stat) =>
-      <ItemStat label={stat.label} extras={stat.extras} key={'stat-body-' + item.url.join(':') + stat.label}/>
+      <ItemStat label={stat.label} extras={stat.extras} key={'stat-body-' + item.url.join(':') + socket + stat.label}/>
     );
 
     const petStats = item.petStats.map((stat) =>
-      <ItemStat label={stat.label} extras={stat.extras} key={'stat-pets-' + item.url.join(':') + stat.label}/>
+      <ItemStat label={stat.label} extras={stat.extras} key={'stat-pets-' + item.url.join(':') + socket + stat.label}/>
     );
 
     const setName = GetSetName(item.baseRecord);
