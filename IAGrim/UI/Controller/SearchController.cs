@@ -54,22 +54,16 @@ namespace IAGrim.UI.Controller
             _settings = settings;
             _itemCollectionRepo = itemCollectionRepo;
 
-            LegacyJsBind.OnRequestItems += JsBind_OnRequestItems;
+            JsIntegration.OnRequestItems += JsBind_OnRequestItems;
         }
 
         // TODO: Redo! Infiscroll
-        private void JsBind_OnRequestItems(object sender, EventArgs e)
-        {
-            if (!LegacyJsBind.ItemSourceExhausted) {
-                ApplyItems(true);
-            }
-
+        private void JsBind_OnRequestItems(object sender, EventArgs e) {
+            ApplyItems(true);
             OnSearch?.Invoke(this, null);
         }
 
-        public string Search(ItemSearchRequest query, bool duplicatesOnly, bool includeBuddyItems, bool orderByLevel)
-        {
-            LegacyJsBind.ItemSourceExhausted = false;
+        public string Search(ItemSearchRequest query, bool duplicatesOnly, bool includeBuddyItems, bool orderByLevel) {
 
             // Signal that we are loading items
             Browser.ShowLoadingAnimation();
@@ -88,7 +82,6 @@ namespace IAGrim.UI.Controller
         {
             var items = _itemPaginatorService.Fetch();
             if (items.Count == 0) {
-                LegacyJsBind.ItemSourceExhausted = true;
                 return false;
             }
 
@@ -145,7 +138,6 @@ namespace IAGrim.UI.Controller
             }
 
             _itemPaginatorService.Update(items, orderByLevel);
-            LegacyJsBind.ItemSourceExhausted = items.Count == 0;
 
             return message;
         }

@@ -13,6 +13,7 @@ namespace IAGrim.UI.Controller.dto {
         public float Level { get; set; }
         public object[] URL { get; set; }
         public uint NumItems { get; set; }
+        public uint InitialNumItems { get; set; }
 
         public ItemTypeDto Type { get; set; }
         public string[] Buddies { get; set; }

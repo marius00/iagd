@@ -36,13 +36,6 @@ namespace IAGrim.UI.Misc {
         }
 
         public string CollectionItems { get; set; }
-        public bool ItemSourceExhausted { get; set; }
-
-        public event EventHandler OnRequestItems;
-
-        public void RequestMoreItems() {
-            OnRequestItems?.Invoke(this, null);
-        }
 
         public string Message => string.Empty;
     }

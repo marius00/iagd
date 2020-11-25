@@ -80,6 +80,7 @@ namespace IAGrim.Utilities {
                 Level = item.MinimumLevel,
                 Socket = GetSocketFromItem(item?.Name) ?? string.Empty,
                 NumItems = (uint)item.Count,
+                InitialNumItems = (uint)item.Count,
                 PetStats = item.PetStats.Select(m => new JsonStat { Label = m.ToString(), Extras = m.Extra?.ToString() }).ToList(),
                 BodyStats = item.BodyStats.Select(m => new JsonStat { Label = m.ToString(), Extras = m.Extra?.ToString() }).ToList(),
                 HeaderStats = item.HeaderStats.Select(m => new JsonStat { Label = m.ToString(), Extras = m.Extra?.ToString() }).ToList(),

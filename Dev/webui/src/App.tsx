@@ -2,7 +2,7 @@ import * as React from 'react';
 import './App.css';
 import IItem from './interfaces/IItem';
 import MockItemsButton from './containers/MockItemsButton';
-import { isEmbedded } from './integration/integration';
+import { isEmbedded, requestMoreItems } from './integration/integration';
 import ItemContainer from './containers/ItemContainer';
 import { store } from 'react-notifications-component';
 import ReactNotification from 'react-notifications-component';
@@ -16,12 +16,15 @@ export interface ApplicationState {
 
 const StoreContext = React.createContext({items: [], isLoading: true} as ApplicationState);
 
+// TODO: infiscroll
 // TODO: Collection tab
 // TODO: Tabs [and maybe improve discord link, and merge in help tab?]
 // TODO: Dark mode
 // TODO: Tooltips broken inside IA?
 // TODO: Prevent multiple clicks on transfer? or non-issue?
 // TODO: Crafting support??
+// TODO: A no more matches message when scrolling too far?
+// TODO: A commit redoing all the damn bracket styles in C# -- do this last.. sigh.
 
 class App extends React.PureComponent<{}, object> {
   state = {
@@ -44,11 +47,12 @@ class App extends React.PureComponent<{}, object> {
     // Add more items (typically scrolling)
     // @ts-ignore: setItems doesn't exist on window
     window.addItems = (data: any) => {
-      const items = typeof data === 'string' ? JSON.parse(data) : data;
+      const items = [...this.state.items];
+      const newItems = typeof data === 'string' ? JSON.parse(data) : data;
 
       this.setState({
         isLoading: false,
-        items: {...this.state.items, items}
+        items: items.concat(newItems)
       });
     };
 
@@ -85,6 +89,13 @@ class App extends React.PureComponent<{}, object> {
     }
   }
 
+  requestMoreItems() {
+    console.log("More items it wantssssss?");
+    this.setState({isLoading: true});
+    requestMoreItems();
+    // TODO: Fix this weird loop? This one will request more items.. which will end up in a call from C# to window.addItems().. is that how we wanna do this?
+  }
+
   render() {
     return (
       <div className="App">
@@ -95,7 +106,12 @@ class App extends React.PureComponent<{}, object> {
 
           {!isEmbedded ? <MockItemsButton onClick={(items) => this.setItems(items)} /> : ''}
 
-          <ItemContainer items={this.state.items} isLoading={this.state.isLoading} onItemReduce={(url, numItems) => this.reduceItemCount(url, numItems)} />
+          <ItemContainer
+            items={this.state.items}
+            isLoading={this.state.isLoading}
+            onItemReduce={(url, numItems) => this.reduceItemCount(url, numItems)}
+            onRequestMoreItems={() => this.requestMoreItems()}
+          />
         </StoreContext.Provider>
       </div>
     );

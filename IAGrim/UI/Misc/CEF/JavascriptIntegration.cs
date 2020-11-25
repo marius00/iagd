@@ -18,6 +18,8 @@ namespace IAGrim.UI.Misc.CEF {
         public event EventHandler ItemTransferEvent;
         public event EventHandler OnClipboard;
 
+        public event EventHandler OnRequestItems;
+
         public string TransferItem(object[] identifier, int numItems) {
             var args = new StashTransferEventArgs {
                 Count = numItems,
@@ -81,6 +83,11 @@ namespace IAGrim.UI.Misc.CEF {
             if (!string.IsNullOrWhiteSpace(data)) {
                 OnClipboard?.Invoke(this, new ClipboardEventArg { Text = data });
             }
+        }
+
+        // TODO: Weird flow, should just return items.
+        public void RequestMoreItems() {
+            OnRequestItems?.Invoke(this, null);
         }
     }
 }

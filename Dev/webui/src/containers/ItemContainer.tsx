@@ -6,11 +6,13 @@ import ReactTooltip from 'react-tooltip';
 import Spinner from '../components/Spinner';
 import translate from '../translations/EmbeddedTranslator';
 import { setClipboard, transferItem } from '../integration/integration';
+import OnScrollLoader from '../components/OnScrollLoader';
 
 interface Props {
   items: IItem[];
   isLoading: boolean;
   onItemReduce(url: object[], numItems: number): void;
+  onRequestMoreItems(): void;
 }
 
 class ItemContainer extends React.PureComponent<Props, object> {
@@ -45,12 +47,10 @@ class ItemContainer extends React.PureComponent<Props, object> {
   render() {
     const items = this.props.items;
 
-    if (this.props.isLoading) {
-      return <Spinner/>;
-    }
-    else if (items.length > 0) {
+    if (items.length > 0) {
       return (
         <div className="items">
+          {this.props.isLoading && <Spinner />}
           <span className="clipboard-link" onClick={() => setClipboard(this.getClipboardContent())}>
             {translate('app.copyToClipboard')}
           </span>
@@ -64,6 +64,7 @@ class ItemContainer extends React.PureComponent<Props, object> {
             />
           )}
           <ReactTooltip />
+          <OnScrollLoader onTrigger={this.props.onRequestMoreItems} />
 
         </div>
       );
