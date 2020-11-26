@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using DataAccess;
 using EvilsoftCommons;
 using EvilsoftCommons.Exceptions;
@@ -66,7 +67,14 @@ namespace IAGrim.Parsers.Arz {
                 Logger.Warn($"Item icon file \"{arcItemfile}\" could not be located..");
             }
 
-            DDSImageReader.ExtractItemIcons(arcItemfile, GlobalPaths.StorageFolder);
+            try {
+                DDSImageReader.ExtractItemIcons(arcItemfile, GlobalPaths.StorageFolder);
+            }
+            catch (Exception ex) {
+                // Ideally we'd like to catch the specific exception, but the available log files don't contain the exception name..
+                Logger.Error(ex.Message, ex);
+                MessageBox.Show("Unable to parse icons, ARZ file is corrupted.\nIf you are using steam, please verify the install integrity.", "Corrupted GD installation", MessageBoxButtons.OK);
+            }
         }
 
         public static string ExtractClassFromRecord(string record, IEnumerable<DatabaseItem> items) {

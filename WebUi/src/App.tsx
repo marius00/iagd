@@ -31,7 +31,6 @@ const StoreContext = React.createContext({items: [], isLoading: true, activeTab:
 // TODO: A commit redoing all the damn bracket styles in C# -- do this last.. sigh.
 // TODO: Ensure loading works correctly.. no duplicates, in expected order..
 // TODO: Look into the duplicate key errors -- seems to be for items with&without a component. dupe item but with comp.
-// TODO: Salt Bag: 5% Less Damage from Aetherials
 
 class App extends React.PureComponent<{}, object> {
   state = {
