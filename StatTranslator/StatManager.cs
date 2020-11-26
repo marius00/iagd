@@ -244,7 +244,7 @@ namespace StatTranslator
             }
 
             var racialBonusPercentDefense = stats.FirstOrDefault(m => m.Stat == "racialBonusPercentDefense");
-            if (racialBonusPercentDefense != null && racialBonusRace.Count > 1)
+            if (racialBonusPercentDefense != null && racialBonusRace.Count >= 1)
             {
                 var race01 = _language.GetTag(racialBonusRace[0].TextValue);
                 var race02 = racialBonusRace.Count >= 2 ? _language.GetTag(racialBonusRace.FirstOrDefault().TextValue) : null;
