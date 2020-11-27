@@ -1,5 +1,7 @@
 
 // tslint:disable-next-line
+import MockItemSetData from '../mock/MockItemSetData';
+
 declare abstract class cefSharp {
 }
 
@@ -45,7 +47,7 @@ export function getItemSetAssociations(): string {
   if (isEmbedded) {
     return core.getItemSetAssociations();
   } else {
-    return "[]";
+    return JSON.stringify(MockItemSetData);
   }
 }
 

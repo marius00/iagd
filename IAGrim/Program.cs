@@ -37,12 +37,16 @@ namespace IAGrim
         }
 #endif
 
-        private static void LoadUuid(IDatabaseSettingDao dao)
-        {
-            string uuid = dao.GetUuid();
-            if (string.IsNullOrEmpty(uuid))
-            {
-                dao.SetUuid(Guid.NewGuid().ToString().Replace("-", ""));
+        private static void LoadUuid(IDatabaseSettingDao dao, SettingsService settings) {
+            var uuid = settings.GetPersistent().UUID;
+            if (string.IsNullOrEmpty(uuid)) {
+                uuid = dao.GetUuid();
+                settings.GetPersistent().UUID = uuid;
+            }
+
+            if (string.IsNullOrEmpty(uuid)) {
+                uuid = Guid.NewGuid().ToString().Replace("-", "");
+                settings.GetPersistent().UUID = uuid;
             }
 
             RuntimeSettings.Uuid = uuid;
@@ -176,13 +180,12 @@ namespace IAGrim
             DumpTranslationTemplate();
             threadExecuter.Execute(() => new MigrationHandler(factory).Migrate());
 
-            LoadUuid(databaseSettingDao);
+            LoadUuid(databaseSettingDao, settingsService);
 
 
             Logger.Debug("Updating augment state..");
             augmentationItemRepo.UpdateState();
 
-            // TODO: GD Path has to be an input param, as does potentially mods.
             var itemTagDao = serviceProvider.Get<IItemTagDao>();
             var databaseItemStatDao = serviceProvider.Get<IDatabaseItemStatDao>();
             var itemSkillDao = serviceProvider.Get<IItemSkillDao>();
@@ -209,8 +212,7 @@ namespace IAGrim
                 _mw = new MainWindow(
                     serviceProvider,
                     browser,
-                    parsingService,
-                    settingsService
+                    parsingService
                 );
 
                 Logger.Info("Checking for database updates..");

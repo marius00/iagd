@@ -3,14 +3,11 @@
 namespace IAGrim.Database.Interfaces {
     [Obsolete]
     public interface IDatabaseSettingDao : IBaseDao<DatabaseSetting> {
-        long GetLastDatabaseUpdate();
         void UpdateCurrentDatabase(string path);
         string GetCurrentDatabasePath();
-        void UpdateRecipeTimestamp(long ts);
-        void UpdateDatabaseTimestamp(long ts);
 
+        [Obsolete]
         string GetUuid();
-        void SetUuid(string uuid);
         void Clean();
     }
 }

@@ -30,6 +30,7 @@ namespace IAGrim.UI.Tabs {
         private readonly SettingsService _settings;
         private readonly GrimDawnDetector _grimDawnDetector;
 
+
         public SettingsWindow(
             CefBrowserHandler cefBrowserHandler,
             TooltipHelper tooltipHelper, 
@@ -194,6 +195,10 @@ namespace IAGrim.UI.Tabs {
 
         private void helpWhatIsExperimentalUpdates_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             HelpService.ShowHelp(HelpService.HelpType.ExperimentalUpdates);
+        }
+
+        private void buttonLootManually_Click(object sender, EventArgs e) {
+
         }
     }
 }

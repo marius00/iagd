@@ -7,13 +7,16 @@ import Spinner from '../components/Spinner';
 import translate from '../translations/EmbeddedTranslator';
 import { setClipboard, transferItem } from '../integration/integration';
 import OnScrollLoader from '../components/OnScrollLoader';
+import ICollectionItem from '../interfaces/ICollectionItem';
 
 interface Props {
   items: IItem[];
   isLoading: boolean;
   onItemReduce(url: object[], numItems: number): void;
   onRequestMoreItems(): void;
+  collectionItems: ICollectionItem[];
 }
+
 
 class ItemContainer extends React.PureComponent<Props, object> {
   transferSingle(url: object[]) {
@@ -44,8 +47,21 @@ class ItemContainer extends React.PureComponent<Props, object> {
     return entries.join('\n');
   }
 
+  // TODO: A O(1) lookup would be preferable
+  findByRecord(baseRecord: string): ICollectionItem {
+    for (let idx in this.props.collectionItems) {
+      const entry = this.props.collectionItems[idx];
+      if (entry.baseRecord === baseRecord) {
+        return entry;
+      }
+    }
+
+    return {baseRecord: "", name: "", icon: "", numOwned: 0};
+  }
+
   render() {
     const items = this.props.items;
+    console.log("CollectionItems?", this.props.collectionItems);
 
     if (items.length > 0) {
       return (
@@ -61,9 +77,10 @@ class ItemContainer extends React.PureComponent<Props, object> {
               key={'item-' + item.url.join(':')}
               transferAll={(url: object[]) => this.transferAll(url)}
               transferSingle={(url: object[]) => this.transferSingle(url)}
+              getItemName={(baseRecord:string) => this.findByRecord(baseRecord)}
             />
           )}
-          <ReactTooltip />
+          <ReactTooltip html={true} type={'light'} />
           <OnScrollLoader onTrigger={this.props.onRequestMoreItems} />
 
         </div>

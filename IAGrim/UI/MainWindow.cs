@@ -71,7 +71,6 @@ namespace IAGrim.UI
         private AzureAuthService _authAuthService;
         private BackupServiceWorker _backupServiceWorker;
         private readonly UserFeedbackService _userFeedbackService;
-        private readonly SettingsService _settingsService;
         private MinimizeToTrayHandler _minimizeToTrayHandler;
 
 
@@ -125,8 +124,7 @@ namespace IAGrim.UI
         public MainWindow(
             ServiceProvider serviceProvider,
             CefBrowserHandler browser,
-            ParsingService parsingService, 
-            SettingsService settingsService
+            ParsingService parsingService
             ) {
             this._serviceProvider = serviceProvider;
             _cefBrowserHandler = browser;
@@ -134,13 +132,13 @@ namespace IAGrim.UI
             FormClosing += MainWindow_FormClosing;
 
 
+            var settingsService = _serviceProvider.Get<SettingsService>();
             _automaticUpdateChecker = new AutomaticUpdateChecker(settingsService);
             _settingsController = new SettingsController(settingsService);
             _dynamicPacker = new DynamicPacker(serviceProvider.Get<IDatabaseItemStatDao>());
             _recipeParser = new RecipeParser(serviceProvider.Get<IRecipeItemDao>());
             _parsingService = parsingService;
             _userFeedbackService = new UserFeedbackService(_cefBrowserHandler);
-            _settingsService = settingsService;
         }
 
         /// <summary>
@@ -346,14 +344,19 @@ namespace IAGrim.UI
             var cacher = new TransferStashServiceCache(databaseItemDao);
             _parsingService.OnParseComplete += (o, args) => cacher.Refresh();
 
+            var settingsService = _serviceProvider.Get<SettingsService>();
             var transferStashService = _serviceProvider.Get<TransferStashService>();
-            var stashWriter = new SafeTransferStashWriter(_settingsService);
-            var transferStashService2 = new TransferStashService2(playerItemDao, cacher, transferStashService, stashWriter, _settingsService);
+            var stashWriter = new SafeTransferStashWriter(settingsService);
+            var transferStashService2 = new TransferStashService2(playerItemDao, cacher, transferStashService, stashWriter, settingsService);
             _transferStashWorker = new TransferStashWorker(transferStashService2, _userFeedbackService);
 
             _stashFileMonitor.OnStashModified += (_, __) => {
                 StashEventArg args = __ as StashEventArg;
                 _transferStashWorker.Queue(args?.Filename);
+
+                // May not minimize, but 
+                _usageStatisticsReporter.ResetLastMinimized();
+                _automaticUpdateChecker.ResetLastMinimized();
             };
 
             if (!_stashFileMonitor.StartMonitorStashfile(GlobalPaths.SavePath)) {
@@ -392,20 +395,22 @@ namespace IAGrim.UI
             var addAndShow = UIHelper.AddAndShow;
             var buddyItemDao = _serviceProvider.Get<IBuddyItemDao>();
             var buddySubscriptionDao = _serviceProvider.Get<IBuddySubscriptionDao>();
+
+
             // Create the tab contents
             _buddySettingsWindow = new BuddySettings(delegate (bool b) { BuddySyncEnabled = b; }, 
                 buddyItemDao, 
                 buddySubscriptionDao,
-                _settingsService
+                settingsService
                 );
 
             addAndShow(_buddySettingsWindow, buddyPanel);
 
             var databaseSettingDao = _serviceProvider.Get<IDatabaseSettingDao>();
-            _authAuthService = new AzureAuthService(_cefBrowserHandler, new AuthenticationProvider(_settingsService));
-            var backupSettings = new BackupSettings(playerItemDao, _authAuthService, _settingsService, !BlockedLogsDetection.DreamcrashBlocked());
+            _authAuthService = new AzureAuthService(_cefBrowserHandler, new AuthenticationProvider(settingsService));
+            var backupSettings = new BackupSettings(playerItemDao, _authAuthService, settingsService, !BlockedLogsDetection.DreamcrashBlocked());
             addAndShow(backupSettings, backupPanel);
-            addAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, playerItemDao, _parsingService, databaseSettingDao, grimDawnDetector, _settingsService), modsPanel);
+            addAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, playerItemDao, _parsingService, databaseSettingDao, grimDawnDetector, settingsService), modsPanel);
             
             addAndShow(new HelpTab(), panelHelp);
         
@@ -415,19 +420,19 @@ namespace IAGrim.UI
 
             var azurePartitionDao = _serviceProvider.Get<IAzurePartitionDao>();
             var itemTagDao = _serviceProvider.Get<IItemTagDao>();
-            var backupService = new BackupService(_authAuthService, playerItemDao, azurePartitionDao, () => _settingsService.GetPersistent().UsingDualComputer);
+            var backupService = new BackupService(_authAuthService, playerItemDao, azurePartitionDao, () => settingsService.GetPersistent().UsingDualComputer);
             _backupServiceWorker = new BackupServiceWorker(backupService);
             backupService.OnUploadComplete += (o, args) => _searchWindow.UpdateListView();
             searchController.OnSearch += (o, args) => backupService.OnSearch();
 
-            _searchWindow = new SplitSearchWindow(_cefBrowserHandler.BrowserControl, SetFeedback, playerItemDao, searchController, itemTagDao, _settingsService);
+            _searchWindow = new SplitSearchWindow(_cefBrowserHandler.BrowserControl, SetFeedback, playerItemDao, searchController, itemTagDao, settingsService);
             addAndShow(_searchWindow, searchPanel);
 
             transferStashService2.OnUpdate += (_, __) => {
                 _searchWindow.UpdateListView();
             };
 
-            var languagePackPicker = new LanguagePackPicker(itemTagDao, playerItemDao, _parsingService, _settingsService);
+            var languagePackPicker = new LanguagePackPicker(itemTagDao, playerItemDao, _parsingService, settingsService);
 
             addAndShow(
                 new SettingsWindow(
@@ -439,7 +444,7 @@ namespace IAGrim.UI
                     transferStashService,
                     transferStashService2,
                     languagePackPicker,
-                    _settingsService,
+                    settingsService,
                     grimDawnDetector
                 ),
                 settingsPanel);
@@ -452,13 +457,13 @@ namespace IAGrim.UI
 #endif
 
             Shown += (_, __) => { StartInjector(); };
-            BuddySyncEnabled = _settingsService.GetPersistent().BuddySyncEnabled;
+            BuddySyncEnabled = settingsService.GetPersistent().BuddySyncEnabled;
 
             // Start the backup task
-            _backupBackgroundTask = new BackgroundTask(new FileBackup(playerItemDao, _settingsService));
+            _backupBackgroundTask = new BackgroundTask(new FileBackup(playerItemDao, settingsService));
 
             LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
-            new EasterEgg(_settingsService).Activate(this);
+            new EasterEgg(settingsService).Activate(this);
 
             // Initialize the "stash packer" used to find item positions for transferring items ingame while the stash is open
             {
@@ -517,7 +522,7 @@ namespace IAGrim.UI
 
             // Popup login diag
             
-            if (_authAuthService.CheckAuthentication() == AzureAuthService.AccessStatus.Unauthorized && !_settingsService.GetLocal().OptOutOfBackups) {
+            if (_authAuthService.CheckAuthentication() == AzureAuthService.AccessStatus.Unauthorized && !settingsService.GetLocal().OptOutOfBackups) {
                 if (!BlockedLogsDetection.DreamcrashBlocked()) { // Backup login wont work
                     var t = new System.Windows.Forms.Timer {Interval = 100};
                     t.Tick += (o, args) => {
@@ -532,16 +537,16 @@ namespace IAGrim.UI
 
 
             searchController.JsIntegration.ItemTransferEvent += TransferItem;
-            new WindowSizeManager(this, _settingsService);
+            new WindowSizeManager(this, settingsService);
 
 
             // Suggest translation packs if available
-            if (!string.IsNullOrEmpty(_settingsService.GetLocal().LocalizationFile) && !_settingsService.GetLocal().HasSuggestedLanguageChange) {
+            if (!string.IsNullOrEmpty(settingsService.GetLocal().LocalizationFile) && !settingsService.GetLocal().HasSuggestedLanguageChange) {
                 if (LocalizationLoader.HasSupportedTranslations(grimDawnDetector.GetGrimLocations())) {
                     Logger.Debug("A new language pack has been detected, informing end user..");
-                    new LanguagePackPicker(itemTagDao, playerItemDao, _parsingService, _settingsService).Show(grimDawnDetector.GetGrimLocations());
+                    new LanguagePackPicker(itemTagDao, playerItemDao, _parsingService, settingsService).Show(grimDawnDetector.GetGrimLocations());
 
-                    _settingsService.GetLocal().HasSuggestedLanguageChange = true;
+                    settingsService.GetLocal().HasSuggestedLanguageChange = true;
                 }
             }
 
@@ -656,8 +661,9 @@ namespace IAGrim.UI
                     var playerItemDao = _serviceProvider.Get<IPlayerItemDao>();
                     var buddyItemDao = _serviceProvider.Get<IBuddyItemDao>();
 
+                    var settingsService = _serviceProvider.Get<SettingsService>();
                     List<long> buddies = new List<long>(buddySubscriptionDao.ListAll().Select(m => m.Id));
-                    _buddyBackgroundThread = new BuddyBackgroundThread(BuddyItemsCallback, playerItemDao, buddyItemDao, buddies, 3 * 60 * 1000, _settingsService);
+                    _buddyBackgroundThread = new BuddyBackgroundThread(BuddyItemsCallback, playerItemDao, buddyItemDao, buddies, 3 * 60 * 1000, settingsService);
                 } else {
                     if (_buddyBackgroundThread != null) {
                         _buddyBackgroundThread.Dispose();

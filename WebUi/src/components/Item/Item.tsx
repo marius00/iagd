@@ -7,13 +7,15 @@ import { openUrl } from '../../integration/integration';
 import { Textfit } from 'react-textfit';
 import translate from '../../translations/EmbeddedTranslator';
 import IItemType from '../../interfaces/IItemType';
-import GetSetName from '../../integration/ItemSetService';
+import GetSetName, { GetSetItems } from '../../integration/ItemSetService';
+import ICollectionItem from '../../interfaces/ICollectionItem';
 
 
 interface Props {
   item: IItem;
   transferSingle: (x: any) => void;
   transferAll: (x: any) => void;
+  getItemName: (baseRecord: string) => ICollectionItem;
 }
 
 class Item extends React.PureComponent<Props, object> {
@@ -129,6 +131,20 @@ class Item extends React.PureComponent<Props, object> {
     );
   }
 
+  getSetItemTooltip(setName: string|undefined, quality: string): string {
+    if (setName !== undefined && quality === 'Epic') { // We don't support blues yet, not available on collection page.
+      const addFont = (numOwned: number, s: string) => (numOwned <= 0) ? `<font color="red">${s}</font>` : s;
+      var setItemsList = GetSetItems(setName)
+        .map(this.props.getItemName)
+        .map(entry => addFont(entry.numOwned, `${("  " + entry.numOwned).substr(-2,2)}x ${entry.name}`))
+        .join("<br>");
+
+      setItemsList = "<b>This set consists of the following items: </b><br><br>" + setItemsList;
+      return setItemsList;
+    }
+
+    return "";
+  }
 
   render() {
     const item = this.props.item;
@@ -149,6 +165,7 @@ class Item extends React.PureComponent<Props, object> {
     );
 
     const setName = GetSetName(item.baseRecord);
+    var setItemsList = this.getSetItemTooltip(setName, item.quality);
 
     return (
       <div className={"item " + (item.numItems <= 0 && item.type === IItemType.Player ?' item-disabled':"")}>
@@ -186,7 +203,7 @@ class Item extends React.PureComponent<Props, object> {
           }
 
           {setName !== undefined && <div><br />
-            <span className="set-name">{translate('item.label.setbonus')}</span> <span className="set-name">{setName}</span></div>}
+            <span className="set-name">{translate('item.label.setbonus')}</span> <span className="set-name" data-tip={setItemsList}>{setName}</span></div>}
 
           {item.skill ? <Skill skill={item.skill} keyPrefix={item.url.join(':')}/> : ''}
 

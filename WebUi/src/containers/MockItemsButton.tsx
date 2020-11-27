@@ -5,7 +5,7 @@ import IItem from '../interfaces/IItem';
 export const mockDataItems = (text: string): IItem[] => {
     return [
              {
-               "baseRecord": "records/items/gearweapons/blunt1h/b016a_blunt.dbr",
+               "baseRecord": "records/items/gearweapons/guns2h/d010_gun2h.dbr",
                "icon": 'a02_feet02.tex.png',
                "quality": "Green",
                "name": "Barrog's Bloody Arm of Alacrity",

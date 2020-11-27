@@ -8,6 +8,7 @@ using IAGrim.Parsers.Arz.dto;
 using log4net;
 
 namespace IAGrim.Parsers.Arz {
+    // Monitors a folder (typically My Documents) for modified files named "transfer.???"
     class StashFileMonitor : IDisposable {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(StashFileMonitor));
         private FileSystemWatcher _watcher = new FileSystemWatcher();

@@ -5,11 +5,11 @@ import IItem from './interfaces/IItem';
 import MockItemsButton from './containers/MockItemsButton';
 import { isEmbedded, requestMoreItems } from './integration/integration';
 import ItemContainer from './containers/ItemContainer';
-import { store } from 'react-notifications-component';
-import ReactNotification from 'react-notifications-component';
+import ReactNotification, { store } from 'react-notifications-component';
 import Tabs from './components/Tabs/Tabs';
 import CollectionItemContainer from './containers/CollectionItemContainer';
 import ICollectionItem from './interfaces/ICollectionItem';
+import MockCollectionItemData from './mock/MockCollectionItemData';
 
 
 export interface ApplicationState {
@@ -22,11 +22,9 @@ export interface ApplicationState {
 const StoreContext = React.createContext({items: [], isLoading: true, activeTab: 0, collectionItems: []} as ApplicationState);
 
 // TODO: Dark mode
-// TODO: Prevent multiple clicks on transfer? or non-issue?
 // TODO: Basic tab-usage analytics, determine if collection or crafting is being used
 // TODO: Discord like 'feature discovery'
 // TODO: Move help tab into WebUI? "[?]" links can trigger a modal on the help page. Add more screenshots.
-// TODO: Crafting support??
 // TODO: A no more matches message when scrolling too far?
 // TODO: A commit redoing all the damn bracket styles in C# -- do this last.. sigh.
 // TODO: Ensure loading works correctly.. no duplicates, in expected order..
@@ -34,6 +32,10 @@ const StoreContext = React.createContext({items: [], isLoading: true, activeTab:
 // TODO: Loot button if stash file path is network \\
 // TODO: Fallback languages, not just English. -- Pickable on first run.
 // TODO: Onboarding => Pick language, new user/returning => import flow vs parse flow, explain how it works, nag about backups, explain misc functionality.
+
+// Trivial
+// TODO: Prevent multiple clicks on transfer? or non-issue?
+// TODO: Crafting support??
 
 class App extends React.PureComponent<{}, object> {
   state = {
@@ -71,13 +73,15 @@ class App extends React.PureComponent<{}, object> {
     // @ts-ignore: setCollectionItems doesn't exist on window
     window.setCollectionItems = (data: any) => {
       const collectionItems = typeof data === 'string' ? JSON.parse(data) : data;
-
+      console.log(data)
       this.setState({
         collectionItems: collectionItems
       });
     };
-
-
+    // Mock data for not embedded / dev mode
+    if (!isEmbedded) {
+      this.setState({collectionItems: MockCollectionItemData});
+    }
 
     // Start showing the loading spinner
     // @ts-ignore: setIsLoading doesn't exist on window
@@ -97,7 +101,7 @@ class App extends React.PureComponent<{}, object> {
 
   // Used primarily for setting mock items for testing
   setItems(items: IItem[]) {
-    this.setState({items: items, isLoading: false})
+    this.setState({items: items, isLoading: false});
   }
 
   // reduceItemCount will reduce the number of items displayed, generally after an item has been transferred out.
@@ -108,12 +112,12 @@ class App extends React.PureComponent<{}, object> {
       item.numItems -= numItems;
       this.setState({items: items});
     } else {
-      console.warn("Attempted to reduce item count, but item could not be found", url);
+      console.warn('Attempted to reduce item count, but item could not be found', url);
     }
   }
 
   requestMoreItems() {
-    console.log("More items it wantssssss?");
+    console.log('More items it wantssssss?');
     this.setState({isLoading: true});
     requestMoreItems();
     // TODO: Fix this weird loop? This one will request more items.. which will end up in a call from C# to window.addItems().. is that how we wanna do this?
@@ -122,30 +126,34 @@ class App extends React.PureComponent<{}, object> {
   render() {
     return (
       <div className="App">
-        <ReactNotification />
+        <ReactNotification/>
         <StoreContext.Provider value={this.state}>
           <div className={'container'}>
-            <Tabs activeTab={this.state.activeTab} setActiveTab={(idx: number) => this.setState({activeTab: idx})} />
+            <Tabs activeTab={this.state.activeTab} setActiveTab={(idx: number) => this.setState({activeTab: idx})}/>
             <div id="myTabContent" className="tab-content" aria-live="polite">
             </div>
           </div>
-          {this.state.activeTab === 0 && !isEmbedded ? <MockItemsButton onClick={(items) => this.setItems(items)} /> : ''}
+          {this.state.activeTab === 0 && !isEmbedded ? <MockItemsButton onClick={(items) => this.setItems(items)}/> : ''}
 
 
-          <div style={this.state.activeTab === 0 ? {display: 'block'}: {display: 'none'}}><ItemContainer
-            items={this.state.items}
-            isLoading={this.state.isLoading}
-            onItemReduce={(url, numItems) => this.reduceItemCount(url, numItems)}
-            onRequestMoreItems={() => this.requestMoreItems()}
-          /></div>
+          <div style={this.state.activeTab === 0 ? {display: 'block'} : {display: 'none'}}>
+            <ItemContainer
+              items={this.state.items}
+              isLoading={this.state.isLoading}
+              onItemReduce={(url, numItems) => this.reduceItemCount(url, numItems)}
+              onRequestMoreItems={() => this.requestMoreItems()}
+              collectionItems={this.state.collectionItems}
+            />
+          </div>
 
-          {this.state.activeTab === 1 && <CollectionItemContainer items={this.state.collectionItems} />}
+          {this.state.activeTab === 1 && <CollectionItemContainer items={this.state.collectionItems}/>}
 
           {this.state.activeTab === 2 && <div className="legacy-crafting">
             <h2>Legacy functionality</h2>
             <p>This used to be a part of IA, automagically detecting which components you already had. <br/>
-            If you'd like to see to see the functionality return, give a shout out!</p>
-            <iframe title="Crafting tab" src="https://items.dreamcrash.org/ComponentAssembler?record=d009_relic.dbr" style={{width: "100%", height: "100%", overflow: "hidden", position: "absolute"}}  scrolling="yes" frameBorder={0} />
+              If you'd like to see to see the functionality return, give a shout out!</p>
+            <iframe title="Crafting tab" src="https://items.dreamcrash.org/ComponentAssembler?record=d009_relic.dbr"
+                    style={{width: '100%', height: '100%', overflow: 'hidden', position: 'absolute'}} scrolling="yes" frameBorder={0}/>
           </div>
           }
 
@@ -161,10 +169,10 @@ function ShowMessage(message: string, type: 'success' | 'danger' | 'info' | 'def
     title: type,
     message: message,
     type: type,
-    insert: "top",
-    container: "bottom-center",
-    animationIn: ["animate__animated", "animate__fadeIn"],
-    animationOut: ["animate__animated", "animate__fadeOut"],
+    insert: 'top',
+    container: 'bottom-center',
+    animationIn: ['animate__animated', 'animate__fadeIn'],
+    animationOut: ['animate__animated', 'animate__fadeOut'],
     dismiss: {
       duration: 2500,
       onScreen: true

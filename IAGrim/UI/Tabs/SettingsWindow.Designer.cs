@@ -52,6 +52,7 @@
             this.radioBeta = new FirefoxRadioButton();
             this.radioRelease = new FirefoxRadioButton();
             this.panelBox2 = new PanelBox();
+            this.buttonLootManually = new FirefoxButton();
             this.buttonPaypal = new System.Windows.Forms.Button();
             this.buttonDevTools = new FirefoxButton();
             this.panelBox1 = new PanelBox();
@@ -446,6 +447,7 @@
             // 
             // panelBox2
             // 
+            this.panelBox2.Controls.Add(this.buttonLootManually);
             this.panelBox2.Controls.Add(this.buttonPatreon);
             this.panelBox2.Controls.Add(this.buttonPaypal);
             this.panelBox2.Controls.Add(this.buttonDevTools);
@@ -459,6 +461,20 @@
             this.panelBox2.Tag = "iatag_ui_misc_title";
             this.panelBox2.Text = "Misc";
             this.panelBox2.TextLocation = "8; 5";
+            // 
+            // buttonLootManually
+            // 
+            this.buttonLootManually.EnabledCalc = true;
+            this.buttonLootManually.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.buttonLootManually.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
+            this.buttonLootManually.Location = new System.Drawing.Point(14, 203);
+            this.buttonLootManually.Name = "buttonLootManually";
+            this.buttonLootManually.Size = new System.Drawing.Size(192, 32);
+            this.buttonLootManually.TabIndex = 9;
+            this.buttonLootManually.Tag = "iatag_ui_lootmanually";
+            this.buttonLootManually.Text = "Loot Manually";
+            this.buttonLootManually.Visible = false;
+            this.buttonLootManually.Click += new System.EventHandler(this.buttonLootManually_Click);
             // 
             // buttonPaypal
             // 
@@ -646,5 +662,6 @@
         private System.Windows.Forms.Button buttonPatreon;
         private System.Windows.Forms.LinkLabel helpWhatIsExperimentalUpdates;
         private System.Windows.Forms.LinkLabel helpWhatIsRegularUpdates;
+        private FirefoxButton buttonLootManually;
     }
 }

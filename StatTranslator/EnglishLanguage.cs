@@ -362,6 +362,7 @@ namespace StatTranslator {
             {"iatag_ui_classes", "Classes"},
             {"iatag_ui_tab_items", "Items"},
             {"iatag_ui_devtools", "Devtools"},
+            {"iatag_ui_lootmanually", "Loot Manually" },
             {"iatag_ui_misc", "Misc"},
             {"iatag_ui_socketedonly", "Has components"},
             {"iatag_ui_duplicatesonly", "Duplicates Only"},
