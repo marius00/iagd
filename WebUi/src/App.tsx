@@ -25,12 +25,15 @@ const StoreContext = React.createContext({items: [], isLoading: true, activeTab:
 // TODO: Prevent multiple clicks on transfer? or non-issue?
 // TODO: Basic tab-usage analytics, determine if collection or crafting is being used
 // TODO: Discord like 'feature discovery'
-// TODO: Move help tab into WebUI?
+// TODO: Move help tab into WebUI? "[?]" links can trigger a modal on the help page. Add more screenshots.
 // TODO: Crafting support??
 // TODO: A no more matches message when scrolling too far?
 // TODO: A commit redoing all the damn bracket styles in C# -- do this last.. sigh.
 // TODO: Ensure loading works correctly.. no duplicates, in expected order..
 // TODO: Look into the duplicate key errors -- seems to be for items with&without a component. dupe item but with comp.
+// TODO: Loot button if stash file path is network \\
+// TODO: Fallback languages, not just English. -- Pickable on first run.
+// TODO: Onboarding => Pick language, new user/returning => import flow vs parse flow, explain how it works, nag about backups, explain misc functionality.
 
 class App extends React.PureComponent<{}, object> {
   state = {

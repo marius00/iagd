@@ -19,6 +19,8 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Windows.Forms;
+using IAGrim.Services;
+using IAGrim.Settings;
 using IAGrim.Utilities.Detection;
 
 namespace IAGrim
@@ -30,7 +32,6 @@ namespace IAGrim
         private static readonly StartupService StartupService = new StartupService();
 
 #if DEBUG
-
         private static void Test() {
             return;
         }
@@ -143,7 +144,6 @@ namespace IAGrim
             {
                 if (_mw != null)
                 {
-                    _mw.Invoke((MethodInvoker)delegate { _mw.notifyIcon1_MouseDoubleClick(null, null); });
                     _mw.Invoke((MethodInvoker)delegate { _mw.Activate(); });
                 }
             }
@@ -166,40 +166,31 @@ namespace IAGrim
         private static void Run(string[] args, ThreadExecuter threadExecuter)
         {
             var factory = new SessionFactory();
+            var serviceProvider = ServiceProvider.Initialize(threadExecuter);
 
-            // Settings should be upgraded early, it contains the language pack etc and some services depends on settings.
-            var settingsService = StartupService.LoadSettingsService();
-            IPlayerItemDao playerItemDao = new PlayerItemRepo(threadExecuter, factory);
-            
-            IDatabaseItemDao databaseItemDao = new DatabaseItemRepo(threadExecuter, factory);
+            var settingsService = serviceProvider.Get<SettingsService>();
+            var databaseItemDao = serviceProvider.Get<IDatabaseItemDao>();
+            var databaseSettingDao = serviceProvider.Get<IDatabaseSettingDao>();
+            var augmentationItemRepo = serviceProvider.Get<IAugmentationItemDao>();
             RuntimeSettings.InitializeLanguage(settingsService.GetLocal().LocalizationFile, databaseItemDao.GetTagDictionary());
             DumpTranslationTemplate();
-
             threadExecuter.Execute(() => new MigrationHandler(factory).Migrate());
 
-            IDatabaseSettingDao databaseSettingDao = new DatabaseSettingRepo(threadExecuter, factory);
             LoadUuid(databaseSettingDao);
-            var azurePartitionDao = new AzurePartitionRepo(threadExecuter, factory);
-            IDatabaseItemStatDao databaseItemStatDao = new DatabaseItemStatRepo(threadExecuter, factory);
-            IItemTagDao itemTagDao = new ItemTagRepo(threadExecuter, factory);
 
-
-            IBuddyItemDao buddyItemDao = new BuddyItemRepo(threadExecuter, factory);
-            IBuddySubscriptionDao buddySubscriptionDao = new BuddySubscriptionRepo(threadExecuter, factory);
-            IRecipeItemDao recipeItemDao = new RecipeItemRepo(threadExecuter, factory);
-            IItemSkillDao itemSkillDao = new ItemSkillRepo(threadExecuter, factory);
-            AugmentationItemRepo augmentationItemRepo = new AugmentationItemRepo(threadExecuter, factory, new DatabaseItemStatDaoImpl(factory));
-            var grimDawnDetector = new GrimDawnDetector(settingsService);
 
             Logger.Debug("Updating augment state..");
             augmentationItemRepo.UpdateState();
 
             // TODO: GD Path has to be an input param, as does potentially mods.
+            var itemTagDao = serviceProvider.Get<IItemTagDao>();
+            var databaseItemStatDao = serviceProvider.Get<IDatabaseItemStatDao>();
+            var itemSkillDao = serviceProvider.Get<IItemSkillDao>();
             ParsingService parsingService = new ParsingService(itemTagDao, null, databaseItemDao, databaseItemStatDao, itemSkillDao, settingsService.GetLocal().LocalizationFile);
             StartupService.PrintStartupInfo(factory, settingsService);
 
 
-
+            // TODO: Offload to the new language loader
             if (RuntimeSettings.Language is EnglishLanguage language)
             {
                 foreach (var tag in itemTagDao.GetClassItemTags())
@@ -215,29 +206,20 @@ namespace IAGrim
 
             using (CefBrowserHandler browser = new CefBrowserHandler())
             {
-                _mw = new MainWindow(browser,
-                    databaseItemDao,
-                    databaseItemStatDao,
-                    playerItemDao,
-                    azurePartitionDao,
-                    databaseSettingDao,
-                    buddyItemDao,
-                    buddySubscriptionDao,
-                    recipeItemDao,
-                    itemSkillDao,
-                    itemTagDao,
+                _mw = new MainWindow(
+                    serviceProvider,
+                    browser,
                     parsingService,
-                    augmentationItemRepo,
-                    settingsService,
-                    grimDawnDetector,
-                    new ItemCollectionRepo(threadExecuter, factory)
+                    settingsService
                 );
 
                 Logger.Info("Checking for database updates..");
 
+                var grimDawnDetector = serviceProvider.Get<GrimDawnDetector>();
                 StartupService.PerformIconCheck(databaseSettingDao, grimDawnDetector);
 
                 try {
+                    var playerItemDao = serviceProvider.Get<IPlayerItemDao>();
                     playerItemDao.DeleteDuplidates();
                 }
                 catch (Exception ex) {

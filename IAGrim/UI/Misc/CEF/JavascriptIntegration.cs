@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 // ReSharper disable UnusedMember.Global
 
 namespace IAGrim.UI.Misc.CEF {
-    class JavascriptIntegration {
+    public class JavascriptIntegration {
         private readonly JsonSerializerSettings _settings = new JsonSerializerSettings {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
             Culture = System.Globalization.CultureInfo.InvariantCulture,

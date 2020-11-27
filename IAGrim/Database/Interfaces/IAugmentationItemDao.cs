@@ -7,7 +7,7 @@ using IAGrim.Database.Dto;
 using IAGrim.Database.Model;
 
 namespace IAGrim.Database.Interfaces {
-    interface IAugmentationItemDao : IBaseDao<AugmentationItem> {
+    public interface IAugmentationItemDao : IBaseDao<AugmentationItem> {
         void UpdateState();
         IList<AugmentationItem> Search(ItemSearchRequest query);
     }

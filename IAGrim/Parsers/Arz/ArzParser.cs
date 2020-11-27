@@ -70,7 +70,7 @@ namespace IAGrim.Parsers.Arz {
             try {
                 DDSImageReader.ExtractItemIcons(arcItemfile, GlobalPaths.StorageFolder);
             }
-            catch (Exception ex) {
+            catch (ArgumentException ex) {
                 // Ideally we'd like to catch the specific exception, but the available log files don't contain the exception name..
                 Logger.Error(ex.Message, ex);
                 MessageBox.Show("Unable to parse icons, ARZ file is corrupted.\nIf you are using steam, please verify the install integrity.", "Corrupted GD installation", MessageBoxButtons.OK);

@@ -11,7 +11,7 @@ using IAGrim.Settings.Dto;
 using MoreLinq;
 
 namespace IAGrim.Services {
-    class ItemStatService {
+    public class ItemStatService {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ItemStatService));
         private readonly IDatabaseItemStatDao _databaseItemStatDao;
         private readonly IItemSkillDao _itemSkillDao;
@@ -23,7 +23,9 @@ namespace IAGrim.Services {
 
         public ItemStatService(
             IDatabaseItemStatDao databaseItemStatDao, 
-            IItemSkillDao itemSkillDao, SettingsService settings) {
+            IItemSkillDao itemSkillDao, 
+            SettingsService settings
+            ) {
             this._databaseItemStatDao = databaseItemStatDao;
             this._itemSkillDao = itemSkillDao;
             _settings = settings;

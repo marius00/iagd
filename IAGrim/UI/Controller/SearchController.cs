@@ -15,8 +15,7 @@ using IAGrim.Settings;
 
 namespace IAGrim.UI.Controller
 {
-
-    internal class SearchController
+    public class SearchController
     {
         private const int TakeSize = 64;
 
@@ -32,7 +31,7 @@ namespace IAGrim.UI.Controller
         private readonly IItemCollectionDao _itemCollectionRepo;
 
 
-        public CefBrowserHandler Browser;
+        public IBrowserCallbacks Browser;
         public readonly JavascriptIntegration JsIntegration = new JavascriptIntegration();
         public event EventHandler OnSearch;
 

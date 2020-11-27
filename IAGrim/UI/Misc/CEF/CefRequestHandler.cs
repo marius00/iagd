@@ -17,11 +17,11 @@ namespace IAGrim.UI.Misc.CEF {
 
             return token;
         }
-
-        public bool OnBeforeBrowse(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, bool userGesture, bool isRedirect) {
+        
+        public bool OnBeforeBrowse(IWebBrowser chromiumWebBrowser, CefSharp.IBrowser browser, IFrame frame, IRequest request, bool userGesture, bool isRedirect) {
             if (request.Url.StartsWith("https://auth.iagd.dreamcrash.org/token/") || request.Url.StartsWith("http://localhost:7071/api/Authenticate")) {
                 var token = ExtractToken(request.Url);
-                OnAuthentication?.Invoke(browser, new AuthResultEvent {Token = token});
+                OnAuthentication?.Invoke(browser, new AuthResultEvent { Token = token });
                 return true;
             }
 
@@ -43,80 +43,41 @@ namespace IAGrim.UI.Misc.CEF {
             return false;
         }
 
-        public void OnDocumentAvailableInMainFrame(IWebBrowser chromiumWebBrowser, IBrowser browser) {
+        public void OnDocumentAvailableInMainFrame(IWebBrowser chromiumWebBrowser, CefSharp.IBrowser browser) {
+            
         }
 
-        public bool OnOpenUrlFromTab(IWebBrowser browserControl, IBrowser browser, IFrame frame, string targetUrl,
-            WindowOpenDisposition targetDisposition, bool userGesture) {
+        public bool OnOpenUrlFromTab(IWebBrowser chromiumWebBrowser, CefSharp.IBrowser browser, IFrame frame, string targetUrl, WindowOpenDisposition targetDisposition, bool userGesture) {
             return false;
         }
 
-        public IResourceRequestHandler GetResourceRequestHandler(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, bool isNavigation, bool isDownload, string requestInitiator, ref bool disableDefaultHandling) {
+        public IResourceRequestHandler GetResourceRequestHandler(IWebBrowser chromiumWebBrowser, CefSharp.IBrowser browser, IFrame frame, IRequest request, bool isNavigation, bool isDownload, string requestInitiator, ref bool disableDefaultHandling) {
             return null;
         }
 
-        public bool GetAuthCredentials(IWebBrowser chromiumWebBrowser, IBrowser browser, string originUrl, bool isProxy, string host, int port, string realm, string scheme, IAuthCallback callback) {
-            return true;
+        public bool GetAuthCredentials(IWebBrowser chromiumWebBrowser, CefSharp.IBrowser browser, string originUrl, bool isProxy, string host, int port, string realm, string scheme, IAuthCallback callback) {
+            return true; // TODO: We got 2 old ones.. true AND false.. O.o
         }
 
-        public bool OnCertificateError(IWebBrowser browserControl, IBrowser browser, CefErrorCode errorCode, string requestUrl,
-            ISslInfo sslInfo, IRequestCallback callback) {
+        public bool OnQuotaRequest(IWebBrowser chromiumWebBrowser, CefSharp.IBrowser browser, string originUrl, long newSize, IRequestCallback callback) {
             return false;
         }
 
-        public void OnPluginCrashed(IWebBrowser browserControl, IBrowser browser, string pluginPath) {
-        }
-
-        public CefReturnValue OnBeforeResourceLoad(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request,
-            IRequestCallback callback) {
-            return CefReturnValue.Continue;
-        }
-
-        public bool GetAuthCredentials(IWebBrowser browserControl, IBrowser browser, IFrame frame, bool isProxy, string host, int port,
-            string realm, string scheme, IAuthCallback callback) {
+        public bool OnCertificateError(IWebBrowser chromiumWebBrowser, CefSharp.IBrowser browser, CefErrorCode errorCode, string requestUrl, ISslInfo sslInfo, IRequestCallback callback) {
             return false;
         }
 
-        public bool OnSelectClientCertificate(IWebBrowser browserControl, IBrowser browser, bool isProxy, string host, int port,
-            X509Certificate2Collection certificates, ISelectClientCertificateCallback callback) {
+        public bool OnSelectClientCertificate(IWebBrowser chromiumWebBrowser, CefSharp.IBrowser browser, bool isProxy, string host, int port, X509Certificate2Collection certificates, ISelectClientCertificateCallback callback) {
             return false;
         }
 
-        public void OnRenderProcessTerminated(IWebBrowser browserControl, IBrowser browser, CefTerminationStatus status) {
+        public void OnPluginCrashed(IWebBrowser chromiumWebBrowser, CefSharp.IBrowser browser, string pluginPath) {
         }
 
-        public bool OnQuotaRequest(IWebBrowser browserControl, IBrowser browser, string originUrl, long newSize,
-            IRequestCallback callback) {
-            return false;
+        public void OnRenderViewReady(IWebBrowser chromiumWebBrowser, CefSharp.IBrowser browser) {
         }
 
-        public void OnResourceRedirect(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request,
-            IResponse response, ref string newUrl) {
-        }
-
-        public void OnResourceRedirect(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request,
-            ref string newUrl) {
-        }
-
-        public bool OnProtocolExecution(IWebBrowser browserControl, IBrowser browser, string url) {
-            return false;
-        }
-
-        public void OnRenderViewReady(IWebBrowser browserControl, IBrowser browser) {
-        }
-
-        public bool OnResourceResponse(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request,
-            IResponse response) {
-            return false;
-        }
-
-        public IResponseFilter GetResourceResponseFilter(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request,
-            IResponse response) {
-            return null;
-        }
-
-        public void OnResourceLoadComplete(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request,
-            IResponse response, UrlRequestStatus status, long receivedContentLength) {
+        public void OnRenderProcessTerminated(IWebBrowser chromiumWebBrowser, CefSharp.IBrowser browser, CefTerminationStatus status) {
         }
     }
 }

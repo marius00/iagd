@@ -1,25 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using IAGrim.Settings;
-using IAGrim.Settings.Dto;
-using Newtonsoft.Json;
-
 namespace IAGrim.UI.Misc {
     /// <summary>
     /// Responsible for persisting the window size and location across runs.
     /// </summary>
     public class WindowSizeManager {
-        private readonly JsonSerializerSettings _settings = new JsonSerializerSettings {
-            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-            Culture = System.Globalization.CultureInfo.InvariantCulture,
-            ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver(),
-            NullValueHandling = NullValueHandling.Ignore
-        };
         private Form _form;
         private readonly SettingsService _settingsService;
 

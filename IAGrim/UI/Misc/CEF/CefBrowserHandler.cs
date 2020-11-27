@@ -13,7 +13,7 @@ using log4net;
 using Newtonsoft.Json;
 
 namespace IAGrim.UI.Misc.CEF {
-    public class CefBrowserHandler : IDisposable, ICefBackupAuthentication, IUserFeedbackHandler {
+    public class CefBrowserHandler : IDisposable, ICefBackupAuthentication, IUserFeedbackHandler, IBrowserCallbacks {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(CefBrowserHandler));
         public ChromiumWebBrowser BrowserControl { get; private set; }
         private readonly object _lockObj = new object();

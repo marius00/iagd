@@ -30,7 +30,8 @@ namespace IAGrim.BuddyShare {
             IPlayerItemDao playerItemDao,
             IBuddyItemDao buddyItemDao,
             List<long> subscribers,
-            long cooldown, SettingsService settings) {
+            long cooldown, 
+            SettingsService settings) {
             _playerItemDao = playerItemDao;
             _buddyItemDao = buddyItemDao;
             this._subscribers = subscribers;
