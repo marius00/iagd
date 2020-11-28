@@ -18,8 +18,8 @@ export interface Props {
 }
 
 export default function Tabs({activeTab, setActiveTab}: Props) {
-  const renderTabEntry = (label: string, idx: number, icon: any, isActive?: boolean) =>
-    <li className={'tab fancyTab ' + (isActive ? 'active' : '')} onClick={() => setActiveTab(idx)}>
+  const renderTabEntry = (label: string, idx: number, icon: any, isActive?: boolean, feature?: string) =>
+    <li className={'tab fancyTab ' + (isActive ? 'active' : '')} onClick={() => setActiveTab(idx)} data-feature={feature}>
       <div className="arrow-down">
         <div className="arrow-down-inner"></div>
       </div>
@@ -49,7 +49,7 @@ export default function Tabs({activeTab, setActiveTab}: Props) {
     <ul className="nav nav-tabs fancyTabs" role="tablist">
 
       {renderTabEntry(translate('app.tab.items'), idx++, <Home/>, activeTab === 0)}
-      {renderTabEntry(translate('app.tab.collections'), idx++, <Web/>, activeTab === 1)}
+      {renderTabEntry(translate('app.tab.collections'), idx++, <Web/>, activeTab === 1, 'CollectionsTab')}
       {renderTabEntry(translate('app.tab.crafting'), idx++, <Web/>, activeTab === 2)}
       {renderLinkEntry(translate('app.tab.components'), idx++, <OpenInNew/>, 'http://dev.dreamcrash.org/enchantments/')}
       {translate('app.tab.videoGuide').length > 0 && renderLinkEntry(translate('app.tab.videoGuide'), idx++, <VideoLibrary/>, translate('app.tab.videoGuideUrl'))}

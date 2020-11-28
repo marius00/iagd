@@ -1,4 +1,3 @@
-
 // tslint:disable-next-line
 import MockItemSetData from '../mock/MockItemSetData';
 
@@ -14,10 +13,18 @@ export interface TransferResult {
 
 interface IntegrationInterface {
   transferItem(id: object[], numItems: number): string;
+
   setClipboard(text: string): void;
+
   requestMoreItems(): void;
+
   getItemSetAssociations(): string;
+
+  getFeatureSuggestion(): string;
+
+  markFeatureSuggestionSeen(feature: string): void;
 }
+
 declare let core: IntegrationInterface;
 
 export function transferItem(url: object[], numItems: number): TransferResult {
@@ -39,7 +46,7 @@ export function requestMoreItems(): void {
   if (isEmbedded) {
     core.requestMoreItems();
   } else {
-    console.debug("It wants itemsss doesss itssss? no more have it doessssss");
+    console.debug('It wants itemsss doesss itssss? no more have it doessssss');
   }
 }
 
@@ -56,6 +63,26 @@ export function openUrl(url: string) {
   if (isEmbedded) {
     document.location.href = url;
   } else {
-    window.open(url, "_blank");
+    window.open(url, '_blank');
+  }
+}
+
+var hasSeenMockFeature = false;
+
+export function getFeatureSuggestion() {
+  if (isEmbedded) {
+    return core.getFeatureSuggestion();
+  } else {
+    const f = hasSeenMockFeature ? '' : (Math.random() < 0.5 ? 'SetBonus' : 'CollectionsTab');
+    console.log('Feature:', f);
+    return f;
+  }
+}
+
+export function markFeatureSuggestionSeen(feature: string) {
+  if (isEmbedded) {
+    return core.markFeatureSuggestionSeen(feature);
+  } else {
+    hasSeenMockFeature = true;
   }
 }

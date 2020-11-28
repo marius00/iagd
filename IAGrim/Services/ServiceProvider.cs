@@ -20,10 +20,10 @@ using IAGrim.Utilities;
 
 namespace IAGrim.Services {
     public class ServiceProvider {
-        private readonly List<object> _services = new List<object>();
+        private readonly List<object> _services;
         private readonly Dictionary<Type, object> _cache = new Dictionary<Type, object>();
 
-        public ServiceProvider(List<object> services) {
+        private ServiceProvider(List<object> services) {
             _services = services;
         }
 
@@ -93,8 +93,12 @@ namespace IAGrim.Services {
 
             services.Add(new ItemStatService(databaseItemStatDao, itemSkillDao, settingsService));
 
+            var cacher = new TransferStashServiceCache(databaseItemDao);
             var stashWriter = new SafeTransferStashWriter(settingsService);
-            services.Add(new TransferStashService(databaseItemStatDao, settingsService, stashWriter));
+            var transferStashService = new TransferStashService(databaseItemStatDao, settingsService, stashWriter);
+            services.Add(transferStashService);
+            services.Add(new TransferStashService2(playerItemDao, cacher, transferStashService, stashWriter, settingsService));
+            services.Add(cacher);
 
             return new ServiceProvider(services);
         }

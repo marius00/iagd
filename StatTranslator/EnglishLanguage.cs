@@ -352,7 +352,7 @@ namespace StatTranslator {
             {"iatag_ui_backup_notloggedin", "Not logged in"},
             {"iatag_ui_update_item_stats", "Update Item Stats"},
             {"iatag_ui_open_logfile", "Open the full log file"},
-            {"iatag_ui_help", "Help"},
+            {"iatag_ui_help", "Discord / Help"},
             {"iatag_ui_source_code", "Source code"},
             {"iatag_ui_online_backup", "Online Backup"},
             {"iatag_ui_language_select", "Language Select"},

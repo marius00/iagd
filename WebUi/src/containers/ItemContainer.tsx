@@ -8,6 +8,7 @@ import translate from '../translations/EmbeddedTranslator';
 import { setClipboard, transferItem } from '../integration/integration';
 import OnScrollLoader from '../components/OnScrollLoader';
 import ICollectionItem from '../interfaces/ICollectionItem';
+import NewFeaturePromoter from '../components/NewFeaturePromoter';
 
 interface Props {
   items: IItem[];
@@ -35,6 +36,7 @@ class ItemContainer extends React.PureComponent<Props, object> {
 
   componentDidUpdate(props: Props) {
     setTimeout(() => ReactTooltip.rebuild(), 1250); // TODO: This seems like a stupid way to solve tooltip issues.
+    setTimeout(() => NewFeaturePromoter.Activate(), 500);
   }
 
   getClipboardContent() {
@@ -61,7 +63,6 @@ class ItemContainer extends React.PureComponent<Props, object> {
 
   render() {
     const items = this.props.items;
-    console.log("CollectionItems?", this.props.collectionItems);
 
     if (items.length > 0) {
       return (
@@ -82,7 +83,6 @@ class ItemContainer extends React.PureComponent<Props, object> {
           )}
           <ReactTooltip html={true} type={'light'} />
           <OnScrollLoader onTrigger={this.props.onRequestMoreItems} />
-
         </div>
       );
     }

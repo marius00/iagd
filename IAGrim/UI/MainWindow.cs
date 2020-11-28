@@ -30,6 +30,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 using CefSharp.WinForms;
@@ -324,6 +325,16 @@ namespace IAGrim.UI
             }
             Logger.Debug("Starting UI initialization");
 
+            // Set version number
+            var version = Assembly.GetExecutingAssembly().GetName().Version;
+            DateTime buildDate = new DateTime(2000, 1, 1)
+                .AddDays(version.Build)
+                .AddSeconds(version.Revision * 2);
+            statusLabel.Text = statusLabel.Text + $" - {version.Major}.{version.Minor}.{version.Build}.{version.Revision} from {buildDate.ToString("dd/MM/yyyy")}";
+
+
+
+            var settingsService = _serviceProvider.Get<SettingsService>();
             ExceptionReporter.EnableLogUnhandledOnThread();
             _minimizeToTrayHandler = new MinimizeToTrayHandler(this, notifyIcon1);
             SizeChanged += OnMinimizeWindow;
@@ -339,15 +350,19 @@ namespace IAGrim.UI
             _cefBrowserHandler.InitializeChromium(searchController.JsIntegration, Browser_IsBrowserInitializedChanged);
             searchController.Browser = _cefBrowserHandler;
             searchController.JsIntegration.OnClipboard += SetItemsClipboard;
+            searchController.JsIntegration.OnRequestFeatureRecommendation += (o, args) => {
+                var features = settingsService.GetPersistent().FeaturesNotShown;
+                (args as FeatureSuggestionArgs).Feature = features.FirstOrDefault();
+                (args as FeatureSuggestionArgs).HasFeature = features.Count > 0;
+            };
+            searchController.JsIntegration.OnSeenFeatureRecommendation += (o, args) => settingsService.GetPersistent().AddShownFeature((args as FeatureSuggestionArgs).Feature);
 
             var playerItemDao = _serviceProvider.Get<IPlayerItemDao>();
-            var cacher = new TransferStashServiceCache(databaseItemDao);
+            var cacher = _serviceProvider.Get<TransferStashServiceCache>();
             _parsingService.OnParseComplete += (o, args) => cacher.Refresh();
 
-            var settingsService = _serviceProvider.Get<SettingsService>();
             var transferStashService = _serviceProvider.Get<TransferStashService>();
-            var stashWriter = new SafeTransferStashWriter(settingsService);
-            var transferStashService2 = new TransferStashService2(playerItemDao, cacher, transferStashService, stashWriter, settingsService);
+            var transferStashService2 = _serviceProvider.Get <TransferStashService2>();
             _transferStashWorker = new TransferStashWorker(transferStashService2, _userFeedbackService);
 
             _stashFileMonitor.OnStashModified += (_, __) => {
@@ -568,11 +583,6 @@ namespace IAGrim.UI
             // Same happens when shutting down, fix unknown
             _injectorCallbackDelegate = InjectorCallback;
 
-            var hasMods = _searchWindow.ModSelectionHandler.HasMods;
-#if DEBUG
-            hasMods = false; // TODO TODO TODO TODO
-#endif
-            // CBA dealing with this.
             string dllname = "ItemAssistantHook.dll";
             _injector = new InjectionHelper(new BackgroundWorker(), _injectorCallbackDelegate, false, "Grim Dawn", string.Empty, dllname);
         }

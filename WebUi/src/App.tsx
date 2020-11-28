@@ -10,6 +10,7 @@ import Tabs from './components/Tabs/Tabs';
 import CollectionItemContainer from './containers/CollectionItemContainer';
 import ICollectionItem from './interfaces/ICollectionItem';
 import MockCollectionItemData from './mock/MockCollectionItemData';
+import NewFeaturePromoter from './components/NewFeaturePromoter';
 
 
 export interface ApplicationState {
@@ -19,23 +20,27 @@ export interface ApplicationState {
   collectionItems: ICollectionItem[];
 }
 
+// TODO: Am I actually using this store??
 const StoreContext = React.createContext({items: [], isLoading: true, activeTab: 0, collectionItems: []} as ApplicationState);
 
 // TODO: Dark mode
 // TODO: Basic tab-usage analytics, determine if collection or crafting is being used
-// TODO: Discord like 'feature discovery'
 // TODO: Move help tab into WebUI? "[?]" links can trigger a modal on the help page. Add more screenshots.
-// TODO: A no more matches message when scrolling too far?
 // TODO: A commit redoing all the damn bracket styles in C# -- do this last.. sigh.
 // TODO: Ensure loading works correctly.. no duplicates, in expected order..
 // TODO: Look into the duplicate key errors -- seems to be for items with&without a component. dupe item but with comp.
 // TODO: Loot button if stash file path is network \\
 // TODO: Fallback languages, not just English. -- Pickable on first run.
 // TODO: Onboarding => Pick language, new user/returning => import flow vs parse flow, explain how it works, nag about backups, explain misc functionality.
+// TODO: Icon next to transfer links?
 
 // Trivial
 // TODO: Prevent multiple clicks on transfer? or non-issue?
 // TODO: Crafting support??
+// TODO: Reset the 'statusLabel' text once in a while, may show 'error' until the end of time.
+// TODO: A no more matches message when scrolling too far?
+// TODO: Improve feature discovery animation
+
 
 class App extends React.PureComponent<{}, object> {
   state = {
@@ -73,7 +78,6 @@ class App extends React.PureComponent<{}, object> {
     // @ts-ignore: setCollectionItems doesn't exist on window
     window.setCollectionItems = (data: any) => {
       const collectionItems = typeof data === 'string' ? JSON.parse(data) : data;
-      console.log(data)
       this.setState({
         collectionItems: collectionItems
       });
@@ -135,7 +139,6 @@ class App extends React.PureComponent<{}, object> {
           </div>
           {this.state.activeTab === 0 && !isEmbedded ? <MockItemsButton onClick={(items) => this.setItems(items)}/> : ''}
 
-
           <div style={this.state.activeTab === 0 ? {display: 'block'} : {display: 'none'}}>
             <ItemContainer
               items={this.state.items}
@@ -146,7 +149,7 @@ class App extends React.PureComponent<{}, object> {
             />
           </div>
 
-          {this.state.activeTab === 1 && <CollectionItemContainer items={this.state.collectionItems}/>}
+          {this.state.activeTab === 1 && <CollectionItemContainer items={this.state.collectionItems} />}
 
           {this.state.activeTab === 2 && <div className="legacy-crafting">
             <h2>Legacy functionality</h2>
@@ -156,8 +159,9 @@ class App extends React.PureComponent<{}, object> {
                     style={{width: '100%', height: '100%', overflow: 'hidden', position: 'absolute'}} scrolling="yes" frameBorder={0}/>
           </div>
           }
-
         </StoreContext.Provider>
+
+        <NewFeaturePromoter />
       </div>
     );
   }

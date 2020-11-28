@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using IAGrim.Database.Model;
+using IAGrim.Settings.Dto;
 using IAGrim.Utilities;
 using Newtonsoft.Json;
 
@@ -20,6 +21,8 @@ namespace IAGrim.UI.Misc.CEF {
         public event EventHandler OnClipboard;
         public event EventHandler OnRequestItems;
         public event EventHandler OnRequestSetItemAssociations;
+        public event EventHandler OnRequestFeatureRecommendation;
+        public event EventHandler OnSeenFeatureRecommendation;
 
         public string TransferItem(object[] identifier, int numItems) {
             var args = new StashTransferEventArgs {
@@ -83,7 +86,7 @@ namespace IAGrim.UI.Misc.CEF {
 
         public void SetClipboard(string data) {
             if (!string.IsNullOrWhiteSpace(data)) {
-                OnClipboard?.Invoke(this, new ClipboardEventArg { Text = data });
+                OnClipboard?.Invoke(this, new ClipboardEventArg {Text = data});
             }
         }
 
@@ -98,6 +101,21 @@ namespace IAGrim.UI.Misc.CEF {
             return JsonConvert.SerializeObject(args.Elements, _settings);
         }
 
+        public string GetFeatureSuggestion() {
+            FeatureSuggestionArgs args = new FeatureSuggestionArgs();
+            OnRequestFeatureRecommendation?.Invoke(this, args);
+            if (args.HasFeature) {
+                return args.Feature.ToString();
+            }
 
+            return string.Empty;
+        }
+
+        public void MarkFeatureSuggestionSeen(string f) {
+            if (Enum.TryParse(f, true, out FeatureRecommendation obj)) {
+                FeatureSuggestionArgs args = new FeatureSuggestionArgs {Feature = obj};
+                OnSeenFeatureRecommendation?.Invoke(this, args);
+            }
+        }
     }
 }
