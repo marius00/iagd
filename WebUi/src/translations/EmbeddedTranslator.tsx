@@ -38,7 +38,9 @@ class EmbeddedTranslator {
     'app.copyToClipboard': 'Copy to clipboard',
     'item.label.setbonus': 'Set:',
     'item.label.noMoreItems': 'No more items',
-    'item.label.setConsistsOf': 'This set consists of the following items: '
+    'item.label.setConsistsOf': 'This set consists of the following items: ',
+    'app.tab.lightMode': 'Light mode',
+    'app.tab.darkMode': 'Dark mode',
   };
 
 

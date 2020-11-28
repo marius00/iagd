@@ -18,11 +18,14 @@ export interface ApplicationState {
   isLoading: boolean;
   activeTab: number;
   collectionItems: ICollectionItem[];
+  isDarkMode: boolean;
 }
 
 // TODO: Am I actually using this store??
-const StoreContext = React.createContext({items: [], isLoading: true, activeTab: 0, collectionItems: []} as ApplicationState);
+const StoreContext = React.createContext({items: [], isLoading: true, activeTab: 0, collectionItems: [], isDarkMode: false} as ApplicationState);
 
+// TODO: Request 'more items' on start, prevent the 'no items found' message
+// TODO: Flip the tab arrow and move tabs up
 // TODO: Dark mode
 // TODO: Basic tab-usage analytics, determine if collection or crafting is being used
 // TODO: Move help tab into WebUI? "[?]" links can trigger a modal on the help page. Add more screenshots.
@@ -46,7 +49,8 @@ class App extends React.PureComponent<{}, object> {
     items: [],
     isLoading: true,
     activeTab: 0,
-    collectionItems: []
+    collectionItems: [],
+    isDarkMode: false,
   } as ApplicationState;
 
   componentDidMount() {
@@ -107,6 +111,12 @@ class App extends React.PureComponent<{}, object> {
     this.setState({items: items, isLoading: false});
   }
 
+  // Will eventually be moved into C# once the form supports darkmode
+  toggleDarkmode() {
+    this.setState({isDarkMode: !this.state.isDarkMode});
+    console.log('swappy', this.state.isDarkMode);
+  }
+
   // reduceItemCount will reduce the number of items displayed, generally after an item has been transferred out.
   reduceItemCount(url: object[], numItems: number) {
     let items = [...this.state.items];
@@ -128,11 +138,16 @@ class App extends React.PureComponent<{}, object> {
 
   render() {
     return (
-      <div className="App">
+      <div className={"App " + (this.state.isDarkMode?"App-dark":"")}>
         <ReactNotification/>
         <StoreContext.Provider value={this.state}>
           <div className={'container'}>
-            <Tabs activeTab={this.state.activeTab} setActiveTab={(idx: number) => this.setState({activeTab: idx})}/>
+            <Tabs
+              activeTab={this.state.activeTab}
+              setActiveTab={(idx: number) => this.setState({activeTab: idx})}
+              isDarkMode={this.state.isDarkMode}
+              toggleDarkmode={() => this.toggleDarkmode()}
+            />
             <div id="myTabContent" className="tab-content" aria-live="polite">
             </div>
           </div>
@@ -145,6 +160,7 @@ class App extends React.PureComponent<{}, object> {
               onItemReduce={(url, numItems) => this.reduceItemCount(url, numItems)}
               onRequestMoreItems={() => this.requestMoreItems()}
               collectionItems={this.state.collectionItems}
+              isDark={this.state.isDarkMode}
             />
           </div>
 

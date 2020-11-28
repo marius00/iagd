@@ -16,6 +16,7 @@ interface Props {
   onItemReduce(url: object[], numItems: number): void;
   onRequestMoreItems(): void;
   collectionItems: ICollectionItem[];
+  isDark: boolean;
 }
 
 
@@ -79,9 +80,10 @@ class ItemContainer extends React.PureComponent<Props, object> {
               transferAll={(url: object[]) => this.transferAll(url)}
               transferSingle={(url: object[]) => this.transferSingle(url)}
               getItemName={(baseRecord:string) => this.findByRecord(baseRecord)}
+              isDark={this.props.isDark}
             />
           )}
-          <ReactTooltip html={true} type={'light'} />
+          <ReactTooltip html={true} type={this.props.isDark ? 'dark' : 'light'} />
           <OnScrollLoader onTrigger={this.props.onRequestMoreItems} />
         </div>
       );

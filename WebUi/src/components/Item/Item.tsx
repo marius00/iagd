@@ -16,6 +16,7 @@ interface Props {
   transferSingle: (x: any) => void;
   transferAll: (x: any) => void;
   getItemName: (baseRecord: string) => ICollectionItem;
+  isDark: boolean;
 }
 
 class Item extends React.PureComponent<Props, object> {
@@ -167,8 +168,14 @@ class Item extends React.PureComponent<Props, object> {
     const setName = GetSetName(item.baseRecord);
     var setItemsList = this.getSetItemTooltip(setName, item.quality);
 
+    const mainClasses = [
+      "item",
+      (item.numItems <= 0 && item.type === IItemType.Player ?' item-disabled':""),
+      (this.props.isDark ? "item-dark" : "")
+    ];
+
     return (
-      <div className={"item " + (item.numItems <= 0 && item.type === IItemType.Player ?' item-disabled':"")}>
+      <div className={mainClasses.join(" ")}>
         <span>
           <img src={icon} className={"item-icon item-icon-" + item.quality.toLowerCase() } data-tip={item.slot}/>
         </span>

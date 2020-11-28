@@ -1,7 +1,5 @@
 
 body {
-
-  --background-color: rgb(85,68,96); /*Legacy*/
   --background-color: rgb(0, 0, 0);
 
 
@@ -17,6 +15,70 @@ body {
 /* Will be introduced with CEFSharp v86 or v87 */
 @media (prefers-color-scheme: dark) {
   body {
-    --background-color: rgb(0, 0, 0);
+    --background-color: rgb(255, 174, 201);
   }
+}
+
+.App {
+  --background-color: rgb(85,68,96); /*Legacy*/
+  background: var(--background-color);
+}
+
+.App-dark {
+  --background-color: rgb(0, 0, 0);
+  background: var(--background-color);
+}
+
+   /*Old/Light theme*/
+.item {
+  --item-background: #e8d5b6;
+  --item-background-hover: #e8d5b6;
+  --item-stat-label: 000000;
+  --item-stat-modifier: 000000;
+  --item-skill-trigger: black;
+  --item-border: #896947;
+  --item-transfer: black;
+  --item-misc-info: black;
+  --item-header-info: black;
+  --item-grantskill-label: inherit;
+  --item-grantskill-content: inherit;
+
+  --item-skill-trigger: gray;
+  --item-supergreen: var(--item-color-green);
+  --item-socket: black;
+  --item-set: black;
+  --item-pet: black;
+  --item-pet-bullet: black;
+  --item-disabled: gray;
+
+  --item-color-green: #006400;
+  --item-color-blue: #338cce;
+  --item-color-epic: #a638ff;
+  --item-color-unknown: #81551a;
+}
+
+
+
+.item-dark {
+  --item-background: #171614;
+  --item-background-hover: #232220;
+  --item-stat-label: #a88054;
+  --item-stat-modifier: #dbb284;
+  --item-skill-trigger: gray;
+  --item-border: #211e1c;
+  --item-transfer: #ffffff;
+  --item-misc-info: #999999;
+  --item-header-info: #ffffff;
+  --item-grantskill-label: #e3ba6b;
+  --item-grantskill-content: #6699ff;
+  --item-supergreen: #3eea4a;
+  --item-socket: #dec2a3;
+  --item-set: #dbb284;
+  --item-pet: #dbb284;
+  --item-pet-bullet: white;
+  --item-disabled: gray;
+  --item-color-green: #006400;
+  --item-color-blue: #338cce;
+  --item-color-epic: #a638ff;
+  --item-color-unknown: #81551a;
 }

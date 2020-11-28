@@ -1,40 +1,3 @@
-/*
-   Old/Light theme
-body {
-  --item-background: #e8d5b6;
-  --item-background-hover: #e8d5b6;
-  --item-stat-label: 000000;
-  --item-stat-modifier: 000000;
-  --item-skill-trigger: black;
-  --item-border: #896947;
-  --item-transfer: #ffffff;
-  --item-misc-info: #008B8B;
-  --item-header-info: #ffffff;
-  --item-grantskill-label: inherit;
-  --item-grantskill-content: inherit;
-}
-*/
-
-.item {
-  --item-background: #171614;
-  --item-background-hover: #232220;
-  --item-stat-label: #a88054;
-  --item-stat-modifier: #dbb284;
-  --item-skill-trigger: gray;
-  --item-border: #211e1c;
-  --item-transfer: #ffffff;
-  --item-misc-info: #999999;
-  --item-header-info: #ffffff;
-  --item-grantskill-label: #e3ba6b;
-  --item-grantskill-content: #6699ff;
-  --item-supergreen: #3eea4a;
-  --item-socket: #dec2a3;
-  --item-set: #dbb284;
-  --item-pet: #dbb284;
-  --item-pet-bullet: white;
-  --item-disabled: gray;
-}
-
 .item .informative, .recipe-item, .buddy-item-mix {
   color: var(--item-set);
 }
@@ -234,16 +197,16 @@ a { cursor: pointer; }
 
 /* Item-level colors */
 .item-quality-unknown {
-  color: #81551a !important;
+  color: var(--item-color-unknown) !important;
 }
 .item-quality-epic {
-  color: #a638ff !important;
+  color: var(--item-color-epic) !important;
 }
 .item-quality-blue {
-  color: #338cce !important;
+  color: var(--item-color-blue) !important;
 }
 .item-quality-green {
-  color: #006400 !important;
+  color: var(--item-color-green) !important;
 }
 
 
