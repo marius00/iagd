@@ -139,7 +139,7 @@ class Item extends React.PureComponent<Props, object> {
         .map(entry => addFont(entry.numOwned, `${("  " + entry.numOwned).substr(-2,2)}x ${entry.name}`))
         .join("<br>");
 
-      setItemsList = "<b>This set consists of the following items: </b><br><br>" + setItemsList;
+      setItemsList = `<b>${translate('item.label.setConsistsOf')}</b><br><br>` + setItemsList;
       return setItemsList;
     }
 

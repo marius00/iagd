@@ -37,7 +37,8 @@ class EmbeddedTranslator {
     'item.augmentPurchasable': 'You may be able to purchase this augment from {0}',
     'app.copyToClipboard': 'Copy to clipboard',
     'item.label.setbonus': 'Set:',
-    'item.label.noMoreItems': 'No more items'
+    'item.label.noMoreItems': 'No more items',
+    'item.label.setConsistsOf': 'This set consists of the following items: '
   };
 
 

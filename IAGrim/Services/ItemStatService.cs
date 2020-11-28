@@ -15,8 +15,13 @@ namespace IAGrim.Services {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ItemStatService));
         private readonly IDatabaseItemStatDao _databaseItemStatDao;
         private readonly IItemSkillDao _itemSkillDao;
-        private bool _hideSkills => _settings.GetPersistent().HideSkills;
-        private readonly Dictionary<string, ISet<DBStatRow>> _xpacSkills;
+        private bool HideSkills => _settings.GetPersistent().HideSkills;
+
+        private Dictionary<string, ISet<DBStatRow>> XpacSkills {
+            get => _xpacSkills ?? (_xpacSkills = _databaseItemStatDao.GetExpacSkillModifierSkills());
+            set => _xpacSkills = value;
+        }
+        private Dictionary<string, ISet<DBStatRow>> _xpacSkills;
         private readonly SettingsService _settings;
 
 
@@ -24,12 +29,10 @@ namespace IAGrim.Services {
         public ItemStatService(
             IDatabaseItemStatDao databaseItemStatDao, 
             IItemSkillDao itemSkillDao, 
-            SettingsService settings
-            ) {
+            SettingsService settings) {
             this._databaseItemStatDao = databaseItemStatDao;
             this._itemSkillDao = itemSkillDao;
             _settings = settings;
-            _xpacSkills = _databaseItemStatDao.GetExpacSkillModifierSkills();
         }
 
 
@@ -129,7 +132,7 @@ namespace IAGrim.Services {
                     var affectedSkill = item.Tags.FirstOrDefault(m => m.Stat == $"modifiedSkillName{i}");
                     var recordForStats = item.Tags.FirstOrDefault(m => m.Stat == $"modifierSkillName{i}")?.TextValue;
 
-                    if (recordForStats == null || !_xpacSkills.ContainsKey(recordForStats)) {
+                    if (recordForStats == null || !XpacSkills.ContainsKey(recordForStats)) {
                         continue;
                     }
 
@@ -139,18 +142,18 @@ namespace IAGrim.Services {
                     }
 
                     // For pet skills we got another layer to hop trough
-                    var petSkillRecord = _xpacSkills[recordForStats].Where(s => s.Stat == "petSkillName").Select(s => s.TextValue).FirstOrDefault();
+                    var petSkillRecord = XpacSkills[recordForStats].Where(s => s.Stat == "petSkillName").Select(s => s.TextValue).FirstOrDefault();
                     if (petSkillRecord != null) {
-                        if (_xpacSkills.ContainsKey(petSkillRecord)) {
+                        if (XpacSkills.ContainsKey(petSkillRecord)) {
                             item.ModifiedSkills.Add(new SkillModifierStat {
-                                Tags = _xpacSkills[petSkillRecord],
+                                Tags = XpacSkills[petSkillRecord],
                                 Name = name
                             });
                         }
                     }
 
                     item.ModifiedSkills.Add(new SkillModifierStat {
-                        Tags = _xpacSkills[recordForStats],
+                        Tags = XpacSkills[recordForStats],
                         Name = name
                     });
                 }
@@ -257,7 +260,7 @@ namespace IAGrim.Services {
                 var records = items.SelectMany(GetRecordsForItem).Distinct();
                 Dictionary<string, List<DBStatRow>> statMap = _databaseItemStatDao.GetStats(records, StatFetch.PlayerItems);
 
-                if (!_hideSkills) {
+                if (!HideSkills) {
                     ApplySkills(items);
                 }
 

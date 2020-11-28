@@ -30,8 +30,7 @@ const StoreContext = React.createContext({items: [], isLoading: true, activeTab:
 // TODO: Ensure loading works correctly.. no duplicates, in expected order..
 // TODO: Look into the duplicate key errors -- seems to be for items with&without a component. dupe item but with comp.
 // TODO: Loot button if stash file path is network \\
-// TODO: Fallback languages, not just English. -- Pickable on first run.
-// TODO: Onboarding => Pick language, new user/returning => import flow vs parse flow, explain how it works, nag about backups, explain misc functionality.
+// TODO: Onboarding => new user/returning => import flow vs parse flow, explain how it works, nag about backups, explain misc functionality.
 // TODO: Icon next to transfer links?
 
 // Trivial

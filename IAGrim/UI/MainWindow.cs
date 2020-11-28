@@ -556,7 +556,7 @@ namespace IAGrim.UI
 
 
             // Suggest translation packs if available
-            if (!string.IsNullOrEmpty(settingsService.GetLocal().LocalizationFile) && !settingsService.GetLocal().HasSuggestedLanguageChange) {
+            if (string.IsNullOrEmpty(settingsService.GetLocal().LocalizationFile) && !settingsService.GetLocal().HasSuggestedLanguageChange) {
                 if (LocalizationLoader.HasSupportedTranslations(grimDawnDetector.GetGrimLocations())) {
                     Logger.Debug("A new language pack has been detected, informing end user..");
                     new LanguagePackPicker(itemTagDao, playerItemDao, _parsingService, settingsService).Show(grimDawnDetector.GetGrimLocations());

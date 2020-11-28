@@ -161,7 +161,7 @@ namespace IAGrim.UI
                 }
             }
 
-            Height += n * 33;
+            Height = Height + n * 33;
         }
 
         private void LanguagePackPicker_FormClosing(object sender, FormClosingEventArgs e)
