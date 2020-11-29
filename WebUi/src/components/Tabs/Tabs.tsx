@@ -17,6 +17,7 @@ export interface Props {
   isDarkMode: boolean;
 
   setActiveTab(idx: number): void;
+
   toggleDarkmode(): void;
 }
 
@@ -28,8 +29,10 @@ export default function Tabs({activeTab, setActiveTab, isDarkMode, toggleDarkmod
       </div>
       <a id="tab0" href={'#tabBody' + idx} role="tab" aria-controls={'tabBody' + idx} aria-selected="true" data-toggle="tab" tabIndex={idx}>
 
-        <span className="fa">{icon}</span>
-        <span className="hidden-xs">{label}</span>
+        <span className="fa">
+          {icon} <br/>
+          <span className="hidden-xs">{label}</span>
+        </span>
       </a>
       <div className="whiteBlock"></div>
     </li>;
@@ -41,8 +44,10 @@ export default function Tabs({activeTab, setActiveTab, isDarkMode, toggleDarkmod
       </div>
       <a id="tab0" href={'#tabBody' + idx} role="tab" aria-controls={'tabBody' + idx} aria-selected="true" data-toggle="tab" tabIndex={idx}>
 
-        <span className="fa">{icon}</span>
-        <span className="hidden-xs">{label}</span>
+        <span className="fa">
+          {icon} <br/>
+          <span className="hidden-xs">{label}</span>
+        </span>
       </a>
       <div className="whiteBlock"></div>
     </li>;

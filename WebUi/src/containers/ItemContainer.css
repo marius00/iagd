@@ -257,6 +257,7 @@ a { cursor: pointer; }
   text-align: center;
   vertical-align: center;
   color: black;
+  height: calc(100vh - 122px);
 }
 .items {
   background: var(--background-color);

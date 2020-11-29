@@ -112,12 +112,16 @@ namespace IAGrim.UI
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void Browser_IsBrowserInitializedChanged(object sender, EventArgs e) {
+            var args = e as FrameLoadEndEventArgs;
             ChromiumWebBrowser browser = sender as ChromiumWebBrowser;
-            if (browser?.CanExecuteJavascriptInMainFrame ?? true) {
-                if (InvokeRequired) {
-                    Invoke((MethodInvoker)delegate { _searchWindow?.UpdateListViewDelayed(); });
-                } else {
-                    _searchWindow?.UpdateListViewDelayed();
+            if (args != null && args.Frame.IsMain) {
+                if (browser?.CanExecuteJavascriptInMainFrame ?? true) {
+                    if (InvokeRequired) {
+                        Invoke((MethodInvoker) delegate { _searchWindow?.UpdateListViewDelayed(); });
+                    }
+                    else {
+                        _searchWindow?.UpdateListViewDelayed();
+                    }
                 }
             }
         }

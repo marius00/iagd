@@ -144,6 +144,9 @@ namespace IAGrim.UI.Misc.CEF {
                 // TODO: browser.JavascriptObjectRepository.ObjectBoundInJavascript += (sender, e) =>
                 BrowserControl.JavascriptObjectRepository.Register("core", bindable, isAsync: false, options: BindingOptions.DefaultBinder);
                 BrowserControl.IsBrowserInitializedChanged += browserIsBrowserInitializedChanged;
+                BrowserControl.FrameLoadEnd += (sender, args) => browserIsBrowserInitializedChanged(this, args);
+                ;
+
 
                 var requestHandler = new CefRequestHandler();
                 requestHandler.OnAuthentication += (sender, args) => OnSuccess?.Invoke(sender, args);

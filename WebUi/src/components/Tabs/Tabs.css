@@ -9,14 +9,8 @@ h1, h2, h3, h4, h5, h6 {
   padding: 8px 0 0 0;
   background-color: #eee;
   box-shadow: 0 0 0 1px #ddd;
-  top: 15px;
   transition: top .2s;
   width: 100px;
-}
-
-.fancyTab.active {
-  top: 0;
-  transition: top .2s;
 }
 
 .whiteBlock {
@@ -26,7 +20,7 @@ h1, h2, h3, h4, h5, h6 {
 .fancyTab.active .whiteBlock {
   display: block;
   height: 2px;
-  bottom: -2px;
+  top: -1px;
   background-color: #fff;
   width: 99%;
   position: absolute;
@@ -47,7 +41,9 @@ h1, h2, h3, h4, h5, h6 {
 
 .fancyTabs {
   border-bottom: 0px;
-  margin: 2px 0 0 0;
+  margin: 0;
+  border-top: 1px solid #ddd;
+  border-left: 1px solid #ddd;
 }
 
 li.fancyTab a {
@@ -62,7 +58,7 @@ li.fancyTab.active a {
 
 .fancyTab .fa {
   width: 100%;
-  padding: 15px 0 0px;
+  padding: 0 0 2px 0;
   color: #666;
   display: block;
 }
@@ -135,7 +131,8 @@ li.fancyTab.active a {
 
 .fancyTab.active {
   background: #fff;
-  box-shadow: 1px 1px 0 1px var(--background-color), 0 0px 0 1px #ddd, -1px 1px 0 0px #ddd inset;
+  /* box-shadow: 1px 1px 0 1px var(--background-color), 0 0px 0 1px #ddd, -1px 1px 0 0px #ddd inset;*/
+  box-shadow: 1px -1px 0 1px var(--background-color), 0 0px 0 -1px #ddd, -1px -1px 0 0px #ddd inset;
 }
 
 .arrow-down {
@@ -146,8 +143,9 @@ li.fancyTab.active a {
   border-right: 20px solid transparent;
   border-top: 22px solid #ddd;
   position: absolute;
-  top: -1px;
+  bottom: -0px;
   left: calc(50% - 20px);
+  transform: rotate(180deg);
 }
 
 .arrow-down-inner {

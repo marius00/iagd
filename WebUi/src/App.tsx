@@ -11,6 +11,8 @@ import CollectionItemContainer from './containers/CollectionItemContainer';
 import ICollectionItem from './interfaces/ICollectionItem';
 import MockCollectionItemData from './mock/MockCollectionItemData';
 import NewFeaturePromoter from './components/NewFeaturePromoter';
+import Spinner from './components/Spinner';
+import ReactTooltip from 'react-tooltip';
 
 
 export interface ApplicationState {
@@ -35,6 +37,7 @@ const StoreContext = React.createContext({items: [], isLoading: true, activeTab:
 // TODO: Loot button if stash file path is network \\
 // TODO: Onboarding => new user/returning => import flow vs parse flow, explain how it works, nag about backups, explain misc functionality.
 // TODO: Icon next to transfer links?
+// TODO: Maybe a UI for restoring old stash files? Would only be accessible via the help page.. unlikely but think on it.
 
 // Trivial
 // TODO: Prevent multiple clicks on transfer? or non-issue?
@@ -139,7 +142,9 @@ class App extends React.PureComponent<{}, object> {
   render() {
     return (
       <div className={"App " + (this.state.isDarkMode?"App-dark":"")}>
+        {this.state.isLoading && isEmbedded && <Spinner />}
         <ReactNotification/>
+        <ReactTooltip html={true} type={this.state.isDarkMode ? 'light' : 'dark'} />
         <StoreContext.Provider value={this.state}>
           <div className={'container'}>
             <Tabs
@@ -160,7 +165,7 @@ class App extends React.PureComponent<{}, object> {
               onItemReduce={(url, numItems) => this.reduceItemCount(url, numItems)}
               onRequestMoreItems={() => this.requestMoreItems()}
               collectionItems={this.state.collectionItems}
-              isDark={this.state.isDarkMode}
+              isDarkMode={this.state.isDarkMode}
             />
           </div>
 
@@ -172,8 +177,8 @@ class App extends React.PureComponent<{}, object> {
               If you'd like to see to see the functionality return, give a shout out!</p>
             <iframe title="Crafting tab" src="https://items.dreamcrash.org/ComponentAssembler?record=d009_relic.dbr"
                     style={{width: '100%', height: '100%', overflow: 'hidden', position: 'absolute'}} scrolling="yes" frameBorder={0}/>
-          </div>
-          }
+          </div>}
+
         </StoreContext.Provider>
 
         <NewFeaturePromoter />

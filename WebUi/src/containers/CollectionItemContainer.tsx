@@ -79,7 +79,6 @@ class CollectionItemContainer extends React.PureComponent<Props, object> {
             </div>
           </a>
         )}
-        <ReactTooltip />
       </div>
     );
   }
