@@ -63,6 +63,7 @@ characterStrengthModifier=+{0}% Physique
 characterTotalSpeedModifier=+{0}% Total Speed
 skillProjectileSpeedModifier=+{0}% Increase in Projectile Speed
 defensiveAbsorptionModifier= Increases Armor Absorption by {0}%
+defensiveAllMaxResist=+{0} Maximum All Resistances
 skillLifeBonus={0} Health Restored
 skillLifePercent={0}% Health Restored
 defensiveTotalSpeedResistance={0}% Slow Resistance

@@ -632,7 +632,7 @@ namespace IAGrim.UI
                 default:
                     tsStashStatus.ForeColor = Color.FromArgb(255, 192, 0, 0);
                     tsStashStatus.Tag = null;
-                    tsStashStatus.Text = RuntimeSettings.Language.GetTag("iatag_stash_") + RuntimeSettings.StashStatus;
+                    tsStashStatus.Text = RuntimeSettings.Language.GetTag("iatag_stash_") + RuntimeSettings.StashStatus.ToString().ToLowerInvariant();
                     break;
             }
         }
