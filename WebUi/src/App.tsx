@@ -12,7 +12,6 @@ import ICollectionItem from './interfaces/ICollectionItem';
 import MockCollectionItemData from './mock/MockCollectionItemData';
 import NewFeaturePromoter from './components/NewFeaturePromoter';
 import Spinner from './components/Spinner';
-import ReactTooltip from 'react-tooltip';
 
 
 export interface ApplicationState {
@@ -144,7 +143,6 @@ class App extends React.PureComponent<{}, object> {
       <div className={"App " + (this.state.isDarkMode?"App-dark":"")}>
         {this.state.isLoading && isEmbedded && <Spinner />}
         <ReactNotification/>
-        <ReactTooltip html={true} type={this.state.isDarkMode ? 'light' : 'dark'} />
         <StoreContext.Provider value={this.state}>
           <div className={'container'}>
             <Tabs

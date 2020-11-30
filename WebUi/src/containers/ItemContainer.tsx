@@ -84,6 +84,7 @@ class ItemContainer extends React.PureComponent<Props, object> {
             />
           )}
           <OnScrollLoader onTrigger={this.props.onRequestMoreItems} />
+          <ReactTooltip html={true} type={this.props.isDarkMode ? 'light' : 'dark'} />
         </div>
       );
     }

@@ -178,11 +178,13 @@ namespace IAGrim
             var augmentationItemRepo = serviceProvider.Get<IAugmentationItemDao>();
             RuntimeSettings.InitializeLanguage(settingsService.GetLocal().LocalizationFile, databaseItemDao.GetTagDictionary());
             DumpTranslationTemplate();
+
+            Logger.Debug("Executing DB migrations..");
             threadExecuter.Execute(() => new MigrationHandler(factory).Migrate());
 
+            Logger.Debug("Loading UUID");
             LoadUuid(databaseSettingDao, settingsService);
-
-
+            
             Logger.Debug("Updating augment state..");
             augmentationItemRepo.UpdateState();
 

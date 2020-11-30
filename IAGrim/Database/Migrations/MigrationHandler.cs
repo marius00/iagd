@@ -12,6 +12,7 @@ namespace IAGrim.Database.Migrations {
             this._sessionCreator = sessionCreator;
         }
         public void Migrate() {
+           
             new AddSkillTables().Migrate(_sessionCreator);
             new AddBuddyItemMigrations().Migrate(_sessionCreator);
             new DatabaseItemHashFixMigration().Migrate(_sessionCreator);

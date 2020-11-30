@@ -11,8 +11,8 @@ class NewFeaturePromoter extends React.PureComponent<{}, object> {
     document.querySelectorAll('.new-feature-promoter')[0].style.display = "none";
   }
 
-  render() { // TODO: Translate or replace with icon
-    return <div className="new-feature-promoter" style={{display: "none"}} onClick={() => this.onClick()}>New feature!</div>;
+  render() {
+    return <div className="new-feature-promoter" style={{display: "none"}} onClick={() => this.onClick()} />;
   }
 
   static Activate() {

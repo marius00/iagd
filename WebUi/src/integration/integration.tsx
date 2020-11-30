@@ -74,7 +74,6 @@ export function getFeatureSuggestion() {
     return core.getFeatureSuggestion();
   } else {
     const f = hasSeenMockFeature ? '' : (Math.random() < 0.5 ? 'SetBonus' : 'CollectionsTab');
-    console.log('Feature:', f);
     return f;
   }
 }

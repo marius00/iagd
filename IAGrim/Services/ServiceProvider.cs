@@ -17,9 +17,11 @@ using IAGrim.Settings;
 using IAGrim.UI.Controller;
 using IAGrim.UI.Misc.CEF;
 using IAGrim.Utilities;
+using log4net;
 
 namespace IAGrim.Services {
     public class ServiceProvider {
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(ServiceProvider));
         private readonly List<object> _services;
         private readonly Dictionary<Type, object> _cache = new Dictionary<Type, object>();
 
@@ -44,6 +46,7 @@ namespace IAGrim.Services {
         }
 
         public static ServiceProvider Initialize(ThreadExecuter threadExecuter) {
+            Logger.Debug("Creating services");
             var factory = new SessionFactory();
 
             // Settings should be upgraded early, it contains the language pack etc and some services depends on settings.
@@ -63,10 +66,11 @@ namespace IAGrim.Services {
             var itemCollectionRepo = new ItemCollectionRepo(threadExecuter, factory);
 
             // Chicken and the egg..
+            var itemStatService = new ItemStatService(databaseItemStatDao, itemSkillDao, settingsService);
             SearchController searchController = new SearchController(
                 databaseItemDao,
                 playerItemDao,
-                new ItemStatService(databaseItemStatDao, itemSkillDao, settingsService),
+                itemStatService,
                 buddyItemDao,
                 augmentationItemRepo,
                 settingsService,
@@ -91,7 +95,7 @@ namespace IAGrim.Services {
             services.Add(itemCollectionRepo);
             services.Add(searchController);
 
-            services.Add(new ItemStatService(databaseItemStatDao, itemSkillDao, settingsService));
+            services.Add(itemStatService);
 
             var cacher = new TransferStashServiceCache(databaseItemDao);
             var stashWriter = new SafeTransferStashWriter(settingsService);
@@ -100,6 +104,7 @@ namespace IAGrim.Services {
             services.Add(new TransferStashService2(playerItemDao, cacher, transferStashService, stashWriter, settingsService));
             services.Add(cacher);
 
+            Logger.Debug("All services created");
             return new ServiceProvider(services);
         }
     }

@@ -1,47 +1,25 @@
 .new-feature-promoter {
   position: absolute;
-  color: black;
 
-  width: 110px;
-  height: 22px;
-  padding-left: 5px;
   cursor: pointer;
 
-  font-weight: 900;
-  border-radius: 25px;
-  border: 2px solid #73AD21;
-  background: rgb(230, 230, 230);
-  -webkit-animation-name: spin;
-  -webkit-animation-duration: 4000ms;
-  -webkit-animation-iteration-count: infinite;
-  -webkit-animation-timing-function: linear;
-  -moz-animation-name: spin;
-  -moz-animation-duration: 4000ms;
-  -moz-animation-iteration-count: infinite;
-  -moz-animation-timing-function: linear;
-  -ms-animation-name: spin;
-  -ms-animation-duration: 4000ms;
-  -ms-animation-iteration-count: infinite;
-  -ms-animation-timing-function: linear;
+  border-radius: 50%;
+  width: 3px;
+  height: 3px;
+  background: #d24f05; /* Center */
+  animation: ripple 2500ms infinite;
 
-  animation-name: spin;
-  animation-duration: 12000ms;
-  animation-iteration-count: infinite;
-  animation-timing-function: linear;
-
-  -webkit-user-select: none; /* Chrome/Safari */
+  --color-outer-ring: #823c15;
+  --color-middle-ring: #823c15;
+  --color-inner-ring: #d24f05;
+  --color-background: rgba(255, 255, 255, 0);
 }
 
-@-moz-keyframes spin {
-  from { -moz-transform: rotate(-90deg); }
-  to { -moz-transform: rotate(270deg); }
-}
-
-@keyframes spin {
-  from {
-    transform:rotate(-45deg);
+@keyframes ripple {
+  0% {
+    box-shadow: 0 0 0 0px var(--color-background), 0 0 0 0px var(--color-inner-ring), 0 0 0 0px var(--color-background), 0 0 0 0px var(--color-middle-ring), 0 0 0 0px var(--color-background), 0 0 0 0px var(--color-outer-ring), 0 0 0 0px var(--color-background), 0 0 0 0px #fff;
   }
-  to {
-    transform:rotate(360deg);
+  100% {
+    box-shadow: 0 0 0 15px var(--color-background), 0 0 0 17px rgba(210, 79, 5, 0), 0 0 0 40px var(--color-background), 0 0 0 42px rgba(210, 79, 5, 0), 0 0 0 70px var(--color-background), 0 0 0 72px rgba(210, 79, 5, 0), 0 0 0 105px var(--color-background), 0 0 0 107px rgba(210, 79, 5, 0);
   }
 }
