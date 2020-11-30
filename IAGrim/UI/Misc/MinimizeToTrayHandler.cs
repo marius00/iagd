@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using IAGrim.Settings;
 using log4net;
 
 namespace IAGrim.UI.Misc {
@@ -12,15 +13,17 @@ namespace IAGrim.UI.Misc {
         private FormWindowState _previousWindowState = FormWindowState.Normal;
         private Form _form;
         private readonly NotifyIcon _notifyIcon;
+        private readonly SettingsService _settingsService;
 
-        public MinimizeToTrayHandler(Form form, NotifyIcon notifyIcon) {
+        public MinimizeToTrayHandler(Form form, NotifyIcon notifyIcon, SettingsService settingsService) {
             _form = form;
             _notifyIcon = notifyIcon;
+            _settingsService = settingsService;
             _form.SizeChanged += OnMinimizeWindow;
             _notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon_MouseDoubleClick);
         }
 
-        public bool MinimizeToTray { get; set; } = true;
+        public bool MinimizeToTray => _settingsService.GetPersistent().MinimizeToTray;
 
         public void notifyIcon_MouseDoubleClick(object sender, MouseEventArgs e) {
             _form.Visible = true;

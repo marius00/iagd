@@ -340,7 +340,7 @@ namespace IAGrim.UI
 
             var settingsService = _serviceProvider.Get<SettingsService>();
             ExceptionReporter.EnableLogUnhandledOnThread();
-            _minimizeToTrayHandler = new MinimizeToTrayHandler(this, notifyIcon1);
+            _minimizeToTrayHandler = new MinimizeToTrayHandler(this, notifyIcon1, settingsService);
             SizeChanged += OnMinimizeWindow;
             
 
