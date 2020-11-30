@@ -548,6 +548,7 @@ namespace StatTranslator
         private void MapSimpleBodyEntries(ISet<IItemStat> stats, List<TranslatedStat> result)
         {
             string[] tags = {
+                "defensiveAllMaxResist",
                 "weaponDamagePct",
                 "offensivePercentCurrentLifeMin",
                 "characterLife",

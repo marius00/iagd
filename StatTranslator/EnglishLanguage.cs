@@ -80,10 +80,10 @@ namespace StatTranslator {
             {"characterSpellCastSpeedModifier", "+{0}% Casting Speed"},
             {"defensiveReflect", "{0}% Damage Reflected"},
             {"blockRecoveryTime", "{0} second Block Recovery"},
-            {"characterLifeRegen", "+{0} Health/s"},
+            {"characterLifeRegen", "+{0} Health regenerated per second"},
             {"characterDexterity", "+{0} Cunning"},
             {"defensiveTrap", "{0}% Reduced Entrapment Duration"},
-            {"characterLifeRegenModifier", "+{0}% Health/s"},
+            {"characterLifeRegenModifier", "+{0}% Health regenerated per second"},
             {"characterDeflectProjectile", "+{0}% Chance to Avoid Projectiles"},
             {"characterConstitutionModifier", "+{0}% Constitution"},
             {"characterHuntingDexterityReqReduction", "-{0}% Cunning Req. for Ranged Weapons"},
@@ -92,6 +92,7 @@ namespace StatTranslator {
             {"characterTotalSpeedModifier", "+{0}% Total Speed"}, // Deprecated?
             {"skillProjectileSpeedModifier", "+{0}% Increase in Projectile Speed"}, // Deprecated?
             {"defensiveAbsorptionModifier", " Increases Armor Absorption by {0}%"},
+            {"defensiveAllMaxResist", "+{0} Maximum All Resistances"},
             {"skillLifeBonus", "{0} Health Restored"},
             {"skillLifePercent", "{0}% Health Restored"},
             {"defensiveTotalSpeedResistance", "{0}% Slow Resistance"},

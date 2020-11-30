@@ -49,6 +49,11 @@ class CollectionItemContainer extends React.PureComponent<Props, object> {
 
     return (
       <div className="collectionItems">
+        <h2>Experimental feature</h2>
+        <p>
+          This feature was added as Proof-of-concept at request from a user.<br/>
+          It may get improved or removed in the future, depending on usage.
+        </p>
         <div className={'toggleContainer'}>
 
           <div className={'sliderContainer'}>
