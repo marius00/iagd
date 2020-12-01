@@ -21,6 +21,7 @@ namespace IAGrim.UI.Misc {
             _settingsService = settingsService;
             _form.SizeChanged += OnMinimizeWindow;
             _notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon_MouseDoubleClick);
+            _previousWindowState = _form.WindowState;
         }
 
         public bool MinimizeToTray => _settingsService.GetPersistent().MinimizeToTray;

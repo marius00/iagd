@@ -25,8 +25,7 @@ export interface ApplicationState {
 // TODO: Am I actually using this store??
 const StoreContext = React.createContext({items: [], isLoading: true, activeTab: 0, collectionItems: [], isDarkMode: false} as ApplicationState);
 
-// TODO: Request 'more items' on start, prevent the 'no items found' message
-// TODO: Flip the tab arrow and move tabs up
+// TODO: Font color red on Set: bonus tag is freaking terrible in light mode (dark tooltip)
 // TODO: Dark mode
 // TODO: Basic tab-usage analytics, determine if collection or crafting is being used
 // TODO: Move help tab into WebUI? "[?]" links can trigger a modal on the help page. Add more screenshots.

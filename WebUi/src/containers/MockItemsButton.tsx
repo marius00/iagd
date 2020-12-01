@@ -61,7 +61,7 @@ export const mockDataItems = (text: string): IItem[] => {
              {
                "baseRecord": "records/items/gearweapons/blunt1h/b016a_blunt.dbr",
                "icon": 'a02_feet02.tex.png',
-               "quality": "Green",
+               "quality": "Epic",
                "name": "Barrog's Bloody Arm of Spines",
                "socket": "",
                "slot": "Mace (1h)",
@@ -115,7 +115,7 @@ export const mockDataItems = (text: string): IItem[] => {
              {
                "baseRecord": "records/items/gearweapons/blunt1h/b016a_blunt.dbr",
                "icon": 'a02_feet02.tex.png',
-               "quality": "Green",
+               "quality": "Blue",
                "name": "Corrosive Barrog's Bloody Arm",
                "socket": "",
                "slot": "Mace (1h)",

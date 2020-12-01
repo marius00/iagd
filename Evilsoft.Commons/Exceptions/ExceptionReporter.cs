@@ -187,7 +187,7 @@ namespace EvilsoftCommons.Exceptions {
 
         //[System.Diagnostics.Conditional("RELEASE")]
         public static void ReportIssue(string issue) {
-            string postData = String.Format("message={0}&stacktrace={1}&version={2}&winver={3}&uuid={4}",
+            string postData = string.Format("message={0}&stacktrace={1}&version={2}&winver={3}&uuid={4}",
                 Uri.EscapeDataString(issue),
                 Uri.EscapeDataString("N/A"),
                 Uri.EscapeDataString(VersionString),

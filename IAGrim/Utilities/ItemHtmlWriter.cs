@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using EvilsoftCommons.Exceptions;
 using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Model;
 using IAGrim.UI.Controller.dto;
@@ -105,6 +106,8 @@ namespace IAGrim.Utilities {
                 }
 
                 if (translated.Count == 0) {
+                    var error = $@"Could not translate skill-modifier on: '{item.Name}', {json.BaseRecord};{json.URL}";
+                    ExceptionReporter.ReportIssue(error);
                     Logger.Debug($"Could not translate skill-modifier stats for \"{item.Name}\"");
                 }
             }

@@ -11,6 +11,7 @@
 }
 .item-icon-epic {
   background-image: url(../components/Item/rarity-Epic.png);
+  background-size: 64px 64px;
 }
 .item-icon-green {
   background-image: url(../components/Item/rarity-Green.png);
@@ -165,7 +166,7 @@
 }
 a { cursor: pointer; }
 .items .item img {
-  max-width: 60px;
+  max-width: 64px;
   height: auto;
   float: left;
 }
@@ -220,6 +221,7 @@ a { cursor: pointer; }
 
 .skill-content {
   color: var(--item-grantskill-content);
+  font-weight: bold;
 }
 
 .skill {
