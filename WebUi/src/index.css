@@ -55,6 +55,8 @@ body {
   --item-color-blue: #338cce;
   --item-color-epic: #a638ff;
   --item-color-unknown: #81551a;
+  --item-color-yellow: #7d7703;
+  --item-warning-zero: orange;
 }
 
 
@@ -81,4 +83,6 @@ body {
   --item-color-blue: #338cce;
   --item-color-epic: #a638ff;
   --item-color-unknown: #81551a;
+  --item-color-yellow: #f1e51b;
+  --item-warning-zero: red;
 }

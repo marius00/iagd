@@ -26,6 +26,8 @@ export interface ApplicationState {
 const StoreContext = React.createContext({items: [], isLoading: true, activeTab: 0, collectionItems: [], isDarkMode: false} as ApplicationState);
 
 // TODO: Font color red on Set: bonus tag is freaking terrible in light mode (dark tooltip)
+// TODO: Start minimized
+// TODO: Background missing for yellow/white items
 // TODO: Dark mode
 // TODO: Basic tab-usage analytics, determine if collection or crafting is being used
 // TODO: Move help tab into WebUI? "[?]" links can trigger a modal on the help page. Add more screenshots.
@@ -39,10 +41,8 @@ const StoreContext = React.createContext({items: [], isLoading: true, activeTab:
 
 // Trivial
 // TODO: Prevent multiple clicks on transfer? or non-issue?
-// TODO: Crafting support??
 // TODO: Reset the 'statusLabel' text once in a while, may show 'error' until the end of time.
 // TODO: A no more matches message when scrolling too far?
-// TODO: Improve feature discovery animation
 
 
 class App extends React.PureComponent<{}, object> {

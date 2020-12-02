@@ -60,7 +60,7 @@ export const mockDataItems = (text: string): IItem[] => {
              },
              {
                "baseRecord": "records/items/gearweapons/blunt1h/b016a_blunt.dbr",
-               "icon": 'a02_feet02.tex.png',
+               "icon": 'a01_axe000.tex.png',
                "quality": "Epic",
                "name": "Barrog's Bloody Arm of Spines",
                "socket": "",
@@ -114,7 +114,7 @@ export const mockDataItems = (text: string): IItem[] => {
              },
              {
                "baseRecord": "records/items/gearweapons/blunt1h/b016a_blunt.dbr",
-               "icon": 'a02_feet02.tex.png',
+               "icon": 'tier1_relic_07.tex.png',
                "quality": "Blue",
                "name": "Corrosive Barrog's Bloody Arm",
                "socket": "",
@@ -171,7 +171,7 @@ export const mockDataItems = (text: string): IItem[] => {
              },
              {
                "baseRecord": "records/storyelements/questassets/q000_torso.dbr",
-               "icon": 'a02_feet02.tex.png',
+               "icon": 'static/recipe.png',
                "quality": "Epic",
                "name": "Gazer Man",
                "socket": "",
@@ -260,7 +260,7 @@ export const mockDataItems = (text: string): IItem[] => {
              {
                "baseRecord": "records/items/gearweapons/blunt1h/b016a_blunt.dbr",
                "icon": 'a02_feet02.tex.png',
-               "quality": "Green",
+               "quality": "Yellow",
                "name": "Searing Barrog's Bloody Arm",
                "socket": "",
                "slot": "Mace (1h)",

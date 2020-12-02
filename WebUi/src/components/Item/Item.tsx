@@ -176,9 +176,7 @@ class Item extends React.PureComponent<Props, object> {
 
     return (
       <div className={mainClasses.join(" ")}>
-        <span>
-          <img src={icon} className={"item-icon item-icon-" + item.quality.toLowerCase() } data-tip={item.slot}/>
-        </span>
+        <img src={icon} className={"item-icon item-icon-" + item.quality.toLowerCase()} data-tip={item.slot}/>
         <div className="text">
           <Textfit mode="multi" max={15} min={10}>
             <span>

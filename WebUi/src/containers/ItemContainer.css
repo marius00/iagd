@@ -16,13 +16,24 @@
 .item-icon-green {
   background-image: url(../components/Item/rarity-Green.png);
 }
+.item-icon-white {
+  background-image: url(../components/Item/rarity-White.png);
+}
+.item-icon-yellow {
+  background-image: url(../components/Item/rarity-Yellow.png);
+}
+.item .item-quality-yellow {
+  color: var(--item-color-yellow) !important;
+}
 .item .item-quality-white {
   color: gray !important;
 }
 .item .supergreen {
   color: var(--item-supergreen);
 }
-
+.set-item-owned-0 {
+  color: var(--item-warning-zero);
+}
 .no-more-items {
   color: var(--item-disabled);
 }
