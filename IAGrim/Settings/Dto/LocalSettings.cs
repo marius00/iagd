@@ -27,6 +27,7 @@ namespace IAGrim.Settings.Dto {
         private string _backupCustomLocation;
         private bool _hasWarnedGrimDawnUpdate;
         private long? _grimDawnLocationLastModified;
+        private bool _startMinimized;
 
         public string MachineName { get; set; }
 
@@ -71,6 +72,14 @@ namespace IAGrim.Settings.Dto {
             get => _easterPrank;
             set {
                 _easterPrank = value;
+                OnMutate?.Invoke(null, null);
+            }
+        }
+
+        public bool StartMinimized {
+            get => _startMinimized;
+            set {
+                _startMinimized = value;
                 OnMutate?.Invoke(null, null);
             }
         }

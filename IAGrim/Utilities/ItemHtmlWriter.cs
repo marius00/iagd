@@ -106,7 +106,9 @@ namespace IAGrim.Utilities {
                 }
 
                 if (translated.Count == 0) {
-                    var error = $@"Could not translate skill-modifier on: '{item.Name}', {json.BaseRecord};{json.URL}";
+                    string[] uri = json.URL.Select(o => o.ToString()).ToArray();
+                    
+                    var error = $@"Could not translate skill-modifier on: '{item.Name}', {json.BaseRecord} - {string.Join(";", uri)}";
                     ExceptionReporter.ReportIssue(error);
                     Logger.Debug($"Could not translate skill-modifier stats for \"{item.Name}\"");
                 }

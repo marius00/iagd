@@ -32,30 +32,31 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPageItems = new System.Windows.Forms.TabPage();
             this.searchPanel = new System.Windows.Forms.Panel();
-            this.tabPageSettings = new System.Windows.Forms.TabPage();
-            this.settingsPanel = new System.Windows.Forms.Panel();
+            this.tabPageHelp = new System.Windows.Forms.TabPage();
+            this.panelHelp = new System.Windows.Forms.Panel();
             this.tabPageMods = new System.Windows.Forms.TabPage();
             this.modsPanel = new System.Windows.Forms.Panel();
             this.tabPageBackups = new System.Windows.Forms.TabPage();
             this.backupPanel = new System.Windows.Forms.Panel();
             this.tabPageBuddy = new System.Windows.Forms.TabPage();
             this.buddyPanel = new System.Windows.Forms.Panel();
+            this.tabPageSettings = new System.Windows.Forms.TabPage();
+            this.settingsPanel = new System.Windows.Forms.Panel();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.panelLogging = new System.Windows.Forms.Panel();
-            this.tabPageHelp = new System.Windows.Forms.TabPage();
-            this.panelHelp = new System.Windows.Forms.Panel();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.trayContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPageItems.SuspendLayout();
-            this.tabPageSettings.SuspendLayout();
+            this.tabPageHelp.SuspendLayout();
             this.tabPageMods.SuspendLayout();
             this.tabPageBackups.SuspendLayout();
             this.tabPageBuddy.SuspendLayout();
+            this.tabPageSettings.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            this.tabPageHelp.SuspendLayout();
             this.trayContextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -128,28 +129,26 @@
             this.searchPanel.Size = new System.Drawing.Size(1106, 560);
             this.searchPanel.TabIndex = 1;
             // 
-            // tabPageSettings
+            // tabPageHelp
             // 
-            this.tabPageSettings.BackColor = System.Drawing.SystemColors.Control;
-            this.tabPageSettings.Controls.Add(this.settingsPanel);
-            this.tabPageSettings.Location = new System.Drawing.Point(4, 22);
-            this.tabPageSettings.Name = "tabPageSettings";
-            this.tabPageSettings.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageSettings.Size = new System.Drawing.Size(1098, 560);
-            this.tabPageSettings.TabIndex = 1;
-            this.tabPageSettings.Tag = "iatag_ui_tab_settings";
-            this.tabPageSettings.Text = "Settings";
+            this.tabPageHelp.Controls.Add(this.panelHelp);
+            this.tabPageHelp.Location = new System.Drawing.Point(4, 22);
+            this.tabPageHelp.Name = "tabPageHelp";
+            this.tabPageHelp.Size = new System.Drawing.Size(1098, 560);
+            this.tabPageHelp.TabIndex = 5;
+            this.tabPageHelp.Tag = "iatag_ui_tab_help";
+            this.tabPageHelp.Text = "Help";
+            this.tabPageHelp.UseVisualStyleBackColor = true;
             // 
-            // settingsPanel
+            // panelHelp
             // 
-            this.settingsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.panelHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.settingsPanel.BackColor = System.Drawing.Color.Transparent;
-            this.settingsPanel.Location = new System.Drawing.Point(-4, 0);
-            this.settingsPanel.Name = "settingsPanel";
-            this.settingsPanel.Size = new System.Drawing.Size(1102, 560);
-            this.settingsPanel.TabIndex = 0;
+            this.panelHelp.Location = new System.Drawing.Point(-2, 0);
+            this.panelHelp.Name = "panelHelp";
+            this.panelHelp.Size = new System.Drawing.Size(1100, 560);
+            this.panelHelp.TabIndex = 1;
             // 
             // tabPageMods
             // 
@@ -216,6 +215,29 @@
             this.buddyPanel.Size = new System.Drawing.Size(1106, 564);
             this.buddyPanel.TabIndex = 0;
             // 
+            // tabPageSettings
+            // 
+            this.tabPageSettings.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPageSettings.Controls.Add(this.settingsPanel);
+            this.tabPageSettings.Location = new System.Drawing.Point(4, 22);
+            this.tabPageSettings.Name = "tabPageSettings";
+            this.tabPageSettings.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageSettings.Size = new System.Drawing.Size(1098, 560);
+            this.tabPageSettings.TabIndex = 1;
+            this.tabPageSettings.Tag = "iatag_ui_tab_settings";
+            this.tabPageSettings.Text = "Settings";
+            // 
+            // settingsPanel
+            // 
+            this.settingsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.settingsPanel.BackColor = System.Drawing.Color.Transparent;
+            this.settingsPanel.Location = new System.Drawing.Point(-4, 0);
+            this.settingsPanel.Name = "settingsPanel";
+            this.settingsPanel.Size = new System.Drawing.Size(1102, 560);
+            this.settingsPanel.TabIndex = 0;
+            // 
             // tabPage1
             // 
             this.tabPage1.Controls.Add(this.panelLogging);
@@ -239,27 +261,6 @@
             this.panelLogging.Size = new System.Drawing.Size(1102, 564);
             this.panelLogging.TabIndex = 1;
             // 
-            // tabPageHelp
-            // 
-            this.tabPageHelp.Controls.Add(this.panelHelp);
-            this.tabPageHelp.Location = new System.Drawing.Point(4, 22);
-            this.tabPageHelp.Name = "tabPageHelp";
-            this.tabPageHelp.Size = new System.Drawing.Size(1098, 560);
-            this.tabPageHelp.TabIndex = 5;
-            this.tabPageHelp.Tag = "iatag_ui_tab_help";
-            this.tabPageHelp.Text = "Help";
-            this.tabPageHelp.UseVisualStyleBackColor = true;
-            // 
-            // panelHelp
-            // 
-            this.panelHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelHelp.Location = new System.Drawing.Point(-2, 0);
-            this.panelHelp.Name = "panelHelp";
-            this.panelHelp.Size = new System.Drawing.Size(1100, 560);
-            this.panelHelp.TabIndex = 1;
-            // 
             // notifyIcon1
             // 
             this.notifyIcon1.BalloonTipTitle = "Item Assistant";
@@ -271,17 +272,25 @@
             // trayContextMenuStrip
             // 
             this.trayContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.trayContextMenuStrip.Name = "trayContextMenuStrip";
-            this.trayContextMenuStrip.Size = new System.Drawing.Size(94, 26);
+            this.trayContextMenuStrip.Size = new System.Drawing.Size(181, 70);
             this.trayContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.trayContextMenuStrip_Opening);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(93, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            // 
+            // openToolStripMenuItem
+            // 
+            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openToolStripMenuItem.Text = "Open";
+            this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // MainWindow
             // 
@@ -300,12 +309,12 @@
             this.statusStrip.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.tabPageItems.ResumeLayout(false);
-            this.tabPageSettings.ResumeLayout(false);
+            this.tabPageHelp.ResumeLayout(false);
             this.tabPageMods.ResumeLayout(false);
             this.tabPageBackups.ResumeLayout(false);
             this.tabPageBuddy.ResumeLayout(false);
+            this.tabPageSettings.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
-            this.tabPageHelp.ResumeLayout(false);
             this.trayContextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -334,5 +343,6 @@
         private System.Windows.Forms.Panel panelHelp;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.Panel panelLogging;
+        private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
     }
 }

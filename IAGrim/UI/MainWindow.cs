@@ -126,6 +126,8 @@ namespace IAGrim.UI
             }
         }
 
+
+
         public MainWindow(
             ServiceProvider serviceProvider,
             CefBrowserHandler browser,
@@ -136,6 +138,7 @@ namespace IAGrim.UI
             InitializeComponent();
             FormClosing += MainWindow_FormClosing;
 
+            _minimizeToTrayHandler = new MinimizeToTrayHandler(this, notifyIcon1, serviceProvider.Get<SettingsService>());
 
             var settingsService = _serviceProvider.Get<SettingsService>();
             _automaticUpdateChecker = new AutomaticUpdateChecker(settingsService);
@@ -144,6 +147,7 @@ namespace IAGrim.UI
             _recipeParser = new RecipeParser(serviceProvider.Get<IRecipeItemDao>());
             _parsingService = parsingService;
             _userFeedbackService = new UserFeedbackService(_cefBrowserHandler);
+
         }
 
         /// <summary>
@@ -329,6 +333,8 @@ namespace IAGrim.UI
             }
             Logger.Debug("Starting UI initialization");
 
+
+
             // Set version number
             var version = Assembly.GetExecutingAssembly().GetName().Version;
             DateTime buildDate = new DateTime(2000, 1, 1)
@@ -340,7 +346,6 @@ namespace IAGrim.UI
 
             var settingsService = _serviceProvider.Get<SettingsService>();
             ExceptionReporter.EnableLogUnhandledOnThread();
-            _minimizeToTrayHandler = new MinimizeToTrayHandler(this, notifyIcon1, settingsService);
             SizeChanged += OnMinimizeWindow;
             
 
@@ -570,6 +575,7 @@ namespace IAGrim.UI
             }
 
             // DarkMode.Activate(this); // Needs a lot more work before its ready, for example custom components uses Draw and does not respect coloring.
+
             Logger.Debug("UI initialization complete");
         }
 
@@ -720,6 +726,9 @@ namespace IAGrim.UI
                 _tooltipHelper.ShowTooltipAtMouse(RuntimeSettings.Language.GetTag("iatag_copied_clipboard"), _cefBrowserHandler.BrowserControl);
             }
         }
-        
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e) {
+            _minimizeToTrayHandler.notifyIcon_MouseDoubleClick(sender, null);
+        }
     } // CLASS
 }

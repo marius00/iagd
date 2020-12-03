@@ -22,6 +22,15 @@ namespace IAGrim.UI.Misc {
             _form.SizeChanged += OnMinimizeWindow;
             _notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon_MouseDoubleClick);
             _previousWindowState = _form.WindowState;
+
+            _notifyIcon.Visible = false;
+            if (_settingsService.GetLocal().StartMinimized) {
+                form.WindowState = FormWindowState.Minimized;
+
+                if (MinimizeToTray) {
+                    form.Load += (sender, args) => form.Hide();
+                }
+            }
         }
 
         public bool MinimizeToTray => _settingsService.GetPersistent().MinimizeToTray;

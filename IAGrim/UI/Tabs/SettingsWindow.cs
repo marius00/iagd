@@ -72,6 +72,7 @@ namespace IAGrim.UI.Tabs {
             cbDualComputer.Checked = _settings.GetPersistent().UsingDualComputer;
             cbShowAugments.Checked = _settings.GetPersistent().ShowAugmentsAsItems;
             cbDeleteDuplicates.Checked = _settings.GetPersistent().DeleteDuplicates;
+            cbStartMinimized.Checked = _settings.GetLocal().StartMinimized;
         }
 
         private void buttonViewBackups_Click(object sender, EventArgs e) {
@@ -199,6 +200,10 @@ namespace IAGrim.UI.Tabs {
 
         private void buttonLootManually_Click(object sender, EventArgs e) {
 
+        }
+
+        private void cbStartMinimized_CheckedChanged(object sender, EventArgs e) {
+            _settings.GetLocal().StartMinimized = (sender as FirefoxCheckBox).Checked;
         }
     }
 }

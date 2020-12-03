@@ -16,9 +16,10 @@ namespace IAGrim.UI.Misc {
             _form.FormClosing += _form_FormClosing;
 
             var obj = _settingsService.GetLocal().WindowPositionSettings;
-            if (obj?.State != null) {
+            if (obj?.State != null && !_settingsService.GetLocal().StartMinimized) {
                 _form.WindowState = (FormWindowState)obj.State;
             }
+
             if (obj?.Width != null && obj?.Height != null) {
                 _form.Size = new Size(obj.Width.Value, obj.Height.Value);
             }

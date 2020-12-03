@@ -24,10 +24,9 @@ export interface ApplicationState {
 
 // TODO: Am I actually using this store??
 const StoreContext = React.createContext({items: [], isLoading: true, activeTab: 0, collectionItems: [], isDarkMode: false} as ApplicationState);
-
+// See code: TODO: Possible to get skill stuff on this? Tooltip + color
 // TODO: Font color red on Set: bonus tag is freaking terrible in light mode (dark tooltip)
 // TODO: Start minimized
-// TODO: Background missing for yellow/white items
 // TODO: Dark mode
 // TODO: Basic tab-usage analytics, determine if collection or crafting is being used
 // TODO: Move help tab into WebUI? "[?]" links can trigger a modal on the help page. Add more screenshots.

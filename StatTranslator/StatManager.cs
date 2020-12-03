@@ -846,7 +846,7 @@ namespace StatTranslator
                 {
                     Param0 = skillCooldownReductionChance.Value,
                     Param1 = skillCooldownReduction.Value,
-                    Param3 = skill,
+                    Param3 = skill, // TODO: Possible to get skill stuff on this? Tooltip + color
                     Text = _language.GetTag("customtag_xpac_modif_skillCooldownReductionChance"),
                     Type = TranslatedStatType.FOOTER
                 });
@@ -860,6 +860,20 @@ namespace StatTranslator
                 {
                     Param0 = offensiveTotalDamageReductionPercentMin.Value,
                     Param1 = offensiveTotalDamageReductionPercentDurationMin.Value,
+                    Param3 = skill,
+                    Text = _language.GetTag("customtag_xpac_modif_offensiveTotalResistanceReductionAbsoluteMin"),
+                    Type = TranslatedStatType.FOOTER
+                });
+            }
+
+
+
+            var offensiveTotalResistanceReductionAbsoluteMin = stats.FirstOrDefault(m => m.Stat == "offensiveTotalResistanceReductionAbsoluteMin");
+            var offensiveTotalResistanceReductionAbsoluteDurationMin = stats.FirstOrDefault(m => m.Stat == "offensiveTotalResistanceReductionAbsoluteDurationMin");
+            if (offensiveTotalResistanceReductionAbsoluteMin != null && offensiveTotalResistanceReductionAbsoluteDurationMin != null) {
+                result.Add(new TranslatedStat {
+                    Param0 = offensiveTotalResistanceReductionAbsoluteMin.Value,
+                    Param1 = offensiveTotalResistanceReductionAbsoluteDurationMin.Value,
                     Param3 = skill,
                     Text = _language.GetTag("customtag_xpac_modif_offensiveTotalDamageReductionPercentDurationMin"),
                     Type = TranslatedStatType.FOOTER

@@ -29,11 +29,13 @@
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelBox4 = new PanelBox();
+            this.cbStartMinimized = new FirefoxCheckBox();
             this.helpWhatIsDeleteDuplicates = new System.Windows.Forms.LinkLabel();
             this.helpWhatIsUsingMultiplePc = new System.Windows.Forms.LinkLabel();
             this.cbDeleteDuplicates = new FirefoxCheckBox();
             this.helpWhatIsTransferToAnyMod = new System.Windows.Forms.LinkLabel();
             this.helpWhatIsSecureTransfers = new System.Windows.Forms.LinkLabel();
+            this.cbMinimizeToTray = new FirefoxCheckBox();
             this.helpWhatIsAugmentAsItem = new System.Windows.Forms.LinkLabel();
             this.helpWhatIsRecipeAsItems = new System.Windows.Forms.LinkLabel();
             this.cbShowAugments = new FirefoxCheckBox();
@@ -44,8 +46,6 @@
             this.cbTransferAnyMod = new FirefoxCheckBox();
             this.cbShowRecipesAsItems = new FirefoxCheckBox();
             this.cbSecureTransfers = new FirefoxCheckBox();
-            this.cbMinimizeToTray = new FirefoxCheckBox();
-            this.buttonPatreon = new System.Windows.Forms.Button();
             this.panelBox3 = new PanelBox();
             this.helpWhatIsExperimentalUpdates = new System.Windows.Forms.LinkLabel();
             this.helpWhatIsRegularUpdates = new System.Windows.Forms.LinkLabel();
@@ -53,6 +53,7 @@
             this.radioRelease = new FirefoxRadioButton();
             this.panelBox2 = new PanelBox();
             this.buttonLootManually = new FirefoxButton();
+            this.buttonPatreon = new System.Windows.Forms.Button();
             this.buttonPaypal = new System.Windows.Forms.Button();
             this.buttonDevTools = new FirefoxButton();
             this.panelBox1 = new PanelBox();
@@ -101,11 +102,13 @@
             // 
             // panelBox4
             // 
+            this.panelBox4.Controls.Add(this.cbStartMinimized);
             this.panelBox4.Controls.Add(this.helpWhatIsDeleteDuplicates);
             this.panelBox4.Controls.Add(this.helpWhatIsUsingMultiplePc);
             this.panelBox4.Controls.Add(this.cbDeleteDuplicates);
             this.panelBox4.Controls.Add(this.helpWhatIsTransferToAnyMod);
             this.panelBox4.Controls.Add(this.helpWhatIsSecureTransfers);
+            this.panelBox4.Controls.Add(this.cbMinimizeToTray);
             this.panelBox4.Controls.Add(this.helpWhatIsAugmentAsItem);
             this.panelBox4.Controls.Add(this.helpWhatIsRecipeAsItems);
             this.panelBox4.Controls.Add(this.cbShowAugments);
@@ -116,7 +119,6 @@
             this.panelBox4.Controls.Add(this.cbTransferAnyMod);
             this.panelBox4.Controls.Add(this.cbShowRecipesAsItems);
             this.panelBox4.Controls.Add(this.cbSecureTransfers);
-            this.panelBox4.Controls.Add(this.cbMinimizeToTray);
             this.panelBox4.Font = new System.Drawing.Font("Segoe UI Semibold", 20F);
             this.panelBox4.HeaderHeight = 40;
             this.panelBox4.Location = new System.Drawing.Point(496, 12);
@@ -128,13 +130,27 @@
             this.panelBox4.Text = "Settings";
             this.panelBox4.TextLocation = "8; 5";
             // 
+            // cbStartMinimized
+            // 
+            this.cbStartMinimized.Bold = false;
+            this.cbStartMinimized.EnabledCalc = true;
+            this.cbStartMinimized.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbStartMinimized.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbStartMinimized.Location = new System.Drawing.Point(3, 318);
+            this.cbStartMinimized.Name = "cbStartMinimized";
+            this.cbStartMinimized.Size = new System.Drawing.Size(268, 27);
+            this.cbStartMinimized.TabIndex = 30;
+            this.cbStartMinimized.Tag = "iatag_ui_startminimized";
+            this.cbStartMinimized.Text = "Start minimized";
+            this.cbStartMinimized.CheckedChanged += new System.EventHandler(this.cbStartMinimized_CheckedChanged);
+            // 
             // helpWhatIsDeleteDuplicates
             // 
             this.helpWhatIsDeleteDuplicates.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.helpWhatIsDeleteDuplicates.AutoSize = true;
             this.helpWhatIsDeleteDuplicates.BackColor = System.Drawing.Color.Transparent;
             this.helpWhatIsDeleteDuplicates.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.helpWhatIsDeleteDuplicates.Location = new System.Drawing.Point(259, 292);
+            this.helpWhatIsDeleteDuplicates.Location = new System.Drawing.Point(259, 259);
             this.helpWhatIsDeleteDuplicates.Name = "helpWhatIsDeleteDuplicates";
             this.helpWhatIsDeleteDuplicates.Size = new System.Drawing.Size(18, 13);
             this.helpWhatIsDeleteDuplicates.TabIndex = 29;
@@ -149,7 +165,7 @@
             this.helpWhatIsUsingMultiplePc.AutoSize = true;
             this.helpWhatIsUsingMultiplePc.BackColor = System.Drawing.Color.Transparent;
             this.helpWhatIsUsingMultiplePc.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.helpWhatIsUsingMultiplePc.Location = new System.Drawing.Point(259, 259);
+            this.helpWhatIsUsingMultiplePc.Location = new System.Drawing.Point(259, 226);
             this.helpWhatIsUsingMultiplePc.Name = "helpWhatIsUsingMultiplePc";
             this.helpWhatIsUsingMultiplePc.Size = new System.Drawing.Size(18, 13);
             this.helpWhatIsUsingMultiplePc.TabIndex = 28;
@@ -164,7 +180,7 @@
             this.cbDeleteDuplicates.EnabledCalc = true;
             this.cbDeleteDuplicates.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbDeleteDuplicates.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbDeleteDuplicates.Location = new System.Drawing.Point(3, 285);
+            this.cbDeleteDuplicates.Location = new System.Drawing.Point(3, 252);
             this.cbDeleteDuplicates.Name = "cbDeleteDuplicates";
             this.cbDeleteDuplicates.Size = new System.Drawing.Size(268, 27);
             this.cbDeleteDuplicates.TabIndex = 27;
@@ -178,7 +194,7 @@
             this.helpWhatIsTransferToAnyMod.AutoSize = true;
             this.helpWhatIsTransferToAnyMod.BackColor = System.Drawing.Color.Transparent;
             this.helpWhatIsTransferToAnyMod.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.helpWhatIsTransferToAnyMod.Location = new System.Drawing.Point(259, 127);
+            this.helpWhatIsTransferToAnyMod.Location = new System.Drawing.Point(259, 94);
             this.helpWhatIsTransferToAnyMod.Name = "helpWhatIsTransferToAnyMod";
             this.helpWhatIsTransferToAnyMod.Size = new System.Drawing.Size(18, 13);
             this.helpWhatIsTransferToAnyMod.TabIndex = 26;
@@ -193,7 +209,7 @@
             this.helpWhatIsSecureTransfers.AutoSize = true;
             this.helpWhatIsSecureTransfers.BackColor = System.Drawing.Color.Transparent;
             this.helpWhatIsSecureTransfers.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.helpWhatIsSecureTransfers.Location = new System.Drawing.Point(259, 160);
+            this.helpWhatIsSecureTransfers.Location = new System.Drawing.Point(259, 127);
             this.helpWhatIsSecureTransfers.Name = "helpWhatIsSecureTransfers";
             this.helpWhatIsSecureTransfers.Size = new System.Drawing.Size(18, 13);
             this.helpWhatIsSecureTransfers.TabIndex = 25;
@@ -202,13 +218,26 @@
             this.helpWhatIsSecureTransfers.Text = " ? ";
             this.helpWhatIsSecureTransfers.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpWhatIsSecureTransfers_LinkClicked);
             // 
+            // cbMinimizeToTray
+            // 
+            this.cbMinimizeToTray.Bold = false;
+            this.cbMinimizeToTray.EnabledCalc = true;
+            this.cbMinimizeToTray.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbMinimizeToTray.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbMinimizeToTray.Location = new System.Drawing.Point(3, 285);
+            this.cbMinimizeToTray.Name = "cbMinimizeToTray";
+            this.cbMinimizeToTray.Size = new System.Drawing.Size(268, 27);
+            this.cbMinimizeToTray.TabIndex = 8;
+            this.cbMinimizeToTray.Tag = "iatag_ui_minimizetotray";
+            this.cbMinimizeToTray.Text = "Minimize to Tray";
+            // 
             // helpWhatIsAugmentAsItem
             // 
             this.helpWhatIsAugmentAsItem.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.helpWhatIsAugmentAsItem.AutoSize = true;
             this.helpWhatIsAugmentAsItem.BackColor = System.Drawing.Color.Transparent;
             this.helpWhatIsAugmentAsItem.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.helpWhatIsAugmentAsItem.Location = new System.Drawing.Point(259, 226);
+            this.helpWhatIsAugmentAsItem.Location = new System.Drawing.Point(259, 193);
             this.helpWhatIsAugmentAsItem.Name = "helpWhatIsAugmentAsItem";
             this.helpWhatIsAugmentAsItem.Size = new System.Drawing.Size(18, 13);
             this.helpWhatIsAugmentAsItem.TabIndex = 24;
@@ -238,7 +267,7 @@
             this.cbShowAugments.EnabledCalc = true;
             this.cbShowAugments.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbShowAugments.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbShowAugments.Location = new System.Drawing.Point(3, 219);
+            this.cbShowAugments.Location = new System.Drawing.Point(3, 186);
             this.cbShowAugments.Name = "cbShowAugments";
             this.cbShowAugments.Size = new System.Drawing.Size(268, 27);
             this.cbShowAugments.TabIndex = 23;
@@ -252,7 +281,7 @@
             this.cbDualComputer.EnabledCalc = true;
             this.cbDualComputer.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbDualComputer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbDualComputer.Location = new System.Drawing.Point(3, 252);
+            this.cbDualComputer.Location = new System.Drawing.Point(3, 219);
             this.cbDualComputer.Name = "cbDualComputer";
             this.cbDualComputer.Size = new System.Drawing.Size(268, 27);
             this.cbDualComputer.TabIndex = 22;
@@ -280,7 +309,7 @@
             this.cbHideSkills.EnabledCalc = true;
             this.cbHideSkills.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbHideSkills.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbHideSkills.Location = new System.Drawing.Point(3, 186);
+            this.cbHideSkills.Location = new System.Drawing.Point(3, 153);
             this.cbHideSkills.Name = "cbHideSkills";
             this.cbHideSkills.Size = new System.Drawing.Size(268, 27);
             this.cbHideSkills.TabIndex = 17;
@@ -310,7 +339,7 @@
             this.cbTransferAnyMod.EnabledCalc = true;
             this.cbTransferAnyMod.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbTransferAnyMod.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbTransferAnyMod.Location = new System.Drawing.Point(3, 120);
+            this.cbTransferAnyMod.Location = new System.Drawing.Point(3, 87);
             this.cbTransferAnyMod.Name = "cbTransferAnyMod";
             this.cbTransferAnyMod.Size = new System.Drawing.Size(268, 27);
             this.cbTransferAnyMod.TabIndex = 14;
@@ -337,36 +366,12 @@
             this.cbSecureTransfers.EnabledCalc = true;
             this.cbSecureTransfers.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbSecureTransfers.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbSecureTransfers.Location = new System.Drawing.Point(3, 153);
+            this.cbSecureTransfers.Location = new System.Drawing.Point(3, 120);
             this.cbSecureTransfers.Name = "cbSecureTransfers";
             this.cbSecureTransfers.Size = new System.Drawing.Size(268, 27);
             this.cbSecureTransfers.TabIndex = 12;
             this.cbSecureTransfers.Tag = "iatag_ui_securetransfers";
             this.cbSecureTransfers.Text = "Secure Transfers";
-            // 
-            // cbMinimizeToTray
-            // 
-            this.cbMinimizeToTray.Bold = false;
-            this.cbMinimizeToTray.EnabledCalc = true;
-            this.cbMinimizeToTray.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cbMinimizeToTray.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbMinimizeToTray.Location = new System.Drawing.Point(3, 87);
-            this.cbMinimizeToTray.Name = "cbMinimizeToTray";
-            this.cbMinimizeToTray.Size = new System.Drawing.Size(268, 27);
-            this.cbMinimizeToTray.TabIndex = 8;
-            this.cbMinimizeToTray.Tag = "iatag_ui_minimizetotray";
-            this.cbMinimizeToTray.Text = "Minimize to Tray";
-            // 
-            // buttonPatreon
-            // 
-            this.buttonPatreon.BackgroundImage = global::IAGrim.Properties.Resources.Patreon_Navy;
-            this.buttonPatreon.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.buttonPatreon.Location = new System.Drawing.Point(14, 111);
-            this.buttonPatreon.Name = "buttonPatreon";
-            this.buttonPatreon.Size = new System.Drawing.Size(192, 47);
-            this.buttonPatreon.TabIndex = 8;
-            this.buttonPatreon.UseVisualStyleBackColor = true;
-            this.buttonPatreon.Click += new System.EventHandler(this.buttonPatreon_Click);
             // 
             // panelBox3
             // 
@@ -475,6 +480,17 @@
             this.buttonLootManually.Text = "Loot Manually";
             this.buttonLootManually.Visible = false;
             this.buttonLootManually.Click += new System.EventHandler(this.buttonLootManually_Click);
+            // 
+            // buttonPatreon
+            // 
+            this.buttonPatreon.BackgroundImage = global::IAGrim.Properties.Resources.Patreon_Navy;
+            this.buttonPatreon.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.buttonPatreon.Location = new System.Drawing.Point(14, 111);
+            this.buttonPatreon.Name = "buttonPatreon";
+            this.buttonPatreon.Size = new System.Drawing.Size(192, 47);
+            this.buttonPatreon.TabIndex = 8;
+            this.buttonPatreon.UseVisualStyleBackColor = true;
+            this.buttonPatreon.Click += new System.EventHandler(this.buttonPatreon_Click);
             // 
             // buttonPaypal
             // 
@@ -663,5 +679,6 @@
         private System.Windows.Forms.LinkLabel helpWhatIsExperimentalUpdates;
         private System.Windows.Forms.LinkLabel helpWhatIsRegularUpdates;
         private FirefoxButton buttonLootManually;
+        private FirefoxCheckBox cbStartMinimized;
     }
 }
