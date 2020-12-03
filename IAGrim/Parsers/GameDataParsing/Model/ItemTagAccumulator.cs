@@ -7,7 +7,7 @@ using IAGrim.Database;
 
 namespace IAGrim.Parsers.GameDataParsing.Model {
     class ItemTagAccumulator {
-        public Dictionary<string, string> MappedTags { get; }= new Dictionary<string, string>();
+        public Dictionary<string, string> MappedTags { get; } = new Dictionary<string, string>();
 
         public List<ItemTag> Tags => MappedTags.Select(kv => new ItemTag {
             Name = kv.Value,
@@ -17,6 +17,5 @@ namespace IAGrim.Parsers.GameDataParsing.Model {
         public void Add(string tag, string name) {
             MappedTags[tag] = name;
         }
-
     }
 }

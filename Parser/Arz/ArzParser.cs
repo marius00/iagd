@@ -188,6 +188,9 @@ namespace IAGrim.Parser.Arz {
                         tags.AddRange(decompresser.GetTags(s));
                         Logger.Debug($"Loading tags from {s}");
                     }
+                    else {
+                        Logger.Debug($"Skipping tag file \"{s}\"");
+                    }
                 }
 
                 Logger.Debug($"Loaded {tags.Count} tags");

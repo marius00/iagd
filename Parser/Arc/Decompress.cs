@@ -396,14 +396,13 @@ namespace IAGrim.Parser.Arc {
 
             string[] lines = GetTagBlob(filename).Split(new string[] { "\n" }, StringSplitOptions.None);
             foreach (string line in lines) {
-                if (!string.IsNullOrEmpty(line.Trim()) && line.StartsWith("tag")) {
+                if (!string.IsNullOrEmpty(line.Trim()) && line.ToLowerInvariant().StartsWith("tag")) {
                     string[] keyVal = line.Split('=');
                     if (keyVal.Length != 2) {
                         logger.WarnFormat("Could not parse key-value pair \"{0}\"", line);
                     }
                     else {
                         result.Add(new ItemTag { Tag = keyVal[0], Name = keyVal[1] });
-                        //keyValueDict[keyVal[0]] = keyVal[1];
                     }
                 }
             }
