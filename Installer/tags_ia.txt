@@ -283,17 +283,14 @@ iatag_ui_no=No
 iatag_ui_survivalmode=The Crucible (DLC)
 iatag_ui_dualcomputer=Using IA on multiple PCs
 iatag_ui_deleteduplicates=Delete bugged duplicates
-iatag_ui_backup_service_error=The backup service is currently experiencing technical difficulties.
-Please try again later.
+iatag_ui_backup_service_error=The backup service is currently experiencing technical difficulties.\nPlease try again later.
 iatag_ui_backup_status=Backup status
 iatag_ui_backup_complete=Backup complete!
 iatag_ui_backup_failed=Backup failed, see the log file for more detailed information.
 iatag_ui_backup_details=Details
 iatag_ui_backup_logout=Logout
 iatag_ui_backup_status_label=Status:
-iatag_ui_backup_logout_sucessful_body=You have been signed out of online backups
-
-Good luck!
+iatag_ui_backup_logout_sucessful_body=You have been signed out of online backups\n\nGood luck!
 iatag_ui_backup_logout_sucessful_header=Online backups disabled
 iatag_ui_backup_deleteaccount_header=Delete online backups
 iatag_ui_backup_deleteaccount_body=Are you sure you wish to delete your online backups?
@@ -543,10 +540,7 @@ tagFactionUser9_ia=The Outcast
 tagFactionUser10_ia=Barrowholm
 tagFactionUser11_ia=Malmouth Resistance
 iatag_ui_dontwantbackups=I don't want backups, stop asking me!
-iatag_ui_clean_body=The internal IA cache has been deleted.
-Your items are still fine, but will shown up as 'Unknown Item'.
-
-In order to display items, re-parse the GD database.
+iatag_ui_clean_body=The internal IA cache has been deleted.\nYour items are still fine, but will shown up as 'Unknown Item'.\n\nIn order to display items, re-parse the GD database.
 iatag_ui_clean_caption=Cache wiped
 iatag_ui_tab_secondtolast=Second to last tab
 iatag_ui_tab_1=Tab 1
@@ -577,9 +571,7 @@ iatag_ui_gamestash=Game Stash
 iatag_ui_gdstash=GD Stash
 iatag_ui_iastash=IA Stash
 iatag_ui_translation=Item Assistant is available in your language! Go to settings and click "Language" to change to English.
-iatag_ui_database_modified_body=The Grim Dawn database appears to have been modified.
-If there has been a recent patch to Grim Dawn:
-Go to "Database\Mods" and parse the database to discover new items and sets.
+iatag_ui_database_modified_body=The Grim Dawn database appears to have been modified.\nIf there has been a recent patch to Grim Dawn:\nGo to "Database\Mods" and parse the database to discover new items and sets.
 iatag_ui_database_modified_title=New patch?
 iatag_ui_avasted=Avasted!
 iatag_ui_avast1=It appears that one or several essential components of Grim Dawn Item Assistant has been deleted.
@@ -591,11 +583,8 @@ iatag_ui_copiedclipboard=Copied to clipboard
 iatag_ui_importexport_nothinginzip_body=This zip file does not contain any .ias backup files
 iatag_ui_importexport_nothinginzip_title=Error
 iatag_ui_importexport_import_success=Items imported!
-iatag_ui_importexport_import_success_body=Items imported
-If you already had items, you may have gotten duplicates.
+iatag_ui_importexport_import_success_body=Items imported\nIf you already had items, you may have gotten duplicates.
 iatag_ui_importexport_selectfile=Select the file to import
-iatag_ui_settings_securetransferdsable_body=Are you sure you wish to disable secure transfers?
-
-It will be YOUR responsibility to make sure the bank is closed when transferring.
+iatag_ui_settings_securetransferdsable_body=Are you sure you wish to disable secure transfers?\n\nIt will be YOUR responsibility to make sure the bank is closed when transferring.
 iatag_ui_settings_securetransferdsable_title=Are you sure?
 iatag_ui_opencustombackup=Open folder
