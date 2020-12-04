@@ -258,8 +258,6 @@ namespace IAGrim.Services {
             }
         }
 
-        // augmentSkillLevel1, augmentSkillName1, augmentSkill1Extras
-
         public void ApplyStatsToPlayerItems(List<PlayerItem> items) {
             if (items.Count > 0) {
                 Logger.Debug($"Applying stats to {items.Count} items");

@@ -651,7 +651,7 @@ namespace IAGrim.Database {
             }
 
             foreach (var desiredClass in query.Classes) {
-                queryFragments.Add("exists (select id_databaseitem from databaseitemstat_v2 dbs where stat IN ('augmentSkill1Extras','augmentSkill2Extras','augmentMastery1','augmentMastery2') "
+                queryFragments.Add("exists (select id_databaseitem from databaseitemstat_v2 dbs where stat IN ('augmentSkill1Extras','augmentSkill2Extras','augmentSkill3Extras','augmentSkill4Extras','augmentMastery1','augmentMastery2','augmentMastery3','augmentMastery4') "
                     + $" AND TextValue = '{desiredClass}'" // Not ideal
                     + " AND db.id_databaseitem = dbs.id_databaseitem)");
             }

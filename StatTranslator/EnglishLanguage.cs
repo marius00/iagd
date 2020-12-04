@@ -18,7 +18,7 @@ namespace StatTranslator {
         }
 
         public string Export() {
-            return string.Join("\r\n", _stats.Select((entry, idx) => $"{entry.Key}={entry.Value}"));
+            return string.Join("\r\n", _stats.Select((entry, idx) => $"{entry.Key}={entry.Value.Replace("\n", "\\n")}"));
         }
 
         private readonly Dictionary<string, string> _stats = new Dictionary<string, string> {
