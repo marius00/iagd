@@ -19,18 +19,15 @@ Name: starticon; Description: "Create a &startmenu icon"; GroupDescription: "Ico
 
 [Icons]
 Name: "{commonprograms}\GD Item Assistant"; Filename: "{app}\\IAGrim.exe"; Tasks: starticon
-Name: "{commonprograms}\GD Item Assistant (Devtools)"; Parameters: " -devtools"; Filename: "{app}\\IAGrim.exe"; Tasks: starticon
 Name: "{commondesktop}\GD Item Assistant"; Filename: "{app}\\IAGrim.exe"; Tasks: desktopicon
 
 
 [Files]
-Source: "..\IAGrim\bin\Release\*"; Excludes: "*.pdb"; DestDir: "{app}"; Flags: overwritereadonly replacesameversion recursesubdirs createallsubdirs touch ignoreversion
+Source: "..\IAGrim\bin\Release\*"; Excludes: "*.pdb,NDP461-KB3102438-Web.exe,vcredist_x86.exe,2010sp1_vcredist_x86.exe,2015rc3_vc_redist.x86.exe"; DestDir: "{app}"; Flags: overwritereadonly replacesameversion recursesubdirs createallsubdirs touch ignoreversion
 
 [Run]
-Filename: "{app}\NDP461-KB3102438-Web.exe"; Parameters: "/passive /showfinalerror"; Description: "Install .NET 4.6.1"; Flags: postinstall runascurrentuser
-Filename: "{app}\vcredist_x86.exe"; Parameters: "/install /quiet /norestart"; Description: "Install VC++ Redistributable 2013 (x86)"; Flags: runhidden runascurrentuser
-Filename: "{app}\2010sp1_vcredist_x86.exe"; Parameters: "/install /quiet /norestart"; Description: "Install VC++ Redistributable 2010 SP1 (x86)"; Flags: runhidden runascurrentuser
-Filename: "{app}\2015rc3_vc_redist.x86.exe"; Parameters: "/install /quiet /norestart"; Description: "Install VC++ Redistributable 2015 RC3 (x86)"; Flags: runhidden runascurrentuser
+
+
 Filename: "{app}\IAGrim.exe"; Description: "Launch GD Item Assistant"; Flags: postinstall nowait
 Filename: "https://www.twitch.tv/videos/210592694"; Description: "Open video tutorial"; Flags: postinstall shellexec
  
