@@ -27,7 +27,6 @@ namespace IAGrim.Settings.Dto {
         private List<FeatureRecommendation> _shownFeatureRecommendations;
 
 
-
         public void AddShownFeature(FeatureRecommendation feature) {
             if (_shownFeatureRecommendations == null) {
                 _shownFeatureRecommendations = new List<FeatureRecommendation>();
@@ -39,11 +38,16 @@ namespace IAGrim.Settings.Dto {
 
             OnMutate?.Invoke(null, null);
         }
-        
+
         public List<FeatureRecommendation> FeaturesNotShown {
             get {
                 var result = new List<FeatureRecommendation>();
-                foreach (var feature in new []{ FeatureRecommendation.SetBonus, FeatureRecommendation.CollectionsTab }) {
+                foreach (var feature in new[] {
+                    FeatureRecommendation.SetBonus,
+                    FeatureRecommendation.CollectionsTab,
+                    FeatureRecommendation.HelpTab,
+                    FeatureRecommendation.CraftingTab
+                }) {
                     if (_shownFeatureRecommendations == null || !_shownFeatureRecommendations.Contains(feature)) {
                         result.Add(feature);
                     }
@@ -63,8 +67,6 @@ namespace IAGrim.Settings.Dto {
 
         // Azure Backups
         private string _azureAuthToken;
-
-
 
 
         // Buddy items
@@ -191,8 +193,5 @@ namespace IAGrim.Settings.Dto {
                 OnMutate?.Invoke(null, null);
             }
         }
-
-
-
     }
 }

@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 namespace IAGrim.Settings.Dto {
     public enum FeatureRecommendation {
         SetBonus = 0,
-        CollectionsTab = 1
+        CollectionsTab = 1,
+        HelpTab = 2,
+        CraftingTab = 3,
     }
 }

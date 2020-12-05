@@ -9,7 +9,6 @@ using CefSharp.WinForms;
 
 namespace IAGrim.Backup.Azure.CefSharp {
     class AzureOnClosePopupHijack : ILifeSpanHandler {
-
         bool ILifeSpanHandler.OnBeforePopup(IWebBrowser browserControl, IBrowser browser, IFrame frame, string targetUrl, string targetFrameName, WindowOpenDisposition targetDisposition, bool userGesture, IPopupFeatures popupFeatures, IWindowInfo windowInfo, IBrowserSettings browserSettings, ref bool noJavascriptAccess, out IWebBrowser newBrowser) {
             //Set newBrowser to null unless your attempting to host the popup in a new instance of ChromiumWebBrowser
             //This option is typically used in WPF. This example demos using IWindowInfo.SetAsChild

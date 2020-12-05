@@ -162,6 +162,7 @@ class App extends React.PureComponent<{}, object> {
               setActiveTab={(idx: number) => this.setState({activeTab: idx})}
               isDarkMode={this.state.isDarkMode}
               toggleDarkmode={() => this.toggleDarkmode()}
+              showVideoGuide={this.state.items.length <= 100}
             />
             <div id="myTabContent" className="tab-content" aria-live="polite">
             </div>

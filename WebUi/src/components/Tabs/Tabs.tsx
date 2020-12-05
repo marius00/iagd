@@ -17,13 +17,13 @@ import translate from '../../translations/EmbeddedTranslator';
 export interface Props {
   activeTab: number;
   isDarkMode: boolean;
-
+  showVideoGuide: boolean;
   setActiveTab(idx: number): void;
 
   toggleDarkmode(): void;
 }
 
-export default function Tabs({activeTab, setActiveTab, isDarkMode, toggleDarkmode}: Props) {
+export default function Tabs({activeTab, setActiveTab, isDarkMode, toggleDarkmode, showVideoGuide}: Props) {
   const renderTabEntry = (label: string, idx: number, icon: any, isActive?: boolean, feature?: string) =>
     <li className={'tab fancyTab ' + (isActive ? 'active' : '')} onClick={() => setActiveTab(idx)} data-feature={feature}>
       <div className="arrow-down">
@@ -50,6 +50,8 @@ export default function Tabs({activeTab, setActiveTab, isDarkMode, toggleDarkmod
           {icon} <br/>
           <span className="hidden-xs">{label}</span>
         </span>
+
+        <span className="external-link"><OpenInNew /></span>
       </a>
       <div className="whiteBlock"></div>
     </li>;
@@ -73,10 +75,10 @@ export default function Tabs({activeTab, setActiveTab, isDarkMode, toggleDarkmod
 
       {renderTabEntry(translate('app.tab.items'), idx++, <Home/>, activeTab === 0)}
       {renderTabEntry(translate('app.tab.collections'), idx++, <Web/>, activeTab === 1)}
-      {renderTabEntry(translate('app.tab.crafting'), idx++, <CraftingIcon/>, activeTab === 2)}
-      {renderTabEntry(translate('app.tab.help'), idx++, <Help/>, activeTab === 3)}
+      {renderTabEntry(translate('app.tab.crafting'), idx++, <CraftingIcon/>, activeTab === 2, 'CraftingTab')}
+      {renderTabEntry(translate('app.tab.help'), idx++, <Help/>, activeTab === 3, "HelpTab")}
       {renderLinkEntry(translate('app.tab.components'), idx++, <OpenInNew/>, 'http://dev.dreamcrash.org/enchantments/')}
-      {translate('app.tab.videoGuide').length > 0 && renderLinkEntry(translate('app.tab.videoGuide'), idx++, <VideoLibrary/>, translate('app.tab.videoGuideUrl'))}
+      {showVideoGuide && translate('app.tab.videoGuide').length > 0 && renderLinkEntry(translate('app.tab.videoGuide'), idx++, <VideoLibrary/>, translate('app.tab.videoGuideUrl'))}
 
 
       {isDarkMode && renderToggleTabEntry(translate('app.tab.lightMode'), idx++, <LightMode/>)}

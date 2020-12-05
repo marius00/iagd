@@ -1,5 +1,6 @@
 import * as React from 'react';
 import './Help.css';
+import { openUrl } from '../integration/integration';
 
 function toNumberedList(s: string) {
   return <ol>
@@ -67,7 +68,7 @@ const helpEntries = [
     title: `When will IA be updated for the latest GD patch? I cannot see some stats`,
     tag: 'GrimDawnUpdated',
     body: () => <div>
-      Item Assistant rarely requires any update, you just need to parse the database again. <br/>
+      Item Assistant rarely requires any update, you just need to parse the database again. <br/><br/>
       {typicalParseDbMessage}
     </div>,
     type: IHelpEntryType.Help
@@ -77,8 +78,7 @@ const helpEntries = [
     tag: 'ReproduceStats',
     body: () => <div>
       IA will never modify any of your items, and will always reproduce them exactly as it found them. <br/>
-      Even if merging items is enabled, your items will remain unchanged. <br/>
-      <b>Always.</b> <br/> <br/>
+      Even if merging items is enabled, your items will remain unchanged. <b>Always.</b> <br/> <br/>
 
       However, the stats displayed in IA will vary from what you see in-game, as IA is unable to display the correct stats itself.
     </div>,
@@ -88,9 +88,9 @@ const helpEntries = [
     title: `What does it mean to use IA on multiple PCs?`,
     tag: 'MultiplePcs',
     body: () => <div>
-      The "Multiple PC" checkbox in Item Assistant is an addition to the backup system.<br/>
+      The "<i>Multiple PC</i>" checkbox in Item Assistant is an addition to the backup system.<br/>
       If you have enabled backups by logging in with an e-mail, it's possible to synchronize your items between multiple PCs in ~realtime.<br/><br/>
-      This can useful if you play Grim Dawn on several PCs, or if you share your stash with a loved one, as you'll be using the same IA stash.<br/><br/>
+      This can useful if you play Grim Dawn on several PCs, or if you share your stash with a loved one, as you'll be using the same IA stash across installs.<br/><br/>
 
       The checkbox under settings makes IA sync items more aggressively, opting for near-instant syncronization instead of low bandwidth usage.
       IA will not synchronize your characters, only your items.<br/>
@@ -104,9 +104,9 @@ const helpEntries = [
     tag: 'ShowingItemsIDontHave',
     body: () => <div>
       Item Assistant lets you show recipes and augments as items, as a reminder that you can obtain them.<br/>
-
+      <br/>
       If you don't wish IA to display these items: <br/>
-      Go to settings and disable "Show recipes as items" and "Show augments as items". <br/>
+      Go to settings and disable "Show recipes as items" and "Show augments as items". <br/><br/>
       It's merely a "convenience feature" to have IA list things you 'might' have or be able to make. <br/>
     </div>,
     type: IHelpEntryType.Informational
@@ -116,7 +116,7 @@ const helpEntries = [
     tag: 'DeleteDuplicates',
     body: () => <div>
       Sometimes bugs can happen which causes an <u>exact duplicate</u> of an item to be spawned. <br/>
-      This is an item with the exact same stats etc, it's not an item that was actually found, but was spawned due to a bug.<br/><br/>
+      This is an item with the exact same stats etc, it's not an item that was actually found, but was <u>spawned due to a bug.</u><br/><br/>
 
 
       Enabling this option under settings will cause IA to simply delete these bugged items, instead of just warning you.<br/>
@@ -131,13 +131,13 @@ const helpEntries = [
       {toNumberedList(`
       Restart IA
       Make sure you've selected the right mod (upper right corner, most likely Vanilla)`)}
-      <br/><br/>
+
       Typically it's the mod selection that causes items to not be found, as IA supports separating items from both mods and softcore/hardcore.
     </div>,
     type: IHelpEntryType.Help
   },
   {
-    title: `I can't find my items!`,
+    title: `IA is not looting my items!`,
     tag: 'CantFindItemsMod2', // TODO: Why is this duplicated?
     body: () => <div>
       {toNumberedList(`
@@ -145,8 +145,8 @@ const helpEntries = [
       Walk away from your stash area
       IA should now have looted these items
       The status bar in IA should indicate it just looted some items`)}
-      <br/><br/>
-      <b className="attention">If this did not resolve your issue, please try running IA as administrator.</b>
+
+      <b className="attention">If this did not resolve your issue, please try running IA as administrator.</b> <br/>
       In some cases IA requires additional permissions in order to run properly.
     </div>,
     type: IHelpEntryType.Help
@@ -159,7 +159,6 @@ const helpEntries = [
       Click the "Settings" tab
       Click "View Logs"
       The most recent log is "log.txt"`)}
-      <br/>
       The log folder can also be found at <i>%appdata%\..\local\evilsoft\iagd\</i>
     </div>,
     type: IHelpEntryType.Informational
@@ -172,7 +171,6 @@ const helpEntries = [
       Click the "Settings" tab
       Click "View Backups"`)}
 
-      <br/>
       This folder contains both daily backups from Item Assistant, as well as all your previous shared stash files.<br/>
       It is <span className="attention">highly recommended</span> that you enable additional backups. <br/>
       Harddrive failures happens. Viruses happens. Reinstalling windows and forgetting to copy IA happens. <br/><br/>
@@ -188,7 +186,6 @@ const helpEntries = [
       Click the "Settings" tab
       Click "View Logs"
       Go to the "data" folder`)}
-      <br/>
       The data folder can also be found at <i>%appdata%\..\local\evilsoft\iagd\data</i>
     </div>,
     type: IHelpEntryType.Informational
@@ -233,10 +230,9 @@ const helpEntries = [
     title: `IA says cloud saving is enabled`,
     tag: 'CloudSavesEnabled',
     body: () => <div>
-      Cloud saving have to be disabled in <u>two</u> locations.
+      For Grim Dawn, cloud saving has to be disabled in <u>two</u> different locations.
       {toNumberedList(`In steam
         Inside Grim Dawn itself, under "Settings"`)}
-      <br/>
       Grim Dawn uses a different save directory with cloud saving disabled.<br/>
       After disabling cloud saving you still need to copy your characters to the correct directory.<br/>
     </div>,
@@ -342,7 +338,7 @@ const helpEntries = [
       Watch the world burn
       Open IA and cry, as you see all your items forever gone.
       `)}
-      <br/><br/><br/>
+      <br/>
 
       If your items start slowly and magically reappearing, you forgot step 1.<br/>
       Start at step 1.
@@ -353,7 +349,8 @@ const helpEntries = [
     title: `Can I move items from Hardcore to Softcore? (or vice versa)`,
     tag: 'SoftcoreToHardcore',
     body: () => <div>
-      By default this is not enabled, however, if you enable the "Transfer to any mod", it is possible to transfer items anywhere you'd like.
+      By default this is not enabled. <br/>
+      However, if you enable the "<i>Transfer to any mod</i>" under settings, it is possible to transfer items anywhere you'd like.
     </div>,
     type: IHelpEntryType.Informational
   },
@@ -367,7 +364,7 @@ const helpEntries = [
     type: IHelpEntryType.Informational
   },
   {
-    title: `Settings: Whare are secure transfers?`,
+    title: `Settings: What is secure transfers?`,
     tag: 'SecureTransfers',
     body: () => <div>
       <b>Disabling the <i>Secure Transfers</i> option lets IA transfer items even when the stash status is open or unknown</b><br/>
@@ -411,7 +408,7 @@ const helpEntries = [
     body: () => <div>
       Buddy items lets you see all of your friends items.<br/>
       This can be useful if you're playing with a friend / spouse / etc <br/>
-      As you can both search and see the items the other person has.
+      As you can both search and see the items the other person has, but not access them yourself.
     </div>,
     type: IHelpEntryType.Informational
   },
@@ -449,7 +446,20 @@ const helpEntries = [
       <b>The easiest way to get IA to detect Grim Dawn, is to simply start the game while IA is running.</b>
     </div>,
     type: IHelpEntryType.Informational
-  }, /*
+  },
+  {
+    title: `How does online backups work?`,
+    tag: 'OnlineBackups',
+    body: () => <div>
+      <h2>IA has built in support for backing up your items to the cloud.</h2>
+      To enable automatic backup of your items, all you need to do is input your e-mail address, and then input the one-time code which will be sent to you. <br/>
+      <br/>
+      Any time you loot an item it will be synced up to the cloud. If anything happens and you need to reinstall IA, all you need to do is login with the same e-mail address, and IA will automagically download all of your items again.
+      <br/>
+      This functionality can also be used to share items between multiple computers, using the "Using multiple PCs" setting.
+    </div>
+  },
+  /*
   {
     title: `aaaaaaaaaaaaaaaaaaa`,
     tag: 'UnknownItem',
@@ -515,7 +525,7 @@ const helpEntries = [
   },
 
 */
-];
+] as IHelpEntry[];
 
 // Converts a JSX element tree to an array of text (extract text content from <div>mytext</div> for example)
 function elementToText(arg: any) {
@@ -537,7 +547,7 @@ function elementToText(arg: any) {
   }
 
   return result;
-};
+}
 
 // Checks if a target string contains all the words in a search string, ala "mystrike LIKE %word%word%word%"
 const contains = (target: string, what: string) => {
@@ -602,8 +612,11 @@ class Help extends React.PureComponent<Props, object> {
         <input type="text" className="form-control" placeholder="Search.." onChange={(e) => this.props.onSearch(e.target.value)} value={this.props.searchString}/>
       </div>
       {this.filteredEntries()}
+
+      <h2>Still could not find what you were looking for?</h2>
+      <a href="#" onClick={() => openUrl("https://discord.gg/5wuCPbB")} target="_blank" rel="noreferrer">Try the IA discord!</a>
     </div>;
   }
-};
+}
 
 export default Help;

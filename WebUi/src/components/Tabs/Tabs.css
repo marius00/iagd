@@ -195,3 +195,34 @@ li.fancyTab.active a {
   margin-right: 0;
   padding: 0;
 }
+
+.tab .external-link {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.tab .external-link svg {
+  width: 16px;
+  height: 16px;
+}
+
+@media (max-width: 1000px) {
+  .fancyTab .fa svg {
+    display: none;
+  }
+
+  .fancyTab {
+    padding: 0;
+  }
+
+  .fa br {
+    display: none;
+  }
+  .fancyTab.active .arrow-down {
+    display: none;
+  }
+  .container {
+    max-width: 100%;
+  }
+}
