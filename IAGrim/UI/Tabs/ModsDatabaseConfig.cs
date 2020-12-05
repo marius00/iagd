@@ -26,6 +26,7 @@ namespace IAGrim.UI
         private readonly IDatabaseSettingDao _databaseSettingRepo;
         private readonly GrimDawnDetector _grimDawnDetector;
         private readonly SettingsService _settingsService;
+        private readonly IHelpService _helpService;
 
         public ModsDatabaseConfig(
             Action itemViewUpdateTrigger, 
@@ -33,8 +34,8 @@ namespace IAGrim.UI
             ParsingService parsingService,
             IDatabaseSettingDao databaseSettingRepo, 
             GrimDawnDetector grimDawnDetector, 
-            SettingsService settingsService
-            )
+            SettingsService settingsService, 
+            IHelpService helpService)
         {
             InitializeComponent();
             _itemViewUpdateTrigger = itemViewUpdateTrigger;
@@ -43,6 +44,7 @@ namespace IAGrim.UI
             _databaseSettingRepo = databaseSettingRepo;
             _grimDawnDetector = grimDawnDetector;
             _settingsService = settingsService;
+            _helpService = helpService;
             _databaseModSelectionService = new DatabaseModSelectionService();
         }
 
@@ -161,7 +163,7 @@ namespace IAGrim.UI
         }
 
         private void helpFindGrimdawnInstall_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            HelpService.ShowHelp(HelpService.HelpType.CannotFindGrimdawn);
+            _helpService.ShowHelp(HelpService.HelpType.CannotFindGrimdawn);
         }
 
         private void buttonClean_Click(object sender, EventArgs e) {

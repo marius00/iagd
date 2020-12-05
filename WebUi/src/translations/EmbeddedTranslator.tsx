@@ -12,6 +12,7 @@ class EmbeddedTranslator {
     'app.tab.items': 'Items',
     'app.tab.collections': 'Collections',
     'app.tab.crafting': 'Crafting',
+    'app.tab.help': 'Help',
     'app.tab.components': 'Components',
     'app.tab.videoGuide': 'Video Guide',
     'app.tab.videoGuideUrl': 'https://www.twitch.tv/videos/210592694',

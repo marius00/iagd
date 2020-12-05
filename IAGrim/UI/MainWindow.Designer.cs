@@ -32,8 +32,6 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPageItems = new System.Windows.Forms.TabPage();
             this.searchPanel = new System.Windows.Forms.Panel();
-            this.tabPageHelp = new System.Windows.Forms.TabPage();
-            this.panelHelp = new System.Windows.Forms.Panel();
             this.tabPageMods = new System.Windows.Forms.TabPage();
             this.modsPanel = new System.Windows.Forms.Panel();
             this.tabPageBackups = new System.Windows.Forms.TabPage();
@@ -46,12 +44,11 @@
             this.panelLogging = new System.Windows.Forms.Panel();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.trayContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPageItems.SuspendLayout();
-            this.tabPageHelp.SuspendLayout();
             this.tabPageMods.SuspendLayout();
             this.tabPageBackups.SuspendLayout();
             this.tabPageBuddy.SuspendLayout();
@@ -94,7 +91,6 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabPageItems);
-            this.tabControl1.Controls.Add(this.tabPageHelp);
             this.tabControl1.Controls.Add(this.tabPageMods);
             this.tabControl1.Controls.Add(this.tabPageBackups);
             this.tabControl1.Controls.Add(this.tabPageBuddy);
@@ -128,27 +124,6 @@
             this.searchPanel.Name = "searchPanel";
             this.searchPanel.Size = new System.Drawing.Size(1106, 560);
             this.searchPanel.TabIndex = 1;
-            // 
-            // tabPageHelp
-            // 
-            this.tabPageHelp.Controls.Add(this.panelHelp);
-            this.tabPageHelp.Location = new System.Drawing.Point(4, 22);
-            this.tabPageHelp.Name = "tabPageHelp";
-            this.tabPageHelp.Size = new System.Drawing.Size(1098, 560);
-            this.tabPageHelp.TabIndex = 5;
-            this.tabPageHelp.Tag = "iatag_ui_tab_help";
-            this.tabPageHelp.Text = "Help";
-            this.tabPageHelp.UseVisualStyleBackColor = true;
-            // 
-            // panelHelp
-            // 
-            this.panelHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelHelp.Location = new System.Drawing.Point(-2, 0);
-            this.panelHelp.Name = "panelHelp";
-            this.panelHelp.Size = new System.Drawing.Size(1100, 560);
-            this.panelHelp.TabIndex = 1;
             // 
             // tabPageMods
             // 
@@ -275,22 +250,22 @@
             this.openToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.trayContextMenuStrip.Name = "trayContextMenuStrip";
-            this.trayContextMenuStrip.Size = new System.Drawing.Size(181, 70);
+            this.trayContextMenuStrip.Size = new System.Drawing.Size(104, 48);
             this.trayContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.trayContextMenuStrip_Opening);
-            // 
-            // exitToolStripMenuItem
-            // 
-            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.exitToolStripMenuItem.Text = "Exit";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
+            // 
+            // exitToolStripMenuItem
+            // 
+            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.exitToolStripMenuItem.Text = "Exit";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // MainWindow
             // 
@@ -309,7 +284,6 @@
             this.statusStrip.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.tabPageItems.ResumeLayout(false);
-            this.tabPageHelp.ResumeLayout(false);
             this.tabPageMods.ResumeLayout(false);
             this.tabPageBackups.ResumeLayout(false);
             this.tabPageBuddy.ResumeLayout(false);
@@ -339,8 +313,6 @@
         private System.Windows.Forms.TabPage tabPageMods;
         private System.Windows.Forms.Panel modsPanel;
         private System.Windows.Forms.Panel searchPanel;
-        private System.Windows.Forms.TabPage tabPageHelp;
-        private System.Windows.Forms.Panel panelHelp;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.Panel panelLogging;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;

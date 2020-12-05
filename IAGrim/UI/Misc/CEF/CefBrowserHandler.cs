@@ -7,14 +7,16 @@ using CefSharp;
 using CefSharp.WinForms;
 using IAGrim.Backup.Azure.CefSharp;
 using IAGrim.Database.Model;
+using IAGrim.Services;
 using IAGrim.UI.Controller.dto;
 using IAGrim.Utilities;
 using log4net;
 using Newtonsoft.Json;
 
 namespace IAGrim.UI.Misc.CEF {
-    public class CefBrowserHandler : IDisposable, ICefBackupAuthentication, IUserFeedbackHandler, IBrowserCallbacks {
+    public class CefBrowserHandler : IDisposable, ICefBackupAuthentication, IUserFeedbackHandler, IBrowserCallbacks, IHelpService {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(CefBrowserHandler));
+        private TabControl _tabControl; // TODO: UGh.. why?
         public ChromiumWebBrowser BrowserControl { get; private set; }
         private readonly object _lockObj = new object();
         private readonly JsonSerializerSettings _settings = new JsonSerializerSettings {
@@ -26,6 +28,16 @@ namespace IAGrim.UI.Misc.CEF {
 
         ~CefBrowserHandler() {
             Dispose();
+        }
+
+        public void ShowHelp(HelpService.HelpType type) {
+            if (BrowserControl.CanExecuteJavascriptInMainFrame) {
+                BrowserControl.ExecuteScriptAsync("window.showHelp", type.ToString());
+                _tabControl.SelectedIndex = 0;
+            }
+            else {
+                Logger.Warn("Attempted to show help but CEF not yet initialized.");
+            }
         }
 
         public void Dispose() {
@@ -128,9 +140,10 @@ namespace IAGrim.UI.Misc.CEF {
         }
 
 
-        public void InitializeChromium(object bindable, EventHandler browserIsBrowserInitializedChanged) {
+        public void InitializeChromium(object bindable, EventHandler browserIsBrowserInitializedChanged, TabControl tabControl) {
             try {
                 Logger.Info("Creating Chromium instance..");
+                _tabControl = tabControl;
 
                 // Useful: https://github.com/cefsharp/CefSharp/blob/cefsharp/79/CefSharp.Example/CefExample.cs#L208
                 Cef.EnableHighDPISupport();

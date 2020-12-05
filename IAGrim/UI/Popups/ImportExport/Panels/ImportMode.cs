@@ -165,7 +165,7 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
         }
 
         private void helpRestoreBackup_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            HelpService.ShowHelp(HelpService.HelpType.RestoreBackup);
+            new HelpService().ShowHelp(HelpService.HelpType.RestoreBackup); // TODO: Move into UI?
         }
     }
 }

@@ -22,11 +22,13 @@ namespace IAGrim.UI.Tabs {
         private readonly AzureAuthService _authAuthService;
         private readonly SettingsService _settings;
         private readonly AzureSyncService _azureSyncService;
+        private readonly IHelpService _helpService;
 
-        public BackupSettings(IPlayerItemDao playerItemDao, AzureAuthService authAuthService, SettingsService settings, bool onlineBackupsEnabled) {
+        public BackupSettings(IPlayerItemDao playerItemDao, AzureAuthService authAuthService, SettingsService settings, bool onlineBackupsEnabled, IHelpService helpService) {
             InitializeComponent();
             _playerItemDao = playerItemDao;
             _settings = settings;
+            _helpService = helpService;
             if (onlineBackupsEnabled) {
                 _authAuthService = authAuthService;
                 _azureSyncService = new AzureSyncService(authAuthService.GetRestService());
@@ -199,15 +201,15 @@ namespace IAGrim.UI.Tabs {
         }
 
         private void helpWhyGdriveDisabled_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            HelpService.ShowHelp(HelpService.HelpType.BackupAutodetectDisabled);
+            _helpService.ShowHelp(HelpService.HelpType.BackupAutodetectDisabled);
         }
 
         private void helpWhyDropboxDisabled_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            HelpService.ShowHelp(HelpService.HelpType.BackupAutodetectDisabled);
+            _helpService.ShowHelp(HelpService.HelpType.BackupAutodetectDisabled);
         }
 
         private void helpWhyOnedriveDisabled_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            HelpService.ShowHelp(HelpService.HelpType.BackupAutodetectDisabled);
+            _helpService.ShowHelp(HelpService.HelpType.BackupAutodetectDisabled);
         }
 
         private void linkDeleteBackup_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {

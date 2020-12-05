@@ -154,28 +154,28 @@ namespace IAGrim.UI.Tabs {
         }
 
         private void helpWhatIsRecipeAsItems_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            HelpService.ShowHelp(HelpService.HelpType.ShowRecipesAsItems);
+            _cefBrowserHandler.ShowHelp(HelpService.HelpType.ShowRecipesAsItems);
         }
 
         private void helpWhatIsAugmentAsItem_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            HelpService.ShowHelp(HelpService.HelpType.ShowAugmentsAsItems);
+            _cefBrowserHandler.ShowHelp(HelpService.HelpType.ShowAugmentsAsItems);
 
         }
 
         private void helpWhatIsSecureTransfers_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            HelpService.ShowHelp(HelpService.HelpType.SecureTransfers);
+            _cefBrowserHandler.ShowHelp(HelpService.HelpType.SecureTransfers);
         }
 
         private void helpWhatIsTransferToAnyMod_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            HelpService.ShowHelp(HelpService.HelpType.TransferToAnyMod);
+            _cefBrowserHandler.ShowHelp(HelpService.HelpType.TransferToAnyMod);
         }
 
         private void helpWhatIsUsingMultiplePc_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            HelpService.ShowHelp(HelpService.HelpType.MultiplePcs);
+            _cefBrowserHandler.ShowHelp(HelpService.HelpType.MultiplePcs);
         }
 
         private void helpWhatIsDeleteDuplicates_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            HelpService.ShowHelp(HelpService.HelpType.DeleteDuplicates);
+            _cefBrowserHandler.ShowHelp(HelpService.HelpType.DeleteDuplicates);
         }
 
         private void cbDeleteDuplicates_CheckedChanged(object sender, EventArgs e) {
@@ -191,11 +191,11 @@ namespace IAGrim.UI.Tabs {
         }
 
         private void helpWhatIsRegularUpdates_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            HelpService.ShowHelp(HelpService.HelpType.RegularUpdates);
+            _cefBrowserHandler.ShowHelp(HelpService.HelpType.RegularUpdates);
         }
 
         private void helpWhatIsExperimentalUpdates_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            HelpService.ShowHelp(HelpService.HelpType.ExperimentalUpdates);
+            _cefBrowserHandler.ShowHelp(HelpService.HelpType.ExperimentalUpdates);
         }
 
         private void buttonLootManually_Click(object sender, EventArgs e) {

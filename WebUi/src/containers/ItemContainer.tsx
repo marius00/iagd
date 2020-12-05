@@ -80,7 +80,6 @@ class ItemContainer extends React.PureComponent<Props, object> {
               transferAll={(url: object[]) => this.transferAll(url)}
               transferSingle={(url: object[]) => this.transferSingle(url)}
               getItemName={(baseRecord:string) => this.findByRecord(baseRecord)}
-              isDarkMode={this.props.isDarkMode}
             />
           )}
           <OnScrollLoader onTrigger={this.props.onRequestMoreItems} />

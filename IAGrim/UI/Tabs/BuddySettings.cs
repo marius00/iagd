@@ -18,6 +18,7 @@ namespace IAGrim.UI
         private readonly IBuddySubscriptionDao _buddySubscriptionDao;
         private readonly Action<bool> _enableCallback;
         private readonly SettingsService _settingsService;
+        private readonly IHelpService _helpService;
 
         private Timer _delayedTextChangedTimer;
 
@@ -35,13 +36,14 @@ namespace IAGrim.UI
             }
         }
 
-        public BuddySettings(Action<bool> enableCallback, IBuddyItemDao buddyItemDao, IBuddySubscriptionDao buddySubscriptionDao, SettingsService settingsService)
+        public BuddySettings(Action<bool> enableCallback, IBuddyItemDao buddyItemDao, IBuddySubscriptionDao buddySubscriptionDao, SettingsService settingsService, IHelpService helpService)
         {
             InitializeComponent();
             _enableCallback = enableCallback;
             _buddyItemDao = buddyItemDao;
             _buddySubscriptionDao = buddySubscriptionDao;
             _settingsService = settingsService;
+            _helpService = helpService;
         }
 
         private void BuddySettings_Load(object sender, EventArgs e)
@@ -271,7 +273,7 @@ namespace IAGrim.UI
         }
 
         private void helpWhatIsThis_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            HelpService.ShowHelp(HelpService.HelpType.BuddyItems);
+            _helpService.ShowHelp(HelpService.HelpType.BuddyItems);
         }
     }
 }

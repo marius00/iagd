@@ -16,7 +16,6 @@ interface Props {
   transferSingle: (x: any) => void;
   transferAll: (x: any) => void;
   getItemName: (baseRecord: string) => ICollectionItem;
-  isDarkMode: boolean;
 }
 
 class Item extends React.PureComponent<Props, object> {
@@ -170,8 +169,7 @@ class Item extends React.PureComponent<Props, object> {
 
     const mainClasses = [
       "item",
-      (item.numItems <= 0 && item.type === IItemType.Player ?' item-disabled':""),
-      (this.props.isDarkMode ? "item-dark" : "")
+      (item.numItems <= 0 && item.type === IItemType.Player ?' item-disabled':"")
     ];
 
     return (

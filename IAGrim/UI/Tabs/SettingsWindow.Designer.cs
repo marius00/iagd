@@ -411,7 +411,7 @@
             this.helpWhatIsRegularUpdates.AutoSize = true;
             this.helpWhatIsRegularUpdates.BackColor = System.Drawing.Color.Transparent;
             this.helpWhatIsRegularUpdates.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.helpWhatIsRegularUpdates.Location = new System.Drawing.Point(143, 60);
+            this.helpWhatIsRegularUpdates.Location = new System.Drawing.Point(170, 66);
             this.helpWhatIsRegularUpdates.Name = "helpWhatIsRegularUpdates";
             this.helpWhatIsRegularUpdates.Size = new System.Drawing.Size(18, 13);
             this.helpWhatIsRegularUpdates.TabIndex = 30;
@@ -432,7 +432,7 @@
             this.radioBeta.Size = new System.Drawing.Size(454, 27);
             this.radioBeta.TabIndex = 1;
             this.radioBeta.Tag = "iatag_ui_experimentalupdates";
-            this.radioBeta.Text = "Experimental Features";
+            this.radioBeta.Text = "Frequent Updates";
             this.radioBeta.CheckedChanged += new FirefoxRadioButton.CheckedChangedEventHandler(this.radioBeta_CheckedChanged);
             // 
             // radioRelease

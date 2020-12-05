@@ -12,6 +12,7 @@ import ICollectionItem from './interfaces/ICollectionItem';
 import MockCollectionItemData from './mock/MockCollectionItemData';
 import NewFeaturePromoter from './components/NewFeaturePromoter';
 import Spinner from './components/Spinner';
+import Help from './containers/Help';
 
 
 export interface ApplicationState {
@@ -20,11 +21,12 @@ export interface ApplicationState {
   activeTab: number;
   collectionItems: ICollectionItem[];
   isDarkMode: boolean;
+  helpSearchFilter: string;
 }
 
 
 // TODO: Am I actually using this store??
-const StoreContext = React.createContext({items: [], isLoading: true, activeTab: 0, collectionItems: [], isDarkMode: false} as ApplicationState);
+const StoreContext = React.createContext({items: [], isLoading: true, activeTab: 0, collectionItems: [], isDarkMode: false, helpSearchFilter: ''} as ApplicationState);
 
 // TODO: Help Tab, how does online backups work? -- maybe split it into "generic info" and "freakout questions"
 // See code: TODO: Possible to get skill stuff on this? Tooltip + color
@@ -53,6 +55,7 @@ class App extends React.PureComponent<{}, object> {
     activeTab: 0,
     collectionItems: [],
     isDarkMode: false,
+    helpSearchFilter: '',
   } as ApplicationState;
 
   componentDidMount() {
@@ -100,6 +103,15 @@ class App extends React.PureComponent<{}, object> {
       });
     };
 
+    // Show the help screen
+    // @ts-ignore: setIsLoading doesn't exist on window
+    window.showHelp = (tag: string) => {
+      this.setState({
+        activeTab: 3,
+        helpSearchFilter: tag
+      });
+    };
+
     // Show a notification message such as "Item transferred" or "Too close to stash"
     // @ts-ignore: showMessage doesn't exist on window
     window.showMessage = (input: string) => {
@@ -140,7 +152,7 @@ class App extends React.PureComponent<{}, object> {
 
   render() {
     return (
-      <div className={"App " + (this.state.isDarkMode?"App-dark":"")}>
+      <div className={"App " + (this.state.isDarkMode ? "App-dark" : "")}>
         {this.state.isLoading && isEmbedded && <Spinner />}
         <ReactNotification/>
         <StoreContext.Provider value={this.state}>
@@ -176,6 +188,8 @@ class App extends React.PureComponent<{}, object> {
             <iframe title="Crafting tab" src="https://items.dreamcrash.org/ComponentAssembler?record=d009_relic.dbr"
                     style={{width: '100%', height: '100%', overflow: 'hidden', position: 'absolute'}} scrolling="yes" frameBorder={0}/>
           </div>}
+
+          {this.state.activeTab === 3 && <Help searchString={this.state.helpSearchFilter} onSearch={(v: string) => this.setState({helpSearchFilter: v})} />}
 
         </StoreContext.Provider>
 

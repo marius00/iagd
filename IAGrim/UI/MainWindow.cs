@@ -197,8 +197,6 @@ namespace IAGrim.UI
             _buddyBackgroundThread?.Dispose();
             _buddyBackgroundThread = null;
 
-            panelHelp.Controls.Clear();
-
             _injector?.Dispose();
             _injector = null;
 
@@ -356,7 +354,7 @@ namespace IAGrim.UI
             var searchController = _serviceProvider.Get<SearchController>();
             searchController.JsIntegration.OnRequestSetItemAssociations += (s, evvv) => { (evvv as GetSetItemAssociationsEventArgs).Elements = databaseItemDao.GetItemSetAssociations(); };
 
-            _cefBrowserHandler.InitializeChromium(searchController.JsIntegration, Browser_IsBrowserInitializedChanged);
+            _cefBrowserHandler.InitializeChromium(searchController.JsIntegration, Browser_IsBrowserInitializedChanged, tabControl1);
             searchController.Browser = _cefBrowserHandler;
             searchController.JsIntegration.OnClipboard += SetItemsClipboard;
             searchController.JsIntegration.OnRequestFeatureRecommendation += (o, args) => {
@@ -385,7 +383,7 @@ namespace IAGrim.UI
 
             if (!_stashFileMonitor.StartMonitorStashfile(GlobalPaths.SavePath)) {
                 MessageBox.Show("Ooops!\nIt seems you are synchronizing your saves to steam cloud..\nThis tool is unfortunately not compatible.\n");
-                HelpService.ShowHelp(HelpService.HelpType.CloudSavesEnabled);
+                _cefBrowserHandler.ShowHelp(HelpService.HelpType.CloudSavesEnabled);
 
                 Logger.Warn("Shutting down IA, unable to monitor stash files.");
 
@@ -425,19 +423,18 @@ namespace IAGrim.UI
             _buddySettingsWindow = new BuddySettings(delegate (bool b) { BuddySyncEnabled = b; }, 
                 buddyItemDao, 
                 buddySubscriptionDao,
-                settingsService
+                settingsService, 
+                _cefBrowserHandler
                 );
 
             addAndShow(_buddySettingsWindow, buddyPanel);
 
             var databaseSettingDao = _serviceProvider.Get<IDatabaseSettingDao>();
             _authAuthService = new AzureAuthService(_cefBrowserHandler, new AuthenticationProvider(settingsService));
-            var backupSettings = new BackupSettings(playerItemDao, _authAuthService, settingsService, !BlockedLogsDetection.DreamcrashBlocked());
+            var backupSettings = new BackupSettings(playerItemDao, _authAuthService, settingsService, !BlockedLogsDetection.DreamcrashBlocked(), _cefBrowserHandler);
             addAndShow(backupSettings, backupPanel);
-            addAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, playerItemDao, _parsingService, databaseSettingDao, grimDawnDetector, settingsService), modsPanel);
+            addAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, playerItemDao, _parsingService, databaseSettingDao, grimDawnDetector, settingsService, _cefBrowserHandler), modsPanel);
             
-            addAndShow(new HelpTab(), panelHelp);
-        
             if (!BlockedLogsDetection.DreamcrashBlocked()) {
                 addAndShow(new LoggingWindow(), panelLogging);
             }

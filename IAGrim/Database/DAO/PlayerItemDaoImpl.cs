@@ -650,6 +650,8 @@ namespace IAGrim.Database {
                 queryFragments.Add("exists (select id_databaseitem from databaseitemstat_v2 dbs where stat like 'retaliation%' and db.id_databaseitem = dbs.id_databaseitem)");
             }
 
+            // TODO: Seems we only have LIST parameters here.. won't work for this, since we'd get OR not AND on classes.
+            // No way to get a non-list param?
             foreach (var desiredClass in query.Classes) {
                 queryFragments.Add("exists (select id_databaseitem from databaseitemstat_v2 dbs where stat IN ('augmentSkill1Extras','augmentSkill2Extras','augmentSkill3Extras','augmentSkill4Extras','augmentMastery1','augmentMastery2','augmentMastery3','augmentMastery4') "
                     + $" AND TextValue = '{desiredClass}'" // Not ideal
@@ -672,7 +674,8 @@ namespace IAGrim.Database {
                 ";
                 return new DatabaseItemStatQuery {
                     SQL = sql,
-                    Parameters = queryParamsList
+                    Parameters = queryParamsList,
+
                 };
             }
 

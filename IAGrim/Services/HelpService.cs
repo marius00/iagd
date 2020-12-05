@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using IAGrim.Utilities;
 
 namespace IAGrim.Services {
-    public static class HelpService {
+    public class HelpService : IHelpService {
         public enum HelpType {
             BuddyItems,
             CloudSavesEnabled,
@@ -29,12 +29,16 @@ namespace IAGrim.Services {
 
         }
 
-        public static void ShowHelp(HelpType type) {
+        public void ShowHelp(HelpType type) {
             Process.Start($"http://grimdawn.dreamcrash.org/ia/help.html?q={type.ToString()}&r={DateTime.UtcNow.Ticks}");
         }
 
         public static string GetUrl(HelpType type) {
             return $"http://grimdawn.dreamcrash.org/ia/help.html?q={type.ToString()}&r={DateTime.UtcNow.Ticks}";
         }
+    }
+
+    public interface IHelpService {
+        void ShowHelp(HelpService.HelpType type);
     }
 }

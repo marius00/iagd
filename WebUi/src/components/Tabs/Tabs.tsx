@@ -7,6 +7,8 @@ import VideoLibrary from '@material-ui/icons/VideoLibrary';
 import LiveHelp from '@material-ui/icons/LiveHelp';
 import DarkMode from '@material-ui/icons/NightsStay';
 import LightMode from '@material-ui/icons/WbSunny';
+import Help from '@material-ui/icons/Help';
+import CraftingIcon from '@material-ui/icons/Work';
 import Patreon from './Patreon';
 
 import { openUrl } from '../../integration/integration';
@@ -71,7 +73,8 @@ export default function Tabs({activeTab, setActiveTab, isDarkMode, toggleDarkmod
 
       {renderTabEntry(translate('app.tab.items'), idx++, <Home/>, activeTab === 0)}
       {renderTabEntry(translate('app.tab.collections'), idx++, <Web/>, activeTab === 1)}
-      {renderTabEntry(translate('app.tab.crafting'), idx++, <Web/>, activeTab === 2)}
+      {renderTabEntry(translate('app.tab.crafting'), idx++, <CraftingIcon/>, activeTab === 2)}
+      {renderTabEntry(translate('app.tab.help'), idx++, <Help/>, activeTab === 3)}
       {renderLinkEntry(translate('app.tab.components'), idx++, <OpenInNew/>, 'http://dev.dreamcrash.org/enchantments/')}
       {translate('app.tab.videoGuide').length > 0 && renderLinkEntry(translate('app.tab.videoGuide'), idx++, <VideoLibrary/>, translate('app.tab.videoGuideUrl'))}
 

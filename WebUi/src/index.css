@@ -22,15 +22,8 @@ body {
 .App {
   --background-color: rgb(85,68,96); /*Legacy*/
   background: var(--background-color);
-}
 
-.App-dark {
-  --background-color: rgb(0, 0, 0);
-  background: var(--background-color);
-}
 
-   /*Old/Light theme*/
-.item {
   --item-background: #e8d5b6;
   --item-background-hover: #e8d5b6;
   --item-stat-label: 000000;
@@ -59,9 +52,11 @@ body {
   --item-warning-zero: orange;
 }
 
+.App-dark {
+  --background-color: rgb(0, 0, 0);
+  background: var(--background-color);
 
 
-.item-dark {
   --item-background: #171614;
   --item-background-hover: #232220;
   --item-stat-label: #a88054;

@@ -431,7 +431,7 @@ namespace StatTranslator {
             {"iatag_ui_minimizetotray", "Minimize to Tray"},
             {"iatag_ui_startminimized", "Start minimized"},
             {"iatag_ui_update_title", "Automatic Updates"},
-            {"iatag_ui_experimentalupdates", "Experimental Features"},
+            {"iatag_ui_experimentalupdates", "Frequent Features"},
             {"iatag_ui_regularupdates", "Regular Updates"},
             {"iatag_ui_misc_title", "Misc"},
             {"iatag_ui_donatenow", "Donate Now!"},

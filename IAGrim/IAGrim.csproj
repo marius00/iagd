@@ -475,12 +475,6 @@
     <Compile Include="UI\Popups\DonateNagScreen.Designer.cs">
       <DependentUpon>DonateNagScreen.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Tabs\HelpTab.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Tabs\HelpTab.Designer.cs">
-      <DependentUpon>HelpTab.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\Popups\LanguagePackPicker.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -644,9 +638,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Popups\DonateNagScreen.resx">
       <DependentUpon>DonateNagScreen.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\Tabs\HelpTab.resx">
-      <DependentUpon>HelpTab.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Popups\LanguagePackPicker.resx">
       <DependentUpon>LanguagePackPicker.cs</DependentUpon>
@@ -817,9 +808,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\static\gdrive.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\help.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\static\ItemArtifact.png">
