@@ -2,7 +2,7 @@ import * as React from 'react';
 import './App.css';
 import 'react-notifications-component/dist/theme.css';
 import IItem from './interfaces/IItem';
-import MockItemsButton from './containers/MockItemsButton';
+import MockItemsButton from './containers/LoadMockItemsButton';
 import { isEmbedded, requestMoreItems } from './integration/integration';
 import ItemContainer from './containers/ItemContainer';
 import ReactNotification, { store } from 'react-notifications-component';
@@ -65,6 +65,7 @@ class App extends React.PureComponent<{}, object> {
     // @ts-ignore: setItems doesn't exist on window
     window.setItems = (data: any) => {
       const items = typeof data === 'string' ? JSON.parse(data) : data;
+      console.log(data);
 
       this.setState({
         isLoading: false,

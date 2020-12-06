@@ -2,11 +2,13 @@ import * as React from 'react';
 import ItemStat from './ItemStat';
 import { ISkill } from '../../interfaces/ISkill';
 import translate from '../../translations/EmbeddedTranslator';
+import { statToString } from '../../interfaces/IStat';
 
 interface Props {
   skill: ISkill;
   keyPrefix: string;
 }
+
 class Skill extends React.PureComponent<Props, object> {
 
   render() {
@@ -14,15 +16,15 @@ class Skill extends React.PureComponent<Props, object> {
     const prefix = this.props.keyPrefix;
 
     const headerStats = skill.headerStats.map((stat) =>
-      <ItemStat label={stat.label} extras={stat.extras} key={'skill-stat-head-' + prefix + stat.label} />
+      <ItemStat {...stat} key={'skill-stat-head-' + prefix + statToString(stat)} />
     );
 
     const bodyStats = skill.bodyStats.map((stat) =>
-      <ItemStat label={stat.label} extras={stat.extras} key={'skill-stat-body-' + prefix + stat.label} />
+      <ItemStat {...stat} key={'skill-stat-body-' + prefix + statToString(stat)} />
     );
 
     const petStats = skill.petStats.map((stat) =>
-      <ItemStat label={stat.label} extras={stat.extras} key={'skill-stat-pets-' + prefix + stat.label} />
+      <ItemStat {...stat} key={'skill-stat-pets-' + prefix + statToString(stat)} />
     );
 
     return (

@@ -1,29 +1,55 @@
 import * as React from 'react';
+import { IStat } from '../../interfaces/IStat';
 
-interface Props {
-  label: string;
-  extras?: string;
+
+function statToString(stat: IStat) {
+  return stat.text
+    .replace('{0}', stat.param0)
+    .replace('{1}', stat.param1)
+    .replace('{2}', stat.param2)
+    .replace('{3}', stat.param3)
+    .replace('{4}', stat.param4)
+    .replace('{5}', stat.param5)
+    .replace('{6}', stat.param6);
 }
 
-class ItemStat extends React.PureComponent<Props, object> {
+// Removes the 3rd parameter, typically skill name.
+function statToStringSkip3(stat: IStat) {
+  return stat.text
+    .replace('{0}', stat.param0)
+    .replace('{1}', stat.param1)
+    .replace('{2}', stat.param2)
+    .replace('{3}', ' ')
+    .replace('{4}', stat.param4)
+    .replace('{5}', stat.param5)
+    .replace('{6}', stat.param6);
+}
+
+class ItemStat extends React.PureComponent<IStat, object> {
   render() {
-    if (this.props.label === '') {
+    if (this.props.text === '') {
       return null;
     }
 
-    const modifier = this.props.label.substr(0, this.props.label.indexOf(' '));
-    const label = this.props.label.substr(this.props.label.indexOf(' ') + 1);
-
     if (this.props.extras) {
+      const text = statToStringSkip3(this.props);
+      const modifier = text.substr(0, text.indexOf(' '));
+      const label = text.substr(text.indexOf(' ') + 1);
+
+      // TODO: We have a tooltip.. that means we got a skill in {3}
       return (
         <li>
           <a data-tip={this.props.extras} className="skill-trigger">
             <span className="modifier">{modifier}</span>&nbsp;
             <span className="label">{label}</span>
-            </a>
+            <span className="modified-skill">{this.props.param3}</span>
+          </a>
         </li>
       );
     } else {
+      const text = statToString(this.props);
+      const modifier = text.substr(0, text.indexOf(' '));
+      const label = text.substr(text.indexOf(' ') + 1);
       return (
         <li>
           <span className="modifier">{modifier}</span>&nbsp;

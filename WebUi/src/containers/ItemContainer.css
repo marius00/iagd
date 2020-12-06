@@ -42,6 +42,11 @@
   color: var(--item-pet-bullet);
 }
 
+
+.bodystats .modified-skill, .skill .modified-skill, .pet-stats .modified-skill {
+  color: var(--item-skill);
+}
+
 .bodystats .label, .skill .label, .pet-stats .label {
   color: var(--item-stat-label);
 }
@@ -239,7 +244,6 @@ a { cursor: pointer; }
   margin-top: 15px;
 }
 .skill-trigger {
-  text-decoration: underline !important;
   color: var(--item-skill-trigger) !important;
 }
 .item-name-header {

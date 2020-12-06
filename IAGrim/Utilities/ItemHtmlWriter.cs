@@ -22,15 +22,28 @@ namespace IAGrim.Utilities {
             CopyMissingFiles();
         }
 
+        private static JsonStat ToJsonStat(TranslatedStat stat) {
+            return new JsonStat {
+                Text = stat.Text,
+                Param0 = stat.Param0,
+                Param1 = stat.Param1,
+                Param2 = stat.Param2,
+                Param3 = stat.Param3,
+                Param4 = stat.Param4,
+                Param5 = stat.Param5,
+                Param6 = stat.Param6,
+                Extras = stat.Extra?.ToString()
+            };
+        }
         private static JsonSkill GetJsonSkill(PlayerItemSkill skill) {
             return new JsonSkill {
                 Name = skill.Name,
                 Description = skill.Description,
                 Level = skill.Level,
                 Trigger = skill.Trigger?.ToString(),
-                PetStats = skill.PetStats.Select(m => new JsonStat { Label = m.ToString(), Extras = m.Extra?.ToString() }).ToList(),
-                BodyStats = skill.BodyStats.Select(m => new JsonStat { Label = m.ToString(), Extras = m.Extra?.ToString() }).ToList(),
-                HeaderStats = skill.HeaderStats.Select(m => new JsonStat { Label = m.ToString(), Extras = m.Extra?.ToString() }).ToList(),
+                PetStats = skill.PetStats.Select(ToJsonStat).ToList(),
+                BodyStats = skill.BodyStats.Select(ToJsonStat).ToList(),
+                HeaderStats = skill.HeaderStats.Select(ToJsonStat).ToList(),
             };
         }
 
@@ -82,9 +95,9 @@ namespace IAGrim.Utilities {
                 Socket = GetSocketFromItem(item?.Name) ?? string.Empty,
                 NumItems = (uint)item.Count,
                 InitialNumItems = (uint)item.Count,
-                PetStats = item.PetStats.Select(m => new JsonStat { Label = m.ToString(), Extras = m.Extra?.ToString() }).ToList(),
-                BodyStats = item.BodyStats.Select(m => new JsonStat { Label = m.ToString(), Extras = m.Extra?.ToString() }).ToList(),
-                HeaderStats = item.HeaderStats.Select(m => new JsonStat { Label = m.ToString(), Extras = m.Extra?.ToString() }).ToList(),
+                PetStats = item.PetStats.Select(ToJsonStat).ToList(),
+                BodyStats = item.BodyStats.Select(ToJsonStat).ToList(),
+                HeaderStats = item.HeaderStats.Select(ToJsonStat).ToList(),
                 Type = type,
                 HasRecipe = item.HasRecipe,
                 Buddies = item.Buddies.ToArray(),
@@ -98,11 +111,8 @@ namespace IAGrim.Utilities {
             var modifiedSkills = item.ModifiedSkills;
             foreach (var modifiedSkill in modifiedSkills) {
                 var translated = modifiedSkill.Translated;
-                foreach (var translatedStat in translated) {
-                    json.BodyStats.Add(new JsonStat {
-                        Label = translatedStat.ToString(),
-                        Extras = translatedStat.Extra?.ToString()
-                    });
+                foreach (var stat in translated.Select(ToJsonStat)) {
+                    json.BodyStats.Add(stat);
                 }
 
                 if (translated.Count == 0 && !(modifiedSkill.Class == null || modifiedSkill.Tier == null)) {

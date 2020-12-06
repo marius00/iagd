@@ -9,6 +9,7 @@ import translate from '../../translations/EmbeddedTranslator';
 import IItemType from '../../interfaces/IItemType';
 import GetSetName, { GetSetItems } from '../../integration/ItemSetService';
 import ICollectionItem from '../../interfaces/ICollectionItem';
+import { IStat, statToString } from '../../interfaces/IStat';
 
 
 interface Props {
@@ -141,6 +142,18 @@ class Item extends React.PureComponent<Props, object> {
     return "";
   }
 
+  // TODO:
+  statToString(stat: IStat) {
+    return stat.text
+      .replace("{0}", stat.param0)
+      .replace("{1}", stat.param1)
+      .replace("{2}", stat.param2)
+      .replace("{3}", stat.param3)
+      .replace("{4}", stat.param4)
+      .replace("{5}", stat.param5)
+      .replace("{6}", stat.param6);
+  }
+
   render() {
     const item = this.props.item;
     const icon = (item.icon && item.icon.length) > 0 ? item.icon : 'weapon1h_focus02a.tex.png';
@@ -148,15 +161,15 @@ class Item extends React.PureComponent<Props, object> {
     const socket = item.socket.replace(" ", "");
 
     const headerStats = item.headerStats.map((stat) =>
-      <ItemStat label={stat.label} extras={stat.extras} key={'stat-head-' + item.url.join(':') + socket + stat.label}/>
+      <ItemStat {...stat} key={'stat-head-' + item.url.join(':') + socket + statToString(stat)} />
     );
 
     const bodyStats = item.bodyStats.map((stat) =>
-      <ItemStat label={stat.label} extras={stat.extras} key={'stat-body-' + item.url.join(':') + socket + stat.label}/>
+      <ItemStat {...stat} key={'stat-body-' + item.url.join(':') + socket + statToString(stat)} />
     );
 
     const petStats = item.petStats.map((stat) =>
-      <ItemStat label={stat.label} extras={stat.extras} key={'stat-pets-' + item.url.join(':') + socket + stat.label}/>
+      <ItemStat {...stat} key={'stat-pets-' + item.url.join(':') + socket + statToString(stat)} />
     );
 
     const setName = GetSetName(item.baseRecord);

@@ -35,6 +35,7 @@ body {
   --item-header-info: black;
   --item-grantskill-label: inherit;
   --item-grantskill-content: inherit;
+  --item-skill: #000000;
 
   --item-skill-trigger: gray;
   --item-supergreen: var(--item-color-green);
@@ -68,6 +69,7 @@ body {
   --item-header-info: #ffffff;
   --item-grantskill-label: #e3ba6b;
   --item-grantskill-content: #6699ff;
+  --item-skill: #338cce;
   --item-supergreen: #3eea4a;
   --item-socket: #dec2a3;
   --item-set: #dbb284;
