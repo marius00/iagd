@@ -15,5 +15,6 @@ namespace IAGrim.Database.Interfaces {
         Dictionary<string, ISet<DBStatRow>> GetExpacSkillModifierSkills();
 
         string GetSkillName(string skillRecord);
+        Dictionary<string, float> GetSkillTiers();
     }
 }

@@ -28,6 +28,8 @@ export interface ApplicationState {
 // TODO: Am I actually using this store??
 const StoreContext = React.createContext({items: [], isLoading: true, activeTab: 0, collectionItems: [], isDarkMode: false, helpSearchFilter: ''} as ApplicationState);
 
+// TODO: See C#: What's this? May be the cause of all the "no stats found" shit.. does it ever DO anything?
+
 // TODO: Help Tab, how does online backups work? -- maybe split it into "generic info" and "freakout questions"
 // See code: TODO: Possible to get skill stuff on this? Tooltip + color
 // TODO: Font color red on Set: bonus tag is freaking terrible in light mode (dark tooltip)
@@ -128,7 +130,6 @@ class App extends React.PureComponent<{}, object> {
   // Will eventually be moved into C# once the form supports darkmode
   toggleDarkmode() {
     this.setState({isDarkMode: !this.state.isDarkMode});
-    console.log('swappy', this.state.isDarkMode);
   }
 
   // reduceItemCount will reduce the number of items displayed, generally after an item has been transferred out.
@@ -177,6 +178,7 @@ class App extends React.PureComponent<{}, object> {
               onRequestMoreItems={() => this.requestMoreItems()}
               collectionItems={this.state.collectionItems}
               isDarkMode={this.state.isDarkMode}
+              requestUnknownItemHelp={() => this.setState({helpSearchFilter: 'UnknownItem', activeTab: 3})}
             />
           </div>
 

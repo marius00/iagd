@@ -11,12 +11,14 @@ using StatTranslator;
 namespace IAGrim.Database.Model {
     public class SkillModifierStat {
         public string Name { get; set; }
+        public string Class { get; set; }
+        public float? Tier { get; set; }
 
         public virtual IList<TranslatedStat> Translated {
             get {
                 if (Tags == null)
                     return new List<TranslatedStat>();
-                return RuntimeSettings.StatManager.ProcessSkillModifierStats(new HashSet<IItemStat>(Tags), Name);
+                return RuntimeSettings.StatManager.ProcessSkillModifierStats(new HashSet<IItemStat>(Tags), Name, Class, Tier);
             }
         }
 

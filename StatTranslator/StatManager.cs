@@ -78,20 +78,15 @@ namespace StatTranslator
                 IItemStat statExtras = stats.FirstOrDefault(m => m.Stat == statName + "Extras" && m.Record == stat.Record);
                 
                 TranslatedStat extraStat = null;
-                if (statExtras != null)
-                {
-
-                    extraStat = new TranslatedStat
-                    {
+                if (statExtras != null) {
+                    extraStat = new TranslatedStat {
                         Text = _language.GetTag(statName + "Extras"),
-                        Param0 = statExtras.Value,
-                        Param3 = _language.GetTag(statExtras.TextValue)
+                        Param0 = statExtras.Value, // Tier
+                        Param3 = _language.GetTag(statExtras.TextValue) // Class
                     };
                 }
-                if (stat != null)
-                {
-                    result.Add(new TranslatedStat
-                    {
+                if (stat != null) {
+                    result.Add(new TranslatedStat {
                         Text = _language.GetTag(statName),
                         Param0 = stat.Value,
                         Param3 = stat.TextValue,
@@ -636,12 +631,21 @@ namespace StatTranslator
         }
 
 
-        public List<TranslatedStat> ProcessSkillModifierStats(ISet<IItemStat> stats, string skill)
+        public List<TranslatedStat> ProcessSkillModifierStats(ISet<IItemStat> stats, string skill, string classtag, float? tier)
         {
             List<TranslatedStat> result = new List<TranslatedStat>();
             var weaponDamageEffect = stats.FirstOrDefault(m => m.Stat == "weaponDamagePct");
             var offensivePhysicalResistanceReduction = stats.FirstOrDefault(m => m.Stat == "offensivePhysicalResistanceReductionAbsoluteMin");
             var petLimit = stats.FirstOrDefault(m => m.Stat == "petLimit");
+
+            TranslatedStat tooltip = null;
+            if (classtag != null && tier != null) {
+                tooltip = new TranslatedStat {
+                    Text = _language.GetTag("augmentSkill1Extras"),
+                    Param0 = tier,
+                    Param3 = _language.GetTag(classtag)
+                };
+            }
 
             if (weaponDamageEffect != null)
             {
@@ -664,6 +668,7 @@ namespace StatTranslator
                         Param0 = offensivePhysicalResistanceReduction.Value,
                         Param1 = offensivePhysicalResistanceReductionAbsoluteDurationMin.Value,
                         Param3 = skill,
+                        Extra = tooltip,
                         Text = _language.GetTag("customtag_xpac_modif_physicalResistDuration"),
                         Type = TranslatedStatType.FOOTER
                     });
@@ -675,6 +680,7 @@ namespace StatTranslator
                     {
                         Param0 = offensivePhysicalResistanceReduction.Value,
                         Param3 = skill,
+                        Extra = tooltip,
                         Text = _language.GetTag("customtag_xpac_modif_physicalResist"),
                         Type = TranslatedStatType.FOOTER
                     });
@@ -882,6 +888,7 @@ namespace StatTranslator
 
             AddSimpleStat("offensiveDamageMultModifier", "customtag_xpac_modif_offensiveDamageMultModifier", stats, skill, result);
 
+            /*
             if (stats.Count > 0 && result.Count == 0)
             {
                 Logger.Warn("No stats parsed for modifiers");
@@ -889,7 +896,16 @@ namespace StatTranslator
                 {
                     Logger.Debug($"{stat.Stat}: {stat.Value}, {stat.TextValue}");
                 }
+            }*/
+
+
+            // Apply the same tooltip to all
+            foreach (var entry in result) {
+                if (entry.Extra == null) {
+                    entry.Extra = tooltip;
+                }
             }
+
             return result;
         }
 

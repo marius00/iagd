@@ -7,6 +7,7 @@ using log4net;
 using IAGrim.Database.Interfaces;
 using IAGrim.Database.DAO.Dto;
 using IAGrim.Database.Model;
+using IAGrim.Parsers.Arz;
 using IAGrim.Settings;
 using IAGrim.Settings.Dto;
 using MoreLinq;
@@ -132,6 +133,7 @@ namespace IAGrim.Services {
                 return;
             }
 
+            var skillTiers = _databaseItemStatDao.GetSkillTiers();
             var itemsWithXpacStat = items.Where(m => m.Tags.Any(s => s.Stat == "modifiedSkillName1"));
             foreach (var item in itemsWithXpacStat) {
                 for (int i = 0; i < 5; i++) {
@@ -149,15 +151,24 @@ namespace IAGrim.Services {
 
                     // For pet skills we got _xpacSkills layer to hop trough
                     var petSkillRecord = _xpacSkills[recordForStats].Where(s => s.Stat == "petSkillName").Select(s => s.TextValue).FirstOrDefault();
+
+                    float? tier = null;
+                    if (skillTiers.ContainsKey(affectedSkill?.TextValue)) {
+                        tier = skillTiers[affectedSkill?.TextValue];
+                    }
+                    
                     if (petSkillRecord != null) {
                         if (_xpacSkills.ContainsKey(petSkillRecord)) {
                             item.ModifiedSkills.Add(new SkillModifierStat {
+                                Class = ArzParser.ExtractClassFromRecord(petSkillRecord),
                                 Tags = _xpacSkills[petSkillRecord],
-                                Name = name
+                                Name = name,
+                                Tier = tier
                             });
                         }
                     }
 
+                    // TODO: What's this? May be the cause of all the "no stats found" shit.. does it ever DO anything?
                     item.ModifiedSkills.Add(new SkillModifierStat {
                         Tags = _xpacSkills[recordForStats],
                         Name = name
@@ -172,8 +183,7 @@ namespace IAGrim.Services {
                 Logger.Debug($"Applying stats to {items.Count()} items");
 
                 var playerItems = GetPlayerItems(items);
-                if (playerItems.Count > 0)
-                {
+                if (playerItems.Count > 0) {
                     ApplyStatsToPlayerItems(playerItems);
                 }
 
@@ -286,9 +296,9 @@ namespace IAGrim.Services {
                         stats.AddRange(Filter(statMap[pi.PetRecord]));
                     // TODO: Don't do this, use PlayerItemRecords.. somehow.. those contain pet bonuses
 
-                    var tmp = stats.Where(s => s.Stat.StartsWith("augment")).ToList();
                     pi.Tags = process(stats);
                 }
+
 
                 Logger.Debug($"Applied stats to {items.Count} items");
             }

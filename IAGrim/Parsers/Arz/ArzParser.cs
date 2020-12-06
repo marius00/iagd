@@ -93,6 +93,16 @@ namespace IAGrim.Parsers.Arz {
             return string.Empty;
         }
 
+        public static string ExtractClassFromRecord(string record) {
+            Regex playerClassRx = new Regex(@".*/player(class\d+)/.*");
+            // "MasteryEnumeration"	"SkillClass24" => tagSkillClassName24
+            var rExSkillClass = playerClassRx.Match(record);
+            if (rExSkillClass.Success && rExSkillClass.Groups.Count == 2)
+                return rExSkillClass.Groups[1].Value;
+
+            return string.Empty;
+        }
+
         /// <summary>
         ///     +1 to Occultist
         ///     Or similar

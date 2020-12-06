@@ -105,7 +105,7 @@ namespace IAGrim.Utilities {
                     });
                 }
 
-                if (translated.Count == 0) {
+                if (translated.Count == 0 && !(modifiedSkill.Class == null || modifiedSkill.Tier == null)) {
                     string[] uri = json.URL.Select(o => o.ToString()).ToArray();
                     
                     var error = $@"Could not translate skill-modifier on: '{item.Name}', {json.BaseRecord} - {string.Join(";", uri)}";

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using IAGrim.Database.DAO.Table;
+using IAGrim.Database.Model;
 using IAGrim.Parsers.GameDataParsing.Model;
 
 namespace IAGrim.Database {
@@ -165,6 +166,29 @@ namespace IAGrim.Database {
                 }
 
                 return result;
+            }
+        }
+
+        public Dictionary<string, float> GetSkillTiers() {
+            string sql = @"
+                select baserecord as BaseRecord, val1 as Tier from DatabaseItem_v2 item, DatabaseItemStat_v2 s
+                WHERE s.id_databaseitem = item.id_databaseitem
+                AND item.baserecord IN (
+	                select TextValue from DatabaseItemStat_v2 statItem
+	                WHERE statItem.stat = 'modifiedSkillName1'
+                )
+                AND Stat = 'skillTier'";
+
+            Dictionary<string, float> dict = new Dictionary<string, float>(100);
+            using (var session = SessionCreator.OpenSession()) {
+                var results = session.CreateSQLQuery(sql)
+                        .SetResultTransformer(Transformers.AliasToBean<SkillTierMapping>())
+                        .List<SkillTierMapping>();
+                foreach (var m in results) {
+                    dict[m.BaseRecord] = (float)m.Tier;
+                }
+
+                return dict;
             }
         }
 

@@ -16,17 +16,12 @@ interface Props {
   transferSingle: (x: any) => void;
   transferAll: (x: any) => void;
   getItemName: (baseRecord: string) => ICollectionItem;
+  requestUnknownItemHelp: () => void;
 }
 
 class Item extends React.PureComponent<Props, object> {
   openItemSite() {
-    let url = `http://www.grimtools.com/db/search?query=${this.props.item.name}`;
-    if (this.props.item.numItems > 50) {
-      console.warn('Unknown item, redirecting to help page.');
-      url = 'http://grimdawn.dreamcrash.org/ia/help.html?q=UnknownItem';
-    }
-
-    openUrl(url);
+    openUrl(`http://www.grimtools.com/db/search?query=${this.props.item.name}`);
   }
 
   renderBuddyItem(item: IItem) {
@@ -261,7 +256,7 @@ class Item extends React.PureComponent<Props, object> {
           : ''
         }
 
-        {item.type === IItemType.Player && this.props.item.numItems > 50 && <div className="unknownitem"><a onClick={() => this.openItemSite()}>You may be experiencing issues.. Click here for more information.</a></div>}
+        {item.type === IItemType.Player && this.props.item.numItems > 50 && <div className="unknownitem"><a onClick={() => this.props.requestUnknownItemHelp()}>You may be experiencing issues.. Click here for more information.</a></div>}
       </div>
     );
   }
