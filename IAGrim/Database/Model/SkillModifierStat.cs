@@ -13,6 +13,7 @@ namespace IAGrim.Database.Model {
         public string Name { get; set; }
         public string Class { get; set; }
         public float? Tier { get; set; }
+        public bool IsMonsterInfrequent { get; set; }
 
         public virtual IList<TranslatedStat> Translated {
             get {

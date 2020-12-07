@@ -156,6 +156,12 @@ namespace IAGrim.Services {
                     if (skillTiers.ContainsKey(affectedSkill?.TextValue)) {
                         tier = skillTiers[affectedSkill?.TextValue];
                     }
+
+                    // TODO: Mark monster infrequents
+                    /*
+                    if (recordForStats.IndexOf("/mi/") != -1) {
+
+                    }*/
                     
                     if (petSkillRecord != null) {
                         if (_xpacSkills.ContainsKey(petSkillRecord)) {
@@ -163,7 +169,8 @@ namespace IAGrim.Services {
                                 Class = ArzParser.ExtractClassFromRecord(petSkillRecord),
                                 Tags = _xpacSkills[petSkillRecord],
                                 Name = name,
-                                Tier = tier
+                                Tier = tier,
+                                IsMonsterInfrequent = recordForStats?.IndexOf("/mi/") != -1
                             });
                         }
                     }

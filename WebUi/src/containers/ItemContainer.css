@@ -47,6 +47,10 @@
   color: var(--item-skill);
 }
 
+.App-Light .bodystats .modified-skill, .skill .modified-skill, .pet-stats .modified-skill {
+  text-decoration: underline;
+}
+
 .bodystats .label, .skill .label, .pet-stats .label {
   color: var(--item-stat-label);
 }

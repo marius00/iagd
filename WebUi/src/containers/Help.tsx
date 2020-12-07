@@ -32,6 +32,14 @@ const typicalParseDbMessage = <>{toNumberedList(`
 
 const helpEntries = [
   {
+    title: `IA says "Stash: Error"`,
+    tag: 'StashError',
+    body: () => <div>
+      Try running IA as administrator.
+    </div>,
+    type: IHelpEntryType.Help
+  },
+  {
     title: `IA shows me "Unknown Item"!??`,
     tag: 'UnknownItem',
     body: () => typicalParseDbMessage,

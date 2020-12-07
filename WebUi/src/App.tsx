@@ -154,7 +154,7 @@ class App extends React.PureComponent<{}, object> {
 
   render() {
     return (
-      <div className={"App " + (this.state.isDarkMode ? "App-dark" : "")}>
+      <div className={"App " + (this.state.isDarkMode ? "App-dark" : "App-Light")}>
         {this.state.isLoading && isEmbedded && <Spinner />}
         <ReactNotification/>
         <StoreContext.Provider value={this.state}>

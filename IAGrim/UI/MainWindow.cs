@@ -115,6 +115,7 @@ namespace IAGrim.UI
             var args = e as FrameLoadEndEventArgs;
             ChromiumWebBrowser browser = sender as ChromiumWebBrowser;
             if (args != null && args.Frame.IsMain) {
+                // https://github.com/cefsharp/CefSharp/issues/3021
                 if (browser?.CanExecuteJavascriptInMainFrame ?? true) {
                     if (InvokeRequired) {
                         Invoke((MethodInvoker) delegate { _searchWindow?.UpdateListViewDelayed(); });

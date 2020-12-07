@@ -180,6 +180,7 @@ class Item extends React.PureComponent<Props, object> {
       (item.numItems <= 0 && item.type === IItemType.Player ?' item-disabled':"")
     ];
 
+    const miText = item.isMonsterInfrequent ? ' / MI' : '';
     return (
       <div className={mainClasses.join(" ")}>
         <img src={icon} className={"item-icon item-icon-" + item.quality.toLowerCase()} data-tip={item.slot}/>
@@ -188,8 +189,8 @@ class Item extends React.PureComponent<Props, object> {
             <span>
               <a onClick={() => this.openItemSite()} className={this.translateQualityToClass(item.quality)}>{name}</a>
             </span>
-              {item.greenRarity === 3 ? <span className="cursor-help supergreen" data-tip={translate('items.label.tripleGreen')}> (3)</span> : ''}
-              {item.greenRarity === 2 ? <span className="cursor-help supergreen" data-tip={translate('items.label.doubleGreen')}> (2)</span> : ''}
+              {item.greenRarity === 3 ? <span className="cursor-help supergreen" data-tip={translate('items.label.tripleGreen')}> (3{miText})</span> : ''}
+              {item.greenRarity === 2 ? <span className="cursor-help supergreen" data-tip={translate('items.label.doubleGreen')}> (2{miText})</span> : ''}
           </Textfit>
           {item.socket && item.socket.length > 0 &&
           <span className="item-socket-label">{item.socket}</span>

@@ -35,6 +35,7 @@ namespace IAGrim.Utilities {
                 Extras = stat.Extra?.ToString()
             };
         }
+
         private static JsonSkill GetJsonSkill(PlayerItemSkill skill) {
             return new JsonSkill {
                 Name = skill.Name,

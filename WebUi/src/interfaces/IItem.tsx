@@ -23,5 +23,6 @@ export default interface IItem {
   hasCloudBackup?: boolean;
   slot?: string;
   extras?: string | undefined;
+  isMonsterInfrequent?: boolean;
 }
 

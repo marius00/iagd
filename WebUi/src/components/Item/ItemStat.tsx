@@ -2,8 +2,8 @@ import * as React from 'react';
 import { IStat } from '../../interfaces/IStat';
 
 
-function statToString(stat: IStat) {
-  return stat.text
+function statToString(text: string, stat: IStat) {
+  return text
     .replace('{0}', stat.param0)
     .replace('{1}', stat.param1)
     .replace('{2}', stat.param2)
@@ -13,18 +13,8 @@ function statToString(stat: IStat) {
     .replace('{6}', stat.param6);
 }
 
-// Removes the 3rd parameter, typically skill name.
-function statToStringSkip3(stat: IStat) {
-  return stat.text
-    .replace('{0}', stat.param0)
-    .replace('{1}', stat.param1)
-    .replace('{2}', stat.param2)
-    .replace('{3}', ' ')
-    .replace('{4}', stat.param4)
-    .replace('{5}', stat.param5)
-    .replace('{6}', stat.param6);
-}
 
+// TODO: Color differentiation on {4}
 class ItemStat extends React.PureComponent<IStat, object> {
   render() {
     if (this.props.text === '') {
@@ -32,9 +22,9 @@ class ItemStat extends React.PureComponent<IStat, object> {
     }
 
     if (this.props.extras) {
-      const text = statToStringSkip3(this.props);
-      const modifier = text.substr(0, text.indexOf(' '));
-      const label = text.substr(text.indexOf(' ') + 1);
+      let text = statToString(this.props.text.replace('{3}', ' '), this.props);
+      let modifier = text.substr(0, text.indexOf(' '));
+      let label = text.substr(text.indexOf(' ') + 1);
 
       // TODO: We have a tooltip.. that means we got a skill in {3}
       return (
@@ -47,7 +37,7 @@ class ItemStat extends React.PureComponent<IStat, object> {
         </li>
       );
     } else {
-      const text = statToString(this.props);
+      const text = statToString(this.props.text, this.props);
       const modifier = text.substr(0, text.indexOf(' '));
       const label = text.substr(text.indexOf(' ') + 1);
       return (

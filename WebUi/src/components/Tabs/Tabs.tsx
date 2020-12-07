@@ -85,7 +85,7 @@ export default function Tabs({activeTab, setActiveTab, isDarkMode, toggleDarkmod
       {!isDarkMode && renderToggleTabEntry(translate('app.tab.darkMode'), idx++, <DarkMode/>)}
 
       {renderLinkEntry(translate('app.tab.discord'), idx++, <LiveHelp/>, 'https://discord.gg/5wuCPbB')}
-      {renderLinkEntry('Patron', idx++, <Patreon/>, 'https://www.patreon.com/itemassistant')}
+      {renderLinkEntry('Patreon', idx++, <Patreon/>, 'https://www.patreon.com/itemassistant')}
     </ul>
   </section>;
 } // TODO: Discord link should be hardcoded in C# - Not translateable nor duplicated.
