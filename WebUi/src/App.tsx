@@ -28,6 +28,7 @@ export interface ApplicationState {
 // TODO: Am I actually using this store??
 const StoreContext = React.createContext({items: [], isLoading: true, activeTab: 0, collectionItems: [], isDarkMode: false, helpSearchFilter: ''} as ApplicationState);
 
+// TODO: "Load more items" button
 // BUGCHECK: Does IA ever download items if DELETE fails? Cloud.
 // ** Reports of the user interface freezing while searching, viable to stick it into its own thread? May be too complex to do right..
 // TODO: See C#: "What's this?" May be the cause of all the "no stats found" shit.. does it ever DO anything?

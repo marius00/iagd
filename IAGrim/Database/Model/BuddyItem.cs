@@ -25,9 +25,14 @@ namespace IAGrim.Database {
         public virtual long PrefixRarity => 0;
         public virtual string Stash { get; set; }
         public virtual string Name { get; set; }
-        public virtual ulong Count { get; set; }
+        public virtual long StackCount { get; set; }
         public virtual long CreationDate { get; set; }
 
+
+        public virtual ulong Count {
+            get { return (ulong)StackCount; }
+            set { StackCount = (long)value; }
+        }
 
         public virtual int CompareTo(object obj) {
             PlayerHeldItem item = obj as PlayerHeldItem;

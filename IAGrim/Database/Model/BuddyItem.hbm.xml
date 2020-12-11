@@ -14,7 +14,7 @@
     <property name="ModifierRecord" column="modifierrecord" />
     <property name="TransmuteRecord" column="transmuterecord" />
     <property name="MateriaRecord" column="materiarecord" />
-    <property name="Count" column="stackcount" />
+    <property name="StackCount" column="stackcount" />
     <property name="IsHardcore" column="ishardcore" />
     <property name="Mod" column="mod" />
     <property name="Name" column="name" />
