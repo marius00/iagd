@@ -73,6 +73,7 @@ namespace IAGrim.UI.Tabs {
             cbShowAugments.Checked = _settings.GetPersistent().ShowAugmentsAsItems;
             cbDeleteDuplicates.Checked = _settings.GetPersistent().DeleteDuplicates;
             cbStartMinimized.Checked = _settings.GetLocal().StartMinimized;
+            cbDarkMode.Checked = _settings.GetPersistent().DarkMode;
         }
 
         private void buttonViewBackups_Click(object sender, EventArgs e) {
@@ -204,6 +205,15 @@ namespace IAGrim.UI.Tabs {
 
         private void cbStartMinimized_CheckedChanged(object sender, EventArgs e) {
             _settings.GetLocal().StartMinimized = (sender as FirefoxCheckBox).Checked;
+        }
+
+        private void cbDarkMode_CheckedChanged(object sender, EventArgs e) {
+            if (_settings.GetPersistent().DarkMode != (sender as FirefoxCheckBox).Checked) {
+                // TODO: No translations for this, will most likely remove the restart requirement
+                MessageBox.Show("Enabling dark mode will require restarting IA.", "Restart required", MessageBoxButtons.OK);
+            }
+
+            _settings.GetPersistent().DarkMode = (sender as FirefoxCheckBox).Checked;
         }
     }
 }

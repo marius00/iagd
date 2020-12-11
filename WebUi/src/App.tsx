@@ -28,14 +28,12 @@ export interface ApplicationState {
 // TODO: Am I actually using this store??
 const StoreContext = React.createContext({items: [], isLoading: true, activeTab: 0, collectionItems: [], isDarkMode: false, helpSearchFilter: ''} as ApplicationState);
 
-// TODO: See C#: What's this? May be the cause of all the "no stats found" shit.. does it ever DO anything?
-
-// TODO: Help Tab, how does online backups work? -- maybe split it into "generic info" and "freakout questions"
+// BUGCHECK: Does IA ever download items if DELETE fails? Cloud.
+// ** Reports of the user interface freezing while searching, viable to stick it into its own thread? May be too complex to do right..
+// TODO: See C#: "What's this?" May be the cause of all the "no stats found" shit.. does it ever DO anything?
+// TODO: Preload stats after a few seconds, to instantly load when scrolling down?
 // See code: TODO: Possible to get skill stuff on this? Tooltip + color
 // TODO: Font color red on Set: bonus tag is freaking terrible in light mode (dark tooltip)
-// TODO: Dark mode
-// TODO: Basic tab-usage analytics, determine if collection or crafting is being used
-// TODO: Move help tab into WebUI? "[?]" links can trigger a modal on the help page. Add more screenshots.
 // TODO: A commit redoing all the damn bracket styles in C# -- do this last.. sigh.
 // TODO: Ensure loading works correctly.. no duplicates, in expected order..
 // TODO: Look into the duplicate key errors -- seems to be for items with&without a component. dupe item but with comp.
@@ -154,8 +152,8 @@ class App extends React.PureComponent<{}, object> {
 
   render() {
     return (
-      <div className={"App " + (this.state.isDarkMode ? "App-dark" : "App-Light")}>
-        {this.state.isLoading && isEmbedded && <Spinner />}
+      <div className={'App ' + (this.state.isDarkMode ? 'App-dark' : 'App-Light')}>
+        {this.state.isLoading && isEmbedded && <Spinner/>}
         <ReactNotification/>
         <StoreContext.Provider value={this.state}>
           <div className={'container'}>
@@ -183,7 +181,7 @@ class App extends React.PureComponent<{}, object> {
             />
           </div>
 
-          {this.state.activeTab === 1 && <CollectionItemContainer items={this.state.collectionItems} />}
+          {this.state.activeTab === 1 && <CollectionItemContainer items={this.state.collectionItems}/>}
 
           {this.state.activeTab === 2 && <div className="legacy-crafting">
             <h2>Legacy functionality</h2>
@@ -193,11 +191,11 @@ class App extends React.PureComponent<{}, object> {
                     style={{width: '100%', height: '100%', overflow: 'hidden', position: 'absolute'}} scrolling="yes" frameBorder={0}/>
           </div>}
 
-          {this.state.activeTab === 3 && <Help searchString={this.state.helpSearchFilter} onSearch={(v: string) => this.setState({helpSearchFilter: v})} />}
+          {this.state.activeTab === 3 && <Help searchString={this.state.helpSearchFilter} onSearch={(v: string) => this.setState({helpSearchFilter: v})}/>}
 
         </StoreContext.Provider>
 
-        <NewFeaturePromoter />
+        <NewFeaturePromoter/>
       </div>
     );
   }

@@ -128,7 +128,7 @@ class Item extends React.PureComponent<Props, object> {
   }
 
   getSetItemTooltip(setName: string|undefined, quality: string): string {
-    if (setName !== undefined && quality === 'Epic') { // We don't support blues yet, not available on collection page.
+    if (setName !== undefined) { // We don't support blues yet, not available on collection page.
       const addFont = (numOwned: number, s: string) => (numOwned <= 0) ? `<font color="red">${s}</font>` : s;
       var setItemsList = GetSetItems(setName)
         .map(this.props.getItemName)

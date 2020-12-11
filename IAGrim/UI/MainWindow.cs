@@ -572,7 +572,11 @@ namespace IAGrim.UI
                 }
             }
 
-            // DarkMode.Activate(this); // Needs a lot more work before its ready, for example custom components uses Draw and does not respect coloring.
+
+            if (settingsService.GetPersistent().DarkMode) {
+                var dm = new DarkMode();
+                dm.Activate(this); // Needs a lot more work before its ready, for example custom components uses Draw and does not respect coloring.
+            }
 
             Logger.Debug("UI initialization complete");
         }

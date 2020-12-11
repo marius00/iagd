@@ -26,6 +26,7 @@ namespace IAGrim.UI.Controller.dto {
         public bool HasCloudBackup { get; set; }
         public int GreenRarity { get; set; }
         public JsonSkill Skill { get; set; }
+        public bool IsMonsterInfrequent { get; set; }
 
         public string Extras { get; set; } // TODO: This should be a custom object
     }

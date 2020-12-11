@@ -6,7 +6,6 @@ using System.Drawing.Text;
 using System.Windows.Forms;
 
 static class Theme {
-
     public static Font GlobalFont(FontStyle B, int S) {
         return new Font("Segoe UI", S, B);
     }
@@ -14,11 +13,9 @@ static class Theme {
     public static string GetCheckMark() {
         return "iVBORw0KGgoAAAANSUhEUgAAABMAAAAQCAYAAAD0xERiAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAEySURBVDhPY/hPRUBdw/79+/efVHz77bf/X37+wRAn2bDff/7+91l+83/YmtsYBpJs2ITjz/8rTbrwP2Dlrf9XXn5FkSPJsD13P/y3nHsVbNjyy28w5Ik27NWXX//TNt8DG1S19zFWNRiGvfzy8//ccy9RxEB4wvFnYIMMZl7+//brLwx5EEYx7MP33/9dF18Ha1py8RVcHBR7mlMvgsVXX8X0Hgwz/P379z8yLtz5AKxJdcpFcBj9+v3nf/CqW2Cx5E13UdSiYwzDvv36/d9/BUSzzvRL/0t2PQSzQd57+vEHilp0jGEYCJ9+8hnuGhiee+4Vhjp0jNUwEN566/1/m/mQZJC/48H/zz9+YVWHjHEaBsKgwAZ59eH771jl0TFew0D48osvWMWxYYKGEY///gcAqiuA6kEmfEMAAAAASUVORK5CYII=";
     }
-
 }
 
 static class Helpers {
-
     public enum MouseState : byte {
         None = 0,
         Over = 1,
@@ -42,7 +39,7 @@ static class Helpers {
         SizeF TS = G.MeasureString(T, F);
 
         using (SolidBrush B = new SolidBrush(C)) {
-            G.DrawString(T, F, B, new Point((int)(R.Width / 2 - (TS.Width / 2)), (int)(R.Height / 2 - (TS.Height / 2))));
+            G.DrawString(T, F, B, new Point((int) (R.Width / 2 - (TS.Width / 2)), (int) (R.Height / 2 - (TS.Height / 2))));
         }
     }
 
@@ -57,7 +54,6 @@ static class Helpers {
             G.FillRectangle(B, R.X, Convert.ToInt32(R.Y + Curve / 2), R.Width, R.Height - Curve);
             G.FillRectangle(B, Convert.ToInt32(R.X + Curve / 2), Convert.ToInt32(R.Y + R.Height - Curve / 2), R.Width - Curve, Convert.ToInt32(Curve / 2));
         }
-
     }
 
 
@@ -71,7 +67,6 @@ static class Helpers {
             G.FillRectangle(B, R.X, Convert.ToInt32(R.Y), R.Width, R.Height);
             //G.FillRectangle(B, Convert.ToInt32(R.X + Curve / 2), Convert.ToInt32(R.Y + R.Height - Curve / 2), R.Width - Curve, Convert.ToInt32(Curve / 2));
         }
-
     }
 
     public static void DrawRoundRect(Graphics G, Rectangle R, int Curve, Color C) {
@@ -85,47 +80,48 @@ static class Helpers {
             G.DrawArc(P, R.X, R.Y + R.Height - Curve, Curve, Curve, 90, 90);
             G.DrawArc(P, R.X + R.Width - Curve, R.Y + R.Height - Curve, Curve, Curve, 0, 90);
         }
-
     }
 
     public static void DrawCircle(Graphics G, Rectangle R, Color C) {
         using (Pen P = new Pen(C)) {
             G.DrawEllipse(P, R);
         }
-
     }
 
 
     public static void CenterStringTab(Graphics G, string text, Font font, Brush brush, Rectangle rect, bool shadow = false, int yOffset = 0) {
         SizeF textSize = G.MeasureString(text, font);
-        int textX = (int)(rect.X + (rect.Width / 2) - (textSize.Width / 2));
-        int textY = (int)(rect.Y + (rect.Height / 2) - (textSize.Height / 2) + yOffset);
+        int textX = (int) (rect.X + (rect.Width / 2) - (textSize.Width / 2));
+        int textY = (int) (rect.Y + (rect.Height / 2) - (textSize.Height / 2) + yOffset);
 
         if (shadow)
             G.DrawString(text, font, Brushes.Black, textX + 1, textY + 1);
         G.DrawString(text, font, brush, textX, textY + 1);
-
     }
-
 }
 
 
 [DefaultEvent("CheckedChanged")]
 class FirefoxRadioButton : Control {
-
     #region " Public "
+
     public event CheckedChangedEventHandler CheckedChanged;
+
     public delegate void CheckedChangedEventHandler(object sender, EventArgs e);
+
     #endregion
 
     #region " Private "
+
     private Helpers.MouseState State;
     private Color ETC = Color.Blue;
 
     private Graphics G;
     private bool _EnabledCalc;
     private bool _Checked;
+
     #endregion
+
     private bool _Bold;
 
     #region " Properties "
@@ -189,7 +185,6 @@ class FirefoxRadioButton : Control {
             ETC = Color.FromArgb(66, 78, 90);
 
             switch (State) {
-
                 case Helpers.MouseState.Over:
                 case Helpers.MouseState.Down:
 
@@ -214,9 +209,7 @@ class FirefoxRadioButton : Control {
                 using (SolidBrush B = new SolidBrush(Color.FromArgb(34, 146, 208))) {
                     G.FillEllipse(B, new Rectangle(7, 7, 12, 12));
                 }
-
             }
-
         }
         else {
             ETC = Helpers.GreyColor(170);
@@ -230,23 +223,17 @@ class FirefoxRadioButton : Control {
                 using (SolidBrush B = new SolidBrush(Color.FromArgb(34, 146, 208))) {
                     G.FillEllipse(B, new Rectangle(7, 7, 12, 12));
                 }
-
             }
-
         }
 
         using (SolidBrush B = new SolidBrush(ETC)) {
-
             if (Bold) {
                 G.DrawString(Text, Theme.GlobalFont(FontStyle.Bold, 10), B, new Point(32, 4));
             }
             else {
                 G.DrawString(Text, Theme.GlobalFont(FontStyle.Regular, 10), B, new Point(32, 4));
             }
-
         }
-
-
     }
 
     protected override void OnMouseDown(MouseEventArgs e) {
@@ -260,14 +247,12 @@ class FirefoxRadioButton : Control {
 
 
         if (Enabled) {
-
             if (!Checked) {
                 foreach (Control C in Parent.Controls) {
                     if (C is FirefoxRadioButton) {
-                        ((FirefoxRadioButton)C).Checked = false;
+                        ((FirefoxRadioButton) C).Checked = false;
                     }
                 }
-
             }
 
             Checked = true;
@@ -293,13 +278,13 @@ class FirefoxRadioButton : Control {
     }
 
     #endregion
-
 }
 
 class FirefoxH1 : Label {
-
     #region " Private "
+
     #endregion
+
     private Graphics G;
 
     #region " Control "
@@ -322,15 +307,12 @@ class FirefoxH1 : Label {
         using (Pen P = new Pen(Helpers.GreyColor(200))) {
             G.DrawLine(P, new Point(0, 50), new Point(Width, 50));
         }
-
     }
 
     #endregion
-
 }
 
 class FirefoxH2 : Label {
-
     #region " Control "
 
     public FirefoxH2() {
@@ -340,148 +322,19 @@ class FirefoxH2 : Label {
     }
 
     #endregion
-
 }
 
-class FirefoxButton : Control {
-
-    #region " Private "
-    private Helpers.MouseState State;
-    private Color ETC = Color.Blue;
-
-    private Graphics G;
-    #endregion
-    private bool _EnabledCalc;
-
-    #region " Properties "
-
-    public new bool Enabled {
-        get { return EnabledCalc; }
-        set {
-            _EnabledCalc = value;
-            Invalidate();
-        }
-    }
-
-    [DisplayName("Enabled")]
-    public bool EnabledCalc {
-        get { return _EnabledCalc; }
-        set {
-            Enabled = value;
-            Invalidate();
-        }
-    }
-
-    #endregion
-
-    #region " Control "
-
-    public FirefoxButton() {
-        DoubleBuffered = true;
-        Enabled = true;
-        ForeColor = Color.FromArgb(56, 68, 80);
-        Font = Theme.GlobalFont(FontStyle.Regular, 10);
-    }
-
-
-    protected override void OnPaint(PaintEventArgs e) {
-        G = e.Graphics;
-        G.SmoothingMode = SmoothingMode.HighQuality;
-        G.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
-
-        base.OnPaint(e);
-
-        G.Clear(Parent.BackColor);
-
-        if (Enabled) {
-            ETC = Color.FromArgb(56, 68, 80);
-
-            switch (State) {
-
-                case Helpers.MouseState.None:
-
-                    using (SolidBrush B = new SolidBrush(Helpers.GreyColor(245))) {
-                        G.FillRectangle(B, new Rectangle(1, 1, Width - 2, Height - 2));
-                    }
-
-
-                    Helpers.DrawRoundRect(G, Helpers.FullRectangle(Size, true), 2, Helpers.GreyColor(193));
-
-                    break;
-                case Helpers.MouseState.Over:
-
-                    using (SolidBrush B = new SolidBrush(Helpers.GreyColor(232))) {
-                        G.FillRectangle(B, new Rectangle(1, 1, Width - 2, Height - 2));
-                    }
-
-
-                    Helpers.DrawRoundRect(G, Helpers.FullRectangle(Size, true), 2, Helpers.GreyColor(193));
-
-                    break;
-                default:
-
-                    using (SolidBrush B = new SolidBrush(Helpers.GreyColor(212))) {
-                        G.FillRectangle(B, new Rectangle(1, 1, Width - 2, Height - 2));
-                    }
-
-
-                    Helpers.DrawRoundRect(G, Helpers.FullRectangle(Size, true), 2, Helpers.GreyColor(193));
-
-                    break;
-            }
-
-        }
-        else {
-            ETC = Helpers.GreyColor(170);
-
-            using (SolidBrush B = new SolidBrush(Helpers.GreyColor(245))) {
-                G.FillRectangle(B, new Rectangle(1, 1, Width - 2, Height - 2));
-            }
-
-            Helpers.DrawRoundRect(G, Helpers.FullRectangle(Size, true), 2, Helpers.GreyColor(223));
-
-        }
-
-        Helpers.CenterString(G, Text, Theme.GlobalFont(FontStyle.Regular, 10), ETC, Helpers.FullRectangle(Size, false));
-
-    }
-
-    protected override void OnMouseUp(MouseEventArgs e) {
-        base.OnMouseUp(e);
-        State = Helpers.MouseState.Over;
-        Invalidate();
-    }
-
-    protected override void OnMouseDown(MouseEventArgs e) {
-        base.OnMouseUp(e);
-        State = Helpers.MouseState.Down;
-        Invalidate();
-    }
-
-    protected override void OnMouseEnter(EventArgs e) {
-        base.OnMouseEnter(e);
-        State = Helpers.MouseState.Over;
-        Invalidate();
-    }
-
-    protected override void OnMouseLeave(EventArgs e) {
-        base.OnMouseEnter(e);
-        State = Helpers.MouseState.None;
-        Invalidate();
-    }
-
-    #endregion
-
-}
 
 class FirefoxRedirect : Control {
-
     #region " Private "
+
     private Helpers.MouseState State;
 
     private Graphics G;
     private Color FC = Color.Blue;
+
     #endregion
+
     private Font FF = null;
 
     #region " Control "
@@ -501,7 +354,6 @@ class FirefoxRedirect : Control {
         base.OnPaint(e);
 
         switch (State) {
-
             case Helpers.MouseState.Over:
                 FC = Color.FromArgb(23, 140, 229);
                 FF = Theme.GlobalFont(FontStyle.Underline, 10);
@@ -522,7 +374,6 @@ class FirefoxRedirect : Control {
         using (SolidBrush B = new SolidBrush(FC)) {
             G.DrawString(Text, FF, B, new Point(0, 0));
         }
-
     }
 
     protected override void OnMouseUp(MouseEventArgs e) {
@@ -550,14 +401,15 @@ class FirefoxRedirect : Control {
     }
 
     #endregion
-
 }
 
 class FirefoxSubTabControl : TabControl {
-
     #region " Private "
+
     private Graphics G;
+
     #endregion
+
     private Rectangle TabRect;
 
     #region " Control "
@@ -606,8 +458,6 @@ class FirefoxSubTabControl : TabControl {
                 using (SolidBrush B = new SolidBrush(Helpers.GreyColor(240))) {
                     G.FillRectangle(B, new Rectangle(GetTabRect(i).Location.X - 2, GetTabRect(i).Location.Y - 2, GetTabRect(i).Width, GetTabRect(i).Height + 1));
                 }
-
-
             }
             else if (SelectedIndex == i) {
                 using (SolidBrush B = new SolidBrush(Helpers.GreyColor(240))) {
@@ -617,7 +467,6 @@ class FirefoxSubTabControl : TabControl {
                 using (Pen P = new Pen(Color.FromArgb(255, 149, 0), 4)) {
                     G.DrawLine(P, new Point(TabRect.X - 2, TabRect.Y + ItemSize.Height - 2), new Point(TabRect.X + TabRect.Width - 2, TabRect.Y + ItemSize.Height - 2));
                 }
-
             }
             else if (!(SelectedIndex == i)) {
                 G.FillRectangle(Brushes.White, GetTabRect(i));
@@ -626,25 +475,24 @@ class FirefoxSubTabControl : TabControl {
             using (SolidBrush B = new SolidBrush(Color.FromArgb(56, 69, 80))) {
                 Helpers.CenterStringTab(G, TabPages[i].Text, Theme.GlobalFont(FontStyle.Regular, 10), B, GetTabRect(i));
             }
-
         }
 
         using (Pen P = new Pen(Helpers.GreyColor(200))) {
             G.DrawLine(P, new Point(0, ItemSize.Height + 2), new Point(Width, ItemSize.Height + 2));
         }
-
     }
 
     #endregion
-
 }
 
 class FirefoxMainTabControl : TabControl {
-
     #region " Private "
+
     private Graphics G;
     private Rectangle TabRect;
+
     #endregion
+
     private Color FC = Color.Blue;
 
     #region " Control "
@@ -699,7 +547,6 @@ class FirefoxMainTabControl : TabControl {
                 using (SolidBrush B = new SolidBrush(Color.FromArgb(255, 175, 54))) {
                     G.FillRectangle(B, new Rectangle(TabRect.Location.X - 3, TabRect.Location.Y + 1, 5, TabRect.Height - 2));
                 }
-
             }
             else {
                 FC = Helpers.GreyColor(192);
@@ -707,7 +554,6 @@ class FirefoxMainTabControl : TabControl {
                 using (SolidBrush B = new SolidBrush(Color.FromArgb(66, 79, 90))) {
                     G.FillRectangle(B, TabRect);
                 }
-
             }
 
             using (SolidBrush B = new SolidBrush(FC)) {
@@ -719,13 +565,10 @@ class FirefoxMainTabControl : TabControl {
                     G.DrawImage(ImageList.Images[TabPages[i].ImageIndex], new Rectangle(TabRect.X + 19, TabRect.Y + ((TabRect.Height / 2) - 10), 18, 18));
                 }
             }
-
         }
-
     }
 
     #endregion
-
 }
 /*
 

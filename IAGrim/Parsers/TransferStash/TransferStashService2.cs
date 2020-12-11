@@ -222,7 +222,9 @@ namespace IAGrim.Parsers.TransferStash {
             var unknownItems = tab.Items.Where(item => !_cache.AllRecords.Contains(item.BaseRecord)).ToList();
 
             var duplicates = tab.Items
-                .Where(item => _playerItemDao.Exists(Arz.TransferStashService.Map(item, null, false))) // We don't care about mod/hardcore for dupe checking.
+                .SkipWhile(item => stacked.Contains(item))
+                .SkipWhile(item => unknownItems.Contains(item))
+                .Where(item => _playerItemDao.Exists(TransferStashService.Map(item, null, false))) // We don't care about mod/hardcore for dupe checking.
                 .ToList();
 
             var remaining = tab.Items

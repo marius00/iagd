@@ -106,7 +106,8 @@ namespace IAGrim.Utilities {
                 GreenRarity = (int)item.PrefixRarity,
                 HasCloudBackup = isCloudSynced,
                 Slot = SlotTranslator.Translate(RuntimeSettings.Language, item.Slot ?? ""),
-                Extras = extras
+                Extras = extras,
+                IsMonsterInfrequent = item.ModifiedSkills.Any(s => s.IsMonsterInfrequent)
             };
 
             var modifiedSkills = item.ModifiedSkills;
@@ -124,6 +125,8 @@ namespace IAGrim.Utilities {
                     Logger.Debug($"Could not translate skill-modifier stats for \"{item.Name}\"");
                 }
             }
+
+
 
             return json;
         }

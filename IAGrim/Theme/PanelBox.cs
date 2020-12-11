@@ -6,12 +6,15 @@ using System.Windows.Forms;
 
 internal class PanelBox : ScrollableControl {
     //private bool _Checked;
+    public Color HeaderColor { get; set; } = Color.FromArgb(231, 231, 231);
 
     public PanelBox() {
         this.SetStyle(ControlStyles.UserPaint | ControlStyles.Opaque | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
         this.B = new Bitmap(1, 1);
         this.G = Graphics.FromImage(this.B);
         this.AllowTransparent();
+        this.ForeColor = System.Drawing.Color.Black;
+        this.BackColor = Color.FromArgb(240, 240, 240);
     }
 
     private PointF _textLocation = new PointF(8, 5);
@@ -46,10 +49,10 @@ internal class PanelBox : ScrollableControl {
         G.SmoothingMode = SmoothingMode.AntiAlias;
 
 
-        Brush colorHeader = new SolidBrush(Color.FromArgb(231, 231, 231));
-        Brush colorContent = new SolidBrush(Color.FromArgb(240, 240, 240));
+        Brush colorHeader = new SolidBrush(HeaderColor);
+        Brush colorContent = new SolidBrush(BackColor);
         Pen colorBorder = new Pen(Color.FromArgb(214, 214, 214));
-        SolidBrush brush = new SolidBrush(System.Drawing.Color.Black);
+        SolidBrush brush = new SolidBrush(ForeColor);
         try {
 
             int headerHeight = Math.Min(HeaderHeight, this.Height);
@@ -87,9 +90,9 @@ internal class PanelBox : ScrollableControl {
     }
 
 
-    protected Graphics G;
+    private Graphics G;
 
-    protected Bitmap B;
+    private Bitmap B;
 
     private bool _NoRounding;
 
