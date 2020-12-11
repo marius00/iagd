@@ -753,7 +753,7 @@ namespace IAGrim.Database {
 
             List<string> sql = new List<string>();
             sql.Add($@"select name as Name, 
-                sum(max(1,stackcount)) as StackCount, 
+                sum(stackcount) as StackCount, 
                 rarity as Rarity, 
                 levelrequirement as LevelRequirement, 
                 baserecord as BaseRecord, 

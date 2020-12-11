@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="IAGrim"
+                   namespace="IAGrim.Database">
+
+  <class name="BuddyItemRecord" table="BuddyItemRecord">
+    <composite-id>
+      <key-property name="BuddyId" column="id_buddyitem" />
+      <key-property name="Record" column="record" />
+    </composite-id>
+    <property name="Id" column="id_buddy" />    
+  </class>
+</hibernate-mapping>

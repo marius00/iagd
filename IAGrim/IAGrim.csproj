@@ -206,6 +206,7 @@
     <Compile Include="Backup\Azure\Dto\AzureLimitsDto.cs" />
     <Compile Include="Database\DAO\ItemCollectionDaoImpl.cs" />
     <Compile Include="Database\Interfaces\IItemCollectionDao.cs" />
+    <Compile Include="Database\Model\BuddyItemRecord.cs" />
     <Compile Include="Database\Model\CollectionItem.cs" />
     <Compile Include="Database\Model\ItemSetAssociation.cs" />
     <Compile Include="Database\Model\ItemSkillMapping.cs" />
@@ -337,7 +338,6 @@
     <Compile Include="Database\Interfaces\IItemTagDao.cs" />
     <Compile Include="Database\Interfaces\IPlayerItemDao.cs" />
     <Compile Include="Database\Interfaces\IRecipeItemDao.cs" />
-    <Compile Include="Database\Migrations\AddBuddyItemMigrations.cs" />
     <Compile Include="Database\Migrations\DatabaseItemHashFixMigration.cs" />
     <Compile Include="Database\Migrations\IDatabaseMigration.cs" />
     <Compile Include="Database\Migrations\MigrationHandler.cs" />
@@ -718,6 +718,8 @@
     <None Include="Resources\2_Arrow_circle_history_refresh-512.png" />
     <EmbeddedResource Include="Database\Model\ItemSkill.hbm.xml" />
     <EmbeddedResource Include="Database\Model\ItemSkillMapping.hbm.xml" />
+    <EmbeddedResource Include="Database\Model\BuddyItem.hbm.xml" />
+    <EmbeddedResource Include="Database\Model\BuddyItemRecord.hbm.xml" />
     <Content Include="hibernate.postgres.cfg.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
