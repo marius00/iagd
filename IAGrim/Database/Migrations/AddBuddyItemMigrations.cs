@@ -10,7 +10,7 @@ using NHibernate;
 
 namespace IAGrim.Database.Migrations {
     class AddBuddyItemMigrations : IDatabaseMigration {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(AddSkillTables));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(AddBuddyItemMigrations));
 
         private readonly string[] Sql = {
             $@"CREATE TABLE IF NOT EXISTS `buddyitems_v5` (

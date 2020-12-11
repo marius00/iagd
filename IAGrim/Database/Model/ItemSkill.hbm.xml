@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="IAGrim"
+                   namespace="IAGrim.Database">
+
+
+  <class name="ItemSkill" table="itemskill_v2">
+    <id name="Id" column="id_skill">
+      <generator class="hilo"/>
+    </id>
+
+    <property name="Description" />
+    <property name="Name" />
+    <property name="Record" />
+    <property name="Trigger" />
+    <property name="Level" />
+    <property name="StatsId" column="id_databaseitem" />
+
+  </class>
+</hibernate-mapping>

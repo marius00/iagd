@@ -25,8 +25,7 @@ using IAGrim.Utilities.Detection;
 
 namespace IAGrim
 {
-    internal class Program
-    {
+    internal class Program {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(Program));
         private static MainWindow _mw;
         private static readonly StartupService StartupService = new StartupService();

@@ -67,6 +67,7 @@ namespace SessionFactoryLoader {
         public ISession OpenSession() {
             return sessionFactory.OpenSession();
         }
+
         public IStatelessSession OpenStatelessSession() {
             return sessionFactory.OpenStatelessSession();
         }

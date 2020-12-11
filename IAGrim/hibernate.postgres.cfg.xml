@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-configuration xmlns="urn:nhibernate-configuration-2.2">
+  <session-factory>
+    <property name="connection.provider">NHibernate.Connection.DriverConnectionProvider</property>
+    <property name="dialect">NHibernate.Dialect.PostgreSQL81Dialect</property>
+    <property name="connection.driver_class">NHibernate.Driver.NpgsqlDriver</property>
+    <property name="connection.connection_string">server=localhost;Port=5432;Database=ia{db};User Id=ia;Password=ia;Pooling=false</property>
+    <property name="connection.isolation">Unspecified</property>
+    <property name="adonet.batch_size">1</property>
+
+    <property name="cache.use_second_level_cache">false</property>
+    <property name="cache.use_query_cache" >false</property>
+
+
+    <property name="show_sql">false</property>
+  </session-factory>
+</hibernate-configuration>
