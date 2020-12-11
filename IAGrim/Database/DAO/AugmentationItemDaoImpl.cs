@@ -76,7 +76,7 @@ namespace IAGrim.Database.DAO {
             session.CreateSQLQuery("DELETE FROM AugmentationItem").ExecuteUpdate();
 
             string sql = @"
-                    INSERT OR IGNORE INTO AugmentationItem (id_databaseitem, baserecord, name, rarity, minimumlevel) 
+                    INSERT INTO AugmentationItem (id_databaseitem, baserecord, name, rarity, minimumlevel) 
                     select db.id_databaseitem, baserecord, name, null, null 
                     from DatabaseItem_v2 db
                     where db.id_databaseitem in (select s.id_databaseitem from DatabaseItemStat_v2 s where stat = 'Class' and textvalue = 'ItemEnchantment') 
