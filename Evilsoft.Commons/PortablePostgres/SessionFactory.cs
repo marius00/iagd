@@ -3,8 +3,6 @@ using NHibernate.Cfg;
 using NHibernate.Tool.hbm2ddl;
 using log4net;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -13,40 +11,49 @@ namespace PortablePostgres {
         private static ISessionFactory _sessionFactory;
         private static ILog logger = LogManager.GetLogger("SessionFactory");
 
-        private static ISessionFactory sessionFactory {
+        private ISessionFactory CreateSessionFactory(string configFile) {
+            if (_sessionFactory == null) {
+                var configuration = new Configuration();
+                configuration.Configure(configFile);
+                configuration.SetProperty("show_sql", "false");
+
+                var db = "";
+#if DEBUG
+                db = "-test";
+#endif
+
+                var connectionString = configuration.GetProperty("connection.connection_string");
+                connectionString = connectionString.Replace("{db}", db);
+                configuration.SetProperty("connection.connection_string", connectionString);
+                //configuration.Configure();
+                configuration.AddAssembly(Assembly.GetEntryAssembly());
+
+                try {
+                    new SchemaUpdate(configuration).Execute(true, true);
+                    _sessionFactory = configuration.BuildSessionFactory();
+                }
+                catch (Exception ex) {
+                    logger.Warn(ex.Message);
+                    logger.Warn(ex.StackTrace);
+                    throw;
+                }
+            }
+            return _sessionFactory;
+        }
+
+        private ISessionFactory sessionFactory {
             get {
                 if (_sessionFactory == null) {
-                    var configuration = new Configuration();
-
-                    configuration.SetProperty("connection.provider", "NHibernate.Connection.DriverConnectionProvider");
-                    configuration.SetProperty("dialect", "NHibernate.Dialect.PostgreSQL81Dialect");
-                    configuration.SetProperty("connection.driver_class", "NHibernate.Driver.NpgsqlDriver");
-                    configuration.SetProperty("show_sql", "false");
-
-                    configuration.SetProperty("connection.connection_string", string.Format("server=localhost;Port=5559;Database=app;User Id={0};Password=", System.Environment.UserName));
-                    //configuration.Configure();
-                    configuration.AddAssembly(Assembly.GetExecutingAssembly());
-                    //configuration.SetProperty("connection.connection_string", "server=localhost;Port=5432;Database=app;User Id=pagloja;Password=123456;");
-
-                    try {
-                        
-                        new SchemaUpdate(configuration).Execute(true, true);
-                        _sessionFactory = configuration.BuildSessionFactory();
-                    }
-                    catch (Exception ex) {
-                        logger.Warn(ex.Message);
-                        logger.Warn(ex.StackTrace);
-                        throw;
-                    }
+                    _sessionFactory = CreateSessionFactory("hibernate.postgres.cfg.xml");
                 }
                 return _sessionFactory;
             }
         }
 
-        public static ISession OpenSession() {
+        public ISession OpenSession() {
             return sessionFactory.OpenSession();
         }
-        public static IStatelessSession OpenStatelessSession() {
+        public IStatelessSession OpenStatelessSession() {
             return sessionFactory.OpenStatelessSession();
         }
     }
