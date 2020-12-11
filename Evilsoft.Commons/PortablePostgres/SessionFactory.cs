@@ -19,17 +19,16 @@ namespace PortablePostgres {
 
                 var db = "";
 #if DEBUG
-                db = "-test";
+                db = "-test2";
 #endif
 
                 var connectionString = configuration.GetProperty("connection.connection_string");
                 connectionString = connectionString.Replace("{db}", db);
                 configuration.SetProperty("connection.connection_string", connectionString);
-                //configuration.Configure();
                 configuration.AddAssembly(Assembly.GetEntryAssembly());
 
                 try {
-                    new SchemaUpdate(configuration).Execute(true, true);
+                    new SchemaUpdate(configuration).Execute(true, true); // Warning: This may silently fail. It just logs and returns, nothing thrown.
                     _sessionFactory = configuration.BuildSessionFactory();
                 }
                 catch (Exception ex) {

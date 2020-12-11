@@ -561,7 +561,7 @@ namespace IAGrim.Database
                                 {BuddyItemsTable.Name} as Name,
                                 {BuddyItemsTable.LevelRequirement} as MinimumLevel,
                                 {BuddyItemsTable.Id} as Id,
-                                SUM(MAX(1, {BuddyItemsTable.StackCount})) as Count,
+                                SUM({BuddyItemsTable.StackCount}) as Count,
                                 S.{BuddyStashTable.Name} as Stash
 
 

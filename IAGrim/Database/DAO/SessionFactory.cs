@@ -13,8 +13,8 @@ namespace IAGrim.Database {
         private static ILog Logger = LogManager.GetLogger(typeof(SessionFactory));
 
         [ThreadStatic]
-        private static SessionFactoryLoader.SessionFactory sessionFactory;
-        //private static PortablePostgres.SessionFactory sessionFactory;
+        //private static SessionFactoryLoader.SessionFactory sessionFactory;
+        private static PortablePostgres.SessionFactory sessionFactory;
 
         static SessionFactory() {
             System.Net.ServicePointManager.Expect100Continue = false;
@@ -22,7 +22,7 @@ namespace IAGrim.Database {
         
         public ISession OpenSession() {
             if (sessionFactory == null) {
-                sessionFactory = new SessionFactoryLoader.SessionFactory();
+                sessionFactory = new PortablePostgres.SessionFactory();
                 Logger.Info($"Creating session on thread {Thread.CurrentThread.ManagedThreadId}");
             }
 
@@ -35,7 +35,7 @@ namespace IAGrim.Database {
 
         public IStatelessSession OpenStatelessSession() {
             if (sessionFactory == null) {
-                sessionFactory = new SessionFactoryLoader.SessionFactory();
+                sessionFactory = new PortablePostgres.SessionFactory();
                 Logger.Info($"Creating session on thread {Thread.CurrentThread.ManagedThreadId}");
             }
 
