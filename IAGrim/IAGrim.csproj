@@ -198,6 +198,9 @@
     <Compile Include="Theme\CollapseablePanelBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Theme\FirefoxButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\Controller\dto\ItemTypeDto.cs" />
     <Compile Include="UI\FilterEventArgs.cs" />
     <Compile Include="UI\Filters\Classes.cs">

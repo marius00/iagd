@@ -29,7 +29,6 @@ Source: "..\IAGrim\bin\Release\*"; Excludes: "*.pdb,NDP461-KB3102438-Web.exe,vcr
 
 
 Filename: "{app}\IAGrim.exe"; Description: "Launch GD Item Assistant"; Flags: postinstall nowait
-Filename: "https://www.twitch.tv/videos/210592694"; Description: "Open video tutorial"; Flags: postinstall shellexec
  
 
 

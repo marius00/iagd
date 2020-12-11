@@ -226,7 +226,10 @@ const helpEntries = [
       Rename the copied file to "transfer.gst"
       Open Grim dawn and go pick up your items from the stash
       Close grim dawn
-      Delete the copied file, and rename the transfer-renamed.gst to transfer.gst to restore your stash`)}
+      Delete transfer.gst
+      Rename transfer-renamed.gst to transfer.gst
+      Voila!
+      `)}
       <br/>
       IA keeps the last 1000 copies of your transfer stash, so you may need to guess which file you need based on the timestamp.<br/>
       Remember: only you know when this happened.
