@@ -18,5 +18,8 @@ namespace IAGrim.Database.Interfaces {
         void UpdateRarity(IList<BuddyItem> items);
         void UpdateNames(IList<BuddyItem> items);
         IList<BuddyItem> FindBy(ItemSearchRequest query);
+
+        long GetNumItems(long subscriptionId);
+        BuddyStash GetBySubscriptionId(long subscriptionId);
     }
 }

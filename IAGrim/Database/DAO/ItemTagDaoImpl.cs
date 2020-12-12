@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.GameDataParsing.Model;
 using log4net;
@@ -13,7 +14,7 @@ namespace IAGrim.Database.DAO {
     class ItemTagDaoImpl : BaseDao<ItemTag>, IItemTagDao {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ItemTagDaoImpl));
 
-        public ItemTagDaoImpl(ISessionCreator sessionCreator) : base(sessionCreator) {
+        public ItemTagDaoImpl(ISessionCreator sessionCreator, SqlDialect dialect) : base(sessionCreator, dialect) {
         }
 
         public void Save(ICollection<ItemTag> items, ProgressTracker tracker) {

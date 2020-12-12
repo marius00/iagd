@@ -5,13 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IAGrim.BuddyShare.dto;
+using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Dto;
 
 namespace IAGrim.Database.Synchronizer {
     class BuddyItemRepo : BasicSynchronizer<BuddyItem>, IBuddyItemDao {
         private readonly IBuddyItemDao _repo;
-        public BuddyItemRepo(ThreadExecuter threadExecuter, ISessionCreator sessionCreator) : base(threadExecuter, sessionCreator) {
-            _repo = new BuddyItemDaoImpl(sessionCreator);
+        public BuddyItemRepo(ThreadExecuter threadExecuter, ISessionCreator sessionCreator, SqlDialect dialect) : base(threadExecuter, sessionCreator) {
+            _repo = new BuddyItemDaoImpl(sessionCreator, dialect);
             this.BaseRepo = _repo;
         }
 
@@ -55,6 +56,18 @@ namespace IAGrim.Database.Synchronizer {
         public IList<BuddyItem> FindBy(ItemSearchRequest query) {
             return ThreadExecuter.Execute(
                 () => _repo.FindBy(query)
+            );
+        }
+
+        public long GetNumItems(long subscriptionId) {
+            return ThreadExecuter.Execute(
+                () => _repo.GetNumItems(subscriptionId)
+            );
+        }
+
+        public BuddyStash GetBySubscriptionId(long subscriptionId) {
+            return ThreadExecuter.Execute(
+                () => _repo.GetBySubscriptionId(subscriptionId)
             );
         }
 

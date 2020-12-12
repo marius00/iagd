@@ -72,6 +72,7 @@
     <Compile Include="DateTimeEpochExtension.cs" />
     <Compile Include="Exceptions\ExceptionReporter.cs" />
     <Compile Include="IOHelper.cs" />
+    <Compile Include="ISessionFactoryWrapper.cs" />
     <Compile Include="Misc\BasicBackgroundWorker.cs" />
     <Compile Include="PortablePostgres\PostgresIntegrator.cs" />
     <Compile Include="PortablePostgres\SessionFactory.cs" />

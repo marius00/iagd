@@ -10,10 +10,8 @@ using IAGrim.Services;
 using IAGrim.Settings;
 using IAGrim.Settings.Dto;
 
-namespace IAGrim.UI
-{
-    public partial class BuddySettings : Form
-    {
+namespace IAGrim.UI {
+    public partial class BuddySettings : Form {
         private readonly IBuddyItemDao _buddyItemDao;
         private readonly IBuddySubscriptionDao _buddySubscriptionDao;
         private readonly Action<bool> _enableCallback;
@@ -22,13 +20,10 @@ namespace IAGrim.UI
 
         private Timer _delayedTextChangedTimer;
 
-        public long UID
-        {
-            set
-            {
+        public long UID {
+            set {
                 var userId = RuntimeSettings.Language.GetTag("iatag_ui_buddy_userid_none");
-                if (value > 0)
-                {
+                if (value > 0) {
                     userId = value.ToString();
                 }
 
@@ -36,8 +31,7 @@ namespace IAGrim.UI
             }
         }
 
-        public BuddySettings(Action<bool> enableCallback, IBuddyItemDao buddyItemDao, IBuddySubscriptionDao buddySubscriptionDao, SettingsService settingsService, IHelpService helpService)
-        {
+        public BuddySettings(Action<bool> enableCallback, IBuddyItemDao buddyItemDao, IBuddySubscriptionDao buddySubscriptionDao, SettingsService settingsService, IHelpService helpService) {
             InitializeComponent();
             _enableCallback = enableCallback;
             _buddyItemDao = buddyItemDao;
@@ -46,12 +40,11 @@ namespace IAGrim.UI
             _helpService = helpService;
         }
 
-        private void BuddySettings_Load(object sender, EventArgs e)
-        {
+        private void BuddySettings_Load(object sender, EventArgs e) {
             Dock = DockStyle.Fill;
             UpdateBuddyList();
 
-            
+
             buddySyncEnabled.Checked = _settingsService.GetPersistent().BuddySyncEnabled;
             UpdateEnabledStatus();
 
@@ -70,31 +63,25 @@ namespace IAGrim.UI
             buddyList.Columns[1].Width = -2;
         }
 
-        void tbDescription_LostFocus(object sender, EventArgs e)
-        {
+        void tbDescription_LostFocus(object sender, EventArgs e) {
             tbDescription.Visible = false;
             descriptionLabel.Visible = true;
         }
 
-        void tbDescription_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (e.KeyChar == 13)
-            {
+        void tbDescription_KeyPress(object sender, KeyPressEventArgs e) {
+            if (e.KeyChar == 13) {
                 tbDescription.Visible = false;
                 descriptionLabel.Visible = true;
             }
         }
 
-        void buddyId_KeyPress(object sender, KeyPressEventArgs e)
-        {
+        void buddyId_KeyPress(object sender, KeyPressEventArgs e) {
             //if (char.IsLetter(e.KeyChar) || char.IsSymbol(e.KeyChar))
-            if (char.IsNumber(e.KeyChar) || char.IsControl(e.KeyChar))
-            {
+            if (char.IsNumber(e.KeyChar) || char.IsControl(e.KeyChar)) {
                 e.Handled = false;
                 errorProvider1.Clear();
             }
-            else
-            {
+            else {
                 e.Handled = true;
 
                 errorProvider1.SetError(buddyId, RuntimeSettings.Language.GetTag("iatag_ui_buddy_userid_numeric_error_message"));
@@ -102,9 +89,7 @@ namespace IAGrim.UI
             }
 
 
-
-            if (e.KeyChar == 13)
-            {
+            if (e.KeyChar == 13) {
                 firefoxButton2_Click(null, null);
             }
         }
@@ -114,12 +99,9 @@ namespace IAGrim.UI
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (ListViewItem item in buddyList.SelectedItems)
-            {
-                if (item != null && long.TryParse(item.Tag.ToString(), out var id))
-                {
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e) {
+            foreach (ListViewItem item in buddyList.SelectedItems) {
+                if (item != null && long.TryParse(item.Tag.ToString(), out var id)) {
                     _buddyItemDao.RemoveBuddy(id);
                     UpdateBuddyList();
                 }
@@ -129,41 +111,25 @@ namespace IAGrim.UI
         /// <summary>
         /// Update the list of buddies
         /// </summary>
-        public void UpdateBuddyList()
-        {
+        public void UpdateBuddyList() {
             buddyList.Items.Clear();
 
             // TODO: Wrap in a DAO
-            using (var session = new SessionFactory().OpenSession())
-            {
-                using (session.BeginTransaction())
-                {
-                    var subscriptions = session.CreateCriteria<BuddySubscription>().List<BuddySubscription>();
-                    foreach (var subscription in subscriptions)
-                    {
-                        var label = subscription.Id.ToString();
-                        var stash = session.CreateCriteria<BuddyStash>()
-                            .Add(Restrictions.Eq("UserId", subscription.Id))
-                            .SetMaxResults(1)
-                            .UniqueResult<BuddyStash>();
+            var subscriptions = _buddySubscriptionDao.ListAll();
+            foreach (var subscription in subscriptions) {
+                var label = subscription.Id.ToString();
+                var stash = _buddyItemDao.GetBySubscriptionId(subscription.Id);
 
-                        if (stash != null)
-                        {
-                            label = $"[{label}] {stash.Description}";
-                        }
-
-                        var numItems = session
-                            .CreateSQLQuery(
-                                $"SELECT COUNT(*) FROM {BuddyItemsTable.Table} WHERE {BuddyItemsTable.BuddyId} = :id")
-                            .SetParameter("id", subscription.Id)
-                            .UniqueResult();
-
-                        var lvi = new ListViewItem(label);
-                        lvi.SubItems.Add(numItems.ToString());
-                        lvi.Tag = subscription.Id;
-                        buddyList.Items.Add(lvi);
-                    }
+                if (stash != null) {
+                    label = $"[{label}] {stash.Description}";
                 }
+
+                var numItems = _buddyItemDao.GetNumItems(subscription.Id);
+
+                var lvi = new ListViewItem(label);
+                lvi.SubItems.Add(numItems.ToString());
+                lvi.Tag = subscription.Id;
+                buddyList.Items.Add(lvi);
             }
         }
 
@@ -172,20 +138,16 @@ namespace IAGrim.UI
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void firefoxButton2_Click(object sender, EventArgs e)
-        {
-            if (long.TryParse(buddyId.Text, out var id))
-            {
-                if (id > 0 && id != _settingsService.GetPersistent().BuddySyncUserIdV2)
-                {
-                    _buddySubscriptionDao.SaveOrUpdate(new BuddySubscription { Id = id });
+        private void firefoxButton2_Click(object sender, EventArgs e) {
+            if (long.TryParse(buddyId.Text, out var id)) {
+                if (id > 0 && id != _settingsService.GetPersistent().BuddySyncUserIdV2) {
+                    _buddySubscriptionDao.SaveOrUpdate(new BuddySubscription {Id = id});
                 }
 
                 UpdateBuddyList();
                 _enableCallback(true);
             }
-            else
-            {
+            else {
                 errorProvider1.SetError(buddyId, RuntimeSettings.Language.GetTag("iatag_ui_buddy_userid_numeric_error_message"));
                 errorProvider1.SetIconAlignment(buddyId, ErrorIconAlignment.MiddleLeft);
             }
@@ -193,8 +155,7 @@ namespace IAGrim.UI
             buddyId.Text = "";
         }
 
-        private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
-        {
+        private void contextMenuStrip1_Opening(object sender, CancelEventArgs e) {
             e.Cancel = false;
         }
 
@@ -203,8 +164,7 @@ namespace IAGrim.UI
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void buddySyncEnabled_CheckedChanged(object sender, EventArgs e)
-        {
+        private void buddySyncEnabled_CheckedChanged(object sender, EventArgs e) {
             _delayedTextChangedTimer?.Stop();
 
             _delayedTextChangedTimer = new Timer();
@@ -215,8 +175,7 @@ namespace IAGrim.UI
             UpdateEnabledStatus();
         }
 
-        private void UpdateEnabledStatus()
-        {
+        private void UpdateEnabledStatus() {
             buttonSyncNow.Enabled = buddySyncEnabled.Checked;
             buddyId.Enabled = buddySyncEnabled.Checked;
             firefoxButton2.Enabled = buddySyncEnabled.Checked;
@@ -227,48 +186,41 @@ namespace IAGrim.UI
             useridLabel.Enabled = buddySyncEnabled.Checked;
         }
 
-        private void DelayedActivate(object sender, EventArgs e)
-        {
-            if (_delayedTextChangedTimer != null)
-            {
+        private void DelayedActivate(object sender, EventArgs e) {
+            if (_delayedTextChangedTimer != null) {
                 _delayedTextChangedTimer.Stop();
                 _delayedTextChangedTimer = null;
             }
+
             _settingsService.GetPersistent().BuddySyncEnabled = buddySyncEnabled.Checked;
             _enableCallback(buddySyncEnabled.Checked);
         }
 
 
-        private void buttonSyncNow_Click(object sender, EventArgs e)
-        {
-            if (buddySyncEnabled.Checked)
-            {
+        private void buttonSyncNow_Click(object sender, EventArgs e) {
+            if (buddySyncEnabled.Checked) {
                 _enableCallback(true);
             }
         }
 
-        private void tbDescription_TextChanged(object sender, EventArgs e)
-        {
+        private void tbDescription_TextChanged(object sender, EventArgs e) {
             var tb = sender as TextBox;
 
             _settingsService.GetPersistent().BuddySyncDescription = tb.Text;
             descriptionLabel.Text = $"{RuntimeSettings.Language.GetTag("iatag_ui_buddy_userid_name")}{tb.Text}";
         }
 
-        private void editToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void editToolStripMenuItem_Click(object sender, EventArgs e) {
             tbDescription.Visible = true;
             descriptionLabel.Visible = false;
             tbDescription.Focus();
         }
 
-        private void contextMenuStripDescription_Opening(object sender, CancelEventArgs e)
-        {
+        private void contextMenuStripDescription_Opening(object sender, CancelEventArgs e) {
             e.Cancel = !buddySyncEnabled.Checked;
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
+        private void button1_Click(object sender, EventArgs e) {
             editToolStripMenuItem_Click(sender, e);
         }
 

@@ -5,11 +5,12 @@ using log4net;
 using System;
 using System.Reflection;
 using System.Text;
+using EvilsoftCommons;
 
 namespace PortablePostgres {
-    public class SessionFactory {
+    public class SessionFactory : ISessionFactoryWrapper {
         private static ISessionFactory _sessionFactory;
-        private static ILog logger = LogManager.GetLogger("SessionFactory");
+        private static readonly ILog Logger = LogManager.GetLogger("SessionFactory");
 
         private ISessionFactory CreateSessionFactory(string configFile) {
             if (_sessionFactory == null) {
@@ -32,8 +33,8 @@ namespace PortablePostgres {
                     _sessionFactory = configuration.BuildSessionFactory();
                 }
                 catch (Exception ex) {
-                    logger.Warn(ex.Message);
-                    logger.Warn(ex.StackTrace);
+                    Logger.Warn(ex.Message);
+                    Logger.Warn(ex.StackTrace);
                     throw;
                 }
             }

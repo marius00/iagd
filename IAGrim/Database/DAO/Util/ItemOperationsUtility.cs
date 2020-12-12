@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using IAGrim.Database.Interfaces;
 using IAGrim.Database.Model;
 using IAGrim.Services.Dto;
 using IAGrim.Utilities;
@@ -10,6 +11,24 @@ using StatTranslator;
 
 namespace IAGrim.Database.DAO.Util {
     static class ItemOperationsUtility {
+
+        /// <summary>
+        /// Merges identical items, summing up the stacksize.
+        /// </summary>
+        public static List<T> MergeStackSize<T>(IEnumerable<T> items) where T : PlayerHeldItem {
+            Dictionary<string, T> map = new Dictionary<string, T>();
+            foreach (var item in items) {
+                var key = item.Name + item.MinimumLevel;
+                if (map.ContainsKey(key)) {
+                    map[key].Count += item.Count;
+                }
+                else {
+                    map[key] = item;
+                }
+            }
+
+            return map.Values.ToList();
+        }
 
         /// <summary>
         /// Calculate the item rarity for a given set of records (suffix, prefix, etc)

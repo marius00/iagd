@@ -8,18 +8,19 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
+using EvilsoftCommons;
 using IAGrim.Utilities;
 
 namespace SessionFactoryLoader {
-    public class SessionFactory {
+    public class SessionFactory : ISessionFactoryWrapper {
         private ISessionFactory _sessionFactory;
-        private ILog logger = LogManager.GetLogger("SessionFactory");
+        private readonly ILog _logger = LogManager.GetLogger("SessionFactory");
 
         public static string ConnectionString { get; private set; }
 
 
         private ISessionFactory CreateSessionFactory(string configFile) {
-            logger.Debug("Creating session factory");
+            _logger.Debug("Creating session factory");
             var configuration = new Configuration();
             configuration.Configure(configFile);
 
@@ -37,19 +38,19 @@ namespace SessionFactoryLoader {
             configuration.AddAssembly(System.Reflection.Assembly.GetEntryAssembly());
 
             try {
-                logger.Debug("Building session factory");
+                _logger.Debug("Building session factory");
                 var factory = configuration.BuildSessionFactory();
 
-                logger.Debug("Running schema updates");
+                _logger.Debug("Running schema updates");
                 var updater = new SchemaUpdate(configuration);
                 updater.Execute(true, true);
 
-                logger.Info("Database connection established.");
+                _logger.Info("Database connection established.");
                 return factory;
             }
             catch (Exception ex) {
-                logger.Warn(ex.Message);
-                logger.Warn(ex.StackTrace);
+                _logger.Warn(ex.Message);
+                _logger.Warn(ex.StackTrace);
                 throw;
             }
 

@@ -205,6 +205,8 @@
     <Compile Include="Backup\Azure\Dto\AzureLimitEntry.cs" />
     <Compile Include="Backup\Azure\Dto\AzureLimitsDto.cs" />
     <Compile Include="Database\DAO\ItemCollectionDaoImpl.cs" />
+    <Compile Include="Database\DAO\Util\SqlDialect.cs" />
+    <Compile Include="Database\DAO\Util\SqlUtils.cs" />
     <Compile Include="Database\Interfaces\IItemCollectionDao.cs" />
     <Compile Include="Database\Model\BuddyItemRecord.cs" />
     <Compile Include="Database\Model\CollectionItem.cs" />

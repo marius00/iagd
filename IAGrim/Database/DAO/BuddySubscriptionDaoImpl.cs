@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using IAGrim.Database.DAO.Util;
 using NHibernate.Persister.Entity;
 
 namespace IAGrim.Database {
@@ -14,9 +15,8 @@ namespace IAGrim.Database {
     /// These are not user owned items
     /// </summary>
     public class BuddySubscriptionDaoImpl : BaseDao<BuddySubscription>, IBuddySubscriptionDao {
-        private static ILog logger = LogManager.GetLogger(typeof(BuddySubscriptionDaoImpl));
 
-        public BuddySubscriptionDaoImpl(ISessionCreator sessionCreator) : base(sessionCreator) {
+        public BuddySubscriptionDaoImpl(ISessionCreator sessionCreator, SqlDialect dialect) : base(sessionCreator, dialect) {
         }
 
 

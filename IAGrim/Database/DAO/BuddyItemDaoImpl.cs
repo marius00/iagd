@@ -11,13 +11,15 @@ using System.Collections.Generic;
 using System.Linq;
 using EvilsoftCommons;
 using IAGrim.Database.DAO;
+using IAGrim.Database.DAO.Util;
+using NHibernate.Criterion;
 
 namespace IAGrim.Database
 {
     public class BuddyItemDaoImpl : BaseDao<BuddyItem>, IBuddyItemDao {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(BuddyItemDaoImpl));
 
-        public BuddyItemDaoImpl(ISessionCreator sessionCreator) : base(sessionCreator) {
+        public BuddyItemDaoImpl(ISessionCreator sessionCreator, SqlDialect dialect) : base(sessionCreator, dialect) {
             //
         }
 
@@ -41,6 +43,32 @@ namespace IAGrim.Database
             }
         }
 
+        public long GetNumItems(long subscriptionId) {
+            using (ISession session = SessionCreator.OpenSession()) {
+                using (session.BeginTransaction()) {
+                    var numItems = session
+                        .CreateSQLQuery(
+                            $"SELECT COUNT(*) FROM {BuddyItemsTable.Table} WHERE {BuddyItemsTable.BuddyId} = :id")
+                        .SetParameter("id", subscriptionId)
+                        .UniqueResult<long>();
+
+                    return numItems;
+                }
+            }
+        }
+
+        public BuddyStash GetBySubscriptionId(long subscriptionId) {
+            using (ISession session = SessionCreator.OpenSession()) {
+                using (session.BeginTransaction()) {
+                    var stash = session.CreateCriteria<BuddyStash>()
+                        .Add(Restrictions.Eq("UserId", subscriptionId))
+                        .SetMaxResults(1)
+                        .UniqueResult<BuddyStash>();
+
+                    return stash;
+                }
+            }
+        }
 
         private class NameRow {
             public string Record { get; set; }
@@ -561,7 +589,7 @@ namespace IAGrim.Database
                                 {BuddyItemsTable.Name} as Name,
                                 {BuddyItemsTable.LevelRequirement} as MinimumLevel,
                                 {BuddyItemsTable.Id} as Id,
-                                SUM({BuddyItemsTable.StackCount}) as Count,
+                                {BuddyItemsTable.StackCount} as Count,
                                 S.{BuddyStashTable.Name} as Stash
 
 
@@ -573,7 +601,7 @@ namespace IAGrim.Database
             if (subquery != null) {
                 sql.Add($" AND PI.{BuddyItemsTable.Id} IN (" + subquery.SQL + ")");
             }
-            sql.Add($" GROUP BY {BuddyItemsTable.Name}, {BuddyItemsTable.LevelRequirement}");
+            
 
 
 
@@ -608,8 +636,8 @@ namespace IAGrim.Database
 
                     Logger.Debug(q.QueryString);
                     q.SetResultTransformer(Transformers.AliasToBean<BuddyItem>());
-                    var result = q.List<BuddyItem>();
-                    
+                    var result = ItemOperationsUtility.MergeStackSize(q.List<BuddyItem>());
+
                     // stacksize is correct.. record is not
                     Logger.Debug($"Search returned {result.Count} items");
                     return result;

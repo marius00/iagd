@@ -7,14 +7,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IAGrim.Database.DAO;
+using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Model;
 using IAGrim.Parsers.GameDataParsing.Model;
 
 namespace IAGrim.Database.Synchronizer {
     class ItemTagRepo : BasicSynchronizer<ItemTag>, IItemTagDao {
         private readonly ItemTagDaoImpl repo;
-        public ItemTagRepo(ThreadExecuter threadExecuter, ISessionCreator sessionCreator) : base(threadExecuter, sessionCreator) {
-            this.repo = new ItemTagDaoImpl(sessionCreator);
+        public ItemTagRepo(ThreadExecuter threadExecuter, ISessionCreator sessionCreator, SqlDialect dialect) : base(threadExecuter, sessionCreator) {
+            this.repo = new ItemTagDaoImpl(sessionCreator, dialect);
             this.BaseRepo = repo;
         }
 

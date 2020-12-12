@@ -15,7 +15,7 @@ namespace Tests_IAGrim.Dao {
     [TestClass]
     public class PlayerItemDaoTests {
         private static readonly IAGrim.Tests.SessionFactory factory = new IAGrim.Tests.SessionFactory();
-        private IPlayerItemDao dao = new IAGrim.Database.PlayerItemDaoImpl(factory, new DatabaseItemStatDaoImpl(factory));
+        private IPlayerItemDao dao = new PlayerItemDaoImpl(factory, new DatabaseItemStatDaoImpl(factory));
 
 
         [ClassInitialize]

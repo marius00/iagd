@@ -28,7 +28,7 @@ namespace IAGrim.Database {
 
         public PlayerItemDaoImpl(
             ISessionCreator sessionCreator, 
-            IDatabaseItemStatDao databaseItemStatDao) : base(sessionCreator) {
+            IDatabaseItemStatDao databaseItemStatDao, SqlDialect dialect) : base(sessionCreator, dialect) {
             _databaseItemStatDao = databaseItemStatDao;
         }
         
@@ -57,8 +57,8 @@ namespace IAGrim.Database {
         public Dictionary<string, int> GetCountByRecord(string mod) {
             using (ISession session = SessionCreator.OpenSession()) {
                 IList<object[]> rows;
-                if (string.IsNullOrEmpty(mod)) {
-                    string sql = string.Join(" ",
+                if (String.IsNullOrEmpty(mod)) {
+                    string sql = String.Join(" ",
                         $"SELECT sum(max(1, {PlayerItemTable.Stackcount})), {PlayerItemTable.Record} ",
                           $"FROM {PlayerItemTable.Table}",
                           $"WHERE {PlayerItemTable.Mod} IS NULL OR {PlayerItemTable.Mod} = ''",
@@ -67,7 +67,7 @@ namespace IAGrim.Database {
                     rows = session.CreateSQLQuery(sql).List<object[]>();
                 }
                 else {
-                    string sql = string.Join(" ",
+                    string sql = String.Join(" ",
                         $"SELECT sum(max(1, {PlayerItemTable.Stackcount})), {PlayerItemTable.Record} ",
                         $"FROM {PlayerItemTable.Table}",
                         $"WHERE {PlayerItemTable.Mod} = :mod",
@@ -78,7 +78,7 @@ namespace IAGrim.Database {
                         .List<object[]>();
                 }
 
-                Dictionary < string, int> result = new Dictionary<string, int>();
+                Dictionary<string, int> result = new Dictionary<string, int>();
                 foreach (var row in rows) {
                     var sum = (long)row[0];
                     var record = (string)row[1];
@@ -125,16 +125,16 @@ namespace IAGrim.Database {
         /// <returns></returns>
         private static List<string> GetRecordsForItem(PlayerItem item) {
             List<string> records = new List<string>();
-            if (!string.IsNullOrEmpty(item.BaseRecord)) {
+            if (!String.IsNullOrEmpty(item.BaseRecord)) {
                 records.Add(item.BaseRecord);
             }
-            if (!string.IsNullOrEmpty(item.PrefixRecord)) {
+            if (!String.IsNullOrEmpty(item.PrefixRecord)) {
                 records.Add(item.PrefixRecord);
             }
-            if (!string.IsNullOrEmpty(item.SuffixRecord)) {
+            if (!String.IsNullOrEmpty(item.SuffixRecord)) {
                 records.Add(item.SuffixRecord);
             }
-            if (!string.IsNullOrEmpty(item.MateriaRecord)) {
+            if (!String.IsNullOrEmpty(item.MateriaRecord)) {
                 records.Add(item.MateriaRecord);
             }
 
@@ -234,7 +234,7 @@ namespace IAGrim.Database {
                         .List<PlayerItem>();
 
                     filteredItems = items
-                        .Where(m => string.IsNullOrEmpty(m.AzureUuid) || !existingItems.Any(item => item.AzureUuid == m.AzureUuid))
+                        .Where(m => String.IsNullOrEmpty(m.AzureUuid) || !existingItems.Any(item => item.AzureUuid == m.AzureUuid))
                         .Where(m => !Exists(session, m)) // May be slow, but should prevent duplicates better than anything
                         .ToList();
                 }
@@ -287,11 +287,11 @@ namespace IAGrim.Database {
                     }
                     
                     // insert into DeletedPlayerItem(oid) select onlineid from playeritem where onlineid is not null and stackcount <= 0 and id in (1,2,3)
-                    session.CreateSQLQuery($" INSERT OR IGNORE INTO {DeletedPlayerItemTable.Table} ({DeletedPlayerItemTable.Id}, {DeletedPlayerItemTable.Partition}) " +
+                    session.CreateSQLQuery(SqlUtils.EnsureDialect(Dialect, $" INSERT OR IGNORE INTO {DeletedPlayerItemTable.Table} ({DeletedPlayerItemTable.Id}, {DeletedPlayerItemTable.Partition}) " +
                                         $" SELECT {PlayerItemTable.AzureUuid}, {PlayerItemTable.AzurePartition} FROM {PlayerItemTable.Table} " +
                                         $" WHERE {PlayerItemTable.AzureUuid} IS NOT NULL " +
                                         $" AND {PlayerItemTable.Stackcount} <= 0 " +
-                                        $" AND {PlayerItemTable.Id} IN ( :ids )")
+                                        $" AND {PlayerItemTable.Id} IN ( :ids )"))
                         .SetParameterList("ids", items.Select(m => m.Id).ToList())
                         .ExecuteUpdate();
 
@@ -344,16 +344,17 @@ namespace IAGrim.Database {
             var id = nameof(PlayerItemRecord.PlayerItemId);
             var rec = nameof(PlayerItemRecord.Record);
 
+            // INSERT INTO PlayerItemRecord (PlayerItemId, Record) VALUES (0, 'b') ON CONFLICT DO NOTHING;;
             var records = GetRecordsForItem(item);
             foreach (var record in records) {
-                session.CreateSQLQuery($"INSERT OR IGNORE INTO {table} ({id}, {rec}) VALUES (:id, :record);")
+                session.CreateSQLQuery(SqlUtils.EnsureDialect(Dialect, $"INSERT OR IGNORE INTO {table} ({id}, {rec}) VALUES (:id, :record)"))
                     .SetParameter("id", item.Id)
                     .SetParameter("record", record)
                     .ExecuteUpdate();
             }
         }
 
-        private void UpdatePetRecords(ISession session, PlayerItem item, Dictionary<String, List<DBStatRow>> stats) {
+        private void UpdatePetRecords(ISession session, PlayerItem item, Dictionary<string, List<DBStatRow>> stats) {
             var records = GetRecordsForItem(item);
 
             var table = nameof(PlayerItemRecord);
@@ -361,7 +362,7 @@ namespace IAGrim.Database {
             var rec = nameof(PlayerItemRecord.Record);
             foreach (var record in GetPetBonusRecords(stats, records)) {
 
-                session.CreateSQLQuery($"INSERT OR IGNORE INTO {table} ({id}, {rec}) VALUES (:id, :record);")
+                session.CreateSQLQuery(SqlUtils.EnsureDialect(Dialect, $"INSERT OR IGNORE INTO {table} ({id}, {rec}) VALUES (:id, :record)"))
                     .SetParameter("id", item.Id)
                     .SetParameter("record", record)
                     .ExecuteUpdate();
@@ -369,7 +370,7 @@ namespace IAGrim.Database {
 
         }
 
-        private void UpdateItemDetails(ISession session, PlayerItem item, Dictionary<String, List<DBStatRow>> stats) {
+        private void UpdateItemDetails(ISession session, PlayerItem item, Dictionary<string, List<DBStatRow>> stats) {
             var table = nameof(PlayerItem);
             var rarity = nameof(PlayerItem.Rarity);
             var levelReq = nameof(PlayerItem.LevelRequirement);
@@ -467,7 +468,7 @@ namespace IAGrim.Database {
             List<long> ids = new List<long>();
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
-                    items = items_.Where(m => string.IsNullOrWhiteSpace(m.AzurePartition) || !Exists(session, m.AzurePartition, m.AzureUuid)).ToList();
+                    items = items_.Where(m => String.IsNullOrWhiteSpace(m.AzurePartition) || !Exists(session, m.AzurePartition, m.AzureUuid)).ToList();
 
                     for (int i = 0; i < items.Count; i++) {
                         var item = items.ElementAt(i);
@@ -574,7 +575,7 @@ namespace IAGrim.Database {
                 }
 
                 // Mark item for deletion from the online backup
-                if (!string.IsNullOrEmpty(azurePartition)) {
+                if (!String.IsNullOrEmpty(azurePartition)) {
                     try {
                         using (ITransaction transaction = session.BeginTransaction()) {
                             session.SaveOrUpdate(new DeletedPlayerItem { Partition = azurePartition, Id = azureId });
@@ -669,7 +670,7 @@ namespace IAGrim.Database {
                         select suffixrecord from playeritem union 
                         select materiarecord from playeritem
                     )
-                    AND {string.Join(" AND ", queryFragments)}
+                    AND {String.Join(" AND ", queryFragments)}
                 )
                 ";
                 return new DatabaseItemStatQuery {
@@ -688,7 +689,7 @@ namespace IAGrim.Database {
             List<string> queryFragments = new List<string>();
             Dictionary<string, object> queryParams = new Dictionary<string, object>();
             
-            if (!string.IsNullOrEmpty(query.Wildcard)) {
+            if (!String.IsNullOrEmpty(query.Wildcard)) {
                 queryFragments.Add("LOWER(PI.namelowercase) LIKE :name");
                 queryParams.Add("name", $"%{query.Wildcard.Replace(' ', '%').ToLower()}%");
             }
@@ -702,7 +703,7 @@ namespace IAGrim.Database {
             else
                 queryFragments.Add("NOT PI.IsHardcore");
 
-            if (!string.IsNullOrEmpty(query.Rarity)) {
+            if (!String.IsNullOrEmpty(query.Rarity)) {
                 queryFragments.Add("PI.Rarity = :rarity");
                 queryParams.Add("rarity", query.Rarity);
             }
@@ -753,7 +754,7 @@ namespace IAGrim.Database {
 
             List<string> sql = new List<string>();
             sql.Add($@"select name as Name, 
-                sum(stackcount) as StackCount, 
+                StackCount, 
                 rarity as Rarity, 
                 levelrequirement as LevelRequirement, 
                 baserecord as BaseRecord, 
@@ -800,11 +801,9 @@ namespace IAGrim.Database {
                 }
             }
 
-            sql.Add(" GROUP BY Name, LevelRequirement COLLATE NOCASE");
-
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
-                    IQuery q = session.CreateSQLQuery(string.Join(" ", sql));
+                    IQuery q = session.CreateSQLQuery(String.Join(" ", sql));
                     foreach (var key in queryParams.Keys) {
                         q.SetParameter(key, queryParams[key]);
                         Logger.Debug($"{key}: " + queryParams[key]);
@@ -823,12 +822,9 @@ namespace IAGrim.Database {
 
                     Logger.Debug(q.QueryString);
                     q.SetResultTransformer(new AliasToBeanResultTransformer(typeof(PlayerItem)));
-                    List<PlayerItem> items = new List<PlayerItem>();
-                    
-                    foreach (PlayerItem pi in q.List()) {
-                        items.Add(pi);
-                    }
 
+                    var items = ItemOperationsUtility.MergeStackSize(q.List<PlayerItem>());
+                    
                     Logger.Debug($"Search returned {items.Count} items");
                     return items;
                 }

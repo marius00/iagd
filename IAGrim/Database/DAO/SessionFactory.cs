@@ -2,6 +2,8 @@
 using NHibernate;
 using log4net;
 using System.Threading;
+using EvilsoftCommons;
+using IAGrim.Database.DAO.Util;
 
 namespace IAGrim.Database {
     public interface ISessionCreator {
@@ -11,18 +13,32 @@ namespace IAGrim.Database {
 
     public class SessionFactory : ISessionCreator {
         private static ILog Logger = LogManager.GetLogger(typeof(SessionFactory));
+        private readonly SqlDialect _dialect;
+
+        public SessionFactory(SqlDialect dialect) {
+            _dialect = dialect;
+        }
+
+        private ISessionFactoryWrapper CreateSession() {
+            if (_dialect == SqlDialect.Sqlite) {
+                return new SessionFactoryLoader.SessionFactory();
+            }
+            else {
+                return new PortablePostgres.SessionFactory();
+            }
+        }
 
         [ThreadStatic]
         //private static SessionFactoryLoader.SessionFactory sessionFactory;
-        private static PortablePostgres.SessionFactory sessionFactory;
+        private static ISessionFactoryWrapper _sessionFactory;
 
         static SessionFactory() {
             System.Net.ServicePointManager.Expect100Continue = false;
         }
         
         public ISession OpenSession() {
-            if (sessionFactory == null) {
-                sessionFactory = new PortablePostgres.SessionFactory();
+            if (_sessionFactory == null) {
+                _sessionFactory = CreateSession();
                 Logger.Info($"Creating session on thread {Thread.CurrentThread.ManagedThreadId}");
             }
 
@@ -30,12 +46,12 @@ namespace IAGrim.Database {
                 Thread.CurrentThread.Name = "NH:Session";
 
             //logger.DebugFormat("Session opened on thread {0}, Stacktrace: {1}", System.Threading.Thread.CurrentThread.Name, new System.Diagnostics.StackTrace());
-            return sessionFactory.OpenSession();
+            return _sessionFactory.OpenSession();
         }
 
         public IStatelessSession OpenStatelessSession() {
-            if (sessionFactory == null) {
-                sessionFactory = new PortablePostgres.SessionFactory();
+            if (_sessionFactory == null) {
+                _sessionFactory = CreateSession();
                 Logger.Info($"Creating session on thread {Thread.CurrentThread.ManagedThreadId}");
             }
 
@@ -43,7 +59,7 @@ namespace IAGrim.Database {
                 Thread.CurrentThread.Name = "NH:Session";
 
             //logger.DebugFormat("Stateless session opened on thread {0}, Stacktrace: {1}", System.Threading.Thread.CurrentThread.Name, new System.Diagnostics.StackTrace());
-            return sessionFactory.OpenStatelessSession();
+            return _sessionFactory.OpenStatelessSession();
         }
     }
 }
