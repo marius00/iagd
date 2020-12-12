@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using IAGrim.Database.DAO.Util;
 using NHibernate;
 using IAGrim.Database.Interfaces;
 
@@ -9,11 +10,12 @@ namespace IAGrim.Database {
 
 
     public class BaseDao<T> where T : class {
-
+        protected readonly SqlDialect Dialect;
         protected readonly ISessionCreator SessionCreator;
 
-        protected BaseDao(ISessionCreator sessionCreator) {
+        protected BaseDao(ISessionCreator sessionCreator, SqlDialect dialect) {
             this.SessionCreator = sessionCreator;
+            Dialect = dialect;
         }
 
 

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using IAGrim.Backup.Azure.Service;
 using IAGrim.Backup.Azure.Util;
 using IAGrim.Database;
+using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Interfaces;
 using IAGrim.Database.Migrations;
 using IAGrim.Database.Synchronizer;
@@ -45,25 +46,25 @@ namespace IAGrim.Services {
             throw new ArgumentException("Cannot find service of type", typeof(T).ToString());
         }
 
-        public static ServiceProvider Initialize(ThreadExecuter threadExecuter) {
+        public static ServiceProvider Initialize(ThreadExecuter threadExecuter, SqlDialect dialect) {
             Logger.Debug("Creating services");
-            var factory = new SessionFactory();
+            var factory = new SessionFactory(dialect);
 
             // Settings should be upgraded early, it contains the language pack etc and some services depends on settings.
             var settingsService = StartupService.LoadSettingsService();
-            IPlayerItemDao playerItemDao = new PlayerItemRepo(threadExecuter, factory);
-            IDatabaseItemDao databaseItemDao = new DatabaseItemRepo(threadExecuter, factory);
-            IDatabaseSettingDao databaseSettingDao = new DatabaseSettingRepo(threadExecuter, factory);
-            var azurePartitionDao = new AzurePartitionRepo(threadExecuter, factory);
-            IDatabaseItemStatDao databaseItemStatDao = new DatabaseItemStatRepo(threadExecuter, factory);
-            IItemTagDao itemTagDao = new ItemTagRepo(threadExecuter, factory);
-            IBuddyItemDao buddyItemDao = new BuddyItemRepo(threadExecuter, factory);
-            IBuddySubscriptionDao buddySubscriptionDao = new BuddySubscriptionRepo(threadExecuter, factory);
-            IRecipeItemDao recipeItemDao = new RecipeItemRepo(threadExecuter, factory);
+            IPlayerItemDao playerItemDao = new PlayerItemRepo(threadExecuter, factory, dialect);
+            IDatabaseItemDao databaseItemDao = new DatabaseItemRepo(threadExecuter, factory, dialect);
+            IDatabaseSettingDao databaseSettingDao = new DatabaseSettingRepo(threadExecuter, factory, dialect);
+            var azurePartitionDao = new AzurePartitionRepo(threadExecuter, factory, dialect);
+            IDatabaseItemStatDao databaseItemStatDao = new DatabaseItemStatRepo(threadExecuter, factory, dialect);
+            IItemTagDao itemTagDao = new ItemTagRepo(threadExecuter, factory, dialect);
+            IBuddyItemDao buddyItemDao = new BuddyItemRepo(threadExecuter, factory, dialect);
+            IBuddySubscriptionDao buddySubscriptionDao = new BuddySubscriptionRepo(threadExecuter, factory, dialect);
+            IRecipeItemDao recipeItemDao = new RecipeItemRepo(threadExecuter, factory, dialect);
             IItemSkillDao itemSkillDao = new ItemSkillRepo(threadExecuter, factory);
-            AugmentationItemRepo augmentationItemRepo = new AugmentationItemRepo(threadExecuter, factory, new DatabaseItemStatDaoImpl(factory));
+            AugmentationItemRepo augmentationItemRepo = new AugmentationItemRepo(threadExecuter, factory, new DatabaseItemStatDaoImpl(factory, dialect), dialect);
             var grimDawnDetector = new GrimDawnDetector(settingsService);
-            var itemCollectionRepo = new ItemCollectionRepo(threadExecuter, factory);
+            var itemCollectionRepo = new ItemCollectionRepo(threadExecuter, factory, dialect);
 
             // Chicken and the egg..
             var itemStatService = new ItemStatService(databaseItemStatDao, itemSkillDao, settingsService);

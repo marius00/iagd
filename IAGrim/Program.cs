@@ -19,12 +19,12 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Windows.Forms;
+using IAGrim.Database.DAO.Util;
 using IAGrim.Services;
 using IAGrim.Settings;
 using IAGrim.Utilities.Detection;
 
-namespace IAGrim
-{
+namespace IAGrim {
     internal class Program {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(Program));
         private static MainWindow _mw;
@@ -57,8 +57,7 @@ namespace IAGrim
 
 
         [STAThread]
-        private static void Main(string[] args)
-        {
+        private static void Main(string[] args) {
             if (Thread.CurrentThread.Name == null)
                 Thread.CurrentThread.Name = "Main";
 
@@ -105,30 +104,24 @@ namespace IAGrim
             ItemHtmlWriter.CopyMissingFiles();
 
             Guid guid = new Guid("{F3693953-C090-4F93-86A2-B98AB96A9368}");
-            using (SingleInstance singleInstance = new SingleInstance(guid))
-            {
-                if (singleInstance.IsFirstInstance)
-                {
+            using (SingleInstance singleInstance = new SingleInstance(guid)) {
+                if (singleInstance.IsFirstInstance) {
                     Logger.Info("Calling run..");
                     singleInstance.ArgumentsReceived += singleInstance_ArgumentsReceived;
                     singleInstance.ListenForArgumentsFromSuccessiveInstances();
-                    using (ThreadExecuter threadExecuter = new ThreadExecuter())
-                    {
+                    using (ThreadExecuter threadExecuter = new ThreadExecuter()) {
                         Application.EnableVisualStyles();
                         Application.SetCompatibleTextRenderingDefault(false);
                         Logger.Info("Visual styles enabled..");
                         Run(args, threadExecuter);
                     }
                 }
-                else
-                {
-                    if (args != null && args.Length > 0)
-                    {
+                else {
+                    if (args != null && args.Length > 0) {
                         singleInstance.PassArgumentsToFirstInstance(args);
                     }
-                    else
-                    {
-                        singleInstance.PassArgumentsToFirstInstance(new string[] { "--ignore" });
+                    else {
+                        singleInstance.PassArgumentsToFirstInstance(new string[] {"--ignore"});
                     }
                 }
             }
@@ -141,17 +134,13 @@ namespace IAGrim
         /// <summary>
         /// Attempting to run a second copy of the program
         /// </summary>
-        private static void singleInstance_ArgumentsReceived(object _, ArgumentsReceivedEventArgs e)
-        {
-            try
-            {
-                if (_mw != null)
-                {
-                    _mw.Invoke((MethodInvoker)delegate { _mw.Activate(); });
+        private static void singleInstance_ArgumentsReceived(object _, ArgumentsReceivedEventArgs e) {
+            try {
+                if (_mw != null) {
+                    _mw.Invoke((MethodInvoker) delegate { _mw.Activate(); });
                 }
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 ExceptionReporter.ReportException(ex, "singleInstance_ArgumentsReceived");
             }
         }
@@ -166,10 +155,10 @@ namespace IAGrim
             }
         }
 
-        private static void Run(string[] args, ThreadExecuter threadExecuter)
-        {
-            var factory = new SessionFactory();
-            var serviceProvider = ServiceProvider.Initialize(threadExecuter);
+        private static void Run(string[] args, ThreadExecuter threadExecuter) {
+            var dialect = SqlDialect.Sqlite; // TODO! DO NOT COMMIT
+            var factory = new SessionFactory(dialect);
+            var serviceProvider = ServiceProvider.Initialize(threadExecuter, dialect);
 
             var settingsService = serviceProvider.Get<SettingsService>();
             var databaseItemDao = serviceProvider.Get<IDatabaseItemDao>();
@@ -183,7 +172,7 @@ namespace IAGrim
 
             Logger.Debug("Loading UUID");
             LoadUuid(databaseSettingDao, settingsService);
-            
+
             Logger.Debug("Updating augment state..");
             augmentationItemRepo.UpdateState();
 
@@ -191,14 +180,12 @@ namespace IAGrim
             var databaseItemStatDao = serviceProvider.Get<IDatabaseItemStatDao>();
             var itemSkillDao = serviceProvider.Get<IItemSkillDao>();
             ParsingService parsingService = new ParsingService(itemTagDao, null, databaseItemDao, databaseItemStatDao, itemSkillDao, settingsService.GetLocal().LocalizationFile);
-            StartupService.PrintStartupInfo(factory, settingsService);
+            StartupService.PrintStartupInfo(factory, settingsService, dialect);
 
 
             // TODO: Offload to the new language loader
-            if (RuntimeSettings.Language is EnglishLanguage language)
-            {
-                foreach (var tag in itemTagDao.GetClassItemTags())
-                {
+            if (RuntimeSettings.Language is EnglishLanguage language) {
+                foreach (var tag in itemTagDao.GetClassItemTags()) {
                     language.SetTagIfMissing(tag.Tag, tag.Name);
                 }
             }
@@ -208,8 +195,7 @@ namespace IAGrim
                 settingsService.GetPersistent().AzureAuthToken = null;
             }
 
-            using (CefBrowserHandler browser = new CefBrowserHandler())
-            {
+            using (CefBrowserHandler browser = new CefBrowserHandler()) {
                 _mw = new MainWindow(
                     serviceProvider,
                     browser,
@@ -241,6 +227,5 @@ namespace IAGrim
 
             Logger.Info("Application ended.");
         }
-
     }
 }

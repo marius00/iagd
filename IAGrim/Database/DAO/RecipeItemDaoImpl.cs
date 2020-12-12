@@ -6,10 +6,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IAGrim.Database.DAO.Util;
 
 namespace IAGrim.Database.DAO {
     public class RecipeItemDaoImpl : BaseDao<RecipeItem>, IRecipeItemDao {
-        public RecipeItemDaoImpl(ISessionCreator sessionCreator) : base(sessionCreator) {
+        public RecipeItemDaoImpl(ISessionCreator sessionCreator, SqlDialect dialect) : base(sessionCreator, dialect) {
         }
 
         public void DeleteAll(bool isHardcore) {

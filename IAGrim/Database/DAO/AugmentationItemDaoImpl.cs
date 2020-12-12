@@ -19,7 +19,7 @@ namespace IAGrim.Database.DAO {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(AugmentationItemDaoImpl));
         private readonly IDatabaseItemStatDao _databaseItemStatDao;
 
-        public AugmentationItemDaoImpl(ISessionCreator sessionCreator, IDatabaseItemStatDao databaseItemStatDao) : base(sessionCreator) {
+        public AugmentationItemDaoImpl(ISessionCreator sessionCreator, IDatabaseItemStatDao databaseItemStatDao, SqlDialect dialect) : base(sessionCreator, dialect) {
             _databaseItemStatDao = databaseItemStatDao;
         }
 

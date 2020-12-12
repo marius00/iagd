@@ -5,13 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IAGrim.Backup.Azure.Dto;
+using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Dto;
 
 namespace IAGrim.Database.Synchronizer {
     class PlayerItemRepo : BasicSynchronizer<PlayerItem>, IPlayerItemDao {
         private readonly IPlayerItemDao _repo;
-        public PlayerItemRepo(ThreadExecuter threadExecuter, ISessionCreator sessionCreator) : base(threadExecuter, sessionCreator) {
-            this._repo = new PlayerItemDaoImpl(sessionCreator, new DatabaseItemStatDaoImpl(sessionCreator));
+        public PlayerItemRepo(ThreadExecuter threadExecuter, ISessionCreator sessionCreator, SqlDialect dialect) : base(threadExecuter, sessionCreator) {
+            this._repo = new PlayerItemDaoImpl(sessionCreator, new DatabaseItemStatDaoImpl(sessionCreator, dialect), dialect);
             this.BaseRepo = _repo;
         }
 

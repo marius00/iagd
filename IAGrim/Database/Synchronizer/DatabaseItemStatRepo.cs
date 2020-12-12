@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 using IAGrim.Services.Dto;
 using NHibernate;
 using IAGrim.Database.DAO.Dto;
+using IAGrim.Database.DAO.Util;
 using IAGrim.Parsers.GameDataParsing.Model;
 
 namespace IAGrim.Database.Synchronizer {
     class DatabaseItemStatRepo : BasicSynchronizer<DatabaseItemStat>, IDatabaseItemStatDao {
         private readonly IDatabaseItemStatDao repo;
-        public DatabaseItemStatRepo(ThreadExecuter threadExecuter, ISessionCreator sessionCreator) : base(threadExecuter, sessionCreator) {
-            this.repo = new DatabaseItemStatDaoImpl(sessionCreator);
+        public DatabaseItemStatRepo(ThreadExecuter threadExecuter, ISessionCreator sessionCreator, SqlDialect dialect) : base(threadExecuter, sessionCreator) {
+            this.repo = new DatabaseItemStatDaoImpl(sessionCreator, dialect);
             this.BaseRepo = repo;
         }
 

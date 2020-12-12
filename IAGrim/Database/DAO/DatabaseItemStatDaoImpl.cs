@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using IAGrim.Database.DAO.Table;
+using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Model;
 using IAGrim.Parsers.GameDataParsing.Model;
 
@@ -87,7 +88,7 @@ namespace IAGrim.Database {
             "modifierSkillName4"
         };
 
-        public DatabaseItemStatDaoImpl(ISessionCreator sessionCreator) : base(sessionCreator) {
+        public DatabaseItemStatDaoImpl(ISessionCreator sessionCreator, SqlDialect dialect) : base(sessionCreator, dialect) {
         }
 
 

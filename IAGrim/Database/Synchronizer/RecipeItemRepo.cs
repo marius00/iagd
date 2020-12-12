@@ -5,12 +5,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IAGrim.Database.DAO.Util;
 
 namespace IAGrim.Database.Synchronizer {
     class RecipeItemRepo : BasicSynchronizer<RecipeItem>, IRecipeItemDao {
         private readonly IRecipeItemDao repo;
-        public RecipeItemRepo(ThreadExecuter threadExecuter, ISessionCreator sessionCreator) : base(threadExecuter, sessionCreator) {
-            this.repo = new RecipeItemDaoImpl(sessionCreator);
+        public RecipeItemRepo(ThreadExecuter threadExecuter, ISessionCreator sessionCreator, SqlDialect dialect) : base(threadExecuter, sessionCreator) {
+            this.repo = new RecipeItemDaoImpl(sessionCreator, dialect);
             this.BaseRepo = repo;
         }
 

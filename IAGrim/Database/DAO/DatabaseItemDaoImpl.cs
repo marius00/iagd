@@ -13,6 +13,7 @@ using System.Linq;
 using System.Text;
 using DataAccess;
 using IAGrim.Database.DAO.Table;
+using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Model;
 using IAGrim.Parsers.GameDataParsing.Model;
 using IAGrim.Services.Dto;
@@ -26,7 +27,7 @@ namespace IAGrim.Database {
     public class DatabaseItemDaoImpl : BaseDao<DatabaseItem>, IDatabaseItemDao {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(DatabaseItemDaoImpl));
 
-        public DatabaseItemDaoImpl(ISessionCreator sessionCreator) : base(sessionCreator) {
+        public DatabaseItemDaoImpl(ISessionCreator sessionCreator, SqlDialect dialect) : base(sessionCreator, dialect) {
         }
 
 
@@ -255,7 +256,9 @@ namespace IAGrim.Database {
         }
 
         public IList<ItemSetAssociation> GetItemSetAssociations() {
-            const string sql = @"SELECT BaseRecord, 
+            const string sql = @"
+            SELECT * FROM (
+                SELECT BaseRecord, 
                 (
 	                SELECT T.name FROM DatabaseItemStat_v2 ST, ItemTag T WHERE id_databaseitem IN (SELECT id_databaseitem FROM DatabaseItem_v2 db WHERE db.baserecord = S.TextValue)
 	                AND ST.stat = 'setName' AND T.tag = ST.TextValue
@@ -264,7 +267,8 @@ namespace IAGrim.Database {
                 FROM DatabaseItemStat_v2 S, DatabaseItem_v2 I
                 WHERE Stat = 'itemSetName' 
                 AND S.id_databaseitem = I.id_databaseitem
-                AND SetName IS NOT NULL";
+            ) x
+            WHERE SetName IS NOT NULL";
 
 
             using (ISession session = SessionCreator.OpenSession()) {

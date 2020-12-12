@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using EvilsoftCommons.Exceptions;
 using IAGrim.Database;
+using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.Arz;
 using IAGrim.Parsers.GameDataParsing.Service;
@@ -49,7 +50,7 @@ namespace IAGrim {
 
 
         // TODO: This creates another session instance, should be executed inside the ThreadExecuter
-        public static void PrintStartupInfo(SessionFactory factory, SettingsService settings) {
+        public static void PrintStartupInfo(SessionFactory factory, SettingsService settings, SqlDialect dialect) {
 
             if (settings.GetLocal().StashToLootFrom == 0) {
                 Logger.Info("IA is configured to loot from the last stash page");
@@ -102,11 +103,11 @@ namespace IAGrim {
             }
 
             Logger.Info("There are items stored for the following mods:");
-            foreach (var entry in new PlayerItemDaoImpl(factory, new DatabaseItemStatDaoImpl(factory)).GetModSelection()) {
+            foreach (var entry in new PlayerItemDaoImpl(factory, new DatabaseItemStatDaoImpl(factory, dialect), dialect).GetModSelection()) {
                 Logger.Info($"Mod: \"{entry.Mod}\", HC: {entry.IsHardcore}");
             }
 
-            var gdPath = new DatabaseSettingDaoImpl(factory).GetCurrentDatabasePath();
+            var gdPath = new DatabaseSettingDaoImpl(factory, dialect).GetCurrentDatabasePath();
             if (string.IsNullOrEmpty(gdPath)) {
                 Logger.Info("The path to Grim Dawn is unknown (not great)");
             }
