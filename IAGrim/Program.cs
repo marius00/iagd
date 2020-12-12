@@ -156,7 +156,7 @@ namespace IAGrim {
         }
 
         private static void Run(string[] args, ThreadExecuter threadExecuter) {
-            var dialect = SqlDialect.Sqlite; // TODO! DO NOT COMMIT
+            var dialect = SqlDialect.Postgres; // TODO! DO NOT COMMIT
             var factory = new SessionFactory(dialect);
             var serviceProvider = ServiceProvider.Initialize(threadExecuter, dialect);
 

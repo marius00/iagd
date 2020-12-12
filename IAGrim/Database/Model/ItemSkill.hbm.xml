@@ -6,10 +6,10 @@
 
   <class name="ItemSkill" table="itemskill_v2">
     <id name="Id" column="id_skill">
-      <generator class="hilo"/>
+      <generator class="identity"/>
     </id>
 
-    <property name="Description" />
+    <property name="Description" type="string" length="4000" />
     <property name="Name" />
     <property name="Record" />
     <property name="Trigger" />
