@@ -5,6 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace IAGrim.Database {
+    /// <summary>
+    /// Mapping to more easily query something based on "any record" on an item.
+    /// Example: 
+    /// </summary>
     public class PlayerItemRecord {
         public virtual long PlayerItemId { get; set; }
         public virtual string Record { get; set; }

@@ -158,12 +158,12 @@ namespace IAGrim.Database {
             using (var session = SessionCreator.OpenSession()) {
                 using (var transaction = session.BeginTransaction()) {
                     foreach (var item in items) {
-                        session.CreateQuery($"UPDATE PlayerItem SET " +
-                                            $" {PlayerItemTable.AzureHasSynchronized} = true, " +
-                                            // Should not be needed for new items, required for legacy items which had no partition.
-                                            $" {PlayerItemTable.AzureUuid} = :uuid, " +
-                                            $" {PlayerItemTable.AzurePartition} = :partition " +
-                                            $"WHERE Id = :id")
+                        session.CreateQuery($@"UPDATE PlayerItem SET 
+                                             {PlayerItemTable.AzureHasSynchronized} = true, 
+                                            -- Should not be needed for new items, required for legacy items which had no partition.
+                                             {PlayerItemTable.AzureUuid} = :uuid, 
+                                             {PlayerItemTable.AzurePartition} = :partition 
+                                            WHERE Id = :id")
                             .SetParameter("id", item.Id)
                             .SetParameter("uuid", item.AzureUuid)
                             .SetParameter("partition", item.AzurePartition)
@@ -390,7 +390,7 @@ namespace IAGrim.Database {
                 .SetParameter("namelowercase", itemName.ToLowerInvariant())
                 .SetParameter("prefixrarity", GetGreenQualityLevelForRecords(stats, records))
                 .SetParameter("rarity", ItemOperationsUtility.GetRarityForRecords(stats, records))
-                .SetParameter("levelreq", ItemOperationsUtility.GetMinimumLevelForRecords(stats, records))
+                .SetParameter("levelreq", (double)ItemOperationsUtility.GetMinimumLevelForRecords(stats, records))
                 .SetParameter("id", item.Id)
                 .ExecuteUpdate();
         }
@@ -765,7 +765,7 @@ namespace IAGrim.Database {
                 {PlayerItemTable.PrefixRarity} as PrefixRarity,
                 {PlayerItemTable.AzurePartition} as AzurePartition,
                 {PlayerItemTable.AzureUuid} as AzureUuid,
-                (SELECT Record FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord)) AS PetRecord
+                (SELECT Record FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord) LIMIT 1) AS PetRecord
                 FROM PlayerItem PI WHERE " + string.Join(" AND ", queryFragments));
 
             var subquery = CreateDatabaseStatQueryParams(query);
@@ -803,7 +803,7 @@ namespace IAGrim.Database {
 
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
-                    IQuery q = session.CreateSQLQuery(String.Join(" ", sql));
+                    IQuery q = session.CreateSQLQuery(string.Join(" ", sql));
                     foreach (var key in queryParams.Keys) {
                         q.SetParameter(key, queryParams[key]);
                         Logger.Debug($"{key}: " + queryParams[key]);
@@ -884,17 +884,24 @@ namespace IAGrim.Database {
                     session.CreateSQLQuery(@"
 insert into deletedplayeritem_v2(partition, id)
 select azpartition_v2, azuuid_v2 FROM playeritem WHERE Id IN (
-select Id from (
-	SELECT COUNT(*) c, baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed as UQ, * FROM PlayerItem
-	WHERE StackCount < 2
-	AND baserecord NOT LIKE '%materia%'
-	AND baserecord NOT LIKE '%questitems%'
-	AND baserecord NOT LIKE '%potions%'
-	AND baserecord NOT LIKE '%crafting%'
-	group by UQ
-	Order By Id desc
-) x 
-WHERE c >= 2) 
+	SELECT Id FROM (
+		SELECT MAX(Id) as Id, (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) as UQ FROM PlayerItem WHERE (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) IN (
+			SELECT UQ FROM (
+				SELECT (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) as UQ, COUNT(*) as C FROM PlayerItem
+					WHERE baserecord NOT LIKE '%materia%'
+					AND baserecord NOT LIKE '%questitems%'
+					AND baserecord NOT LIKE '%potions%'
+					AND baserecord NOT LIKE '%crafting%'
+					AND StackCount < 2 -- Potions, components, etc
+					GROUP BY UQ
+				) X 
+			WHERE C > 1
+		)
+
+		Group BY UQ
+	) Z
+)
+
 AND azpartition_v2 IS NOT NULL 
 AND azuuid_v2 IS NOT NULL 
 AND azuuid_v2 NOT IN (SELECT azuuid_v2 FROM deletedplayeritem_v2)
@@ -903,18 +910,24 @@ AND azuuid_v2 != ''
                     // Delete duplicates (if there are multiple, only one will be deleted)
                     int duplicatesDeleted = session.CreateSQLQuery(@"
 DELETE FROM PlayerItem WHERE Id IN (
-select Id from (
-	SELECT COUNT(*) c, baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed as UQ, * FROM PlayerItem
-	WHERE StackCount < 2
-	AND baserecord NOT LIKE '%materia%'
-	AND baserecord NOT LIKE '%questitems%'
-	AND baserecord NOT LIKE '%potions%'
-	AND baserecord NOT LIKE '%crafting%'
-	group by UQ
-	Order By Id desc
-) x 
-WHERE c >= 2
-)").ExecuteUpdate();
+	SELECT Id FROM (
+		SELECT MAX(Id) as Id, (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) as UQ FROM PlayerItem WHERE (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) IN (
+			SELECT UQ FROM (
+				SELECT (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) as UQ, COUNT(*) as C FROM PlayerItem
+					WHERE baserecord NOT LIKE '%materia%'
+					AND baserecord NOT LIKE '%questitems%'
+					AND baserecord NOT LIKE '%potions%'
+					AND baserecord NOT LIKE '%crafting%'
+					AND StackCount < 2 -- Potions, components, etc
+					GROUP BY UQ
+				) X 
+			WHERE C > 1
+		)
+
+		Group BY UQ
+	) Z
+)
+").ExecuteUpdate();
 
                     transaction.Commit();
                 }

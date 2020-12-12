@@ -6,7 +6,7 @@
     <property name="connection.driver_class">NHibernate.Driver.NpgsqlDriver</property>
     <property name="connection.connection_string">server=localhost;Port=5432;Database=ia{db};User Id=ia;Password=ia;Pooling=false</property>
     <property name="connection.isolation">Unspecified</property>
-    <property name="adonet.batch_size">1</property>
+    <property name="adonet.batch_size">950</property>
 
     <property name="cache.use_second_level_cache">false</property>
     <property name="cache.use_query_cache" >false</property>

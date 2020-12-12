@@ -52,29 +52,28 @@ namespace IAGrim.Database {
         public override void Save(DatabaseItem item) {
             using (var session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
-
                     session.CreateQuery("DELETE FROM DatabaseItemStat as S WHERE S.Parent.Id = :id")
                         .SetParameter("id", item.Id)
                         .ExecuteUpdate();
-                        
+
                     session.CreateQuery("DELETE FROM DatabaseItem WHERE Record = :record")
                         .SetParameter("record", item.Record)
                         .ExecuteUpdate();
 
                     transaction.Commit();
                 }
-                using (ITransaction transaction = session.BeginTransaction()) {
 
+                using (ITransaction transaction = session.BeginTransaction()) {
                     foreach (DatabaseItemStat stat in item.Stats) {
                         stat.Parent = item;
                         //session.Insert(stat);
                     }
+
                     session.Save(item);
 
                     transaction.Commit();
                 }
             }
-
         }
 
         private void ExecuteTransactionSql(SQLiteConnection dbConnection, string[] commands) {
@@ -88,7 +87,6 @@ namespace IAGrim.Database {
 
                 transaction.Commit();
             }
-            
         }
 
         public void Save(List<DatabaseItem> items, ProgressTracker progressTracker) {
@@ -99,8 +97,8 @@ namespace IAGrim.Database {
             using (var session = SessionCreator.OpenSession()) {
                 var hashes = new HashSet<string>(
                     session.CreateSQLQuery($"SELECT distinct({DatabaseItemTable.Record} || {DatabaseItemTable.Hash}) from {DatabaseItemTable.Table}")
-                    .List<string>()
-                    );
+                        .List<string>()
+                );
 
                 // This is absurdly slow
                 updated = items.Where(m => !hashes.Contains(m.Record + m.Hash)).ToList();
@@ -117,64 +115,162 @@ namespace IAGrim.Database {
         }
 
         private void Save(List<DatabaseItem> items, ProgressTracker progressTracker, bool reset) {
-            long numStats = 0;
-
+            // Insert the items (not stats)
             using (var session = SessionCreator.OpenSession()) {
-                if (reset) {
-                    using (ITransaction transaction = session.BeginTransaction()) {
-                        var records = items.Select(m => m.Record).ToList();
+                using (ITransaction transaction = session.BeginTransaction()) {
+                    var records = items.Select(m => m.Record).ToList();
 
-                        session.CreateSQLQuery($@"
-                                DELETE FROM {DatabaseItemStatTable.Table} 
-                                WHERE {DatabaseItemStatTable.Item} IN (
-                                    SELECT {DatabaseItemTable.Id} FROM {DatabaseItemTable.Table}
-                                     WHERE {DatabaseItemTable.Record} IN ( :records )
-                                )")
-                            .SetParameterList("records", records)
-                            .ExecuteUpdate();
+                    session.CreateSQLQuery($@"
+                            DELETE FROM {DatabaseItemStatTable.Table} 
+                            WHERE {DatabaseItemStatTable.Item} IN (
+                                SELECT {DatabaseItemTable.Id} FROM {DatabaseItemTable.Table}
+                                    WHERE {DatabaseItemTable.Record} IN ( :records )
+                            )")
+                        .SetParameterList("records", records)
+                        .ExecuteUpdate();
 
-                        session.CreateSQLQuery($"DELETE FROM {DatabaseItemTable.Table} WHERE {DatabaseItemTable.Record} IN ( :records )")
-                            .SetParameterList("records", records)
-                            .ExecuteUpdate();
+                    session.CreateSQLQuery($"DELETE FROM {DatabaseItemTable.Table} WHERE {DatabaseItemTable.Record} IN ( :records )")
+                        .SetParameterList("records", records)
+                        .ExecuteUpdate();
 
-                        transaction.Commit();
-                    }
+                    transaction.Commit();
                 }
-                
+
                 using (ITransaction transaction = session.BeginTransaction()) {
                     foreach (DatabaseItem item in items) {
                         session.Save(item);
                         progressTracker.Increment();
                     }
+
                     transaction.Commit();
                 }
             }
 
 
-            var createCommands = new [] {
-                        "create index idx_databaseitemstatv2_parent on DatabaseItemStat_v2 (id_databaseitem)",
-                        "create index idx_databaseitemstatv2_stat on DatabaseItemStat_v2 (Stat)",
-                        "create index idx_databaseitemstatv2_tv on DatabaseItemStat_v2 (TextValue)"
-                    };
-            var dropCommands = new [] {
-                        "drop index if exists idx_databaseitemstatv2_parent",
-                        "drop index if exists idx_databaseitemstatv2_stat",
-                        "drop index if exists idx_databaseitemstatv2_tv"
-                    };
+            var createCommands = new[] {
+                "create index idx_databaseitemstatv2_parent on DatabaseItemStat_v2 (id_databaseitem)",
+                "create index idx_databaseitemstatv2_stat on DatabaseItemStat_v2 (Stat)",
+                "create index idx_databaseitemstatv2_tv on DatabaseItemStat_v2 (TextValue)"
+            };
+
+            var dropCommands = new[] {
+                "drop index if exists idx_databaseitemstatv2_parent",
+                "drop index if exists idx_databaseitemstatv2_stat",
+                "drop index if exists idx_databaseitemstatv2_tv"
+            };
 
 
+            // Drop index, insert stats, recreate index
+            var sq = new System.Diagnostics.Stopwatch();
+            sq.Start();
+            const string sql = "insert into databaseitemstat_v2 (id_databaseitem, stat, textvalue, val1) values (@id, @stat, @tv, @val)";
+
+            int numStats;
+            if (Dialect == SqlDialect.Sqlite) {
+                numStats = InsertStatsSqlite(dropCommands, createCommands, sql, items);
+            }
+            else {
+                numStats = InsertStatsPostgres(dropCommands, createCommands, items);
+            }
+
+            sq.Stop();
+            Logger.Info("Records stored");
+            Console.WriteLine($"Storing the records took {sq.ElapsedMilliseconds} milliseconds");
+
+            Logger.InfoFormat("Stored {0} items and {1} stats to internal db.", items.Count, numStats);
+        }
+
+        private int InsertStatsPostgres(string[] dropCommands, string[] createCommands, List<DatabaseItem> items) {
+            int numStats = 0;
+            void Execute(string[] commands) {
+                using (var session = SessionCreator.OpenStatelessSession()) {
+                    using (ITransaction transaction = session.BeginTransaction()) {
+                        foreach (var command in commands) {
+                            session.CreateSQLQuery(command);
+                        }
+
+                        transaction.Commit();
+                    }
+                }
+            }
+
+            string GetQueryString(int numRows) {
+                if (numRows > 8190)
+                    throw new ArgumentException("Cannot create query, too many rows/args");
+
+                string query = $"INSERT INTO {DatabaseItemStatTable.Table} ({DatabaseItemStatTable.Item}, {DatabaseItemStatTable.Stat}, {DatabaseItemStatTable.Value}, {DatabaseItemStatTable.TextValue}) VALUES ";
+
+                // Batching these into 7500 inserts (~30,000 params, the postgres limit is 32767)
+                List<string> entries = new List<string>(numRows);
+                for (int i = 0; i < numRows; i++) {
+                    entries.Add($"(:i{i}, :s{i}, :v{i}, :tv{i})");
+                }
+
+                
+                return query + string.Join(", ", entries);
+            }
+
+            // Drop index
+            Execute(dropCommands);
+
+
+            // Insert stats
+            using (var session = SessionCreator.OpenStatelessSession()) {
+                using (ITransaction transaction = session.BeginTransaction()) {
+
+                    // Batching these into 7500 inserts (~30,000 params, the postgres limit is 32767)
+                    int batchSize = 7500;
+                    List<string> entries = new List<string>(batchSize);
+
+
+                    foreach (var item in items) {
+                        numStats += item.Stats.Count;
+
+                        // Not ideal to not use argumnets, but sending in 30,000 named arguments takes minutes, not seconds.
+                        foreach (DatabaseItemStat stat in item.Stats) {
+                            var v = stat.Value.ToString().Replace(",", ".");
+                            entries.Add($"({item.Id}, '{stat.Stat}', {v}, '{stat.TextValue?.Replace("'", "''")}')");
+
+                            // 1875 items, max args
+                            if (entries.Count >= batchSize) {
+                                var query = session.CreateSQLQuery($"INSERT INTO {DatabaseItemStatTable.Table} ({DatabaseItemStatTable.Item}, {DatabaseItemStatTable.Stat}, {DatabaseItemStatTable.Value}, {DatabaseItemStatTable.TextValue}) VALUES "
+                                                       + string.Join(",", entries));
+                                int affectedRows = query.ExecuteUpdate();
+                                Logger.Info($"Inserted stats with {affectedRows} affected rows");
+
+                                entries.Clear();
+                            }
+                        }
+
+                    }
+
+                    // We got a batch that never hit 7500
+                    if (entries.Count > 0) {
+                        var query = session.CreateSQLQuery($"INSERT INTO {DatabaseItemStatTable.Table} ({DatabaseItemStatTable.Item}, {DatabaseItemStatTable.Stat}, {DatabaseItemStatTable.Value}, {DatabaseItemStatTable.TextValue}) VALUES "
+                                                           + string.Join(",", entries));
+                        int affectedRows = query.ExecuteUpdate();
+                        Logger.Info($"Inserted stats with {affectedRows} affected rows (trailing)");
+                    }
+
+                    transaction.Commit();
+                }
+            }
+
+            // Recreate index
+            Execute(createCommands); // TODO: Since we're being batched higher up at 950 items, this might be... unfortunate
+            return numStats;
+        }
+
+        private int InsertStatsSqlite(string[] dropCommands, string[] createCommands, string sql, List<DatabaseItem> items) {
+            int numStats = 0;
             using (SQLiteConnection dbConnection = new SQLiteConnection(SessionFactoryLoader.SessionFactory.ConnectionString)) {
                 dbConnection.Open();
-                var sq = new System.Diagnostics.Stopwatch();
-                sq.Start();
 
                 ExecuteTransactionSql(dbConnection, dropCommands);
 
                 using (var transaction = dbConnection.BeginTransaction()) {
                     using (SQLiteCommand command = new SQLiteCommand(dbConnection)) {
-                        string sql = "insert into databaseitemstat_v2 (id_databaseitem, stat, textvalue, val1) values (@id, @stat, @tv, @val)";
                         command.CommandText = sql;
-
                         foreach (DatabaseItem item in items) {
                             foreach (DatabaseItemStat stat in item.Stats) {
                                 command.Parameters.Add(new SQLiteParameter("@id", item.Id));
@@ -189,16 +285,12 @@ namespace IAGrim.Database {
 
                     transaction.Commit();
                 }
-                ExecuteTransactionSql(dbConnection, createCommands);
 
-                sq.Stop();
-                Logger.Info("Records stored");
-                Console.WriteLine($"Storing the records took {sq.ElapsedMilliseconds} milliseconds");
+                ExecuteTransactionSql(dbConnection, createCommands);
             }
 
-            Logger.InfoFormat("Stored {0} items and {1} stats to internal db.", items.Count, numStats);
+            return numStats;
         }
-
 
 
         public DatabaseItem FindByRecord(string record) {
@@ -206,7 +298,7 @@ namespace IAGrim.Database {
                 using (ITransaction transaction = session.BeginTransaction()) {
                     var item = session.CreateCriteria<DatabaseItem>().Add(Restrictions.Eq("Record", record)).UniqueResult();
                     if (item != null)
-                        return (DatabaseItem)item;
+                        return (DatabaseItem) item;
                 }
             }
 
@@ -281,7 +373,6 @@ namespace IAGrim.Database {
         }
 
         public List<DatabaseItemDto> GetByClass(string itemClass) {
-
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
                     var subquery = $"SELECT {DatabaseItemStatTable.Item} FROM {DatabaseItemStatTable.Table} " +
@@ -388,7 +479,6 @@ namespace IAGrim.Database {
         }
 
 
-
         public IList<string> ListAllRecords() {
             using (ISession session = SessionCreator.OpenSession()) {
                 using (session.BeginTransaction()) {
@@ -410,7 +500,7 @@ namespace IAGrim.Database {
                 }
             }
         }
-        
+
 
         public IList<RecipeItem> SearchForRecipeItems(ItemSearchRequest query) {
             // No idea when recipes were added, the user probably wants owned items only.
@@ -462,7 +552,6 @@ namespace IAGrim.Database {
                     .SetProjection(Projections.Property("P.Record")));
 
                 criterias.Add(subquery);
-
             }
 
             // Add the MINIMUM level requirement (if any)
@@ -474,7 +563,6 @@ namespace IAGrim.Database {
                     .SetProjection(Projections.Property("P.Record")));
 
                 criterias.Add(subquery);
-
             }
 
             // Add the MAXIMUM level requirement (if any)
@@ -501,11 +589,10 @@ namespace IAGrim.Database {
 
             // Player Class
             string[] classes = query.Classes.ToArray();
-            if (classes.Length > 0)
-            {
+            if (classes.Length > 0) {
                 criterias.Add(Subqueries.PropertyIn("BaseRecord", DetachedCriteria.For<DatabaseItemStat>()
                     .Add(Restrictions.In("Stat", new string[] {
-                        "augmentSkill1Extras","augmentSkill2Extras","augmentMastery1","augmentMastery2",
+                        "augmentSkill1Extras", "augmentSkill2Extras", "augmentMastery1", "augmentMastery2",
                         "augmentSkill4Extras", "augmentSkill3Extras", "augmentMastery4", "augmentMastery3"
                     }))
                     .Add(Restrictions.In("TextValue", classes))
@@ -541,15 +628,13 @@ namespace IAGrim.Database {
                         .SetProjection(Projections.Property("P.Record")));
                     criterias.Add(subquery);
                 }
-
             }
-
 
 
 #if DEBUG
             //criterias.SetMaxResults(50);
 #else
-            //criterias.SetMaxResults(500);
+//criterias.SetMaxResults(500);
 #endif
             criterias.CreateAlias("Internal", "db");
         }

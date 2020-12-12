@@ -20,7 +20,7 @@ namespace PortablePostgres {
 
                 var db = "";
 #if DEBUG
-                db = "-test2";
+                db = "-test3";
 #endif
 
                 var connectionString = configuration.GetProperty("connection.connection_string");
@@ -29,7 +29,7 @@ namespace PortablePostgres {
                 configuration.AddAssembly(Assembly.GetEntryAssembly());
 
                 try {
-                    new SchemaUpdate(configuration).Execute(true, true); // Warning: This may silently fail. It just logs and returns, nothing thrown.
+                    new SchemaUpdate(configuration).Execute(false, true); // Warning: This may silently fail. It just logs and returns, nothing thrown.
                     _sessionFactory = configuration.BuildSessionFactory();
                 }
                 catch (Exception ex) {
