@@ -16,7 +16,6 @@ namespace PortablePostgres {
             if (_sessionFactory == null) {
                 var configuration = new Configuration();
                 configuration.Configure(configFile);
-                configuration.SetProperty("show_sql", "false");
 
                 var db = "";
 #if DEBUG
@@ -29,7 +28,7 @@ namespace PortablePostgres {
                 configuration.AddAssembly(Assembly.GetEntryAssembly());
 
                 try {
-                    new SchemaUpdate(configuration).Execute(false, true); // Warning: This may silently fail. It just logs and returns, nothing thrown.
+                    new SchemaUpdate(configuration).Execute(true, true); // Warning: This may silently fail. It just logs and returns, nothing thrown.
                     _sessionFactory = configuration.BuildSessionFactory();
                 }
                 catch (Exception ex) {

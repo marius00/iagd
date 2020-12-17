@@ -9,6 +9,7 @@ using IAGrim.Database.DAO;
 using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Dto;
 using IAGrim.Database.Model;
+using IAGrim.Database.Synchronizer.Core;
 
 namespace IAGrim.Database.Synchronizer {
     public class AugmentationItemRepo : BasicSynchronizer<AugmentationItem>, IAugmentationItemDao {

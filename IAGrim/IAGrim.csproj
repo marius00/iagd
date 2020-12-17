@@ -594,7 +594,6 @@
     <None Include="app.manifest">
       <SubType>Designer</SubType>
     </None>
-    <None Include="IAGrim_TemporaryKey.pfx" />
     <None Include="Log4net.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
@@ -708,7 +707,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Database\Model\PlayerItemRecord.hbm.xml" />
     <EmbeddedResource Include="Database\Model\AzurePartition.hbm.xml" />
-    <None Include="FodyWeavers.xml" />
     <EmbeddedResource Include="Database\Model\AugmentationItem.hbm.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>

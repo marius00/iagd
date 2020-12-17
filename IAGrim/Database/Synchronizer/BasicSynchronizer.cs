@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IAGrim.Database.Synchronizer.Core;
 
 namespace IAGrim.Database.Synchronizer {
     public abstract class BasicSynchronizer<T> : IBaseDao<T> {

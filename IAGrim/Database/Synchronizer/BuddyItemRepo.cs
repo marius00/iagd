@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using IAGrim.BuddyShare.dto;
 using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Dto;
+using IAGrim.Database.Synchronizer.Core;
 
 namespace IAGrim.Database.Synchronizer {
     class BuddyItemRepo : BasicSynchronizer<BuddyItem>, IBuddyItemDao {

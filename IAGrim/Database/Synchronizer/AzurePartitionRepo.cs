@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using IAGrim.Database.DAO;
 using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Interfaces;
+using IAGrim.Database.Synchronizer.Core;
 
 namespace IAGrim.Database.Synchronizer {
     class AzurePartitionRepo : BasicSynchronizer<AzurePartition>, IAzurePartitionDao {

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IAGrim.Database.DAO.Util;
+using IAGrim.Database.Synchronizer.Core;
 
 namespace IAGrim.Database.Synchronizer {
     class RecipeItemRepo : BasicSynchronizer<RecipeItem>, IRecipeItemDao {

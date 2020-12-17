@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using IAGrim.Database.DAO.Util;
+using IAGrim.Database.Synchronizer.Core;
 
 namespace IAGrim.Database.Synchronizer {
     class BuddySubscriptionRepo : BasicSynchronizer<BuddySubscription>, IBuddySubscriptionDao {

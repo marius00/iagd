@@ -20,6 +20,7 @@ using System.Net;
 using System.Threading;
 using System.Windows.Forms;
 using IAGrim.Database.DAO.Util;
+using IAGrim.Database.Synchronizer.Core;
 using IAGrim.Services;
 using IAGrim.Settings;
 using IAGrim.Utilities.Detection;
