@@ -25,7 +25,7 @@ namespace IAGrim.UI.Controller {
         private readonly ItemStatService _itemStatService;
         private readonly IBuddyItemDao _buddyItemDao;
         private readonly ItemPaginatorService _itemPaginatorService;
-        private readonly AugmentationItemRepo _augmentationItemRepo;
+        private readonly IAugmentationItemDao _augmentationItemRepo;
         private readonly SettingsService _settings;
         private readonly IItemCollectionDao _itemCollectionRepo;
 
@@ -39,7 +39,7 @@ namespace IAGrim.UI.Controller {
             IPlayerItemDao playerItemDao,
             ItemStatService itemStatService,
             IBuddyItemDao buddyItemDao,
-            AugmentationItemRepo augmentationItemRepo,
+            IAugmentationItemDao augmentationItemRepo,
             SettingsService settings,
             IItemCollectionDao itemCollectionRepo) {
             _dbItemDao = databaseItemDao;

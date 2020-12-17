@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using IAGrim.Backup.Azure.Dto;
 using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Dto;
+using IAGrim.Database.Synchronizer.Core;
 
 namespace IAGrim.Database.Synchronizer {
     class PlayerItemRepo : BasicSynchronizer<PlayerItem>, IPlayerItemDao {

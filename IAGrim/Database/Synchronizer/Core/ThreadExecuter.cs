@@ -1,16 +1,15 @@
-﻿using EvilsoftCommons.Exceptions;
-using log4net;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.ExceptionServices;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
+using EvilsoftCommons.Exceptions;
+using log4net;
 
-namespace IAGrim.Database.Synchronizer {
-
+namespace IAGrim.Database.Synchronizer.Core {
+    /// <summary>
+    /// The thread executor ensures that all calls to SQLite runs on the same thread.
+    /// SQLite has no support for access across multiple threads.
+    /// </summary>
     public class ThreadExecuter : IDisposable {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ThreadExecuter));
         private readonly ConcurrentDictionary<AutoResetEvent, object> _results = new ConcurrentDictionary<AutoResetEvent, object>();
@@ -34,8 +33,7 @@ namespace IAGrim.Database.Synchronizer {
             ExceptionReporter.EnableLogUnhandledOnThread();
 
             while (!_isCancelled) {
-                QueuedExecution elem;
-                if (_queue.TryDequeue(out elem)) {
+                if (_queue.TryDequeue(out var elem)) {
                     try {
                         if (elem.Func != null)
                             _results[elem.Trigger] = elem.Func();

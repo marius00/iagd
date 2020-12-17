@@ -2,6 +2,7 @@
 using IAGrim.Database.DAO;
 using IAGrim.Database.Interfaces;
 using IAGrim.Database.Model;
+using IAGrim.Database.Synchronizer.Core;
 using IAGrim.Parsers.Arz.dto;
 
 namespace IAGrim.Database.Synchronizer {

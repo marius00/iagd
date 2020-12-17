@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Model;
+using IAGrim.Database.Synchronizer.Core;
 using IAGrim.Parsers.GameDataParsing.Model;
 
 namespace IAGrim.Database.Synchronizer {

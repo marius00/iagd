@@ -8,6 +8,7 @@ using IAGrim.Services.Dto;
 using NHibernate;
 using IAGrim.Database.DAO.Dto;
 using IAGrim.Database.DAO.Util;
+using IAGrim.Database.Synchronizer.Core;
 using IAGrim.Parsers.GameDataParsing.Model;
 
 namespace IAGrim.Database.Synchronizer {

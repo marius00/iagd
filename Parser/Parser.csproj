@@ -80,7 +80,6 @@
     <Compile Include="Helperclasses\ParserHelpers.cs" />
     <Compile Include="IOHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RecordUtility.cs" />
     <Compile Include="Stash\Block.cs" />
     <Compile Include="Stash\DataBuffer.cs" />
     <Compile Include="Stash\GDCryptoDataBuffer.cs" />
