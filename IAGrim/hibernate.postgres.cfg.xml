@@ -2,7 +2,7 @@
 <hibernate-configuration xmlns="urn:nhibernate-configuration-2.2">
   <session-factory>
     <property name="connection.provider">NHibernate.Connection.DriverConnectionProvider</property>
-    <property name="dialect">NHibernate.Dialect.PostgreSQL81Dialect</property>
+    <property name="dialect">NHibernate.Dialect.PostgreSQL83Dialect</property>
     <property name="connection.driver_class">NHibernate.Driver.NpgsqlDriver</property>
     <property name="connection.connection_string">server=localhost;Port=5432;Database=ia{db};User Id=ia;Password=ia;Pooling=false</property>
     <property name="connection.isolation">Unspecified</property>
