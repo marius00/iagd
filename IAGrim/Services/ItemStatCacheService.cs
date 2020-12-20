@@ -38,7 +38,6 @@ namespace IAGrim.Services {
         }
 
         private void ThreadStart() {
-
             // Sleeping a bit in the start, we don't wanna keep locking the DB (SQLite mode) on startup
             try {
                 Thread.Sleep(1000 * 15);
@@ -70,41 +69,38 @@ namespace IAGrim.Services {
         
         void Tick() {
             var items = _playerItemDao.ListWithMissingStatCache();
-            if (items.Count > 0) {
-                Logger.Debug($"Updated cache for {items.Count} items");
-                _itemStatService.ApplyStats(items);
+            if (items.Count <= 0) return;
+            
+            Logger.Debug($"Updated cache for {items.Count} items");
+            _itemStatService.ApplyStats(items);
 
-                foreach (var item in items) {
-                    var rendered = ItemHtmlWriter.GetJsonItem(item);
-                    var json = JsonConvert.SerializeObject(item, _settings);
+            foreach (var item in items) {
+                var rendered = ItemHtmlWriter.GetJsonItem(item);
+                var json = JsonConvert.SerializeObject(rendered, _settings);
 
-                    List<string> searchableText = new List<string>();
-                    searchableText.AddRange(rendered.HeaderStats.Select(ToString));
-                    searchableText.AddRange(rendered.BodyStats.Select(ToString));
-                    searchableText.AddRange(rendered.PetStats.Select(ToString));
-                    if (rendered.Skill != null) {
-                        searchableText.AddRange(rendered.Skill.HeaderStats.Select(ToString).ToList());
-                        searchableText.AddRange(rendered.Skill.BodyStats.Select(ToString).ToList());
-                        searchableText.AddRange(rendered.Skill.PetStats.Select(ToString).ToList());
-                        searchableText.Add(rendered.Skill.Name);
-                        searchableText.Add(rendered.Skill.Description);
-                        searchableText.Add(rendered.Skill.Trigger);
-                    }
-
-                    searchableText.Add(rendered.Extras);
-
-
-                    item.SearchableText = string.Join("\n", searchableText);
-                    item.CachedStats = json;
+                List<string> searchableText = new List<string>();
+                searchableText.AddRange(rendered.HeaderStats.Select(ToString));
+                searchableText.AddRange(rendered.BodyStats.Select(ToString));
+                searchableText.AddRange(rendered.PetStats.Select(ToString));
+                if (rendered.Skill != null) {
+                    searchableText.AddRange(rendered.Skill.HeaderStats.Select(ToString).ToList());
+                    searchableText.AddRange(rendered.Skill.BodyStats.Select(ToString).ToList());
+                    searchableText.AddRange(rendered.Skill.PetStats.Select(ToString).ToList());
+                    searchableText.Add(rendered.Skill.Name);
+                    searchableText.Add(rendered.Skill.Description);
+                    searchableText.Add(rendered.Skill.Trigger);
                 }
 
-                _playerItemDao.UpdateCachedStats(items);
+                searchableText.Add(rendered.Extras);
+
+
+                item.SearchableText = string.Join("\n", searchableText);
+                item.CachedStats = json;
             }
+
+            _playerItemDao.UpdateCachedStats(items);
         }
-        // TODO: Fetch items where CachedStats is null
-        // TODO: Render as JSON
-        // TODO: Store item stat
-        // TODO: Sleep.. zzz..
+        
         public void Dispose() {
             t?.Abort();
             t = null;

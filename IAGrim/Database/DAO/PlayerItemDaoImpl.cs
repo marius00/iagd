@@ -772,6 +772,7 @@ namespace IAGrim.Database {
                 {PlayerItemTable.PrefixRarity} as PrefixRarity,
                 {PlayerItemTable.AzurePartition} as AzurePartition,
                 {PlayerItemTable.AzureUuid} as AzureUuid,
+                CachedStats as CachedStats,
                 (SELECT Record FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord) LIMIT 1) AS PetRecord
                 FROM PlayerItem PI WHERE " + string.Join(" AND ", queryFragments));
 

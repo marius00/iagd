@@ -134,7 +134,7 @@ namespace IAGrim.Services {
             }
 
             var skillTiers = _databaseItemStatDao.GetSkillTiers();
-            var itemsWithXpacStat = items.Where(m => m.Tags.Any(s => s.Stat == "modifiedSkillName1"));
+            var itemsWithXpacStat = items.Where(m => m.Tags != null && m.Tags.Any(s => s.Stat == "modifiedSkillName1"));
             foreach (var item in itemsWithXpacStat) {
                 for (int i = 0; i < 5; i++) {
                     var affectedSkill = item.Tags.FirstOrDefault(m => m.Stat == $"modifiedSkillName{i}");
@@ -278,7 +278,10 @@ namespace IAGrim.Services {
             }
         }
 
-        public void ApplyStatsToPlayerItems(List<PlayerItem> items) {
+        public void ApplyStatsToPlayerItems(List<PlayerItem> candidates) {
+            // Filter out items with cached stats
+            var items = candidates.Where(item => string.IsNullOrEmpty(item.CachedStats)).ToList();
+            
             if (items.Count > 0) {
                 Logger.Debug($"Applying stats to {items.Count} items");
                 var records = items.SelectMany(GetRecordsForItem).Distinct();

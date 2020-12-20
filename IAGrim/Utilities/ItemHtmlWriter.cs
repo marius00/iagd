@@ -10,6 +10,7 @@ using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Model;
 using IAGrim.UI.Controller.dto;
 using log4net;
+using Newtonsoft.Json;
 using NHibernate.Dialect.Schema;
 using StatTranslator;
 
@@ -17,6 +18,13 @@ namespace IAGrim.Utilities {
 
     internal static class ItemHtmlWriter {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ItemHtmlWriter));
+        private static readonly JsonSerializerSettings _settings = new JsonSerializerSettings {
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            Culture = System.Globalization.CultureInfo.InvariantCulture,
+            ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver(),
+            NullValueHandling = NullValueHandling.Ignore
+        };
+
 
         static ItemHtmlWriter() {
             CopyMissingFiles();
@@ -150,8 +158,23 @@ namespace IAGrim.Utilities {
             Logger.Debug("Copy complete");
         }
 
-        public static List<JsonItem> ToJsonSerializeable(List<PlayerHeldItem> items) {
-            var jsonItems = new List<JsonItem>(items.Select(GetJsonItem));
+        public static List<JsonItem> ToJsonSerializable(List<PlayerHeldItem> items) {
+            var jsonItems = new List<JsonItem>(items.Count);
+            foreach (var item in items) {
+                if (item is PlayerItem pi && !string.IsNullOrEmpty(pi.CachedStats)) {
+                    try {
+                        jsonItems.Add(JsonConvert.DeserializeObject<JsonItem>(pi.CachedStats));
+                    }
+                    catch (Exception ex) {
+                        Logger.Warn("Error deserializing items, please update player item stats on the Grim Dawn tab", ex);
+                        // TODO: Is it safe to do a regular conversion here?
+                    }
+                }
+                else {
+                    jsonItems.Add(GetJsonItem(item));
+                }
+            }
+            
             return jsonItems;
         }
 

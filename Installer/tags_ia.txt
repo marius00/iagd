@@ -212,6 +212,7 @@ BasePierce=Pierce
 BaseAether=Aether
 BaseLife=Vitality
 Resistance=Resistance
+ResistanceMaxResist=to Maximum 
 iatag_html_choose_a_relic=Choose a Relic
 iatag_html_choose_a_recipe=Choose a Recipe
 iatag_html_choose_a_component=Choose a Component
