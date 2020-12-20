@@ -65,6 +65,7 @@ class App extends React.PureComponent<{}, object> {
     window.setItems = (data: any) => {
       const items = typeof data === 'string' ? JSON.parse(data) : data;
       console.log(data);
+      window.scrollTo(0,0);
 
       this.setState({
         isLoading: false,
