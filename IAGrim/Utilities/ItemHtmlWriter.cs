@@ -50,7 +50,7 @@ namespace IAGrim.Utilities {
 
 
 
-        private static JsonItem GetJsonItem(PlayerHeldItem item) {
+        public static JsonItem GetJsonItem(PlayerHeldItem item) {
             // TODO: Modifiers
 
             bool isCloudSynced = false;

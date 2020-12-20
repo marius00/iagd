@@ -37,6 +37,9 @@ namespace IAGrim.Database.Interfaces {
 
         bool Exists(PlayerItem item);
 
-        void DeleteDuplidates();
+        void DeleteDuplicates();
+
+        IList<PlayerItem> ListWithMissingStatCache();
+        void UpdateCachedStats(IList<PlayerItem> items);
     }
 }

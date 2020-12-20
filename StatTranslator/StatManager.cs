@@ -609,14 +609,14 @@ namespace StatTranslator
 
             string[] damageTypes = BodyDamageTypes;
             var resistance = _language.GetTag("Resistance");
+            var toMaxResistance = _language.GetTag("ResistanceMaxResist");
 
             for (var i = 0; i < damageTypes.Length; i++)
             {
                 var r = DamageTypeTranslation(damageTypes[i]);
                 translationTable[$"defensive{damageTypes[i]}"] = "{0}% " + r + " " + resistance;
                 translationTable[$"defensive{damageTypes[i]}Resistance"] = "{0}% " + r + " " + resistance;
-
-                translationTable[$"defensive{damageTypes[i]}MaxResist"] = "{0}% to Maximum " + r + " " + resistance;
+                translationTable[$"defensive{damageTypes[i]}MaxResist"] = "{0}% " + toMaxResistance + r + " " + resistance;
             }
 
             foreach (var elem in stats.Where(m => translationTable.Keys.Contains(m.Stat)))

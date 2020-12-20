@@ -86,6 +86,8 @@ namespace IAGrim.UI.Controller {
                 return false;
             }
 
+            // TODO: For player items, use cached stats if present
+            
             _itemStatService.ApplyStats(items);
 
             var convertedItems = ItemHtmlWriter.ToJsonSerializeable(items);

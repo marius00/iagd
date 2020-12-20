@@ -7,7 +7,6 @@ using IAGrim.Parsers.GameDataParsing.Model;
 
 namespace IAGrim.Database.Interfaces {
     public interface IBaseDao<T> {
-
         long GetNumItems();
 
         void Save(T obj);

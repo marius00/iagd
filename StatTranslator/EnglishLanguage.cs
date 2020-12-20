@@ -261,6 +261,7 @@ namespace StatTranslator {
             {"BaseAether", "Aether"},
             {"BaseLife", "Vitality"},
             {"Resistance", "Resistance"},
+            {"ResistanceMaxResist", "to Maximum "},
 
             // HTML
             {"iatag_html_choose_a_relic", "Choose a Relic"},

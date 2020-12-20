@@ -71,9 +71,21 @@ namespace IAGrim.Database.Synchronizer {
             );
         }
 
-        public void DeleteDuplidates() {
+        public void DeleteDuplicates() {
             ThreadExecuter.Execute(
-                () => _repo.DeleteDuplidates()
+                () => _repo.DeleteDuplicates()
+            );
+        }
+
+        public IList<PlayerItem> ListWithMissingStatCache() {
+            return ThreadExecuter.Execute(
+                () => _repo.ListWithMissingStatCache()
+            );
+        }
+
+        public void UpdateCachedStats(IList<PlayerItem> items) {
+            ThreadExecuter.Execute(
+                () => _repo.UpdateCachedStats(items)
             );
         }
 

@@ -383,7 +383,13 @@ namespace IAGrim.Database {
             var itemName = ItemOperationsUtility.GetItemName(session, stats, item);
             var records = GetRecordsForItem(item);
             session.CreateQuery($@"UPDATE {table} 
-                    SET {name} = :name, {nameLowercase} = :namelowercase, {rarity} = :rarity, {levelReq} = :levelreq, {prefixRarity} = :prefixrarity 
+                    SET {name} = :name, 
+                    {nameLowercase} = :namelowercase, 
+                    {rarity} = :rarity, 
+                    {levelReq} = :levelreq, 
+                    {prefixRarity} = :prefixrarity,
+                    cachedstats = NULL,
+                    searchabletext = NULL
                     WHERE {id} = :id"
                 )
                 .SetParameter("name", itemName)
@@ -690,8 +696,9 @@ namespace IAGrim.Database {
             Dictionary<string, object> queryParams = new Dictionary<string, object>();
             
             if (!String.IsNullOrEmpty(query.Wildcard)) {
-                queryFragments.Add("LOWER(PI.namelowercase) LIKE :name");
+                queryFragments.Add("(PI.namelowercase LIKE :name OR searchabletext LIKE :wildcard)");
                 queryParams.Add("name", $"%{query.Wildcard.Replace(' ', '%').ToLower()}%");
+                queryParams.Add("wildcard", $"%{query.Wildcard.ToLower()}%");
             }
 
             // Filter by mod/hc
@@ -876,7 +883,7 @@ namespace IAGrim.Database {
         /// <summary>
         /// Delete duplicate items (items duplicated via bugs, not simply similar items)
         /// </summary>
-        public void DeleteDuplidates() {
+        public void DeleteDuplicates() {
 
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
@@ -928,6 +935,40 @@ DELETE FROM PlayerItem WHERE Id IN (
 	) Z
 )
 ").ExecuteUpdate();
+
+                    transaction.Commit();
+                }
+            }
+        }
+
+        public IList<PlayerItem> ListWithMissingStatCache() {
+            using (ISession session = SessionCreator.OpenSession()) {
+                using (session.BeginTransaction()) {
+                    return session.CreateCriteria<PlayerItem>()
+                        .Add(Restrictions.IsNull("CachedStats"))
+                        .SetMaxResults(50)
+                        .List<PlayerItem>();
+                }
+            }
+        }
+
+
+
+        public void UpdateCachedStats(IList<PlayerItem> items) {
+            var table = nameof(PlayerItem);
+            var searchableText = nameof(PlayerItem.SearchableText);
+            var cachedStats = nameof(PlayerItem.CachedStats);
+            var id = nameof(PlayerItem.Id);
+
+            using (ISession session = SessionCreator.OpenSession()) {
+                using (var transaction = session.BeginTransaction()) {
+                    foreach (var item in items) {
+                        session.CreateQuery($@"UPDATE {table} SET {searchableText} = :searchableText, {cachedStats} = :cachedStats WHERE {id} = :id")
+                            .SetParameter("cachedStats", item.CachedStats)
+                            .SetParameter("searchableText", item.SearchableText.ToLowerInvariant())
+                            .SetParameter("id", item.Id)
+                            .ExecuteUpdate();
+                    }
 
                     transaction.Commit();
                 }

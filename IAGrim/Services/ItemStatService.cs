@@ -23,10 +23,9 @@ namespace IAGrim.Services {
         private readonly SettingsService _settings;
 
 
-
         public ItemStatService(
-            IDatabaseItemStatDao databaseItemStatDao, 
-            IItemSkillDao itemSkillDao, 
+            IDatabaseItemStatDao databaseItemStatDao,
+            IItemSkillDao itemSkillDao,
             SettingsService settings) {
             this._databaseItemStatDao = databaseItemStatDao;
             this._itemSkillDao = itemSkillDao;
@@ -34,9 +33,7 @@ namespace IAGrim.Services {
 
             Thread thread = new Thread(() => { _xpacSkills = _databaseItemStatDao.GetExpacSkillModifierSkills(); });
             thread.Start();
-
         }
-
 
 
         private static List<string> GetRecordsForItem(BaseItem item) {
@@ -44,15 +41,19 @@ namespace IAGrim.Services {
             if (!string.IsNullOrEmpty(item.BaseRecord)) {
                 records.Add(item.BaseRecord);
             }
+
             if (!string.IsNullOrEmpty(item.PrefixRecord)) {
                 records.Add(item.PrefixRecord);
             }
+
             if (!string.IsNullOrEmpty(item.SuffixRecord)) {
                 records.Add(item.SuffixRecord);
             }
+
             if (!string.IsNullOrEmpty(item.MateriaRecord)) {
                 records.Add(item.MateriaRecord);
             }
+
             if (!string.IsNullOrEmpty(item.PetRecord)) {
                 records.Add(item.PetRecord);
             }
@@ -99,7 +100,6 @@ namespace IAGrim.Services {
         }
 
         private void ApplyStatsToDbItems(List<PlayerHeldItem> items, StatFetch type) {
-
             var records = GetRecordsForItems(items);
             Dictionary<string, List<DBStatRow>> statMap = _databaseItemStatDao.GetStats(records, type);
 
@@ -150,7 +150,8 @@ namespace IAGrim.Services {
                     }
 
                     // For pet skills we got _xpacSkills layer to hop trough
-                    var petSkillRecord = _xpacSkills[recordForStats].Where(s => s.Stat == "petSkillName").Select(s => s.TextValue).FirstOrDefault();
+                    var petSkillRecord = _xpacSkills[recordForStats].Where(s => s.Stat == "petSkillName")
+                        .Select(s => s.TextValue).FirstOrDefault();
 
                     float? tier = null;
                     if (skillTiers.ContainsKey(affectedSkill?.TextValue)) {
@@ -162,7 +163,7 @@ namespace IAGrim.Services {
                     if (recordForStats.IndexOf("/mi/") != -1) {
 
                     }*/
-                    
+
                     if (petSkillRecord != null) {
                         if (_xpacSkills.ContainsKey(petSkillRecord)) {
                             item.ModifiedSkills.Add(new SkillModifierStat {
@@ -184,9 +185,9 @@ namespace IAGrim.Services {
             }
         }
 
-        public void ApplyStats(List<PlayerHeldItem> items) {
-            if (items.Count > 0)
-            {
+        public void ApplyStats(IEnumerable<PlayerHeldItem> itemSource) {
+            var items = itemSource.ToList();
+            if (items.Count > 0) {
                 Logger.Debug($"Applying stats to {items.Count()} items");
 
                 var playerItems = GetPlayerItems(items);
@@ -205,7 +206,8 @@ namespace IAGrim.Services {
                     ApplyStatsToAugmentations(augmentItems);
                 }
 
-                var remaining = items.Where(m => !IsPlayerItem(m) && !IsBuddyItem(m) && !augmentItems.Contains(m)).ToList();
+                var remaining = items.Where(m => !IsPlayerItem(m) && !IsBuddyItem(m) && !augmentItems.Contains(m))
+                    .ToList();
                 if (remaining.Count > 0) {
                     ApplyStatsToRecipeItems(remaining);
                 }
@@ -248,8 +250,9 @@ namespace IAGrim.Services {
             if (items.Count > 0) {
                 Logger.Debug($"Applying stats to {items.Count} items");
                 var records = items.SelectMany(GetRecordsForItem).Distinct();
-                Dictionary<string, List<DBStatRow>> statMap = _databaseItemStatDao.GetStats(records, StatFetch.BuddyItems);
-                
+                Dictionary<string, List<DBStatRow>> statMap =
+                    _databaseItemStatDao.GetStats(records, StatFetch.BuddyItems);
+
                 foreach (var pi in items) {
                     List<DBStatRow> stats = new List<DBStatRow>();
                     if (statMap.ContainsKey(pi.BaseRecord))
@@ -279,7 +282,8 @@ namespace IAGrim.Services {
             if (items.Count > 0) {
                 Logger.Debug($"Applying stats to {items.Count} items");
                 var records = items.SelectMany(GetRecordsForItem).Distinct();
-                Dictionary<string, List<DBStatRow>> statMap = _databaseItemStatDao.GetStats(records, StatFetch.PlayerItems);
+                Dictionary<string, List<DBStatRow>> statMap =
+                    _databaseItemStatDao.GetStats(records, StatFetch.PlayerItems);
 
                 if (!HideSkills) {
                     ApplySkills(items);
@@ -330,10 +334,7 @@ namespace IAGrim.Services {
 
         private IEnumerable<DBStatRow> Filter(IEnumerable<DBStatRow> stats) {
             return stats.GroupBy(r => r.Stat)
-                    .Select(g => g.OrderByDescending(m => {
-                        return m.Value;
-                    }).First());
+                .Select(g => g.OrderByDescending(m => { return m.Value; }).First());
         }
-        
     }
 }

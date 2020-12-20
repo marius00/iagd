@@ -115,5 +115,7 @@ namespace IAGrim.Database {
         }
 
         public virtual long? CreationDate { get; set; }
+        public virtual string CachedStats { get; set; }
+        public virtual string SearchableText { get; set; }
     }
 }

@@ -208,9 +208,15 @@ namespace IAGrim {
                 var grimDawnDetector = serviceProvider.Get<GrimDawnDetector>();
                 StartupService.PerformIconCheck(databaseSettingDao, grimDawnDetector);
 
+                ItemStatCacheService itemStatCacheService = new ItemStatCacheService(
+                    serviceProvider.Get<IPlayerItemDao>(),
+                    serviceProvider.Get<ItemStatService>()
+                );
+                itemStatCacheService.Start();
+
                 try {
                     var playerItemDao = serviceProvider.Get<IPlayerItemDao>();
-                    playerItemDao.DeleteDuplidates();
+                    playerItemDao.DeleteDuplicates();
                 }
                 catch (Exception ex) {
                     Logger.Warn("Something went terribly wrong trying to ensure no duplicate items are found, however we'll just ignore it instead of blocking you access to your items.. sigh..", ex);
@@ -224,6 +230,8 @@ namespace IAGrim {
 
                 StartupService.PerformGrimUpdateCheck(settingsService);
                 Application.Run(_mw);
+
+                itemStatCacheService.Dispose();
             }
 
             Logger.Info("Application ended.");
