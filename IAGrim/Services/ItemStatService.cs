@@ -192,7 +192,7 @@ namespace IAGrim.Services {
 
                 var playerItems = GetPlayerItems(items);
                 if (playerItems.Count > 0) {
-                    ApplyStatsToPlayerItems(playerItems);
+                    ApplyStatsToPlayerItems(playerItems, false);
                 }
 
                 var buddyItems = GetBuddyItems(items);
@@ -278,9 +278,9 @@ namespace IAGrim.Services {
             }
         }
 
-        public void ApplyStatsToPlayerItems(List<PlayerItem> candidates) {
+        public void ApplyStatsToPlayerItems(List<PlayerItem> candidates, bool ignoreCache) {
             // Filter out items with cached stats
-            var items = candidates.Where(item => string.IsNullOrEmpty(item.CachedStats)).ToList();
+            var items = candidates.Where(item => string.IsNullOrEmpty(item.CachedStats) || ignoreCache).ToList();
             
             if (items.Count > 0) {
                 Logger.Debug($"Applying stats to {items.Count} items");

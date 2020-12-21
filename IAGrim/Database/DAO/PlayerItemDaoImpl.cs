@@ -160,7 +160,6 @@ namespace IAGrim.Database {
                     foreach (var item in items) {
                         session.CreateQuery($@"UPDATE PlayerItem SET 
                                              {PlayerItemTable.AzureHasSynchronized} = true, 
-                                            -- Should not be needed for new items, required for legacy items which had no partition.
                                              {PlayerItemTable.AzureUuid} = :uuid, 
                                              {PlayerItemTable.AzurePartition} = :partition 
                                             WHERE Id = :id")

@@ -49,6 +49,23 @@ const StoreContext = React.createContext({items: [], isLoading: true, activeTab:
 // TODO: A no more matches message when scrolling too far?
 
 
+/*
+Does buddy items use a lot of memory atm?
+
+
+   at Newtonsoft.Json.Utilities.StringBuffer.Append(IArrayPool`1 bufferPool, Char[] buffer, Int32 startIndex, Int32 count)
+   at Newtonsoft.Json.JsonTextReader.ReadStringIntoBuffer(Char quote)
+   at Newtonsoft.Json.JsonTextReader.ParseString(Char quote, ReadType readType)
+   at Newtonsoft.Json.JsonTextReader.ParseValue()
+   at Newtonsoft.Json.JsonTextReader.Read()
+   at Newtonsoft.Json.Linq.JContainer.ReadContentFrom(JsonReader r, JsonLoadSettings settings)
+   at Newtonsoft.Json.Linq.JContainer.ReadTokenFrom(JsonReader reader, JsonLoadSettings options)
+   at Newtonsoft.Json.Linq.JObject.Load(JsonReader reader, JsonLoadSettings settings)
+   at Newtonsoft.Json.Linq.JObject.Parse(String json, JsonLoadSettings settings)
+   at IAGrim.BuddyShare.Synchronizer.DownloadBuddyItems(List`1 buddies)
+   at IAGrim.BuddyShare.BuddyBackgroundThread.bw_DoWork(Object sender, DoWorkEventArgs e)
+* */
+
 class App extends React.PureComponent<{}, object> {
   state = {
     items: [],
