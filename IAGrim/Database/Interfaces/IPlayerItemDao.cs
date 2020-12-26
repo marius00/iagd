@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using IAGrim.Backup.Azure.Dto;
+using IAGrim.Backup.Cloud.Dto;
 using IAGrim.Database.Dto;
 
 namespace IAGrim.Database.Interfaces {
@@ -11,11 +11,10 @@ namespace IAGrim.Database.Interfaces {
 
         IList<PlayerItem> GetUnsynchronizedItems();
         void SetAsSynchronized(IList<PlayerItem> items);
-        long GetNumItems(string backupPartition);
 
 
         void UpdateAllItemStats(IList<PlayerItem> items, Action<int> progress);
-        void Delete(List<AzureItemDeletionDto> items);
+        void Delete(List<DeleteItemDto> items);
 
         /// <summary>
         ///     Does an additional UNIQUE check on OnlineID
@@ -24,7 +23,7 @@ namespace IAGrim.Database.Interfaces {
         void Import(List<PlayerItem> items);
 
         IList<DeletedPlayerItem> GetItemsMarkedForOnlineDeletion();
-        int ClearItemsMarkedForOnlineDeletion();
+        void ClearItemsMarkedForOnlineDeletion();
         void ResetOnlineSyncState();
 
         void Update(IList<PlayerItem> items, bool clearOnlineId);

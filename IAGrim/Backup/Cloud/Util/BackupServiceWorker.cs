@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using EvilsoftCommons.Exceptions;
-using IAGrim.Backup.Azure.Service;
+using IAGrim.Backup.Cloud.Service;
 using log4net;
 
-namespace IAGrim.Backup.Azure.Util {
+namespace IAGrim.Backup.Cloud.Util {
     class BackupServiceWorker : IDisposable {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(BackupServiceWorker));
         private BackgroundWorker _bw = new BackgroundWorker();
@@ -26,8 +22,11 @@ namespace IAGrim.Backup.Azure.Util {
 
 
         private void bw_DoWork(object sender, DoWorkEventArgs e) {
-            if (Thread.CurrentThread.Name == null)
+            if (Thread.CurrentThread.Name == null) {
                 Thread.CurrentThread.Name = "BackupServiceWorker";
+                Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
+            }
+            ExceptionReporter.EnableLogUnhandledOnThread();
 
             try {
                 Logger.Debug("Backup service started, waiting for 10 seconds before initializing..");

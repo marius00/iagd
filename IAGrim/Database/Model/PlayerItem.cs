@@ -14,11 +14,18 @@ using IAGrim.Services.Dto;
 
 namespace IAGrim.Database {
     public class PlayerItem : BaseItem, PlayerHeldItem, IComparable, ICloneable, RecordCollection {
-        public virtual Int64 Id { get; set; }
+        public virtual long Id { get; set; }
 
-        public virtual string AzurePartition { get; set; }
+        [Obsolete]
         public virtual string AzureUuid { get; set; }
-        public virtual bool AzureHasSynchronized { get; set; }
+
+        public virtual string CloudId { get; set; }
+
+        public virtual bool IsCloudSynchronized {
+            get => IsCloudSynchronizedValue != null && IsCloudSynchronizedValue != 0;
+            set => IsCloudSynchronizedValue = value ? 1 : 0;
+        }
+        public virtual System.Int64 IsCloudSynchronizedValue { get; set; }
 
         public virtual bool IsKnown => Tags != null && Tags.Count > 0;
         

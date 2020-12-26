@@ -29,9 +29,10 @@
 		<property name="Mod" />
 		<property name="IsHardcore" />
 
-		<property name="AzurePartition" column="azpartition_v2" />
 		<property name="AzureUuid" column="azuuid_v2" />
-		<property name="AzureHasSynchronized" column="azuresynchronized_v2" />
+		<property name="CloudId" column="cloudid" />
+		<property name="IsCloudSynchronizedValue" column="cloud_hassync" />
+		
 
 		<property name="CreationDate" column="created_at" />
 		<property name="CachedStats" column="cachedstats" />

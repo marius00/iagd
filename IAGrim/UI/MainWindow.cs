@@ -3,8 +3,6 @@ using EvilsoftCommons;
 using EvilsoftCommons.Cloud;
 using EvilsoftCommons.DllInjector;
 using EvilsoftCommons.Exceptions;
-using IAGrim.Backup.Azure.Service;
-using IAGrim.Backup.Azure.Util;
 using IAGrim.BuddyShare;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parsers;
@@ -35,6 +33,8 @@ using System.Threading;
 using System.Windows.Forms;
 using CefSharp.WinForms;
 using DllInjector;
+using IAGrim.Backup.Cloud.Service;
+using IAGrim.Backup.Cloud.Util;
 using IAGrim.Parsers.TransferStash;
 using IAGrim.Settings;
 using IAGrim.Utilities.Detection;
@@ -69,7 +69,7 @@ namespace IAGrim.UI
         private ItemTransferController _transferController;
         private readonly RecipeParser _recipeParser;
         private readonly ParsingService _parsingService;
-        private AzureAuthService _authAuthService;
+        private AuthService _authAuthService;
         private BackupServiceWorker _backupServiceWorker;
         private readonly UserFeedbackService _userFeedbackService;
         private MinimizeToTrayHandler _minimizeToTrayHandler;
@@ -291,8 +291,10 @@ namespace IAGrim.UI
 
         private void TimerTickLookForGrimDawn(object sender, EventArgs e) {
             System.Windows.Forms.Timer timer = sender as System.Windows.Forms.Timer;
-            if (Thread.CurrentThread.Name == null)
+            if (Thread.CurrentThread.Name == null) {
                 Thread.CurrentThread.Name = "DetectGrimDawnTimer";
+                Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
+            }
 
             var grimDawnDetector = _serviceProvider.Get<GrimDawnDetector>();
             string gdPath = grimDawnDetector.GetGrimLocation();
@@ -431,8 +433,8 @@ namespace IAGrim.UI
             addAndShow(_buddySettingsWindow, buddyPanel);
 
             var databaseSettingDao = _serviceProvider.Get<IDatabaseSettingDao>();
-            _authAuthService = new AzureAuthService(_cefBrowserHandler, new AuthenticationProvider(settingsService));
-            var backupSettings = new BackupSettings(playerItemDao, _authAuthService, settingsService, !BlockedLogsDetection.DreamcrashBlocked(), _cefBrowserHandler);
+            _authAuthService = new AuthService(_cefBrowserHandler, new AuthenticationProvider(settingsService));
+            var backupSettings = new BackupSettings(playerItemDao, _authAuthService, settingsService, _cefBrowserHandler);
             addAndShow(backupSettings, backupPanel);
             addAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, playerItemDao, _parsingService, databaseSettingDao, grimDawnDetector, settingsService, _cefBrowserHandler), modsPanel);
             
@@ -440,9 +442,8 @@ namespace IAGrim.UI
                 addAndShow(new LoggingWindow(), panelLogging);
             }
 
-            var azurePartitionDao = _serviceProvider.Get<IAzurePartitionDao>();
             var itemTagDao = _serviceProvider.Get<IItemTagDao>();
-            var backupService = new BackupService(_authAuthService, playerItemDao, azurePartitionDao, () => settingsService.GetPersistent().UsingDualComputer);
+            var backupService = new BackupService(_authAuthService, playerItemDao, settingsService);
             _backupServiceWorker = new BackupServiceWorker(backupService);
             backupService.OnUploadComplete += (o, args) => _searchWindow.UpdateListView();
             searchController.OnSearch += (o, args) => backupService.OnSearch();
@@ -528,7 +529,6 @@ namespace IAGrim.UI
                 SetTooltipAtmouse, 
                 _settingsController, 
                 _searchWindow, 
-                _dynamicPacker,
                 playerItemDao,
                 transferStashService,
                 _serviceProvider.Get<ItemStatService>()
@@ -544,7 +544,7 @@ namespace IAGrim.UI
 
             // Popup login diag
             
-            if (_authAuthService.CheckAuthentication() == AzureAuthService.AccessStatus.Unauthorized && !settingsService.GetLocal().OptOutOfBackups) {
+            if (_authAuthService.CheckAuthentication() == AuthService.AccessStatus.Unauthorized && !settingsService.GetLocal().OptOutOfBackups) {
                 if (!BlockedLogsDetection.DreamcrashBlocked()) { // Backup login wont work
                     var t = new System.Windows.Forms.Timer {Interval = 100};
                     t.Tick += (o, args) => {

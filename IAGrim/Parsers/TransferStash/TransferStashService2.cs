@@ -248,26 +248,11 @@ namespace IAGrim.Parsers.TransferStash {
             public List<Item> Remaining { get; set; }
         }
 
-
-        private string GetUploadPartition() {
-            var currentPartition = _settings.GetPersistent().AzureUploadPartition;
-            var numItems = _playerItemDao.GetNumItems(currentPartition);
-            if (numItems > 100 || string.IsNullOrEmpty(currentPartition)) {
-                _settings.GetPersistent().AzureUploadPartition = SeqGuid.Create().ToString();
-            }
-
-            return _settings.GetPersistent().AzureUploadPartition;
-        }
+        
 
         private bool StoreItemsToDatabase(ICollection<Item> items, string mod, bool isHardcore) {
-            var uploadPartition = GetUploadPartition();
-
-            // Convert the items and set the upload partition
-            var playerItems = items.Select(item => TransferStashService.Map(item, mod, isHardcore))
-                .Select(p => {
-                    p.AzurePartition = uploadPartition;
-                    return p;
-                }).ToList();
+            // Convert the items
+            var playerItems = items.Select(item => TransferStashService.Map(item, mod, isHardcore)).ToList();
 
             try {
                 _playerItemDao.Save(playerItems);

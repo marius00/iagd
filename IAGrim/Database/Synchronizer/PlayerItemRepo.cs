@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IAGrim.Backup.Azure.Dto;
+using IAGrim.Backup.Cloud.Dto;
 using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Dto;
 using IAGrim.Database.Synchronizer.Core;
@@ -23,8 +23,8 @@ namespace IAGrim.Database.Synchronizer {
             );
         }
 
-        public int ClearItemsMarkedForOnlineDeletion() {
-            return ThreadExecuter.Execute(
+        public void ClearItemsMarkedForOnlineDeletion() {
+            ThreadExecuter.Execute(
                 () => _repo.ClearItemsMarkedForOnlineDeletion()
             );
         }
@@ -35,7 +35,7 @@ namespace IAGrim.Database.Synchronizer {
             );
         }
 
-        public void Delete(List<AzureItemDeletionDto> items) {
+        public void Delete(List<DeleteItemDto> items) {
             ThreadExecuter.Execute(
                 () => _repo.Delete(items)
             );
@@ -98,12 +98,6 @@ namespace IAGrim.Database.Synchronizer {
         public void SetAsSynchronized(IList<PlayerItem> items) {
             ThreadExecuter.Execute(
                 () => _repo.SetAsSynchronized(items)
-            );
-        }
-
-        public long GetNumItems(string backupPartition) {
-            return ThreadExecuter.Execute(
-                () => _repo.GetNumItems(backupPartition)
             );
         }
 

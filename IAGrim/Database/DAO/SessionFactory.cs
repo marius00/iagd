@@ -35,15 +35,17 @@ namespace IAGrim.Database {
         static SessionFactory() {
             System.Net.ServicePointManager.Expect100Continue = false;
         }
-        
+
         public ISession OpenSession() {
             if (_sessionFactory == null) {
                 _sessionFactory = CreateSession();
                 Logger.Info($"Creating session on thread {Thread.CurrentThread.ManagedThreadId}");
             }
 
-            if (Thread.CurrentThread.Name == null)
+            if (Thread.CurrentThread.Name == null) {
                 Thread.CurrentThread.Name = "NH:Session";
+                Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
+            }
 
             //logger.DebugFormat("Session opened on thread {0}, Stacktrace: {1}", System.Threading.Thread.CurrentThread.Name, new System.Diagnostics.StackTrace());
             return _sessionFactory.OpenSession();
@@ -55,8 +57,10 @@ namespace IAGrim.Database {
                 Logger.Info($"Creating session on thread {Thread.CurrentThread.ManagedThreadId}");
             }
 
-            if (Thread.CurrentThread.Name == null)
+            if (Thread.CurrentThread.Name == null) {
                 Thread.CurrentThread.Name = "NH:Session";
+                Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
+            }
 
             //logger.DebugFormat("Stateless session opened on thread {0}, Stacktrace: {1}", System.Threading.Thread.CurrentThread.Name, new System.Diagnostics.StackTrace());
             return _sessionFactory.OpenStatelessSession();

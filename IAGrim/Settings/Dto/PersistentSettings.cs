@@ -24,7 +24,8 @@ namespace IAGrim.Settings.Dto {
         private bool _autoUpdateModSettings;
         private bool _hideSkills;
         private bool _deleteDuplicates;
-        private string _azureUploadPartition;
+        
+        private long _cloudUploadTimestamp;
         private List<FeatureRecommendation> _shownFeatureRecommendations;
 
 
@@ -67,8 +68,11 @@ namespace IAGrim.Settings.Dto {
         }
 
         // Azure Backups
+        [Obsolete]
         private string _azureAuthToken;
-
+        
+        private string _cloudAuthToken;
+        private string _cloudUser;
 
         // Buddy items
         public long? BuddySyncUserIdV2 {
@@ -179,10 +183,27 @@ namespace IAGrim.Settings.Dto {
         }
 
         // Azure Backups
+        [Obsolete]
         public string AzureAuthToken {
             get => _azureAuthToken;
             set {
                 _azureAuthToken = value;
+                OnMutate?.Invoke(null, null);
+            }
+        }
+
+        public string CloudAuthToken {
+            get => _cloudAuthToken;
+            set {
+                _cloudAuthToken = value;
+                OnMutate?.Invoke(null, null);
+            }
+        }
+
+        public string CloudUser {
+            get => _cloudUser;
+            set {
+                _cloudUser = value;
                 OnMutate?.Invoke(null, null);
             }
         }
@@ -195,12 +216,14 @@ namespace IAGrim.Settings.Dto {
             }
         }
 
-        public string AzureUploadPartition {
-            get => _azureUploadPartition;
+        public long CloudUploadTimestamp {
+            get => _cloudUploadTimestamp;
             set {
-                _azureUploadPartition = value;
+                _cloudUploadTimestamp = value;
                 OnMutate?.Invoke(null, null);
             }
         }
+        
+        
     }
 }

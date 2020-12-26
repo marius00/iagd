@@ -23,8 +23,11 @@ namespace EvilsoftCommons.Cloud {
 
         private void bw_DoWork(object sender, DoWorkEventArgs e) {
             try {
-                if (Thread.CurrentThread.Name == null)
+                if (Thread.CurrentThread.Name == null) {
                     Thread.CurrentThread.Name = "Backup";
+                    Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
+                }
+                ExceptionReporter.EnableLogUnhandledOnThread();
 
                 BackgroundWorker worker = sender as BackgroundWorker;
                 ICloudBackup b = e.Argument as ICloudBackup;

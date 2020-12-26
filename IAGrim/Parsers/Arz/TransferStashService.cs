@@ -240,7 +240,7 @@ namespace IAGrim.Parsers.Arz {
                 Mod = mod,
                 IsHardcore = isHardcore,
                 CreationDate = DateTime.UtcNow.ToTimestamp(),
-                AzureUuid = Guid.NewGuid().ToString() 
+                CloudId = Guid.NewGuid().ToString() 
             };
         }
 

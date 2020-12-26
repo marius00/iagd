@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Security.Cryptography.X509Certificates;
+using System.Web;
 using CefSharp;
-using IAGrim.Backup.Azure.CefSharp.Events;
+using IAGrim.Backup.Cloud.CefSharp.Events;
 
 namespace IAGrim.UI.Misc.CEF {
     // https://github.com/cefsharp/CefSharp/blob/master/CefSharp.Example/RequestHandler.cs
@@ -10,18 +11,30 @@ namespace IAGrim.UI.Misc.CEF {
         public event EventHandler OnAuthentication;
 
         private static string ExtractToken(string url) {
-            var token = url.Replace("https://auth.iagd.dreamcrash.org/token/", "");
-            if (token.Contains("#")) {
-                return token.Substring(0, token.IndexOf("#"));
-            }
-
-            return token;
+            return HttpUtility.ParseQueryString(url).Get("token");
         }
-        
+        private static string ExtractUser(string url) {
+            return HttpUtility.ParseQueryString(url).Get("email");
+        }
+
+        /// <summary>
+        /// Navigation/redirect request hook.
+        /// This ensures that only whitelisted URLs can be opened inside IA.
+        /// Any URL not whitelisted will be opened using the system default browser instead.
+        /// </summary>
+        /// <param name="chromiumWebBrowser"></param>
+        /// <param name="browser"></param>
+        /// <param name="frame"></param>
+        /// <param name="request"></param>
+        /// <param name="userGesture"></param>
+        /// <param name="isRedirect"></param>
+        /// <returns>True to ABORT any request/redirect, False to ALLOW them.</returns>
         public bool OnBeforeBrowse(IWebBrowser chromiumWebBrowser, CefSharp.IBrowser browser, IFrame frame, IRequest request, bool userGesture, bool isRedirect) {
-            if (request.Url.StartsWith("https://auth.iagd.dreamcrash.org/token/") || request.Url.StartsWith("http://localhost:7071/api/Authenticate")) {
+            // URL Hook for online backup login. (Binding a JS object to new windows proved to be too painful)
+            if (request.Url.StartsWith("https://token.iagd.evilsoft.net/")) {
                 var token = ExtractToken(request.Url);
-                OnAuthentication?.Invoke(browser, new AuthResultEvent { Token = token });
+                var user = ExtractUser(request.Url);
+                OnAuthentication?.Invoke(browser, new AuthResultEvent(user, token));
                 return true;
             }
 
@@ -34,11 +47,11 @@ namespace IAGrim.UI.Misc.CEF {
                 return false;
             }
 
-            else if (!request.Url.Contains("grimdawn.dreamcrash") && !frame.Url.Contains("dreamcrash.org") && (request.Url.StartsWith("http://") || request.Url.StartsWith("https://"))) {
+            // TODO: Rewrite this, who the hell knows what this does.
+            else if (!request.Url.Contains("iagd.evilsoft.net") && !request.Url.Contains("grimdawn.dreamcrash") && !frame.Url.Contains("dreamcrash.org") && !frame.Url.Contains("iagd.evilsoft.net") && (request.Url.StartsWith("http://") || request.Url.StartsWith("https://"))) {
                 System.Diagnostics.Process.Start(request.Url);
                 return true;
             }
-
 
             return false;
         }

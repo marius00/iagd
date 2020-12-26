@@ -5,11 +5,10 @@
     /// </summary>
     public class DeletedPlayerItem {
         public virtual string Id { get; set; }
-        public virtual string Partition { get; set; }
 
         public override bool Equals(object obj) {
             if (obj is DeletedPlayerItem that) {
-                return this.Id == that.Id && this.Partition == that.Partition;
+                return this.Id == that.Id;
             }
             else {
                 return base.Equals(obj);
@@ -17,7 +16,7 @@
         }
 
         public override int GetHashCode() {
-            return (Id + Partition).GetHashCode();
+            return Id.GetHashCode();
         }
     }
 }

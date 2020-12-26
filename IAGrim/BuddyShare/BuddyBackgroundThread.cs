@@ -48,8 +48,11 @@ namespace IAGrim.BuddyShare {
 
 
         private void bw_DoWork(object sender, DoWorkEventArgs e) {
-            if (Thread.CurrentThread.Name == null)
+            if (Thread.CurrentThread.Name == null) {
                 Thread.CurrentThread.Name = "BuddyBackground";
+                Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
+            }
+            ExceptionReporter.EnableLogUnhandledOnThread();
 
             BackgroundWorker worker = sender as BackgroundWorker;
             Serializer serializer = new Serializer(_buddyItemDao, _playerItemDao, _settings);

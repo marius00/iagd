@@ -1,10 +1,8 @@
 ﻿using EvilsoftCommons.Exceptions;
 using EvilsoftCommons.SingleInstance;
-using IAGrim.Backup.Azure.Constants;
 using IAGrim.Database;
 using IAGrim.Database.Interfaces;
 using IAGrim.Database.Migrations;
-using IAGrim.Database.Synchronizer;
 using IAGrim.Parsers.GameDataParsing.Service;
 using IAGrim.UI;
 using IAGrim.UI.Misc.CEF;
@@ -13,12 +11,12 @@ using log4net;
 using StatTranslator;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Threading;
+using System.Web;
 using System.Windows.Forms;
+using IAGrim.Backup.Cloud;
 using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Synchronizer.Core;
 using IAGrim.Services;
@@ -33,6 +31,7 @@ namespace IAGrim {
 
 #if DEBUG
         private static void Test() {
+            var testytest = HttpUtility.ParseQueryString("https://token.iagd.evilsoft.net?bug=1&email=itemassistant@gmail.com&token=00e449aa-634b-43b1-a9d5-9e503bd040aa");
             return;
         }
 #endif
@@ -59,8 +58,10 @@ namespace IAGrim {
 
         [STAThread]
         private static void Main(string[] args) {
-            if (Thread.CurrentThread.Name == null)
+            if (Thread.CurrentThread.Name == null) {
                 Thread.CurrentThread.Name = "Main";
+                Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
+            }
 
 
             Logger.Info("Starting IA:GD..");
@@ -71,25 +72,20 @@ namespace IAGrim {
                 ExceptionReporter.UrlCrashreport = "http://ribbs.dreamcrash.org/iagd/crashreport.php";
                 ExceptionReporter.UrlStats = "http://ribbs.dreamcrash.org/iagd/stats.php";
 #if !DEBUG
-            ExceptionReporter.LogExceptions = true;
+                ExceptionReporter.LogExceptions = true;
 #endif
             }
 
-            Logger.Info("Starting exception monitor for bug reports.."); // Phrased this way since people took it as a 'bad' thing.
+            Logger.Info("Starting exception monitor for bug reports..");
             Logger.Debug("Crash reports can be seen at http://ribbs.dreamcrash.org/iagd/logs.html");
             ExceptionReporter.EnableLogUnhandledOnThread();
 
-#if DEBUG
-            AzureUris.Initialize(AzureUris.EnvAzure);
-            //AzureUris.Initialize(AzureUris.EnvDev);
-#else
-            AzureUris.Initialize(AzureUris.EnvAzure);
-#endif
-
+            Uris.Initialize(Uris.EnvCloud);
             StartupService.Init();
 
 #if DEBUG
             Test();
+            Uris.Initialize(Uris.EnvLocalDev);
 #endif
 
             // Prevent running in RELEASE mode by accident
@@ -189,11 +185,6 @@ namespace IAGrim {
                 foreach (var tag in itemTagDao.GetClassItemTags()) {
                     language.SetTagIfMissing(tag.Tag, tag.Name);
                 }
-            }
-
-            if (args != null && args.Any(m => m.Contains("-logout"))) {
-                Logger.Info("Started with -logout specified, logging out of online backups.");
-                settingsService.GetPersistent().AzureAuthToken = null;
             }
 
             using (CefBrowserHandler browser = new CefBrowserHandler()) {

@@ -30,6 +30,7 @@ namespace IAGrim.Utilities {
             _timer.Elapsed += (a1, a2) => {
                 if (Thread.CurrentThread.Name == null) {
                     Thread.CurrentThread.Name = "ReportUsageThread";
+                    Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
                 }
 
                 // If the application has been minimized for 38 hours or more, stop checking for updates / statistics.

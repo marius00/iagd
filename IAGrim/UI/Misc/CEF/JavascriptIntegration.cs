@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
 using IAGrim.Database.Model;
 using IAGrim.Settings.Dto;
 using IAGrim.Utilities;
@@ -42,6 +43,7 @@ namespace IAGrim.UI.Misc.CEF {
         }
 
         public string RequestStats() {
+            MessageBox.Show("Stuff");
             return "stuff";
         }
 

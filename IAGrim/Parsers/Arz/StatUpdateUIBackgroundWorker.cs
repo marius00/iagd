@@ -38,6 +38,7 @@ namespace IAGrim.Parsers.Arz {
             try {
                 if (Thread.CurrentThread.Name == null)
                     Thread.CurrentThread.Name = "StatParserUI";
+                ExceptionReporter.EnableLogUnhandledOnThread();
 
                 Logger.Info("Updating player stats");
 

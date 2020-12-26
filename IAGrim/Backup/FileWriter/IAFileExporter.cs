@@ -72,18 +72,15 @@ namespace IAGrim.Backup.FileWriter {
                     pos += 8;
                 }
                 else if (fileVer >= 2) {
-                    pi.AzurePartition = ReadString();
-                    pi.AzureUuid = ReadString();
-                    pi.AzureHasSynchronized = !string.IsNullOrEmpty(pi.AzurePartition);
+                    ReadString(); // Old AzurePartition
+                    pi.CloudId = ReadString();
                 }
                 if (fileVer >= 3) {
-                    pi.AzureHasSynchronized = bytes[pos++] == 1;
+                    pi.IsCloudSynchronized = bytes[pos++] == 1;
                 }
                 // File v4 is identical to v3
                 if (fileVer >= 5) {
-                    ReadString(); // Reserved
-                    ReadString(); // Reserved
-                    pos++; // Boolean
+                    // TODO: Just a placeholder to ensure that v4 is never added
                 }
 
                 items.Add(pi);
@@ -121,9 +118,9 @@ namespace IAGrim.Backup.FileWriter {
                     IOHelper.Write(fs, pi.IsExpansion1);
                     IOHelper.WriteBytePrefixed(fs, pi.Mod);
 
-                    IOHelper.WriteBytePrefixed(fs, pi.AzurePartition);
-                    IOHelper.WriteBytePrefixed(fs, pi.AzureUuid);
-                    IOHelper.Write(fs, pi.AzureHasSynchronized);
+                    IOHelper.WriteBytePrefixed(fs, string.Empty);
+                    IOHelper.WriteBytePrefixed(fs, pi.CloudId);
+                    IOHelper.Write(fs, pi.IsCloudSynchronized);
                 }
             }
         }

@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using EvilsoftCommons.Cloud;
-using IAGrim.Backup.Azure.Service;
+using IAGrim.Backup.Cloud.Service;
 using IAGrim.Database.Interfaces;
 using IAGrim.Services;
 using IAGrim.Settings;
@@ -19,25 +19,24 @@ namespace IAGrim.UI.Tabs {
     public partial class BackupSettings : Form {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(BackupSettings));
         private readonly IPlayerItemDao _playerItemDao;
-        private readonly AzureAuthService _authAuthService;
+        private readonly AuthService _authAuthService;
         private readonly SettingsService _settings;
-        private readonly AzureSyncService _azureSyncService;
+        private readonly CloudSyncService _cloudSyncService;
         private readonly IHelpService _helpService;
 
-        public BackupSettings(IPlayerItemDao playerItemDao, AzureAuthService authAuthService, SettingsService settings, bool onlineBackupsEnabled, IHelpService helpService) {
+        public BackupSettings(IPlayerItemDao playerItemDao, AuthService authAuthService, SettingsService settings, IHelpService helpService) {
             InitializeComponent();
             _playerItemDao = playerItemDao;
             _settings = settings;
             _helpService = helpService;
-            if (onlineBackupsEnabled) {
-                _authAuthService = authAuthService;
-                _azureSyncService = new AzureSyncService(authAuthService.GetRestService());
-            }
+            
+            _authAuthService = authAuthService;
+            _cloudSyncService = new CloudSyncService(authAuthService.GetRestService());
 
         }
 
         private void UpdateUi() {
-            if (_authAuthService?.CheckAuthentication() == AzureAuthService.AccessStatus.Authorized) {
+            if (_authAuthService?.CheckAuthentication() == AuthService.AccessStatus.Authorized) {
                 labelStatus.Text = RuntimeSettings.Language.GetTag("iatag_ui_backup_loggedinas", "emailhere");
                 buttonLogin.Enabled = false;
             }
@@ -172,10 +171,10 @@ namespace IAGrim.UI.Tabs {
                 var access = _authAuthService.CheckAuthentication();
 
                 switch (access) {
-                    case AzureAuthService.AccessStatus.Unauthorized:
+                    case AuthService.AccessStatus.Unauthorized:
                         _authAuthService.Authenticate();
                         break;
-                    case AzureAuthService.AccessStatus.Unknown:
+                    case AuthService.AccessStatus.Unknown:
                         MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_backup_service_error"));
                         break;
                     default: {
@@ -222,14 +221,15 @@ namespace IAGrim.UI.Tabs {
                     MessageBoxIcon.Exclamation,
                     MessageBoxDefaultButton.Button2) == DialogResult.Yes) {
                 try {
-                    if (_azureSyncService != null && _azureSyncService.DeleteAccount()) {
+                    if (_cloudSyncService != null && _cloudSyncService.DeleteAccount()) {
                         MessageBox.Show(
                             RuntimeSettings.Language.GetTag("iatag_ui_backup_deleteaccount_success_body"),
                             RuntimeSettings.Language.GetTag("iatag_ui_backup_deleteaccount_success_header"),
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Exclamation
                         );
-
+                        
+                        _settings.GetPersistent().CloudUploadTimestamp = 0;
                         _authAuthService.UnAuthenticate();
                         _playerItemDao.ResetOnlineSyncState();
                     }
@@ -257,6 +257,8 @@ namespace IAGrim.UI.Tabs {
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             Logger.Info("Logging out of online backups.");
             _authAuthService.UnAuthenticate();
+            _settings.GetPersistent().CloudUploadTimestamp = 0;
+            _playerItemDao.ResetOnlineSyncState();
             MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_backup_logout_sucessful_body"), RuntimeSettings.Language.GetTag("iatag_ui_backup_logout_sucessful_header"));
             UpdateUi();
         }
