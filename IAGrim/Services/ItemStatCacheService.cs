@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using EvilsoftCommons.Exceptions;
 using IAGrim.Database.Interfaces;
 using IAGrim.UI.Controller.dto;
 using IAGrim.Utilities;
@@ -38,22 +39,31 @@ namespace IAGrim.Services {
         }
 
         private void ThreadStart() {
-            // Sleeping a bit in the start, we don't wanna keep locking the DB (SQLite mode) on startup
             try {
-                Thread.Sleep(1000 * 15);
-            } catch (ThreadInterruptedException) {
-                // Don't care
-            }
-            
-            while (t?.IsAlive ?? false) {
-                Tick();
-
+                ExceptionReporter.EnableLogUnhandledOnThread();
+                t.Name = "ItemStatCache";
+                t.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
+                // Sleeping a bit in the start, we don't wanna keep locking the DB (SQLite mode) on startup
                 try {
-                    Thread.Sleep(1000);
+                    Thread.Sleep(1000 * 15);
                 }
                 catch (ThreadInterruptedException) {
                     // Don't care
                 }
+
+                while (t?.IsAlive ?? false) {
+                    Tick();
+
+                    try {
+                        Thread.Sleep(1000);
+                    }
+                    catch (ThreadInterruptedException) {
+                        // Don't care
+                    }
+                }
+            }
+            catch (ThreadAbortException ex) {
+                Logger.Warn(ex.Message, ex);
             }
         }
 

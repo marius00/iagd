@@ -27,8 +27,10 @@ namespace IAGrim.Database.Synchronizer.Core {
         }
 
         private void Run() {
-            if (Thread.CurrentThread.Name == null)
+            if (Thread.CurrentThread.Name == null) {
                 Thread.CurrentThread.Name = "SQL";
+                Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
+            }
 
             ExceptionReporter.EnableLogUnhandledOnThread();
 
@@ -43,12 +45,15 @@ namespace IAGrim.Database.Synchronizer.Core {
                     catch (Exception ex) {
                         _results[elem.Trigger] = ex;
                     }
+
                     elem.Trigger.Set();
                 }
 
                 try {
                     Thread.Sleep(1);
-                } catch (Exception) { }
+                }
+                catch (Exception) {
+                }
             }
         }
 
@@ -99,7 +104,6 @@ namespace IAGrim.Database.Synchronizer.Core {
             object result;
 
             if (_results.TryRemove(ev, out result)) {
-
                 Exception ex = result as Exception;
                 if (ex != null) {
                     Logger.Warn(ex.Message);
@@ -108,7 +112,7 @@ namespace IAGrim.Database.Synchronizer.Core {
                 }
             }
 
-            return (T)result;
+            return (T) result;
         }
 
         ~ThreadExecuter() {
@@ -119,13 +123,12 @@ namespace IAGrim.Database.Synchronizer.Core {
             _isCancelled = true;
             _thread = null;
         }
-    
+
 
         class QueuedExecution {
             public Func<object> Func { get; set; }
             public Action Action { get; set; }
             public AutoResetEvent Trigger { get; set; }
         }
-
     }
 }

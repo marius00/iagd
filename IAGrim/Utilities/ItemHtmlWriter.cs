@@ -3,6 +3,7 @@ using IAGrim.Database.Interfaces;
 using IAGrim.UI.Controller;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using EvilsoftCommons.Exceptions;
@@ -65,7 +66,7 @@ namespace IAGrim.Utilities {
             object[] id = { item.Id, "", "", "", "" };
             if (item is PlayerItem pi) {
                 id = new object[] { pi.Id, pi.BaseRecord, pi.PrefixRecord, pi.SuffixRecord, pi.MateriaRecord };
-                isCloudSynced = !string.IsNullOrWhiteSpace(pi.AzureUuid);
+                isCloudSynced = pi.IsCloudSynchronized;
             }
 
 
@@ -163,7 +164,11 @@ namespace IAGrim.Utilities {
             foreach (var item in items) {
                 if (item is PlayerItem pi && !string.IsNullOrEmpty(pi.CachedStats)) {
                     try {
-                        jsonItems.Add(JsonConvert.DeserializeObject<JsonItem>(pi.CachedStats));
+                        var cached = JsonConvert.DeserializeObject<JsonItem>(pi.CachedStats);
+                        cached.NumItems = (uint)item.Count; // Can't use a cached item count, no idea how many items are left.
+                        cached.InitialNumItems = (uint)item.Count;
+                        cached.HasCloudBackup = pi.IsCloudSynchronized;
+                        jsonItems.Add(cached);
                     }
                     catch (Exception ex) {
                         Logger.Warn("Error deserializing items, please update player item stats on the Grim Dawn tab", ex);

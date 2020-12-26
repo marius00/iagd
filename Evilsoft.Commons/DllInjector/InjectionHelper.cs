@@ -61,8 +61,11 @@ namespace DllInjector {
         }
 
         private void bw_DoWork(object sender, DoWorkEventArgs e) {
-            if (Thread.CurrentThread.Name == null)
+            if (Thread.CurrentThread.Name == null) {
                 Thread.CurrentThread.Name = "InjectionHelper";
+                Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
+            }
+            ExceptionReporter.EnableLogUnhandledOnThread();
 
             try {
                 BackgroundWorker worker = sender as BackgroundWorker;

@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using EvilsoftCommons.Exceptions;
 using IAGrim.Settings;
 
 namespace IAGrim.UI.Controller {
@@ -75,7 +76,10 @@ namespace IAGrim.UI.Controller {
         }
 
         private void UpdateCollectionItems() {
-            Thread thread = new Thread(() => { Browser.SetCollectionItems(_itemCollectionRepo.GetItemCollection()); });
+            Thread thread = new Thread(() => {
+                ExceptionReporter.EnableLogUnhandledOnThread();
+                Browser.SetCollectionItems(_itemCollectionRepo.GetItemCollection());
+            });
             thread.Start();
         }
 

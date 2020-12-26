@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace IAGrim.Backup.Azure.Dto {
-    public class CommonItem {
+﻿namespace IAGrim.Backup.Cloud.Dto {
+    public class CloudItemDto {
+        public string Id { get; set; }
         public string Mod { get; set; }
         public virtual bool IsHardcore { get; set; }
 

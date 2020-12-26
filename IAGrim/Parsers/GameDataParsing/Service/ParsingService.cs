@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using EvilsoftCommons;
+using EvilsoftCommons.Exceptions;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.GameDataParsing.Model;
 using IAGrim.Parsers.GameDataParsing.UI;
@@ -136,6 +137,7 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
 
             // Invoke the background thread & show progress UI
             Thread t = new Thread(() => {
+                ExceptionReporter.EnableLogUnhandledOnThread();
                 foreach (var action in actions) {
                     action.Invoke();
                 }

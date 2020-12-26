@@ -24,7 +24,6 @@ namespace IAGrim.UI.Controller {
         private readonly Action<string> _setTooltip;
         private readonly ISettingsReadController _settingsController;
         private readonly SplitSearchWindow _searchWindow;
-        private readonly DynamicPacker _dynamicPacker;
         private readonly CefBrowserHandler _browser;
         private readonly TransferStashService _transferStashService;
         private readonly ItemStatService _itemStatService;
@@ -35,7 +34,6 @@ namespace IAGrim.UI.Controller {
             Action<string> setTooltip,
             ISettingsReadController settingsController,
             SplitSearchWindow searchWindow,
-            DynamicPacker dynamicPacker,
             IPlayerItemDao playerItemDao,
             TransferStashService transferStashService,
             ItemStatService itemStatService
@@ -45,7 +43,6 @@ namespace IAGrim.UI.Controller {
             _setTooltip = setTooltip;
             _settingsController = settingsController;
             _searchWindow = searchWindow;
-            _dynamicPacker = dynamicPacker;
             _dao = playerItemDao;
             _transferStashService = transferStashService;
             _itemStatService = itemStatService;
@@ -55,10 +52,7 @@ namespace IAGrim.UI.Controller {
             List<PlayerItem> items = new List<PlayerItem>();
 
             // Detect the record type (long or string) and add the item(s)
-            if (args.Id != null && args.Id > 0) {
-                items.Add(_dao.GetById(args.Id.Value));
-            }
-            else if (args.HasValidId) {
+            if (args.HasValidId) {
                 IList<PlayerItem> tmp = _dao.GetByRecord(args.Prefix, args.BaseRecord, args.Suffix, args.Materia);
                 if (tmp.Count > 0) {
                     if (args.Count == 1)
@@ -74,7 +68,7 @@ namespace IAGrim.UI.Controller {
 
                 var message = RuntimeSettings.Language.GetTag("iatag_feedback_item_does_not_exist");
                 _setFeedback(message);
-                _browser.ShowMessage(message, UserFeedbackLevel.Error);
+                _browser.ShowMessage(message, UserFeedbackLevel.Danger);
 
                 return null;
             }
@@ -105,7 +99,7 @@ namespace IAGrim.UI.Controller {
 
                 if (!string.IsNullOrEmpty(error)) {
                     Logger.Warn(error);
-                    _browser.ShowMessage(error, UserFeedbackLevel.Error);
+                    _browser.ShowMessage(error, UserFeedbackLevel.Danger);
                 }
 
                 return new TransferStatus {
@@ -114,7 +108,7 @@ namespace IAGrim.UI.Controller {
                 };
             }
             catch (TransferStashService.DepositException) {
-                _browser.ShowMessage(RuntimeSettings.Language.GetTag("iatag_feedback_unable_to_deposit"), UserFeedbackLevel.Error);
+                _browser.ShowMessage(RuntimeSettings.Language.GetTag("iatag_feedback_unable_to_deposit"), UserFeedbackLevel.Danger);
                 return new TransferStatus {
                     NumItemsTransferred = 0,
                     NumItemsRequested = numItemsRequested
@@ -134,7 +128,7 @@ namespace IAGrim.UI.Controller {
 
                 Logger.Info(RuntimeSettings.Language.GetTag("iatag_no_stash_abort"));
                 _setFeedback(RuntimeSettings.Language.GetTag("iatag_no_stash_abort"));
-                _browser.ShowMessage(RuntimeSettings.Language.GetTag("iatag_no_stash_abort"), UserFeedbackLevel.Error);
+                _browser.ShowMessage(RuntimeSettings.Language.GetTag("iatag_no_stash_abort"), UserFeedbackLevel.Danger);
 
                 return string.Empty;
             }

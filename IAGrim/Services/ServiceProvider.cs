@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IAGrim.Backup.Azure.Service;
-using IAGrim.Backup.Azure.Util;
 using IAGrim.Database;
 using IAGrim.Database.DAO;
 using IAGrim.Database.DAO.Util;
@@ -59,7 +57,6 @@ namespace IAGrim.Services {
             IPlayerItemDao playerItemDao;
             IDatabaseItemDao databaseItemDao;
             IDatabaseSettingDao databaseSettingDao;
-            IAzurePartitionDao azurePartitionDao;
             IDatabaseItemStatDao databaseItemStatDao;
             IItemTagDao itemTagDao;
             IBuddyItemDao buddyItemDao;
@@ -73,7 +70,6 @@ namespace IAGrim.Services {
                 playerItemDao = new PlayerItemRepo(threadExecuter, factory, dialect);
                 databaseItemDao = new DatabaseItemRepo(threadExecuter, factory, dialect);
                 databaseSettingDao = new DatabaseSettingRepo(threadExecuter, factory, dialect);
-                azurePartitionDao = new AzurePartitionRepo(threadExecuter, factory, dialect);
                 databaseItemStatDao = new DatabaseItemStatRepo(threadExecuter, factory, dialect);
                 itemTagDao = new ItemTagRepo(threadExecuter, factory, dialect);
                 buddyItemDao = new BuddyItemRepo(threadExecuter, factory, dialect);
@@ -88,7 +84,6 @@ namespace IAGrim.Services {
                 playerItemDao = new PlayerItemDaoImpl(factory, databaseItemStatDao, dialect);
                 databaseItemDao = new DatabaseItemDaoImpl(factory, dialect);
                 databaseSettingDao = new DatabaseSettingDaoImpl(factory, dialect);
-                azurePartitionDao = new AzurePartitionDaoImpl(factory, dialect);
                 itemTagDao = new ItemTagDaoImpl(factory, dialect);
                 buddyItemDao = new BuddyItemDaoImpl(factory, dialect);
                 buddySubscriptionDao = new BuddySubscriptionDaoImpl(factory, dialect);
@@ -115,7 +110,6 @@ namespace IAGrim.Services {
             services.Add(databaseItemDao);
             services.Add(databaseItemStatDao);
             services.Add(playerItemDao);
-            services.Add(azurePartitionDao);
             services.Add(databaseSettingDao);
             services.Add(buddyItemDao);
             services.Add(buddySubscriptionDao);

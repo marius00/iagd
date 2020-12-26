@@ -53,7 +53,7 @@ const StoreContext = React.createContext({items: [], isLoading: true, activeTab:
 Does buddy items use a lot of memory atm?
 
 
-   at Newtonsoft.Json.Utilities.StringBuffer.Append(IArrayPool`1 bufferPool, Char[] buffer, Int32 startIndex, Int32 count)
+   at Newtonsoft.Json.Utilities.StringBuffer.Append(sIArrayPool`1 bufferPool, Char[] buffer, Int32 startIndex, Int32 count)
    at Newtonsoft.Json.JsonTextReader.ReadStringIntoBuffer(Char quote)
    at Newtonsoft.Json.JsonTextReader.ParseString(Char quote, ReadType readType)
    at Newtonsoft.Json.JsonTextReader.ParseValue()

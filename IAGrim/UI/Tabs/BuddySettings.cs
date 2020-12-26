@@ -6,6 +6,7 @@ using NHibernate.Criterion;
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using EvilsoftCommons.Exceptions;
 using IAGrim.Services;
 using IAGrim.Settings;
 using IAGrim.Settings.Dto;
@@ -187,6 +188,7 @@ namespace IAGrim.UI {
         }
 
         private void DelayedActivate(object sender, EventArgs e) {
+            ExceptionReporter.EnableLogUnhandledOnThread();
             if (_delayedTextChangedTimer != null) {
                 _delayedTextChangedTimer.Stop();
                 _delayedTextChangedTimer = null;

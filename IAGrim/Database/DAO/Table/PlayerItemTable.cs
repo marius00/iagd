@@ -19,8 +19,8 @@ namespace IAGrim.Database.DAO.Table {
         public const string Materia = "materiarecord";
         public const string Seed = "seed";
 
-        public const string AzurePartition = "azpartition_v2";
         public const string AzureUuid = "azuuid_v2";
-        public const string AzureHasSynchronized = "azuresynchronized_v2";
+        public const string CloudId = "cloudid";
+        public const string IsCloudSynchronized = "cloud_hassync";
     }
 }

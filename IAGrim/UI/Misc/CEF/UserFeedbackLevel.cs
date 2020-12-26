@@ -6,6 +6,6 @@ using System.Threading.Tasks;
 
 namespace IAGrim.UI.Misc.CEF {
     public enum UserFeedbackLevel {
-        Info, Warning, Error, Success
+        Info, Warning, Danger, Success
     }
 }

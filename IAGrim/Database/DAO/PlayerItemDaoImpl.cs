@@ -11,7 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using EvilsoftCommons;
-using IAGrim.Backup.Azure.Dto;
+using IAGrim.Backup.Cloud.Dto;
 using IAGrim.Database.DAO;
 using IAGrim.Database.DAO.Table;
 using IAGrim.Database.DAO.Util;
@@ -143,13 +143,12 @@ namespace IAGrim.Database {
         
         public IList<PlayerItem> GetUnsynchronizedItems() {
             using (var session = SessionCreator.OpenSession()) {
-                var req = Restrictions.Or(
-                    Restrictions.Eq(nameof(PlayerItem.AzureUuid), ""), 
-                    Restrictions.Eq(nameof(PlayerItem.AzureHasSynchronized), false)
-                    );
-
                 return session.CreateCriteria<PlayerItem>()
-                    .Add(req)
+                    .Add(Restrictions.Or(
+                        Restrictions.Eq(nameof(PlayerItem.IsCloudSynchronizedValue), 0L),
+                        Restrictions.IsNull(nameof(PlayerItem.IsCloudSynchronizedValue))
+                        )
+                    )
                     .List<PlayerItem>();
             }
         }
@@ -159,27 +158,15 @@ namespace IAGrim.Database {
                 using (var transaction = session.BeginTransaction()) {
                     foreach (var item in items) {
                         session.CreateQuery($@"UPDATE PlayerItem SET 
-                                             {PlayerItemTable.AzureHasSynchronized} = true, 
-                                             {PlayerItemTable.AzureUuid} = :uuid, 
-                                             {PlayerItemTable.AzurePartition} = :partition 
+                                             {PlayerItemTable.IsCloudSynchronized} = true, 
+                                             {PlayerItemTable.CloudId} = :uuid 
                                             WHERE Id = :id")
                             .SetParameter("id", item.Id)
-                            .SetParameter("uuid", item.AzureUuid)
-                            .SetParameter("partition", item.AzurePartition)
+                            .SetParameter("uuid", item.CloudId)
                             .ExecuteUpdate();
                     }
 
                     transaction.Commit();
-                }
-            }
-        }
-
-        public long GetNumItems(string backupPartition) {
-            using (ISession session = SessionCreator.OpenSession()) {
-                using (session.BeginTransaction()) {
-                    return session.CreateSQLQuery($"SELECT COUNT(*) FROM {PlayerItemTable.Table} WHERE {PlayerItemTable.AzurePartition} = :partition")
-                        .SetParameter("partition", backupPartition)
-                        .UniqueResult<long>();
                 }
             }
         }
@@ -229,11 +216,11 @@ namespace IAGrim.Database {
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
                     var existingItems = session.CreateCriteria<PlayerItem>()
-                        .Add(Restrictions.IsNotNull(nameof(PlayerItem.AzureUuid)))
+                        .Add(Restrictions.IsNotNull(nameof(PlayerItem.CloudId)))
                         .List<PlayerItem>();
 
                     filteredItems = items
-                        .Where(m => String.IsNullOrEmpty(m.AzureUuid) || !existingItems.Any(item => item.AzureUuid == m.AzureUuid))
+                        .Where(m => string.IsNullOrEmpty(m.CloudId) || existingItems.All(existing => existing.CloudId != m.CloudId))
                         .Where(m => !Exists(session, m)) // May be slow, but should prevent duplicates better than anything
                         .ToList();
                 }
@@ -249,9 +236,8 @@ namespace IAGrim.Database {
         public void ResetOnlineSyncState() {
             using (var session = SessionCreator.OpenSession()) {
                 using (var transaction = session.BeginTransaction()) {
-                    session.CreateQuery($"UPDATE PlayerItem SET {PlayerItemTable.AzureHasSynchronized} = false")
-                        .ExecuteUpdate();
-                    session.CreateQuery($"DELETE FROM {nameof(AzurePartition)}")
+                    // TODO: Whoever calls this should also ensure that LastSync is set to 0
+                    session.CreateQuery($"UPDATE PlayerItem SET {PlayerItemTable.IsCloudSynchronized} = false")
                         .ExecuteUpdate();
 
                     transaction.Commit();
@@ -261,7 +247,6 @@ namespace IAGrim.Database {
         }
 
         public void Update(IList<PlayerItem> items, bool clearOnlineId) {
-
             const string table = nameof(PlayerItem);
             const string stack = nameof(PlayerItem.StackCount);
             var id = nameof(PlayerItem.Id);
@@ -269,26 +254,17 @@ namespace IAGrim.Database {
                 using (ITransaction transaction = session.BeginTransaction()) {
                     foreach (var item in items) {
                         // This is if an item has been deleted due to a transfer to stash
-                        /*
-                        if (clearOnlineId && !string.IsNullOrEmpty(item.AzureUuid) ) {
-                            session.CreateSQLQuery($"INSERT OR IGNORE INTO {DeletedPlayerItemTable.Table} ({DeletedPlayerItemTable.Id}) VALUES (:id)")
-                                .SetParameter("id", item.OnlineId.Value)
-                                .ExecuteUpdate();
-
-                            item.OnlineId = null;
-                        }*/
-
-                        session.CreateQuery($"UPDATE {table} SET {stack} = :count, {PlayerItemTable.AzureUuid} = :uuid WHERE {id} = :id")
+                        session.CreateQuery($"UPDATE {table} SET {stack} = :count, {PlayerItemTable.CloudId} = :uuid WHERE {id} = :id")
                             .SetParameter("count", item.StackCount)
                             .SetParameter("id", item.Id)
-                            .SetParameter("uuid", item.AzureUuid)
+                            .SetParameter("uuid", item.CloudId)
                             .ExecuteUpdate();
                     }
                     
                     // insert into DeletedPlayerItem(oid) select onlineid from playeritem where onlineid is not null and stackcount <= 0 and id in (1,2,3)
-                    session.CreateSQLQuery(SqlUtils.EnsureDialect(Dialect, $" INSERT OR IGNORE INTO {DeletedPlayerItemTable.Table} ({DeletedPlayerItemTable.Id}, {DeletedPlayerItemTable.Partition}) " +
-                                        $" SELECT {PlayerItemTable.AzureUuid}, {PlayerItemTable.AzurePartition} FROM {PlayerItemTable.Table} " +
-                                        $" WHERE {PlayerItemTable.AzureUuid} IS NOT NULL " +
+                    session.CreateSQLQuery(SqlUtils.EnsureDialect(Dialect, $" INSERT OR IGNORE INTO {DeletedPlayerItemTable.Table} ({DeletedPlayerItemTable.Id}) " +
+                                        $" SELECT {PlayerItemTable.CloudId} FROM {PlayerItemTable.Table} " +
+                                        $" WHERE {PlayerItemTable.CloudId} IS NOT NULL " +
                                         $" AND {PlayerItemTable.Stackcount} <= 0 " +
                                         $" AND {PlayerItemTable.Id} IN ( :ids )"))
                         .SetParameterList("ids", items.Select(m => m.Id).ToList())
@@ -303,33 +279,11 @@ namespace IAGrim.Database {
                 }
             }
         }
-        /*
-        private long? GetIfExists(ISession session, PlayerItem item) {
-            long? id = session.CreateCriteria<PlayerItem>()
-                .Add(Restrictions.Eq(nameof(PlayerItem.BaseRecord), item.BaseRecord))
-                .Add(Restrictions.Eq(nameof(PlayerItem.PrefixRecord), item.PrefixRecord))
-                .Add(Restrictions.Eq(nameof(PlayerItem.SuffixRecord), item.SuffixRecord))
-                .Add(Restrictions.Eq(nameof(PlayerItem.ModifierRecord), item.ModifierRecord))
-                .Add(Restrictions.Eq(nameof(PlayerItem.TransmuteRecord), item.TransmuteRecord))
-                .Add(Restrictions.Eq(nameof(PlayerItem.Seed), item.Seed))
-                .Add(Restrictions.Eq(nameof(PlayerItem.MateriaRecord), item.MateriaRecord))
-                .Add(Restrictions.Eq(nameof(PlayerItem.RelicCompletionBonusRecord), item.RelicCompletionBonusRecord))
-                .Add(Restrictions.Eq(nameof(PlayerItem.RelicSeed), item.RelicSeed))
-                .Add(Restrictions.Eq(nameof(PlayerItem.EnchantmentRecord), item.EnchantmentRecord))
-                .Add(Restrictions.Eq(nameof(PlayerItem.EnchantmentSeed), item.EnchantmentSeed))
-                .Add(Restrictions.Eq(nameof(PlayerItem.MateriaCombines), item.MateriaCombines))
-                .Add(Restrictions.Ge(nameof(PlayerItem.StackCount), 1L)) // Old entries may have 0
-                .SetMaxResults(1)
-                .SetProjection(Projections.Id())
-                .UniqueResult<long?>();
 
-            return id;
-        }*/
 
-        private bool Exists(ISession session, string azurePartition, string azureUuid) {
+        private bool Exists(ISession session, string cloudId) {
             long id = session.CreateCriteria<PlayerItem>()
-                .Add(Restrictions.Eq(nameof(PlayerItem.AzurePartition), azurePartition))
-                .Add(Restrictions.Eq(nameof(PlayerItem.AzureUuid), azureUuid))
+                .Add(Restrictions.Eq(nameof(PlayerItem.CloudId), cloudId))
                 .SetMaxResults(1)
                 .SetProjection(Projections.RowCountInt64())
                 .UniqueResult<long>();
@@ -446,12 +400,11 @@ namespace IAGrim.Database {
 
         }
 
-        public void Delete(List<AzureItemDeletionDto> items) {
+        public void Delete(List<DeleteItemDto> items) {
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
                     foreach (var item in items) {
-                        session.CreateQuery($"DELETE FROM PlayerItem WHERE {PlayerItemTable.AzurePartition} = :partition AND {PlayerItemTable.AzureUuid} = :uuid")
-                            .SetParameter("partition", item.Partition)
+                        session.CreateQuery($"DELETE FROM PlayerItem WHERE {PlayerItemTable.CloudId} = :uuid")
                             .SetParameter("uuid", item.Id)
                             .ExecuteUpdate();
                     }
@@ -473,12 +426,12 @@ namespace IAGrim.Database {
             List<long> ids = new List<long>();
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
-                    items = items_.Where(m => String.IsNullOrWhiteSpace(m.AzurePartition) || !Exists(session, m.AzurePartition, m.AzureUuid)).ToList();
+                    // Items not cloud synced -- No idea why -- Mass import?
+                    items = items_.Where(m => !m.IsCloudSynchronized || !Exists(session, m.CloudId)).ToList();
 
                     for (int i = 0; i < items.Count; i++) {
                         var item = items.ElementAt(i);
 
-                        // Stack item if possible
                         session.Save(item);
                         ids.Add(item.Id);
 
@@ -540,7 +493,7 @@ namespace IAGrim.Database {
 
         public IList<DeletedPlayerItem> GetItemsMarkedForOnlineDeletion() {
             using (ISession session = SessionCreator.OpenSession()) {
-                using (ITransaction transaction = session.BeginTransaction()) {
+                using (session.BeginTransaction()) {
                     return session.QueryOver<DeletedPlayerItem>().List();
                 }
             }
@@ -550,12 +503,11 @@ namespace IAGrim.Database {
         /// Simply delete the 'mark for deletion' tags
         /// </summary>
         /// <returns></returns>
-        public int ClearItemsMarkedForOnlineDeletion() {
+        public void ClearItemsMarkedForOnlineDeletion() {
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
-                    int n = session.CreateQuery($"DELETE FROM {nameof(DeletedPlayerItem)}").ExecuteUpdate();
+                    session.CreateQuery($"DELETE FROM {nameof(DeletedPlayerItem)}").ExecuteUpdate();
                     transaction.Commit();
-                    return n;
                 }
             }
         }
@@ -563,27 +515,26 @@ namespace IAGrim.Database {
         /// <summary>
         /// Delete a player item and all its stats
         /// </summary>
-        public override void Remove(PlayerItem obj) {
-            var azurePartition = obj.AzurePartition;
-            var azureId = obj.AzureUuid;
+        public override void Remove(PlayerItem item) {
+            var cloudId = item.CloudId;
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
 
                     session.CreateQuery($"DELETE FROM {nameof(PlayerItemRecord)} WHERE {nameof(PlayerItemRecord.PlayerItemId)} = :id")
-                        .SetParameter("id", obj.Id)
+                        .SetParameter("id", item.Id)
                         .ExecuteUpdate();
 
 
-                    session.Delete(obj);
+                    session.Delete(item);
 
                     transaction.Commit();
                 }
 
                 // Mark item for deletion from the online backup
-                if (!String.IsNullOrEmpty(azurePartition)) {
+                if (item.IsCloudSynchronized) {
                     try {
                         using (ITransaction transaction = session.BeginTransaction()) {
-                            session.SaveOrUpdate(new DeletedPlayerItem { Partition = azurePartition, Id = azureId });
+                            session.SaveOrUpdate(new DeletedPlayerItem { Id = cloudId });
                             transaction.Commit();
                         }
                     } catch (Exception ex) {
@@ -689,6 +640,44 @@ namespace IAGrim.Database {
 
         }
 
+        private static PlayerItem ToPlayerItem(object o) {
+            object[] arr = (object[]) o;
+            int idx = 0;
+            string name = arr[idx++] as string;
+            long stackCount = (long)arr[idx++];
+            string rarity = (string)arr[idx++];
+            int levelrequirement = (int)(double)arr[idx++];
+            string baserecord = (string)arr[idx++];
+            string prefixrecord = (string)arr[idx++];
+            string suffixrecord = (string)arr[idx++];
+            string ModifierRecord = (string)arr[idx++];
+            string MateriaRecord = (string) arr[idx++];
+            int PrefixRarity = (int)arr[idx++];
+            string AzureUuid = (string)arr[idx++];
+            string CloudId = (string)arr[idx++];
+            long? IsCloudSynchronized = (long?)arr[idx++];
+            string CachedStats = (string)arr[idx++];
+            string PetRecord = (string)arr[idx++];
+
+            return new PlayerItem {
+                Name = name,
+                StackCount = stackCount,
+                Rarity = rarity,
+                LevelRequirement = levelrequirement,
+                BaseRecord = baserecord,
+                PrefixRecord = prefixrecord,
+                SuffixRecord = suffixrecord,
+                ModifierRecord = ModifierRecord,
+                MateriaRecord = MateriaRecord,
+                PrefixRarity = PrefixRarity,
+                AzureUuid = AzureUuid,
+                CloudId = CloudId,
+                IsCloudSynchronized = IsCloudSynchronized.HasValue && IsCloudSynchronized.Value == 1,
+                CachedStats = CachedStats,
+                PetRecord = PetRecord
+            };
+
+        }
         public List<PlayerItem> SearchForItems(ItemSearchRequest query) {
             Logger.Debug($"Searching for items with query {query}");
             List<string> queryFragments = new List<string>();
@@ -769,8 +758,9 @@ namespace IAGrim.Database {
                 ModifierRecord as ModifierRecord, 
                 MateriaRecord as MateriaRecord,
                 {PlayerItemTable.PrefixRarity} as PrefixRarity,
-                {PlayerItemTable.AzurePartition} as AzurePartition,
                 {PlayerItemTable.AzureUuid} as AzureUuid,
+                {PlayerItemTable.CloudId} as CloudId,
+                {PlayerItemTable.IsCloudSynchronized} as IsCloudSynchronizedValue,
                 CachedStats as CachedStats,
                 (SELECT Record FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord) LIMIT 1) AS PetRecord
                 FROM PlayerItem PI WHERE " + string.Join(" AND ", queryFragments));
@@ -829,6 +819,11 @@ namespace IAGrim.Database {
 
                     Logger.Debug(q.QueryString);
                     q.SetResultTransformer(new AliasToBeanResultTransformer(typeof(PlayerItem)));
+                    /*
+                    List<PlayerItem> items = new List<PlayerItem>();
+                    foreach (var item in q.List()) {
+                        items.Add(ToPlayerItem(item));
+                    }*/
 
                     var items = ItemOperationsUtility.MergeStackSize(q.List<PlayerItem>());
                     
@@ -889,8 +884,8 @@ namespace IAGrim.Database {
                 using (ITransaction transaction = session.BeginTransaction()) {
                     // Mark all duplicates for deletion from online backups
                     session.CreateSQLQuery(@"
-insert into deletedplayeritem_v2(partition, id)
-select azpartition_v2, azuuid_v2 FROM playeritem WHERE Id IN (
+insert into deletedplayeritem_v3(id)
+select cloudid FROM playeritem WHERE Id IN (
 	SELECT Id FROM (
 		SELECT MAX(Id) as Id, (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) as UQ FROM PlayerItem WHERE (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) IN (
 			SELECT UQ FROM (
@@ -909,10 +904,10 @@ select azpartition_v2, azuuid_v2 FROM playeritem WHERE Id IN (
 	) Z
 )
 
-AND azpartition_v2 IS NOT NULL 
-AND azuuid_v2 IS NOT NULL 
-AND azuuid_v2 NOT IN (SELECT azuuid_v2 FROM deletedplayeritem_v2)
-AND azuuid_v2 != ''
+AND cloud_hassync
+AND cloudid IS NOT NULL 
+AND cloudid NOT IN (SELECT id FROM deletedplayeritem_v3)
+AND cloudid != ''
 ").ExecuteUpdate();
                     // Delete duplicates (if there are multiple, only one will be deleted)
                     int duplicatesDeleted = session.CreateSQLQuery(@"

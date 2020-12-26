@@ -198,8 +198,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Backup\Azure\Dto\AzureLimitEntry.cs" />
-    <Compile Include="Backup\Azure\Dto\AzureLimitsDto.cs" />
+    <Compile Include="Backup\Cloud\Dto\LimitEntry.cs" />
+    <Compile Include="Backup\Cloud\Dto\LimitsDto.cs" />
     <Compile Include="Database\DAO\ItemCollectionDaoImpl.cs" />
     <Compile Include="Database\DAO\Util\SqlDialect.cs" />
     <Compile Include="Database\DAO\Util\SqlUtils.cs" />
@@ -278,23 +278,18 @@
     <Compile Include="Utilities\Detection\SteamDetection.cs" />
     <Compile Include="Utilities\HelperClasses\IComboBoxItemToggle.cs" />
     <Compile Include="UI\Misc\CEF\CefRequestHandler.cs" />
-    <Compile Include="Backup\Azure\CefSharp\AzureOnClosePopupHijack.cs" />
-    <Compile Include="Backup\Azure\CefSharp\Events\AuthResultEvent.cs" />
-    <Compile Include="Backup\Azure\Constants\AzureUris.cs" />
-    <Compile Include="Backup\Azure\Dto\AzureItemDeletionDto.cs" />
-    <Compile Include="Backup\Azure\Dto\AzureUploadedItem.cs" />
-    <Compile Include="Backup\Azure\Dto\CommonItem.cs" />
-    <Compile Include="Backup\Azure\Dto\ItemDownloadDto.cs" />
-    <Compile Include="Backup\Azure\Service\AuthenticationProvider.cs" />
-    <Compile Include="Backup\Azure\Service\AzureAuthService.cs" />
-    <Compile Include="Backup\Azure\Service\AzureSyncService.cs" />
-    <Compile Include="Backup\Azure\Dto\AzureItem.cs" />
-    <Compile Include="Backup\Azure\Dto\AzureItemContainer.cs" />
-    <Compile Include="Backup\Azure\Dto\AzureItemPartitionDto.cs" />
-    <Compile Include="Backup\Azure\Dto\AzureUploadItem.cs" />
-    <Compile Include="Backup\Azure\Service\BackupService.cs" />
-    <Compile Include="Backup\Azure\Util\BackupServiceWorker.cs" />
-    <Compile Include="Backup\Azure\Util\ItemConverter.cs" />
+    <Compile Include="Backup\Cloud\CefSharp\AzureOnClosePopupHijack.cs" />
+    <Compile Include="Backup\Cloud\CefSharp\Events\AuthResultEvent.cs" />
+    <Compile Include="Backup\Cloud\Uris.cs" />
+    <Compile Include="Backup\Cloud\Dto\DeleteItemDto.cs" />
+    <Compile Include="Backup\Cloud\Dto\CloudItemDto.cs" />
+    <Compile Include="Backup\Cloud\Dto\ItemDownloadDto.cs" />
+    <Compile Include="Backup\Cloud\Service\AuthenticationProvider.cs" />
+    <Compile Include="Backup\Cloud\Service\AuthService.cs" />
+    <Compile Include="Backup\Cloud\Service\CloudSyncService.cs" />
+    <Compile Include="Backup\Cloud\Service\BackupService.cs" />
+    <Compile Include="Backup\Cloud\Util\BackupServiceWorker.cs" />
+    <Compile Include="Backup\Cloud\Util\ItemConverter.cs" />
     <Compile Include="Backup\FileWriter\FileExporter.cs" />
     <Compile Include="Backup\FileWriter\GDFileExporter.cs" />
     <Compile Include="Backup\FileWriter\IAFileExporter.cs" />
@@ -302,7 +297,6 @@
     <Compile Include="BuddyShare\dto\JsonBuddyItem.cs" />
     <Compile Include="BuddyShare\GzipCompressionHandler.cs" />
     <Compile Include="Database\DAO\AugmentationItemDaoImpl.cs" />
-    <Compile Include="Database\DAO\AzurePartitionDaoImpl.cs" />
     <Compile Include="Database\DAO\BuddyItemDaoImpl.cs" />
     <Compile Include="Database\DAO\DatabaseItemStatDaoImpl.cs" />
     <Compile Include="Database\DAO\Dto\StatFetch.cs" />
@@ -326,7 +320,6 @@
     <Compile Include="Database\Dto\ModSelection.cs" />
     <Compile Include="Database\Dto\ItemSearchRequest.cs" />
     <Compile Include="Database\Interfaces\IAugmentationItemDao.cs" />
-    <Compile Include="Database\Interfaces\IAzurePartitionDao.cs" />
     <Compile Include="Database\Interfaces\IBuddyItemDao.cs" />
     <Compile Include="Database\Interfaces\IBuddySubscriptionDao.cs" />
     <Compile Include="Database\Interfaces\IDatabaseItemDao.cs" />
@@ -341,8 +334,6 @@
     <Compile Include="Database\Migrations\IDatabaseMigration.cs" />
     <Compile Include="Database\Migrations\MigrationHandler.cs" />
     <Compile Include="Database\Model\AugmentationItem.cs" />
-    <Compile Include="Database\Model\AzureIdentifier.cs" />
-    <Compile Include="Database\Model\AzurePartition.cs" />
     <Compile Include="Database\Model\BaseItem.cs" />
     <Compile Include="Database\Model\DatabaseItemDto.cs" />
     <Compile Include="Database\Model\DeletedPlayerItem.cs" />
@@ -356,7 +347,6 @@
     <Compile Include="Database\Model\SkillModifierStat.cs" />
     <Compile Include="Database\SessionFactoryLoader\SessionFactory.cs" />
     <Compile Include="Database\SearchResult.cs" />
-    <Compile Include="Database\Synchronizer\AzurePartitionRepo.cs" />
     <Compile Include="Database\Synchronizer\BasicSynchronizer.cs" />
     <Compile Include="Database\Synchronizer\AugmentationItemRepo.cs" />
     <Compile Include="Database\Synchronizer\BuddyItemRepo.cs" />
@@ -703,7 +693,6 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Database\Model\PlayerItemRecord.hbm.xml" />
-    <EmbeddedResource Include="Database\Model\AzurePartition.hbm.xml" />
     <EmbeddedResource Include="Database\Model\AugmentationItem.hbm.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>

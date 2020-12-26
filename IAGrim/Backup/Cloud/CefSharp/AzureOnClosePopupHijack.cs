@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using CefSharp;
-using CefSharp.WinForms;
+﻿using CefSharp;
 
-namespace IAGrim.Backup.Azure.CefSharp {
+namespace IAGrim.Backup.Cloud.CefSharp {
+    // TODO: What in the world did/does this class do?
     class AzureOnClosePopupHijack : ILifeSpanHandler {
         bool ILifeSpanHandler.OnBeforePopup(IWebBrowser browserControl, IBrowser browser, IFrame frame, string targetUrl, string targetFrameName, WindowOpenDisposition targetDisposition, bool userGesture, IPopupFeatures popupFeatures, IWindowInfo windowInfo, IBrowserSettings browserSettings, ref bool noJavascriptAccess, out IWebBrowser newBrowser) {
             //Set newBrowser to null unless your attempting to host the popup in a new instance of ChromiumWebBrowser

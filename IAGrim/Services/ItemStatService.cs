@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using EvilsoftCommons.Exceptions;
 using IAGrim.Services.Dto;
 using log4net;
 using IAGrim.Database.Interfaces;
@@ -31,7 +32,10 @@ namespace IAGrim.Services {
             this._itemSkillDao = itemSkillDao;
             _settings = settings;
 
-            Thread thread = new Thread(() => { _xpacSkills = _databaseItemStatDao.GetExpacSkillModifierSkills(); });
+            Thread thread = new Thread(() => {
+                ExceptionReporter.EnableLogUnhandledOnThread();
+                _xpacSkills = _databaseItemStatDao.GetExpacSkillModifierSkills();
+            });
             thread.Start();
         }
 
