@@ -40,13 +40,11 @@ namespace IAGrim.Backup.Cloud.Service {
 
         private AccessStatus IsTokenValid(string user, string token) {
             try {
-                // TODO : This is being spammed to holy hell, probably incurring vast costs.
-                var httpClient = new HttpClient();
-                httpClient.Timeout = TimeSpan.FromSeconds(5);
+                var httpClient = new HttpClient {Timeout = TimeSpan.FromSeconds(5)};
                 httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", token);
                 if (!httpClient.DefaultRequestHeaders.TryAddWithoutValidation("X-Api-User", user))
                     Logger.Error("Could not add user header");
-                
+
                 var result = httpClient.GetAsync(Uris.TokenVerificationUri).Result;
                 var status = result.StatusCode;
 
@@ -75,6 +73,31 @@ namespace IAGrim.Backup.Cloud.Service {
             catch (WebException ex) {
                 Logger.Warn(ex.Message, ex);
                 return AccessStatus.Unknown;
+            }
+        }
+
+        public void Logout() {
+            try {
+                if (_authenticationProvider.HasToken()) {
+                    var httpClient = new HttpClient {Timeout = TimeSpan.FromSeconds(5)};
+                    httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", _authenticationProvider.GetToken());
+                    httpClient.DefaultRequestHeaders.TryAddWithoutValidation("X-Api-User", _authenticationProvider.GetUser());
+
+                    var status = httpClient.GetAsync(Uris.LogoutUrl).Result.StatusCode;
+
+                    if (status == HttpStatusCode.OK) {
+                        Logger.Info($"Successfully logged out of cloud backups");
+                    }
+                    else {
+                        Logger.Info($"Failed logging out of cloud backups, status code {status} (this is OK, client still deletes token and gets logged out)");
+                    }
+                }
+            }
+            catch (Exception ex) {
+                Logger.Warn(ex.Message, ex);
+            }
+            finally {
+                UnAuthenticate();
             }
         }
 
@@ -115,7 +138,7 @@ namespace IAGrim.Backup.Cloud.Service {
         /// <summary>
         /// Logout
         /// </summary>
-        public void UnAuthenticate(/* args: This <-> All */) {
+        public void UnAuthenticate( /* args: This <-> All */) {
             _authenticationProvider.SetToken(string.Empty, string.Empty);
             MemoryCache.Default.Set(CacheKey, AccessStatus.Unauthorized, DateTimeOffset.Now.AddDays(1));
         }

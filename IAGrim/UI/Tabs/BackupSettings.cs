@@ -256,10 +256,10 @@ namespace IAGrim.UI.Tabs {
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             Logger.Info("Logging out of online backups.");
-            _authAuthService.UnAuthenticate();
+            _authAuthService.Logout();
             _settings.GetPersistent().CloudUploadTimestamp = 0;
             _playerItemDao.ResetOnlineSyncState();
-            MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_backup_logout_sucessful_body"), RuntimeSettings.Language.GetTag("iatag_ui_backup_logout_sucessful_header"));
+            MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_backup_logout_successful_body"), RuntimeSettings.Language.GetTag("iatag_ui_backup_logout_successful_header"));
             UpdateUi();
         }
 
