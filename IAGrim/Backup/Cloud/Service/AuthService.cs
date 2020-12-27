@@ -8,13 +8,20 @@ using IAGrim.Backup.Cloud.CefSharp.Events;
 using IAGrim.UI.Misc.CEF;
 using IAGrim.Utilities.HelperClasses;
 using log4net;
+using Newtonsoft.Json;
 
 namespace IAGrim.Backup.Cloud.Service {
     public class AuthService {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(AuthService));
         private const string CacheKey = "IAGDIsCloudAuthenticated";
         private readonly ICefBackupAuthentication _authentication;
-        private readonly AuthenticationProvider _authenticationProvider;
+        private readonly AuthenticationProvider _authenticationProvider; 
+        private static readonly JsonSerializerSettings _settings = new JsonSerializerSettings {
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            Culture = System.Globalization.CultureInfo.InvariantCulture,
+            ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver(),
+            NullValueHandling = NullValueHandling.Ignore
+        };
 
         public enum AccessStatus {
             Authorized,
@@ -25,10 +32,10 @@ namespace IAGrim.Backup.Cloud.Service {
         public AuthService(ICefBackupAuthentication authentication, AuthenticationProvider authenticationProvider) {
             _authentication = authentication;
             _authenticationProvider = authenticationProvider;
-            _authentication.OnSuccess += AuthenticationOnOnSuccess;
+            _authentication.OnSuccess += AuthenticationOnSuccess;
         }
 
-        private void AuthenticationOnOnSuccess(object sender, EventArgs eventArgs) {
+        private void AuthenticationOnSuccess(object sender, EventArgs eventArgs) {
             var args = eventArgs as AuthResultEvent;
             (sender as IBrowser)?.CloseBrowser(true);
 
@@ -38,7 +45,7 @@ namespace IAGrim.Backup.Cloud.Service {
             }
         }
 
-        private AccessStatus IsTokenValid(string user, string token) {
+        private static AccessStatus IsTokenValid(string user, string token) {
             try {
                 var httpClient = new HttpClient {Timeout = TimeSpan.FromSeconds(5)};
                 httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", token);
@@ -63,6 +70,50 @@ namespace IAGrim.Backup.Cloud.Service {
                 else {
                     Logger.Error($"Got Status {result} verifying authentication token");
                     ExceptionReporter.ReportIssue($"Server response {result} verifying access token");
+                    return AccessStatus.Unknown;
+                }
+            }
+            catch (AggregateException ex) {
+                Logger.Warn(ex.Message, ex);
+                return AccessStatus.Unknown;
+            }
+            catch (WebException ex) {
+                Logger.Warn(ex.Message, ex);
+                return AccessStatus.Unknown;
+            }
+        }
+
+        class MigrateResponseType {
+            public string Token { get; set; }
+            public string Email { get; set; }
+        }
+
+        private AccessStatus Migrate() {
+            try {
+                var httpClient = new HttpClient {Timeout = TimeSpan.FromSeconds(15)};
+                var url = Uris.MigrateUrl + "?token=" + _authenticationProvider.GetLegacyToken();
+                var result = httpClient.GetAsync(url).Result;
+                var status = result.StatusCode;
+
+                if (status == HttpStatusCode.OK) {
+                    Logger.Info($"Got Status {result} migrating authentication token");
+                    var body = result.Content.ReadAsStringAsync().Result;
+                    var accessToken = JsonConvert.DeserializeObject<MigrateResponseType>(body);
+                    _authenticationProvider.SetToken(accessToken.Email, accessToken.Token);
+                    
+                    return AccessStatus.Authorized;
+                }
+                else if (status == HttpStatusCode.Unauthorized || status == HttpStatusCode.Forbidden) {
+                    return AccessStatus.Unauthorized;
+                }
+                else if (status == HttpStatusCode.InternalServerError) {
+                    ExceptionReporter.ReportIssue("Server response 500 migrating access token");
+                    Logger.Warn("Server response 500 migrating access token towards backup service");
+                    return AccessStatus.Unknown;
+                }
+                else {
+                    Logger.Error($"Got Status {result} migrating authentication token");
+                    ExceptionReporter.ReportIssue($"Server response {result} migrating access token");
                     return AccessStatus.Unknown;
                 }
             }
@@ -106,7 +157,11 @@ namespace IAGrim.Backup.Cloud.Service {
                 return cached;
             }
 
-            if (_authenticationProvider.HasToken()) {
+            if (_authenticationProvider.CanMigrate()) {
+                // We have a legacy access token, can migrate to the new cloud solution.
+                return Migrate();
+            }
+            else if (_authenticationProvider.HasToken()) {
                 var result = IsTokenValid(_authenticationProvider.GetUser(), _authenticationProvider.GetToken());
                 MemoryCache.Default.Set(CacheKey, result, DateTimeOffset.Now.AddDays(1));
 
