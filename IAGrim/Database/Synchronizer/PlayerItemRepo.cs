@@ -12,6 +12,7 @@ using IAGrim.Database.Synchronizer.Core;
 namespace IAGrim.Database.Synchronizer {
     class PlayerItemRepo : BasicSynchronizer<PlayerItem>, IPlayerItemDao {
         private readonly IPlayerItemDao _repo;
+
         public PlayerItemRepo(ThreadExecuter threadExecuter, ISessionCreator sessionCreator, SqlDialect dialect) : base(threadExecuter, sessionCreator) {
             this._repo = new PlayerItemDaoImpl(sessionCreator, new DatabaseItemStatDaoImpl(sessionCreator, dialect), dialect);
             this.BaseRepo = _repo;
@@ -20,6 +21,12 @@ namespace IAGrim.Database.Synchronizer {
         public void Import(List<PlayerItem> items) {
             ThreadExecuter.Execute(
                 () => _repo.Import(items)
+            );
+        }
+
+        public IList<string> GetOnlineIds() {
+            return ThreadExecuter.Execute(
+                () => _repo.GetOnlineIds()
             );
         }
 

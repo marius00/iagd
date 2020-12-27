@@ -37,7 +37,7 @@ namespace IAGrim.UI.Tabs {
 
         private void UpdateUi() {
             if (_authAuthService?.CheckAuthentication() == AuthService.AccessStatus.Authorized) {
-                labelStatus.Text = RuntimeSettings.Language.GetTag("iatag_ui_backup_loggedinas", "emailhere");
+                labelStatus.Text = RuntimeSettings.Language.GetTag("iatag_ui_backup_loggedinas", _settings.GetPersistent().CloudUser);
                 buttonLogin.Enabled = false;
             }
             else {

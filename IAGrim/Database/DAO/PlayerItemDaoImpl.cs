@@ -18,7 +18,6 @@ using IAGrim.Database.DAO.Util;
 using IAGrim.Settings;
 
 namespace IAGrim.Database {
-
     /// <summary>
     /// Database class for handling player owned items
     /// </summary>
@@ -27,11 +26,11 @@ namespace IAGrim.Database {
         private readonly IDatabaseItemStatDao _databaseItemStatDao;
 
         public PlayerItemDaoImpl(
-            ISessionCreator sessionCreator, 
+            ISessionCreator sessionCreator,
             IDatabaseItemStatDao databaseItemStatDao, SqlDialect dialect) : base(sessionCreator, dialect) {
             _databaseItemStatDao = databaseItemStatDao;
         }
-        
+
         /// <summary>
         /// List all player items
         /// </summary>
@@ -60,9 +59,9 @@ namespace IAGrim.Database {
                 if (String.IsNullOrEmpty(mod)) {
                     string sql = String.Join(" ",
                         $"SELECT sum(max(1, {PlayerItemTable.Stackcount})), {PlayerItemTable.Record} ",
-                          $"FROM {PlayerItemTable.Table}",
-                          $"WHERE {PlayerItemTable.Mod} IS NULL OR {PlayerItemTable.Mod} = ''",
-                          $"GROUP BY {PlayerItemTable.Record}"
+                        $"FROM {PlayerItemTable.Table}",
+                        $"WHERE {PlayerItemTable.Mod} IS NULL OR {PlayerItemTable.Mod} = ''",
+                        $"GROUP BY {PlayerItemTable.Record}"
                     );
                     rows = session.CreateSQLQuery(sql).List<object[]>();
                 }
@@ -80,16 +79,14 @@ namespace IAGrim.Database {
 
                 Dictionary<string, int> result = new Dictionary<string, int>();
                 foreach (var row in rows) {
-                    var sum = (long)row[0];
-                    var record = (string)row[1];
-                    result[record] = (int)sum + (result.ContainsKey(record) ? result[record] : 0);
+                    var sum = (long) row[0];
+                    var record = (string) row[1];
+                    result[record] = (int) sum + (result.ContainsKey(record) ? result[record] : 0);
                 }
 
                 return result;
             }
-
         }
-
 
 
         /// <summary>
@@ -128,25 +125,28 @@ namespace IAGrim.Database {
             if (!String.IsNullOrEmpty(item.BaseRecord)) {
                 records.Add(item.BaseRecord);
             }
+
             if (!String.IsNullOrEmpty(item.PrefixRecord)) {
                 records.Add(item.PrefixRecord);
             }
+
             if (!String.IsNullOrEmpty(item.SuffixRecord)) {
                 records.Add(item.SuffixRecord);
             }
+
             if (!String.IsNullOrEmpty(item.MateriaRecord)) {
                 records.Add(item.MateriaRecord);
             }
 
             return records;
         }
-        
+
         public IList<PlayerItem> GetUnsynchronizedItems() {
             using (var session = SessionCreator.OpenSession()) {
                 return session.CreateCriteria<PlayerItem>()
                     .Add(Restrictions.Or(
-                        Restrictions.Eq(nameof(PlayerItem.IsCloudSynchronizedValue), 0L),
-                        Restrictions.IsNull(nameof(PlayerItem.IsCloudSynchronizedValue))
+                            Restrictions.Eq(nameof(PlayerItem.IsCloudSynchronizedValue), 0L),
+                            Restrictions.IsNull(nameof(PlayerItem.IsCloudSynchronizedValue))
                         )
                     )
                     .List<PlayerItem>();
@@ -176,7 +176,7 @@ namespace IAGrim.Database {
             var relevant = stats.Where(m => records.Contains(m.Key));
             return relevant.SelectMany(m => m.Value)
                 .Where(m => m.Stat == "petBonusName")
-                .Select(m => m.TextValue);            
+                .Select(m => m.TextValue);
         }
 
         /// <summary>
@@ -195,17 +195,14 @@ namespace IAGrim.Database {
         }
 
 
-
-
         /// <summary>
         /// Calculate the name, rarity and stats for a player item and store it to DB
         /// </summary>
         /// <param name="item"></param>
         public override void Save(PlayerItem item) {
-            Save(new List<PlayerItem> { item });
+            Save(new List<PlayerItem> {item});
             Logger.Info("Stored player item to database.");
         }
-
 
 
         public void Import(List<PlayerItem> items) {
@@ -230,7 +227,7 @@ namespace IAGrim.Database {
         }
 
         public override void Update(PlayerItem item) {
-            Update(new List<PlayerItem> { item }, false);
+            Update(new List<PlayerItem> {item}, false);
         }
 
         public void ResetOnlineSyncState() {
@@ -243,7 +240,6 @@ namespace IAGrim.Database {
                     transaction.Commit();
                 }
             }
-
         }
 
         public void Update(IList<PlayerItem> items, bool clearOnlineId) {
@@ -260,13 +256,13 @@ namespace IAGrim.Database {
                             .SetParameter("uuid", item.CloudId)
                             .ExecuteUpdate();
                     }
-                    
+
                     // insert into DeletedPlayerItem(oid) select onlineid from playeritem where onlineid is not null and stackcount <= 0 and id in (1,2,3)
                     session.CreateSQLQuery(SqlUtils.EnsureDialect(Dialect, $" INSERT OR IGNORE INTO {DeletedPlayerItemTable.Table} ({DeletedPlayerItemTable.Id}) " +
-                                        $" SELECT {PlayerItemTable.CloudId} FROM {PlayerItemTable.Table} " +
-                                        $" WHERE {PlayerItemTable.CloudId} IS NOT NULL " +
-                                        $" AND {PlayerItemTable.Stackcount} <= 0 " +
-                                        $" AND {PlayerItemTable.Id} IN ( :ids )"))
+                                                                           $" SELECT {PlayerItemTable.CloudId} FROM {PlayerItemTable.Table} " +
+                                                                           $" WHERE {PlayerItemTable.CloudId} IS NOT NULL " +
+                                                                           $" AND {PlayerItemTable.Stackcount} <= 0 " +
+                                                                           $" AND {PlayerItemTable.Id} IN ( :ids )"))
                         .SetParameterList("ids", items.Select(m => m.Id).ToList())
                         .ExecuteUpdate();
 
@@ -314,13 +310,11 @@ namespace IAGrim.Database {
             var id = nameof(PlayerItemRecord.PlayerItemId);
             var rec = nameof(PlayerItemRecord.Record);
             foreach (var record in GetPetBonusRecords(stats, records)) {
-
                 session.CreateSQLQuery(SqlUtils.EnsureDialect(Dialect, $"INSERT OR IGNORE INTO {table} ({id}, {rec}) VALUES (:id, :record)"))
                     .SetParameter("id", item.Id)
                     .SetParameter("record", record)
                     .ExecuteUpdate();
             }
-
         }
 
         private void UpdateItemDetails(ISession session, PlayerItem item, Dictionary<string, List<DBStatRow>> stats) {
@@ -349,12 +343,10 @@ namespace IAGrim.Database {
                 .SetParameter("namelowercase", itemName.ToLowerInvariant())
                 .SetParameter("prefixrarity", GetGreenQualityLevelForRecords(stats, records))
                 .SetParameter("rarity", ItemOperationsUtility.GetRarityForRecords(stats, records))
-                .SetParameter("levelreq", (double)ItemOperationsUtility.GetMinimumLevelForRecords(stats, records))
+                .SetParameter("levelreq", (double) ItemOperationsUtility.GetMinimumLevelForRecords(stats, records))
                 .SetParameter("id", item.Id)
                 .ExecuteUpdate();
         }
-
-
 
 
         /// <summary>
@@ -395,9 +387,6 @@ namespace IAGrim.Database {
                     transaction.Commit();
                 }
             }
-
-            
-
         }
 
         public void Delete(List<DeleteItemDto> items) {
@@ -459,7 +448,6 @@ namespace IAGrim.Database {
                 }
 
 
-
                 if (items.Count < 500) {
                     Logger.Debug($"Updating stats for {items.Count} new items");
                     using (ITransaction transaction = session.BeginTransaction()) {
@@ -481,13 +469,11 @@ namespace IAGrim.Database {
                     }
                 }
                 else {
-
                     Logger.Debug($"Stat update skipped, too many items.");
                 }
-
             }
 
-            
+
             Logger.InfoFormat("Stored {0} player items to database.", items.Count);
         }
 
@@ -495,6 +481,16 @@ namespace IAGrim.Database {
             using (ISession session = SessionCreator.OpenSession()) {
                 using (session.BeginTransaction()) {
                     return session.QueryOver<DeletedPlayerItem>().List();
+                }
+            }
+        }
+
+        public IList<string> GetOnlineIds() {
+            using (ISession session = SessionCreator.OpenSession()) {
+                using (session.BeginTransaction()) {
+                    return session.CreateCriteria<PlayerItem>()
+                        .SetProjection(Projections.Property(nameof(PlayerItem.CloudId)))
+                        .List<string>();
                 }
             }
         }
@@ -519,7 +515,6 @@ namespace IAGrim.Database {
             var cloudId = item.CloudId;
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
-
                     session.CreateQuery($"DELETE FROM {nameof(PlayerItemRecord)} WHERE {nameof(PlayerItemRecord.PlayerItemId)} = :id")
                         .SetParameter("id", item.Id)
                         .ExecuteUpdate();
@@ -534,10 +529,11 @@ namespace IAGrim.Database {
                 if (item.IsCloudSynchronized) {
                     try {
                         using (ITransaction transaction = session.BeginTransaction()) {
-                            session.SaveOrUpdate(new DeletedPlayerItem { Id = cloudId });
+                            session.SaveOrUpdate(new DeletedPlayerItem {Id = cloudId});
                             transaction.Commit();
                         }
-                    } catch (Exception ex) {
+                    }
+                    catch (Exception ex) {
                         Logger.Warn("Unable to mark item for deletion, duplication may occur");
                         Logger.Warn(ex.Message);
                         Logger.Warn(ex.StackTrace);
@@ -575,7 +571,6 @@ namespace IAGrim.Database {
                     if (session.QueryOver<PlayerItemRecord>()
                         .ToRowCountInt64Query()
                         .SingleOrDefault<long>() == 0) {
-
                         Logger.Debug("A stat parse is required, there no entries in the item records table");
                         return true;
                     }
@@ -611,10 +606,9 @@ namespace IAGrim.Database {
             // No way to get a non-list param?
             foreach (var desiredClass in query.Classes) {
                 queryFragments.Add("exists (select id_databaseitem from databaseitemstat_v2 dbs where stat IN ('augmentSkill1Extras','augmentSkill2Extras','augmentSkill3Extras','augmentSkill4Extras','augmentMastery1','augmentMastery2','augmentMastery3','augmentMastery4') "
-                    + $" AND TextValue = '{desiredClass}'" // Not ideal
-                    + " AND db.id_databaseitem = dbs.id_databaseitem)");
+                                   + $" AND TextValue = '{desiredClass}'" // Not ideal
+                                   + " AND db.id_databaseitem = dbs.id_databaseitem)");
             }
-
 
 
             if (queryFragments.Count > 0) {
@@ -632,32 +626,30 @@ namespace IAGrim.Database {
                 return new DatabaseItemStatQuery {
                     SQL = sql,
                     Parameters = queryParamsList,
-
                 };
             }
 
             return null;
-
         }
 
         private static PlayerItem ToPlayerItem(object o) {
             object[] arr = (object[]) o;
             int idx = 0;
             string name = arr[idx++] as string;
-            long stackCount = (long)arr[idx++];
-            string rarity = (string)arr[idx++];
-            int levelrequirement = (int)(double)arr[idx++];
-            string baserecord = (string)arr[idx++];
-            string prefixrecord = (string)arr[idx++];
-            string suffixrecord = (string)arr[idx++];
-            string ModifierRecord = (string)arr[idx++];
+            long stackCount = (long) arr[idx++];
+            string rarity = (string) arr[idx++];
+            int levelrequirement = (int) (double) arr[idx++];
+            string baserecord = (string) arr[idx++];
+            string prefixrecord = (string) arr[idx++];
+            string suffixrecord = (string) arr[idx++];
+            string ModifierRecord = (string) arr[idx++];
             string MateriaRecord = (string) arr[idx++];
-            int PrefixRarity = (int)arr[idx++];
-            string AzureUuid = (string)arr[idx++];
-            string CloudId = (string)arr[idx++];
-            long? IsCloudSynchronized = (long?)arr[idx++];
-            string CachedStats = (string)arr[idx++];
-            string PetRecord = (string)arr[idx++];
+            int PrefixRarity = (int) arr[idx++];
+            string AzureUuid = (string) arr[idx++];
+            string CloudId = (string) arr[idx++];
+            long? IsCloudSynchronized = (long?) arr[idx++];
+            string CachedStats = (string) arr[idx++];
+            string PetRecord = (string) arr[idx++];
 
             return new PlayerItem {
                 Name = name,
@@ -676,13 +668,13 @@ namespace IAGrim.Database {
                 CachedStats = CachedStats,
                 PetRecord = PetRecord
             };
-
         }
+
         public List<PlayerItem> SearchForItems(ItemSearchRequest query) {
             Logger.Debug($"Searching for items with query {query}");
             List<string> queryFragments = new List<string>();
             Dictionary<string, object> queryParams = new Dictionary<string, object>();
-            
+
             if (!String.IsNullOrEmpty(query.Wildcard)) {
                 queryFragments.Add("(PI.namelowercase LIKE :name OR searchabletext LIKE :wildcard)");
                 queryParams.Add("name", $"%{query.Wildcard.Replace(' ', '%').ToLower()}%");
@@ -813,6 +805,7 @@ namespace IAGrim.Database {
                             Logger.Debug($"{key}: " + string.Join(",", subquery.Parameters[key]));
                         }
                     }
+
                     if (query.Slot?.Length > 0) {
                         q.SetParameterList("class", query.Slot);
                     }
@@ -826,7 +819,7 @@ namespace IAGrim.Database {
                     }*/
 
                     var items = ItemOperationsUtility.MergeStackSize(q.List<PlayerItem>());
-                    
+
                     Logger.Debug($"Search returned {items.Count} items");
                     return items;
                 }
@@ -879,7 +872,6 @@ namespace IAGrim.Database {
         /// Delete duplicate items (items duplicated via bugs, not simply similar items)
         /// </summary>
         public void DeleteDuplicates() {
-
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
                     // Mark all duplicates for deletion from online backups
@@ -946,7 +938,6 @@ DELETE FROM PlayerItem WHERE Id IN (
                 }
             }
         }
-
 
 
         public void UpdateCachedStats(IList<PlayerItem> items) {

@@ -23,6 +23,7 @@ namespace IAGrim.Database.Interfaces {
         void Import(List<PlayerItem> items);
 
         IList<DeletedPlayerItem> GetItemsMarkedForOnlineDeletion();
+        IList<string> GetOnlineIds();
         void ClearItemsMarkedForOnlineDeletion();
         void ResetOnlineSyncState();
 

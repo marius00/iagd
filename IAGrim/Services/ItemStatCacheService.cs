@@ -17,6 +17,7 @@ namespace IAGrim.Services {
         private readonly IPlayerItemDao _playerItemDao;
         private readonly ItemStatService _itemStatService;
         private Thread t = null;
+
         private readonly JsonSerializerSettings _settings = new JsonSerializerSettings {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
             Culture = System.Globalization.CultureInfo.InvariantCulture,
@@ -33,37 +34,32 @@ namespace IAGrim.Services {
             if (t != null) {
                 throw new ArgumentException("Attempting to a second thread");
             }
-            
+
             t = new Thread(ThreadStart);
             t.Start();
         }
 
         private void ThreadStart() {
+            ExceptionReporter.EnableLogUnhandledOnThread();
+            t.Name = "ItemStatCache";
+            t.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
+            // Sleeping a bit in the start, we don't wanna keep locking the DB (SQLite mode) on startup
             try {
-                ExceptionReporter.EnableLogUnhandledOnThread();
-                t.Name = "ItemStatCache";
-                t.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
-                // Sleeping a bit in the start, we don't wanna keep locking the DB (SQLite mode) on startup
+                Thread.Sleep(1000 * 15);
+            }
+            catch (ThreadInterruptedException) {
+                // Don't care
+            }
+
+            while (t?.IsAlive ?? false) {
+                Tick();
+
                 try {
-                    Thread.Sleep(1000 * 15);
+                    Thread.Sleep(1000);
                 }
                 catch (ThreadInterruptedException) {
                     // Don't care
                 }
-
-                while (t?.IsAlive ?? false) {
-                    Tick();
-
-                    try {
-                        Thread.Sleep(1000);
-                    }
-                    catch (ThreadInterruptedException) {
-                        // Don't care
-                    }
-                }
-            }
-            catch (ThreadAbortException ex) {
-                Logger.Warn(ex.Message, ex);
             }
         }
 
@@ -76,11 +72,11 @@ namespace IAGrim.Services {
                 .Replace("{5}", stat.Param5)
                 .Replace("{6}", stat.Param6);
         }
-        
+
         void Tick() {
             var items = _playerItemDao.ListWithMissingStatCache();
             if (items.Count <= 0) return;
-            
+
             Logger.Debug($"Updated cache for {items.Count} items");
             _itemStatService.ApplyStats(items);
 
@@ -110,7 +106,7 @@ namespace IAGrim.Services {
 
             _playerItemDao.UpdateCachedStats(items);
         }
-        
+
         public void Dispose() {
             t?.Abort();
             t = null;
