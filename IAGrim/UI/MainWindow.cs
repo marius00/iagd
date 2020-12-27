@@ -543,7 +543,6 @@ namespace IAGrim.UI
 
 
             // Popup login diag
-            
             if (_authAuthService.CheckAuthentication() == AuthService.AccessStatus.Unauthorized && !settingsService.GetLocal().OptOutOfBackups) {
                 if (!BlockedLogsDetection.DreamcrashBlocked()) { // Backup login wont work
                     var t = new System.Windows.Forms.Timer {Interval = 100};

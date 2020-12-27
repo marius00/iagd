@@ -19,12 +19,6 @@ namespace IAGrim.Utilities {
 
     internal static class ItemHtmlWriter {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ItemHtmlWriter));
-        private static readonly JsonSerializerSettings _settings = new JsonSerializerSettings {
-            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-            Culture = System.Globalization.CultureInfo.InvariantCulture,
-            ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver(),
-            NullValueHandling = NullValueHandling.Ignore
-        };
 
 
         static ItemHtmlWriter() {

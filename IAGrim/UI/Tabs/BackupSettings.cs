@@ -36,8 +36,13 @@ namespace IAGrim.UI.Tabs {
         }
 
         private void UpdateUi() {
-            if (_authAuthService?.CheckAuthentication() == AuthService.AccessStatus.Authorized) {
+            var status = _authAuthService?.CheckAuthentication();
+            if (status == AuthService.AccessStatus.Authorized) {
                 labelStatus.Text = RuntimeSettings.Language.GetTag("iatag_ui_backup_loggedinas", _settings.GetPersistent().CloudUser);
+                buttonLogin.Enabled = false;
+            }
+            else if (status == AuthService.AccessStatus.Unknown) {
+                labelStatus.Text = RuntimeSettings.Language.GetTag("iatag_ui_backup_statusunknown");
                 buttonLogin.Enabled = false;
             }
             else {

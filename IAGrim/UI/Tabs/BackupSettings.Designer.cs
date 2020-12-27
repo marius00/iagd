@@ -69,7 +69,7 @@
             this.onlineBackup.Location = new System.Drawing.Point(12, 12);
             this.onlineBackup.Name = "onlineBackup";
             this.onlineBackup.NoRounding = false;
-            this.onlineBackup.Size = new System.Drawing.Size(652, 174);
+            this.onlineBackup.Size = new System.Drawing.Size(762, 174);
             this.onlineBackup.TabIndex = 12;
             this.onlineBackup.Tag = "iatag_ui_online_backup";
             this.onlineBackup.Text = "Online Backup";
@@ -84,7 +84,7 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Location = new System.Drawing.Point(398, 46);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(251, 125);
+            this.groupBox1.Size = new System.Drawing.Size(361, 125);
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
             this.groupBox1.Tag = "iatag_ui_backup_details";
@@ -95,7 +95,7 @@
             this.btnRefreshBackupDetails.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRefreshBackupDetails.BackgroundImage = global::IAGrim.Properties.Resources.refresh;
             this.btnRefreshBackupDetails.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnRefreshBackupDetails.Location = new System.Drawing.Point(229, 23);
+            this.btnRefreshBackupDetails.Location = new System.Drawing.Point(339, 23);
             this.btnRefreshBackupDetails.Name = "btnRefreshBackupDetails";
             this.btnRefreshBackupDetails.Size = new System.Drawing.Size(16, 16);
             this.btnRefreshBackupDetails.TabIndex = 4;
@@ -107,7 +107,7 @@
             this.linkLogout.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.linkLogout.AutoSize = true;
             this.linkLogout.Font = new System.Drawing.Font("Segoe UI", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.linkLogout.Location = new System.Drawing.Point(190, 100);
+            this.linkLogout.Location = new System.Drawing.Point(300, 100);
             this.linkLogout.Name = "linkLogout";
             this.linkLogout.Size = new System.Drawing.Size(32, 11);
             this.linkLogout.TabIndex = 3;
@@ -121,7 +121,7 @@
             this.linkDeleteBackup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.linkDeleteBackup.AutoSize = true;
             this.linkDeleteBackup.Font = new System.Drawing.Font("Segoe UI", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.linkDeleteBackup.Location = new System.Drawing.Point(190, 111);
+            this.linkDeleteBackup.Location = new System.Drawing.Point(300, 111);
             this.linkDeleteBackup.Name = "linkDeleteBackup";
             this.linkDeleteBackup.Size = new System.Drawing.Size(57, 11);
             this.linkDeleteBackup.TabIndex = 2;
@@ -137,7 +137,7 @@
             this.labelStatus.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.labelStatus.Location = new System.Drawing.Point(62, 42);
             this.labelStatus.Name = "labelStatus";
-            this.labelStatus.Size = new System.Drawing.Size(183, 19);
+            this.labelStatus.Size = new System.Drawing.Size(293, 19);
             this.labelStatus.TabIndex = 1;
             this.labelStatus.Text = "-----";
             // 
@@ -162,7 +162,7 @@
             this.cbDontWantBackups.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.cbDontWantBackups.Location = new System.Drawing.Point(41, 100);
             this.cbDontWantBackups.Name = "cbDontWantBackups";
-            this.cbDontWantBackups.Size = new System.Drawing.Size(389, 27);
+            this.cbDontWantBackups.Size = new System.Drawing.Size(499, 27);
             this.cbDontWantBackups.TabIndex = 16;
             this.cbDontWantBackups.Tag = "iatag_ui_dontwantbackups";
             this.cbDontWantBackups.Text = "I don\'t want backups, stop asking me!";
@@ -212,7 +212,7 @@
             this.panelBox5.Location = new System.Drawing.Point(12, 192);
             this.panelBox5.Name = "panelBox5";
             this.panelBox5.NoRounding = false;
-            this.panelBox5.Size = new System.Drawing.Size(652, 363);
+            this.panelBox5.Size = new System.Drawing.Size(762, 363);
             this.panelBox5.TabIndex = 10;
             this.panelBox5.Tag = "iatag_ui_backup_location";
             this.panelBox5.Text = "Local Backup";
@@ -385,7 +385,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(676, 564);
+            this.ClientSize = new System.Drawing.Size(786, 564);
             this.Controls.Add(this.onlineBackup);
             this.Controls.Add(this.panelBox5);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;

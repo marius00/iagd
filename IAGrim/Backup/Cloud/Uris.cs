@@ -4,7 +4,6 @@ namespace IAGrim.Backup.Cloud {
     static class Uris {
         public const string EnvLocalDev = "localdev";
         public const string EnvCloud = "cloud";
-        private const string CloudURi = "https://api.iagd.evilsoft.net";
 
 
         public static void Initialize(string env) {
@@ -26,7 +25,8 @@ namespace IAGrim.Backup.Cloud {
             DeleteItemsUrl = $"{host}/remove";
             FetchLimitationsUrl = $"{host}/logincheck";
             DeleteAccountUrl = $"{host}/delete";
-            LogoutUrl = $"{CloudURi}/logout";
+            LogoutUrl = $"{host}/logout";
+            MigrateUrl = $"{host}/migrate";
 
             LoginPageUrl = "http://iagd.evilsoft.net/";
         }
@@ -39,5 +39,6 @@ namespace IAGrim.Backup.Cloud {
         public static string FetchLimitationsUrl { get; private set; }
         public static string DeleteAccountUrl { get; private set; }
         public static string LogoutUrl { get; private set; }
+        public static string MigrateUrl { get; private set; }
     }
 }
