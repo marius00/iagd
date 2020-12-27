@@ -152,6 +152,8 @@ namespace IAGrim.Backup.Cloud.Service {
 
         private void SyncDown() {
             try {
+                Logger.Debug("Checking cloud sync for new items..");
+
                 // Fetching the known IDs will allow us to skip the items we just uploaded. A massive issue if you just logged on and have 10,000 items for download.
                 var knownItems = _playerItemDao.GetOnlineIds();
                 var deletedItems = _playerItemDao.GetItemsMarkedForOnlineDeletion();
@@ -165,8 +167,14 @@ namespace IAGrim.Backup.Cloud.Service {
                     .Select(ItemConverter.ToPlayerItem)
                     .ToList();
 
-                
-                _playerItemDao.Save(items);
+
+                // Store items in batches, to prevent IA just freezing up if we happen to get 10-20,000 items.
+                var batches = ToBatches(items);
+                foreach (var batch in batches) {
+                    Logger.Debug($"Storing batch of {batch.Count} items");
+                    _playerItemDao.Save(batch);
+                }
+
                 _playerItemDao.Delete(sync.Removed);
                 _settings.GetPersistent().CloudUploadTimestamp = sync.Timestamp;
 
