@@ -16,7 +16,11 @@ namespace IAGrim.Database.Synchronizer.Core {
         private readonly ConcurrentQueue<QueuedExecution> _queue = new ConcurrentQueue<QueuedExecution>();
         private Thread _thread;
         private volatile bool _isCancelled;
+#if DEBUG
+        public const int ThreadTimeout = 1000 * 15;
+#else
         public const int ThreadTimeout = 1000 * 60 * 30;
+#endif
 
         public ThreadExecuter() {
             _isCancelled = false;

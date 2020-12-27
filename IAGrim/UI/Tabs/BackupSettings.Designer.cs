@@ -33,6 +33,7 @@
             this.cbDontWantBackups = new FirefoxCheckBox();
             this.buttonLogin = new FirefoxButton();
             this.panelBox5 = new PanelBox();
+            this.lbOpenCustomBackupFolder = new System.Windows.Forms.LinkLabel();
             this.helpWhyOnedriveDisabled = new System.Windows.Forms.LinkLabel();
             this.helpWhyDropboxDisabled = new System.Windows.Forms.LinkLabel();
             this.helpWhyGdriveDisabled = new System.Windows.Forms.LinkLabel();
@@ -45,7 +46,6 @@
             this.pbDropbox = new System.Windows.Forms.PictureBox();
             this.pbGoogle = new System.Windows.Forms.PictureBox();
             this.cbGoogle = new FirefoxCheckBox();
-            this.lbOpenCustomBackupFolder = new System.Windows.Forms.LinkLabel();
             this.onlineBackup.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panelBox5.SuspendLayout();
@@ -58,15 +58,18 @@
             // 
             this.onlineBackup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.onlineBackup.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
             this.onlineBackup.Controls.Add(this.groupBox1);
             this.onlineBackup.Controls.Add(this.cbDontWantBackups);
             this.onlineBackup.Controls.Add(this.buttonLogin);
             this.onlineBackup.Font = new System.Drawing.Font("Segoe UI Semibold", 20F);
+            this.onlineBackup.ForeColor = System.Drawing.Color.Black;
+            this.onlineBackup.HeaderColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(231)))), ((int)(((byte)(231)))));
             this.onlineBackup.HeaderHeight = 40;
             this.onlineBackup.Location = new System.Drawing.Point(12, 12);
             this.onlineBackup.Name = "onlineBackup";
             this.onlineBackup.NoRounding = false;
-            this.onlineBackup.Size = new System.Drawing.Size(614, 174);
+            this.onlineBackup.Size = new System.Drawing.Size(652, 174);
             this.onlineBackup.TabIndex = 12;
             this.onlineBackup.Tag = "iatag_ui_online_backup";
             this.onlineBackup.Text = "Online Backup";
@@ -81,7 +84,7 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Location = new System.Drawing.Point(398, 46);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(213, 125);
+            this.groupBox1.Size = new System.Drawing.Size(251, 125);
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
             this.groupBox1.Tag = "iatag_ui_backup_details";
@@ -92,7 +95,7 @@
             this.btnRefreshBackupDetails.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRefreshBackupDetails.BackgroundImage = global::IAGrim.Properties.Resources.refresh;
             this.btnRefreshBackupDetails.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnRefreshBackupDetails.Location = new System.Drawing.Point(191, 23);
+            this.btnRefreshBackupDetails.Location = new System.Drawing.Point(229, 23);
             this.btnRefreshBackupDetails.Name = "btnRefreshBackupDetails";
             this.btnRefreshBackupDetails.Size = new System.Drawing.Size(16, 16);
             this.btnRefreshBackupDetails.TabIndex = 4;
@@ -104,7 +107,7 @@
             this.linkLogout.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.linkLogout.AutoSize = true;
             this.linkLogout.Font = new System.Drawing.Font("Segoe UI", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.linkLogout.Location = new System.Drawing.Point(152, 100);
+            this.linkLogout.Location = new System.Drawing.Point(190, 100);
             this.linkLogout.Name = "linkLogout";
             this.linkLogout.Size = new System.Drawing.Size(32, 11);
             this.linkLogout.TabIndex = 3;
@@ -118,7 +121,7 @@
             this.linkDeleteBackup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.linkDeleteBackup.AutoSize = true;
             this.linkDeleteBackup.Font = new System.Drawing.Font("Segoe UI", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.linkDeleteBackup.Location = new System.Drawing.Point(152, 111);
+            this.linkDeleteBackup.Location = new System.Drawing.Point(190, 111);
             this.linkDeleteBackup.Name = "linkDeleteBackup";
             this.linkDeleteBackup.Size = new System.Drawing.Size(57, 11);
             this.linkDeleteBackup.TabIndex = 2;
@@ -134,7 +137,7 @@
             this.labelStatus.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.labelStatus.Location = new System.Drawing.Point(62, 42);
             this.labelStatus.Name = "labelStatus";
-            this.labelStatus.Size = new System.Drawing.Size(145, 19);
+            this.labelStatus.Size = new System.Drawing.Size(183, 19);
             this.labelStatus.TabIndex = 1;
             this.labelStatus.Text = "-----";
             // 
@@ -159,7 +162,7 @@
             this.cbDontWantBackups.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.cbDontWantBackups.Location = new System.Drawing.Point(41, 100);
             this.cbDontWantBackups.Name = "cbDontWantBackups";
-            this.cbDontWantBackups.Size = new System.Drawing.Size(351, 27);
+            this.cbDontWantBackups.Size = new System.Drawing.Size(389, 27);
             this.cbDontWantBackups.TabIndex = 16;
             this.cbDontWantBackups.Tag = "iatag_ui_dontwantbackups";
             this.cbDontWantBackups.Text = "I don\'t want backups, stop asking me!";
@@ -168,9 +171,14 @@
             // 
             // buttonLogin
             // 
+            this.buttonLogin.BackColorDefault = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
+            this.buttonLogin.BackColorOverride = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(245)))), ((int)(((byte)(245)))));
+            this.buttonLogin.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
             this.buttonLogin.EnabledCalc = true;
             this.buttonLogin.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.buttonLogin.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
+            this.buttonLogin.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(232)))), ((int)(((byte)(232)))), ((int)(((byte)(232)))));
+            this.buttonLogin.HoverForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
             this.buttonLogin.Location = new System.Drawing.Point(41, 70);
             this.buttonLogin.Name = "buttonLogin";
             this.buttonLogin.Size = new System.Drawing.Size(245, 24);
@@ -183,6 +191,7 @@
             // 
             this.panelBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
             this.panelBox5.Controls.Add(this.lbOpenCustomBackupFolder);
             this.panelBox5.Controls.Add(this.helpWhyOnedriveDisabled);
             this.panelBox5.Controls.Add(this.helpWhyDropboxDisabled);
@@ -197,15 +206,31 @@
             this.panelBox5.Controls.Add(this.pbGoogle);
             this.panelBox5.Controls.Add(this.cbGoogle);
             this.panelBox5.Font = new System.Drawing.Font("Segoe UI Semibold", 20F);
+            this.panelBox5.ForeColor = System.Drawing.Color.Black;
+            this.panelBox5.HeaderColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(231)))), ((int)(((byte)(231)))));
             this.panelBox5.HeaderHeight = 40;
             this.panelBox5.Location = new System.Drawing.Point(12, 192);
             this.panelBox5.Name = "panelBox5";
             this.panelBox5.NoRounding = false;
-            this.panelBox5.Size = new System.Drawing.Size(614, 363);
+            this.panelBox5.Size = new System.Drawing.Size(652, 363);
             this.panelBox5.TabIndex = 10;
             this.panelBox5.Tag = "iatag_ui_backup_location";
             this.panelBox5.Text = "Local Backup";
             this.panelBox5.TextLocation = "8; 5";
+            // 
+            // lbOpenCustomBackupFolder
+            // 
+            this.lbOpenCustomBackupFolder.AutoSize = true;
+            this.lbOpenCustomBackupFolder.BackColor = System.Drawing.Color.Transparent;
+            this.lbOpenCustomBackupFolder.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbOpenCustomBackupFolder.Location = new System.Drawing.Point(133, 233);
+            this.lbOpenCustomBackupFolder.Name = "lbOpenCustomBackupFolder";
+            this.lbOpenCustomBackupFolder.Size = new System.Drawing.Size(70, 13);
+            this.lbOpenCustomBackupFolder.TabIndex = 17;
+            this.lbOpenCustomBackupFolder.TabStop = true;
+            this.lbOpenCustomBackupFolder.Tag = "iatag_ui_opencustombackup";
+            this.lbOpenCustomBackupFolder.Text = "Open folder";
+            this.lbOpenCustomBackupFolder.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lbOpenCustomBackupFolder_LinkClicked);
             // 
             // helpWhyOnedriveDisabled
             // 
@@ -251,9 +276,14 @@
             // 
             // buttonBackupNow
             // 
+            this.buttonBackupNow.BackColorDefault = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
+            this.buttonBackupNow.BackColorOverride = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(245)))), ((int)(((byte)(245)))));
+            this.buttonBackupNow.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
             this.buttonBackupNow.EnabledCalc = true;
             this.buttonBackupNow.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.buttonBackupNow.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
+            this.buttonBackupNow.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(232)))), ((int)(((byte)(232)))), ((int)(((byte)(232)))));
+            this.buttonBackupNow.HoverForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
             this.buttonBackupNow.Location = new System.Drawing.Point(17, 270);
             this.buttonBackupNow.Name = "buttonBackupNow";
             this.buttonBackupNow.Size = new System.Drawing.Size(192, 32);
@@ -351,25 +381,11 @@
             this.cbGoogle.Size = new System.Drawing.Size(29, 27);
             this.cbGoogle.TabIndex = 0;
             // 
-            // lbOpenCustomBackupFolder
-            // 
-            this.lbOpenCustomBackupFolder.AutoSize = true;
-            this.lbOpenCustomBackupFolder.BackColor = System.Drawing.Color.Transparent;
-            this.lbOpenCustomBackupFolder.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbOpenCustomBackupFolder.Location = new System.Drawing.Point(133, 233);
-            this.lbOpenCustomBackupFolder.Name = "lbOpenCustomBackupFolder";
-            this.lbOpenCustomBackupFolder.Size = new System.Drawing.Size(70, 13);
-            this.lbOpenCustomBackupFolder.TabIndex = 17;
-            this.lbOpenCustomBackupFolder.TabStop = true;
-            this.lbOpenCustomBackupFolder.Tag = "iatag_ui_opencustombackup";
-            this.lbOpenCustomBackupFolder.Text = "Open folder";
-            this.lbOpenCustomBackupFolder.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lbOpenCustomBackupFolder_LinkClicked);
-            // 
             // BackupSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(638, 564);
+            this.ClientSize = new System.Drawing.Size(676, 564);
             this.Controls.Add(this.onlineBackup);
             this.Controls.Add(this.panelBox5);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;

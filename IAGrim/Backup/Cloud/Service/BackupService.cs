@@ -56,8 +56,7 @@ namespace IAGrim.Backup.Cloud.Service {
             limitations.DeletionCooldown.ExecuteIfReady(SyncDeletions);
             limitations.UploadCooldown.ExecuteIfReady(SyncUp);
 
-            // TODO:
-            // Downloads will eventually stop
+            // Downloads will go into 'idle mode' and stop trying to download new items when IA is not in use.
             const int syncFreezeTime = 31;
             var canSyncDown = isDualPc || !_hasSyncedDownOnce; // Either first sync since startup, or we're in dual-pc mode.
             if (canSyncDown && (DateTimeOffset.UtcNow - _lastSearchDt).TotalMinutes < syncFreezeTime) {
@@ -130,7 +129,7 @@ namespace IAGrim.Backup.Cloud.Service {
                         _playerItemDao.SetAsSynchronized(batch);
                     }
                     else {
-                        Logger.Info($"Upload of {batch.Count} items unsuccessful");
+                        Logger.Warn($"Upload of {batch.Count} items unsuccessful");
                     }
                 }
                 catch (AggregateException ex) {
@@ -153,15 +152,20 @@ namespace IAGrim.Backup.Cloud.Service {
 
         private void SyncDown() {
             try {
+                // Fetching the known IDs will allow us to skip the items we just uploaded. A massive issue if you just logged on and have 10,000 items for download.
+                var knownItems = _playerItemDao.GetOnlineIds();
                 var deletedItems = _playerItemDao.GetItemsMarkedForOnlineDeletion();
                 var timestamp = _settings.GetPersistent().CloudUploadTimestamp;
                 var sync = _cloudSyncService.Get(timestamp);
 
                 // Skip items we've deleted locally
-                var items = sync.Items.Select(ItemConverter.ToPlayerItem)
-                    .Where(m => deletedItems.All(d => d.Id != m.CloudId))
+                var items = sync.Items
+                    .Where(item => deletedItems.All(deleted => deleted.Id != item.Id))
+                    .Where(item => !knownItems.Contains(item.Id))
+                    .Select(ItemConverter.ToPlayerItem)
                     .ToList();
 
+                
                 _playerItemDao.Save(items);
                 _playerItemDao.Delete(sync.Removed);
                 _settings.GetPersistent().CloudUploadTimestamp = sync.Timestamp;
