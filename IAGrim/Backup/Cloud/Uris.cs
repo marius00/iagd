@@ -8,27 +8,27 @@ namespace IAGrim.Backup.Cloud {
 
 
         public static void Initialize(string env) {
+            string host;
+
             if (env == EnvLocalDev) {
-                string local = "http://localhost:8080";
-                TokenVerificationUri = $"{local}/logincheck";
-                UploadItemsUrl = $"{local}/upload";
-                DownloadUrl = $"{local}/download";
-                DeleteItemsUrl = $"{local}/remove";
-                FetchLimitationsUrl = $"{local}/logincheck";
-                DeleteAccountUrl = $"{local}/delete";
+                host = "http://localhost:8080";
             }
             else if (env == EnvCloud) {
-                LoginPageUrl = "http://iagd.evilsoft.net/";
-                TokenVerificationUri = $"{CloudURi}/logincheck";
-                UploadItemsUrl = $"{CloudURi}/upload";
-                DownloadUrl = $"{CloudURi}/download";
-                DeleteItemsUrl = $"{CloudURi}/remove";
-                FetchLimitationsUrl = $"{CloudURi}/logincheck";
-                DeleteAccountUrl = $"{CloudURi}/delete";
+                host = "https://api.iagd.evilsoft.net";
             }
             else {
                 throw new ArgumentException(env);
             }
+
+            TokenVerificationUri = $"{host}/logincheck";
+            UploadItemsUrl = $"{host}/upload";
+            DownloadUrl = $"{host}/download";
+            DeleteItemsUrl = $"{host}/remove";
+            FetchLimitationsUrl = $"{host}/logincheck";
+            DeleteAccountUrl = $"{host}/delete";
+            LogoutUrl = $"{CloudURi}/logout";
+
+            LoginPageUrl = "http://iagd.evilsoft.net/";
         }
 
         public static string LoginPageUrl { get; private set; }
@@ -38,5 +38,6 @@ namespace IAGrim.Backup.Cloud {
         public static string DeleteItemsUrl { get; private set; }
         public static string FetchLimitationsUrl { get; private set; }
         public static string DeleteAccountUrl { get; private set; }
+        public static string LogoutUrl { get; private set; }
     }
 }
