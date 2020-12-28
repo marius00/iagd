@@ -80,10 +80,6 @@ export default function Tabs({activeTab, setActiveTab, isDarkMode, toggleDarkmod
       {renderLinkEntry(translate('app.tab.components'), idx++, <OpenInNew/>, 'http://dev.dreamcrash.org/enchantments/')}
       {showVideoGuide && translate('app.tab.videoGuide').length > 0 && renderLinkEntry(translate('app.tab.videoGuide'), idx++, <VideoLibrary/>, translate('app.tab.videoGuideUrl'))}
 
-
-      {isDarkMode && renderToggleTabEntry(translate('app.tab.lightMode'), idx++, <LightMode/>)}
-      {!isDarkMode && renderToggleTabEntry(translate('app.tab.darkMode'), idx++, <DarkMode/>)}
-
       {renderLinkEntry(translate('app.tab.discord'), idx++, <LiveHelp/>, 'https://discord.gg/5wuCPbB')}
       {renderLinkEntry('Patreon', idx++, <Patreon/>, 'https://www.patreon.com/itemassistant')}
     </ul>

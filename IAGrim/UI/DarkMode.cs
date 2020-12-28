@@ -6,6 +6,7 @@ using IAGrim.Theme;
 
 namespace IAGrim.UI {
     class DarkMode {
+        private readonly Control _root;
         struct ColorSet {
             public Color? BackColor;
             public Color? ForeColor;
@@ -22,7 +23,8 @@ namespace IAGrim.UI {
         private Dictionary<Type, ColorSet> _regularColors = null;
         private bool _isLightMode = true;
 
-        public DarkMode() {
+        public DarkMode(Control root) {
+            _root = root;
             _darkColors[typeof(TextBox)] = new ColorSet {
                 BackColor = _darkBackgroundColor,
                 ForeColor = Color.LightGray
@@ -71,10 +73,10 @@ namespace IAGrim.UI {
             };
         }
 
-        public void Activate(Control root) {
+        public void Activate() {
             if (_regularColors == null) {
                 _regularColors = new Dictionary<Type, ColorSet>();
-                FetchRegularColors(root.Controls);
+                FetchRegularColors(_root.Controls);
                 _regularColors[typeof(CollapseablePanelBox)] = _regularColors[typeof(PanelBox)];
 
                 _regularColors[typeof(Control)] = new ColorSet {
@@ -85,7 +87,7 @@ namespace IAGrim.UI {
 
             _isLightMode = !_isLightMode;
 
-            It(root.Controls, _isLightMode ? _regularColors : _darkColors);
+            It(_root.Controls, _isLightMode ? _regularColors : _darkColors);
         }
 
         private static void It(Control.ControlCollection collection, Dictionary<Type, ColorSet> colorSet) {
@@ -130,6 +132,7 @@ namespace IAGrim.UI {
                 }
 
                 control.Invalidate();
+                control.Update();
             }
         }
 

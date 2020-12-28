@@ -110,6 +110,7 @@ class App extends React.PureComponent<{}, object> {
         collectionItems: collectionItems
       });
     };
+
     // Mock data for not embedded / dev mode
     if (!isEmbedded) {
       this.setState({collectionItems: MockCollectionItemData});
@@ -120,6 +121,14 @@ class App extends React.PureComponent<{}, object> {
     window.setIsLoading = (isLoading: boolean) => {
       this.setState({
         isLoading: isLoading
+      });
+    };
+
+    // Toggle dark mode from C# container
+    // @ts-ignore
+    window.setIsDarkmode = (isDarkMode: boolean) => {
+      this.setState({
+        isDarkMode: isDarkMode
       });
     };
 

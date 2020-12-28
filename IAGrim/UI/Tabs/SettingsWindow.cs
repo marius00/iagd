@@ -29,6 +29,7 @@ namespace IAGrim.UI.Tabs {
         private readonly LanguagePackPicker _languagePackPicker;
         private readonly SettingsService _settings;
         private readonly GrimDawnDetector _grimDawnDetector;
+        private readonly DarkMode _darkModeToggler;
 
 
         public SettingsWindow(
@@ -40,7 +41,7 @@ namespace IAGrim.UI.Tabs {
             TransferStashService transferStashService,
             TransferStashService2 transferStashService2,
             LanguagePackPicker languagePackPicker, 
-            SettingsService settings, GrimDawnDetector grimDawnDetector) {            
+            SettingsService settings, GrimDawnDetector grimDawnDetector, DarkMode darkModeToggler) {            
             InitializeComponent();
             _controller = new SettingsController(settings);
             this._cefBrowserHandler = cefBrowserHandler;
@@ -53,6 +54,7 @@ namespace IAGrim.UI.Tabs {
             _languagePackPicker = languagePackPicker;
             _settings = settings;
             _grimDawnDetector = grimDawnDetector;
+            _darkModeToggler = darkModeToggler;
 
             _controller.BindCheckbox(cbMinimizeToTray);
 
@@ -208,9 +210,10 @@ namespace IAGrim.UI.Tabs {
         }
 
         private void cbDarkMode_CheckedChanged(object sender, EventArgs e) {
+            
             if (_settings.GetPersistent().DarkMode != (sender as FirefoxCheckBox).Checked) {
                 // TODO: No translations for this, will most likely remove the restart requirement
-                MessageBox.Show("Enabling dark mode will require restarting IA.", "Restart required", MessageBoxButtons.OK);
+                _darkModeToggler.Activate();
             }
 
             _settings.GetPersistent().DarkMode = (sender as FirefoxCheckBox).Checked;

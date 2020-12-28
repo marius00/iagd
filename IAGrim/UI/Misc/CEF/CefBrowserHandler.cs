@@ -99,6 +99,17 @@ namespace IAGrim.UI.Misc.CEF {
             }
         }
 
+        public bool SetDarkMode(bool enabled) {
+            if (BrowserControl.CanExecuteJavascriptInMainFrame) {
+                BrowserControl.ExecuteScriptAsync("window.setIsDarkmode", enabled);
+                return true;
+            }
+            else {
+                Logger.Warn("Attempted to set dark/light mode but CEF not yet initialized.");
+                return false;
+            }
+        }
+
         private string GetSiteUri() {
 #if DEBUG
             var client = new WebClient();

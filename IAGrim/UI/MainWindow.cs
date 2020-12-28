@@ -118,10 +118,13 @@ namespace IAGrim.UI
                 // https://github.com/cefsharp/CefSharp/issues/3021
                 if (browser?.CanExecuteJavascriptInMainFrame ?? true) {
                     if (InvokeRequired) {
-                        Invoke((MethodInvoker) delegate { _searchWindow?.UpdateListViewDelayed(); });
+                        Invoke((MethodInvoker) delegate { Browser_IsBrowserInitializedChanged(sender, e); });
                     }
                     else {
                         _searchWindow?.UpdateListViewDelayed();
+                        
+                        var settingsService = _serviceProvider.Get<SettingsService>();
+                        _cefBrowserHandler.SetDarkMode(settingsService.GetPersistent().DarkMode);
                     }
                 }
             }
@@ -457,6 +460,8 @@ namespace IAGrim.UI
 
             var languagePackPicker = new LanguagePackPicker(itemTagDao, playerItemDao, _parsingService, settingsService);
 
+            
+            var dm = new DarkMode(this);
             addAndShow(
                 new SettingsWindow(
                     _cefBrowserHandler,
@@ -468,7 +473,8 @@ namespace IAGrim.UI
                     transferStashService2,
                     languagePackPicker,
                     settingsService,
-                    grimDawnDetector
+                    grimDawnDetector,
+                    dm
                 ),
                 settingsPanel);
 
@@ -573,8 +579,8 @@ namespace IAGrim.UI
 
 
             if (settingsService.GetPersistent().DarkMode) {
-                var dm = new DarkMode();
-                dm.Activate(this); // Needs a lot more work before its ready, for example custom components uses Draw and does not respect coloring.
+                dm.Activate(); // Needs a lot more work before its ready, for example custom components uses Draw and does not respect coloring.
+                _cefBrowserHandler.SetDarkMode(settingsService.GetPersistent().DarkMode);
             }
 
             Logger.Debug("UI initialization complete");

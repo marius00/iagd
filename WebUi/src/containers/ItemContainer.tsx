@@ -69,7 +69,6 @@ class ItemContainer extends React.PureComponent<Props, object> {
     if (items.length > 0) {
       return (
         <div className="items">
-          {this.props.isLoading && <Spinner />}
           <span className="clipboard-link" onClick={() => setClipboard(this.getClipboardContent())}>
             {translate('app.copyToClipboard')}
           </span>
