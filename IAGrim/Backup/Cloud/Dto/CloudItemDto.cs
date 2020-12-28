@@ -18,5 +18,15 @@
         public long EnchantmentSeed { get; set; } = 0u;
         public long MateriaCombines { get; set; } = 0u;
         public long StackCount { get; set; } = 1;
+        
+        public long CreatedAt { get; set; }
+
+
+        public string Name { get; set; }
+        public string NameLowercase { get; set; }
+        public string Rarity { get; set; }
+        public int LevelRequirement { get; set; }
+        public string SearchableText { get; set; }
+        public string CachedStats { get; set; }
     }
 }

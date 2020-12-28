@@ -28,7 +28,7 @@ namespace IAGrim.Backup.Cloud {
             LogoutUrl = $"{host}/logout";
             MigrateUrl = $"{host}/migrate";
 
-            LoginPageUrl = "http://iagd.evilsoft.net/";
+            LoginPageUrl = "http://iagd.evilsoft.net/login";
         }
 
         public static string LoginPageUrl { get; private set; }

@@ -40,8 +40,12 @@ namespace IAGrim.Backup.Cloud.Service {
             (sender as IBrowser)?.CloseBrowser(true);
 
             if (IsTokenValid(args.User, args.Token) == AccessStatus.Authorized) {
+                Logger.Info($"Token validated for {args.User}");
                 _authenticationProvider.SetToken(args.User, args.Token);
                 MemoryCache.Default.Set(CacheKey, true, DateTimeOffset.Now.AddDays(1));
+            }
+            else {
+                Logger.Warn($"Token for {args.User} failed validation");
             }
         }
 
@@ -49,8 +53,8 @@ namespace IAGrim.Backup.Cloud.Service {
             try {
                 var httpClient = new HttpClient {Timeout = TimeSpan.FromSeconds(5)};
                 httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", token);
-                if (!httpClient.DefaultRequestHeaders.TryAddWithoutValidation("X-Api-User", user))
-                    Logger.Error("Could not add user header");
+                httpClient.DefaultRequestHeaders.TryAddWithoutValidation("X-Api-User", user);
+                    
 
                 var result = httpClient.GetAsync(Uris.TokenVerificationUri).Result;
                 var status = result.StatusCode;
@@ -60,6 +64,7 @@ namespace IAGrim.Backup.Cloud.Service {
                     return AccessStatus.Authorized;
                 }
                 else if (status == HttpStatusCode.Unauthorized || status == HttpStatusCode.Forbidden) {
+                    Logger.Warn("Got unauthorized validating access token");
                     return AccessStatus.Unauthorized;
                 }
                 else if (status == HttpStatusCode.InternalServerError) {
@@ -90,6 +95,7 @@ namespace IAGrim.Backup.Cloud.Service {
 
         private AccessStatus Migrate() {
             try {
+                Logger.Info("Starting migration to new backup provider");
                 var httpClient = new HttpClient {Timeout = TimeSpan.FromSeconds(15)};
                 var url = Uris.MigrateUrl + "?token=" + _authenticationProvider.GetLegacyToken();
                 var result = httpClient.GetAsync(url).Result;
@@ -104,6 +110,7 @@ namespace IAGrim.Backup.Cloud.Service {
                     return AccessStatus.Authorized;
                 }
                 else if (status == HttpStatusCode.Unauthorized || status == HttpStatusCode.Forbidden) {
+                    Logger.Warn("Migration failed, unauthorized");
                     return AccessStatus.Unauthorized;
                 }
                 else if (status == HttpStatusCode.InternalServerError) {
@@ -113,7 +120,8 @@ namespace IAGrim.Backup.Cloud.Service {
                 }
                 else {
                     Logger.Error($"Got Status {result} migrating authentication token");
-                    ExceptionReporter.ReportIssue($"Server response {result} migrating access token");
+                    ExceptionReporter.ReportIssue($"Server response {result} migrating access oken");
+                    
                     return AccessStatus.Unknown;
                 }
             }
@@ -130,6 +138,7 @@ namespace IAGrim.Backup.Cloud.Service {
         public void Logout() {
             try {
                 if (_authenticationProvider.HasToken()) {
+                    Logger.Info("Logging out of cloud backups");
                     var httpClient = new HttpClient {Timeout = TimeSpan.FromSeconds(5)};
                     httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", _authenticationProvider.GetToken());
                     httpClient.DefaultRequestHeaders.TryAddWithoutValidation("X-Api-User", _authenticationProvider.GetUser());
