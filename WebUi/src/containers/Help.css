@@ -59,3 +59,12 @@
 .help h2 {
   color: #ffffff;
 }
+
+.App-dark .help input {
+  background-color: #000000;
+  color: #a5a1a1;
+}
+
+.App-dark .help .header {
+  background-color: #afafaf;
+}
