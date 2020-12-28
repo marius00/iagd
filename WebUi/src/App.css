@@ -11,6 +11,10 @@
   z-index: 100000;
 }
 
+.App-dark .clipboard-link {
+  color: white;
+}
+
 .legacy-crafting {
   color: #ccc2c2;
 }

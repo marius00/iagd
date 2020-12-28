@@ -214,6 +214,7 @@ namespace IAGrim.UI.Tabs {
             if (_settings.GetPersistent().DarkMode != (sender as FirefoxCheckBox).Checked) {
                 // TODO: No translations for this, will most likely remove the restart requirement
                 _darkModeToggler.Activate();
+                _cefBrowserHandler.SetDarkMode((sender as FirefoxCheckBox).Checked);
             }
 
             _settings.GetPersistent().DarkMode = (sender as FirefoxCheckBox).Checked;
