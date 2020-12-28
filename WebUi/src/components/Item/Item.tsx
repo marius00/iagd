@@ -4,7 +4,6 @@ import IItem from '../../interfaces/IItem';
 import Skill from './Skill';
 import { openUrl } from '../../integration/integration';
 // @ts-ignore: Missing @types
-import { Textfit } from 'react-textfit';
 import translate from '../../translations/EmbeddedTranslator';
 import IItemType from '../../interfaces/IItemType';
 import GetSetName, { GetSetItems } from '../../integration/ItemSetService';
@@ -185,13 +184,13 @@ class Item extends React.PureComponent<Props, object> {
       <div className={mainClasses.join(" ")}>
         <img src={icon} className={"item-icon item-icon-" + item.quality.toLowerCase()} data-tip={item.slot}/>
         <div className="text">
-          <Textfit mode="multi" max={15} min={10}>
+          <div>
             <span>
               <a onClick={() => this.openItemSite()} className={this.translateQualityToClass(item.quality)}>{name}</a>
             </span>
               {item.greenRarity === 3 ? <span className="cursor-help supergreen" data-tip={translate('items.label.tripleGreen')}> (3{miText})</span> : ''}
               {item.greenRarity === 2 ? <span className="cursor-help supergreen" data-tip={translate('items.label.doubleGreen')}> (2{miText})</span> : ''}
-          </Textfit>
+          </div>
           {item.socket && item.socket.length > 0 &&
           <span className="item-socket-label">{item.socket}</span>
           }

@@ -39,20 +39,29 @@ export function transferItem(url: object[], numItems: number): TransferResult {
 }
 
 export function setClipboard(text: string): void {
+  console.debug("Setting clipboard text");
   core.setClipboard(text);
 }
 
 export function requestMoreItems(): void {
   if (isEmbedded) {
+    console.debug("Requesting more items");
     core.requestMoreItems();
   } else {
     console.debug('It wants itemsss doesss itssss? no more have it doessssss');
   }
 }
 
+
+var itemSetAssociationsCache = '';
 export function getItemSetAssociations(): string {
   if (isEmbedded) {
-    return core.getItemSetAssociations();
+    if (itemSetAssociationsCache !== '')
+      return itemSetAssociationsCache;
+
+    console.debug("Requesting item set associations");
+    itemSetAssociationsCache = core.getItemSetAssociations();
+    return itemSetAssociationsCache;
   } else {
     return JSON.stringify(MockItemSetData);
   }

@@ -25,9 +25,6 @@ export interface ApplicationState {
 }
 
 
-// TODO: Am I actually using this store??
-const StoreContext = React.createContext({items: [], isLoading: true, activeTab: 0, collectionItems: [], isDarkMode: false, helpSearchFilter: ''} as ApplicationState);
-
 // TODO: "Load more items" button
 // BUGCHECK: Does IA ever download items if DELETE fails? Cloud.
 // ** Reports of the user interface freezing while searching, viable to stick it into its own thread? May be too complex to do right..
@@ -82,7 +79,7 @@ class App extends React.PureComponent<{}, object> {
     window.setItems = (data: any) => {
       const items = typeof data === 'string' ? JSON.parse(data) : data;
       console.log(data);
-      window.scrollTo(0,0);
+      window.scrollTo(0, 0);
 
       this.setState({
         isLoading: false,
@@ -183,45 +180,41 @@ class App extends React.PureComponent<{}, object> {
       <div className={'App ' + (this.state.isDarkMode ? 'App-dark' : 'App-Light')}>
         {this.state.isLoading && isEmbedded && <Spinner/>}
         <ReactNotification/>
-        <StoreContext.Provider value={this.state}>
-          <div className={'container'}>
-            <Tabs
-              activeTab={this.state.activeTab}
-              setActiveTab={(idx: number) => this.setState({activeTab: idx})}
-              isDarkMode={this.state.isDarkMode}
-              toggleDarkmode={() => this.toggleDarkmode()}
-              showVideoGuide={this.state.items.length <= 100}
-            />
-            <div id="myTabContent" className="tab-content" aria-live="polite">
-            </div>
+        <div className={'container'}>
+          <Tabs
+            activeTab={this.state.activeTab}
+            setActiveTab={(idx: number) => this.setState({activeTab: idx})}
+            isDarkMode={this.state.isDarkMode}
+            toggleDarkmode={() => this.toggleDarkmode()}
+            showVideoGuide={this.state.items.length <= 100}
+          />
+          <div id="myTabContent" className="tab-content" aria-live="polite">
           </div>
-          {this.state.activeTab === 0 && !isEmbedded ? <MockItemsButton onClick={(items) => this.setItems(items)}/> : ''}
+        </div>
+        {this.state.activeTab === 0 && !isEmbedded ? <MockItemsButton onClick={(items) => this.setItems(items)}/> : ''}
 
-          <div style={this.state.activeTab === 0 ? {display: 'block'} : {display: 'none'}}>
-            <ItemContainer
-              items={this.state.items}
-              isLoading={this.state.isLoading}
-              onItemReduce={(url, numItems) => this.reduceItemCount(url, numItems)}
-              onRequestMoreItems={() => this.requestMoreItems()}
-              collectionItems={this.state.collectionItems}
-              isDarkMode={this.state.isDarkMode}
-              requestUnknownItemHelp={() => this.setState({helpSearchFilter: 'UnknownItem', activeTab: 3})}
-            />
-          </div>
+        {this.state.activeTab === 0 && <ItemContainer
+            items={this.state.items}
+            isLoading={this.state.isLoading}
+            onItemReduce={(url, numItems) => this.reduceItemCount(url, numItems)}
+            onRequestMoreItems={() => this.requestMoreItems()}
+            collectionItems={this.state.collectionItems}
+            isDarkMode={this.state.isDarkMode}
+            requestUnknownItemHelp={() => this.setState({helpSearchFilter: 'UnknownItem', activeTab: 3})}
+          />}
 
-          {this.state.activeTab === 1 && <CollectionItemContainer items={this.state.collectionItems}/>}
+        {this.state.activeTab === 1 && <CollectionItemContainer items={this.state.collectionItems}/>}
 
-          {this.state.activeTab === 2 && <div className="legacy-crafting">
-            <h2>Legacy functionality</h2>
-            <p>This used to be a part of IA, automagically detecting which components you already had. <br/>
-              If you'd like to see to see the functionality return, give a shout out!</p>
-            <iframe title="Crafting tab" src="https://items.dreamcrash.org/ComponentAssembler?record=d009_relic.dbr"
-                    style={{width: '100%', height: '100%', overflow: 'hidden', position: 'absolute'}} scrolling="yes" frameBorder={0}/>
-          </div>}
+        {this.state.activeTab === 2 && <div className="legacy-crafting">
+          <h2>Legacy functionality</h2>
+          <p>This used to be a part of IA, automagically detecting which components you already had. <br/>
+            If you'd like to see to see the functionality return, give a shout out!</p>
+          <iframe title="Crafting tab" src="https://items.dreamcrash.org/ComponentAssembler?record=d009_relic.dbr"
+                  style={{width: '100%', height: '100%', overflow: 'hidden', position: 'absolute'}} scrolling="yes" frameBorder={0}/>
+        </div>}
 
-          {this.state.activeTab === 3 && <Help searchString={this.state.helpSearchFilter} onSearch={(v: string) => this.setState({helpSearchFilter: v})}/>}
+        {this.state.activeTab === 3 && <Help searchString={this.state.helpSearchFilter} onSearch={(v: string) => this.setState({helpSearchFilter: v})}/>}
 
-        </StoreContext.Provider>
 
         <NewFeaturePromoter/>
       </div>

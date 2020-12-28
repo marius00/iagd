@@ -50,6 +50,7 @@ class EmbeddedTranslator {
   public translate(id: string): string {
     // Fetch data from host
     if (Object.getOwnPropertyNames(EmbeddedTranslator.translation).length === 0 && typeof core !== 'undefined') {
+      console.debug("Fetching translation strings");
       const d = core.getTranslationStrings();
       EmbeddedTranslator.translation = typeof d === 'string' ? JSON.parse(d) : d;
     }
