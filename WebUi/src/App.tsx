@@ -72,7 +72,7 @@ class App extends React.PureComponent<{}, object> {
     isLoading: true,
     activeTab: 0,
     collectionItems: [],
-    isDarkMode: false,
+    isDarkMode: true,
     helpSearchFilter: '',
   } as ApplicationState;
 

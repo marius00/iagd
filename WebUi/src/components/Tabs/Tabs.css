@@ -13,6 +13,24 @@ h1, h2, h3, h4, h5, h6 {
   width: 100px;
 }
 
+.App-dark .fancyTab {
+  background-color: #000000;
+}
+
+.App-dark .fancyTab.active {
+  background: #484848;
+}
+
+.App-dark .nav-tabs > li.fancyTab.active:hover {
+  background-color: #484848;
+}
+
+.App-dark .nav-tabs > li.fancyTab:hover {
+  background-color: #484848;
+  color: white !important;
+}
+
+
 .whiteBlock {
   display: none;
 }

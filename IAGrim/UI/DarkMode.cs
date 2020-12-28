@@ -44,6 +44,7 @@ namespace IAGrim.UI {
             };
 
             _darkColors[typeof(GroupBox)] = new ColorSet {
+                ForeColor = Color.LightGray,
                 BackColor = _darkBackgroundColor
             };
 
