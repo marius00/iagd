@@ -35,7 +35,7 @@ namespace IAGrim.Backup.Cloud.Service {
             _settings.GetPersistent().CloudAuthToken = token;
 
             // Clear the old access token
-            _settings.GetPersistent().AzureAuthToken = string.Empty;
+            _settings.GetPersistent().AzureAuthToken = null;
         } 
     }
 }

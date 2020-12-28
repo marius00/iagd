@@ -21,6 +21,15 @@ namespace IAGrim.Backup.Cloud.Util {
                 SuffixRecord = pi.SuffixRecord,
                 TransmuteRecord = pi.TransmuteRecord,
                 Id = pi.CloudId,
+                CreatedAt = pi.CreationDate ?? 0,
+                LevelRequirement = (int)pi.MinimumLevel,
+                Name = pi.Name,
+                NameLowercase = pi.NameLowercase,
+                Rarity = pi.Rarity,
+                
+                // One way data, online backup does not return these
+                CachedStats = pi.CachedStats,
+                SearchableText = pi.SearchableText
             };
         }
 
@@ -42,7 +51,12 @@ namespace IAGrim.Backup.Cloud.Util {
                 SuffixRecord = itemDto.SuffixRecord,
                 TransmuteRecord = itemDto.TransmuteRecord,
                 CloudId = itemDto.Id,
-                IsCloudSynchronized = true
+                IsCloudSynchronized = true,
+                CreationDate = itemDto.CreatedAt,
+                LevelRequirement = itemDto.LevelRequirement,
+                Name = itemDto.Name,
+                NameLowercase = itemDto.NameLowercase,
+                Rarity = itemDto.Rarity
             };
         }
     }

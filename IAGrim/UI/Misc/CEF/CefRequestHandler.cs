@@ -3,11 +3,13 @@ using System.Security.Cryptography.X509Certificates;
 using System.Web;
 using CefSharp;
 using IAGrim.Backup.Cloud.CefSharp.Events;
+using log4net;
 
 namespace IAGrim.UI.Misc.CEF {
     // https://github.com/cefsharp/CefSharp/blob/master/CefSharp.Example/RequestHandler.cs
     // Overrides links inside the embedded webview.
     public class CefRequestHandler : IRequestHandler {
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(CefRequestHandler));
         public event EventHandler OnAuthentication;
 
         private static string ExtractToken(string url) {
@@ -34,6 +36,7 @@ namespace IAGrim.UI.Misc.CEF {
             if (request.Url.StartsWith("https://token.iagd.evilsoft.net/")) {
                 var token = ExtractToken(request.Url);
                 var user = ExtractUser(request.Url);
+                Logger.Info($"Got a login request for {user}");
                 OnAuthentication?.Invoke(browser, new AuthResultEvent(user, token));
                 return true;
             }
