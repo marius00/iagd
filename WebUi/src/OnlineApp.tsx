@@ -17,6 +17,7 @@ export interface ApplicationState {
   search: string;
   errorMessage: string;
   offset: number;
+  hasMoreItems: boolean;
 }
 
 
@@ -31,6 +32,7 @@ class OnlineApp extends React.PureComponent<Props, object> {
     offset: 0,
     search: '',
     errorMessage: '',
+    hasMoreItems: false,
   } as ApplicationState;
 
 
@@ -40,14 +42,17 @@ class OnlineApp extends React.PureComponent<Props, object> {
     this.setState({
       items: joined,
       isLoading: false,
-      offset: this.state.items.length + items.length
+      offset: this.state.items.length + items.length,
+      hasMoreItems: items.length > 0
     });
   }
 
   requestMoreItems() {
     console.log('More items it wantssssss?');
-    this.setState({isLoading: true});
-    this.fetchItems(this.state.search, this.state.offset);
+    if (this.state.hasMoreItems) {
+      this.setState({isLoading: true});
+      this.fetchItems(this.state.search, this.state.offset);
+    }
   }
 
   getId() {
@@ -56,13 +61,12 @@ class OnlineApp extends React.PureComponent<Props, object> {
   }
 
   search(text: string) {
-    this.setState({isLoading: true, items: [], offset: 0, search: text});
+    this.setState({isLoading: true, items: [], offset: 0, search: text, hasMoreItems: true});
     this.fetchItems(text, 0);
   }
 
   fetchItems(text: string, offset: number) {
     var self = this;
-    // TODO: Url encode
     fetch(`${this.props.url}/buddy?id=${this.getId()}&offset=${offset}&search=${encodeURIComponent(text.toLowerCase())}`, {
         method: 'GET',
         headers: {'Accept': 'application/json'},
@@ -114,6 +118,7 @@ class OnlineApp extends React.PureComponent<Props, object> {
             requestUnknownItemHelp={() => this.setState({helpSearchFilter: 'UnknownItem', activeTab: 3})}
           />
         </div>
+        {!this.state.hasMoreItems && <h2 className="no-more-items">No more items found</h2>}
 
         <div className="new-feature-promoter"></div>
       </div>

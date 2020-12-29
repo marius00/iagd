@@ -40,3 +40,7 @@
 .App-dark h1 {
   color: #717171;
 }
+.web .no-more-items {
+  text-align: center;
+  color: red;
+}
