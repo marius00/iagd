@@ -30,7 +30,6 @@ class NewFeaturePromoter extends React.PureComponent<{}, object> {
 
     let feature = features[0];
     var pos = getDocumentOffsetPosition(feature);
-    console.log(pos);
 
     if (pos.left > 0 && pos.top > 0) {
       // @ts-ignore

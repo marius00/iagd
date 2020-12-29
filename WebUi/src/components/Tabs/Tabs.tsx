@@ -5,8 +5,6 @@ import Home from '@material-ui/icons/Home';
 import OpenInNew from '@material-ui/icons/OpenInNew'; //https://material.io/resources/icons/?style=baseline
 import VideoLibrary from '@material-ui/icons/VideoLibrary';
 import LiveHelp from '@material-ui/icons/LiveHelp';
-import DarkMode from '@material-ui/icons/NightsStay';
-import LightMode from '@material-ui/icons/WbSunny';
 import Help from '@material-ui/icons/Help';
 import CraftingIcon from '@material-ui/icons/Work';
 import Patreon from './Patreon';
@@ -19,11 +17,9 @@ export interface Props {
   isDarkMode: boolean;
   showVideoGuide: boolean;
   setActiveTab(idx: number): void;
-
-  toggleDarkmode(): void;
 }
 
-export default function Tabs({activeTab, setActiveTab, isDarkMode, toggleDarkmode, showVideoGuide}: Props) {
+export default function Tabs({activeTab, setActiveTab, isDarkMode, showVideoGuide}: Props) {
   const renderTabEntry = (label: string, idx: number, icon: any, isActive?: boolean, feature?: string) =>
     <li className={'tab fancyTab ' + (isActive ? 'active' : '')} onClick={() => setActiveTab(idx)} data-feature={feature}>
       <div className="arrow-down">
@@ -56,18 +52,6 @@ export default function Tabs({activeTab, setActiveTab, isDarkMode, toggleDarkmod
       <div className="whiteBlock"></div>
     </li>;
 
-  const renderToggleTabEntry = (label: string, idx: number, icon: any, isActive?: boolean) =>
-    <li className={'tab fancyTab ' + (isActive ? 'active' : '')} onClick={() => toggleDarkmode()}>
-      <div className="arrow-down">
-        <div className="arrow-down-inner"></div>
-      </div>
-      <a id="tab0" href={'#tabBody' + idx} role="tab" aria-controls={'tabBody' + idx} aria-selected="true" data-toggle="tab" tabIndex={idx}>
-
-        <span className="fa">{icon}</span>
-        <span className="hidden-xs">{label}</span>
-      </a>
-      <div className="whiteBlock"></div>
-    </li>;
 
   var idx = 0;
   return <section id="fancyTabWidget" className="tabs t-tabs">

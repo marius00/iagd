@@ -149,6 +149,11 @@ namespace IAGrim.Database {
                             Restrictions.IsNull(nameof(PlayerItem.IsCloudSynchronizedValue))
                         )
                     )
+                    .Add(Restrictions.Not(Restrictions.Or(
+                            Restrictions.Eq(nameof(PlayerItem.CachedStats), ""),
+                            Restrictions.IsNull(nameof(PlayerItem.CachedStats))
+                        ))
+                    )
                     .List<PlayerItem>();
             }
         }

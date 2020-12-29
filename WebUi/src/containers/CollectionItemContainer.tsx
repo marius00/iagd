@@ -20,7 +20,7 @@ class CollectionItemContainer extends React.PureComponent<Props, object> {
   }
 
   openItemSite(item: ICollectionItem) {
-    let url = `http://www.grimtools.com/db/search?query=${item.name}`;
+    let url = `http://www.grimtools.com/db/search?src=itemassistant&query=${item.name}`;
     openUrl(url);
   }
 

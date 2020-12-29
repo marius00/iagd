@@ -1,0 +1,42 @@
+.web .new-feature-promoter {
+  display: none !important;;
+}
+
+.web .clipboard-link {
+  display: none !important;
+}
+
+.web .darkmode-toggle {
+  position: fixed;
+  right: 3px;
+  top: 3px;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.App-dark .darkmode-toggle {
+  color: yellow;
+}
+
+.web .content {
+  color: white;
+  margin-top: 135px;
+}
+
+.web .content .error {
+  color: red;
+  margin: 5px;
+}
+
+.web header {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1;
+  background-color: black;
+  width: 100%;
+}
+
+.App-dark h1 {
+  color: #717171;
+}

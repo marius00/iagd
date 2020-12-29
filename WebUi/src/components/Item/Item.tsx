@@ -2,7 +2,7 @@ import * as React from 'react';
 import ItemStat from './ItemStat';
 import IItem from '../../interfaces/IItem';
 import Skill from './Skill';
-import { openUrl } from '../../integration/integration';
+import { isEmbedded, openUrl } from '../../integration/integration';
 // @ts-ignore: Missing @types
 import translate from '../../translations/EmbeddedTranslator';
 import IItemType from '../../interfaces/IItemType';
@@ -21,7 +21,7 @@ interface Props {
 
 class Item extends React.PureComponent<Props, object> {
   openItemSite() {
-    openUrl(`http://www.grimtools.com/db/search?query=${this.props.item.name}`);
+    openUrl(`http://www.grimtools.com/db/search?src=itemassistant&query=${this.props.item.name}`);
   }
 
   renderBuddyItem(item: IItem) {
@@ -49,8 +49,8 @@ class Item extends React.PureComponent<Props, object> {
   }
 
   renderCornerContainer(item: IItem) {
-    const showCloudOkIcon = item.type === IItemType.Player && item.hasCloudBackup;
-    const showCloudErrorIcon = item.type === IItemType.Player && !item.hasCloudBackup;
+    const showCloudOkIcon = item.type === IItemType.Player && item.hasCloudBackup && isEmbedded;
+    const showCloudErrorIcon = item.type === IItemType.Player && !item.hasCloudBackup && isEmbedded;
     const showSingularBuddyItemIcon = item.type !== IItemType.Buddy && item.buddies.length === 1;
     const showPluralBuddyItemIcon = item.type !== IItemType.Buddy && item.buddies.length > 1;
     const showRecipeIcon = item.hasRecipe && item.type !== 0;
@@ -126,8 +126,8 @@ class Item extends React.PureComponent<Props, object> {
     );
   }
 
-  getSetItemTooltip(setName: string|undefined, quality: string): string {
-    if (setName !== undefined) { // We don't support blues yet, not available on collection page.
+  getSetItemTooltip(setName: string|undefined): string {
+    if (setName !== undefined && isEmbedded) {
       const addFont = (numOwned: number, s: string) => (numOwned <= 0) ? `<font color="red">${s}</font>` : s;
       var setItemsList = GetSetItems(setName)
         .map(this.props.getItemName)
@@ -155,9 +155,13 @@ class Item extends React.PureComponent<Props, object> {
 
   render() {
     const item = this.props.item;
-    const icon = (item.icon && item.icon.length) > 0 ? item.icon : 'weapon1h_focus02a.tex.png';
     const name = item.name.length > 0 ? item.name : 'Unknown';
     const socket = item.socket.replace(" ", "");
+
+
+    let icon = (item.icon && item.icon.length) > 0 ? item.icon : 'weapon1h_focus02a.tex.png';
+    if (!isEmbedded) // Online items stores icons separately
+      icon = `http://static.iagd.evilsoft.net/img/${icon}`;
 
     const headerStats = item.headerStats.map((stat) =>
       <ItemStat {...stat} key={'stat-head-' + item.url.join(':') + socket + statToString(stat)} />
@@ -172,7 +176,7 @@ class Item extends React.PureComponent<Props, object> {
     );
 
     const setName = GetSetName(item.baseRecord);
-    var setItemsList = this.getSetItemTooltip(setName, item.quality);
+    var setItemsList = this.getSetItemTooltip(setName);
 
     const mainClasses = [
       "item",
@@ -248,14 +252,14 @@ class Item extends React.PureComponent<Props, object> {
           <p>{translate('item.label.levelRequirement', item.level > 1 ? String(item.level) : translate('item.label.levelRequirementAny'))}</p>
         </div>
 
-        {item.initialNumItems > 1 && item.numItems >= 1 && item.type === IItemType.Player ?
+        {item.initialNumItems > 1 && item.numItems >= 1 && item.type === IItemType.Player && isEmbedded ?
           <div className="link-container-all">
             <a onClick={() => this.props.transferAll(item.url)}>{translate('item.label.transferAll')} ({item.numItems})</a>
           </div>
           : ''
         }
 
-        {item.numItems >= 1 && item.type === IItemType.Player ?
+        {item.numItems >= 1 && item.type === IItemType.Player && isEmbedded ?
           <div className="link-container">
             <a onClick={() => this.props.transferSingle(item.url)}>{translate('item.label.transferSingle')}</a>
           </div>

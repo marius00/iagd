@@ -101,6 +101,11 @@
     width: calc(50% - 20px);
   }
 }
+@media only screen and (min-width: 1px) and (max-width: 400px) {
+  .items .item {
+    width: calc(100% - 20px);
+  }
+}
 
 .recipe-item-corner {
   position: absolute;

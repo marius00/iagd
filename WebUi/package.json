@@ -6,6 +6,8 @@
   "dependencies": {
     "@material-ui/core": "^4.11.1",
     "@material-ui/icons": "^4.9.1",
+    "cross-env": "^7.0.3",
+    "getenv": "^1.0.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-notifications-component": "^3.0.2",
@@ -15,8 +17,10 @@
     "web-vitals": "^0.2.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build"
+    "start": "cross-env REACT_APP_BUILD_TARGET=GDIA react-scripts start",
+    "start:online": "cross-env REACT_APP_BUILD_TARGET=ONLINE react-scripts start",
+    "build": "react-scripts build",
+    "build:online": "cross-env REACT_APP_BUILD_TARGET=ONLINE react-scripts build"
   },
   "eslintConfig": {
     "extends": [
