@@ -436,7 +436,7 @@ namespace IAGrim.UI
             addAndShow(_buddySettingsWindow, buddyPanel);
 
             var databaseSettingDao = _serviceProvider.Get<IDatabaseSettingDao>();
-            _authAuthService = new AuthService(_cefBrowserHandler, new AuthenticationProvider(settingsService));
+            _authAuthService = new AuthService(_cefBrowserHandler, new AuthenticationProvider(settingsService), playerItemDao);
             var backupSettings = new BackupSettings(playerItemDao, _authAuthService, settingsService, _cefBrowserHandler);
             addAndShow(backupSettings, backupPanel);
             addAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, playerItemDao, _parsingService, databaseSettingDao, grimDawnDetector, settingsService, _cefBrowserHandler), modsPanel);

@@ -5,6 +5,7 @@ using System.Runtime.Caching;
 using CefSharp;
 using EvilsoftCommons.Exceptions;
 using IAGrim.Backup.Cloud.CefSharp.Events;
+using IAGrim.Database.Interfaces;
 using IAGrim.UI.Misc.CEF;
 using IAGrim.Utilities.HelperClasses;
 using log4net;
@@ -15,13 +16,8 @@ namespace IAGrim.Backup.Cloud.Service {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(AuthService));
         private const string CacheKey = "IAGDIsCloudAuthenticated";
         private readonly ICefBackupAuthentication _authentication;
-        private readonly AuthenticationProvider _authenticationProvider; 
-        private static readonly JsonSerializerSettings _settings = new JsonSerializerSettings {
-            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-            Culture = System.Globalization.CultureInfo.InvariantCulture,
-            ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver(),
-            NullValueHandling = NullValueHandling.Ignore
-        };
+        private readonly AuthenticationProvider _authenticationProvider;
+        private readonly IPlayerItemDao _playerItemDao;
 
         public enum AccessStatus {
             Authorized,
@@ -29,9 +25,10 @@ namespace IAGrim.Backup.Cloud.Service {
             Unknown
         }
 
-        public AuthService(ICefBackupAuthentication authentication, AuthenticationProvider authenticationProvider) {
+        public AuthService(ICefBackupAuthentication authentication, AuthenticationProvider authenticationProvider, IPlayerItemDao playerItemDao) {
             _authentication = authentication;
             _authenticationProvider = authenticationProvider;
+            _playerItemDao = playerItemDao;
             _authentication.OnSuccess += AuthenticationOnSuccess;
         }
 
@@ -177,6 +174,7 @@ namespace IAGrim.Backup.Cloud.Service {
                 if (result == AccessStatus.Unauthorized) {
                     Logger.Warn("Existing authentication token is invalid, clearing authentication provider");
                     _authenticationProvider.SetToken(string.Empty, string.Empty);
+                    _playerItemDao.ResetOnlineSyncState();
                 }
 
                 return result;
