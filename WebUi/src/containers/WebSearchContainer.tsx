@@ -16,6 +16,9 @@ class WebSearchContainer extends React.PureComponent<Props, object> {
     if (event.key === 'Enter') {
       this.props.onSearch(this.state.search);
     }
+    else if (event.key === 'Escape') {
+      this.setState({search: ''});
+    }
   }
 
   render() {

@@ -47,7 +47,7 @@ class OnlineApp extends React.PureComponent<Props, object> {
   requestMoreItems() {
     console.log('More items it wantssssss?');
     this.setState({isLoading: true});
-    this.fetchItems(this.state.search);
+    this.fetchItems(this.state.search, this.state.offset);
   }
 
   getId() {
@@ -56,25 +56,27 @@ class OnlineApp extends React.PureComponent<Props, object> {
   }
 
   search(text: string) {
-    this.setState({isLoading: true, items: [], offset: 0, search: text.toLowerCase()});
-    this.fetchItems(text);
+    this.setState({isLoading: true, items: [], offset: 0, search: text});
+    this.fetchItems(text, 0);
   }
 
-  fetchItems(text: string) {
+  fetchItems(text: string, offset: number) {
     var self = this;
-    fetch(`${this.props.url}/buddy?id=${this.getId()}&offset=${this.state.offset}&search=${text}`, {
+    // TODO: Url encode
+    fetch(`${this.props.url}/buddy?id=${this.getId()}&offset=${offset}&search=${encodeURIComponent(text.toLowerCase())}`, {
         method: 'GET',
         headers: {'Accept': 'application/json'},
       }
     )
+      .then(r =>  r.json().then(data => ({status: r.status, statusText: r.statusText, ok: r.ok, body: data})))
       .then((response) => {
         if (!response.ok) {
           console.log(response);
-          throw Error(`Got response ${response.status}, ${response.statusText}, ${response.json()}`);
+          throw Error(`Got response ${response.body.msg}`);
         }
         return response;
       })
-      .then((response) => response.json())
+      .then((response) => response.body)
       .then((json) => {
         this.setItems(json);
       })
