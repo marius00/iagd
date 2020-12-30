@@ -6,18 +6,21 @@ interface ItemSetAssociation {
 }
 
 
+let dataset = [] as Array<ItemSetAssociation>;
 let reverseLookup: { [index: string]: string[] } = {};
 
 // Returns the set name or undefined
 export default function GetSetName(baseRecord: string): string | undefined {
-  let dataset = JSON.parse(getItemSetAssociations()) as Array<ItemSetAssociation>;
+  if (dataset.length === 0) {
+    dataset = JSON.parse(getItemSetAssociations());
 
-  for (let idx in dataset) {
-    const entry = dataset[idx];
-    if (reverseLookup.hasOwnProperty(entry.setName)) {
-      reverseLookup[entry.setName] = reverseLookup[entry.setName].concat(entry.baseRecord);
-    } else {
-      reverseLookup[entry.setName] = [entry.baseRecord];
+    for (let idx in dataset) {
+      const entry = dataset[idx];
+      if (reverseLookup.hasOwnProperty(entry.setName)) {
+        reverseLookup[entry.setName] = reverseLookup[entry.setName].concat(entry.baseRecord);
+      } else {
+        reverseLookup[entry.setName] = [entry.baseRecord];
+      }
     }
   }
 
@@ -30,7 +33,7 @@ export default function GetSetName(baseRecord: string): string | undefined {
 }
 
 // Returns the items in a given set or undefined
-export function GetSetItems(setName: string | undefined): string[] {
+export function GetSetItems(setName: string|undefined): string[] {
   if (setName !== undefined) {
     return reverseLookup[setName];
   }
