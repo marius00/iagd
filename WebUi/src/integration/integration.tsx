@@ -80,6 +80,7 @@ var hasSeenMockFeature = false;
 
 export function getFeatureSuggestion() {
   if (isEmbedded) {
+    console.debug("Requesting feature suggestions");
     return core.getFeatureSuggestion();
   } else {
     const f = hasSeenMockFeature ? '' : (Math.random() < 0.5 ? 'SetBonus' : 'CollectionsTab');

@@ -83,9 +83,9 @@ class Item extends React.PureComponent<Props, object> {
     if (!isEmbedded) // Online items stores icons separately
       icon = `http://static.iagd.evilsoft.net/img/${icon}`;
 
-    return <div className="item-icon-container">
+    return <div className="item-icon-container" data-tip={item.slot}>
       <div className={'item-icon-background item-icon-'+ item.quality.toLowerCase()} />
-      <img src={icon} className={"item-icon" } data-tip={item.slot}/>
+      <img src={icon} className={"item-icon" }/>
     </div>;
   }
 

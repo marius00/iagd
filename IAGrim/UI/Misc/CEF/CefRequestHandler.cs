@@ -43,19 +43,23 @@ namespace IAGrim.UI.Misc.CEF {
 
             // Allow localdev
             else if (request.Url.StartsWith("http://localhost:3000")) {
+                Logger.Debug($"URL Requested: {request.Url}, Status: Allowed");
                 return false;
             }
 
             else if (request.Url.StartsWith("https://items.dreamcrash.org")) {
+                Logger.Debug($"URL Requested: {request.Url}, Status: Allowed");
                 return false;
             }
 
             // TODO: Rewrite this, who the hell knows what this does.
             else if (!request.Url.Contains("iagd.evilsoft.net") && !request.Url.Contains("grimdawn.dreamcrash") && !frame.Url.Contains("dreamcrash.org") && !frame.Url.Contains("iagd.evilsoft.net") && (request.Url.StartsWith("http://") || request.Url.StartsWith("https://"))) {
+                Logger.Debug($"URL Requested: {request.Url}, Status: Deny, Action: DefaultBrowser");
                 System.Diagnostics.Process.Start(request.Url);
                 return true;
             }
 
+            Logger.Debug($"URL Requested: {request.Url}, Status: Allowed");
             return false;
         }
 

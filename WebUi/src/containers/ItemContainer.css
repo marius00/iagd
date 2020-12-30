@@ -198,7 +198,7 @@ a { cursor: pointer; }
   background: var(--item-background-hover);
 }
 .items .item .text {
-  padding-left: 70px;
+  padding-left: 75px;
 }
 .items .item .text h3 a {
   text-decoration: none;
@@ -306,7 +306,7 @@ a { cursor: pointer; }
 .item-icon-container {
 
   vertical-align: middle;
-  position: relative;
+  position: absolute;
   display: inline-block;
 
   min-width: 68px;
