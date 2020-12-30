@@ -17,7 +17,7 @@ namespace IAGrim.Database.Synchronizer.Core {
         private Thread _thread;
         private volatile bool _isCancelled;
 #if DEBUG
-        public const int ThreadTimeout = 1000 * 15;
+        public const int ThreadTimeout = 1000 * 60 * 2;
 #else
         public const int ThreadTimeout = 1000 * 60 * 30;
 #endif

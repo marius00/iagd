@@ -3,7 +3,6 @@ import Item from '../components/Item/Item';
 import IItem from '../interfaces/IItem';
 import './ItemContainer.css';
 import ReactTooltip from 'react-tooltip';
-import Spinner from '../components/Spinner';
 import translate from '../translations/EmbeddedTranslator';
 import { setClipboard, transferItem } from '../integration/integration';
 import OnScrollLoader from '../components/OnScrollLoader';

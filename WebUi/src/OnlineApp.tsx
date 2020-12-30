@@ -38,7 +38,6 @@ class OnlineApp extends React.PureComponent<Props, object> {
 
   setItems(items: IItem[]) {
     var joined = [...this.state.items].concat(items);
-    console.log('joined:', joined);
     this.setState({
       items: joined,
       isLoading: false,
@@ -48,7 +47,6 @@ class OnlineApp extends React.PureComponent<Props, object> {
   }
 
   requestMoreItems() {
-    console.log('More items it wantssssss?');
     if (this.state.hasMoreItems) {
       this.setState({isLoading: true});
       this.fetchItems(this.state.search, this.state.offset);
@@ -91,6 +89,9 @@ class OnlineApp extends React.PureComponent<Props, object> {
   }
 
   render() {
+    if (!this.getId())
+      return <h1 className="missing-id">404 - These are not the drones you are looking for..</h1>;
+
     return (
       <div className={'web App ' + (this.state.isDarkMode ? 'App-dark' : 'App-Light')}>
         <header>

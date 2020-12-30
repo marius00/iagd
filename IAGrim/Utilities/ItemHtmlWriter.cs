@@ -25,6 +25,7 @@ namespace IAGrim.Utilities {
             CopyMissingFiles();
         }
 
+
         private static JsonStat ToJsonStat(TranslatedStat stat) {
             return new JsonStat {
                 Text = stat.Text,
@@ -110,7 +111,7 @@ namespace IAGrim.Utilities {
                 HasCloudBackup = isCloudSynced,
                 Slot = SlotTranslator.Translate(RuntimeSettings.Language, item.Slot ?? ""),
                 Extras = extras,
-                IsMonsterInfrequent = item.ModifiedSkills.Any(s => s.IsMonsterInfrequent)
+                IsMonsterInfrequent = item.ModifiedSkills.Any(s => s.IsMonsterInfrequent),
             };
 
             var modifiedSkills = item.ModifiedSkills;

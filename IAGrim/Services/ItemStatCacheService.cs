@@ -52,10 +52,10 @@ namespace IAGrim.Services {
             }
 
             while (t?.IsAlive ?? false) {
-                Tick();
+                var result = Tick();
 
                 try {
-                    Thread.Sleep(1500);
+                    Thread.Sleep(result ? 1500 : 120 * 1000);
                 }
                 catch (ThreadInterruptedException) {
                     // Don't care
@@ -73,9 +73,9 @@ namespace IAGrim.Services {
                 .Replace("{6}", stat.Param6);
         }
 
-        void Tick() {
+        bool Tick() {
             var items = _playerItemDao.ListWithMissingStatCache();
-            if (items.Count <= 0) return;
+            if (items.Count <= 0) return true;
 
             Logger.Debug($"Updated cache for {items.Count} items");
             _itemStatService.ApplyStats(items);
@@ -102,9 +102,15 @@ namespace IAGrim.Services {
 
                 item.SearchableText = string.Join("\n", searchableText);
                 item.CachedStats = json;
+
+                if (string.IsNullOrEmpty(item.SearchableText)) {
+                    Logger.Warn("Aborting stat cache generation, unable to produce searchable text. Database not parsed?");
+                    return false;
+                }
             }
 
             _playerItemDao.UpdateCachedStats(items);
+            return true;
         }
 
         public void Dispose() {

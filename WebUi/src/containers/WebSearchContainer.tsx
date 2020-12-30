@@ -1,7 +1,4 @@
 import * as React from 'react';
-import { ApplicationState } from '../OnlineApp';
-import IItem from '../interfaces/IItem';
-import { isEmbedded } from '../integration/integration';
 
 export interface Props {
   onSearch: (text: string) => void;

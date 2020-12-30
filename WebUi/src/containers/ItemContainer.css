@@ -193,7 +193,6 @@ a { cursor: pointer; }
 .items .item img {
   max-width: 64px;
   height: auto;
-  float: left;
 }
 .items .item:hover {
   background: var(--item-background-hover);
@@ -274,9 +273,6 @@ a { cursor: pointer; }
 .pet-content {
   padding-left: 10px;
 }
-.item-icon {
-  -webkit-user-select: none; /* Chrome/Safari */
-}
 .no-items-found {
   width: 100%;
   font-size: 20px;
@@ -302,4 +298,37 @@ a { cursor: pointer; }
 
 .unknownitem {
   color: red;
+}
+
+
+
+
+.item-icon-container {
+
+  vertical-align: middle;
+  position: relative;
+  display: inline-block;
+
+  min-width: 68px;
+  min-height: 68px;
+  line-height: 68px;
+  text-align: center;
+}
+
+.item-icon-background {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  background-size: 100% 100%;
+}
+
+.item-icon {
+  -webkit-user-select: none; /* Chrome/Safari */
+  max-width: 100%;
+  max-height: 100%;
+  vertical-align: middle;
+  position: relative;
+  display: inline-block;
 }
