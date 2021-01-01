@@ -163,6 +163,7 @@ namespace IAGrim.Utilities {
                         cached.NumItems = (uint)item.Count; // Can't use a cached item count, no idea how many items are left.
                         cached.InitialNumItems = (uint)item.Count;
                         cached.HasCloudBackup = pi.IsCloudSynchronized;
+                        cached.Buddies = pi.Buddies.ToArray();
                         jsonItems.Add(cached);
                     }
                     catch (Exception ex) {
