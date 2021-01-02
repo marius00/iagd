@@ -16,6 +16,7 @@ namespace IAGrim.Database.DAO.Table {
 
         public const string Prefix = "prefixrecord";
         public const string Suffix = "suffixrecord";
+        public const string ModifierRecord = "modifierrecord";
         public const string Materia = "materiarecord";
         public const string Seed = "seed";
 

@@ -934,8 +934,31 @@ DELETE FROM PlayerItem WHERE Id IN (
         }
 
         public IList<PlayerItem> ListWithMissingStatCache() {
+            
+            var sql = $@"
+                select name as Name, 
+                {PlayerItemTable.Id} as Id,
+                {PlayerItemTable.Stackcount}, 
+                rarity as Rarity, 
+                levelrequirement as LevelRequirement, 
+                {PlayerItemTable.Record} as BaseRecord, 
+                {PlayerItemTable.Prefix} as PrefixRecord, 
+                {PlayerItemTable.Suffix} as SuffixRecord, 
+                {PlayerItemTable.ModifierRecord} as ModifierRecord, 
+                MateriaRecord as MateriaRecord,
+                {PlayerItemTable.PrefixRarity} as PrefixRarity,
+                {PlayerItemTable.AzureUuid} as AzureUuid,
+                {PlayerItemTable.CloudId} as CloudId,
+                {PlayerItemTable.IsCloudSynchronized} as IsCloudSynchronizedValue,
+                CachedStats as CachedStats,
+                (SELECT Record FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord) LIMIT 1) AS PetRecord
+                FROM PlayerItem PI WHERE CachedStats IS NULL OR CachedStats = '' LIMIT 50";
+        
             using (ISession session = SessionCreator.OpenSession()) {
                 using (session.BeginTransaction()) {
+                    return session.CreateSQLQuery(sql)
+                        .SetResultTransformer(new AliasToBeanResultTransformer(typeof(PlayerItem)))
+                        .List<PlayerItem>();
                     return session.CreateCriteria<PlayerItem>()
                         .Add(Restrictions.IsNull("CachedStats"))
                         .SetMaxResults(50)
