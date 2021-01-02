@@ -85,7 +85,9 @@ namespace IAGrim.Database {
             "modifierSkillName1",
             "modifierSkillName2",
             "modifierSkillName3",
-            "modifierSkillName4"
+            "modifierSkillName4",
+            "petconversionOutType", 
+            "petconversionInType"
         };
 
         public DatabaseItemStatDaoImpl(ISessionCreator sessionCreator, SqlDialect dialect) : base(sessionCreator, dialect) {

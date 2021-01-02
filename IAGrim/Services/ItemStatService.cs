@@ -310,8 +310,10 @@ namespace IAGrim.Services {
                     if (!string.IsNullOrEmpty(pi.ModifierRecord) && statMap.ContainsKey(pi.ModifierRecord))
                         stats.AddRange(Filter(statMap[pi.ModifierRecord]));
 
-                    if (!string.IsNullOrEmpty(pi.PetRecord) && statMap.ContainsKey(pi.PetRecord))
-                        stats.AddRange(Filter(statMap[pi.PetRecord]));
+                    if (!string.IsNullOrEmpty(pi.PetRecord) && statMap.ContainsKey(pi.PetRecord)) {
+                        var petRecords = Filter(statMap[pi.PetRecord]);
+                        stats.AddRange(petRecords);
+                    }
                     // TODO: Don't do this, use PlayerItemRecords.. somehow.. those contain pet bonuses
 
                     pi.Tags = process(stats);

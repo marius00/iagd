@@ -52,6 +52,20 @@ namespace StatTranslator {
                     });
                 }
             }
+            { // A bit of a lame way of doing this.. maybe look into a better way? stats has a "pet" prefix from earlier preprocessing when loading the database
+                var conversionPercentage = stats.FirstOrDefault(m => m.Stat == "petconversionPercentage");
+                var conversionOutType = stats.FirstOrDefault(m => m.Stat == "petconversionOutType");
+                var conversionInType = stats.FirstOrDefault(m => m.Stat == "petconversionInType");
+                if (conversionPercentage != null && conversionOutType != null && conversionInType != null) {
+                    result.Add(new TranslatedStat {
+                        Text = _language.GetTag("customtag_damage_conversion"),
+                        Param0 = conversionPercentage.Value,
+                        Param3 = DamageTypeTranslation(conversionInType.TextValue),
+                        Param5 = DamageTypeTranslation(conversionOutType.TextValue),
+                        Type = TranslatedStatType.BODY
+                    });
+                }
+            }
         }
 
         /// <summary>
