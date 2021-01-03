@@ -17,7 +17,7 @@ namespace IAGrim.UI {
         };
 
         readonly Color _darkBackgroundColor = Color.FromArgb(27, 40, 56);
-        readonly Color _darkForeColor = Color.White;
+        readonly Color _darkForeColor = Color.FromArgb(238, 238, 238);
 
         private readonly Dictionary<Type, ColorSet> _darkColors = new Dictionary<Type, ColorSet>();
         private Dictionary<Type, ColorSet> _regularColors = null;
@@ -91,13 +91,14 @@ namespace IAGrim.UI {
             It(_root.Controls, _isLightMode ? _regularColors : _darkColors);
         }
 
-        private static void It(Control.ControlCollection collection, Dictionary<Type, ColorSet> colorSet) {
+        private void It(Control.ControlCollection collection, Dictionary<Type, ColorSet> colorSet) {
             foreach (Control control in collection) {
                 It(control.Controls, colorSet);
 
                 FirefoxButton button = control as FirefoxButton;
                 PanelBox pb = control as PanelBox;
                 LinkLabel linkLabel = control as LinkLabel;
+                FirefoxCheckBox cb = control as FirefoxCheckBox;
 
                 if (button != null && colorSet.ContainsKey(button.GetType())) {
                     var colorset = colorSet[button.GetType()];
@@ -130,6 +131,10 @@ namespace IAGrim.UI {
                         control.BackColor = colorset.BackColor ?? control.BackColor;
                         control.ForeColor = colorset.ForeColor ?? control.ForeColor;
                     }
+                }
+
+                if (cb != null) {
+                    cb.IsDarkMode = !_isLightMode;
                 }
 
                 control.Invalidate();

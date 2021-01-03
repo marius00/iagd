@@ -20,6 +20,9 @@ class FirefoxCheckBox : CheckBox {
     #region " Private "
     private Helpers.MouseState State;
     private Color ETC = Color.Blue;
+    public Color TextColor;
+    public bool IsDarkMode { get; set; }
+    private byte[] checkMarkBytes => Convert.FromBase64String(IsDarkMode ? Theme.GetCheckMark() :  Theme.GetLightCheckMark());
 
     private Graphics G;
 
@@ -96,7 +99,7 @@ class FirefoxCheckBox : CheckBox {
         G.Clear(Parent.BackColor);
 
         if (Enabled) {
-            ETC = Color.FromArgb(66, 78, 90);
+            ETC = ForeColor;
 
             switch (State) {
 
@@ -113,7 +116,7 @@ class FirefoxCheckBox : CheckBox {
 
 
             if (Checked) {
-                using (Image I = Image.FromStream(new System.IO.MemoryStream(Convert.FromBase64String(Theme.GetCheckMark())))) {
+                using (Image I = Image.FromStream(new System.IO.MemoryStream(checkMarkBytes))) {
                     G.DrawImage(I, new Point(4, 5));
                 }
 
@@ -127,7 +130,7 @@ class FirefoxCheckBox : CheckBox {
 
 
             if (Checked) {
-                using (Image I = Image.FromStream(new System.IO.MemoryStream(Convert.FromBase64String(Theme.GetCheckMark())))) {
+                using (Image I = Image.FromStream(new System.IO.MemoryStream(checkMarkBytes))) {
                     G.DrawImage(I, new Point(4, 5));
                 }
 
