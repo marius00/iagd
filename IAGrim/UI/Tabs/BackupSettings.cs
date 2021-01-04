@@ -17,42 +17,15 @@ using log4net.Repository.Hierarchy;
 
 namespace IAGrim.UI.Tabs {
     public partial class BackupSettings : Form {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(BackupSettings));
         private readonly IPlayerItemDao _playerItemDao;
-        private readonly AuthService _authAuthService;
         private readonly SettingsService _settings;
-        private readonly CloudSyncService _cloudSyncService;
         private readonly IHelpService _helpService;
 
-        public BackupSettings(IPlayerItemDao playerItemDao, AuthService authAuthService, SettingsService settings, IHelpService helpService) {
+        public BackupSettings(IPlayerItemDao playerItemDao, SettingsService settings, IHelpService helpService) {
             InitializeComponent();
             _playerItemDao = playerItemDao;
             _settings = settings;
             _helpService = helpService;
-            
-            _authAuthService = authAuthService;
-            _cloudSyncService = new CloudSyncService(authAuthService.GetRestService());
-
-        }
-
-        private void UpdateUi() {
-            var status = _authAuthService?.CheckAuthentication();
-            if (status == AuthService.AccessStatus.Authorized) {
-                labelStatus.Text = RuntimeSettings.Language.GetTag("iatag_ui_backup_loggedinas", _settings.GetPersistent().CloudUser);
-                buttonLogin.Enabled = false;
-            }
-            else if (status == AuthService.AccessStatus.Unknown) {
-                labelStatus.Text = RuntimeSettings.Language.GetTag("iatag_ui_backup_statusunknown");
-                buttonLogin.Enabled = false;
-            }
-            else {
-                labelStatus.Text = RuntimeSettings.Language.GetTag("iatag_ui_backup_notloggedin");
-                buttonLogin.Enabled = true;
-            }
-
-            linkLogout.Enabled = !buttonLogin.Enabled;
-            linkDeleteBackup.Enabled = !buttonLogin.Enabled;
-            buttonLogin.Visible = !BlockedLogsDetection.DreamcrashBlocked();
         }
 
 
@@ -85,22 +58,16 @@ namespace IAGrim.UI.Tabs {
             pbGoogle.Enabled = cbGoogle.Enabled;
             pbSkydrive.Enabled = cbOneDrive.Enabled;
 
-
             cbDropbox.Checked = _settings.GetLocal().BackupDropbox;
             cbGoogle.Checked = _settings.GetLocal().BackupGoogle;
             cbOneDrive.Checked = _settings.GetLocal().BackupOnedrive;
             cbCustom.Checked = _settings.GetLocal().BackupCustom;
             lbOpenCustomBackupFolder.Visible = cbCustom.Checked;
 
-            cbDontWantBackups.Checked = _settings.GetLocal().OptOutOfBackups;
-            buttonLogin.Enabled = !_settings.GetLocal().OptOutOfBackups;
-
             cbDropbox.CheckedChanged += cbDropbox_CheckedChanged;
             cbGoogle.CheckedChanged += cbGoogle_CheckedChanged;
             cbOneDrive.CheckedChanged += CbOneDriveCheckedChanged;
             cbCustom.CheckedChanged += cbCustom_CheckedChanged;
-
-            UpdateUi();
         }
 
         private void pictureBox2_Click(object sender, EventArgs e) {
@@ -171,39 +138,6 @@ namespace IAGrim.UI.Tabs {
             }
         }
 
-        private void firefoxButton1_Click(object sender, EventArgs e) {
-            if ((sender as FirefoxButton).EnabledCalc) {
-                var access = _authAuthService.CheckAuthentication();
-
-                switch (access) {
-                    case AuthService.AccessStatus.Unauthorized:
-                        _authAuthService.Authenticate();
-                        break;
-                    case AuthService.AccessStatus.Unknown:
-                        MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_backup_service_error"));
-                        break;
-                    default: {
-                        var alreadyLoggedIn = RuntimeSettings.Language.GetTag("iatag_feedback_already_logged_in");
-
-                        MessageBox.Show(
-                            alreadyLoggedIn,
-                            alreadyLoggedIn,
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Information
-                        );
-                        break;
-                    }
-                }
-            }
-
-            UpdateUi();
-        }
-
-        private void cbDontWantBackups_CheckedChanged(object sender, EventArgs e) {
-            buttonLogin.Enabled = !cbDontWantBackups.Checked;
-            _settings.GetLocal().OptOutOfBackups = cbDontWantBackups.Checked;
-        }
-
         private void helpWhyGdriveDisabled_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             _helpService.ShowHelp(HelpService.HelpType.BackupAutodetectDisabled);
         }
@@ -214,64 +148,6 @@ namespace IAGrim.UI.Tabs {
 
         private void helpWhyOnedriveDisabled_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             _helpService.ShowHelp(HelpService.HelpType.BackupAutodetectDisabled);
-        }
-
-        private void linkDeleteBackup_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            var caption = RuntimeSettings.Language.GetTag("iatag_ui_backup_deleteaccount_header");
-            var content = RuntimeSettings.Language.GetTag("iatag_ui_backup_deleteaccount_body");
-            if (MessageBox.Show(
-                    content,
-                    caption,
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Exclamation,
-                    MessageBoxDefaultButton.Button2) == DialogResult.Yes) {
-                try {
-                    if (_cloudSyncService != null && _cloudSyncService.DeleteAccount()) {
-                        MessageBox.Show(
-                            RuntimeSettings.Language.GetTag("iatag_ui_backup_deleteaccount_success_body"),
-                            RuntimeSettings.Language.GetTag("iatag_ui_backup_deleteaccount_success_header"),
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Exclamation
-                        );
-                        
-                        _settings.GetPersistent().CloudUploadTimestamp = 0;
-                        _authAuthService.UnAuthenticate();
-                        _playerItemDao.ResetOnlineSyncState();
-                    }
-                    else {
-                        MessageBox.Show(
-                            RuntimeSettings.Language.GetTag("iatag_ui_backup_deleteaccount_failure_body"),
-                            RuntimeSettings.Language.GetTag("iatag_ui_backup_deleteaccount_failure_header"),
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Error
-                        );
-                    }
-                }
-                catch (Exception ex) {
-                    Logger.Warn("Error deleting account", ex);
-                    MessageBox.Show(
-                        RuntimeSettings.Language.GetTag("iatag_ui_backup_deleteaccount_failure_body"),
-                        RuntimeSettings.Language.GetTag("iatag_ui_backup_deleteaccount_failure_header"),
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error
-                    );
-                }
-            }
-            
-            UpdateUi();
-        }
-
-        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            Logger.Info("Logging out of online backups.");
-            _authAuthService.Logout();
-            _settings.GetPersistent().CloudUploadTimestamp = 0;
-            _playerItemDao.ResetOnlineSyncState();
-            MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_backup_logout_successful_body"), RuntimeSettings.Language.GetTag("iatag_ui_backup_logout_successful_header"));
-            UpdateUi();
-        }
-
-        private void btnRefreshBackupDetails_Click(object sender, EventArgs e) {
-            UpdateUi();
         }
 
         private void lbOpenCustomBackupFolder_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {

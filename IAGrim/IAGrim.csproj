@@ -274,6 +274,12 @@
     <Compile Include="UI\Misc\CEF\UserFeedbackService.cs" />
     <Compile Include="UI\DarkMode.cs" />
     <Compile Include="UI\Misc\MinimizeToTrayHandler.cs" />
+    <Compile Include="UI\Tabs\OnlineSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Tabs\OnlineSettings.Designer.cs">
+      <DependentUpon>OnlineSettings.cs</DependentUpon>
+    </Compile>
     <Compile Include="Utilities\AutomaticUpdateChecker.cs" />
     <Compile Include="Utilities\Detection\BlockedLogsDetection.cs" />
     <Compile Include="Utilities\Detection\SteamDetection.cs" />
@@ -641,6 +647,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Popups\StashTabPicker.resx">
       <DependentUpon>StashTabPicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Tabs\OnlineSettings.resx">
+      <DependentUpon>OnlineSettings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Tabs\BackupSettings.resx">
       <DependentUpon>BackupSettings.cs</DependentUpon>

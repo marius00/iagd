@@ -40,12 +40,14 @@
             this.buddyPanel = new System.Windows.Forms.Panel();
             this.tabPageSettings = new System.Windows.Forms.TabPage();
             this.settingsPanel = new System.Windows.Forms.Panel();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPageLog = new System.Windows.Forms.TabPage();
             this.panelLogging = new System.Windows.Forms.Panel();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.trayContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tabPageOnline = new System.Windows.Forms.TabPage();
+            this.onlinePanel = new System.Windows.Forms.Panel();
             this.statusStrip.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPageItems.SuspendLayout();
@@ -53,8 +55,9 @@
             this.tabPageBackups.SuspendLayout();
             this.tabPageBuddy.SuspendLayout();
             this.tabPageSettings.SuspendLayout();
-            this.tabPage1.SuspendLayout();
+            this.tabPageLog.SuspendLayout();
             this.trayContextMenuStrip.SuspendLayout();
+            this.tabPageOnline.SuspendLayout();
             this.SuspendLayout();
             // 
             // statusStrip
@@ -92,10 +95,11 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabPageItems);
             this.tabControl1.Controls.Add(this.tabPageMods);
+            this.tabControl1.Controls.Add(this.tabPageOnline);
             this.tabControl1.Controls.Add(this.tabPageBackups);
             this.tabControl1.Controls.Add(this.tabPageBuddy);
             this.tabControl1.Controls.Add(this.tabPageSettings);
-            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPageLog);
             this.tabControl1.Location = new System.Drawing.Point(0, 1);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -213,17 +217,17 @@
             this.settingsPanel.Size = new System.Drawing.Size(1102, 560);
             this.settingsPanel.TabIndex = 0;
             // 
-            // tabPage1
+            // tabPageLog
             // 
-            this.tabPage1.Controls.Add(this.panelLogging);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1098, 560);
-            this.tabPage1.TabIndex = 6;
-            this.tabPage1.Tag = "iatag_ui_tab_log";
-            this.tabPage1.Text = "Log";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.tabPageLog.Controls.Add(this.panelLogging);
+            this.tabPageLog.Location = new System.Drawing.Point(4, 22);
+            this.tabPageLog.Name = "tabPageLog";
+            this.tabPageLog.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageLog.Size = new System.Drawing.Size(1098, 560);
+            this.tabPageLog.TabIndex = 6;
+            this.tabPageLog.Tag = "iatag_ui_tab_log";
+            this.tabPageLog.Text = "Log";
+            this.tabPageLog.UseVisualStyleBackColor = true;
             // 
             // panelLogging
             // 
@@ -267,6 +271,27 @@
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
+            // tabPageOnline
+            // 
+            this.tabPageOnline.Controls.Add(this.onlinePanel);
+            this.tabPageOnline.Location = new System.Drawing.Point(4, 22);
+            this.tabPageOnline.Name = "tabPageOnline";
+            this.tabPageOnline.Size = new System.Drawing.Size(1098, 560);
+            this.tabPageOnline.TabIndex = 7;
+            this.tabPageOnline.Tag = "iatag_ui_tab_online";
+            this.tabPageOnline.Text = "Online";
+            this.tabPageOnline.UseVisualStyleBackColor = true;
+            // 
+            // onlinePanel
+            // 
+            this.onlinePanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.onlinePanel.Location = new System.Drawing.Point(-2, 0);
+            this.onlinePanel.Name = "onlinePanel";
+            this.onlinePanel.Size = new System.Drawing.Size(1102, 560);
+            this.onlinePanel.TabIndex = 1;
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -288,8 +313,9 @@
             this.tabPageBackups.ResumeLayout(false);
             this.tabPageBuddy.ResumeLayout(false);
             this.tabPageSettings.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
+            this.tabPageLog.ResumeLayout(false);
             this.trayContextMenuStrip.ResumeLayout(false);
+            this.tabPageOnline.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -313,8 +339,10 @@
         private System.Windows.Forms.TabPage tabPageMods;
         private System.Windows.Forms.Panel modsPanel;
         private System.Windows.Forms.Panel searchPanel;
-        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage tabPageLog;
         private System.Windows.Forms.Panel panelLogging;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
+        private System.Windows.Forms.TabPage tabPageOnline;
+        private System.Windows.Forms.Panel onlinePanel;
     }
 }

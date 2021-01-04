@@ -68,7 +68,7 @@ namespace IAGrim.UI {
         private ItemTransferController _transferController;
         private readonly RecipeParser _recipeParser;
         private readonly ParsingService _parsingService;
-        private AuthService _authAuthService;
+        private AuthService _authService;
         private BackupServiceWorker _backupServiceWorker;
         private readonly UserFeedbackService _userFeedbackService;
         private MinimizeToTrayHandler _minimizeToTrayHandler;
@@ -428,9 +428,13 @@ namespace IAGrim.UI {
             addAndShow(_buddySettingsWindow, buddyPanel);
 
             var databaseSettingDao = _serviceProvider.Get<IDatabaseSettingDao>();
-            _authAuthService = new AuthService(_cefBrowserHandler, new AuthenticationProvider(settingsService), playerItemDao);
-            var backupSettings = new BackupSettings(playerItemDao, _authAuthService, settingsService, _cefBrowserHandler);
+            _authService = new AuthService(_cefBrowserHandler, new AuthenticationProvider(settingsService), playerItemDao);
+            var backupSettings = new BackupSettings(playerItemDao, settingsService, _cefBrowserHandler);
             addAndShow(backupSettings, backupPanel);
+
+            var onlineSettings = new OnlineSettings(playerItemDao, _authService, settingsService, _cefBrowserHandler);
+            addAndShow(onlineSettings, onlinePanel);
+
             addAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, playerItemDao, _parsingService, databaseSettingDao, grimDawnDetector, settingsService, _cefBrowserHandler), modsPanel);
 
             if (!BlockedLogsDetection.DreamcrashBlocked()) {
@@ -438,7 +442,7 @@ namespace IAGrim.UI {
             }
 
             var itemTagDao = _serviceProvider.Get<IItemTagDao>();
-            var backupService = new BackupService(_authAuthService, playerItemDao, settingsService);
+            var backupService = new BackupService(_authService, playerItemDao, settingsService);
             _backupServiceWorker = new BackupServiceWorker(backupService);
             backupService.OnUploadComplete += (o, args) => _searchWindow.UpdateListView();
             searchController.OnSearch += (o, args) => backupService.OnSearch();
@@ -480,7 +484,7 @@ namespace IAGrim.UI {
                 buddyItemDao,
                 3 * 60 * 1000,
                 settingsService,
-                _authAuthService,
+                _authService,
                 buddySubscriptionDao
             );
 
@@ -544,13 +548,13 @@ namespace IAGrim.UI {
 
 
             // Popup login diag
-            if (_authAuthService.CheckAuthentication() == AuthService.AccessStatus.Unauthorized && !settingsService.GetLocal().OptOutOfBackups) {
+            if (_authService.CheckAuthentication() == AuthService.AccessStatus.Unauthorized && !settingsService.GetLocal().OptOutOfBackups) {
                 if (!BlockedLogsDetection.DreamcrashBlocked()) {
                     // Backup login wont work
                     var t = new System.Windows.Forms.Timer {Interval = 100};
                     t.Tick += (o, args) => {
                         if (_cefBrowserHandler.BrowserControl.CanExecuteJavascriptInMainFrame) {
-                            _authAuthService.Authenticate();
+                            _authService.Authenticate();
                             t.Stop();
                         }
                     };

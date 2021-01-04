@@ -443,6 +443,7 @@ namespace StatTranslator {
             {"iatag_ui_viewbackups", "View Backups"},
             {"iatag_ui_viewlogs", "View Logs"},
             {"iatag_ui_tab_mods", "Grim Dawn"},
+            {"iatag_ui_tab_online", "Online" },
             {"iatag_ui_mods_header", "Grim Dawn Database"},
             {"iatag_ui_mod_database_mods_header", "Mod"},
             {"iatag_ui_mod_path", "Path"},
