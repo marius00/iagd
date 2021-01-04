@@ -29,7 +29,7 @@ namespace IAGrim.Database {
                         .SetParameter("id", buddyId)
                         .ExecuteUpdate();
 
-                    session.CreateQuery($"DELETE FROM {BuddySubscriptionTable.Table} WHERE {BuddySubscriptionTable.Id} = :id")
+                    session.CreateSQLQuery($"DELETE FROM {BuddySubscriptionTable.Table} WHERE {BuddySubscriptionTable.Id} = :id")
                         .SetParameter("id", buddyId)
                         .ExecuteUpdate();
 
