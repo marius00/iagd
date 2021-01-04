@@ -9,7 +9,6 @@ namespace IAGrim.Settings.Dto {
         public event EventHandler OnMutate;
 
         private long? _buddySyncUserIdV3;
-        private string _buddySyncDescription;
         private bool _buddySyncEnabled;
 
         // Settings
@@ -79,14 +78,6 @@ namespace IAGrim.Settings.Dto {
             get => _buddySyncUserIdV3;
             set {
                 _buddySyncUserIdV3 = value;
-                OnMutate?.Invoke(null, null);
-            }
-        }
-
-        public string BuddySyncDescription {
-            get => _buddySyncDescription;
-            set {
-                _buddySyncDescription = value;
                 OnMutate?.Invoke(null, null);
             }
         }

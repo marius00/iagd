@@ -111,7 +111,6 @@ namespace IAGrim.UI
         }
 
         private void LanguagePackPicker_Load(object sender, EventArgs e) {
-
             LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
             var loc = new LocalizationLoader();
 

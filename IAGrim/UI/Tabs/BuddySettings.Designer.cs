@@ -26,26 +26,19 @@
             this.components = new System.ComponentModel.Container();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.contextMenuStripDescription = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.panelBox3 = new PanelBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.helpWhatIsThis = new System.Windows.Forms.LinkLabel();
             this.label1 = new System.Windows.Forms.Label();
-            this.descriptionLabel = new System.Windows.Forms.Label();
             this.firefoxButton2 = new FirefoxButton();
             this.buddyId = new System.Windows.Forms.TextBox();
             this.useridLabel = new System.Windows.Forms.Label();
             this.buddyList = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.tbDescription = new System.Windows.Forms.TextBox();
             this.panelBox1 = new PanelBox();
-            this.buttonSyncNow = new FirefoxButton();
             this.buddySyncEnabled = new FirefoxCheckBox();
-            this.helpWhatIsThis = new System.Windows.Forms.LinkLabel();
             this.contextMenuStrip1.SuspendLayout();
-            this.contextMenuStripDescription.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.panelBox3.SuspendLayout();
             this.panelBox1.SuspendLayout();
@@ -66,21 +59,6 @@
             this.deleteToolStripMenuItem.Text = "Delete";
             this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
             // 
-            // contextMenuStripDescription
-            // 
-            this.contextMenuStripDescription.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.editToolStripMenuItem});
-            this.contextMenuStripDescription.Name = "contextMenuStripDescription";
-            this.contextMenuStripDescription.Size = new System.Drawing.Size(95, 26);
-            this.contextMenuStripDescription.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStripDescription_Opening);
-            // 
-            // editToolStripMenuItem
-            // 
-            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
-            this.editToolStripMenuItem.Size = new System.Drawing.Size(94, 22);
-            this.editToolStripMenuItem.Text = "Edit";
-            this.editToolStripMenuItem.Click += new System.EventHandler(this.editToolStripMenuItem_Click);
-            // 
             // errorProvider1
             // 
             this.errorProvider1.ContainerControl = this;
@@ -90,16 +68,16 @@
             this.panelBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
             this.panelBox3.Controls.Add(this.helpWhatIsThis);
-            this.panelBox3.Controls.Add(this.button1);
             this.panelBox3.Controls.Add(this.label1);
-            this.panelBox3.Controls.Add(this.descriptionLabel);
             this.panelBox3.Controls.Add(this.firefoxButton2);
             this.panelBox3.Controls.Add(this.buddyId);
             this.panelBox3.Controls.Add(this.useridLabel);
             this.panelBox3.Controls.Add(this.buddyList);
-            this.panelBox3.Controls.Add(this.tbDescription);
             this.panelBox3.Font = new System.Drawing.Font("Segoe UI Semibold", 20F);
+            this.panelBox3.ForeColor = System.Drawing.Color.Black;
+            this.panelBox3.HeaderColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(231)))), ((int)(((byte)(231)))));
             this.panelBox3.HeaderHeight = 40;
             this.panelBox3.Location = new System.Drawing.Point(12, 12);
             this.panelBox3.Name = "panelBox3";
@@ -110,17 +88,19 @@
             this.panelBox3.Text = "Buddies";
             this.panelBox3.TextLocation = "8; 5";
             // 
-            // button1
+            // helpWhatIsThis
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button1.BackgroundImage = global::IAGrim.Properties.Resources.edit;
-            this.button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.button1.Location = new System.Drawing.Point(2, 352);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(20, 20);
-            this.button1.TabIndex = 7;
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.helpWhatIsThis.AutoSize = true;
+            this.helpWhatIsThis.BackColor = System.Drawing.Color.Transparent;
+            this.helpWhatIsThis.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.helpWhatIsThis.Location = new System.Drawing.Point(119, 20);
+            this.helpWhatIsThis.Name = "helpWhatIsThis";
+            this.helpWhatIsThis.Size = new System.Drawing.Size(73, 13);
+            this.helpWhatIsThis.TabIndex = 9;
+            this.helpWhatIsThis.TabStop = true;
+            this.helpWhatIsThis.Tag = "iatag_ui_whatisthis";
+            this.helpWhatIsThis.Text = "What is this?";
+            this.helpWhatIsThis.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpWhatIsThis_LinkClicked);
             // 
             // label1
             // 
@@ -134,24 +114,17 @@
             this.label1.Tag = "iatag_ui_buddy_descriptive_help_text";
             this.label1.Text = "Enabling buddy items lets your friends see which items you have.";
             // 
-            // descriptionLabel
-            // 
-            this.descriptionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.descriptionLabel.AutoSize = true;
-            this.descriptionLabel.ContextMenuStrip = this.contextMenuStripDescription;
-            this.descriptionLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 8F);
-            this.descriptionLabel.Location = new System.Drawing.Point(22, 355);
-            this.descriptionLabel.Name = "descriptionLabel";
-            this.descriptionLabel.Size = new System.Drawing.Size(36, 13);
-            this.descriptionLabel.TabIndex = 7;
-            this.descriptionLabel.Text = "label1";
-            // 
             // firefoxButton2
             // 
             this.firefoxButton2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.firefoxButton2.BackColorDefault = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
+            this.firefoxButton2.BackColorOverride = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(245)))), ((int)(((byte)(245)))));
+            this.firefoxButton2.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
             this.firefoxButton2.EnabledCalc = true;
             this.firefoxButton2.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.firefoxButton2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
+            this.firefoxButton2.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(232)))), ((int)(((byte)(232)))), ((int)(((byte)(232)))));
+            this.firefoxButton2.HoverForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
             this.firefoxButton2.Location = new System.Drawing.Point(353, 276);
             this.firefoxButton2.Name = "firefoxButton2";
             this.firefoxButton2.Size = new System.Drawing.Size(160, 25);
@@ -215,25 +188,15 @@
             this.columnHeader2.Text = "Items";
             this.columnHeader2.Width = 161;
             // 
-            // tbDescription
-            // 
-            this.tbDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.tbDescription.Font = new System.Drawing.Font("Arial", 8F);
-            this.tbDescription.Location = new System.Drawing.Point(22, 352);
-            this.tbDescription.MaxLength = 32;
-            this.tbDescription.Name = "tbDescription";
-            this.tbDescription.Size = new System.Drawing.Size(192, 20);
-            this.tbDescription.TabIndex = 7;
-            this.tbDescription.Visible = false;
-            this.tbDescription.TextChanged += new System.EventHandler(this.tbDescription_TextChanged);
-            // 
             // panelBox1
             // 
             this.panelBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelBox1.Controls.Add(this.buttonSyncNow);
+            this.panelBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
             this.panelBox1.Controls.Add(this.buddySyncEnabled);
             this.panelBox1.Font = new System.Drawing.Font("Segoe UI Semibold", 20F);
+            this.panelBox1.ForeColor = System.Drawing.Color.Black;
+            this.panelBox1.HeaderColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(231)))), ((int)(((byte)(231)))));
             this.panelBox1.HeaderHeight = 40;
             this.panelBox1.Location = new System.Drawing.Point(549, 12);
             this.panelBox1.Name = "panelBox1";
@@ -244,26 +207,13 @@
             this.panelBox1.Text = "Configuration";
             this.panelBox1.TextLocation = "8; 5";
             // 
-            // buttonSyncNow
-            // 
-            this.buttonSyncNow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonSyncNow.EnabledCalc = true;
-            this.buttonSyncNow.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.buttonSyncNow.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
-            this.buttonSyncNow.Location = new System.Drawing.Point(20, 360);
-            this.buttonSyncNow.Name = "buttonSyncNow";
-            this.buttonSyncNow.Size = new System.Drawing.Size(192, 32);
-            this.buttonSyncNow.TabIndex = 6;
-            this.buttonSyncNow.Tag = "iatag_ui_syncnow";
-            this.buttonSyncNow.Text = "Sync Now";
-            this.buttonSyncNow.Click += new System.EventHandler(this.buttonSyncNow_Click);
-            // 
             // buddySyncEnabled
             // 
             this.buddySyncEnabled.Bold = false;
             this.buddySyncEnabled.EnabledCalc = true;
             this.buddySyncEnabled.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.buddySyncEnabled.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.buddySyncEnabled.IsDarkMode = false;
             this.buddySyncEnabled.Location = new System.Drawing.Point(3, 49);
             this.buddySyncEnabled.Name = "buddySyncEnabled";
             this.buddySyncEnabled.Size = new System.Drawing.Size(160, 27);
@@ -271,27 +221,13 @@
             this.buddySyncEnabled.Tag = "iatag_ui_enabled";
             this.buddySyncEnabled.Text = "Enabled";
             // 
-            // helpWhatIsThis
-            // 
-            this.helpWhatIsThis.AutoSize = true;
-            this.helpWhatIsThis.BackColor = System.Drawing.Color.Transparent;
-            this.helpWhatIsThis.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.helpWhatIsThis.Location = new System.Drawing.Point(119, 20);
-            this.helpWhatIsThis.Name = "helpWhatIsThis";
-            this.helpWhatIsThis.Size = new System.Drawing.Size(73, 13);
-            this.helpWhatIsThis.TabIndex = 9;
-            this.helpWhatIsThis.TabStop = true;
-            this.helpWhatIsThis.Tag = "iatag_ui_whatisthis";
-            this.helpWhatIsThis.Text = "What is this?";
-            this.helpWhatIsThis.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpWhatIsThis_LinkClicked);
-            // 
             // BuddySettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(791, 422);
-            this.Controls.Add(this.panelBox3);
             this.Controls.Add(this.panelBox1);
+            this.Controls.Add(this.panelBox3);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -301,7 +237,6 @@
             this.Text = "BuddySettings";
             this.Load += new System.EventHandler(this.BuddySettings_Load);
             this.contextMenuStrip1.ResumeLayout(false);
-            this.contextMenuStripDescription.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
             this.panelBox3.ResumeLayout(false);
             this.panelBox3.PerformLayout();
@@ -323,14 +258,8 @@
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
         private FirefoxButton firefoxButton2;
         private System.Windows.Forms.TextBox buddyId;
-        private FirefoxButton buttonSyncNow;
-        private System.Windows.Forms.TextBox tbDescription;
-        private System.Windows.Forms.Label descriptionLabel;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStripDescription;
-        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ErrorProvider errorProvider1;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.LinkLabel helpWhatIsThis;
     }
 }

@@ -49,29 +49,13 @@ namespace IAGrim.UI {
 
             UID = _settingsService.GetPersistent().BuddySyncUserIdV3 ?? 0L;
 
-            tbDescription.Text = _settingsService.GetPersistent().BuddySyncDescription;
-            descriptionLabel.Text = $"Name: {tbDescription.Text}";
 
             buddyId.KeyPress += buddyId_KeyPress;
-            tbDescription.KeyPress += tbDescription_KeyPress;
-            tbDescription.LostFocus += tbDescription_LostFocus;
             buddySyncEnabled.CheckedChanged += buddySyncEnabled_CheckedChanged;
 
             // Allows 2nd column to auto-size to the width of the column heading
             // Source: https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.columnheader.width
             buddyList.Columns[1].Width = -2;
-        }
-
-        void tbDescription_LostFocus(object sender, EventArgs e) {
-            tbDescription.Visible = false;
-            descriptionLabel.Visible = true;
-        }
-
-        void tbDescription_KeyPress(object sender, KeyPressEventArgs e) {
-            if (e.KeyChar == 13) {
-                tbDescription.Visible = false;
-                descriptionLabel.Visible = true;
-            }
         }
 
         void buddyId_KeyPress(object sender, KeyPressEventArgs e) {
@@ -110,7 +94,7 @@ namespace IAGrim.UI {
         /// <summary>
         /// Update the list of buddies
         /// </summary>
-        public void UpdateBuddyList() {
+        private void UpdateBuddyList() {
             buddyList.Items.Clear();
 
             // TODO: Wrap in a DAO
@@ -165,63 +149,16 @@ namespace IAGrim.UI {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void buddySyncEnabled_CheckedChanged(object sender, EventArgs e) {
-            _delayedTextChangedTimer?.Stop();
 
-            _delayedTextChangedTimer = new Timer();
-            _delayedTextChangedTimer.Tick += new EventHandler(DelayedActivate);
-            _delayedTextChangedTimer.Interval = 1200;
-            _delayedTextChangedTimer.Start();
-
+            _settingsService.GetPersistent().BuddySyncEnabled = buddySyncEnabled.Checked;
             UpdateEnabledStatus();
         }
 
         private void UpdateEnabledStatus() {
-            buttonSyncNow.Enabled = buddySyncEnabled.Checked;
             buddyId.Enabled = buddySyncEnabled.Checked;
             firefoxButton2.Enabled = buddySyncEnabled.Checked;
             buddyList.Enabled = buddySyncEnabled.Checked;
-            descriptionLabel.Enabled = buddySyncEnabled.Checked;
-            tbDescription.Enabled = buddySyncEnabled.Checked;
-            contextMenuStripDescription.Enabled = buddySyncEnabled.Checked;
             useridLabel.Enabled = buddySyncEnabled.Checked;
-        }
-
-        private void DelayedActivate(object sender, EventArgs e) {
-            ExceptionReporter.EnableLogUnhandledOnThread();
-            if (_delayedTextChangedTimer != null) {
-                _delayedTextChangedTimer.Stop();
-                _delayedTextChangedTimer = null;
-            }
-
-            _settingsService.GetPersistent().BuddySyncEnabled = buddySyncEnabled.Checked;
-        }
-
-
-        private void buttonSyncNow_Click(object sender, EventArgs e) {
-            if (buddySyncEnabled.Checked) {
-                _settingsService.GetPersistent().BuddySyncEnabled = true;
-            }
-        }
-
-        private void tbDescription_TextChanged(object sender, EventArgs e) {
-            var tb = sender as TextBox;
-
-            _settingsService.GetPersistent().BuddySyncDescription = tb.Text;
-            descriptionLabel.Text = $"{RuntimeSettings.Language.GetTag("iatag_ui_buddy_userid_name")}{tb.Text}";
-        }
-
-        private void editToolStripMenuItem_Click(object sender, EventArgs e) {
-            tbDescription.Visible = true;
-            descriptionLabel.Visible = false;
-            tbDescription.Focus();
-        }
-
-        private void contextMenuStripDescription_Opening(object sender, CancelEventArgs e) {
-            e.Cancel = !buddySyncEnabled.Checked;
-        }
-
-        private void button1_Click(object sender, EventArgs e) {
-            editToolStripMenuItem_Click(sender, e);
         }
 
         private void helpWhatIsThis_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {

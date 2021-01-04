@@ -424,6 +424,24 @@ const helpEntries = [
     type: IHelpEntryType.Informational
   },
   {
+    title: `BuddyItems: What is a buddy id?`,
+    tag: 'WhatIsBuddyId',
+    body: () => <div>
+      When logging into online backups, a random number is assigned to your account.<br/>
+      This number can then be sent to your buddies, to let them search your items without needing to know your email.
+    </div>,
+    type: IHelpEntryType.Informational
+  },
+  {
+    title: `BuddyItems: What is a buddy nickname?`,
+    tag: 'WhatIsBuddyNickname',
+    body: () => <div>
+      The buddy nickname is a text label to help you identify which buddy this is.<br />
+      This field can contain anything, but it cannot be empty.
+    </div>,
+    type: IHelpEntryType.Informational
+  },
+  {
     title: `Settings: What is regular updates?`,
     tag: 'RegularUpdates',
     body: () => <div>

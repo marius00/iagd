@@ -94,7 +94,10 @@ namespace IAGrim.Backup.Cloud.Service {
         private AccessStatus Migrate() {
             try {
                 Logger.Info("Starting migration to new backup provider");
-                var httpClient = new HttpClient {Timeout = TimeSpan.FromSeconds(15)};
+                var httpClient = new HttpClient(new HttpClientHandler {
+                    AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+                }) {Timeout = TimeSpan.FromSeconds(15)};
+
                 var url = Uris.MigrateUrl + "?token=" + _authenticationProvider.GetLegacyToken();
                 var result = httpClient.GetAsync(url).Result;
                 var status = result.StatusCode;
@@ -104,7 +107,7 @@ namespace IAGrim.Backup.Cloud.Service {
                     var body = result.Content.ReadAsStringAsync().Result;
                     var accessToken = JsonConvert.DeserializeObject<MigrateResponseType>(body);
                     _authenticationProvider.SetToken(accessToken.Email, accessToken.Token);
-                    
+
                     return AccessStatus.Authorized;
                 }
                 else if (status == HttpStatusCode.Unauthorized || status == HttpStatusCode.Forbidden) {
@@ -119,7 +122,7 @@ namespace IAGrim.Backup.Cloud.Service {
                 else {
                     Logger.Error($"Got Status {result} migrating authentication token");
                     ExceptionReporter.ReportIssue($"Server response {result} migrating access oken");
-                    
+
                     return AccessStatus.Unknown;
                 }
             }
@@ -209,11 +212,11 @@ namespace IAGrim.Backup.Cloud.Service {
         public RestService GetRestService() {
             if (CheckAuthentication() == AccessStatus.Authorized) {
                 var token = _authenticationProvider.GetToken();
-                
+
                 HttpClientHandler handler = new HttpClientHandler() {
                     AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
                 };
-                
+
                 var httpClient = new HttpClient(handler);
                 httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", token);
                 httpClient.DefaultRequestHeaders.TryAddWithoutValidation("X-Api-User", _authenticationProvider.GetUser());

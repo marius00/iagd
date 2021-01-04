@@ -21,10 +21,11 @@ namespace IAGrim.BuddyShare {
         private bool _disposed = false;
 
         private readonly IBuddyItemDao _buddyItemDao;
-        private readonly ActionCooldown _cooldown;
+        private readonly Dictionary<long, ActionCooldown> _cooldowns = new Dictionary<long, ActionCooldown>();
         private readonly SettingsService _settings;
         private readonly AuthService _authService;
         private readonly IBuddySubscriptionDao _subscriptionRepo;
+        private readonly long _defaultCooldown;
 
         public BuddyItemsService(
             IBuddyItemDao buddyItemDao,
@@ -37,7 +38,7 @@ namespace IAGrim.BuddyShare {
             _settings = settings;
             _authService = authService;
             _subscriptionRepo = subscriptionRepo;
-            _cooldown = new ActionCooldown(cooldown);
+            _defaultCooldown = cooldown;
 
             _bw.DoWork += new DoWorkEventHandler(bw_DoWork);
             _bw.WorkerSupportsCancellation = true;
@@ -57,31 +58,31 @@ namespace IAGrim.BuddyShare {
             BackgroundWorker worker = sender as BackgroundWorker;
             while (!worker.CancellationPending) {
                 try {
-                    Thread.Sleep(100);
-
-                    if (!_settings.GetPersistent().BuddySyncEnabled) continue;
-
+                    Thread.Sleep(5000);
 
                     var missingNames = _buddyItemDao.ListItemsWithMissingName();
                     _buddyItemDao.UpdateNames(missingNames);
 
                     if (_authService.GetRestService() == null) {
                         Logger.Info("Not logged into online backups, skipping buddy sync");
-                        _cooldown.Reset();
+                        _cooldowns.Clear();
                         continue;
                     }
                     
-                    if (!_cooldown.IsReady) continue;
-                    
-
                     var subscriptions = _subscriptionRepo.ListAll();
                     foreach (var subscription in subscriptions) {
+                        // Cooldown per user (so that newly added ones gets fetched fairly fast)
+                        if (!_cooldowns.ContainsKey(subscription.Id)) {
+                            _cooldowns[subscription.Id] = new ActionCooldown(_defaultCooldown);
+                        }
+                        if (!_cooldowns[subscription.Id].IsReady) continue;
+
                         Logger.Debug($"Downloading items for buddy {subscription.Nickname} ({subscription.Id}) with TS > {subscription.LastSyncTimestamp}");
                         SyncDown(subscription);
-
-                        // TODO: Update names etc
+                        _cooldowns[subscription.Id].Reset();
                     }
 
+                    // Fetch own buddy id, if missing.
                     var buddyId = _settings.GetPersistent().BuddySyncUserIdV3;
                     if (!buddyId.HasValue || buddyId <= 0) {
                         Logger.Info("Fetching own buddy ID from cloud");
@@ -89,7 +90,6 @@ namespace IAGrim.BuddyShare {
                         _settings.GetPersistent().BuddySyncUserIdV3 = id.Id;
                     }
 
-                    _cooldown.Reset();
                 }
                 catch (NullReferenceException ex) {
                     Logger.Info("The following exception is logged, but can safely be ignored:");

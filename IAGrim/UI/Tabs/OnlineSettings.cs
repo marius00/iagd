@@ -2,9 +2,11 @@
 
 using System.Windows.Forms;
 using IAGrim.Backup.Cloud.Service;
+using IAGrim.Database;
 using IAGrim.Database.Interfaces;
 using IAGrim.Services;
 using IAGrim.Settings;
+using IAGrim.UI.Popups;
 using IAGrim.Utilities;
 using IAGrim.Utilities.Detection;
 using log4net;
@@ -17,13 +19,17 @@ namespace IAGrim.UI.Tabs {
         private readonly SettingsService _settings;
         private readonly CloudSyncService _cloudSyncService;
         private readonly IHelpService _helpService;
+        private readonly IBuddyItemDao _buddyItemDao;
+        private readonly IBuddySubscriptionDao _buddySubscriptionDao;
 
-        public OnlineSettings(IPlayerItemDao playerItemDao, AuthService authAuthService, SettingsService settings, IHelpService helpService) {
+        public OnlineSettings(IPlayerItemDao playerItemDao, AuthService authAuthService, SettingsService settings, IHelpService helpService, IBuddyItemDao buddyItemDao, IBuddySubscriptionDao buddySubscriptionDao) {
             InitializeComponent();
             _playerItemDao = playerItemDao;
             _settings = settings;
             _helpService = helpService;
-            
+            _buddyItemDao = buddyItemDao;
+            _buddySubscriptionDao = buddySubscriptionDao;
+
             _authAuthService = authAuthService;
             _cloudSyncService = new CloudSyncService(authAuthService.GetRestService());
 
@@ -34,6 +40,7 @@ namespace IAGrim.UI.Tabs {
             if (status == AuthService.AccessStatus.Authorized) {
                 labelStatus.Text = RuntimeSettings.Language.GetTag("iatag_ui_backup_loggedinas", _settings.GetPersistent().CloudUser);
                 buttonLogin.Enabled = false;
+                _settings.GetLocal().OptOutOfBackups = false;
             }
             else if (status == AuthService.AccessStatus.Unknown) {
                 labelStatus.Text = RuntimeSettings.Language.GetTag("iatag_ui_backup_statusunknown");
@@ -46,7 +53,19 @@ namespace IAGrim.UI.Tabs {
 
             linkLogout.Enabled = !buttonLogin.Enabled;
             linkDeleteBackup.Enabled = !buttonLogin.Enabled;
-            buttonLogin.Visible = !BlockedLogsDetection.DreamcrashBlocked();
+            cbDontWantBackups.Visible = buttonLogin.Enabled; // Hide "I dont want backups" button if already logged in
+            groupBoxBackupDetails.Visible = !cbDontWantBackups.Checked; // No point displaying info if user has opted for zero features
+            pbBuddyItems.Visible = !cbDontWantBackups.Checked;
+            btnAddBuddy.Enabled = !buttonLogin.Enabled;
+            buddyList.Enabled = !buttonLogin.Enabled;
+            if (buddyList.Enabled) UpdateBuddyList();
+
+
+            var buddyId = _settings.GetPersistent().BuddySyncUserIdV3;
+            if (buddyId.HasValue && buddyId > 0)
+                labelBuddyId.Text = buddyId.ToString();
+            else
+                labelBuddyId.Text = "-";
         }
 
 
@@ -54,8 +73,16 @@ namespace IAGrim.UI.Tabs {
             Dock = DockStyle.Fill;
             cbDontWantBackups.Checked = _settings.GetLocal().OptOutOfBackups;
             buttonLogin.Enabled = !_settings.GetLocal().OptOutOfBackups;
+
+
+            // Allows 2nd column to auto-size to the width of the column heading
+            // Source: https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.columnheader.width
+            buddyList.Columns[1].Width = -2;
+            
+            
             UpdateUi();
         }
+        
         private void firefoxButton1_Click(object sender, EventArgs e) {
             if ((sender as FirefoxButton).EnabledCalc) {
                 var access = _authAuthService.CheckAuthentication();
@@ -148,5 +175,77 @@ namespace IAGrim.UI.Tabs {
             UpdateUi();
         }
 
+
+
+        /// <summary>
+        /// Update the list of buddies
+        /// </summary>
+        public void UpdateBuddyList() {
+            buddyList.Items.Clear();
+
+            var subscriptions = _buddySubscriptionDao.ListAll();
+            foreach (var subscription in subscriptions) {
+                var label = subscription.Id.ToString();
+                var stash = subscription.Nickname;
+
+                if (stash != null) {
+                    label = $"[{label}] {stash}";
+                }
+
+                var numItems = _buddyItemDao.GetNumItems(subscription.Id);
+
+                var lvi = new ListViewItem(label);
+                lvi.SubItems.Add(numItems.ToString());
+                lvi.Tag = subscription.Id;
+                buddyList.Items.Add(lvi);
+            }
+        }
+
+        private void helpWhatIsThis_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            _helpService.ShowHelp(HelpService.HelpType.BuddyItems);
+        }
+
+        private void linkLabel1_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e) {
+            _helpService.ShowHelp(HelpService.HelpType.OnlineBackups);
+        }
+
+        private void btnAddBuddy_Click(object sender, EventArgs e) {
+            var diag = new AddEditBuddy(_helpService);
+            if (diag.ShowDialog() == DialogResult.OK) {
+                bool isMyself = diag.BuddyId == _settings.GetPersistent().BuddySyncUserIdV3;
+                if (diag.BuddyId > 0 && !isMyself) {
+                    _buddySubscriptionDao.SaveOrUpdate(new BuddySubscription { Id = diag.BuddyId, Nickname = diag.Nickname });
+                }
+                
+                UpdateBuddyList();
+            }
+        }
+
+        private void buddyItemListContextMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e) {
+            e.Cancel = false;
+        }
+
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e) {
+            foreach (ListViewItem item in buddyList.SelectedItems) {
+                if (item != null && long.TryParse(item.Tag.ToString(), out var id)) {
+                    _buddyItemDao.RemoveBuddy(id);
+                    UpdateBuddyList();
+                }
+            }
+        }
+
+        private void editToolStripMenuItem_Click(object sender, EventArgs e) {
+            foreach (ListViewItem item in buddyList.SelectedItems) {
+                if (item != null && long.TryParse(item.Tag.ToString(), out var id)) {
+                    var diag = new AddEditBuddy(_helpService) { BuddyId = id };
+                    if (diag.ShowDialog() == DialogResult.OK) {
+                        var entry = _buddySubscriptionDao.GetById(diag.BuddyId);
+                        entry.Nickname = diag.Nickname;
+                        _buddySubscriptionDao.Update(entry);
+                    }
+                    UpdateBuddyList();
+                }
+            }
+        }
     }
 }

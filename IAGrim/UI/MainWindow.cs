@@ -432,9 +432,10 @@ namespace IAGrim.UI {
             var backupSettings = new BackupSettings(playerItemDao, settingsService, _cefBrowserHandler);
             addAndShow(backupSettings, backupPanel);
 
-            var onlineSettings = new OnlineSettings(playerItemDao, _authService, settingsService, _cefBrowserHandler);
+            // TODO: buttonLogin.Visible = !BlockedLogsDetection.DreamcrashBlocked();
+            var onlineSettings = new OnlineSettings(playerItemDao, _authService, settingsService, _cefBrowserHandler, buddyItemDao, buddySubscriptionDao);
             addAndShow(onlineSettings, onlinePanel);
-
+            
             addAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, playerItemDao, _parsingService, databaseSettingDao, grimDawnDetector, settingsService, _cefBrowserHandler), modsPanel);
 
             if (!BlockedLogsDetection.DreamcrashBlocked()) {

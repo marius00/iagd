@@ -25,7 +25,10 @@ namespace IAGrim.Services {
             DeleteDuplicates,
             MultiplePcs,
             RegularUpdates,
-            ExperimentalUpdates
+            ExperimentalUpdates,
+            WhatIsBuddyId,
+            WhatIsBuddyNickname,
+            OnlineBackups
 
         }
 

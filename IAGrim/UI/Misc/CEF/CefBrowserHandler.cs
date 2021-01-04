@@ -31,7 +31,7 @@ namespace IAGrim.UI.Misc.CEF {
         }
 
         public void ShowHelp(HelpService.HelpType type) {
-            if (BrowserControl.CanExecuteJavascriptInMainFrame) {
+            if (BrowserControl != null && BrowserControl.CanExecuteJavascriptInMainFrame) {
                 BrowserControl.ExecuteScriptAsync("window.showHelp", type.ToString());
                 _tabControl.SelectedIndex = 0;
             }
@@ -63,7 +63,7 @@ namespace IAGrim.UI.Misc.CEF {
         }
 
         public void ShowLoadingAnimation() {
-            if (BrowserControl.CanExecuteJavascriptInMainFrame) {
+            if (BrowserControl != null && BrowserControl.CanExecuteJavascriptInMainFrame) {
                 BrowserControl.ExecuteScriptAsync("window.setIsLoading", true);
             }
             else {
@@ -73,7 +73,7 @@ namespace IAGrim.UI.Misc.CEF {
         }
         
         public void SetItems(List<JsonItem> items) {
-            if (BrowserControl.CanExecuteJavascriptInMainFrame) {
+            if (BrowserControl != null && BrowserControl.CanExecuteJavascriptInMainFrame) {
                 BrowserControl.ExecuteScriptAsync("window.setItems", JsonConvert.SerializeObject(items, _settings));
             }
             else {
