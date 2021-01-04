@@ -1,6 +1,7 @@
 .help {
   margin: 15px;
   padding-bottom: 50px;
+  color: #c3c3c3;
 }
 
 .help .container {
@@ -13,7 +14,7 @@
 
 .help .header {
   color: #333;
-  background-color: #f5f5f5;
+  background-color: #eae9e9;
   border-color: #ddd;
   font-size: 16px;
 
@@ -56,9 +57,6 @@
   max-width: 1140px;
 }
 
-.help h2 {
-  color: #ffffff;
-}
 
 .App-dark .help input {
   background-color: #000000;

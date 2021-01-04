@@ -55,7 +55,6 @@ namespace IAGrim.UI {
         private SplitSearchWindow _searchWindow;
         private TransferStashWorker _transferStashWorker;
 
-        private BuddySettings _buddySettingsWindow;
         private StashFileMonitor _stashFileMonitor = new StashFileMonitor();
 
         private Action<RegisterWindow.DataAndType> _registerWindowDelegate;
@@ -417,15 +416,6 @@ namespace IAGrim.UI {
             var buddySubscriptionDao = _serviceProvider.Get<IBuddySubscriptionDao>();
 
 
-            // Create the tab contents
-            _buddySettingsWindow = new BuddySettings(
-                buddyItemDao,
-                buddySubscriptionDao,
-                settingsService,
-                _cefBrowserHandler
-            );
-
-            addAndShow(_buddySettingsWindow, buddyPanel);
 
             var databaseSettingDao = _serviceProvider.Get<IDatabaseSettingDao>();
             _authService = new AuthService(_cefBrowserHandler, new AuthenticationProvider(settingsService), playerItemDao);

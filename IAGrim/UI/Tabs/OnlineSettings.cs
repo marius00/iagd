@@ -1,6 +1,7 @@
 ﻿using System;
-
+using System.Diagnostics;
 using System.Windows.Forms;
+using IAGrim.Backup.Cloud;
 using IAGrim.Backup.Cloud.Service;
 using IAGrim.Database;
 using IAGrim.Database.Interfaces;
@@ -246,6 +247,10 @@ namespace IAGrim.UI.Tabs {
                     UpdateBuddyList();
                 }
             }
+        }
+
+        private void linkViewOnline_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            Process.Start(Uris.OnlineItemsUrl);
         }
     }
 }

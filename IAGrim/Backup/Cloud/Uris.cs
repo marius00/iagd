@@ -31,8 +31,9 @@ namespace IAGrim.Backup.Cloud {
             GetBuddyIdUrl = $"{host}/buddyId";
 
             LoginPageUrl = "http://iagd.evilsoft.net/login";
+            OnlineItemsUrl = "http://iagd.evilsoft.net/items/";
         }
-
+        public static string OnlineItemsUrl { get; private set; }
         public static string LoginPageUrl { get; private set; }
         public static string DownloadUrl { get; private set; }
         public static string TokenVerificationUri { get; private set; }

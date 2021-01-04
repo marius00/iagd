@@ -477,12 +477,6 @@
     <Compile Include="UI\Tabs\BackupSettings.Designer.cs">
       <DependentUpon>BackupSettings.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Tabs\BuddySettings.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Tabs\BuddySettings.Designer.cs">
-      <DependentUpon>BuddySettings.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\ComboBoxItemDisabler.cs" />
     <Compile Include="UI\Controller\ISettingsController.cs" />
     <Compile Include="UI\Controller\ISettingsReadController.cs" />
@@ -662,9 +656,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Tabs\BackupSettings.resx">
       <DependentUpon>BackupSettings.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\Tabs\BuddySettings.resx">
-      <DependentUpon>BuddySettings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\DesiredSkills.resx">
       <DependentUpon>DesiredSkills.cs</DependentUpon>

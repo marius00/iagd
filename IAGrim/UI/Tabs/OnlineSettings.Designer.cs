@@ -25,8 +25,8 @@
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
             this.buddyItemListContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pbBuddyItems = new PanelBox();
             this.buddyList = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -34,8 +34,6 @@
             this.helpWhatIsThis = new System.Windows.Forms.LinkLabel();
             this.label2 = new System.Windows.Forms.Label();
             this.btnAddBuddy = new FirefoxButton();
-            this.panelBox1 = new PanelBox();
-            this.whatIsOnlineFeaturesLabel = new System.Windows.Forms.Label();
             this.onlineBackup = new PanelBox();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.groupBoxBackupDetails = new System.Windows.Forms.GroupBox();
@@ -48,9 +46,9 @@
             this.label1 = new System.Windows.Forms.Label();
             this.cbDontWantBackups = new FirefoxCheckBox();
             this.buttonLogin = new FirefoxButton();
+            this.linkViewOnline = new System.Windows.Forms.LinkLabel();
             this.buddyItemListContextMenu.SuspendLayout();
             this.pbBuddyItems.SuspendLayout();
-            this.panelBox1.SuspendLayout();
             this.onlineBackup.SuspendLayout();
             this.groupBoxBackupDetails.SuspendLayout();
             this.SuspendLayout();
@@ -64,19 +62,19 @@
             this.buddyItemListContextMenu.Size = new System.Drawing.Size(108, 48);
             this.buddyItemListContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.buddyItemListContextMenu_Opening);
             // 
-            // deleteToolStripMenuItem
-            // 
-            this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
-            this.deleteToolStripMenuItem.Text = "Delete";
-            this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
-            // 
             // editToolStripMenuItem
             // 
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.editToolStripMenuItem.Text = "Edit";
             this.editToolStripMenuItem.Click += new System.EventHandler(this.editToolStripMenuItem_Click);
+            // 
+            // deleteToolStripMenuItem
+            // 
+            this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.deleteToolStripMenuItem.Text = "Delete";
+            this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
             // 
             // pbBuddyItems
             // 
@@ -91,7 +89,7 @@
             this.pbBuddyItems.ForeColor = System.Drawing.Color.Black;
             this.pbBuddyItems.HeaderColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(231)))), ((int)(((byte)(231)))));
             this.pbBuddyItems.HeaderHeight = 40;
-            this.pbBuddyItems.Location = new System.Drawing.Point(12, 365);
+            this.pbBuddyItems.Location = new System.Drawing.Point(12, 189);
             this.pbBuddyItems.Name = "pbBuddyItems";
             this.pbBuddyItems.NoRounding = false;
             this.pbBuddyItems.Size = new System.Drawing.Size(762, 251);
@@ -178,40 +176,6 @@
             this.btnAddBuddy.Text = "Add buddy";
             this.btnAddBuddy.Click += new System.EventHandler(this.btnAddBuddy_Click);
             // 
-            // panelBox1
-            // 
-            this.panelBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
-            this.panelBox1.Controls.Add(this.whatIsOnlineFeaturesLabel);
-            this.panelBox1.Font = new System.Drawing.Font("Segoe UI Semibold", 20F);
-            this.panelBox1.ForeColor = System.Drawing.Color.Black;
-            this.panelBox1.HeaderColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(231)))), ((int)(((byte)(231)))));
-            this.panelBox1.HeaderHeight = 40;
-            this.panelBox1.Location = new System.Drawing.Point(12, 12);
-            this.panelBox1.Name = "panelBox1";
-            this.panelBox1.NoRounding = false;
-            this.panelBox1.Size = new System.Drawing.Size(762, 170);
-            this.panelBox1.TabIndex = 18;
-            this.panelBox1.Tag = "iatag_ui_onlinefeatures";
-            this.panelBox1.Text = "Online Features";
-            this.panelBox1.TextLocation = "8; 5";
-            // 
-            // whatIsOnlineFeaturesLabel
-            // 
-            this.whatIsOnlineFeaturesLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.whatIsOnlineFeaturesLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 12F);
-            this.whatIsOnlineFeaturesLabel.Location = new System.Drawing.Point(3, 50);
-            this.whatIsOnlineFeaturesLabel.Name = "whatIsOnlineFeaturesLabel";
-            this.whatIsOnlineFeaturesLabel.Size = new System.Drawing.Size(756, 109);
-            this.whatIsOnlineFeaturesLabel.TabIndex = 0;
-            this.whatIsOnlineFeaturesLabel.Tag = "iatag_ui_onlinefeatures_body";
-            this.whatIsOnlineFeaturesLabel.Text = "Online features in Item Assistant ensures that your items are automatically backe" +
-    "d up to the cloud.\r\n\r\nThe feature also gives you a unique ID which your friends " +
-    "can use to search your items.";
-            // 
             // onlineBackup
             // 
             this.onlineBackup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -225,7 +189,7 @@
             this.onlineBackup.ForeColor = System.Drawing.Color.Black;
             this.onlineBackup.HeaderColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(231)))), ((int)(((byte)(231)))));
             this.onlineBackup.HeaderHeight = 40;
-            this.onlineBackup.Location = new System.Drawing.Point(12, 188);
+            this.onlineBackup.Location = new System.Drawing.Point(12, 12);
             this.onlineBackup.Name = "onlineBackup";
             this.onlineBackup.NoRounding = false;
             this.onlineBackup.Size = new System.Drawing.Size(762, 174);
@@ -251,6 +215,7 @@
             // groupBoxBackupDetails
             // 
             this.groupBoxBackupDetails.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxBackupDetails.Controls.Add(this.linkViewOnline);
             this.groupBoxBackupDetails.Controls.Add(this.labelBuddyId);
             this.groupBoxBackupDetails.Controls.Add(this.lbBuddyId);
             this.groupBoxBackupDetails.Controls.Add(this.btnRefreshBackupDetails);
@@ -386,13 +351,26 @@
             this.buttonLogin.Text = "Login";
             this.buttonLogin.Click += new System.EventHandler(this.firefoxButton1_Click);
             // 
+            // linkViewOnline
+            // 
+            this.linkViewOnline.AutoSize = true;
+            this.linkViewOnline.BackColor = System.Drawing.Color.Transparent;
+            this.linkViewOnline.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.linkViewOnline.Location = new System.Drawing.Point(6, 107);
+            this.linkViewOnline.Name = "linkViewOnline";
+            this.linkViewOnline.Size = new System.Drawing.Size(70, 13);
+            this.linkViewOnline.TabIndex = 18;
+            this.linkViewOnline.TabStop = true;
+            this.linkViewOnline.Tag = "iatag_ui_backup_viewonline";
+            this.linkViewOnline.Text = "View Online";
+            this.linkViewOnline.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkViewOnline_LinkClicked);
+            // 
             // OnlineSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(786, 628);
+            this.ClientSize = new System.Drawing.Size(786, 458);
             this.Controls.Add(this.pbBuddyItems);
-            this.Controls.Add(this.panelBox1);
             this.Controls.Add(this.onlineBackup);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;
@@ -405,7 +383,6 @@
             this.buddyItemListContextMenu.ResumeLayout(false);
             this.pbBuddyItems.ResumeLayout(false);
             this.pbBuddyItems.PerformLayout();
-            this.panelBox1.ResumeLayout(false);
             this.onlineBackup.ResumeLayout(false);
             this.onlineBackup.PerformLayout();
             this.groupBoxBackupDetails.ResumeLayout(false);
@@ -424,8 +401,6 @@
         private System.Windows.Forms.LinkLabel linkDeleteBackup;
         private System.Windows.Forms.LinkLabel linkLogout;
         private System.Windows.Forms.Button btnRefreshBackupDetails;
-        private PanelBox panelBox1;
-        private System.Windows.Forms.Label whatIsOnlineFeaturesLabel;
         private PanelBox pbBuddyItems;
         private System.Windows.Forms.LinkLabel helpWhatIsThis;
         private System.Windows.Forms.Label label2;
@@ -439,5 +414,6 @@
         private System.Windows.Forms.ContextMenuStrip buddyItemListContextMenu;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
+        private System.Windows.Forms.LinkLabel linkViewOnline;
     }
 }
