@@ -1,10 +1,6 @@
 ﻿using IAGrim.Database.Interfaces;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using IAGrim.BuddyShare.dto;
+using IAGrim.Backup.Cloud.Dto;
 using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Dto;
 using IAGrim.Database.Synchronizer.Core;
@@ -66,21 +62,27 @@ namespace IAGrim.Database.Synchronizer {
             );
         }
 
-        public BuddyStash GetBySubscriptionId(long subscriptionId) {
+        public IList<string> GetOnlineIds(BuddySubscription subscription) {
             return ThreadExecuter.Execute(
-                () => _repo.GetBySubscriptionId(subscriptionId)
+                () => _repo.GetOnlineIds(subscription)
+            );
+        }
+
+        public void Save(BuddySubscription subscription, List<BuddyItem> items) {
+            ThreadExecuter.Execute(
+                () => _repo.Save(subscription, items)
+            );
+        }
+
+        public void Delete(BuddySubscription subscription, List<DeleteItemDto> items) {
+            ThreadExecuter.Execute(
+                () => _repo.Delete(subscription, items)
             );
         }
 
         public void RemoveBuddy(long buddyId) {
             ThreadExecuter.Execute(
                 () => _repo.RemoveBuddy(buddyId)
-            );
-        }
-
-        public void SetItems(long userid, string description, List<JsonBuddyItem> items) {
-            ThreadExecuter.Execute(
-                () => _repo.SetItems(userid, description, items)
             );
         }
     }

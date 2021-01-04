@@ -11,14 +11,17 @@ using System.Text;
 using IAGrim.Database.Model;
 
 namespace IAGrim.Database {
+    /// <summary>
+    /// Lookup table for records.
+    /// Simplifies lookups, not having to do "OR BaseRecord OR PrefixRecord OR....", and may contain optional records such as petbonuses
+    /// </summary>
     public class BuddyItemRecord {
-        public virtual long Id { get; set; }
-        public virtual long BuddyId { get; set; }
+        public virtual string ItemId { get; set; }
         public virtual string Record { get; set; }
 
         public override bool Equals(object obj) {
             if (obj is BuddyItemRecord that) {
-                return this.BuddyId == that.BuddyId && this.Record == that.Record;
+                return this.ItemId == that.ItemId && this.Record == that.Record;
             }
             else {
                 return base.Equals(obj);
@@ -26,7 +29,7 @@ namespace IAGrim.Database {
         }
 
         public override int GetHashCode() {
-            return (BuddyId + Record).GetHashCode();
+            return (ItemId + Record).GetHashCode();
         }
     }
 }

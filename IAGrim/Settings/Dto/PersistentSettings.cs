@@ -8,7 +8,7 @@ namespace IAGrim.Settings.Dto {
     public class PersistentSettings {
         public event EventHandler OnMutate;
 
-        private long? _buddySyncUserIdV2;
+        private long? _buddySyncUserIdV3;
         private string _buddySyncDescription;
         private bool _buddySyncEnabled;
 
@@ -75,10 +75,10 @@ namespace IAGrim.Settings.Dto {
         private string _cloudUser;
 
         // Buddy items
-        public long? BuddySyncUserIdV2 {
-            get => _buddySyncUserIdV2;
+        public long? BuddySyncUserIdV3 {
+            get => _buddySyncUserIdV3;
             set {
-                _buddySyncUserIdV2 = value;
+                _buddySyncUserIdV3 = value;
                 OnMutate?.Invoke(null, null);
             }
         }

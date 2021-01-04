@@ -1,10 +1,5 @@
 ﻿using IAGrim.Database.Interfaces;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using IAGrim.BuddyShare.dto;
 using IAGrim.Database.DAO;
 using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Dto;

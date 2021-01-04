@@ -6,5 +6,7 @@
 
   <class name="BuddySubscription">
     <id name="Id" />
+    <property name="Nickname" />
+    <property name="LastSyncTimestamp" />
   </class>
 </hibernate-mapping>

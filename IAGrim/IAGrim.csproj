@@ -201,6 +201,7 @@
     <Compile Include="Backup\Cloud\Dto\LimitEntry.cs" />
     <Compile Include="Backup\Cloud\Dto\LimitsDto.cs" />
     <Compile Include="Database\DAO\ItemCollectionDaoImpl.cs" />
+    <Compile Include="Database\DAO\Table\BuddySubscriptionTable.cs" />
     <Compile Include="Database\DAO\Util\SqlDialect.cs" />
     <Compile Include="Database\DAO\Util\SqlUtils.cs" />
     <Compile Include="Database\Interfaces\IItemCollectionDao.cs" />
@@ -293,9 +294,6 @@
     <Compile Include="Backup\FileWriter\FileExporter.cs" />
     <Compile Include="Backup\FileWriter\GDFileExporter.cs" />
     <Compile Include="Backup\FileWriter\IAFileExporter.cs" />
-    <Compile Include="BuddyShare\dto\BuddyUploadResponse.cs" />
-    <Compile Include="BuddyShare\dto\JsonBuddyItem.cs" />
-    <Compile Include="BuddyShare\GzipCompressionHandler.cs" />
     <Compile Include="Database\DAO\AugmentationItemDaoImpl.cs" />
     <Compile Include="Database\DAO\BuddyItemDaoImpl.cs" />
     <Compile Include="Database\DAO\DatabaseItemStatDaoImpl.cs" />
@@ -307,7 +305,6 @@
     <Compile Include="Database\DAO\RecipeItemDaoImpl.cs" />
     <Compile Include="Database\DAO\Table\BuddyItemRecordTable.cs" />
     <Compile Include="Database\DAO\Table\BuddyItemsTable.cs" />
-    <Compile Include="Database\DAO\Table\BuddyStashTable.cs" />
     <Compile Include="Database\DAO\Table\DatabaseItemStatTable.cs" />
     <Compile Include="Database\DAO\Table\DatabaseItemTable.cs" />
     <Compile Include="Database\DAO\Table\DeletedPlayerItemTable.cs" />
@@ -367,13 +364,9 @@
     <Compile Include="Parsers\Arz\StashFileMonitor.cs" />
     <Compile Include="Parsers\Arz\TransferStashService.cs" />
     <Compile Include="Parsers\Arz\StatUpdateUIBackgroundWorker.cs" />
-    <Compile Include="BuddyShare\BuddyBackgroundThread.cs" />
-    <Compile Include="BuddyShare\SerializedPlayerItems.cs" />
-    <Compile Include="BuddyShare\Serializer.cs" />
-    <Compile Include="BuddyShare\Synchronizer.cs" />
+    <Compile Include="BuddyShare\BuddyItemsService.cs" />
     <Compile Include="Database\DAO\BaseDao.cs" />
     <Compile Include="Database\Model\BuddyItem.cs" />
-    <Compile Include="Database\Model\BuddyStash.cs" />
     <Compile Include="Database\Model\BuddySubscription.cs" />
     <Compile Include="Database\DAO\BuddySubscriptionDaoImpl.cs" />
     <Compile Include="Database\Model\DatabaseItemStat.cs" />
@@ -905,7 +898,6 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Database\Model\DatabaseItemStat.hbm.xml" />
-    <EmbeddedResource Include="Database\Model\BuddyStash.hbm.xml" />
     <EmbeddedResource Include="Database\Model\BuddySubscription.hbm.xml" />
     <EmbeddedResource Include="Database\Model\RecipeItem.hbm.xml">
       <SubType>Designer</SubType>

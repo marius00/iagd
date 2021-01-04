@@ -39,8 +39,7 @@ using IAGrim.Parsers.TransferStash;
 using IAGrim.Settings;
 using IAGrim.Utilities.Detection;
 
-namespace IAGrim.UI
-{
+namespace IAGrim.UI {
     public partial class MainWindow : Form {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(MainWindow));
         private readonly CefBrowserHandler _cefBrowserHandler;
@@ -50,12 +49,12 @@ namespace IAGrim.UI
         private readonly DynamicPacker _dynamicPacker;
         private readonly UsageStatisticsReporter _usageStatisticsReporter = new UsageStatisticsReporter();
         private readonly AutomaticUpdateChecker _automaticUpdateChecker;
-        
+
         private readonly List<IMessageProcessor> _messageProcessors = new List<IMessageProcessor>();
 
         private SplitSearchWindow _searchWindow;
         private TransferStashWorker _transferStashWorker;
-        
+
         private BuddySettings _buddySettingsWindow;
         private StashFileMonitor _stashFileMonitor = new StashFileMonitor();
 
@@ -64,7 +63,7 @@ namespace IAGrim.UI
         private InjectionHelper _injector;
         private ProgressChangedEventHandler _injectorCallbackDelegate;
 
-        private BuddyBackgroundThread _buddyBackgroundThread;
+        private BuddyItemsService _buddyItemsService;
         private BackgroundTask _backupBackgroundTask;
         private ItemTransferController _transferController;
         private readonly RecipeParser _recipeParser;
@@ -84,8 +83,9 @@ namespace IAGrim.UI
         /// <param name="e"></param>
         private void InjectorCallback(object sender, ProgressChangedEventArgs e) {
             if (InvokeRequired) {
-                Invoke((MethodInvoker)delegate { InjectorCallback(sender, e); });
-            } else {
+                Invoke((MethodInvoker) delegate { InjectorCallback(sender, e); });
+            }
+            else {
                 if (e.ProgressPercentage == InjectionHelper.INJECTION_ERROR) {
                     RuntimeSettings.StashStatus = StashAvailability.ERROR;
                     statusLabel.Text = e.UserState as string;
@@ -103,7 +103,7 @@ namespace IAGrim.UI
             }
         }
 
-#endregion Stash Status
+        #endregion Stash Status
 
 
         /// <summary>
@@ -122,7 +122,7 @@ namespace IAGrim.UI
                     }
                     else {
                         _searchWindow?.UpdateListViewDelayed();
-                        
+
                         var settingsService = _serviceProvider.Get<SettingsService>();
                         _cefBrowserHandler.SetDarkMode(settingsService.GetPersistent().DarkMode);
                     }
@@ -131,12 +131,11 @@ namespace IAGrim.UI
         }
 
 
-
         public MainWindow(
             ServiceProvider serviceProvider,
             CefBrowserHandler browser,
             ParsingService parsingService
-            ) {
+        ) {
             this._serviceProvider = serviceProvider;
             _cefBrowserHandler = browser;
             InitializeComponent();
@@ -151,24 +150,20 @@ namespace IAGrim.UI
             _recipeParser = new RecipeParser(serviceProvider.Get<IRecipeItemDao>());
             _parsingService = parsingService;
             _userFeedbackService = new UserFeedbackService(_cefBrowserHandler);
-
         }
 
         /// <summary>
         /// Update the UI's language
         /// </summary>
-        public void UpdateLanguage()
-        {
+        public void UpdateLanguage() {
             LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
             Text = RuntimeSettings.Language.GetTag(Tag.ToString());
-            if (tsStashStatus.Tag is string)
-            {
+            if (tsStashStatus.Tag is string) {
                 tsStashStatus.Text = RuntimeSettings.Language.GetTag(tsStashStatus.Tag.ToString());
             }
+
             Refresh();
         }
-
-
 
 
         private void IterAndCloseForms(Control.ControlCollection controls) {
@@ -198,8 +193,8 @@ namespace IAGrim.UI
 
             _tooltipHelper?.Dispose();
 
-            _buddyBackgroundThread?.Dispose();
-            _buddyBackgroundThread = null;
+            _buddyItemsService?.Dispose();
+            _buddyItemsService = null;
 
             _injector?.Dispose();
             _injector = null;
@@ -222,18 +217,16 @@ namespace IAGrim.UI
             // Most if not all actions may interact with SQL
             // SQL is done on the UI thread.
             if (InvokeRequired) {
-                Invoke((MethodInvoker)delegate { CustomWndProc(bt); });
+                Invoke((MethodInvoker) delegate { CustomWndProc(bt); });
                 return;
             }
 
-            MessageType type = (MessageType)bt.Type;
+            MessageType type = (MessageType) bt.Type;
             foreach (IMessageProcessor t in _messageProcessors) {
                 t.Process(type, bt.Data);
             }
 
             switch (type) {
-   
-
                 case MessageType.TYPE_REPORT_WORKER_THREAD_LAUNCHED:
                     Logger.Info("Grim Dawn hook reports successful launch.");
                     break;
@@ -253,15 +246,15 @@ namespace IAGrim.UI
                     if (_settingsController.AutoUpdateModSettings) {
                         _searchWindow.ModSelectionHandler.UpdateModSelection(IOHelper.GetPrefixString(bt.Data, 0));
                     }
-                    break;
 
+                    break;
             }
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
             if (keyData == Keys.Escape) {
                 _searchWindow.ClearFilters();
-                return true;    // indicate that you handled this keystroke
+                return true; // indicate that you handled this keystroke
             }
 
             // Call the base class
@@ -286,7 +279,8 @@ namespace IAGrim.UI
         private void SetTooltipAtmouse(string message) {
             if (InvokeRequired) {
                 Invoke((MethodInvoker) delegate { SetTooltipAtmouse(message); });
-            } else {
+            }
+            else {
                 _tooltipHelper.ShowTooltipAtMouse(message, _cefBrowserHandler.BrowserControl);
             }
         }
@@ -328,15 +322,15 @@ namespace IAGrim.UI
 
         private void DatabaseLoadedTrigger() {
             _searchWindow.UpdateInterface();
-            _searchWindow?.UpdateListViewDelayed(); 
+            _searchWindow?.UpdateListViewDelayed();
         }
 
         private void MainWindow_Load(object sender, EventArgs e) {
             if (Thread.CurrentThread.Name == null) {
                 Thread.CurrentThread.Name = "UI";
             }
-            Logger.Debug("Starting UI initialization");
 
+            Logger.Debug("Starting UI initialization");
 
 
             // Set version number
@@ -347,12 +341,9 @@ namespace IAGrim.UI
             statusLabel.Text = statusLabel.Text + $" - {version.Major}.{version.Minor}.{version.Build}.{version.Revision} from {buildDate.ToString("dd/MM/yyyy")}";
 
 
-
             var settingsService = _serviceProvider.Get<SettingsService>();
             ExceptionReporter.EnableLogUnhandledOnThread();
             SizeChanged += OnMinimizeWindow;
-            
-
 
 
             // Chicken and the egg.. search controller needs browser, browser needs search controllers var.
@@ -375,7 +366,7 @@ namespace IAGrim.UI
             _parsingService.OnParseComplete += (o, args) => cacher.Refresh();
 
             var transferStashService = _serviceProvider.Get<TransferStashService>();
-            var transferStashService2 = _serviceProvider.Get <TransferStashService2>();
+            var transferStashService2 = _serviceProvider.Get<TransferStashService2>();
             _transferStashWorker = new TransferStashWorker(transferStashService2, _userFeedbackService);
 
             _stashFileMonitor.OnStashModified += (_, __) => {
@@ -401,7 +392,8 @@ namespace IAGrim.UI
             var grimDawnDetector = _serviceProvider.Get<GrimDawnDetector>();
             string gdPath = grimDawnDetector.GetGrimLocation();
             if (!string.IsNullOrEmpty(gdPath)) {
-            } else {
+            }
+            else {
                 Logger.Warn("Could not find the Grim Dawn install location");
                 statusLabel.Text = "Could not find the Grim Dawn install location";
 
@@ -426,12 +418,12 @@ namespace IAGrim.UI
 
 
             // Create the tab contents
-            _buddySettingsWindow = new BuddySettings(delegate (bool b) { BuddySyncEnabled = b; }, 
-                buddyItemDao, 
+            _buddySettingsWindow = new BuddySettings(
+                buddyItemDao,
                 buddySubscriptionDao,
-                settingsService, 
+                settingsService,
                 _cefBrowserHandler
-                );
+            );
 
             addAndShow(_buddySettingsWindow, buddyPanel);
 
@@ -440,7 +432,7 @@ namespace IAGrim.UI
             var backupSettings = new BackupSettings(playerItemDao, _authAuthService, settingsService, _cefBrowserHandler);
             addAndShow(backupSettings, backupPanel);
             addAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, playerItemDao, _parsingService, databaseSettingDao, grimDawnDetector, settingsService, _cefBrowserHandler), modsPanel);
-            
+
             if (!BlockedLogsDetection.DreamcrashBlocked()) {
                 addAndShow(new LoggingWindow(), panelLogging);
             }
@@ -454,13 +446,11 @@ namespace IAGrim.UI
             _searchWindow = new SplitSearchWindow(_cefBrowserHandler.BrowserControl, SetFeedback, playerItemDao, searchController, itemTagDao, settingsService);
             addAndShow(_searchWindow, searchPanel);
 
-            transferStashService2.OnUpdate += (_, __) => {
-                _searchWindow.UpdateListView();
-            };
+            transferStashService2.OnUpdate += (_, __) => { _searchWindow.UpdateListView(); };
 
             var languagePackPicker = new LanguagePackPicker(itemTagDao, playerItemDao, _parsingService, settingsService);
 
-            
+
             var dm = new DarkMode(this);
             addAndShow(
                 new SettingsWindow(
@@ -486,7 +476,13 @@ namespace IAGrim.UI
 #endif
 
             Shown += (_, __) => { StartInjector(); };
-            BuddySyncEnabled = settingsService.GetPersistent().BuddySyncEnabled;
+            _buddyItemsService = new BuddyItemsService(
+                buddyItemDao,
+                3 * 60 * 1000,
+                settingsService,
+                _authAuthService,
+                buddySubscriptionDao
+            );
 
             // Start the backup task
             _backupBackgroundTask = new BackgroundTask(new FileBackup(playerItemDao, settingsService));
@@ -506,12 +502,11 @@ namespace IAGrim.UI
                         _dynamicPacker.Initialize(stash.Width, stash.Height);
                         if (stash.Tabs.Count >= 3) {
                             foreach (var item in stash.Tabs[2].Items) {
-
                                 byte[] bx = BitConverter.GetBytes(item.XOffset);
-                                uint x = (uint)BitConverter.ToSingle(bx, 0);
+                                uint x = (uint) BitConverter.ToSingle(bx, 0);
 
                                 byte[] by = BitConverter.GetBytes(item.YOffset);
-                                uint y = (uint)BitConverter.ToSingle(by, 0);
+                                uint y = (uint) BitConverter.ToSingle(by, 0);
 
                                 _dynamicPacker.Insert(item.BaseRecord, item.Seed, x, y);
                             }
@@ -530,17 +525,17 @@ namespace IAGrim.UI
             RuntimeSettings.StashStatusChanged += GlobalSettings_StashStatusChanged;
 
             _transferController = new ItemTransferController(
-                _cefBrowserHandler, 
-                SetFeedback, 
-                SetTooltipAtmouse, 
-                _settingsController, 
-                _searchWindow, 
+                _cefBrowserHandler,
+                SetFeedback,
+                SetTooltipAtmouse,
+                _settingsController,
+                _searchWindow,
                 playerItemDao,
                 transferStashService,
                 _serviceProvider.Get<ItemStatService>()
-                );
+            );
             Application.AddMessageFilter(new MousewheelMessageFilter());
-            
+
 
             var titleTag = RuntimeSettings.Language.GetTag("iatag_ui_itemassistant");
             if (!string.IsNullOrEmpty(titleTag)) {
@@ -550,7 +545,8 @@ namespace IAGrim.UI
 
             // Popup login diag
             if (_authAuthService.CheckAuthentication() == AuthService.AccessStatus.Unauthorized && !settingsService.GetLocal().OptOutOfBackups) {
-                if (!BlockedLogsDetection.DreamcrashBlocked()) { // Backup login wont work
+                if (!BlockedLogsDetection.DreamcrashBlocked()) {
+                    // Backup login wont work
                     var t = new System.Windows.Forms.Timer {Interval = 100};
                     t.Tick += (o, args) => {
                         if (_cefBrowserHandler.BrowserControl.CanExecuteJavascriptInMainFrame) {
@@ -607,7 +603,7 @@ namespace IAGrim.UI
 
         private void GlobalSettings_StashStatusChanged(object sender, EventArgs e) {
             if (InvokeRequired) {
-                Invoke((MethodInvoker)delegate { GlobalSettings_StashStatusChanged(sender, e); });
+                Invoke((MethodInvoker) delegate { GlobalSettings_StashStatusChanged(sender, e); });
                 return;
             }
 
@@ -650,7 +646,7 @@ namespace IAGrim.UI
             }
         }
 
-#region Tray and Menu
+        #region Tray and Menu
 
         /// <summary>
         /// Minimize to tray
@@ -671,61 +667,14 @@ namespace IAGrim.UI
             Close();
         }
 
-#endregion Tray and Menu
+        #endregion Tray and Menu
 
-#region BuddySync
-        
-        /// <summary>
-        /// Enable / Disable the buddy sync feature
-        /// </summary>
-        private bool BuddySyncEnabled {
-            get => _buddyBackgroundThread != null;
-            set {
-                if (value) {
-                    // Reset timers etc first
-                    BuddySyncEnabled = false;
-                    var buddySubscriptionDao = _serviceProvider.Get<IBuddySubscriptionDao>();
-                    var playerItemDao = _serviceProvider.Get<IPlayerItemDao>();
-                    var buddyItemDao = _serviceProvider.Get<IBuddyItemDao>();
-
-                    var settingsService = _serviceProvider.Get<SettingsService>();
-                    List<long> buddies = new List<long>(buddySubscriptionDao.ListAll().Select(m => m.Id));
-                    _buddyBackgroundThread = new BuddyBackgroundThread(BuddyItemsCallback, playerItemDao, buddyItemDao, buddies, 3 * 60 * 1000, settingsService);
-                } else {
-                    if (_buddyBackgroundThread != null) {
-                        _buddyBackgroundThread.Dispose();
-                        _buddyBackgroundThread = null;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// BuddyShare callback to store data on UI thread (SQL is here)
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void BuddyItemsCallback(object sender, ProgressChangedEventArgs e) {
-            if (InvokeRequired) {
-                Invoke((MethodInvoker)delegate {
-                    BuddyItemsCallback(sender, e);
-                });
-            } else {
-                if (e.ProgressPercentage == BuddyBackgroundThread.ProgressStoreBuddydata) {
-
-                    _buddySettingsWindow.UpdateBuddyList();
-                } else if (e.ProgressPercentage == BuddyBackgroundThread.ProgressSetUid) {
-                    _buddySettingsWindow.UID = (long)e.UserState;
-                }
-            }
-        }
-
-#endregion BuddySync
 
         private void SetItemsClipboard(object ignored, EventArgs _args) {
             if (InvokeRequired) {
-                Invoke((MethodInvoker)delegate { SetItemsClipboard(ignored, _args); });
-            } else {
+                Invoke((MethodInvoker) delegate { SetItemsClipboard(ignored, _args); });
+            }
+            else {
                 if (_args is ClipboardEventArg args) {
                     Clipboard.SetText(args.Text);
                 }

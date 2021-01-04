@@ -65,7 +65,7 @@ class OnlineApp extends React.PureComponent<Props, object> {
 
   fetchItems(text: string, offset: number) {
     var self = this;
-    fetch(`${this.props.url}/buddy?id=${this.getId()}&offset=${offset}&search=${encodeURIComponent(text.toLowerCase())}`, {
+    fetch(`${this.props.url}/search?id=${this.getId()}&offset=${offset}&search=${encodeURIComponent(text.toLowerCase())}`, {
         method: 'GET',
         headers: {'Accept': 'application/json'},
       }

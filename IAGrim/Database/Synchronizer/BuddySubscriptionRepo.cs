@@ -1,6 +1,4 @@
 ﻿using IAGrim.Database.Interfaces;
-using System;
-using System.Collections.Generic;
 using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Synchronizer.Core;
 

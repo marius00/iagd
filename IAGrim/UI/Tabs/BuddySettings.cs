@@ -15,7 +15,6 @@ namespace IAGrim.UI {
     public partial class BuddySettings : Form {
         private readonly IBuddyItemDao _buddyItemDao;
         private readonly IBuddySubscriptionDao _buddySubscriptionDao;
-        private readonly Action<bool> _enableCallback;
         private readonly SettingsService _settingsService;
         private readonly IHelpService _helpService;
 
@@ -32,9 +31,8 @@ namespace IAGrim.UI {
             }
         }
 
-        public BuddySettings(Action<bool> enableCallback, IBuddyItemDao buddyItemDao, IBuddySubscriptionDao buddySubscriptionDao, SettingsService settingsService, IHelpService helpService) {
+        public BuddySettings(IBuddyItemDao buddyItemDao, IBuddySubscriptionDao buddySubscriptionDao, SettingsService settingsService, IHelpService helpService) {
             InitializeComponent();
-            _enableCallback = enableCallback;
             _buddyItemDao = buddyItemDao;
             _buddySubscriptionDao = buddySubscriptionDao;
             _settingsService = settingsService;
@@ -49,7 +47,7 @@ namespace IAGrim.UI {
             buddySyncEnabled.Checked = _settingsService.GetPersistent().BuddySyncEnabled;
             UpdateEnabledStatus();
 
-            UID = _settingsService.GetPersistent().BuddySyncUserIdV2 ?? 0L;
+            UID = _settingsService.GetPersistent().BuddySyncUserIdV3 ?? 0L;
 
             tbDescription.Text = _settingsService.GetPersistent().BuddySyncDescription;
             descriptionLabel.Text = $"Name: {tbDescription.Text}";
@@ -119,10 +117,10 @@ namespace IAGrim.UI {
             var subscriptions = _buddySubscriptionDao.ListAll();
             foreach (var subscription in subscriptions) {
                 var label = subscription.Id.ToString();
-                var stash = _buddyItemDao.GetBySubscriptionId(subscription.Id);
+                var stash = subscription.Nickname;
 
                 if (stash != null) {
-                    label = $"[{label}] {stash.Description}";
+                    label = $"[{label}] {stash}";
                 }
 
                 var numItems = _buddyItemDao.GetNumItems(subscription.Id);
@@ -141,12 +139,13 @@ namespace IAGrim.UI {
         /// <param name="e"></param>
         private void firefoxButton2_Click(object sender, EventArgs e) {
             if (long.TryParse(buddyId.Text, out var id)) {
-                if (id > 0 && id != _settingsService.GetPersistent().BuddySyncUserIdV2) {
+                bool isMyself = id == _settingsService.GetPersistent().BuddySyncUserIdV3;
+                if (id > 0 && !isMyself) {
                     _buddySubscriptionDao.SaveOrUpdate(new BuddySubscription {Id = id});
                 }
 
                 UpdateBuddyList();
-                _enableCallback(true);
+                _settingsService.GetPersistent().BuddySyncEnabled = true;
             }
             else {
                 errorProvider1.SetError(buddyId, RuntimeSettings.Language.GetTag("iatag_ui_buddy_userid_numeric_error_message"));
@@ -195,13 +194,12 @@ namespace IAGrim.UI {
             }
 
             _settingsService.GetPersistent().BuddySyncEnabled = buddySyncEnabled.Checked;
-            _enableCallback(buddySyncEnabled.Checked);
         }
 
 
         private void buttonSyncNow_Click(object sender, EventArgs e) {
             if (buddySyncEnabled.Checked) {
-                _enableCallback(true);
+                _settingsService.GetPersistent().BuddySyncEnabled = true;
             }
         }
 

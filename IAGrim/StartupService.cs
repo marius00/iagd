@@ -76,7 +76,7 @@ namespace IAGrim {
 
 
             if (settings.GetPersistent().BuddySyncEnabled) {
-                Logger.Info($"Buddy items is enabled with user id {settings.GetPersistent().BuddySyncUserIdV2}");
+                Logger.Info($"Buddy items is enabled with user id {settings.GetPersistent().BuddySyncUserIdV3}");
             }
             else {
                 Logger.Info("Buddy items is disabled");

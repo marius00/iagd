@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using IAGrim.BuddyShare.dto;
+﻿using System.Collections.Generic;
+using IAGrim.Backup.Cloud.Dto;
 using IAGrim.Database.Dto;
 
 namespace IAGrim.Database.Interfaces {
     public interface IBuddyItemDao : IBaseDao<BuddyItem> {
-        void SetItems(long userid, string description, List<JsonBuddyItem> items);
         void RemoveBuddy(long buddyId);
         IList<BuddyItem> ListItemsWithMissingRarity();
         IList<BuddyItem> ListItemsWithMissingLevelRequirement();
@@ -20,6 +15,8 @@ namespace IAGrim.Database.Interfaces {
         IList<BuddyItem> FindBy(ItemSearchRequest query);
 
         long GetNumItems(long subscriptionId);
-        BuddyStash GetBySubscriptionId(long subscriptionId);
+        IList<string> GetOnlineIds(BuddySubscription subscription);
+        void Save(BuddySubscription subscription, List<BuddyItem> items);
+        void Delete(BuddySubscription subscription, List<DeleteItemDto> items);
     }
 }

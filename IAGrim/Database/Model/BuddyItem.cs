@@ -12,6 +12,7 @@ using IAGrim.Database.Model;
 
 namespace IAGrim.Database {
     public class BuddyItem : BaseItem, PlayerHeldItem {
+        [Obsolete] // Absolutely do not use
         public virtual long Id { get; set; }
         private DatabaseItem Internal { get; set; }
         public virtual bool IsKnown => Internal != null;
@@ -25,6 +26,7 @@ namespace IAGrim.Database {
         public virtual long PrefixRarity => 0;
         public virtual string Stash { get; set; }
         public virtual string Name { get; set; }
+        public virtual string NameLowercase { get; set; } // To help with case insensitive search on non-ascii characters
         public virtual long StackCount { get; set; }
         public virtual long CreationDate { get; set; }
 
@@ -51,8 +53,14 @@ namespace IAGrim.Database {
         public virtual bool HasRecipe { get; set; }
         public virtual List<string> Buddies { get; set; } = new List<string>();
 
-        public virtual long RemoteItemId { get; set; }
+        // Online UUID
+        public virtual string RemoteItemId { get; set; }
+
+        /// <summary>
+        /// SubscriptionId / ID of the buddy
+        /// </summary>
         public virtual long BuddyId { get; set; }
+        
         public virtual string BaseRecord { get; set; }
         public virtual string PrefixRecord { get; set; }
         public virtual string SuffixRecord { get; set; }
@@ -61,6 +69,22 @@ namespace IAGrim.Database {
         public virtual string MateriaRecord { get; set; }
         public virtual bool IsHardcore { get; set; }
         public virtual string Mod { get; set; }
+
+
+
+        public override bool Equals(object obj) {
+            BuddyItem that = obj as BuddyItem;
+            if (that != null) {
+                return this.RemoteItemId == that.RemoteItemId && this.BuddyId == that.BuddyId;
+            }
+            else {
+                return base.Equals(obj);
+            }
+        }
+
+        public override int GetHashCode() {
+            return (RemoteItemId + BuddyId).GetHashCode();
+        }
     }
 }
 

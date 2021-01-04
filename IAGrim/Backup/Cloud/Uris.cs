@@ -27,6 +27,8 @@ namespace IAGrim.Backup.Cloud {
             DeleteAccountUrl = $"{host}/delete";
             LogoutUrl = $"{host}/logout";
             MigrateUrl = $"{host}/migrate";
+            BuddyItemsUrl = $"{host}/buddyitems";
+            GetBuddyIdUrl = $"{host}/buddyId";
 
             LoginPageUrl = "http://iagd.evilsoft.net/login";
         }
@@ -40,5 +42,7 @@ namespace IAGrim.Backup.Cloud {
         public static string DeleteAccountUrl { get; private set; }
         public static string LogoutUrl { get; private set; }
         public static string MigrateUrl { get; private set; }
+        public static string BuddyItemsUrl { get; private set; }
+        public static string GetBuddyIdUrl { get; private set; } // TODO: This needs to be set by the backup service
     }
 }

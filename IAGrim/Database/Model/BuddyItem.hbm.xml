@@ -4,10 +4,12 @@
                    namespace="IAGrim.Database">
 
 
-  <class name="BuddyItem" table="buddyitems_v5">
-    <id name="Id" column="id_buddyitem" />
-    <property name="BuddyId" column="id_buddy" />
-    <property name="RemoteItemId" column="id_buddy_remote" />
+  <class name="BuddyItem" table="buddyitems_v6">
+    <composite-id>
+      <key-property name="RemoteItemId" column="id_item_remote" />
+      <key-property name="BuddyId" column="id_buddy" />
+    </composite-id>
+
     <property name="BaseRecord" column="baserecord" />
     <property name="PrefixRecord" column="prefixrecord" />
     <property name="SuffixRecord" column="suffixrecord" />
@@ -18,6 +20,8 @@
     <property name="IsHardcore" column="ishardcore" />
     <property name="Mod" column="mod" />
     <property name="Name" column="name" />
+    <property name="NameLowercase" column="namelowercase" />
+    
     <property name="MinimumLevel" column="levelrequirement" />
     <property name="CreationDate" column="created_at" />
     <property name="Rarity" column="rarity" />

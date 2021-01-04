@@ -3,11 +3,10 @@
                    assembly="IAGrim"
                    namespace="IAGrim.Database">
 
-  <class name="BuddyItemRecord" table="BuddyItemRecord">
+  <class name="BuddyItemRecord" table="BuddyItemRecord_v2">
     <composite-id>
-      <key-property name="BuddyId" column="id_buddyitem" />
+      <key-property name="ItemId" column="id_item" />
       <key-property name="Record" column="record" />
-    </composite-id>
-    <property name="Id" column="id_buddy" />    
+    </composite-id>  
   </class>
 </hibernate-mapping>

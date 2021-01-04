@@ -1,5 +1,4 @@
-﻿using IAGrim.BuddyShare.dto;
-using IAGrim.Database.DAO.Table;
+﻿using IAGrim.Database.DAO.Table;
 using IAGrim.Database.Dto;
 using IAGrim.Database.Interfaces;
 using IAGrim.Utilities;
@@ -10,12 +9,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using EvilsoftCommons;
+using IAGrim.Backup.Cloud.Dto;
 using IAGrim.Database.DAO;
 using IAGrim.Database.DAO.Util;
 using NHibernate.Criterion;
 
-namespace IAGrim.Database
-{
+namespace IAGrim.Database {
     public class BuddyItemDaoImpl : BaseDao<BuddyItem>, IBuddyItemDao {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(BuddyItemDaoImpl));
 
@@ -26,15 +25,11 @@ namespace IAGrim.Database
         public void RemoveBuddy(long buddyId) {
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
-                    session.CreateSQLQuery($"DELETE FROM {BuddyItemsTable.Table} WHERE {BuddyItemsTable.BuddyId} = :id")
+                    session.CreateSQLQuery($"DELETE FROM {BuddyItemsTable.Table} WHERE {BuddyItemsTable.SubscriptionId} = :id")
                         .SetParameter("id", buddyId)
                         .ExecuteUpdate();
 
-                    session.CreateQuery("DELETE FROM BuddyStash WHERE UserId = :id")
-                        .SetParameter("id", buddyId)
-                        .ExecuteUpdate();
-
-                    session.CreateQuery("DELETE FROM BuddySubscription WHERE Id = :id")
+                    session.CreateQuery($"DELETE FROM {BuddySubscriptionTable.Table} WHERE {BuddySubscriptionTable.Id} = :id")
                         .SetParameter("id", buddyId)
                         .ExecuteUpdate();
 
@@ -48,7 +43,7 @@ namespace IAGrim.Database
                 using (session.BeginTransaction()) {
                     var numItems = session
                         .CreateSQLQuery(
-                            $"SELECT COUNT(*) FROM {BuddyItemsTable.Table} WHERE {BuddyItemsTable.BuddyId} = :id")
+                            $"SELECT COUNT(*) FROM {BuddyItemsTable.Table} WHERE {BuddyItemsTable.SubscriptionId} = :id")
                         .SetParameter("id", subscriptionId)
                         .UniqueResult<long>();
 
@@ -57,18 +52,66 @@ namespace IAGrim.Database
             }
         }
 
-        public BuddyStash GetBySubscriptionId(long subscriptionId) {
+        public IList<string> GetOnlineIds(BuddySubscription subscription) {
             using (ISession session = SessionCreator.OpenSession()) {
                 using (session.BeginTransaction()) {
-                    var stash = session.CreateCriteria<BuddyStash>()
-                        .Add(Restrictions.Eq("UserId", subscriptionId))
-                        .SetMaxResults(1)
-                        .UniqueResult<BuddyStash>();
-
-                    return stash;
+                    return session.CreateCriteria<BuddyItem>()
+                        .Add(Restrictions.Eq(nameof(BuddyItem.BuddyId), subscription.Id))
+                        .SetProjection(Projections.Property(nameof(BuddyItem.RemoteItemId)))
+                        .List<string>();
                 }
             }
         }
+
+        public void Save(BuddySubscription subscription, List<BuddyItem> items) {
+            using (ISession session = SessionCreator.OpenSession()) {
+                using (ITransaction transaction = session.BeginTransaction()) {
+                    foreach (var item in items) {
+                        item.BuddyId = subscription.Id;
+                        session.Save(item);
+                    }
+
+
+                    // Update / Insert records into lookup table
+                    foreach (var item in items) {
+                        foreach (var record in new[] {item.BaseRecord, item.PrefixRecord, item.SuffixRecord, item.MateriaRecord}) {
+                            if (!string.IsNullOrEmpty(record)) {
+                                session.CreateSQLQuery(
+                                        $@"INSERT OR IGNORE INTO {BuddyItemRecordTable.Table} ({BuddyItemRecordTable.Item}, {BuddyItemRecordTable.Record}) 
+                                                VALUES (:id, :record)")
+                                    .SetParameter("id", item.RemoteItemId)
+                                    .SetParameter("record", record)
+                                    .ExecuteUpdate();
+                            }
+                        }
+                    }
+
+                    transaction.Commit();
+                }
+            }
+        }
+
+        public void Delete(BuddySubscription subscription, List<DeleteItemDto> items) {
+            using (ISession session = SessionCreator.OpenSession()) {
+                using (ITransaction transaction = session.BeginTransaction()) {
+                    foreach (var item in items) {
+                        session.CreateSQLQuery($@"DELETE FROM {BuddyItemsTable.Table} 
+                                WHERE {BuddyItemsTable.RemoteItemId} = :cloudId
+                                AND {BuddyItemsTable.SubscriptionId} = :subscriptionId")
+                            .SetParameter("cloudId", item.Id)
+                            .SetParameter("subscriptionId", subscription.Id)
+                            .ExecuteUpdate();
+                    }
+
+                    // Remove record from records table (lookup table)
+                    session.CreateSQLQuery($"DELETE FROM {BuddyItemRecordTable.Table} WHERE NOT {BuddyItemRecordTable.Item} IN (SELECT {BuddyItemsTable.RemoteItemId} FROM {BuddyItemsTable.Table})")
+                        .ExecuteUpdate();
+
+                    transaction.Commit();
+                }
+            }
+        }
+
 
         private class NameRow {
             public string Record { get; set; }
@@ -78,9 +121,9 @@ namespace IAGrim.Database
 
         private static string GetName(BuddyItem item, ICollection<NameRow> rows) {
             // Grab tags
-
             string prefix = rows.FirstOrDefault(m => m.Record == item.PrefixRecord && m.Stat == "lootRandomizerName")?.Text ?? string.Empty;
             string suffix = rows.FirstOrDefault(m => m.Record == item.SuffixRecord && m.Stat == "lootRandomizerName")?.Text ?? string.Empty;
+
             string core = rows.FirstOrDefault(m => m.Record == item.BaseRecord && m.Stat == "itemNameTag")?.Text ?? string.Empty;
             if (string.IsNullOrEmpty(core)) {
                 core = rows.FirstOrDefault(m => m.Record == item.BaseRecord && m.Stat == "description")?.Text ?? string.Empty;
@@ -88,11 +131,11 @@ namespace IAGrim.Database
 
             string quality = rows.FirstOrDefault(m => m.Record == item.BaseRecord && m.Stat == "itemQualityTag")?.Text ?? string.Empty;
             string style = rows.FirstOrDefault(m => m.Record == item.BaseRecord && m.Stat == "itemStyleTag")?.Text ?? string.Empty;
+
             string materia = rows.FirstOrDefault(m => m.Record == item.MateriaRecord && m.Stat == "description")?.Text ?? string.Empty;
             if (!string.IsNullOrEmpty(materia)) {
                 materia = $" [{materia}]";
             }
-
 
             string localizedName = RuntimeSettings.Language.TranslateName(prefix, quality, style, core, suffix);
             return localizedName + materia;
@@ -112,7 +155,6 @@ namespace IAGrim.Database
                     OR {DatabaseItemTable.Record} IN (SELECT {BuddyItemsTable.SuffixRecord} FROM {BuddyItemsTable.Table} WHERE {BuddyItemsTable.Name} IS NULL OR {BuddyItemsTable.Name} = '')
                 )";
 
-
             IList<NameRow> rows;
             using (ISession session = SessionCreator.OpenSession()) {
                 using (session.BeginTransaction()) {
@@ -123,15 +165,17 @@ namespace IAGrim.Database
             }
 
             Logger.Debug("Updating the names for buddy items");
-            string updateSql = $"UPDATE {BuddyItemsTable.Table} SET {BuddyItemsTable.Name} = :name WHERE {BuddyItemsTable.Id} = :id";
+
+            string updateSql = $"UPDATE {BuddyItemsTable.Table} SET {BuddyItemsTable.Name} = :name, {BuddyItemsTable.NameLowercase} = :nameLowercase WHERE {BuddyItemsTable.RemoteItemId} = :id";
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
                     foreach (var item in items) {
                         var name = GetName(item, rows);
                         if (!string.IsNullOrEmpty(name)) {
                             session.CreateSQLQuery(updateSql)
-                                .SetParameter("id", item.Id)
+                                .SetParameter("id", item.RemoteItemId)
                                 .SetParameter("name", name)
+                                .SetParameter("nameLowercase", name.ToLowerInvariant())
                                 .ExecuteUpdate();
                         }
                     }
@@ -139,13 +183,14 @@ namespace IAGrim.Database
                     transaction.Commit();
                 }
             }
+
             Logger.Debug("Names updated");
         }
 
         private static int GetLevelRequirement(BuddyItem item, IEnumerable<LevelRequirementRow> rows) {
-            return (int)rows.Where(row => row.Record == item.BaseRecord
-                                     || row.Record == item.PrefixRecord
-                                     || row.Record == item.SuffixRecord)
+            return (int) rows.Where(row => row.Record == item.BaseRecord
+                                           || row.Record == item.PrefixRecord
+                                           || row.Record == item.SuffixRecord)
                 .OrderByDescending(row => row.LevelRequirement)
                 .Select(row => row.LevelRequirement)
                 .FirstOrDefault();
@@ -174,13 +219,13 @@ namespace IAGrim.Database
             }
 
             Logger.Debug("Updating the level requirements for buddy items");
-            string updateSql = $"UPDATE {BuddyItemsTable.Table} SET {BuddyItemsTable.LevelRequirement} = :requirement WHERE {BuddyItemsTable.Id} = :id";
+            string updateSql = $"UPDATE {BuddyItemsTable.Table} SET {BuddyItemsTable.LevelRequirement} = :requirement WHERE {BuddyItemsTable.RemoteItemId} = :id";
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
                     foreach (var item in items) {
                         var requirement = GetLevelRequirement(item, rows);
                         session.CreateSQLQuery(updateSql)
-                            .SetParameter("id", item.Id)
+                            .SetParameter("id", item.RemoteItemId)
                             .SetParameter("requirement", requirement)
                             .ExecuteUpdate();
                     }
@@ -188,6 +233,7 @@ namespace IAGrim.Database
                     transaction.Commit();
                 }
             }
+
             Logger.Debug("Level requirements updated");
         }
 
@@ -224,6 +270,7 @@ namespace IAGrim.Database
                 return -1;
             }
         }
+
         private static string TranslateRarity(string rarity) {
             if (string.IsNullOrEmpty(rarity))
                 return "White";
@@ -232,14 +279,12 @@ namespace IAGrim.Database
                 return _rarityTranslations[rarity];
 
             return "White";
-            
         }
 
-
         private static string GetRarity(BuddyItem item, IEnumerable<RarityRow> rows) {
-            return rows.Where(row => row.Record == item.BaseRecord 
-                                    || row.Record == item.PrefixRecord 
-                                    || row.Record == item.SuffixRecord)
+            return rows.Where(row => row.Record == item.BaseRecord
+                                     || row.Record == item.PrefixRecord
+                                     || row.Record == item.SuffixRecord)
                 .OrderByDescending(row => ClassifyRarity(row.Rarity))
                 .Select(row => TranslateRarity(row.Rarity))
                 .FirstOrDefault();
@@ -268,15 +313,15 @@ namespace IAGrim.Database
                         .List<RarityRow>();
                 }
             }
-            
+
             Logger.Debug("Updating the rarity for buddy items");
-            string updateSql = $"UPDATE {BuddyItemsTable.Table} SET {BuddyItemsTable.Rarity} = :rarity WHERE {BuddyItemsTable.Id} = :id";
+            string updateSql = $"UPDATE {BuddyItemsTable.Table} SET {BuddyItemsTable.Rarity} = :rarity WHERE {BuddyItemsTable.RemoteItemId} = :id";
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
                     foreach (var item in items) {
                         string rarity = GetRarity(item, rows);
                         session.CreateSQLQuery(updateSql)
-                            .SetParameter("id", item.Id)
+                            .SetParameter("id", item.RemoteItemId)
                             .SetParameter("rarity", rarity)
                             .ExecuteUpdate();
                     }
@@ -284,6 +329,7 @@ namespace IAGrim.Database
                     transaction.Commit();
                 }
             }
+
             Logger.Debug("Rarities updated");
         }
 
@@ -297,7 +343,7 @@ namespace IAGrim.Database
             var count = (long) obj[10];
             var minimumLevel = obj[8] as float? ?? obj[8] as long?;
 
-            var id = (long) obj[9];
+            var id = (string) obj[9];
             return new BuddyItem {
                 BaseRecord = obj[0] as string,
                 PrefixRecord = obj[1] as string,
@@ -309,8 +355,8 @@ namespace IAGrim.Database
                 Name = obj[7] as string,
                 MinimumLevel = minimumLevel ?? 0,
                 Stash = obj[11] as string,
-                Id = id,
-                Count = (uint)count
+                RemoteItemId = id,
+                Count = (uint) count
             };
         }
 
@@ -326,15 +372,15 @@ namespace IAGrim.Database
                                 {BuddyItemsTable.Rarity} as Rarity,
                                 {BuddyItemsTable.Name} as Name,
                                 {BuddyItemsTable.LevelRequirement} as MinimumLevel,
-                                {BuddyItemsTable.Id} as Id,
+                                {BuddyItemsTable.RemoteItemId} as RemoteItemId,
                                 MAX(1, {BuddyItemsTable.StackCount}) as Count,
-                                {BuddyStashTable.Name} as Buddy
-                        FROM {BuddyItemsTable.Table}, {BuddyStashTable.Table}
+                                {BuddySubscriptionTable.Nickname} as Buddy
+                        FROM {BuddyItemsTable.Table}, {BuddySubscriptionTable.Table}
                         {where}
-                        AND {BuddyItemsTable.BuddyId} = {BuddyStashTable.User}
+                        AND {BuddyItemsTable.SubscriptionId} = {BuddySubscriptionTable.Id}
             ";
 
-            
+
             using (ISession session = SessionCreator.OpenSession()) {
                 return session.CreateSQLQuery(sql)
                     .List<object>()
@@ -358,100 +404,99 @@ namespace IAGrim.Database
         public override IList<BuddyItem> ListAll() {
             return ListAll(string.Empty);
         }
+/*
+public void SetItems(long userid, string description, List<JsonBuddyItem> items) {
+    string sql = $@"INSERT INTO {BuddyItemsTable.Table} (
+            {BuddyItemsTable.BuddyId},
+            {BuddyItemsTable.RemoteItemId}, 
+            {BuddyItemsTable.BaseRecord}, 
+            {BuddyItemsTable.PrefixRecord},
+            {BuddyItemsTable.SuffixRecord},
+            {BuddyItemsTable.ModifierRecord},
+            {BuddyItemsTable.TransmuteRecord},
+            {BuddyItemsTable.MateriaRecord},
+            {BuddyItemsTable.StackCount},
+            {BuddyItemsTable.IsHardcore},
+            {BuddyItemsTable.Mod},
+            {BuddyItemsTable.CreatedAt}) 
+    VALUES (:buddy, :remoteId, :base, :pre, :suff, :modif, :transmute, :materia, :stacksize, :isHardcore, :mod, :createdAt);";
 
-        public void SetItems(long userid, string description, List<JsonBuddyItem> items) {
-            string sql = $@"INSERT INTO {BuddyItemsTable.Table} (
-                    {BuddyItemsTable.BuddyId},
-                    {BuddyItemsTable.RemoteItemId}, 
-                    {BuddyItemsTable.BaseRecord}, 
-                    {BuddyItemsTable.PrefixRecord},
-                    {BuddyItemsTable.SuffixRecord},
-                    {BuddyItemsTable.ModifierRecord},
-                    {BuddyItemsTable.TransmuteRecord},
-                    {BuddyItemsTable.MateriaRecord},
-                    {BuddyItemsTable.StackCount},
-                    {BuddyItemsTable.IsHardcore},
-                    {BuddyItemsTable.Mod},
-                    {BuddyItemsTable.CreatedAt}) 
-            VALUES (:buddy, :remoteId, :base, :pre, :suff, :modif, :transmute, :materia, :stacksize, :isHardcore, :mod, :createdAt);";
+    using (ISession session = SessionCreator.OpenSession()) {
+        using (ITransaction transaction = session.BeginTransaction()) {
 
-            using (ISession session = SessionCreator.OpenSession()) {
-                using (ITransaction transaction = session.BeginTransaction()) {
+            IList<long> existingItemsForBuddy = session.CreateSQLQuery($"SELECT {BuddyItemsTable.RemoteItemId} FROM {BuddyItemsTable.Table} WHERE {BuddyItemsTable.BuddyId} = :buddy")
+                .SetParameter("buddy", userid)
+                .List<long>();
 
-                    IList<long> existingItemsForBuddy = session.CreateSQLQuery($"SELECT {BuddyItemsTable.RemoteItemId} FROM {BuddyItemsTable.Table} WHERE {BuddyItemsTable.BuddyId} = :buddy")
-                        .SetParameter("buddy", userid)
-                        .List<long>();
+            var newItems = items.Where(m => !existingItemsForBuddy.Contains(m.Id));
+            var deletedItems = existingItemsForBuddy.Where(m => items.All(item => item.Id != m)).ToList();
 
-                    var newItems = items.Where(m => !existingItemsForBuddy.Contains(m.Id));
-                    var deletedItems = existingItemsForBuddy.Where(m => items.All(item => item.Id != m)).ToList();
-
-                    Logger.Debug($"Deleting existing buddy items for {userid}");
-                    const int deleteBatchSize = 800;
-                    for (int i = 0; i < 1 + deletedItems.Count / deleteBatchSize; i++) {
-                        var batch = deletedItems.Skip(i * deleteBatchSize).Take(deleteBatchSize).ToList();
-                        if (batch.Count > 0) {
-                            session.CreateSQLQuery($"DELETE FROM {BuddyItemsTable.Table} WHERE {BuddyItemsTable.RemoteItemId} IN ( :items )")
-                                .SetParameterList("items", batch)
-                                .ExecuteUpdate();
-                        }
-                    }
-
-                    
-                    session.CreateSQLQuery($"DELETE FROM {BuddyItemRecordTable.Table} WHERE NOT {BuddyItemRecordTable.Item} IN (SELECT {BuddyItemsTable.Id} FROM {BuddyItemsTable.Table})")
+            Logger.Debug($"Deleting existing buddy items for {userid}");
+            const int deleteBatchSize = 800;
+            for (int i = 0; i < 1 + deletedItems.Count / deleteBatchSize; i++) {
+                var batch = deletedItems.Skip(i * deleteBatchSize).Take(deleteBatchSize).ToList();
+                if (batch.Count > 0) {
+                    session.CreateSQLQuery($"DELETE FROM {BuddyItemsTable.Table} WHERE {BuddyItemsTable.RemoteItemId} IN ( :items )")
+                        .SetParameterList("items", batch)
                         .ExecuteUpdate();
+                }
+            }
+
+            
+            session.CreateSQLQuery($"DELETE FROM {BuddyItemRecordTable.Table} WHERE NOT {BuddyItemRecordTable.Item} IN (SELECT {BuddyItemsTable.Id} FROM {BuddyItemsTable.Table})")
+                .ExecuteUpdate();
 
 
 
-                    Logger.Debug($"Adding {items.Count} items for buddy {userid}");
-                    foreach (var item in newItems) {
-                        session.CreateSQLQuery(sql)
+            Logger.Debug($"Adding {items.Count} items for buddy {userid}");
+            foreach (var item in newItems) {
+                session.CreateSQLQuery(sql)
+                    .SetParameter("buddy", userid)
+                    .SetParameter("remoteId", item.Id)
+                    .SetParameter("base", item.BaseRecord)
+                    .SetParameter("pre", item.PrefixRecord)
+                    .SetParameter("suff", item.SuffixRecord)
+                    .SetParameter("modif", item.ModifierRecord)
+                    .SetParameter("transmute", item.TransmuteRecord)
+                    .SetParameter("materia", item.MateriaRecord)
+                    .SetParameter("stacksize", item.StackCount)
+                    .SetParameter("isHardcore", item.IsHardcore)
+                    .SetParameter("mod", item.Mod)
+                    .SetParameter("createdAt", item.CreationDate)
+                    .ExecuteUpdate();
+            }
+
+            session.SaveOrUpdate(new BuddyStash {
+                UserId = userid,
+                Description = description
+            });
+
+            transaction.Commit();
+        }
+    }
+
+
+    var allItems = ListAll($"WHERE NOT {BuddyItemsTable.Id} IN (SELECT {BuddyItemRecordTable.Item} FROM {BuddyItemRecordTable.Table})");
+    using (ISession session = SessionCreator.OpenSession()) {
+        using (ITransaction transaction = session.BeginTransaction()) {
+            foreach (var item in allItems) {
+                foreach (var record in new[] {item.BaseRecord, item.PrefixRecord, item.SuffixRecord, item.MateriaRecord}) {
+                    if (!string.IsNullOrEmpty(record)) {
+                        session.CreateSQLQuery(
+                                $@"INSERT OR IGNORE INTO {BuddyItemRecordTable.Table} ({BuddyItemRecordTable.Item}, {BuddyItemRecordTable.Record}, {BuddyItemRecordTable.BuddyId}) 
+                                        VALUES (:id, :record, :buddy)")
+                            .SetParameter("id", item.Id)
+                            .SetParameter("record", record)
                             .SetParameter("buddy", userid)
-                            .SetParameter("remoteId", item.Id)
-                            .SetParameter("base", item.BaseRecord)
-                            .SetParameter("pre", item.PrefixRecord)
-                            .SetParameter("suff", item.SuffixRecord)
-                            .SetParameter("modif", item.ModifierRecord)
-                            .SetParameter("transmute", item.TransmuteRecord)
-                            .SetParameter("materia", item.MateriaRecord)
-                            .SetParameter("stacksize", item.StackCount)
-                            .SetParameter("isHardcore", item.IsHardcore)
-                            .SetParameter("mod", item.Mod)
-                            .SetParameter("createdAt", item.CreationDate)
                             .ExecuteUpdate();
                     }
-
-                    session.SaveOrUpdate(new BuddyStash {
-                        UserId = userid,
-                        Description = description
-                    });
-
-                    transaction.Commit();
                 }
             }
 
-
-            var allItems = ListAll($"WHERE NOT {BuddyItemsTable.Id} IN (SELECT {BuddyItemRecordTable.Item} FROM {BuddyItemRecordTable.Table})");
-            using (ISession session = SessionCreator.OpenSession()) {
-                using (ITransaction transaction = session.BeginTransaction()) {
-                    foreach (var item in allItems) {
-                        foreach (var record in new[] {item.BaseRecord, item.PrefixRecord, item.SuffixRecord, item.MateriaRecord}) {
-                            if (!string.IsNullOrEmpty(record)) {
-                                session.CreateSQLQuery(
-                                        $@"INSERT OR IGNORE INTO {BuddyItemRecordTable.Table} ({BuddyItemRecordTable.Item}, {BuddyItemRecordTable.Record}, {BuddyItemRecordTable.BuddyId}) 
-                                                VALUES (:id, :record, :buddy)")
-                                    .SetParameter("id", item.Id)
-                                    .SetParameter("record", record)
-                                    .SetParameter("buddy", userid)
-                                    .ExecuteUpdate();
-                            }
-                        }
-                    }
-
-                    transaction.Commit();
-                }
-            }
+            transaction.Commit();
         }
-
+    }
+}*/
 
 
         class DatabaseItemStatQuery {
@@ -486,10 +531,9 @@ namespace IAGrim.Database
                     $@"EXISTS (SELECT {DatabaseItemStatTable.Item} FROM {DatabaseItemStatTable.Table} dbs 
                         WHERE {DatabaseItemStatTable.Stat} IN ('augmentSkill1Extras','augmentSkill2Extras','augmentMastery1','augmentMastery2') 
                         AND {DatabaseItemStatTable.TextValue} = '{desiredClass}'" // Not ideal
-                        + $" AND db.{DatabaseItemTable.Id} = dbs.{DatabaseItemStatTable.Item})"
+                    + $" AND db.{DatabaseItemTable.Id} = dbs.{DatabaseItemStatTable.Item})"
                 );
             }
-
 
 
             // Can be several slots for stuff like "2 Handed"
@@ -528,7 +572,7 @@ namespace IAGrim.Database
                                 UNION SELECT {BuddyItemsTable.SuffixRecord} FROM {BuddyItemsTable.Table} 
                                 UNION SELECT {BuddyItemsTable.MateriaRecord} FROM {BuddyItemsTable.Table}
                         ) ";
-                sql += " AND " + string.Join(" AND ", queryFragments); 
+                sql += " AND " + string.Join(" AND ", queryFragments);
                 sql += ")";
                 return new DatabaseItemStatQuery {
                     SQL = sql,
@@ -537,7 +581,6 @@ namespace IAGrim.Database
             }
 
             return null;
-
         }
 
         public IList<BuddyItem> FindBy(ItemSearchRequest query) {
@@ -545,8 +588,8 @@ namespace IAGrim.Database
             Dictionary<string, object> queryParams = new Dictionary<string, object>();
 
             if (!string.IsNullOrEmpty(query.Wildcard)) {
-                queryFragments.Add($"{BuddyItemsTable.Name} LIKE :name");
-                queryParams.Add("name", $"%{query.Wildcard.Replace(' ', '%')}%");
+                queryFragments.Add($"{BuddyItemsTable.NameLowercase} LIKE :name");
+                queryParams.Add("name", $"%{query.Wildcard.Replace(' ', '%').ToLowerInvariant()}%");
             }
 
 
@@ -588,21 +631,20 @@ namespace IAGrim.Database
                                 {BuddyItemsTable.Rarity} as Rarity,
                                 {BuddyItemsTable.Name} as Name,
                                 {BuddyItemsTable.LevelRequirement} as MinimumLevel,
-                                {BuddyItemsTable.Id} as Id,
+                                {BuddyItemsTable.RemoteItemId} as RemoteItemId,
                                 {BuddyItemsTable.StackCount} as Count,
-                                S.{BuddyStashTable.Name} as Stash
+                                S.{BuddySubscriptionTable.Nickname} as Stash
 
 
-                FROM {BuddyItemsTable.Table} PI, {BuddyStashTable.Table} S WHERE " + string.Join(" AND ", queryFragments)
-                + $" AND {BuddyItemsTable.BuddyId} = {BuddyStashTable.User} "
-                );
+                FROM {BuddyItemsTable.Table} PI, {BuddySubscriptionTable.Table} S WHERE "
+                    + string.Join(" AND ", queryFragments)
+                    + $" AND {BuddyItemsTable.SubscriptionId} = {BuddySubscriptionTable.Id} "
+            );
 
             var subquery = CreateDatabaseStatQueryParams(query);
             if (subquery != null) {
-                sql.Add($" AND PI.{BuddyItemsTable.Id} IN (" + subquery.SQL + ")");
+                sql.Add($" AND PI.{BuddyItemsTable.RemoteItemId} IN (" + subquery.SQL + ")");
             }
-            
-
 
 
             using (ISession session = SessionCreator.OpenSession()) {

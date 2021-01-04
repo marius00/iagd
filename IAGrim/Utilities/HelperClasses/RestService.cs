@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Web;
@@ -6,7 +7,7 @@ using log4net;
 using Newtonsoft.Json;
 
 namespace IAGrim.Utilities.HelperClasses {
-    public class RestService {
+    public class RestService : IDisposable {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(RestService));
         private readonly HttpClient _client;
 
@@ -49,6 +50,10 @@ namespace IAGrim.Utilities.HelperClasses {
         public bool Delete(string url, string json) {
             var result = _client.DeleteAsync(url).Result;
             return result.IsSuccessStatusCode;
+        }
+
+        public void Dispose() {
+            _client?.Dispose();
         }
     }
 }

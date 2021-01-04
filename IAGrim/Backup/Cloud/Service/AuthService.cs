@@ -48,31 +48,32 @@ namespace IAGrim.Backup.Cloud.Service {
 
         private static AccessStatus IsTokenValid(string user, string token) {
             try {
-                var httpClient = new HttpClient {Timeout = TimeSpan.FromSeconds(5)};
-                httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", token);
-                httpClient.DefaultRequestHeaders.TryAddWithoutValidation("X-Api-User", user);
-                    
+                using (var httpClient = new HttpClient {Timeout = TimeSpan.FromSeconds(5)}) {
+                    httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", token);
+                    httpClient.DefaultRequestHeaders.TryAddWithoutValidation("X-Api-User", user);
 
-                var result = httpClient.GetAsync(Uris.TokenVerificationUri).Result;
-                var status = result.StatusCode;
 
-                if (status == HttpStatusCode.OK) {
-                    Logger.Info($"Got Status {result} verifying authentication token");
-                    return AccessStatus.Authorized;
-                }
-                else if (status == HttpStatusCode.Unauthorized || status == HttpStatusCode.Forbidden) {
-                    Logger.Warn("Got unauthorized validating access token");
-                    return AccessStatus.Unauthorized;
-                }
-                else if (status == HttpStatusCode.InternalServerError) {
-                    ExceptionReporter.ReportIssue("Server response 500 verifying access token");
-                    Logger.Warn("Server response 500 verifying access token towards backup service");
-                    return AccessStatus.Unknown;
-                }
-                else {
-                    Logger.Error($"Got Status {result} verifying authentication token");
-                    ExceptionReporter.ReportIssue($"Server response {result} verifying access token");
-                    return AccessStatus.Unknown;
+                    var result = httpClient.GetAsync(Uris.TokenVerificationUri).Result;
+                    var status = result.StatusCode;
+
+                    if (status == HttpStatusCode.OK) {
+                        Logger.Info($"Got Status {result} verifying authentication token");
+                        return AccessStatus.Authorized;
+                    }
+                    else if (status == HttpStatusCode.Unauthorized || status == HttpStatusCode.Forbidden) {
+                        Logger.Warn("Got unauthorized validating access token");
+                        return AccessStatus.Unauthorized;
+                    }
+                    else if (status == HttpStatusCode.InternalServerError) {
+                        ExceptionReporter.ReportIssue("Server response 500 verifying access token");
+                        Logger.Warn("Server response 500 verifying access token towards backup service");
+                        return AccessStatus.Unknown;
+                    }
+                    else {
+                        Logger.Error($"Got Status {result} verifying authentication token");
+                        ExceptionReporter.ReportIssue($"Server response {result} verifying access token");
+                        return AccessStatus.Unknown;
+                    }
                 }
             }
             catch (AggregateException ex) {
@@ -208,8 +209,12 @@ namespace IAGrim.Backup.Cloud.Service {
         public RestService GetRestService() {
             if (CheckAuthentication() == AccessStatus.Authorized) {
                 var token = _authenticationProvider.GetToken();
-
-                var httpClient = new HttpClient();
+                
+                HttpClientHandler handler = new HttpClientHandler() {
+                    AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+                };
+                
+                var httpClient = new HttpClient(handler);
                 httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", token);
                 httpClient.DefaultRequestHeaders.TryAddWithoutValidation("X-Api-User", _authenticationProvider.GetUser());
                 httpClient.Timeout = TimeSpan.FromSeconds(5);
