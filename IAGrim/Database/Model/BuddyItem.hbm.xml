@@ -25,5 +25,6 @@
     <property name="MinimumLevel" column="levelrequirement" />
     <property name="CreationDate" column="created_at" />
     <property name="Rarity" column="rarity" />
+    <property name="PrefixRarity" column="prefixrarity" />
   </class>
 </hibernate-mapping>

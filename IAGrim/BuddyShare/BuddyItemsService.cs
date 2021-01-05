@@ -194,7 +194,8 @@ namespace IAGrim.BuddyShare {
                 CreationDate = itemDto.CreatedAt,
                 MinimumLevel = itemDto.LevelRequirement,
                 Rarity = itemDto.Rarity,
-                BuddyId = subscription.Id
+                BuddyId = subscription.Id,
+                PrefixRarity = itemDto.PrefixRarity,
             };
         }
 

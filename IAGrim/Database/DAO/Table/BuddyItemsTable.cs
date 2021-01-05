@@ -21,6 +21,7 @@ namespace IAGrim.Database.DAO.Table {
         public const string NameLowercase = "namelowercase";
         public const string LevelRequirement = "levelrequirement";
         public const string Rarity = "rarity";
+        public const string PrefixRarity = "prefixrarity";
         public const string RemoteItemId = "id_item_remote"; // Remote ID
         public const string CreatedAt = "created_at";
     }

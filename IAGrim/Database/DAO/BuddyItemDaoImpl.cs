@@ -600,6 +600,11 @@ public void SetItems(long userid, string description, List<JsonBuddyItem> items)
                 queryFragments.Add($"{BuddyItemsTable.Rarity} = :rarity");
                 queryParams.Add("rarity", query.Rarity);
             }
+            
+            if (query.PrefixRarity > 0) {
+                queryFragments.Add($"{BuddyItemsTable.PrefixRarity} >= :prefixRarity");
+                queryParams.Add("prefixRarity", query.PrefixRarity);
+            }
 
             queryFragments.Add(query.IsHardcore ? "IsHardcore" : "NOT IsHardcore");
 
@@ -645,6 +650,7 @@ public void SetItems(long userid, string description, List<JsonBuddyItem> items)
             if (subquery != null) {
                 sql.Add($" AND PI.{BuddyItemsTable.RemoteItemId} IN (" + subquery.SQL + ")");
             }
+
 
 
             using (ISession session = SessionCreator.OpenSession()) {

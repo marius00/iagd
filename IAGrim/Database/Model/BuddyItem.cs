@@ -23,7 +23,7 @@ namespace IAGrim.Database {
         public virtual string Rarity { get; set; }
         public virtual List<SkillModifierStat> ModifiedSkills { get; } = new List<SkillModifierStat>();
         
-        public virtual long PrefixRarity => 0;
+        public virtual long PrefixRarity { get; set; }
         public virtual string Stash { get; set; }
         public virtual string Name { get; set; }
         public virtual string NameLowercase { get; set; } // To help with case insensitive search on non-ascii characters

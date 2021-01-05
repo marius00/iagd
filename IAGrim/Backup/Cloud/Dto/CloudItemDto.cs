@@ -21,6 +21,8 @@
         
         public long CreatedAt { get; set; }
 
+        public long PrefixRarity { get; set; }
+
 
         public string Name { get; set; }
         public string NameLowercase { get; set; }
