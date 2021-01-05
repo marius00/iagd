@@ -35,6 +35,9 @@ class OnlineApp extends React.PureComponent<Props, object> {
     hasMoreItems: false,
   } as ApplicationState;
 
+  componentDidMount() {
+    this.search('');
+  }
 
   setItems(items: IItem[]) {
     var joined = [...this.state.items].concat(items);

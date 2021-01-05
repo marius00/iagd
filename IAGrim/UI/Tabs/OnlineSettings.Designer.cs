@@ -249,6 +249,7 @@
             // 
             this.labelBuddyId.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelBuddyId.Cursor = System.Windows.Forms.Cursors.Hand;
             this.labelBuddyId.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.labelBuddyId.Location = new System.Drawing.Point(71, 62);
             this.labelBuddyId.Name = "labelBuddyId";
