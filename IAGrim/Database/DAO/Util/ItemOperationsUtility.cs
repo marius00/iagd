@@ -15,10 +15,11 @@ namespace IAGrim.Database.DAO.Util {
         /// <summary>
         /// Merges identical items, summing up the stacksize.
         /// </summary>
-        public static List<T> MergeStackSize<T>(IEnumerable<T> items) where T : PlayerHeldItem {
+        public static List<T> MergeStackSize<T>(IEnumerable<T> items) where T : BaseItem, PlayerHeldItem {
             Dictionary<string, T> map = new Dictionary<string, T>();
             foreach (var item in items) {
-                var key = item.Name + item.MinimumLevel;
+                
+                var key = item.BaseRecord + item.PrefixRecord + item.SuffixRecord + item.ModifierRecord;
                 if (map.ContainsKey(key)) {
                     map[key].Count += item.Count;
                 }

@@ -58,9 +58,9 @@ namespace IAGrim.Utilities {
             // TODO: Modifiers
 
             bool isCloudSynced = false;
-            object[] id = { item.Id, "", "", "", "" };
+            object[] id = { "", "", "", "" };
             if (item is PlayerItem pi) {
-                id = new object[] { pi.Id, pi.BaseRecord, pi.PrefixRecord, pi.SuffixRecord, pi.MateriaRecord };
+                id = new object[] { pi.BaseRecord, pi.PrefixRecord, pi.SuffixRecord, pi.MateriaRecord };
                 isCloudSynced = pi.IsCloudSynchronized;
             }
 

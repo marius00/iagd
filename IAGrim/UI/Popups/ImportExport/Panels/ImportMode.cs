@@ -156,7 +156,6 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
                 foreach (var batch in batches) {
                     _playerItemDao.Import(batch);
                     progressBar1.Value += batch.Count;
-                    Logger.Debug($"Stored {batch.Count} items to db");
                 }
 
                 MessageBox.Show(
