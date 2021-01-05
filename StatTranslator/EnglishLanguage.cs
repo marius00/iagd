@@ -461,7 +461,7 @@ namespace StatTranslator {
             {"iatag_ui_tab_buddy", "Buddy"},
             {"iatag_ui_buddies", "Buddies"},
             {"iatag_ui_backup_buddy_id", "BuddyId:" },
-            {"iatag_ui_buddy_descriptive_help_text", "Enabling buddy items lets your friends see which items you have."},
+            {"iatag_ui_buddy_descriptive_help_text", "Buddy items lets you see which items your friends have."},
             {"iatag_ui_add", "Add buddy"},
             {"iatag_ui_buddy_header_buddy", "Buddy"},
             {"iatag_ui_buddy_header_items", "Items"},

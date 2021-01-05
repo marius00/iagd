@@ -22,41 +22,47 @@ namespace IAGrim.Parsers.Arz {
         private readonly SettingsService _settings;
         private readonly SafeTransferStashWriter _stashWriter;
 
+        private int GetNumTabsInStash(string file) {
+            if (!string.IsNullOrEmpty(file) && File.Exists(file)) {
+                var pCrypto = new GDCryptoDataBuffer(DataBuffer.ReadBytesFromDisk(file));
+                var stash = new Stash();
+
+                if (stash.Read(pCrypto)) {
+                    return stash.Tabs.Count;
+                }
+            }
+
+            return 1;
+        }
+
         public TransferStashService(IDatabaseItemStatDao dbItemStatDao, SettingsService settings, SafeTransferStashWriter stashWriter) {
             _settings = settings;
             _stashWriter = stashWriter;
             _itemSizeService = new ItemSizeService(dbItemStatDao);
 
-            // TODO: Should also check for transfer.gsh and pick whichever is newest / has the highest number
-            var path = Path.Combine(GlobalPaths.SavePath, "transfer.gst");
-
-            if (!string.IsNullOrEmpty(path) && File.Exists(path)) {
-                var pCrypto = new GDCryptoDataBuffer(DataBuffer.ReadBytesFromDisk(path));
-                var stash = new Stash();
-
-                if (stash.Read(pCrypto)) {
-                    NumStashTabs = stash.Tabs.Count;
-                }
-            }
+            // This is used to limit settings, just pick whichever is highest.
+            NumStashTabs = Math.Max(
+                GetNumTabsInStash(Path.Combine(GlobalPaths.SavePath, "transfer.gst")),
+                GetNumTabsInStash(Path.Combine(GlobalPaths.SavePath, "transfer.gsh"))
+            );
         }
 
         public int GetStashToLootFrom(Stash stash) {
             if (_settings.GetLocal().StashToLootFrom == 0) {
-
                 return stash.Tabs.Count - 1;
             }
 
-            return (int)_settings.GetLocal().StashToLootFrom - 1;
+            return (int) _settings.GetLocal().StashToLootFrom - 1;
         }
 
         private int GetStashToDepositTo(Stash stash) {
             if (_settings.GetLocal().StashToDepositTo == 0) {
                 return stash.Tabs.Count - 2;
             }
-            
-            return (int)_settings.GetLocal().StashToDepositTo - 1;
+
+            return (int) _settings.GetLocal().StashToDepositTo - 1;
         }
-        
+
         /// <summary>
         /// Attempt to get the name of the current mod
         /// Vanilla leaves this tag empty
@@ -240,7 +246,7 @@ namespace IAGrim.Parsers.Arz {
                 Mod = mod,
                 IsHardcore = isHardcore,
                 CreationDate = DateTime.UtcNow.ToTimestamp(),
-                CloudId = Guid.NewGuid().ToString() 
+                CloudId = Guid.NewGuid().ToString()
             };
         }
 
