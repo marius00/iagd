@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows.Forms;
+using CefSharp.Structs;
+using EvilsoftCommons;
 using IAGrim.Backup.Cloud;
 using IAGrim.Backup.Cloud.Service;
 using IAGrim.Database;
@@ -11,9 +13,10 @@ using IAGrim.UI.Popups;
 using IAGrim.Utilities;
 using IAGrim.Utilities.Detection;
 using log4net;
+using Point = System.Drawing.Point;
 
 namespace IAGrim.UI.Tabs {
-    public partial class OnlineSettings : Form {
+    public partial class OnlineSettings : Form, IDisposable {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(BackupSettings));
         private readonly IPlayerItemDao _playerItemDao;
         private readonly AuthService _authAuthService;
@@ -22,6 +25,7 @@ namespace IAGrim.UI.Tabs {
         private readonly IHelpService _helpService;
         private readonly IBuddyItemDao _buddyItemDao;
         private readonly IBuddySubscriptionDao _buddySubscriptionDao;
+        private TooltipHelper _tooltipHelper;
 
         public OnlineSettings(IPlayerItemDao playerItemDao, AuthService authAuthService, SettingsService settings, IHelpService helpService, IBuddyItemDao buddyItemDao, IBuddySubscriptionDao buddySubscriptionDao) {
             InitializeComponent();
@@ -33,7 +37,7 @@ namespace IAGrim.UI.Tabs {
 
             _authAuthService = authAuthService;
             _cloudSyncService = new CloudSyncService(authAuthService.GetRestService());
-
+            _tooltipHelper = new TooltipHelper();
         }
 
         private void UpdateUi() {
@@ -80,11 +84,15 @@ namespace IAGrim.UI.Tabs {
             // Allows 2nd column to auto-size to the width of the column heading
             // Source: https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.columnheader.width
             buddyList.Columns[1].Width = -2;
-            
-            
+
+
             UpdateUi();
+            this.FormClosing += (_, __) => {
+                _tooltipHelper?.Dispose();
+                _tooltipHelper = null;
+            };
         }
-        
+
         private void firefoxButton1_Click(object sender, EventArgs e) {
             if ((sender as FirefoxButton).EnabledCalc) {
                 var access = _authAuthService.CheckAuthentication();
@@ -123,11 +131,11 @@ namespace IAGrim.UI.Tabs {
             var caption = RuntimeSettings.Language.GetTag("iatag_ui_backup_deleteaccount_header");
             var content = RuntimeSettings.Language.GetTag("iatag_ui_backup_deleteaccount_body");
             if (MessageBox.Show(
-                    content,
-                    caption,
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Exclamation,
-                    MessageBoxDefaultButton.Button2) == DialogResult.Yes) {
+                content,
+                caption,
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Exclamation,
+                MessageBoxDefaultButton.Button2) == DialogResult.Yes) {
                 try {
                     if (_cloudSyncService != null && _cloudSyncService.DeleteAccount()) {
                         MessageBox.Show(
@@ -136,7 +144,7 @@ namespace IAGrim.UI.Tabs {
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Exclamation
                         );
-                        
+
                         _settings.GetPersistent().CloudUploadTimestamp = 0;
                         _authAuthService.UnAuthenticate();
                         _playerItemDao.ResetOnlineSyncState();
@@ -160,7 +168,7 @@ namespace IAGrim.UI.Tabs {
                     );
                 }
             }
-            
+
             UpdateUi();
         }
 
@@ -176,7 +184,6 @@ namespace IAGrim.UI.Tabs {
         private void btnRefreshBackupDetails_Click(object sender, EventArgs e) {
             UpdateUi();
         }
-
 
 
         /// <summary>
@@ -216,9 +223,9 @@ namespace IAGrim.UI.Tabs {
             if (diag.ShowDialog() == DialogResult.OK) {
                 bool isMyself = diag.BuddyId == _settings.GetPersistent().BuddySyncUserIdV3;
                 if (diag.BuddyId > 0 && !isMyself) {
-                    _buddySubscriptionDao.SaveOrUpdate(new BuddySubscription { Id = diag.BuddyId, Nickname = diag.Nickname });
+                    _buddySubscriptionDao.SaveOrUpdate(new BuddySubscription {Id = diag.BuddyId, Nickname = diag.Nickname});
                 }
-                
+
                 UpdateBuddyList();
             }
         }
@@ -228,7 +235,6 @@ namespace IAGrim.UI.Tabs {
         }
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e) {
-            
             foreach (ListViewItem item in buddyList.SelectedItems) {
                 if (item != null && long.TryParse(item.Tag.ToString(), out var id)) {
                     _buddyItemDao.RemoveBuddy(id);
@@ -240,12 +246,13 @@ namespace IAGrim.UI.Tabs {
         private void editToolStripMenuItem_Click(object sender, EventArgs e) {
             foreach (ListViewItem item in buddyList.SelectedItems) {
                 if (item != null && long.TryParse(item.Tag.ToString(), out var id)) {
-                    var diag = new AddEditBuddy(_helpService, _authAuthService.GetRestService()) { BuddyId = id };
+                    var diag = new AddEditBuddy(_helpService, _authAuthService.GetRestService()) {BuddyId = id};
                     if (diag.ShowDialog() == DialogResult.OK) {
                         var entry = _buddySubscriptionDao.GetById(diag.BuddyId);
                         entry.Nickname = diag.Nickname;
                         _buddySubscriptionDao.Update(entry);
                     }
+
                     UpdateBuddyList();
                 }
             }
@@ -257,6 +264,13 @@ namespace IAGrim.UI.Tabs {
             }
             else {
                 MessageBox.Show("Unavailable - Not logged in");
+            }
+        }
+
+        private void labelBuddyId_Click(object sender, EventArgs e) {
+            if (_settings.GetPersistent().BuddySyncUserIdV3.HasValue && _settings.GetPersistent().BuddySyncUserIdV3 > 0) {
+                _tooltipHelper.ShowTooltipForControl(RuntimeSettings.Language.GetTag("iatag_ui_copiedclipboard"), labelBuddyId);
+                Clipboard.SetText(_settings.GetPersistent().BuddySyncUserIdV3.ToString());
             }
         }
     }

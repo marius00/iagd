@@ -7,6 +7,10 @@ using System.Drawing;
 using System.Diagnostics;
 
 namespace EvilsoftCommons {
+    /// <summary>
+    /// Tooltip helper utility
+    /// Must be disposed before program exit
+    /// </summary>
     public class TooltipHelper : IDisposable {
         private ToolTip _tooltip;
         private ToolTip Tooltip {

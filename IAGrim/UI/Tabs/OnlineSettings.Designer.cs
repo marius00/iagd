@@ -37,6 +37,7 @@
             this.onlineBackup = new PanelBox();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.groupBoxBackupDetails = new System.Windows.Forms.GroupBox();
+            this.linkViewOnline = new System.Windows.Forms.LinkLabel();
             this.labelBuddyId = new System.Windows.Forms.Label();
             this.lbBuddyId = new System.Windows.Forms.Label();
             this.btnRefreshBackupDetails = new System.Windows.Forms.Button();
@@ -46,7 +47,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.cbDontWantBackups = new FirefoxCheckBox();
             this.buttonLogin = new FirefoxButton();
-            this.linkViewOnline = new System.Windows.Forms.LinkLabel();
             this.buddyItemListContextMenu.SuspendLayout();
             this.pbBuddyItems.SuspendLayout();
             this.onlineBackup.SuspendLayout();
@@ -231,6 +231,20 @@
             this.groupBoxBackupDetails.Tag = "iatag_ui_backup_details";
             this.groupBoxBackupDetails.Text = "Details";
             // 
+            // linkViewOnline
+            // 
+            this.linkViewOnline.AutoSize = true;
+            this.linkViewOnline.BackColor = System.Drawing.Color.Transparent;
+            this.linkViewOnline.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.linkViewOnline.Location = new System.Drawing.Point(6, 107);
+            this.linkViewOnline.Name = "linkViewOnline";
+            this.linkViewOnline.Size = new System.Drawing.Size(70, 13);
+            this.linkViewOnline.TabIndex = 18;
+            this.linkViewOnline.TabStop = true;
+            this.linkViewOnline.Tag = "iatag_ui_backup_viewonline";
+            this.linkViewOnline.Text = "View Online";
+            this.linkViewOnline.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkViewOnline_LinkClicked);
+            // 
             // labelBuddyId
             // 
             this.labelBuddyId.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -241,6 +255,7 @@
             this.labelBuddyId.Size = new System.Drawing.Size(197, 19);
             this.labelBuddyId.TabIndex = 6;
             this.labelBuddyId.Text = "-----";
+            this.labelBuddyId.Click += new System.EventHandler(this.labelBuddyId_Click);
             // 
             // lbBuddyId
             // 
@@ -350,20 +365,6 @@
             this.buttonLogin.Tag = "iatag_ui_login";
             this.buttonLogin.Text = "Login";
             this.buttonLogin.Click += new System.EventHandler(this.firefoxButton1_Click);
-            // 
-            // linkViewOnline
-            // 
-            this.linkViewOnline.AutoSize = true;
-            this.linkViewOnline.BackColor = System.Drawing.Color.Transparent;
-            this.linkViewOnline.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.linkViewOnline.Location = new System.Drawing.Point(6, 107);
-            this.linkViewOnline.Name = "linkViewOnline";
-            this.linkViewOnline.Size = new System.Drawing.Size(70, 13);
-            this.linkViewOnline.TabIndex = 18;
-            this.linkViewOnline.TabStop = true;
-            this.linkViewOnline.Tag = "iatag_ui_backup_viewonline";
-            this.linkViewOnline.Text = "View Online";
-            this.linkViewOnline.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkViewOnline_LinkClicked);
             // 
             // OnlineSettings
             // 
