@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 using log4net;
 using Newtonsoft.Json;
@@ -28,6 +30,10 @@ namespace IAGrim.Utilities.HelperClasses {
         public T Get<T>(string url) {
             var result = _client.GetStringAsync(url).Result;
             return JsonConvert.DeserializeObject<T>(result, _settings);
+        }
+
+        public HttpStatusCode VerifyGet(string url) {
+            return _client.GetAsync(url).Result.StatusCode;
         }
 
         public T Post<T>(string url, string json) {

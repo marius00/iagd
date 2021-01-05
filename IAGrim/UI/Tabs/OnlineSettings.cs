@@ -212,7 +212,7 @@ namespace IAGrim.UI.Tabs {
         }
 
         private void btnAddBuddy_Click(object sender, EventArgs e) {
-            var diag = new AddEditBuddy(_helpService);
+            var diag = new AddEditBuddy(_helpService, _authAuthService.GetRestService());
             if (diag.ShowDialog() == DialogResult.OK) {
                 bool isMyself = diag.BuddyId == _settings.GetPersistent().BuddySyncUserIdV3;
                 if (diag.BuddyId > 0 && !isMyself) {
@@ -228,6 +228,7 @@ namespace IAGrim.UI.Tabs {
         }
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e) {
+            
             foreach (ListViewItem item in buddyList.SelectedItems) {
                 if (item != null && long.TryParse(item.Tag.ToString(), out var id)) {
                     _buddyItemDao.RemoveBuddy(id);
@@ -239,7 +240,7 @@ namespace IAGrim.UI.Tabs {
         private void editToolStripMenuItem_Click(object sender, EventArgs e) {
             foreach (ListViewItem item in buddyList.SelectedItems) {
                 if (item != null && long.TryParse(item.Tag.ToString(), out var id)) {
-                    var diag = new AddEditBuddy(_helpService) { BuddyId = id };
+                    var diag = new AddEditBuddy(_helpService, _authAuthService.GetRestService()) { BuddyId = id };
                     if (diag.ShowDialog() == DialogResult.OK) {
                         var entry = _buddySubscriptionDao.GetById(diag.BuddyId);
                         entry.Nickname = diag.Nickname;

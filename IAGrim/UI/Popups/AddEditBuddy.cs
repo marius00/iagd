@@ -1,12 +1,17 @@
 ﻿using System;
+using System.Net;
+using System.Net.Http;
 using System.Windows.Forms;
+using IAGrim.Backup.Cloud;
 using IAGrim.Parsers.Arz;
 using IAGrim.Services;
 using IAGrim.Utilities;
+using IAGrim.Utilities.HelperClasses;
 
 namespace IAGrim.UI.Popups {
     public partial class AddEditBuddy : Form {
         private readonly IHelpService _helpService;
+        private readonly RestService _restService;
         
         public long BuddyId {
             get {
@@ -24,8 +29,9 @@ namespace IAGrim.UI.Popups {
 
         public string Nickname => tbBuddyNickname.Text;
 
-        public AddEditBuddy(IHelpService helpService) {
+        public AddEditBuddy(IHelpService helpService, RestService restService) {
             _helpService = helpService;
+            _restService = restService;
             InitializeComponent();
         }
 
@@ -63,18 +69,24 @@ namespace IAGrim.UI.Popups {
             }
 
             else {
-                DialogResult = DialogResult.OK;
-                Close();
+                if (Verify(tbBuddyId.Text)) {
+                    DialogResult = DialogResult.OK;
+                    Close();
+                } else {
+                    errorProvider1.SetError(tbBuddyId, RuntimeSettings.Language.GetTag("iatag_ui_buddy_userid_doesnotexist_error_message"));
+                    errorProvider1.SetIconAlignment(tbBuddyId, ErrorIconAlignment.MiddleLeft);
+                }
             }
         }
 
         void buddyId_KeyPress(object sender, KeyPressEventArgs e) {
-
-            if (tbBuddyId.Text.Length >= 6) {
+            // Disallow more than 6 characters
+            if (tbBuddyId.Text.Length >= 6 && !char.IsControl(e.KeyChar)) { // Non printable chars 0..31
                 e.Handled = true;
                 return;
             }
 
+            // Allow numbers only
             if (char.IsNumber(e.KeyChar) || char.IsControl(e.KeyChar)) {
                 e.Handled = false;
                 errorProvider1.Clear();
@@ -85,15 +97,22 @@ namespace IAGrim.UI.Popups {
                 errorProvider1.SetIconAlignment(tbBuddyId, ErrorIconAlignment.MiddleLeft);
             }
 
-            // Enter
+            // Enter/Return key
             if (e.KeyChar == 13) {
                 if (tbBuddyId.Text.Length != 6) {
                     errorProvider1.SetError(tbBuddyId, RuntimeSettings.Language.GetTag("iatag_ui_buddy_userid_numeric_error_message"));
                     errorProvider1.SetIconAlignment(tbBuddyId, ErrorIconAlignment.MiddleLeft);
                 }
                 else {
-                    e.Handled = true;
-                    tbBuddyNickname.Focus();
+                    // Verify if ID exists
+                    if (Verify(tbBuddyId.Text)) {
+                        e.Handled = true;
+                        tbBuddyNickname.Focus();
+                    }
+                    else {
+                        errorProvider1.SetError(tbBuddyId, RuntimeSettings.Language.GetTag("iatag_ui_buddy_userid_doesnotexist_error_message"));
+                        errorProvider1.SetIconAlignment(tbBuddyId, ErrorIconAlignment.MiddleLeft);
+                    }
                 }
             }
         }
@@ -110,6 +129,11 @@ namespace IAGrim.UI.Popups {
                 }
                 e.Handled = true;
             }
+        }
+
+        bool Verify(string buddyId) {
+            var status = _restService.VerifyGet($"{Uris.BuddyItemsUrl}/?id={buddyId}&ts=900000000000");
+            return status == HttpStatusCode.OK;
         }
     }
 }

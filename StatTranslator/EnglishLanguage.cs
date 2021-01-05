@@ -321,6 +321,7 @@ namespace StatTranslator {
             {"iatag_ui_buddy_userid_none", "None"},
             {"iatag_ui_buddy_userid_name", "Name: "},
             {"iatag_ui_buddy_userid_numeric_error_message", "Six digit number, ask your buddy for his id"},
+            {"iatag_ui_buddy_userid_doesnotexist_error_message", "This user id does not appear to exist"},
             {"iatag_ui_buddy_nickname_error_message", "Please fill in a nickname to recognize this buddy"},
             {"iatag_ui_online_backups_disabled", "Online backups are disabled"},
             {"iatag_ui_online_backup_email", "You are logged in as {OnlineBackupEmail}"},
