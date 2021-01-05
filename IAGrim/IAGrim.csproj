@@ -198,6 +198,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Backup\BatchUtil.cs" />
     <Compile Include="Backup\Cloud\Dto\LimitEntry.cs" />
     <Compile Include="Backup\Cloud\Dto\LimitsDto.cs" />
     <Compile Include="Database\DAO\ItemCollectionDaoImpl.cs" />

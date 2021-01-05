@@ -105,6 +105,7 @@ namespace IAGrim.Database.Synchronizer.Core {
                 throw new Exception("Operation never terminated");
             }
 
+            
             object result;
 
             if (_results.TryRemove(ev, out result)) {

@@ -30,8 +30,8 @@ namespace IAGrim.Backup.FileWriter {
                 throw new InvalidDataException($"This format of IAStash files is not supported, expected {string.Join(",", _supportedFileVer)}, got {fileVer}");
             }
 
-            if (_supportedFileVer.Max() != fileVer) {
-                Logger.Debug($"Parsing a legacy IA file of version v{fileVer}, the latest is version v{_supportedFileVer.Max()}");
+            if (_currentFileVer != fileVer) {
+                Logger.Debug($"Parsing a legacy IA file of version v{fileVer}, the latest is version v{_currentFileVer}");
             }
 
             string ReadString() {
@@ -41,6 +41,7 @@ namespace IAGrim.Backup.FileWriter {
             }
 
             int numItems = IOHelper.GetInt(bytes, pos); pos += 4;
+            Logger.Debug($"Found {numItems} items in ias");
             for (int i = 0; i < numItems; i++) {
                 PlayerItem pi = new PlayerItem();
 

@@ -1,25 +1,22 @@
 ﻿using IAGrim.Backup.FileWriter;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.Arz;
-using IAGrim.UI.Controller;
 using IAGrim.Utilities.HelperClasses;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using IAGrim.Backup;
+using IAGrim.Database;
 using IAGrim.Parsers.TransferStash;
 using IAGrim.Services;
 using IAGrim.Utilities;
 using Ionic.Zip;
+using log4net;
 
 namespace IAGrim.UI.Popups.ImportExport.Panels {
     partial class ImportMode : Form {
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(ImportMode));
         private readonly GDTransferFile[] _modSelection;
         private readonly IPlayerItemDao _playerItemDao;
         private string _filename;
@@ -153,7 +150,14 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
                 }
 
                 var items = io.Read(Read(_filename));
-                _playerItemDao.Import(items);
+                Logger.Debug($"Storing {items.Count} items to db");
+                progressBar1.Maximum = items.Count;
+                var batches = BatchUtil.ToBatches<PlayerItem>(items);
+                foreach (var batch in batches) {
+                    _playerItemDao.Import(batch);
+                    progressBar1.Value += batch.Count;
+                    Logger.Debug($"Stored {batch.Count} items to db");
+                }
 
                 MessageBox.Show(
                     RuntimeSettings.Language.GetTag("iatag_ui_importexport_import_success_body"),
@@ -166,6 +170,10 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
 
         private void helpRestoreBackup_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             new HelpService().ShowHelp(HelpService.HelpType.RestoreBackup); // TODO: Move into UI?
+        }
+
+        private void progressBar1_Click(object sender, EventArgs e) {
+
         }
     }
 }

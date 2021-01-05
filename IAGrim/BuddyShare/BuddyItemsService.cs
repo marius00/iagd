@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Threading;
+using IAGrim.Backup;
 using IAGrim.Backup.Cloud;
 using IAGrim.Backup.Cloud.Dto;
 using IAGrim.Backup.Cloud.Service;
@@ -105,27 +106,6 @@ namespace IAGrim.BuddyShare {
         }
 
 
-        private static List<List<T>> ToBatches<T>(IList<T> items) {
-            List<T> currentBatch = new List<T>();
-            List<List<T>> batches = new List<List<T>>();
-
-            // Max 100 items per batch, no mix of partitions in a batch.
-            foreach (var item in items) {
-                if (currentBatch.Count > 99) {
-                    batches.Add(currentBatch);
-                    currentBatch = new List<T>();
-                }
-
-                currentBatch.Add(item);
-            }
-
-            if (currentBatch.Count > 0) {
-                batches.Add(currentBatch);
-            }
-
-            return batches;
-        }
-
         private ItemDownloadDto Get(BuddySubscription subscription) {
             var url = $"{Uris.BuddyItemsUrl}?id={subscription.Id}&ts={subscription.LastSyncTimestamp}";
             return _authService.GetRestService()?.Get<ItemDownloadDto>(url);
@@ -146,7 +126,7 @@ namespace IAGrim.BuddyShare {
                 
 
                 // Store items in batches, to prevent IA just freezing up if we happen to get 10-20,000 items.
-                var batches = ToBatches<BuddyItem>(items);
+                var batches = BatchUtil.ToBatches<BuddyItem>(items);
                 foreach (var batch in batches) {
                     Logger.Debug($"Storing batch of {batch.Count} items");
                     _buddyItemDao.Save(subscription, batch);

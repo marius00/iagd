@@ -439,12 +439,12 @@ namespace IAGrim.Database {
 
                     // Get the base records stored
                     for (int i = 0; i < items.Count; i++) {
-                        if (ids.Contains(items.ElementAt(i).Id))
-                            UpdateRecords(session, items.ElementAt(i));
+                        if (ids.Contains(items[i].Id))
+                            UpdateRecords(session, items[i]);
 
 
                         if (i > 0 && i % 1000 == 0) {
-                            Logger.Debug($"Have updated internal recorsd for {i} / {items.Count} items");
+                            Logger.Debug($"Have updated internal records for {i} / {items.Count} items");
                         }
                     }
 
