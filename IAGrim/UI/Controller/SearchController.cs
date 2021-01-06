@@ -151,11 +151,11 @@ namespace IAGrim.UI.Controller {
             var buddyItems = new List<BuddyItem>(_buddyItemDao.FindBy(query));
             var itemsWithBuddy = items.FindAll(item => buddyItems.Any(buddy => buddy.BaseRecord == item.BaseRecord));
 
-            foreach (var item in items.FindAll(item => buddyItems.Any(buddy => buddy.BaseRecord == item.BaseRecord))) {
-                foreach (PlayerHeldItem buddyItem in buddyItems.FindAll(buddy => buddy.BaseRecord == item.BaseRecord)) {
+            foreach (var playerItem in items.FindAll(item => buddyItems.Any(buddy => buddy.BaseRecord == item.BaseRecord))) {
+                foreach (PlayerHeldItem buddyItem in buddyItems.FindAll(buddyItem => buddyItem.Equals(playerItem))) {
                     var buddyName = System.Web.HttpUtility.HtmlEncode(buddyItem.Stash);
-                    if (!item.Buddies.Exists(name => name == buddyName)) {
-                        item.Buddies.Add(buddyName);
+                    if (!playerItem.Buddies.Exists(name => name == buddyName)) {
+                        playerItem.Buddies.Add(buddyName);
                     }
                 }
             }
@@ -163,8 +163,7 @@ namespace IAGrim.UI.Controller {
             Logger.Debug($"Merged {itemsWithBuddy.Count} buddy items into player items");
 
             // TODO: This should use .Except(), find out why its not working with .Except()
-            var remainingBuddyItems = buddyItems
-                .FindAll(buddy => itemsWithBuddy.All(item => item.BaseRecord != buddy.BaseRecord));
+            var remainingBuddyItems = buddyItems.FindAll(buddy => itemsWithBuddy.All(item => !buddy.Equals(item)));
 
             //We add the Owner name from pure BuddyItems from Stash to BuddyNames
             foreach (PlayerHeldItem remainingBuddyItem in remainingBuddyItems) {

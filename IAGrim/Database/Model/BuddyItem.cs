@@ -73,9 +73,11 @@ namespace IAGrim.Database {
 
 
         public override bool Equals(object obj) {
-            BuddyItem that = obj as BuddyItem;
-            if (that != null) {
+            if (obj is BuddyItem that) {
                 return this.RemoteItemId == that.RemoteItemId && this.BuddyId == that.BuddyId;
+            }
+            else if (obj is PlayerItem pi) {
+                return this.BaseRecord == pi.BaseRecord && this.SuffixRecord == pi.SuffixRecord && this.PrefixRecord == pi.PrefixRecord && this.ModifierRecord == pi.ModifierRecord;
             }
             else {
                 return base.Equals(obj);

@@ -63,6 +63,10 @@ namespace IAGrim.Utilities {
                 id = new object[] { pi.BaseRecord, pi.PrefixRecord, pi.SuffixRecord, pi.MateriaRecord };
                 isCloudSynced = pi.IsCloudSynchronized;
             }
+            else
+            if (item is BuddyItem bi) {
+                id = new object[] { bi.BaseRecord, bi.PrefixRecord, bi.SuffixRecord, bi.MateriaRecord };
+            }
 
 
             ItemTypeDto type;

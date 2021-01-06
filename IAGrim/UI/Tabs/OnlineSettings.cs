@@ -145,6 +145,7 @@ namespace IAGrim.UI.Tabs {
                         _settings.GetPersistent().CloudUploadTimestamp = 0;
                         _authAuthService.UnAuthenticate();
                         _playerItemDao.ResetOnlineSyncState();
+                        _settings.GetPersistent().BuddySyncUserIdV3 = null;
                     }
                     else {
                         MessageBox.Show(
@@ -174,6 +175,7 @@ namespace IAGrim.UI.Tabs {
             _authAuthService.Logout();
             _settings.GetPersistent().CloudUploadTimestamp = 0;
             _playerItemDao.ResetOnlineSyncState();
+            _settings.GetPersistent().BuddySyncUserIdV3 = null;
             MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_backup_logout_successful_body"), RuntimeSettings.Language.GetTag("iatag_ui_backup_logout_successful_header"));
             UpdateUi();
         }

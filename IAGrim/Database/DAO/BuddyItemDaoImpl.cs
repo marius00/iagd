@@ -634,7 +634,9 @@ public void SetItems(long userid, string description, List<JsonBuddyItem> items)
                                 {BuddyItemsTable.TransmuteRecord} as TransmuteRecord,
                                 {BuddyItemsTable.MateriaRecord} as MateriaRecord,
                                 {BuddyItemsTable.Rarity} as Rarity,
+                                {BuddyItemsTable.PrefixRarity} as PrefixRarity,
                                 {BuddyItemsTable.Name} as Name,
+ 
                                 {BuddyItemsTable.LevelRequirement} as MinimumLevel,
                                 {BuddyItemsTable.RemoteItemId} as RemoteItemId,
                                 {BuddyItemsTable.StackCount} as Count,
@@ -661,6 +663,7 @@ public void SetItems(long userid, string description, List<JsonBuddyItem> items)
                     q.AddScalar("PrefixRecord", NHibernateUtil.String);
                     q.AddScalar("SuffixRecord", NHibernateUtil.String);
                     q.AddScalar("ModifierRecord", NHibernateUtil.String);
+                    q.AddScalar("PrefixRarity", NHibernateUtil.Int64);
                     q.AddScalar("TransmuteRecord", NHibernateUtil.String);
                     q.AddScalar("MateriaRecord", NHibernateUtil.String);
                     q.AddScalar("Rarity", NHibernateUtil.String);
