@@ -364,8 +364,12 @@ namespace IAGrim.UI {
             var cacher = _serviceProvider.Get<TransferStashServiceCache>();
             _parsingService.OnParseComplete += (o, args) => cacher.Refresh();
 
+
             var transferStashService = _serviceProvider.Get<TransferStashService>();
-            var transferStashService2 = _serviceProvider.Get<TransferStashService2>();
+            var stashWriter = new SafeTransferStashWriter(settingsService);
+            var transferStashService2 = new TransferStashService2(playerItemDao, cacher, transferStashService, stashWriter, settingsService, _cefBrowserHandler);
+            _serviceProvider.Add(transferStashService2);
+
             _transferStashWorker = new TransferStashWorker(transferStashService2, _userFeedbackService);
 
             _stashFileMonitor.OnStashModified += (_, __) => {

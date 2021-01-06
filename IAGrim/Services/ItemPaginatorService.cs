@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace IAGrim.Services {
-    class ItemPaginatorService {        
+    class ItemPaginatorService {
         private readonly int _limit;
         private readonly Comparison<PlayerHeldItem> _comparer;
 
@@ -28,15 +28,12 @@ namespace IAGrim.Services {
         }
 
         private int CompareToMinimumLevel(PlayerHeldItem itemA, PlayerHeldItem itemB) {
-            if (itemA != null && itemB != null)
-            {
+            if (itemA != null && itemB != null) {
                 var order = itemA.MinimumLevel.CompareTo(itemB.MinimumLevel);
-                if (order == 0)
-                {
+                if (order == 0) {
                     return itemA.CompareTo(itemB);
                 }
-                else
-                {
+                else {
                     return order;
                 }
             }

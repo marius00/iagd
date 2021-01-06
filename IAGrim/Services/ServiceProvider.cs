@@ -46,6 +46,10 @@ namespace IAGrim.Services {
             throw new ArgumentException("Cannot find service of type", typeof(T).ToString());
         }
 
+        public void Add(object o) {
+            _services.Add(o);
+        }
+
         public static ServiceProvider Initialize(ThreadExecuter threadExecuter, SqlDialect dialect) {
             Logger.Debug("Creating services");
             var factory = new SessionFactory(dialect);
@@ -128,7 +132,6 @@ namespace IAGrim.Services {
             var stashWriter = new SafeTransferStashWriter(settingsService);
             var transferStashService = new TransferStashService(databaseItemStatDao, settingsService, stashWriter);
             services.Add(transferStashService);
-            services.Add(new TransferStashService2(playerItemDao, cacher, transferStashService, stashWriter, settingsService));
             services.Add(cacher);
 
             Logger.Debug("All services created");

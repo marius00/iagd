@@ -72,6 +72,11 @@ namespace IAGrim.BuddyShare {
                     
                     var subscriptions = _subscriptionRepo.ListAll();
                     foreach (var subscription in subscriptions) {
+                        if (subscription.Id <= 9999) {
+                            // TODO: Delete legacy
+                            continue;
+                        }
+                        
                         // Cooldown per user (so that newly added ones gets fetched fairly fast)
                         if (!_cooldowns.ContainsKey(subscription.Id)) {
                             _cooldowns[subscription.Id] = new ActionCooldown(_defaultCooldown);

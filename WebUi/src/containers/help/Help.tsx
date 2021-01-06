@@ -1,6 +1,7 @@
 import * as React from 'react';
 import './Help.css';
-import { openUrl } from '../integration/integration';
+import { openUrl } from '../../integration/integration';
+import smuggler from './smuggler.png';
 
 function toNumberedList(s: string) {
   return <ol>
@@ -486,6 +487,18 @@ const helpEntries = [
       Any time you loot an item it will be synced up to the cloud. If anything happens and you need to reinstall IA, all you need to do is login with the same e-mail address, and IA will automagically download all of your items again.
       <br/>
       This functionality can also be used to share items between multiple computers, using the "Using multiple PCs" setting.
+    </div>
+  },
+  {
+    title: `Not enough stash tabs`,
+    tag: 'NotEnoughStashTabs',
+    body: () => <div>
+      IA requires a <u>minimum</u> of two <u>shared</u> stash tabs to work. <br/>
+      One tab to loot/remove items from, and one tab to deposit/add items. <br/>
+      By default IA will loot any items you place in the <u>last</u> shared tab, and deposit to the <u>second to last</u><br/><br/>
+      If you already have 2 or more tabs, and are seeing this error, you most likely bought <u>personal stash</u> tabs, not <u>shared stash</u> tabs.<br/>
+      <img src={smuggler} /> <br/>
+      If you are seeing this icon, you are viewing your <u>private stash</u>, not your shared stash.
     </div>
   },
   /*

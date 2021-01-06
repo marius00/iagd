@@ -86,7 +86,7 @@ namespace IAGrim {
 
 #if DEBUG
             Test();
-            Uris.Initialize(Uris.EnvLocalDev);
+            //Uris.Initialize(Uris.EnvLocalDev);
 #endif
 
             // Prevent running in RELEASE mode by accident

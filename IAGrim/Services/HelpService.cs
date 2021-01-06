@@ -28,8 +28,8 @@ namespace IAGrim.Services {
             ExperimentalUpdates,
             WhatIsBuddyId,
             WhatIsBuddyNickname,
-            OnlineBackups
-
+            OnlineBackups,
+            NotEnoughStashTabs
         }
 
         public void ShowHelp(HelpType type) {

@@ -12,7 +12,7 @@ import ICollectionItem from './interfaces/ICollectionItem';
 import MockCollectionItemData from './mock/MockCollectionItemData';
 import NewFeaturePromoter from './components/NewFeaturePromoter';
 import Spinner from './components/Spinner';
-import Help from './containers/Help';
+import Help from './containers/help/Help';
 
 
 export interface ApplicationState {

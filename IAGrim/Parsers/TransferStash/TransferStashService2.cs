@@ -24,17 +24,19 @@ namespace IAGrim.Parsers.TransferStash {
         private readonly TransferStashService _transferStashService;
         private readonly SafeTransferStashWriter _stashWriter;
         private readonly SettingsService _settings;
+        private readonly IHelpService _helpService;
         public event EventHandler OnUpdate;
 
-        public TransferStashService2(IPlayerItemDao playerItemDao, TransferStashServiceCache cache, TransferStashService transferStashService, SafeTransferStashWriter stashWriter, SettingsService settings) {
+        public TransferStashService2(IPlayerItemDao playerItemDao, TransferStashServiceCache cache, TransferStashService transferStashService, SafeTransferStashWriter stashWriter, SettingsService settings, IHelpService helpService) {
             _playerItemDao = playerItemDao;
             _cache = cache;
             _transferStashService = transferStashService;
             _stashWriter = stashWriter;
             _settings = settings;
+            _helpService = helpService;
         }
 
-        private static List<UserFeedback> Validate(Stash stash, int lootFromIndex) {
+        private List<UserFeedback> Validate(Stash stash, int lootFromIndex) {
 #if DEBUG
             if (stash.Tabs.Count < 5) {
                 Logger.Debug($"Transfer stash only has {stash.Tabs.Count} tabs, upgrading to 5 tabs.");
@@ -46,6 +48,7 @@ namespace IAGrim.Parsers.TransferStash {
 
             if (stash.Tabs.Count < 2) {
                 Logger.WarnFormat($"Transfer stash contains {stash.Tabs.Count} pages. IA requires at least 2 stash pages to function properly.");
+                _helpService.ShowHelp(HelpService.HelpType.NotEnoughStashTabs);
                 return new List<UserFeedback> {new UserFeedback(UserFeedbackLevel.Warning, RuntimeSettings.Language.GetTag("iatag_not_enough_stash", stash.Tabs.Count))};
             }
 
