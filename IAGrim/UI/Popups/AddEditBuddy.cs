@@ -132,7 +132,7 @@ namespace IAGrim.UI.Popups {
         }
 
         bool Verify(string buddyId) {
-            var status = _restService.VerifyGet($"{Uris.BuddyItemsUrl}/?id={buddyId}&ts=900000000000");
+            var status = _restService.VerifyGet($"{Uris.BuddyItemsUrl}?id={buddyId}&ts=900000000000");
             return status == HttpStatusCode.OK;
         }
     }
