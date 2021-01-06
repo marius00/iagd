@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using CefSharp.Structs;
 using EvilsoftCommons;
 using IAGrim.Backup.Cloud;
 using IAGrim.Backup.Cloud.Service;
@@ -11,9 +10,7 @@ using IAGrim.Services;
 using IAGrim.Settings;
 using IAGrim.UI.Popups;
 using IAGrim.Utilities;
-using IAGrim.Utilities.Detection;
 using log4net;
-using Point = System.Drawing.Point;
 
 namespace IAGrim.UI.Tabs {
     public partial class OnlineSettings : Form, IDisposable {
@@ -272,6 +269,14 @@ namespace IAGrim.UI.Tabs {
                 _tooltipHelper.ShowTooltipForControl(RuntimeSettings.Language.GetTag("iatag_ui_copiedclipboard"), labelBuddyId);
                 Clipboard.SetText(_settings.GetPersistent().BuddySyncUserIdV3.ToString());
             }
+        }
+
+        private void btnModifyBuddy_Click(object sender, EventArgs e) {
+            editToolStripMenuItem_Click(sender, e);
+        }
+
+        private void btnDeleteBuddy_Click(object sender, EventArgs e) {
+            deleteToolStripMenuItem_Click(sender, e);
         }
     }
 }
