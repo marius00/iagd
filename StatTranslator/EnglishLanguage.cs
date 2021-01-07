@@ -304,6 +304,8 @@ namespace StatTranslator {
             {"iatag_html_nomoreitems", "No more items"},
             {"iatag_html_setconsistsof", "This set consists of the following items: "},
 
+            {"iatag_ui_updatingstats_title", "Updating stats for owned items.." },
+            {"iatag_ui_updatingstats", "Updating stats for your items..." },
             {"iatag_ui_darkmode", "Dark mode" },
             {"iatag_ui_nagscreen1_button", "Maybe later..."},
             {"iatag_ui_nagscreen2_button", "Hah, as if!"},

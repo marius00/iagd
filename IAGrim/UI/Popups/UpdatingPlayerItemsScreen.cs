@@ -8,13 +8,14 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using IAGrim.Utilities;
 
 namespace IAGrim.UI {
     /// <summary>
     /// Loading screen while parsing player item stats
     /// </summary>
     public partial class UpdatingPlayerItemsScreen : Form {
-        private StatUpdateUIBackgroundWorker worker;
+        private StatUpdateUIBackgroundWorker _worker;
         public bool CanClose { get; set; }
 
 
@@ -22,7 +23,7 @@ namespace IAGrim.UI {
             InitializeComponent();
             CanClose = false;
 
-            worker = new StatUpdateUIBackgroundWorker(playerItemDao, bw_RunWorkerCompleted, bw_ProgressChanged);
+            _worker = new StatUpdateUIBackgroundWorker(playerItemDao, bw_RunWorkerCompleted, bw_ProgressChanged);
         }
 
         /// <summary>
@@ -47,6 +48,7 @@ namespace IAGrim.UI {
 
         private void UpdatingPlayerItemsScreen_Load(object sender, EventArgs e) {
             this.FormClosing += ParsingDatabaseScreen_FormClosing;
+            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
         }
 
 

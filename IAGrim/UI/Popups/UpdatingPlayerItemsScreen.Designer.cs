@@ -48,6 +48,7 @@
             this.firefoxH11.Name = "firefoxH11";
             this.firefoxH11.Size = new System.Drawing.Size(396, 37);
             this.firefoxH11.TabIndex = 3;
+            this.firefoxH11.Tag = "iatag_ui_updatingstats";
             this.firefoxH11.Text = "Updating stats for your items...";
             // 
             // UpdatingPlayerItemsScreen
@@ -62,6 +63,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "UpdatingPlayerItemsScreen";
+            this.Tag = "iatag_ui_updatingstats_title";
             this.Text = "Updating stats for owned items..";
             this.Load += new System.EventHandler(this.UpdatingPlayerItemsScreen_Load);
             this.ResumeLayout(false);

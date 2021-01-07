@@ -11,11 +11,8 @@ using log4net;
 using StatTranslator;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading;
-using System.Web;
 using System.Windows.Forms;
 using IAGrim.Backup.Cloud;
 using IAGrim.Database.DAO.Util;
@@ -32,7 +29,6 @@ namespace IAGrim {
 
 #if DEBUG
         private static void Test() {
-            var testytest = HttpUtility.ParseQueryString("https://token.iagd.evilsoft.net?bug=1&email=itemassistant@gmail.com&token=00e449aa-634b-43b1-a9d5-9e503bd040aa");
             return;
         }
 #endif
