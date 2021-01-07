@@ -13,12 +13,11 @@ using IAGrim.Utilities;
 using log4net;
 
 namespace IAGrim.UI.Tabs {
-    public partial class OnlineSettings : Form, IDisposable {
+    public partial class OnlineSettings : Form {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(BackupSettings));
         private readonly IPlayerItemDao _playerItemDao;
         private readonly AuthService _authAuthService;
         private readonly SettingsService _settings;
-        private readonly CloudSyncService _cloudSyncService;
         private readonly IHelpService _helpService;
         private readonly IBuddyItemDao _buddyItemDao;
         private readonly IBuddySubscriptionDao _buddySubscriptionDao;
@@ -33,7 +32,6 @@ namespace IAGrim.UI.Tabs {
             _buddySubscriptionDao = buddySubscriptionDao;
 
             _authAuthService = authAuthService;
-            _cloudSyncService = new CloudSyncService(authAuthService.GetRestService());
             _tooltipHelper = new TooltipHelper();
         }
 
@@ -134,7 +132,9 @@ namespace IAGrim.UI.Tabs {
                 MessageBoxIcon.Exclamation,
                 MessageBoxDefaultButton.Button2) == DialogResult.Yes) {
                 try {
-                    if (_cloudSyncService != null && _cloudSyncService.DeleteAccount()) {
+                    var restService = _authAuthService.GetRestService();
+                    var cloudSyncService = new CloudSyncService(_authAuthService.GetRestService());
+                    if (restService != null && cloudSyncService.DeleteAccount()) {
                         MessageBox.Show(
                             RuntimeSettings.Language.GetTag("iatag_ui_backup_deleteaccount_success_body"),
                             RuntimeSettings.Language.GetTag("iatag_ui_backup_deleteaccount_success_header"),
