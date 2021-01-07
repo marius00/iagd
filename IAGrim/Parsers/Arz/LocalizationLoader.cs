@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using IAGrim.UI;
+using NHibernate.Linq;
 
 namespace IAGrim.Parsers.Arz {
     public class LocalizationLoader {
@@ -87,7 +88,10 @@ namespace IAGrim.Parsers.Arz {
             }
             var dataset = new Dictionary<string, string>(_tagsItems);
             if (_tagsIa != null) {
-                dataset = dataset.Concat(_tagsIa).ToDictionary(m => m.Key, m => m.Value);
+                foreach (var tag in _tagsIa) {
+                    dataset[tag.Key] = tag.Value;
+                }
+                
             }
             var language = new ThirdPartyLanguage(dataset, fallback);
             return language;
