@@ -3,6 +3,7 @@
 namespace IAGrim.UI.Controller.dto {
 
     public class JsonItem {
+        public string UniqueIdentifier { get; set; }
         public string BaseRecord { get; set; }
         public string Icon { get; set; }
         public string Quality { get; set; }

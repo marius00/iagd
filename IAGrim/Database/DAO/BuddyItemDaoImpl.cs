@@ -640,6 +640,7 @@ public void SetItems(long userid, string description, List<JsonBuddyItem> items)
                                 {BuddyItemsTable.LevelRequirement} as MinimumLevel,
                                 {BuddyItemsTable.RemoteItemId} as RemoteItemId,
                                 {BuddyItemsTable.StackCount} as Count,
+                                {BuddyItemsTable.SubscriptionId} as BuddyId,
                                 S.{BuddySubscriptionTable.Nickname} as Stash
 
 
@@ -672,6 +673,8 @@ public void SetItems(long userid, string description, List<JsonBuddyItem> items)
                     q.AddScalar("Id", NHibernateUtil.Int64);
                     q.AddScalar("Count", NHibernateUtil.UInt32);
                     q.AddScalar("Stash", NHibernateUtil.String);
+                    q.AddScalar("BuddyId", NHibernateUtil.Int64);
+                    q.AddScalar("RemoteItemId", NHibernateUtil.String);
 
                     foreach (var key in queryParams.Keys) {
                         q.SetParameter(key, queryParams[key]);

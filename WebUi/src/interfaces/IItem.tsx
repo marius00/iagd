@@ -3,6 +3,7 @@ import { ISkill } from './ISkill';
 import IItemType from './IItemType';
 
 export default interface IItem {
+  uniqueIdentifier: string;
   baseRecord: string;
   icon: string;
   quality: string;

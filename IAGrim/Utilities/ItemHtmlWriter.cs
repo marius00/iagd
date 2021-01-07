@@ -16,7 +16,6 @@ using NHibernate.Dialect.Schema;
 using StatTranslator;
 
 namespace IAGrim.Utilities {
-
     internal static class ItemHtmlWriter {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ItemHtmlWriter));
 
@@ -53,19 +52,29 @@ namespace IAGrim.Utilities {
         }
 
 
-
         public static JsonItem GetJsonItem(PlayerHeldItem item) {
             // TODO: Modifiers
 
             bool isCloudSynced = false;
-            object[] id = { "", "", "", "" };
+            object[] transferUrl = {"", "", "", ""};
+            string uniqueIdentifier;
             if (item is PlayerItem pi) {
-                id = new object[] { pi.BaseRecord, pi.PrefixRecord, pi.SuffixRecord, pi.MateriaRecord };
+                transferUrl = new object[] {pi.BaseRecord, pi.PrefixRecord, pi.SuffixRecord, pi.MateriaRecord};
                 isCloudSynced = pi.IsCloudSynchronized;
+                uniqueIdentifier = $"PI/{pi.Id}/{pi.CloudId}";
             }
-            else
-            if (item is BuddyItem bi) {
-                id = new object[] { bi.BaseRecord, bi.PrefixRecord, bi.SuffixRecord, bi.MateriaRecord };
+            else if (item is BuddyItem bi) {
+                // TODO: Remove this, buddy items are never transferable. Gotta provide a better unique id.
+                uniqueIdentifier = $"BI/{bi.BuddyId}/{bi.RemoteItemId}";
+            }
+            else if (item is RecipeItem) {
+                uniqueIdentifier = $"RI/{item.BaseRecord}";
+            }
+            else if (item is AugmentationItem) {
+                uniqueIdentifier = $"AI/{item.BaseRecord}";
+            }
+            else {
+                uniqueIdentifier = $"UK/{item.BaseRecord}";
             }
 
 
@@ -81,11 +90,11 @@ namespace IAGrim.Utilities {
             else if (item is PlayerItem) {
                 type = ItemTypeDto.Player;
             }
-            else if (item is AugmentationItem) {
+            else if (item is AugmentationItem augmentationItem) {
                 type = ItemTypeDto.Augmentation;
                 extras = ItemOperationsUtility.TranslateFaction(
                     RuntimeSettings.Language,
-                    ((AugmentationItem) item).Tags.FirstOrDefault(m => m.Stat == "factionSource")?.TextValue ?? string.Empty
+                    augmentationItem.Tags.FirstOrDefault(m => m.Stat == "factionSource")?.TextValue ?? string.Empty
                 );
             }
             else {
@@ -93,17 +102,17 @@ namespace IAGrim.Utilities {
             }
 
 
-
             var json = new JsonItem {
+                UniqueIdentifier = uniqueIdentifier,
                 BaseRecord = item.BaseRecord ?? string.Empty,
-                URL = id,
+                URL = transferUrl,
                 Icon = item.Bitmap ?? string.Empty,
                 Name = PureItemName(item.Name) ?? string.Empty,
                 Quality = item.Rarity ?? string.Empty,
                 Level = item.MinimumLevel,
                 Socket = GetSocketFromItem(item?.Name) ?? string.Empty,
-                NumItems = (uint)item.Count,
-                InitialNumItems = (uint)item.Count,
+                NumItems = (uint) item.Count,
+                InitialNumItems = (uint) item.Count,
                 PetStats = item.PetStats.Select(ToJsonStat).ToList(),
                 BodyStats = item.BodyStats.Select(ToJsonStat).ToList(),
                 HeaderStats = item.HeaderStats.Select(ToJsonStat).ToList(),
@@ -111,7 +120,7 @@ namespace IAGrim.Utilities {
                 HasRecipe = item.HasRecipe,
                 Buddies = item.Buddies.ToArray(),
                 Skill = item.Skill != null ? GetJsonSkill(item.Skill) : null,
-                GreenRarity = (int)item.PrefixRarity,
+                GreenRarity = (int) item.PrefixRarity,
                 HasCloudBackup = isCloudSynced,
                 Slot = SlotTranslator.Translate(RuntimeSettings.Language, item.Slot ?? ""),
                 Extras = extras,
@@ -127,13 +136,12 @@ namespace IAGrim.Utilities {
 
                 if (translated.Count == 0 && !(modifiedSkill.Class == null || modifiedSkill.Tier == null)) {
                     string[] uri = json.URL.Select(o => o.ToString()).ToArray();
-                    
+
                     var error = $@"Could not translate skill-modifier on: '{item.Name}', {json.BaseRecord} - {string.Join(";", uri)}";
                     ExceptionReporter.ReportIssue(error);
                     Logger.Debug($"Could not translate skill-modifier stats for \"{item.Name}\"");
                 }
             }
-
 
 
             return json;
@@ -164,8 +172,8 @@ namespace IAGrim.Utilities {
                 if (item is PlayerItem pi && !string.IsNullOrEmpty(pi.CachedStats)) {
                     try {
                         var cached = JsonConvert.DeserializeObject<JsonItem>(pi.CachedStats);
-                        cached.NumItems = (uint)item.Count; // Can't use a cached item count, no idea how many items are left.
-                        cached.InitialNumItems = (uint)item.Count;
+                        cached.NumItems = (uint) item.Count; // Can't use a cached item count, no idea how many items are left.
+                        cached.InitialNumItems = (uint) item.Count;
                         cached.HasCloudBackup = pi.IsCloudSynchronized;
                         cached.Buddies = pi.Buddies.ToArray();
                         jsonItems.Add(cached);
@@ -179,7 +187,7 @@ namespace IAGrim.Utilities {
                     jsonItems.Add(GetJsonItem(item));
                 }
             }
-            
+
             return jsonItems;
         }
 
@@ -188,7 +196,8 @@ namespace IAGrim.Utilities {
             if (!string.IsNullOrEmpty(name) && name.Contains("[")) {
                 string[] tmp = name.Split('[');
                 return $"({tmp[1].Replace("]", "")})";
-            } else {
+            }
+            else {
                 return string.Empty;
             }
         }
@@ -203,7 +212,8 @@ namespace IAGrim.Utilities {
             if (!string.IsNullOrEmpty(name) && name.Contains("[")) {
                 string[] tmp = name.Split('[');
                 return tmp[0].Trim();
-            } else {
+            }
+            else {
                 return name;
             }
         }

@@ -26,11 +26,8 @@ namespace IAGrim.UI.Misc.CEF {
         public event EventHandler OnSeenFeatureRecommendation;
 
         public string TransferItem(object[] identifier, int numItems) {
-            var args = new StashTransferEventArgs {
-                Count = numItems,
-                InternalId = identifier
-            };
-
+            var args = new StashTransferEventArgs(identifier, numItems);
+             
             ItemTransferEvent?.Invoke(this, args);
 
             // Frontend expects a reply on success/failure

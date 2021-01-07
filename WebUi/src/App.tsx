@@ -223,8 +223,12 @@ class App extends React.PureComponent<{}, object> {
 };
 
 function ShowMessage(message: string, type: 'success' | 'danger' | 'info' | 'default' | 'warning') {
+  let duration = 2500;
+  if (type === 'danger') {
+    duration = 4500;
+  }
+
   store.addNotification({
-    title: type,
     message: message,
     type: type,
     insert: 'top',
@@ -232,7 +236,7 @@ function ShowMessage(message: string, type: 'success' | 'danger' | 'info' | 'def
     animationIn: ['animate__animated', 'animate__fadeIn'],
     animationOut: ['animate__animated', 'animate__fadeOut'],
     dismiss: {
-      duration: 2500,
+      duration: duration,
       onScreen: true
     }
   });

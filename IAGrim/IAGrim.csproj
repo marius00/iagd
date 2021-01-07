@@ -211,7 +211,6 @@
     <Compile Include="Database\Model\ItemSetAssociation.cs" />
     <Compile Include="Database\Model\ItemSkillMapping.cs" />
     <Compile Include="Database\Model\SkillTierMapping.cs" />
-    <Compile Include="Database\Model\UnlootedStashItem.cs" />
     <Compile Include="Database\Synchronizer\ItemCollectionRepo.cs" />
     <Compile Include="Parsers\TransferStash\SafeTransferStashWriter.cs" />
     <Compile Include="Parsers\TransferStash\TransferStashService2.cs" />
@@ -697,9 +696,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Database\Model\PlayerItemRecord.hbm.xml" />
     <EmbeddedResource Include="Database\Model\AugmentationItem.hbm.xml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Database\Model\UnlootedStashItem.h_b_m.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="Resources\arrow.bmp" />

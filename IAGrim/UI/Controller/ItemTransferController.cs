@@ -171,18 +171,11 @@ namespace IAGrim.UI.Controller {
                     Logger.InfoFormat("Successfully deposited {0} out of {1} items", result.NumItemsTransferred, result.NumItemsRequested);
                     args.NumTransferred = result.NumItemsTransferred;
                     args.IsSuccessful = true;
-                    try {
-                        var message = string.Format(RuntimeSettings.Language.GetTag("iatag_stash3_success"),
-                            result.NumItemsTransferred, result.NumItemsRequested);
+                    
+                    if (result.NumItemsTransferred > 0) {
+                        var message = RuntimeSettings.Language.GetTag("iatag_stash3_success", result.NumItemsTransferred, result.NumItemsRequested);
                         _browser.ShowMessage(message, UserFeedbackLevel.Success);
-                    }
-                    catch (FormatException ex) {
-                        Logger.Warn(ex.Message);
-                        Logger.Warn(ex.StackTrace);
-                        Logger.Warn("Language pack error, iatag_stash3_success is of invalid format.");
-                    }
-
-                    if (result.NumItemsTransferred == 0) {
+                    } else if (result.NumItemsTransferred == 0) {
                         _setTooltip(RuntimeSettings.Language.GetTag("iatag_stash3_failure"));
                         _browser.ShowMessage(RuntimeSettings.Language.GetTag("iatag_stash3_failure"), UserFeedbackLevel.Warning);
 

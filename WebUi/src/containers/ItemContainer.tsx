@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Item from '../components/Item/Item';
+import Item, { getUniqueId } from '../components/Item/Item';
 import IItem from '../interfaces/IItem';
 import './ItemContainer.css';
 import ReactTooltip from 'react-tooltip';
@@ -75,7 +75,7 @@ class ItemContainer extends React.PureComponent<Props, object> {
           {items.map((item) =>
             <Item
               item={item}
-              key={'item-' + item.url.join(':')}
+              key={'item-' + getUniqueId(item)}
               transferAll={(url: object[]) => this.transferAll(url)}
               transferSingle={(url: object[]) => this.transferSingle(url)}
               getItemName={(baseRecord:string) => this.findByRecord(baseRecord)}

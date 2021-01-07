@@ -20,6 +20,11 @@ interface Props {
   requestUnknownItemHelp: () => void;
 }
 
+export function getUniqueId(item: IItem): string {
+  if (item.uniqueIdentifier) return item.uniqueIdentifier;
+  else return item.url.join(":");
+}
+
 class Item extends React.PureComponent<Props, object> {
   openItemSite() {
     openUrl(`http://www.grimtools.com/db/search?src=itemassistant&query=${this.props.item.name}`);
@@ -97,15 +102,15 @@ class Item extends React.PureComponent<Props, object> {
 
 
     const headerStats = item.headerStats.map((stat) =>
-      <ItemStat {...stat} key={'stat-head-' + item.url.join(':') + socket + statToString(stat)} />
+      <ItemStat {...stat} key={'stat-head-' + getUniqueId(item) + socket + statToString(stat)} />
     );
 
     const bodyStats = item.bodyStats.map((stat) =>
-      <ItemStat {...stat} key={'stat-body-' + item.url.join(':') + socket + statToString(stat)} />
+      <ItemStat {...stat} key={'stat-body-' + getUniqueId(item) + socket + statToString(stat)} />
     );
 
     const petStats = item.petStats.map((stat) =>
-      <ItemStat {...stat} key={'stat-pets-' + item.url.join(':') + socket + statToString(stat)} />
+      <ItemStat {...stat} key={'stat-pets-' + getUniqueId(item) + socket + statToString(stat)} />
     );
 
     const setName = GetSetName(item.baseRecord);
@@ -153,7 +158,7 @@ class Item extends React.PureComponent<Props, object> {
           {setName !== undefined && <div><br />
             <span className="set-name">{translate('item.label.setbonus')}</span> <span className="set-name" data-feature="SetBonus" data-tip={setItemsList}>{setName}</span></div>}
 
-          {item.skill ? <Skill skill={item.skill} keyPrefix={item.url.join(':')}/> : ''}
+          {item.skill ? <Skill skill={item.skill} keyPrefix={getUniqueId(item)}/> : ''}
 
         </div>
         {item.buddies.length > 0 ? this.renderBuddyItem(item) : ''}
