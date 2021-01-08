@@ -78,7 +78,7 @@ namespace IAGrim.Services {
             if (items.Count <= 0) return true;
 
             Logger.Debug($"Updated cache for {items.Count} items");
-            _itemStatService.ApplyStats(items);
+            _itemStatService.ApplyStats(items, false);
 
             foreach (var item in items) {
                 var rendered = ItemHtmlWriter.GetJsonItem(item);

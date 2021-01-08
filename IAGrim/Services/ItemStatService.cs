@@ -189,14 +189,14 @@ namespace IAGrim.Services {
             }
         }
 
-        public void ApplyStats(IEnumerable<PlayerHeldItem> itemSource) {
+        public void ApplyStats(IEnumerable<PlayerHeldItem> itemSource, bool useCache) {
             var items = itemSource.ToList();
             if (items.Count > 0) {
                 Logger.Debug($"Applying stats to {items.Count()} items");
 
                 var playerItems = GetPlayerItems(items);
                 if (playerItems.Count > 0) {
-                    ApplyStatsToPlayerItems(playerItems, false);
+                    ApplyStatsToPlayerItems(playerItems, !useCache);
                 }
 
                 var buddyItems = GetBuddyItems(items);
