@@ -413,7 +413,7 @@
     </Compile>
     <Compile Include="Services\Dto\DBSTatRow.cs" />
     <Compile Include="Services\GrimStateTracker.cs" />
-    <Compile Include="Services\ItemPaginatorService.cs" />
+    <Compile Include="Services\ItemPaginationService.cs" />
     <Compile Include="Services\ItemStatService.cs" />
     <Compile Include="Services\MessageProcessor\CloudDetectorProcessor.cs" />
     <Compile Include="Services\MessageProcessor\GenericErrorHandler.cs" />

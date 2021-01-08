@@ -758,6 +758,7 @@ namespace IAGrim.Database {
                 {PlayerItemTable.AzureUuid} as AzureUuid,
                 {PlayerItemTable.CloudId} as CloudId,
                 {PlayerItemTable.IsCloudSynchronized} as IsCloudSynchronizedValue,
+                {PlayerItemTable.Id} as Id,
                 CachedStats as CachedStats,
                 (SELECT Record FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord) LIMIT 1) AS PetRecord
                 FROM PlayerItem PI WHERE " + string.Join(" AND ", queryFragments));
@@ -958,10 +959,6 @@ DELETE FROM PlayerItem WHERE Id IN (
                 using (session.BeginTransaction()) {
                     return session.CreateSQLQuery(sql)
                         .SetResultTransformer(new AliasToBeanResultTransformer(typeof(PlayerItem)))
-                        .List<PlayerItem>();
-                    return session.CreateCriteria<PlayerItem>()
-                        .Add(Restrictions.IsNull("CachedStats"))
-                        .SetMaxResults(50)
                         .List<PlayerItem>();
                 }
             }

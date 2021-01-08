@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace IAGrim.Services {
-    class ItemPaginatorService {
+    class ItemPaginationService {
         private readonly int _limit;
         private readonly Comparison<PlayerHeldItem> _comparer;
 
@@ -17,7 +17,7 @@ namespace IAGrim.Services {
         private int Remaining => Math.Min(_limit, NumItems - _skip);
 
 
-        public ItemPaginatorService(int limit) {
+        public ItemPaginationService(int limit) {
             this._limit = limit;
 
             this._comparer = (a, b) => a?.Name?.CompareTo(b?.Name) ?? 0;

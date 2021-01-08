@@ -25,7 +25,7 @@ namespace IAGrim.UI.Controller {
         private readonly IPlayerItemDao _playerItemDao;
         private readonly ItemStatService _itemStatService;
         private readonly IBuddyItemDao _buddyItemDao;
-        private readonly ItemPaginatorService _itemPaginatorService;
+        private readonly ItemPaginationService _itemPaginationService;
         private readonly IAugmentationItemDao _augmentationItemRepo;
         private readonly SettingsService _settings;
         private readonly IItemCollectionDao _itemCollectionRepo;
@@ -46,7 +46,7 @@ namespace IAGrim.UI.Controller {
             _dbItemDao = databaseItemDao;
             _playerItemDao = playerItemDao;
             _itemStatService = itemStatService;
-            _itemPaginatorService = new ItemPaginatorService(TakeSize);
+            _itemPaginationService = new ItemPaginationService(TakeSize);
             _buddyItemDao = buddyItemDao;
             _augmentationItemRepo = augmentationItemRepo;
             _settings = settings;
@@ -84,7 +84,7 @@ namespace IAGrim.UI.Controller {
         }
 
         private bool ApplyItems(bool append) {
-            var items = _itemPaginatorService.Fetch();
+            var items = _itemPaginationService.Fetch();
             if (items.Count == 0) {
                 Browser.AddItems(new List<JsonItem>());
                 return false;
@@ -142,7 +142,7 @@ namespace IAGrim.UI.Controller {
                 AddAugmentItems(items, query);
             }
 
-            _itemPaginatorService.Update(items, orderByLevel);
+            _itemPaginationService.Update(items, orderByLevel);
 
             return message;
         }
