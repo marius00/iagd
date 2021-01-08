@@ -26,6 +26,7 @@ namespace IAGrim.Backup.Cloud.Util {
                 Name = pi.Name,
                 NameLowercase = pi.NameLowercase,
                 Rarity = pi.Rarity,
+                PrefixRarity = pi.PrefixRarity,
                 
                 // One way data, online backup does not return these
                 CachedStats = pi.CachedStats,

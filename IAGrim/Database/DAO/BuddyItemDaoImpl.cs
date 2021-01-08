@@ -601,7 +601,7 @@ public void SetItems(long userid, string description, List<JsonBuddyItem> items)
                 queryParams.Add("rarity", query.Rarity);
             }
             
-            if (query.PrefixRarity > 0) {
+            if (query.PrefixRarity > 1) {
                 queryFragments.Add($"{BuddyItemsTable.PrefixRarity} >= :prefixRarity");
                 queryParams.Add("prefixRarity", query.PrefixRarity);
             }
