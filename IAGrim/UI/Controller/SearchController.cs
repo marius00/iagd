@@ -187,10 +187,10 @@ namespace IAGrim.UI.Controller {
             if (buddyPlayerHeldItems.Count > 0) {
                 MergeDuplicates(buddyPlayerHeldItems);
                 items.AddRange(buddyPlayerHeldItems);
-                message = RuntimeSettings.Language.GetTag("iatag_additional_items_found", buddyPlayerHeldItems.Count);
-            }
+                message = RuntimeSettings.Language.GetTag("iatag_items_found_self_and_buddy", items.Count, buddyPlayerHeldItems.Count);
+            } 
             else {
-                message = string.Empty;
+                message = RuntimeSettings.Language.GetTag("iatag_items_found_selfonly", items.Count);
             }
         }
 

@@ -556,7 +556,8 @@ namespace StatTranslator {
             {"iatag_stash_might_be_full", "Some items not deposited, stash {0} might be full."},
             {"iatag_not_enough_stash", "Transfer Stash only contains {0} pages. IA requires at least 2 pages to function properly."},
             {"iatag_no_matching_items_found", "No matching items found"},
-            {"iatag_additional_items_found", "An additional {0} items found from your friends"},
+            {"iatag_items_found_selfonly", "{0} matching items found"},
+            {"iatag_items_found_self_and_buddy", "{0} matching items found (with an additional {1} from your friends)"},
 
             {"iatag_not_implemented", "Functionality not implemented"},
 
