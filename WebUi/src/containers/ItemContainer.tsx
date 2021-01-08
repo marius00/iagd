@@ -11,6 +11,7 @@ import NewFeaturePromoter from '../components/NewFeaturePromoter';
 
 interface Props {
   items: IItem[];
+  numItems?: number;
   isLoading: boolean;
   onItemReduce(url: object[], numItems: number): void;
   onRequestMoreItems(): void;
@@ -64,13 +65,18 @@ class ItemContainer extends React.PureComponent<Props, object> {
 
   render() {
     const items = this.props.items;
+    const canLoadMoreItems = this.props.numItems !== undefined ? this.props.numItems > items.length : true;
+    console.log('num', this.props.numItems);
 
     if (items.length > 0) {
       return (
         <div className="items">
-          <span className="clipboard-link" onClick={() => setClipboard(this.getClipboardContent())}>
-            {translate('app.copyToClipboard')}
-          </span>
+          <div className="clipboard-container">
+            <div className="clipboard-link" onClick={() => setClipboard(this.getClipboardContent())}>
+              {translate('app.copyToClipboard')}
+            </div>
+            <div>Displaying {items.length + '/' + this.props.numItems}</div>
+          </div>
 
           {items.map((item) =>
             <Item
@@ -82,7 +88,9 @@ class ItemContainer extends React.PureComponent<Props, object> {
               requestUnknownItemHelp={this.props.requestUnknownItemHelp}
             />
           )}
-          <OnScrollLoader onTrigger={this.props.onRequestMoreItems} />
+
+          {canLoadMoreItems && <button onClick={this.props.onRequestMoreItems}>Load more items</button>}
+          {canLoadMoreItems && <OnScrollLoader onTrigger={this.props.onRequestMoreItems} />}
           <ReactTooltip html={true} type={this.props.isDarkMode ? 'light' : 'dark'} />
         </div>
       );

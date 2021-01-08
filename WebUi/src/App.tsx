@@ -22,19 +22,15 @@ export interface ApplicationState {
   collectionItems: ICollectionItem[];
   isDarkMode: boolean;
   helpSearchFilter: string;
+  numItems: number;
 }
 
 
-// TODO: "Load more items" button
-// BUGCHECK: Does IA ever download items if DELETE fails? Cloud.
 // ** Reports of the user interface freezing while searching, viable to stick it into its own thread? May be too complex to do right..
 // TODO: See C#: "What's this?" May be the cause of all the "no stats found" shit.. does it ever DO anything?
-// TODO: Preload stats after a few seconds, to instantly load when scrolling down?
 // See code: TODO: Possible to get skill stuff on this? Tooltip + color
 // TODO: Font color red on Set: bonus tag is freaking terrible in light mode (dark tooltip)
-// TODO: A commit redoing all the damn bracket styles in C# -- do this last.. sigh.
 // TODO: Ensure loading works correctly.. no duplicates, in expected order..
-// TODO: Look into the duplicate key errors -- seems to be for items with&without a component. dupe item but with comp.
 // TODO: Loot button if stash file path is network \\
 // TODO: Onboarding => new user/returning => import flow vs parse flow, explain how it works, nag about backups, explain misc functionality.
 // TODO: Icon next to transfer links?
@@ -71,19 +67,22 @@ class App extends React.PureComponent<{}, object> {
     collectionItems: [],
     isDarkMode: false,
     helpSearchFilter: '',
+    numItems: 0,
   } as ApplicationState;
 
   componentDidMount() {
     // Set the items to show
     // @ts-ignore: setItems doesn't exist on window
-    window.setItems = (data: any) => {
+    window.setItems = (data: any, numItems: number) => {
       const items = typeof data === 'string' ? JSON.parse(data) : data;
-      console.log(data);
+      console.log(data, numItems);
+      console.log('==========>', numItems);
       window.scrollTo(0, 0);
 
       this.setState({
         isLoading: false,
-        items: items
+        items: items,
+        numItems: numItems || 0
       });
     };
 
@@ -176,6 +175,7 @@ class App extends React.PureComponent<{}, object> {
   }
 
   render() {
+    console.log('wtf', this.state.numItems);
     return (
       <div className={'App ' + (this.state.isDarkMode ? 'App-dark' : 'App-Light')}>
         {this.state.isLoading && isEmbedded && <Spinner/>}
@@ -194,6 +194,7 @@ class App extends React.PureComponent<{}, object> {
 
         {this.state.activeTab === 0 && <ItemContainer
             items={this.state.items}
+            numItems={this.state.numItems}
             isLoading={this.state.isLoading}
             onItemReduce={(url, numItems) => this.reduceItemCount(url, numItems)}
             onRequestMoreItems={() => this.requestMoreItems()}

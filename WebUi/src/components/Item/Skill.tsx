@@ -16,15 +16,15 @@ class Skill extends React.PureComponent<Props, object> {
     const prefix = this.props.keyPrefix;
 
     const headerStats = skill.headerStats.map((stat) =>
-      <ItemStat {...stat} key={'skill-stat-head-' + prefix + statToString(stat)} />
+      <ItemStat {...stat} key={`skill-stat-head-${prefix}-${statToString(stat)}`.replace(' ', '_')} />
     );
 
     const bodyStats = skill.bodyStats.map((stat) =>
-      <ItemStat {...stat} key={'skill-stat-body-' + prefix + statToString(stat)} />
+      <ItemStat {...stat} key={`skill-stat-body-${prefix}-${statToString(stat)}`.replace(' ', '_')} />
     );
 
     const petStats = skill.petStats.map((stat) =>
-      <ItemStat {...stat} key={'skill-stat-pets-' + prefix + statToString(stat)} />
+      <ItemStat {...stat} key={`skill-stat-pets-${prefix}-${statToString(stat)}`.replace(' ', '_')} />
     );
 
     return (

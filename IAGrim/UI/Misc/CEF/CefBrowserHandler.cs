@@ -79,7 +79,7 @@ namespace IAGrim.UI.Misc.CEF {
         /// <param name="numItemsFound">The number of items found, total (eg 3000 found, but batch has 64)</param>
         public void SetItems(List<JsonItem> items, int numItemsFound) {
             if (BrowserControl != null && BrowserControl.CanExecuteJavascriptInMainFrame) {
-                BrowserControl.ExecuteScriptAsync("window.setItems", JsonConvert.SerializeObject(items, _settings), 0);
+                BrowserControl.ExecuteScriptAsync("window.setItems", JsonConvert.SerializeObject(items, _settings), numItemsFound);
             }
             else {
                 Logger.Warn("Attempted to update items but CEF not yet initialized.");

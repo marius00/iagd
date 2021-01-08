@@ -2,13 +2,21 @@
   cursor: help !important;
 }
 
-.clipboard-link {
+.clipboard-container {
   position: fixed;
   right: 14px;
   top: 7px;
+  z-index: 100000;
+
+  background-color: #f3f3f387;
+  border: 1px solid;
+  border-radius: 5px;
+  padding: 7px;
+}
+
+.clipboard-link {
   text-decoration: underline;
   cursor: pointer;
-  z-index: 100000;
 }
 
 .App-dark .clipboard-link {

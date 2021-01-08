@@ -10,6 +10,7 @@ import GetSetName, { GetSetItems } from '../../integration/ItemSetService';
 import ICollectionItem from '../../interfaces/ICollectionItem';
 import { IStat, statToString } from '../../interfaces/IStat';
 import ItemCornerContainer from './ItemCornerContainer';
+import { v4 as uuidv4 } from 'uuid';
 
 
 interface Props {
@@ -22,7 +23,10 @@ interface Props {
 
 export function getUniqueId(item: IItem): string {
   if (item.uniqueIdentifier) return item.uniqueIdentifier;
-  else return item.url.join(":");
+  else {
+    console.warn("Could not find unique identifier for item, defaulting to uuid", item);
+    return uuidv4();
+  };
 }
 
 class Item extends React.PureComponent<Props, object> {
@@ -102,15 +106,15 @@ class Item extends React.PureComponent<Props, object> {
 
 
     const headerStats = item.headerStats.map((stat) =>
-      <ItemStat {...stat} key={'stat-head-' + getUniqueId(item) + socket + statToString(stat)} />
+      <ItemStat {...stat} key={`stat-head-${getUniqueId(item)}-${socket}-${statToString(stat)}`.replace(' ', '_')} />
     );
 
     const bodyStats = item.bodyStats.map((stat) =>
-      <ItemStat {...stat} key={'stat-body-' + getUniqueId(item) + socket + statToString(stat)} />
+      <ItemStat {...stat} key={`stat-body-${getUniqueId(item)}-${socket}-${statToString(stat)}`.replace(' ', '_')} />
     );
 
     const petStats = item.petStats.map((stat) =>
-      <ItemStat {...stat} key={'stat-pets-' + getUniqueId(item) + socket + statToString(stat)} />
+      <ItemStat {...stat} key={`stat-pets-${getUniqueId(item)}-${socket}-${statToString(stat)}`.replace(' ', '_')} />
     );
 
     const setName = GetSetName(item.baseRecord);

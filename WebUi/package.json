@@ -6,6 +6,7 @@
   "dependencies": {
     "@material-ui/core": "^4.11.1",
     "@material-ui/icons": "^4.9.1",
+    "@types/uuid": "^8.3.0",
     "cross-env": "^7.0.3",
     "getenv": "^1.0.0",
     "react": "^17.0.1",
@@ -14,6 +15,7 @@
     "react-scripts": "4.0.0",
     "react-tooltip": "^4.2.11",
     "typescript": "^4.0.5",
+    "uuid": "^8.3.2",
     "web-vitals": "^0.2.4"
   },
   "scripts": {
