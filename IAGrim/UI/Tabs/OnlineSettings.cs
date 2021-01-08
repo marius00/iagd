@@ -57,7 +57,7 @@ namespace IAGrim.UI.Tabs {
             groupBoxBackupDetails.Visible = !cbDontWantBackups.Checked; // No point displaying info if user has opted for zero features
             pbBuddyItems.Visible = !cbDontWantBackups.Checked;
             btnAddBuddy.Enabled = !buttonLogin.Enabled;
-            buddyList.Enabled = !buttonLogin.Enabled;
+            btnModifyBuddy.Enabled = !buttonLogin.Enabled;
             linkViewOnline.Enabled = !buttonLogin.Enabled;
             if (buddyList.Enabled) UpdateBuddyList();
 
@@ -218,14 +218,16 @@ namespace IAGrim.UI.Tabs {
         }
 
         private void btnAddBuddy_Click(object sender, EventArgs e) {
-            var diag = new AddEditBuddy(_helpService, _authAuthService.GetRestService());
-            if (diag.ShowDialog() == DialogResult.OK) {
-                bool isMyself = diag.BuddyId == _settings.GetPersistent().BuddySyncUserIdV3;
-                if (diag.BuddyId > 0 && !isMyself) {
-                    _buddySubscriptionDao.SaveOrUpdate(new BuddySubscription {Id = diag.BuddyId, Nickname = diag.Nickname});
-                }
+            if (btnAddBuddy.Enabled) {
+                var diag = new AddEditBuddy(_helpService, _authAuthService.GetRestService());
+                if (diag.ShowDialog() == DialogResult.OK) {
+                    bool isMyself = diag.BuddyId == _settings.GetPersistent().BuddySyncUserIdV3;
+                    if (diag.BuddyId > 0 && !isMyself) {
+                        _buddySubscriptionDao.SaveOrUpdate(new BuddySubscription {Id = diag.BuddyId, Nickname = diag.Nickname});
+                    }
 
-                UpdateBuddyList();
+                    UpdateBuddyList();
+                }
             }
         }
 
@@ -274,7 +276,9 @@ namespace IAGrim.UI.Tabs {
         }
 
         private void btnModifyBuddy_Click(object sender, EventArgs e) {
-            editToolStripMenuItem_Click(sender, e);
+            if (btnModifyBuddy.Enabled) {
+                editToolStripMenuItem_Click(sender, e);
+            }
         }
 
         private void btnDeleteBuddy_Click(object sender, EventArgs e) {
