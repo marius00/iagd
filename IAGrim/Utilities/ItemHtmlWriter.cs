@@ -11,6 +11,7 @@ using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Model;
 using IAGrim.UI.Controller.dto;
 using log4net;
+using MoreLinq;
 using Newtonsoft.Json;
 using NHibernate.Dialect.Schema;
 using StatTranslator;
@@ -113,9 +114,9 @@ namespace IAGrim.Utilities {
                 Socket = GetSocketFromItem(item?.Name) ?? string.Empty,
                 NumItems = (uint) item.Count,
                 InitialNumItems = (uint) item.Count,
-                PetStats = item.PetStats.Select(ToJsonStat).ToList(),
-                BodyStats = item.BodyStats.Select(ToJsonStat).ToList(),
-                HeaderStats = item.HeaderStats.Select(ToJsonStat).ToList(),
+                PetStats = item.PetStats.Select(ToJsonStat).ToHashSet().ToList(),
+                BodyStats = item.BodyStats.Select(ToJsonStat).ToHashSet().ToList(),
+                HeaderStats = item.HeaderStats.Select(ToJsonStat).ToHashSet().ToList(),
                 Type = type,
                 HasRecipe = item.HasRecipe,
                 Buddies = item.Buddies.ToArray(),

@@ -12,5 +12,22 @@
         public string Param6;
 
         public string Extras { get; set; }
+
+        public override string ToString() {
+            return Text + Param0 + Param1 + Param2 + Param3 + Param4 + Param5 + Param6 + Extras;
+        }
+
+        public int CompareTo(JsonStat obj) {
+            return ToString().CompareTo(obj.ToString());
+        }
+
+        public override bool Equals(object obj) {
+            JsonStat o = obj as JsonStat;
+            return this.ToString().Equals(obj?.ToString());
+        }
+
+        public override int GetHashCode() {
+            return ToString().GetHashCode();
+        }
     }
 }

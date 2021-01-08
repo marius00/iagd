@@ -13,7 +13,7 @@ namespace IAGrim.Services {
         private int _skip;
         private List<PlayerHeldItem> _items = new List<PlayerHeldItem>();
 
-        private int NumItems => _items?.Count ?? 0;
+        public int NumItems => _items?.Count ?? 0;
         private int Remaining => Math.Min(_limit, NumItems - _skip);
 
 

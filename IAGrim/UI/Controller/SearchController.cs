@@ -68,7 +68,7 @@ namespace IAGrim.UI.Controller {
             var message = Search_(query, duplicatesOnly, includeBuddyItems, orderByLevel);
 
             if (!ApplyItems(false)) {
-                Browser.SetItems(new List<JsonItem>());
+                Browser.SetItems(new List<JsonItem>(), 0);
                 UpdateCollectionItems();
             }
 
@@ -99,7 +99,7 @@ namespace IAGrim.UI.Controller {
                 Browser.AddItems(convertedItems);
             }
             else {
-                Browser.SetItems(convertedItems);
+                Browser.SetItems(convertedItems, _itemPaginationService.NumItems);
             }
 
             UpdateCollectionItems();
