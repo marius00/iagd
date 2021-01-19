@@ -162,13 +162,14 @@ namespace IAGrim.Database {
             using (var session = SessionCreator.OpenSession()) {
                 using (var transaction = session.BeginTransaction()) {
                     foreach (var item in items) {
-                        session.CreateQuery($@"UPDATE PlayerItem SET 
-                                             {PlayerItemTable.IsCloudSynchronized} = true, 
+                        var query = session.CreateQuery($@"UPDATE PlayerItem SET 
+                                             {PlayerItemTable.IsCloudSynchronized} = 1, 
                                              {PlayerItemTable.CloudId} = :uuid 
                                             WHERE Id = :id")
                             .SetParameter("id", item.Id)
-                            .SetParameter("uuid", item.CloudId)
-                            .ExecuteUpdate();
+                            .SetParameter("uuid", item.CloudId);
+
+                            query.ExecuteUpdate();
                     }
 
                     transaction.Commit();

@@ -199,7 +199,8 @@ namespace IAGrim {
 
                 ItemStatCacheService itemStatCacheService = new ItemStatCacheService(
                     serviceProvider.Get<IPlayerItemDao>(),
-                    serviceProvider.Get<ItemStatService>()
+                    serviceProvider.Get<ItemStatService>(),
+                    serviceProvider.Get<IDatabaseItemDao>()
                 );
                 itemStatCacheService.Start();
 

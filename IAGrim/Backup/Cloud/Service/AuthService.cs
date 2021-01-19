@@ -29,7 +29,7 @@ namespace IAGrim.Backup.Cloud.Service {
             _authentication = authentication;
             _authenticationProvider = authenticationProvider;
             _playerItemDao = playerItemDao;
-            _authentication.OnSuccess += AuthenticationOnSuccess;
+            _authentication.OnAuthSuccess += AuthenticationOnSuccess;
         }
 
         private void AuthenticationOnSuccess(object sender, EventArgs eventArgs) {

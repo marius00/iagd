@@ -178,7 +178,7 @@ namespace IAGrim.UI.Misc.CEF {
 
 
                 var requestHandler = new CefRequestHandler();
-                requestHandler.OnAuthentication += (sender, args) => OnSuccess?.Invoke(sender, args);
+                requestHandler.OnAuthentication += (sender, args) => OnAuthSuccess?.Invoke(sender, args);
                 BrowserControl.RequestHandler = requestHandler;
                 
                 BrowserControl.LifeSpanHandler = new AzureOnClosePopupHijack();
@@ -217,7 +217,7 @@ namespace IAGrim.UI.Misc.CEF {
             }
         }
 
-        public event EventHandler OnSuccess;
+        public event EventHandler OnAuthSuccess;
         /* End CefBackupAuthentication End */
     }
 }

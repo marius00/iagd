@@ -35,7 +35,12 @@ namespace IAGrim.UI.Tabs {
             _tooltipHelper = new TooltipHelper();
         }
 
-        private void UpdateUi() {
+        public void UpdateUi() {
+            if (InvokeRequired) {
+                Invoke((MethodInvoker)delegate { UpdateUi(); });
+                return;
+            }
+
             var status = _authAuthService?.CheckAuthentication();
             if (status == AuthService.AccessStatus.Authorized) {
                 labelStatus.Text = RuntimeSettings.Language.GetTag("iatag_ui_backup_loggedinas", _settings.GetPersistent().CloudUser);
