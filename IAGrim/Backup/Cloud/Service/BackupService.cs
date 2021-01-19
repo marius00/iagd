@@ -60,7 +60,13 @@ namespace IAGrim.Backup.Cloud.Service {
             const int syncFreezeTime = 31;
             var canSyncDown = isDualPc || !_hasSyncedDownOnce; // Either first sync since startup, or we're in dual-pc mode.
             if (canSyncDown && (DateTimeOffset.UtcNow - _lastSearchDt).TotalMinutes < syncFreezeTime) {
-                limitations.DownloadCooldown.ExecuteIfReady(SyncDown);
+                if (!limitations.DownloadCooldown.IsReady) return;
+
+                if (!SyncDown()) {
+                    _hasSyncedDownOnce = true;
+                }
+
+                limitations.DownloadCooldown.Reset();
             }
         }
 
@@ -150,7 +156,11 @@ namespace IAGrim.Backup.Cloud.Service {
             OnUploadComplete?.Invoke(this, null);
         }
 
-        private void SyncDown() {
+        /// <summary>
+        /// Download items from online sync
+        /// </summary>
+        /// <returns>True if there are additional items to be downloaded</returns>
+        private bool SyncDown() {
             try {
                 Logger.Debug("Checking cloud sync for new items..");
 
@@ -180,20 +190,20 @@ namespace IAGrim.Backup.Cloud.Service {
 
                 Logger.Debug($"Updated/Merged in {items.Count} items, new timestamp is {sync.Timestamp}");
 
-                _hasSyncedDownOnce = true;
+                return sync.IsPartial;
             }
             catch (AggregateException ex) {
                 Logger.Warn(ex.Message, ex);
-                return;
+                return false;
             }
             catch (WebException ex) {
                 Logger.Warn(ex.Message, ex);
-                return;
+                return false;
             }
             catch (Exception ex) {
                 ExceptionReporter.ReportException(ex, "SyncDown");
                 Logger.Warn(ex);
-                return;
+                return false;
             }
         }
 

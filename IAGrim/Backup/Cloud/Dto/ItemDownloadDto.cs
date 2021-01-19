@@ -6,5 +6,10 @@ namespace IAGrim.Backup.Cloud.Dto {
         public List<CloudItemDto> Items { get; set; }
         public List<DeleteItemDto> Removed { get; set; }
         public long Timestamp { get; set; }
+
+        /// <summary>
+        /// Partial item batch, may be more items.
+        /// </summary>
+        public bool IsPartial { get; set; }
     }
 }
