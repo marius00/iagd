@@ -429,6 +429,8 @@ namespace IAGrim.UI {
             // TODO: buttonLogin.Visible = !BlockedLogsDetection.DreamcrashBlocked();
             var onlineSettings = new OnlineSettings(playerItemDao, _authService, settingsService, _cefBrowserHandler, buddyItemDao, buddySubscriptionDao);
             addAndShow(onlineSettings, onlinePanel);
+            _cefBrowserHandler.OnAuthSuccess += (_, __) => onlineSettings.UpdateUi();
+            
             
             addAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, playerItemDao, _parsingService, databaseSettingDao, grimDawnDetector, settingsService, _cefBrowserHandler), modsPanel);
 
