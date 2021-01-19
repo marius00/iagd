@@ -851,6 +851,8 @@ namespace IAGrim.Database {
                 WHERE {PlayerItemTable.Record} = :base
                 AND {PlayerItemTable.Prefix} = :prefix
                 AND {PlayerItemTable.Suffix} = :suffix
+                AND {PlayerItemTable.Materia} = :materia
+                AND {PlayerItemTable.ModifierRecord} = :modifier
                 AND {PlayerItemTable.Seed} = :seed
                 LIMIT 1
             ";
@@ -859,9 +861,11 @@ namespace IAGrim.Database {
                 .SetParameter("base", item.BaseRecord)
                 .SetParameter("prefix", item.PrefixRecord)
                 .SetParameter("suffix", item.SuffixRecord)
+                .SetParameter("materia", item.MateriaRecord)
+                .SetParameter("modifier", item.ModifierRecord)
                 .SetParameter("seed", item.Seed)
                 .UniqueResult();
-
+            
             return result != null;
         }
 

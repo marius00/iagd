@@ -15,6 +15,7 @@ namespace IAGrim.Services {
     class ItemStatCacheService : IDisposable {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ItemStatCacheService));
         private readonly IPlayerItemDao _playerItemDao;
+        private readonly IDatabaseItemDao _databaseItemDao;
         private readonly ItemStatService _itemStatService;
         private Thread t = null;
 
@@ -25,9 +26,10 @@ namespace IAGrim.Services {
             NullValueHandling = NullValueHandling.Ignore
         };
 
-        public ItemStatCacheService(IPlayerItemDao playerItemDao, ItemStatService itemStatService) {
+        public ItemStatCacheService(IPlayerItemDao playerItemDao, ItemStatService itemStatService, IDatabaseItemDao databaseItemDao) {
             _playerItemDao = playerItemDao;
             _itemStatService = itemStatService;
+            _databaseItemDao = databaseItemDao;
         }
 
         public void Start() {
@@ -52,7 +54,11 @@ namespace IAGrim.Services {
             }
 
             while (t?.IsAlive ?? false) {
-                var result = Tick();
+                // Only perform action if we got plenty in the DB, otherwise we might not be parsed yet.
+                bool result = false;
+                if (_databaseItemDao.GetRowCount() > 20000) {
+                    result = Tick();
+                }
 
                 try {
                     Thread.Sleep(result ? 1500 : 120 * 1000);
@@ -104,8 +110,9 @@ namespace IAGrim.Services {
                 item.CachedStats = json;
 
                 if (string.IsNullOrEmpty(item.SearchableText)) {
-                    Logger.Warn("Aborting stat cache generation, unable to produce searchable text. Database not parsed?");
-                    return false;
+                    if (string.IsNullOrEmpty(item.Name)) {
+                        continue;
+                    }
                 }
             }
 
