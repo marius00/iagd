@@ -64,6 +64,11 @@ namespace IAGrim.BuddyShare {
                     var missingNames = _buddyItemDao.ListItemsWithMissingName();
                     _buddyItemDao.UpdateNames(missingNames);
 
+                    if (_settings.GetLocal().OptOutOfBackups) {
+                        Logger.Info("User opted out of online features, disabling buddy items.");
+                        return;
+                    }
+
                     if (_authService.GetRestService() == null) {
                         Logger.Info("Not logged into online backups, skipping buddy sync");
                         _cooldowns.Clear();

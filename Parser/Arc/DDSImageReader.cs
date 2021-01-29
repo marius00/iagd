@@ -60,15 +60,15 @@ namespace IAGrim.Parser.Arc {
                     Decompress dc = new Decompress(itemsArcFullpath, true);
                     dc.decompress();
 
-                    foreach (string s in dc.strings) {
-                        byte[] b = dc.GetTexture(s);
-                        if (b != null && !s.EndsWith("_dif.tex") && !s.EndsWith("_nml.tex")) {
+                    foreach (string icon in dc.strings) {
+                        byte[] b = dc.GetTexture(icon);
+                        if (b != null && !icon.EndsWith("_dif.tex") && !icon.EndsWith("_nml.tex")) {
                             try {
                                 Image img = ExtractImage(b);
-                                img?.Save(Path.Combine(destinationFolder, $@"{Path.GetFileName(s)}.png"), ImageFormat.Png);
+                                img?.Save(Path.Combine(destinationFolder, $@"{Path.GetFileName(icon)}.png"), ImageFormat.Png);
                             }
                             catch (Exception ex) {
-                                logger.Warn(ex.Message);
+                                logger.Warn($"Error extracting icon \"{icon}\", {ex.Message}", ex);
                             }
                         }
 
@@ -105,10 +105,8 @@ namespace IAGrim.Parser.Arc {
             if (decodedPixels == null)
                 return null;
 
-            {
-                Bitmap bitmap1 = bitmapFromBytes(GetWidth(rawPixels), GetHeight(rawPixels), decodedPixels);
-                return bitmap1;
-            }
+            Bitmap bitmap1 = bitmapFromBytes(GetWidth(rawPixels), GetHeight(rawPixels), decodedPixels);
+            return bitmap1;
         }
 
         private static Bitmap bitmapFromBytes(int width, int height, int[] arr) {
