@@ -10,7 +10,6 @@ using IAGrim.Database.DAO.Dto;
 using IAGrim.Database.Model;
 using IAGrim.Parsers.Arz;
 using IAGrim.Settings;
-using IAGrim.Settings.Dto;
 using MoreLinq;
 
 namespace IAGrim.Services {

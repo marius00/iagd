@@ -13,7 +13,6 @@ using IAGrim.UI.Controller.dto;
 using log4net;
 using MoreLinq;
 using Newtonsoft.Json;
-using NHibernate.Dialect.Schema;
 using StatTranslator;
 
 namespace IAGrim.Utilities {

@@ -99,6 +99,12 @@ namespace IAGrim.UI {
                 else if (e.ProgressPercentage == InjectionHelper.NO_PROCESS_FOUND) {
                     RuntimeSettings.StashStatus = StashAvailability.CLOSED;
                 }
+                // Injection error
+                else if (e.ProgressPercentage == InjectionHelper.INJECTION_ERROR_POSSIBLE_ACCESS_DENIED) {
+                    RuntimeSettings.StashStatus = StashAvailability.ERROR;
+                    _cefBrowserHandler.ShowHelp(HelpService.HelpType.StashError);
+                }
+                
             }
         }
 

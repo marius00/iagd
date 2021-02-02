@@ -16,10 +16,12 @@ namespace DllInjector {
         private readonly HashSet<uint> _previouslyInjected = new HashSet<uint>();
         private readonly HashSet<uint> _dontLog = new HashSet<uint>();
         private readonly RunArguments _exitArguments;
+        private bool _hasWarnedPermissionError = false;
 
         public const int INJECTION_ERROR = 0;
         public const int NO_PROCESS_FOUND_ON_STARTUP = 1;
         public const int NO_PROCESS_FOUND = 2;
+        public const int INJECTION_ERROR_POSSIBLE_ACCESS_DENIED = 3;
 
         private readonly ProgressChangedEventHandler _registeredProgressCallback;
 
@@ -108,7 +110,7 @@ namespace DllInjector {
             }
         }
 
-        private bool Is64Bit(int pid) {
+        private bool Is64Bit(int pid, BackgroundWorker worker) {
             try {
                 var p = System.Diagnostics.Process.GetProcessById(pid);
                 return EvilsoftCommons.DllInjector.DllInjector.Is64BitProcess(p);
@@ -117,6 +119,11 @@ namespace DllInjector {
                 Logger.Warn("Error checking 32/64bit status of GD, if this was an access denied error, try running as administrator.");
                 Logger.Warn(ex.Message);
                 Logger.Warn(ex.StackTrace);
+                if (!_hasWarnedPermissionError) {
+                    worker.ReportProgress(INJECTION_ERROR_POSSIBLE_ACCESS_DENIED, null);
+                    _hasWarnedPermissionError = true;
+                }
+
                 return false;
             }
             catch (ArgumentException) {
@@ -203,7 +210,7 @@ namespace DllInjector {
             else {
                 foreach (uint pid in pids) {
                     if (!_previouslyInjected.Contains(pid)) {
-                        if (Is64Bit((int)pid)) {
+                        if (Is64Bit((int)pid, worker)) {
                             if (InjectionVerifier.VerifyInjection(pid, dll64Bit)) {
                                 Logger.Info($"DLL already injected into target process, skipping injection into {pid}");
                                 _dontLog.Add(pid);

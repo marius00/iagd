@@ -36,6 +36,8 @@ const helpEntries = [
     title: `IA says "Stash: Error"`,
     tag: 'StashError',
     body: () => <div>
+      There is an issue detecting the status of your in-game stash. <br />
+      This often indicates an issue injecting the IA dll into the game due to permission issues. <br/>
       Try running IA as administrator.
     </div>,
     type: IHelpEntryType.Help

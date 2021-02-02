@@ -29,7 +29,8 @@ namespace IAGrim.Services {
             WhatIsBuddyId,
             WhatIsBuddyNickname,
             OnlineBackups,
-            NotEnoughStashTabs
+            NotEnoughStashTabs,
+            StashError,
         }
 
         public void ShowHelp(HelpType type) {
