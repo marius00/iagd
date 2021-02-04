@@ -94,6 +94,7 @@ namespace StatTranslator {
             {"defensiveAbsorptionModifier", " Increases Armor Absorption by {0}%"},
             {"defensiveAllMaxResist", "+{0} Maximum All Resistances"},
             {"skillLifeBonus", "{0} Health Restored"},
+            {"defensiveFreeze", "{0}% Reduced Freeze Duration"},
             {"skillLifePercent", "{0}% Health Restored"},
             {"defensiveTotalSpeedResistance", "{0}% Slow Resistance"},
             {"defensiveBlockModifier", "Increases Shield Block Chance by {0}%"},
