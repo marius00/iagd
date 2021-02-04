@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using DataAccess;
 using EvilsoftCommons;
 using IAGrim.Database;
@@ -34,16 +35,22 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
             const bool skipIrrelevantStats = true;  // "skipLots"
 
             ItemAccumulator accumulator = new ItemAccumulator();
-
-            foreach (string arzFile in arzFiles) {
-                if (File.Exists(arzFile)) {
-                    Logger.Debug($"Parsing / Loading items from {arzFile}");
-                    Parser.Arz.ArzParser.LoadItemRecords(arzFile, skipIrrelevantStats).ForEach(accumulator.Add);
-                    tracker.Increment();
+            try {
+                foreach (string arzFile in arzFiles) {
+                    if (File.Exists(arzFile)) {
+                        Logger.Debug($"Parsing / Loading items from {arzFile}");
+                        Parser.Arz.ArzParser.LoadItemRecords(arzFile, skipIrrelevantStats).ForEach(accumulator.Add);
+                        tracker.Increment();
+                    }
+                    else {
+                        Logger.Debug($"Ignoring non existing arz file {arzFile}");
+                    }
                 }
-                else {
-                    Logger.Debug($"Ignnoring non existing arz file {arzFile}");
-                }
+            }
+            catch (ArgumentException ex) {
+                Logger.Warn(ex.Message, ex);
+                MessageBox.Show("Game installation is corrupted.\nPlease verify the integrity of your Grim Dawn installation and try again.\n\n(Easily done in steam)");
+                throw ex;
             }
 
             Items = accumulator.Items;

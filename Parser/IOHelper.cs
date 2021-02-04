@@ -57,7 +57,7 @@ namespace EvilsoftCommons {
             byte[] array = new byte[4];
             if (fs.Read(array, 0, 4) != 4) {
                 logger.WarnFormat("ReadUInteger called with only {0} bytes remaining!", fs.Length - fs.Position);
-                return 0;
+                throw new ArgumentException("Could not read 4 bytes");
             }
             else {
                 if (endian && BitConverter.IsLittleEndian) {

@@ -61,6 +61,11 @@ class OnlineApp extends React.PureComponent<Props, object> {
     return urlParams.get('id');
   }
 
+  getIsHardcore() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('hc') || 0;
+  }
+
   search(text: string) {
     this.setState({isLoading: true, items: [], offset: 0, search: text, hasMoreItems: true});
     this.fetchItems(text, 0);
@@ -68,7 +73,7 @@ class OnlineApp extends React.PureComponent<Props, object> {
 
   fetchItems(text: string, offset: number) {
     var self = this;
-    fetch(`${this.props.url}/search?id=${this.getId()}&offset=${offset}&search=${encodeURIComponent(text.toLowerCase())}`, {
+    fetch(`${this.props.url}/search?id=${this.getId()}&offset=${offset}&search=${encodeURIComponent(text.toLowerCase())}&hc=${this.getIsHardcore()}`, {
         method: 'GET',
         headers: {'Accept': 'application/json'},
       }

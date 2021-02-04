@@ -266,7 +266,7 @@ namespace IAGrim.UI.Tabs {
 
         private void linkViewOnline_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             if (_settings.GetPersistent().BuddySyncUserIdV3.HasValue && _settings.GetPersistent().BuddySyncUserIdV3 > 0) {
-                Process.Start(Uris.OnlineItemsUrl + "?id=" + _settings.GetPersistent().BuddySyncUserIdV3);
+                Process.Start(Uris.OnlineItemsUrl + "?id=" + _settings.GetPersistent().BuddySyncUserIdV3 + "&hc=0");
             }
             else {
                 MessageBox.Show("Unavailable - Not logged in");

@@ -33,7 +33,12 @@ namespace IAGrim.UI.Misc.CEF {
         public void ShowHelp(HelpService.HelpType type) {
             if (BrowserControl != null && BrowserControl.CanExecuteJavascriptInMainFrame) {
                 BrowserControl.ExecuteScriptAsync("window.showHelp", type.ToString());
-                _tabControl.SelectedIndex = 0;
+                if (_tabControl.InvokeRequired) {
+                    _tabControl.Invoke((MethodInvoker) delegate { _tabControl.SelectedIndex = 0; });
+                }
+                else {
+                    _tabControl.SelectedIndex = 0;
+                }
             }
             else {
                 Logger.Warn("Attempted to show help but CEF not yet initialized.");
