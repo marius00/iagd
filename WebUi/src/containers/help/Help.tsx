@@ -248,7 +248,7 @@ const helpEntries = [
       {toNumberedList(`In steam
         Inside Grim Dawn itself, under "Settings"`)}
       Grim Dawn uses a different save directory with cloud saving disabled.<br/>
-      After disabling cloud saving you still need to copy your characters to the correct directory.<br/>
+      After disabling cloud saving you still need to <a href="https://forums.crateentertainment.com/t/how-to-move-your-saves-from-steam-cloud-to-grim-dawns-default-location/28921">copy your characters to the correct directory</a>.<br/>
     </div>,
     type: IHelpEntryType.Help
   },
@@ -262,7 +262,7 @@ const helpEntries = [
         This is expected`)}
       Look up a guide online on disabling cloud saving.<br/>
       When cloud saves are disabled, Grim Dawn looks for your characters in a <i>different folder</i>.<br/><br/>
-      You simply need to copy them to a new folder, and everything will be right in the world.
+      You simply need to <a href="https://forums.crateentertainment.com/t/how-to-move-your-saves-from-steam-cloud-to-grim-dawns-default-location/28921">copy them to a new folder</a>, and everything will be right in the world.
     </div>,
     type: IHelpEntryType.Help
   },
