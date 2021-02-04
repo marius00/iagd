@@ -761,7 +761,7 @@ namespace IAGrim.Database {
                 {PlayerItemTable.IsCloudSynchronized} as IsCloudSynchronizedValue,
                 {PlayerItemTable.Id} as Id,
                 CachedStats as CachedStats,
-                (SELECT Record FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord) LIMIT 1) AS PetRecord
+                coalesce((SELECT group_concat(Record, '|') FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord)), '') AS PetRecord
                 FROM PlayerItem PI WHERE " + string.Join(" AND ", queryFragments));
 
             var subquery = CreateDatabaseStatQueryParams(query);
@@ -957,7 +957,7 @@ DELETE FROM PlayerItem WHERE Id IN (
                 {PlayerItemTable.CloudId} as CloudId,
                 {PlayerItemTable.IsCloudSynchronized} as IsCloudSynchronizedValue,
                 CachedStats as CachedStats,
-                (SELECT Record FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord) LIMIT 1) AS PetRecord
+                coalesce((SELECT group_concat(Record, '|') FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord)),'') AS PetRecord
                 FROM PlayerItem PI WHERE CachedStats IS NULL OR CachedStats = '' LIMIT 50";
         
             using (ISession session = SessionCreator.OpenSession()) {

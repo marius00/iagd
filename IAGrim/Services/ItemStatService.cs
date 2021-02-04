@@ -57,9 +57,7 @@ namespace IAGrim.Services {
                 records.Add(item.MateriaRecord);
             }
 
-            if (!string.IsNullOrEmpty(item.PetRecord)) {
-                records.Add(item.PetRecord);
-            }
+            records.AddRange(item.PetRecords);
 
             return records;
         }
@@ -270,8 +268,10 @@ namespace IAGrim.Services {
                     if (!string.IsNullOrEmpty(pi.ModifierRecord) && statMap.ContainsKey(pi.ModifierRecord))
                         stats.AddRange(Filter(statMap[pi.ModifierRecord]));
 
-                    if (!string.IsNullOrEmpty(pi.PetRecord) && statMap.ContainsKey(pi.PetRecord))
-                        stats.AddRange(Filter(statMap[pi.PetRecord]));
+                    foreach (var petRecord in pi.PetRecords) {
+                        if (!string.IsNullOrEmpty(petRecord) && statMap.ContainsKey(petRecord))
+                            stats.AddRange(Filter(statMap[petRecord]));
+                    }
 
 
                     pi.Tags = process(stats);
@@ -309,9 +309,11 @@ namespace IAGrim.Services {
                     if (!string.IsNullOrEmpty(pi.ModifierRecord) && statMap.ContainsKey(pi.ModifierRecord))
                         stats.AddRange(Filter(statMap[pi.ModifierRecord]));
 
-                    if (!string.IsNullOrEmpty(pi.PetRecord) && statMap.ContainsKey(pi.PetRecord)) {
-                        var petRecords = Filter(statMap[pi.PetRecord]);
-                        stats.AddRange(petRecords);
+                    foreach (var petRecord in pi.PetRecords) {
+                        if (!string.IsNullOrEmpty(petRecord) && statMap.ContainsKey(petRecord)) {
+                            var petRecords = Filter(statMap[petRecord]);
+                            stats.AddRange(petRecords);
+                        }
                     }
                     // TODO: Don't do this, use PlayerItemRecords.. somehow.. those contain pet bonuses
 

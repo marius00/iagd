@@ -1,4 +1,5 @@
-﻿using IAGrim.Database.DAO.Table;
+﻿
+using IAGrim.Database.DAO.Table;
 using IAGrim.Database.Dto;
 using IAGrim.Database.Interfaces;
 using IAGrim.Utilities;

@@ -16,6 +16,7 @@ namespace IAGrim.Database.Model {
         public virtual string ModifierRecord { get; set; }
         public virtual string TransmuteRecord { get; set; }
         public virtual string PetRecord { get; set; }
+        public virtual List<string> PetRecords => string.IsNullOrEmpty(PetRecord) ? new List<string>(0) : new List<string>(PetRecord.Split('|'));
         public virtual string MateriaRecord { get; set; }
         public virtual string EnchantmentRecord { get; set; }
 
