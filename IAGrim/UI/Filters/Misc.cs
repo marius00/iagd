@@ -95,6 +95,10 @@ namespace IAGrim.UI.Filters {
                     filters.Add(new[] { "conversionPercentage" });
                 }
 
+                if (cbCooldownReduction.Checked) {
+                    filters.Add(new[] { "skillCooldownReduction" });
+                }
+
                 return filters;
             }
         }

@@ -540,7 +540,6 @@ namespace StatTranslator {
                 "offensiveTotalDamageModifier"
             };
 
-            var xyz = stats.Where(s => s.Record == "records/skills/itemskills/pets/item_petbonus_damage_09.dbr").ToList();
             Dictionary<string, string> translationTable = new Dictionary<string, string>();
             foreach (var tag in tags) {
                 translationTable[tag] = _language.GetTag(tag);

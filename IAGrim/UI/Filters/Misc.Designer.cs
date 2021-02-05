@@ -46,6 +46,7 @@ namespace IAGrim.UI.Filters {
             this.cbRunspeed = new FirefoxCheckBox();
             this.cbDefense = new FirefoxCheckBox();
             this.exp = new FirefoxCheckBox();
+            this.cbCooldownReduction = new FirefoxCheckBox();
             this.miscPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -53,6 +54,8 @@ namespace IAGrim.UI.Filters {
             // 
             this.miscPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.miscPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.miscPanel.Controls.Add(this.cbCooldownReduction);
             this.miscPanel.Controls.Add(this.cbDamageConversion);
             this.miscPanel.Controls.Add(this.cbWeaponLifeLeech);
             this.miscPanel.Controls.Add(this.cbEnergyRegen);
@@ -74,11 +77,13 @@ namespace IAGrim.UI.Filters {
             this.miscPanel.Controls.Add(this.cbDefense);
             this.miscPanel.Controls.Add(this.exp);
             this.miscPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.miscPanel.ForeColor = System.Drawing.Color.Black;
+            this.miscPanel.HeaderColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(231)))), ((int)(((byte)(231)))));
             this.miscPanel.HeaderHeight = 29;
             this.miscPanel.Location = new System.Drawing.Point(3, 3);
             this.miscPanel.Name = "miscPanel";
             this.miscPanel.NoRounding = false;
-            this.miscPanel.Size = new System.Drawing.Size(293, 706);
+            this.miscPanel.Size = new System.Drawing.Size(293, 736);
             this.miscPanel.TabIndex = 40;
             this.miscPanel.Tag = "iatag_ui_misc";
             this.miscPanel.Text = "Misc";
@@ -92,6 +97,7 @@ namespace IAGrim.UI.Filters {
             this.cbDamageConversion.EnabledCalc = true;
             this.cbDamageConversion.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbDamageConversion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbDamageConversion.IsDarkMode = false;
             this.cbDamageConversion.Location = new System.Drawing.Point(4, 668);
             this.cbDamageConversion.Name = "cbDamageConversion";
             this.cbDamageConversion.Size = new System.Drawing.Size(272, 27);
@@ -108,6 +114,7 @@ namespace IAGrim.UI.Filters {
             this.cbWeaponLifeLeech.EnabledCalc = true;
             this.cbWeaponLifeLeech.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbWeaponLifeLeech.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbWeaponLifeLeech.IsDarkMode = false;
             this.cbWeaponLifeLeech.Location = new System.Drawing.Point(4, 637);
             this.cbWeaponLifeLeech.Name = "cbWeaponLifeLeech";
             this.cbWeaponLifeLeech.Size = new System.Drawing.Size(272, 27);
@@ -124,6 +131,7 @@ namespace IAGrim.UI.Filters {
             this.cbEnergyRegen.EnabledCalc = true;
             this.cbEnergyRegen.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbEnergyRegen.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbEnergyRegen.IsDarkMode = false;
             this.cbEnergyRegen.Location = new System.Drawing.Point(4, 604);
             this.cbEnergyRegen.Name = "cbEnergyRegen";
             this.cbEnergyRegen.Size = new System.Drawing.Size(272, 27);
@@ -140,6 +148,7 @@ namespace IAGrim.UI.Filters {
             this.cbSummonerSkill.EnabledCalc = true;
             this.cbSummonerSkill.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbSummonerSkill.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbSummonerSkill.IsDarkMode = false;
             this.cbSummonerSkill.Location = new System.Drawing.Point(3, 571);
             this.cbSummonerSkill.Name = "cbSummonerSkill";
             this.cbSummonerSkill.Size = new System.Drawing.Size(272, 27);
@@ -156,6 +165,7 @@ namespace IAGrim.UI.Filters {
             this.cbGrantsSkill.EnabledCalc = true;
             this.cbGrantsSkill.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbGrantsSkill.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbGrantsSkill.IsDarkMode = false;
             this.cbGrantsSkill.Location = new System.Drawing.Point(3, 538);
             this.cbGrantsSkill.Name = "cbGrantsSkill";
             this.cbGrantsSkill.Size = new System.Drawing.Size(272, 27);
@@ -172,6 +182,7 @@ namespace IAGrim.UI.Filters {
             this.cbRecentOnly.EnabledCalc = true;
             this.cbRecentOnly.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbRecentOnly.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbRecentOnly.IsDarkMode = false;
             this.cbRecentOnly.Location = new System.Drawing.Point(3, 505);
             this.cbRecentOnly.Name = "cbRecentOnly";
             this.cbRecentOnly.Size = new System.Drawing.Size(272, 27);
@@ -188,6 +199,7 @@ namespace IAGrim.UI.Filters {
             this.cbSocketed.EnabledCalc = true;
             this.cbSocketed.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbSocketed.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbSocketed.IsDarkMode = false;
             this.cbSocketed.Location = new System.Drawing.Point(3, 472);
             this.cbSocketed.Name = "cbSocketed";
             this.cbSocketed.Size = new System.Drawing.Size(272, 27);
@@ -204,6 +216,7 @@ namespace IAGrim.UI.Filters {
             this.cbDuplicates.EnabledCalc = true;
             this.cbDuplicates.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbDuplicates.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbDuplicates.IsDarkMode = false;
             this.cbDuplicates.Location = new System.Drawing.Point(3, 439);
             this.cbDuplicates.Name = "cbDuplicates";
             this.cbDuplicates.Size = new System.Drawing.Size(272, 27);
@@ -220,6 +233,7 @@ namespace IAGrim.UI.Filters {
             this.cbReflect.EnabledCalc = true;
             this.cbReflect.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbReflect.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbReflect.IsDarkMode = false;
             this.cbReflect.Location = new System.Drawing.Point(3, 406);
             this.cbReflect.Name = "cbReflect";
             this.cbReflect.Size = new System.Drawing.Size(273, 27);
@@ -235,6 +249,7 @@ namespace IAGrim.UI.Filters {
             this.shieldStuff.EnabledCalc = true;
             this.shieldStuff.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.shieldStuff.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.shieldStuff.IsDarkMode = false;
             this.shieldStuff.Location = new System.Drawing.Point(3, 373);
             this.shieldStuff.Name = "shieldStuff";
             this.shieldStuff.Size = new System.Drawing.Size(273, 27);
@@ -250,6 +265,7 @@ namespace IAGrim.UI.Filters {
             this.setbonus.EnabledCalc = true;
             this.setbonus.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.setbonus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.setbonus.IsDarkMode = false;
             this.setbonus.Location = new System.Drawing.Point(3, 340);
             this.setbonus.Name = "setbonus";
             this.setbonus.Size = new System.Drawing.Size(273, 27);
@@ -265,6 +281,7 @@ namespace IAGrim.UI.Filters {
             this.cbPetBonuses.EnabledCalc = true;
             this.cbPetBonuses.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbPetBonuses.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbPetBonuses.IsDarkMode = false;
             this.cbPetBonuses.Location = new System.Drawing.Point(3, 307);
             this.cbPetBonuses.Name = "cbPetBonuses";
             this.cbPetBonuses.Size = new System.Drawing.Size(272, 27);
@@ -280,6 +297,7 @@ namespace IAGrim.UI.Filters {
             this.cbMasterySkills.EnabledCalc = true;
             this.cbMasterySkills.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbMasterySkills.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbMasterySkills.IsDarkMode = false;
             this.cbMasterySkills.Location = new System.Drawing.Point(3, 274);
             this.cbMasterySkills.Name = "cbMasterySkills";
             this.cbMasterySkills.Size = new System.Drawing.Size(272, 27);
@@ -295,6 +313,7 @@ namespace IAGrim.UI.Filters {
             this.cbCastspeed.EnabledCalc = true;
             this.cbCastspeed.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbCastspeed.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbCastspeed.IsDarkMode = false;
             this.cbCastspeed.Location = new System.Drawing.Point(3, 208);
             this.cbCastspeed.Name = "cbCastspeed";
             this.cbCastspeed.Size = new System.Drawing.Size(272, 27);
@@ -310,6 +329,7 @@ namespace IAGrim.UI.Filters {
             this.cbAttackSpeed.EnabledCalc = true;
             this.cbAttackSpeed.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbAttackSpeed.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbAttackSpeed.IsDarkMode = false;
             this.cbAttackSpeed.Location = new System.Drawing.Point(3, 241);
             this.cbAttackSpeed.Name = "cbAttackSpeed";
             this.cbAttackSpeed.Size = new System.Drawing.Size(273, 27);
@@ -325,6 +345,7 @@ namespace IAGrim.UI.Filters {
             this.health.EnabledCalc = true;
             this.health.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.health.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.health.IsDarkMode = false;
             this.health.Location = new System.Drawing.Point(3, 43);
             this.health.Name = "health";
             this.health.Size = new System.Drawing.Size(273, 27);
@@ -340,6 +361,7 @@ namespace IAGrim.UI.Filters {
             this.cbOffensive.EnabledCalc = true;
             this.cbOffensive.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbOffensive.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbOffensive.IsDarkMode = false;
             this.cbOffensive.Location = new System.Drawing.Point(3, 109);
             this.cbOffensive.Name = "cbOffensive";
             this.cbOffensive.Size = new System.Drawing.Size(272, 27);
@@ -355,6 +377,7 @@ namespace IAGrim.UI.Filters {
             this.cbRunspeed.EnabledCalc = true;
             this.cbRunspeed.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbRunspeed.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbRunspeed.IsDarkMode = false;
             this.cbRunspeed.Location = new System.Drawing.Point(3, 175);
             this.cbRunspeed.Name = "cbRunspeed";
             this.cbRunspeed.Size = new System.Drawing.Size(272, 27);
@@ -370,6 +393,7 @@ namespace IAGrim.UI.Filters {
             this.cbDefense.EnabledCalc = true;
             this.cbDefense.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbDefense.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbDefense.IsDarkMode = false;
             this.cbDefense.Location = new System.Drawing.Point(3, 76);
             this.cbDefense.Name = "cbDefense";
             this.cbDefense.Size = new System.Drawing.Size(273, 27);
@@ -385,6 +409,7 @@ namespace IAGrim.UI.Filters {
             this.exp.EnabledCalc = true;
             this.exp.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.exp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.exp.IsDarkMode = false;
             this.exp.Location = new System.Drawing.Point(3, 142);
             this.exp.Name = "exp";
             this.exp.Size = new System.Drawing.Size(272, 27);
@@ -392,13 +417,30 @@ namespace IAGrim.UI.Filters {
             this.exp.Tag = "iatag_ui_experience";
             this.exp.Text = "Experience";
             // 
+            // cbCooldownReduction
+            // 
+            this.cbCooldownReduction.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbCooldownReduction.Bold = false;
+            this.cbCooldownReduction.EnabledCalc = true;
+            this.cbCooldownReduction.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbCooldownReduction.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbCooldownReduction.IsDarkMode = false;
+            this.cbCooldownReduction.Location = new System.Drawing.Point(4, 701);
+            this.cbCooldownReduction.Name = "cbCooldownReduction";
+            this.cbCooldownReduction.Size = new System.Drawing.Size(272, 27);
+            this.cbCooldownReduction.TabIndex = 20;
+            this.cbCooldownReduction.Tag = "iatag_ui_cooldown_reduction";
+            this.cbCooldownReduction.Text = "Cooldown Reduction";
+            this.cbCooldownReduction.UseVisualStyleBackColor = true;
+            // 
             // Misc
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.miscPanel);
             this.Name = "Misc";
-            this.Size = new System.Drawing.Size(299, 711);
+            this.Size = new System.Drawing.Size(299, 741);
             this.Load += new System.EventHandler(this.Misc_Load);
             this.miscPanel.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -428,5 +470,6 @@ namespace IAGrim.UI.Filters {
         private FirefoxCheckBox cbEnergyRegen;
         private FirefoxCheckBox cbWeaponLifeLeech;
         private FirefoxCheckBox cbDamageConversion;
+        private FirefoxCheckBox cbCooldownReduction;
     }
 }
