@@ -33,7 +33,7 @@ namespace IAGrim.Database {
 
         public virtual ulong Count {
             get { return (ulong)StackCount; }
-            set { StackCount = (long)value; }
+            set => StackCount = (long)value;
         }
 
         public virtual int CompareTo(object obj) {
@@ -60,13 +60,6 @@ namespace IAGrim.Database {
         /// SubscriptionId / ID of the buddy
         /// </summary>
         public virtual long BuddyId { get; set; }
-        
-        public virtual string BaseRecord { get; set; }
-        public virtual string PrefixRecord { get; set; }
-        public virtual string SuffixRecord { get; set; }
-        public virtual string ModifierRecord { get; set; }
-        public virtual string TransmuteRecord { get; set; }
-        public virtual string MateriaRecord { get; set; }
         public virtual bool IsHardcore { get; set; }
         public virtual string Mod { get; set; }
 

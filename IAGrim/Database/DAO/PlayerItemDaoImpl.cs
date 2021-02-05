@@ -15,6 +15,7 @@ using IAGrim.Backup.Cloud.Dto;
 using IAGrim.Database.DAO;
 using IAGrim.Database.DAO.Table;
 using IAGrim.Database.DAO.Util;
+using IAGrim.Database.Model;
 using IAGrim.Settings;
 
 namespace IAGrim.Database {
@@ -120,7 +121,7 @@ namespace IAGrim.Database {
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        private static List<string> GetRecordsForItem(PlayerItem item) {
+        public static List<string> GetRecordsForItem(BaseItem item) {
             List<string> records = new List<string>();
             if (!String.IsNullOrEmpty(item.BaseRecord)) {
                 records.Add(item.BaseRecord);
@@ -178,7 +179,7 @@ namespace IAGrim.Database {
         }
 
 
-        private IEnumerable<string> GetPetBonusRecords(Dictionary<string, List<DBStatRow>> stats, List<string> records) {
+        public static IEnumerable<string> GetPetBonusRecords(Dictionary<string, List<DBStatRow>> stats, List<string> records) {
             var relevant = stats.Where(m => records.Contains(m.Key));
             return relevant.SelectMany(m => m.Value)
                 .Where(m => m.Stat == "petBonusName")

@@ -24,5 +24,6 @@ namespace IAGrim.Database.DAO.Table {
         public const string PrefixRarity = "prefixrarity";
         public const string RemoteItemId = "id_item_remote"; // Remote ID
         public const string CreatedAt = "created_at";
+
     }
 }

@@ -9,7 +9,7 @@ namespace IAGrim.Database.Synchronizer {
     class BuddyItemRepo : BasicSynchronizer<BuddyItem>, IBuddyItemDao {
         private readonly IBuddyItemDao _repo;
         public BuddyItemRepo(ThreadExecuter threadExecuter, ISessionCreator sessionCreator, SqlDialect dialect) : base(threadExecuter, sessionCreator) {
-            _repo = new BuddyItemDaoImpl(sessionCreator, dialect);
+            _repo = new BuddyItemDaoImpl(sessionCreator, new DatabaseItemStatDaoImpl(sessionCreator, dialect), dialect);
             this.BaseRepo = _repo;
         }
 

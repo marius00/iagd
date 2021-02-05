@@ -89,7 +89,7 @@ namespace IAGrim.Services {
                 databaseItemDao = new DatabaseItemDaoImpl(factory, dialect);
                 databaseSettingDao = new DatabaseSettingDaoImpl(factory, dialect);
                 itemTagDao = new ItemTagDaoImpl(factory, dialect);
-                buddyItemDao = new BuddyItemDaoImpl(factory, dialect);
+                buddyItemDao = new BuddyItemDaoImpl(factory, databaseItemStatDao, dialect);
                 buddySubscriptionDao = new BuddySubscriptionDaoImpl(factory, dialect);
                 recipeItemDao = new RecipeItemDaoImpl(factory, dialect);
                 itemSkillDao = new ItemSkillDaoImpl(factory);

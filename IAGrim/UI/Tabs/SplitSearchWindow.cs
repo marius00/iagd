@@ -147,8 +147,8 @@ namespace IAGrim.UI.Tabs
                 WithSummonerSkillOnly = filters.WithSummonerSkillOnly
             };
 
-            
-            var includeBuddyItems = _settings.GetPersistent().BuddySyncEnabled;
+
+            const bool includeBuddyItems = true;
             var message = _searchController.Search(query, filters.DuplicatesOnly, includeBuddyItems, _orderByLevel.Checked);
 
             Logger.Info("Updating UI...");

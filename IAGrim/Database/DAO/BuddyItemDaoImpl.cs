@@ -12,15 +12,19 @@ using System.Linq;
 using EvilsoftCommons;
 using IAGrim.Backup.Cloud.Dto;
 using IAGrim.Database.DAO;
+using IAGrim.Database.DAO.Dto;
 using IAGrim.Database.DAO.Util;
+using IAGrim.Database.Model;
+using IAGrim.Services.Dto;
 using NHibernate.Criterion;
 
 namespace IAGrim.Database {
     public class BuddyItemDaoImpl : BaseDao<BuddyItem>, IBuddyItemDao {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(BuddyItemDaoImpl));
+        private readonly IDatabaseItemStatDao _databaseItemStatDao;
 
-        public BuddyItemDaoImpl(ISessionCreator sessionCreator, SqlDialect dialect) : base(sessionCreator, dialect) {
-            //
+        public BuddyItemDaoImpl(ISessionCreator sessionCreator, IDatabaseItemStatDao databaseItemStatDao, SqlDialect dialect) : base(sessionCreator, dialect) {
+            _databaseItemStatDao = databaseItemStatDao;
         }
 
         public void RemoveBuddy(long buddyId) {
@@ -89,6 +93,36 @@ namespace IAGrim.Database {
 
                     transaction.Commit();
                 }
+
+                UpdatePetRecords(session, items);
+            }
+        }
+
+
+        public void UpdatePetRecords(ISession session, List<BuddyItem> items) {
+            using (ITransaction transaction = session.BeginTransaction()) {
+                // Now that we have base stats, we can calculate pet records as well
+                var stats = _databaseItemStatDao.GetStats(session, StatFetch.BuddyItems);
+                for (int i = 0; i < items.Count; i++) {
+                    UpdatePetRecords(session, items.ElementAt(i), stats);
+                }
+                transaction.Commit();
+            }
+        }
+
+
+        private void UpdatePetRecords(ISession session, BuddyItem item, Dictionary<string, List<DBStatRow>> stats) {
+            var records = PlayerItemDaoImpl.GetRecordsForItem(item);
+
+            var table = BuddyItemRecordTable.Table;
+            var id = BuddyItemRecordTable.Item;
+            var rec = BuddyItemRecordTable.Record;
+            foreach (var record in PlayerItemDaoImpl.GetPetBonusRecords(stats, records)) {
+                Logger.Debug($"INSERT OR IGNORE INTO {table} ({id}, {rec}) VALUES ({item.RemoteItemId}, {record})");
+                session.CreateSQLQuery(SqlUtils.EnsureDialect(Dialect, $"INSERT OR IGNORE INTO {table} ({id}, {rec}) VALUES (:id, :record)"))
+                    .SetParameter("id", item.RemoteItemId)
+                    .SetParameter("record", record)
+                    .ExecuteUpdate();
             }
         }
 
@@ -361,7 +395,7 @@ namespace IAGrim.Database {
             };
         }
 
-        private IList<BuddyItem> ListAll(string where) {
+        public IList<BuddyItem> ListAll(string where) {
             if (string.IsNullOrEmpty(where))
                 where = "WHERE 1=1";
             var sql = $@"SELECT {BuddyItemsTable.BaseRecord} as BaseRecord,
@@ -642,7 +676,8 @@ public void SetItems(long userid, string description, List<JsonBuddyItem> items)
                                 {BuddyItemsTable.RemoteItemId} as RemoteItemId,
                                 {BuddyItemsTable.StackCount} as Count,
                                 {BuddyItemsTable.SubscriptionId} as BuddyId,
-                                S.{BuddySubscriptionTable.Nickname} as Stash
+                                S.{BuddySubscriptionTable.Nickname} as Stash,
+                                coalesce((SELECT group_concat(Record, '|') FROM {BuddyItemRecordTable.Table} pir WHERE pir.{BuddyItemRecordTable.Item} = PI.{BuddyItemsTable.RemoteItemId} AND NOT {BuddyItemRecordTable.Record} IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord)), '') AS PetRecord
 
 
                 FROM {BuddyItemsTable.Table} PI, {BuddySubscriptionTable.Table} S WHERE "
@@ -676,6 +711,7 @@ public void SetItems(long userid, string description, List<JsonBuddyItem> items)
                     q.AddScalar("Stash", NHibernateUtil.String);
                     q.AddScalar("BuddyId", NHibernateUtil.Int64);
                     q.AddScalar("RemoteItemId", NHibernateUtil.String);
+                    q.AddScalar("PetRecord", NHibernateUtil.String);
 
                     foreach (var key in queryParams.Keys) {
                         q.SetParameter(key, queryParams[key]);
