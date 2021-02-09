@@ -20,9 +20,24 @@ namespace IAGrim.Utilities.Cloud {
         private readonly SettingsService _settingsService;
         private readonly IPlayerItemDao _playerItemDao;
 
+        private readonly string[] _acceptedFileFormats = new[] {
+            ".gdc",
+            ".gdd",
+            ".fow",
+            ".dat",
+            ".bin",
+            ".cpn",
+            ".gst",
+            ".gsh"
+        };
+
         public FileBackup(IPlayerItemDao playerItemDao, SettingsService settingsService) {
             this._playerItemDao = playerItemDao;
             this._settingsService = settingsService;
+        }
+
+        private bool IsAcceptedFileFormat(string s) {
+            return _acceptedFileFormats.Contains(Path.GetExtension(s));
         }
 
         public void Update() {
@@ -115,16 +130,20 @@ namespace IAGrim.Utilities.Cloud {
                     string gameSaves = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "Grim Dawn", "Save");
                     string[] files = Directory.GetFiles(gameSaves, "*.*", SearchOption.AllDirectories);
                     foreach (var f in files) {
-                        if (f.EndsWith(".zip") || f.EndsWith(".ias") || f.EndsWith(".gds") || f.EndsWith(".rar")) {
+                        if (!IsAcceptedFileFormat(f)) {
+                            Logger.Debug($"Ignoring file {f}, invalid file format.");
                             continue;
                         }
 
-                        // Max 10MB
-                        if (new FileInfo(f).Length > 1024 * 1024 * 10) {
+                        // Max 1MB
+                        if (new FileInfo(f).Length > 1024 * 1024) {
+                            Logger.Debug($"Ignoring file {f}, size exceeds 1MB");
                             continue;
                         }
 
-                        zip.AddFile(f);
+
+                        var relativePath = f.Replace(gameSaves, "").Replace(Path.GetFileName(f), "");
+                        zip.AddFile(f, relativePath);
                     }
 
                     Logger.Info("Backing up items..");
