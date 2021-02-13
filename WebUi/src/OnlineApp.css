@@ -83,3 +83,6 @@ input:checked + .slider {
   margin-right: 5px;
   display: inline-block;
 }
+.switch {
+  cursor: pointer;
+}
