@@ -80,15 +80,8 @@
     <Compile Include="SingleInstance\SingleInstance.cs" />
     <Compile Include="StringUtilities.cs" />
     <Compile Include="TooltipHelper.cs" />
-    <Compile Include="UI\DateFieldVerifier.cs" />
-    <Compile Include="UI\TextboxCurrencyBRL.cs" />
     <Compile Include="UI\TextboxHoverFocusHighlight.cs" />
     <Compile Include="UI\TextboxPlaceholder.cs" />
-    <Compile Include="UI\Themes\Firefox.cs" />
-    <Compile Include="UI\Themes\Firefox\FirefoxNumericUpDown.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Themes\Xylos.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
@@ -98,7 +91,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Exceptions\UUIDGenerator\" />
     <Folder Include="Properties\" />
     <Folder Include="SQL\" />
   </ItemGroup>

@@ -29,6 +29,7 @@
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelBox4 = new PanelBox();
+            this.cbDarkMode = new FirefoxCheckBox();
             this.cbStartMinimized = new FirefoxCheckBox();
             this.helpWhatIsDeleteDuplicates = new System.Windows.Forms.LinkLabel();
             this.helpWhatIsUsingMultiplePc = new System.Windows.Forms.LinkLabel();
@@ -63,7 +64,6 @@
             this.buttonLanguageSelect = new FirefoxButton();
             this.buttonViewBackups = new FirefoxButton();
             this.buttonViewLogs = new FirefoxButton();
-            this.cbDarkMode = new FirefoxCheckBox();
             this.contextMenuStrip1.SuspendLayout();
             this.panelBox4.SuspendLayout();
             this.panelBox3.SuspendLayout();
@@ -135,12 +135,28 @@
             this.panelBox4.Text = "Settings";
             this.panelBox4.TextLocation = "8; 5";
             // 
+            // cbDarkMode
+            // 
+            this.cbDarkMode.Bold = false;
+            this.cbDarkMode.EnabledCalc = true;
+            this.cbDarkMode.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbDarkMode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbDarkMode.IsDarkMode = false;
+            this.cbDarkMode.Location = new System.Drawing.Point(3, 351);
+            this.cbDarkMode.Name = "cbDarkMode";
+            this.cbDarkMode.Size = new System.Drawing.Size(268, 27);
+            this.cbDarkMode.TabIndex = 31;
+            this.cbDarkMode.Tag = "iatag_ui_darkmode";
+            this.cbDarkMode.Text = "Dark mode";
+            this.cbDarkMode.CheckedChanged += new System.EventHandler(this.cbDarkMode_CheckedChanged);
+            // 
             // cbStartMinimized
             // 
             this.cbStartMinimized.Bold = false;
             this.cbStartMinimized.EnabledCalc = true;
             this.cbStartMinimized.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbStartMinimized.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbStartMinimized.IsDarkMode = false;
             this.cbStartMinimized.Location = new System.Drawing.Point(3, 318);
             this.cbStartMinimized.Name = "cbStartMinimized";
             this.cbStartMinimized.Size = new System.Drawing.Size(268, 27);
@@ -185,6 +201,7 @@
             this.cbDeleteDuplicates.EnabledCalc = true;
             this.cbDeleteDuplicates.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbDeleteDuplicates.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbDeleteDuplicates.IsDarkMode = false;
             this.cbDeleteDuplicates.Location = new System.Drawing.Point(3, 252);
             this.cbDeleteDuplicates.Name = "cbDeleteDuplicates";
             this.cbDeleteDuplicates.Size = new System.Drawing.Size(268, 27);
@@ -229,6 +246,7 @@
             this.cbMinimizeToTray.EnabledCalc = true;
             this.cbMinimizeToTray.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbMinimizeToTray.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbMinimizeToTray.IsDarkMode = false;
             this.cbMinimizeToTray.Location = new System.Drawing.Point(3, 285);
             this.cbMinimizeToTray.Name = "cbMinimizeToTray";
             this.cbMinimizeToTray.Size = new System.Drawing.Size(268, 27);
@@ -272,6 +290,7 @@
             this.cbShowAugments.EnabledCalc = true;
             this.cbShowAugments.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbShowAugments.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbShowAugments.IsDarkMode = false;
             this.cbShowAugments.Location = new System.Drawing.Point(3, 186);
             this.cbShowAugments.Name = "cbShowAugments";
             this.cbShowAugments.Size = new System.Drawing.Size(268, 27);
@@ -286,6 +305,7 @@
             this.cbDualComputer.EnabledCalc = true;
             this.cbDualComputer.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbDualComputer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbDualComputer.IsDarkMode = false;
             this.cbDualComputer.Location = new System.Drawing.Point(3, 219);
             this.cbDualComputer.Name = "cbDualComputer";
             this.cbDualComputer.Size = new System.Drawing.Size(268, 27);
@@ -314,6 +334,7 @@
             this.cbHideSkills.EnabledCalc = true;
             this.cbHideSkills.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbHideSkills.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbHideSkills.IsDarkMode = false;
             this.cbHideSkills.Location = new System.Drawing.Point(3, 153);
             this.cbHideSkills.Name = "cbHideSkills";
             this.cbHideSkills.Size = new System.Drawing.Size(268, 27);
@@ -329,6 +350,7 @@
             this.cbAutoUpdateModSettings.EnabledCalc = true;
             this.cbAutoUpdateModSettings.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Strikeout, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbAutoUpdateModSettings.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbAutoUpdateModSettings.IsDarkMode = false;
             this.cbAutoUpdateModSettings.Location = new System.Drawing.Point(3, 436);
             this.cbAutoUpdateModSettings.Name = "cbAutoUpdateModSettings";
             this.cbAutoUpdateModSettings.Size = new System.Drawing.Size(268, 27);
@@ -344,6 +366,7 @@
             this.cbTransferAnyMod.EnabledCalc = true;
             this.cbTransferAnyMod.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbTransferAnyMod.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbTransferAnyMod.IsDarkMode = false;
             this.cbTransferAnyMod.Location = new System.Drawing.Point(3, 87);
             this.cbTransferAnyMod.Name = "cbTransferAnyMod";
             this.cbTransferAnyMod.Size = new System.Drawing.Size(268, 27);
@@ -357,6 +380,7 @@
             this.cbShowRecipesAsItems.EnabledCalc = true;
             this.cbShowRecipesAsItems.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbShowRecipesAsItems.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbShowRecipesAsItems.IsDarkMode = false;
             this.cbShowRecipesAsItems.Location = new System.Drawing.Point(3, 54);
             this.cbShowRecipesAsItems.Name = "cbShowRecipesAsItems";
             this.cbShowRecipesAsItems.Size = new System.Drawing.Size(268, 27);
@@ -371,6 +395,7 @@
             this.cbSecureTransfers.EnabledCalc = true;
             this.cbSecureTransfers.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbSecureTransfers.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbSecureTransfers.IsDarkMode = false;
             this.cbSecureTransfers.Location = new System.Drawing.Point(3, 120);
             this.cbSecureTransfers.Name = "cbSecureTransfers";
             this.cbSecureTransfers.Size = new System.Drawing.Size(268, 27);
@@ -481,11 +506,13 @@
             // buttonLootManually
             // 
             this.buttonLootManually.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
+            this.buttonLootManually.BackColorDefault = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
+            this.buttonLootManually.BackColorOverride = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(245)))), ((int)(((byte)(245)))));
             this.buttonLootManually.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
             this.buttonLootManually.EnabledCalc = true;
             this.buttonLootManually.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.buttonLootManually.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
-            this.buttonLootManually.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
+            this.buttonLootManually.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(232)))), ((int)(((byte)(232)))), ((int)(((byte)(232)))));
             this.buttonLootManually.HoverForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
             this.buttonLootManually.Location = new System.Drawing.Point(14, 203);
             this.buttonLootManually.Name = "buttonLootManually";
@@ -522,11 +549,13 @@
             // buttonDevTools
             // 
             this.buttonDevTools.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
+            this.buttonDevTools.BackColorDefault = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
+            this.buttonDevTools.BackColorOverride = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(245)))), ((int)(((byte)(245)))));
             this.buttonDevTools.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
             this.buttonDevTools.EnabledCalc = true;
             this.buttonDevTools.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.buttonDevTools.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
-            this.buttonDevTools.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
+            this.buttonDevTools.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(232)))), ((int)(((byte)(232)))), ((int)(((byte)(232)))));
             this.buttonDevTools.HoverForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
             this.buttonDevTools.Location = new System.Drawing.Point(14, 165);
             this.buttonDevTools.Name = "buttonDevTools";
@@ -560,12 +589,14 @@
             // 
             // buttonAdvancedSettings
             // 
-            this.buttonAdvancedSettings.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
+            this.buttonAdvancedSettings.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.buttonAdvancedSettings.BackColorDefault = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
+            this.buttonAdvancedSettings.BackColorOverride = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(245)))), ((int)(((byte)(245)))));
             this.buttonAdvancedSettings.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
             this.buttonAdvancedSettings.EnabledCalc = true;
             this.buttonAdvancedSettings.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.buttonAdvancedSettings.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
-            this.buttonAdvancedSettings.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
+            this.buttonAdvancedSettings.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(232)))), ((int)(((byte)(232)))), ((int)(((byte)(232)))));
             this.buttonAdvancedSettings.HoverForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
             this.buttonAdvancedSettings.Location = new System.Drawing.Point(19, 203);
             this.buttonAdvancedSettings.Name = "buttonAdvancedSettings";
@@ -577,12 +608,14 @@
             // 
             // buttonImportExport
             // 
-            this.buttonImportExport.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
+            this.buttonImportExport.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.buttonImportExport.BackColorDefault = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
+            this.buttonImportExport.BackColorOverride = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(245)))), ((int)(((byte)(245)))));
             this.buttonImportExport.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
             this.buttonImportExport.EnabledCalc = true;
             this.buttonImportExport.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.buttonImportExport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
-            this.buttonImportExport.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
+            this.buttonImportExport.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(232)))), ((int)(((byte)(232)))), ((int)(((byte)(232)))));
             this.buttonImportExport.HoverForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
             this.buttonImportExport.Location = new System.Drawing.Point(19, 165);
             this.buttonImportExport.Name = "buttonImportExport";
@@ -595,6 +628,8 @@
             // buttonMigratePostgres
             // 
             this.buttonMigratePostgres.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
+            this.buttonMigratePostgres.BackColorDefault = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
+            this.buttonMigratePostgres.BackColorOverride = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(245)))), ((int)(((byte)(245)))));
             this.buttonMigratePostgres.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
             this.buttonMigratePostgres.EnabledCalc = true;
             this.buttonMigratePostgres.Font = new System.Drawing.Font("Segoe UI", 10F);
@@ -608,12 +643,14 @@
             // 
             // buttonLanguageSelect
             // 
-            this.buttonLanguageSelect.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
+            this.buttonLanguageSelect.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.buttonLanguageSelect.BackColorDefault = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
+            this.buttonLanguageSelect.BackColorOverride = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(245)))), ((int)(((byte)(245)))));
             this.buttonLanguageSelect.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
             this.buttonLanguageSelect.EnabledCalc = true;
             this.buttonLanguageSelect.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.buttonLanguageSelect.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
-            this.buttonLanguageSelect.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
+            this.buttonLanguageSelect.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(232)))), ((int)(((byte)(232)))), ((int)(((byte)(232)))));
             this.buttonLanguageSelect.HoverForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
             this.buttonLanguageSelect.Location = new System.Drawing.Point(19, 127);
             this.buttonLanguageSelect.Name = "buttonLanguageSelect";
@@ -625,12 +662,14 @@
             // 
             // buttonViewBackups
             // 
-            this.buttonViewBackups.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
+            this.buttonViewBackups.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.buttonViewBackups.BackColorDefault = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
+            this.buttonViewBackups.BackColorOverride = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(245)))), ((int)(((byte)(245)))));
             this.buttonViewBackups.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
             this.buttonViewBackups.EnabledCalc = true;
             this.buttonViewBackups.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.buttonViewBackups.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
-            this.buttonViewBackups.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
+            this.buttonViewBackups.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(232)))), ((int)(((byte)(232)))), ((int)(((byte)(232)))));
             this.buttonViewBackups.HoverForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
             this.buttonViewBackups.Location = new System.Drawing.Point(19, 89);
             this.buttonViewBackups.Name = "buttonViewBackups";
@@ -642,12 +681,14 @@
             // 
             // buttonViewLogs
             // 
-            this.buttonViewLogs.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
+            this.buttonViewLogs.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.buttonViewLogs.BackColorDefault = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
+            this.buttonViewLogs.BackColorOverride = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(245)))), ((int)(((byte)(245)))));
             this.buttonViewLogs.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
             this.buttonViewLogs.EnabledCalc = true;
             this.buttonViewLogs.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.buttonViewLogs.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
-            this.buttonViewLogs.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
+            this.buttonViewLogs.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(232)))), ((int)(((byte)(232)))), ((int)(((byte)(232)))));
             this.buttonViewLogs.HoverForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
             this.buttonViewLogs.Location = new System.Drawing.Point(19, 51);
             this.buttonViewLogs.Name = "buttonViewLogs";
@@ -656,20 +697,6 @@
             this.buttonViewLogs.Tag = "iatag_ui_viewlogs";
             this.buttonViewLogs.Text = "View Logs";
             this.buttonViewLogs.Click += new System.EventHandler(this.buttonViewLogs_Click);
-            // 
-            // cbDarkMode
-            // 
-            this.cbDarkMode.Bold = false;
-            this.cbDarkMode.EnabledCalc = true;
-            this.cbDarkMode.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cbDarkMode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbDarkMode.Location = new System.Drawing.Point(3, 351);
-            this.cbDarkMode.Name = "cbDarkMode";
-            this.cbDarkMode.Size = new System.Drawing.Size(268, 27);
-            this.cbDarkMode.TabIndex = 31;
-            this.cbDarkMode.Tag = "iatag_ui_darkmode";
-            this.cbDarkMode.Text = "Dark mode";
-            this.cbDarkMode.CheckedChanged += new System.EventHandler(this.cbDarkMode_CheckedChanged);
             // 
             // SettingsWindow
             // 
