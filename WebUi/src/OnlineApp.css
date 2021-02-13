@@ -14,10 +14,6 @@
   z-index: 2;
 }
 
-.App-dark .darkmode-toggle {
-  color: yellow;
-}
-
 .web .content {
   color: white;
   margin-top: 135px;
@@ -51,4 +47,24 @@
   top: 50%;
   color: red;
   transform: translate(-50%);
+}
+.web .clipboard-container {
+  display: none;
+}
+
+
+.sliderContainer .lightmode {
+  position: absolute;
+  left: 4px;
+  top: 6px;
+}
+
+.sliderContainer .darkmode {
+  position: absolute;
+  right: 4px;
+  top: 6px;
+}
+
+input:checked + .slider {
+  background-color: #ccc;
 }

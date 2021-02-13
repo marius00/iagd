@@ -24,6 +24,7 @@ export interface ApplicationState {
 interface Props {
   url: string;
 }
+
 class OnlineApp extends React.PureComponent<Props, object> {
   state = {
     items: [],
@@ -78,7 +79,7 @@ class OnlineApp extends React.PureComponent<Props, object> {
         headers: {'Accept': 'application/json'},
       }
     )
-      .then(r =>  r.json().then(data => ({status: r.status, statusText: r.statusText, ok: r.ok, body: data})))
+      .then(r => r.json().then(data => ({status: r.status, statusText: r.statusText, ok: r.ok, body: data})))
       .then((response) => {
         if (!response.ok) {
           console.log(response);
@@ -108,10 +109,17 @@ class OnlineApp extends React.PureComponent<Props, object> {
 
           <WebSearchContainer onSearch={(s) => this.search(s)}/>
 
-          <div className="darkmode-toggle" onClick={() => this.setState({isDarkMode: !this.state.isDarkMode})}>
-            {this.state.isDarkMode && <LightMode/>}
-            {!this.state.isDarkMode && <DarkMode/>}
+          <div className="darkmode-toggle">
+            <div className={'sliderContainer'}>
+              <label className="switch">
+                <input type="checkbox" checked={this.state.isDarkMode} onChange={() => this.setState({isDarkMode: !this.state.isDarkMode})}/>
+                <span className="slider round"/>
+                <LightMode className="lightmode"/>
+                <DarkMode className="darkmode"/>
+              </label>
+            </div>
           </div>
+
         </header>
 
         <div className="content">
