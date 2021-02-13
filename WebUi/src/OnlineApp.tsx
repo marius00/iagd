@@ -18,11 +18,17 @@ export interface ApplicationState {
   errorMessage: string;
   offset: number;
   hasMoreItems: boolean;
+  isHardcore: boolean;
 }
 
 
 interface Props {
   url: string;
+}
+
+function getIsHardcore(): boolean {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get('hc') === '1';
 }
 
 class OnlineApp extends React.PureComponent<Props, object> {
@@ -34,6 +40,7 @@ class OnlineApp extends React.PureComponent<Props, object> {
     search: '',
     errorMessage: '',
     hasMoreItems: false,
+    isHardcore: getIsHardcore(),
   } as ApplicationState;
 
   componentDidMount() {
@@ -62,10 +69,6 @@ class OnlineApp extends React.PureComponent<Props, object> {
     return urlParams.get('id');
   }
 
-  getIsHardcore() {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get('hc') || 0;
-  }
 
   search(text: string) {
     this.setState({isLoading: true, items: [], offset: 0, search: text, hasMoreItems: true});
@@ -74,7 +77,7 @@ class OnlineApp extends React.PureComponent<Props, object> {
 
   fetchItems(text: string, offset: number) {
     var self = this;
-    fetch(`${this.props.url}/search?id=${this.getId()}&offset=${offset}&search=${encodeURIComponent(text.toLowerCase())}&hc=${this.getIsHardcore()}`, {
+    fetch(`${this.props.url}/search?id=${this.getId()}&offset=${offset}&search=${encodeURIComponent(text.toLowerCase())}&hc=${this.state.isHardcore?1:0}`, {
         method: 'GET',
         headers: {'Accept': 'application/json'},
       }
@@ -97,6 +100,12 @@ class OnlineApp extends React.PureComponent<Props, object> {
       });
   }
 
+  toggleHardcoreMode() {
+    const url = window.document.location.href.replace(`hc=${this.state.isHardcore ? 1 : 0}`, `hc=${this.state.isHardcore ? 0 : 1}`);
+    window.history.replaceState('', '', url);
+    this.setState({isHardcore: !this.state.isHardcore});
+  }
+
   render() {
     if (!this.getId())
       return <h1 className="missing-id">404 - These are not the drones you are looking for..</h1>;
@@ -110,6 +119,15 @@ class OnlineApp extends React.PureComponent<Props, object> {
           <WebSearchContainer onSearch={(s) => this.search(s)}/>
 
           <div className="darkmode-toggle">
+            <div className={'sliderContainer noselect'}>
+              <label className="switch">
+                <input type="checkbox" checked={this.state.isHardcore} onChange={() => this.toggleHardcoreMode()}/>
+                <span className="slider round"/>
+                <span className="sc">SC</span>
+                <span className="hc">HC</span>
+              </label>
+            </div>
+
             <div className={'sliderContainer'}>
               <label className="switch">
                 <input type="checkbox" checked={this.state.isDarkMode} onChange={() => this.setState({isDarkMode: !this.state.isDarkMode})}/>

@@ -52,7 +52,6 @@
   display: none;
 }
 
-
 .sliderContainer .lightmode {
   position: absolute;
   left: 4px;
@@ -67,4 +66,20 @@
 
 input:checked + .slider {
   background-color: #ccc;
+}
+
+.sliderContainer .sc {
+  position: absolute;
+  left: 7px;
+  top: 8px;
+}
+
+.sliderContainer .hc {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+}
+.sliderContainer {
+  margin-right: 5px;
+  display: inline-block;
 }
