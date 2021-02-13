@@ -520,6 +520,7 @@ namespace StatTranslator {
             {"iatag_ui_howdoifindgrimdawn", "How can I find the Grim Dawn install?"},
             {"iatag_ui_whatisthis", "What is this?"},
             {"iatag_ui_backupsdisabled", "Why is this disabled?"},
+            {"iatag_ui_missing_stash_tabs", "Why are these disabled?"},
             {"iatag_no_stash_abort", "No stash chosen. Aborting transfer."},
             {"iatag_stash_status_error", "Could not inject into Grim Dawn, are you sure the bank is CLOSED?"},
             {"iatag_ui_recentonly", "Recent Only"},
@@ -657,7 +658,6 @@ namespace StatTranslator {
             {"iatag_ui_translation", "Item Assistant is available in your language! Go to settings and click \"Language\" to change to English."},
             {"iatag_ui_database_modified_body", "The Grim Dawn database appears to have been modified.\nIf there has been a recent patch to Grim Dawn:\nGo to \"Database\\Mods\" and parse the database to discover new items and sets."},
             {"iatag_ui_database_modified_title", "New patch?"},
-
             // These cannot currently be translated.
             // Once the injection code is moved back into the "core" IA, this should be possible.
             {"iatag_ui_avasted", "Avasted!"},

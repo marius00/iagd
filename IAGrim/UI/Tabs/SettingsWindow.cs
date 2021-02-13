@@ -136,7 +136,7 @@ namespace IAGrim.UI.Tabs {
         }
 
         private void buttonAdvancedSettings_Click(object sender, EventArgs e) {
-            new StashTabPicker(_transferStashService.NumStashTabs, _settings).ShowDialog();
+            new StashTabPicker(_transferStashService.NumStashTabs, _settings, _cefBrowserHandler).ShowDialog();
         }
 
         private void linkSourceCode_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {

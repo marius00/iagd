@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using IAGrim.Parsers.Arz;
+using IAGrim.Services;
 using IAGrim.Settings;
 using IAGrim.Settings.Dto;
 using IAGrim.Utilities;
@@ -11,11 +12,13 @@ namespace IAGrim.UI.Popups {
     public partial class StashTabPicker : Form {
         private readonly SettingsService _settings;
         private readonly int _numStashTabs;
+        private readonly IHelpService _helpService;
 
-        public StashTabPicker(int numStashTabs, SettingsService settings) {
+        public StashTabPicker(int numStashTabs, SettingsService settings, IHelpService helpService) {
             InitializeComponent();
             _numStashTabs = numStashTabs;
             _settings = settings;
+            _helpService = helpService;
         }
 
         private void buttonClose_Click(object sender, EventArgs e) {
@@ -73,6 +76,7 @@ namespace IAGrim.UI.Popups {
                 cb.Enabled = i <= _numStashTabs;
                 cb.EnabledCalc = i <= _numStashTabs;
                 this.gbMoveTo.Controls.Add(cb);
+                helpWhyAreTheseDisabled.Visible = _numStashTabs <= 4;
             }
 
 
@@ -107,6 +111,10 @@ namespace IAGrim.UI.Popups {
 
         private void radioInputLast_CheckedChanged(object sender, EventArgs e) {
             _settings.GetLocal().StashToLootFrom = 0;
+        }
+
+        private void helpWhyAreTheseDisabled_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            _helpService.ShowHelp(HelpService.HelpType.NotEnoughStashTabs);
         }
     }
 }
