@@ -20,7 +20,7 @@ namespace IAGrim.Utilities.Cloud {
         private readonly SettingsService _settingsService;
         private readonly IPlayerItemDao _playerItemDao;
 
-        private readonly string[] _acceptedFileFormats = new[] {
+        private static readonly string[] AcceptedFileFormats = new[] {
             ".gdc",
             ".gdd",
             ".fow",
@@ -36,8 +36,8 @@ namespace IAGrim.Utilities.Cloud {
             this._settingsService = settingsService;
         }
 
-        private bool IsAcceptedFileFormat(string s) {
-            return _acceptedFileFormats.Contains(Path.GetExtension(s));
+        private static bool IsAcceptedFileFormat(string s) {
+            return AcceptedFileFormats.Contains(Path.GetExtension(s));
         }
 
         public void Update() {
@@ -103,7 +103,77 @@ namespace IAGrim.Utilities.Cloud {
 
             return true;
         }
-        
+
+        public static List<string> ListCharactersNewerThan(DateTime dt) {
+            List<string> result = new List<string>();
+
+            string characterFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "Grim Dawn", "Save", "main");
+            var characters = Directory.GetDirectories(characterFolder);
+            foreach (var character in characters) {
+                var f = Path.Combine(character, "player.gdc");
+                if (!File.Exists(f))
+                    continue;
+
+                if (File.GetLastWriteTimeUtc(f) > dt) {
+                    result.Add(Path.GetFileName(character));
+                }
+            }
+
+            return result;
+        }
+
+        public static DateTime GetHighestCharacterTimestamp() {
+            string characterFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "Grim Dawn", "Save", "main");
+            var characters = Directory.GetDirectories(characterFolder);
+            return characters.Select(File.GetLastWriteTimeUtc).Max();
+        }
+
+        /// <summary>
+        /// Creates a backup of a single character in the "main" directory (eg not mod)
+        /// </summary>
+        /// <param name="target">Target zip file (will be overwritten if exists)</param>
+        /// <param name="character">Character name (with leading _ if applicable)</param>
+        public static void BackupCharacter(string target, string character) {
+            var destination = Path.GetDirectoryName(target);
+            if (!Directory.Exists(destination))
+                Directory.CreateDirectory(destination);
+
+
+            string gameSaves = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "Grim Dawn", "Save");
+            
+            string[] files = Directory.GetFiles(Path.Combine(gameSaves, "main", character), "*.*", SearchOption.AllDirectories);
+
+            using (ZipFile zip = new ZipFile { UseZip64WhenSaving = Zip64Option.AsNecessary }) {
+                Logger.Info($"Backing up character {character}..");
+
+                foreach (var f in files) {
+                    if (!IsAcceptedFileFormat(f)) {
+                        Logger.Debug($"Ignoring file {f}, invalid file format.");
+                        continue;
+                    }
+
+                    // Max 1MB
+                    if (new FileInfo(f).Length > 1024 * 1024) {
+                        Logger.Debug($"Ignoring file {f}, size exceeds 1MB");
+                        continue;
+                    }
+
+
+                    var relativePath = f.Replace(gameSaves, "").Replace(Path.GetFileName(f), "");
+                    zip.AddFile(f, relativePath);
+                }
+
+                zip.Comment = $"This backup of {character} was created at {DateTime.Now:G}.";
+
+                try {
+                    zip.Save(target);
+                }
+                catch (UnauthorizedAccessException) {
+                    Logger.WarnFormat("Access denied writing backup to \"{0}\"", target);
+                    throw;
+                }
+            }
+        }
 
         private void Backup(string destination, bool forced) {
             if (!Directory.Exists(destination))

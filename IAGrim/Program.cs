@@ -22,6 +22,7 @@ using IAGrim.Database.Dto;
 using IAGrim.Database.Synchronizer.Core;
 using IAGrim.Services;
 using IAGrim.Settings;
+using IAGrim.Utilities.Cloud;
 using IAGrim.Utilities.Detection;
 
 namespace IAGrim {
@@ -32,6 +33,10 @@ namespace IAGrim {
 
 #if DEBUG
         private static void Test() {
+            var characters = FileBackup.ListCharactersNewerThan(DateTime.MinValue);
+            var xyz = Path.GetFileName(characters[0]);
+            var target = @"f:\temp\backup.zip";
+            FileBackup.BackupCharacter(target, "_Fog");
             return;
         }
 #endif

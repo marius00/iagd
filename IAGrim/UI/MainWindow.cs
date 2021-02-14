@@ -446,7 +446,8 @@ namespace IAGrim.UI {
 
             var itemTagDao = _serviceProvider.Get<IItemTagDao>();
             var backupService = new BackupService(_authService, playerItemDao, settingsService);
-            _backupServiceWorker = new BackupServiceWorker(backupService);
+            var charBackupService = new CharacterBackupService(_authService.GetRestService(), settingsService, _authService);
+            _backupServiceWorker = new BackupServiceWorker(backupService, charBackupService);
             backupService.OnUploadComplete += (o, args) => _searchWindow.UpdateListView();
             searchController.OnSearch += (o, args) => backupService.OnSearch();
 

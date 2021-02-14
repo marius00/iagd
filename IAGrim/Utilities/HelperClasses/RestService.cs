@@ -1,9 +1,9 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading.Tasks;
 using System.Web;
 using log4net;
 using Newtonsoft.Json;
@@ -52,7 +52,7 @@ namespace IAGrim.Utilities.HelperClasses {
             var result = _client.PostAsync(url, new StringContent(json, Encoding.UTF8, "application/json")).Result;
             return result.IsSuccessStatusCode;
         }
-        
+
         public bool Delete(string url, string json) {
             var result = _client.DeleteAsync(url).Result;
             return result.IsSuccessStatusCode;

@@ -10,9 +10,11 @@ namespace IAGrim.Backup.Cloud.Util {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(BackupServiceWorker));
         private BackgroundWorker _bw = new BackgroundWorker();
         private readonly BackupService _backupService;
+        private readonly CharacterBackupService _characterBackupService;
 
-        public BackupServiceWorker(BackupService backupService) {
+        public BackupServiceWorker(BackupService backupService, CharacterBackupService characterBackupService) {
             _backupService = backupService;
+            _characterBackupService = characterBackupService;
 
             _bw.DoWork += new DoWorkEventHandler(bw_DoWork);
             _bw.WorkerSupportsCancellation = true;
@@ -44,6 +46,7 @@ namespace IAGrim.Backup.Cloud.Util {
                 try {
                     Thread.Sleep(1000);
                     _backupService.Execute();
+                    _characterBackupService.Execute();
                 }
                 catch (Exception ex) {
                     Logger.Error(ex.Message);

@@ -28,6 +28,7 @@ namespace IAGrim.Settings.Dto {
         private bool _hasWarnedGrimDawnUpdate;
         private long? _grimDawnLocationLastModified;
         private bool _startMinimized;
+        private DateTime _lastCharSyncUtc;
 
         public string MachineName { get; set; }
 
@@ -205,5 +206,15 @@ namespace IAGrim.Settings.Dto {
                 OnMutate?.Invoke(null, null);
             }
         }
+
+        public DateTime LastCharSyncUtc {
+            get => _lastCharSyncUtc;
+            set {
+                _lastCharSyncUtc = value;
+                OnMutate?.Invoke(null, null);
+            }
+        }
+
+        
     }
 }

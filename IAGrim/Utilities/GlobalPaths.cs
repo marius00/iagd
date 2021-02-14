@@ -35,6 +35,13 @@ namespace IAGrim.Utilities {
                 return path;
             }
         }
+        public static string CharacterBackupLocation {
+            get {
+                string path = Path.Combine(BackupLocation, "characters");
+                Directory.CreateDirectory(path);
+                return path;
+            }
+        }
 
 
         /// <summary>

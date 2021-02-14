@@ -208,6 +208,7 @@
     <Compile Include="Backup\BatchUtil.cs" />
     <Compile Include="Backup\Cloud\Dto\LimitEntry.cs" />
     <Compile Include="Backup\Cloud\Dto\LimitsDto.cs" />
+    <Compile Include="Backup\Cloud\Service\CharacterBackupService.cs" />
     <Compile Include="Database\DAO\ItemCollectionDaoImpl.cs" />
     <Compile Include="Database\DAO\Table\BuddySubscriptionTable.cs" />
     <Compile Include="Database\DAO\Util\SqlDialect.cs" />

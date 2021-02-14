@@ -29,6 +29,7 @@ namespace IAGrim.Backup.Cloud {
             MigrateUrl = $"{host}/migrate";
             BuddyItemsUrl = $"{host}/buddyitems";
             GetBuddyIdUrl = $"{host}/buddyId";
+            UploadCharacterUrl = $"{host}/character/upload";
 
             LoginPageUrl = "http://iagd.evilsoft.net/login";
             OnlineItemsUrl = "http://iagd.evilsoft.net/items/";
@@ -45,5 +46,6 @@ namespace IAGrim.Backup.Cloud {
         public static string MigrateUrl { get; private set; }
         public static string BuddyItemsUrl { get; private set; }
         public static string GetBuddyIdUrl { get; private set; } // TODO: This needs to be set by the backup service
+        public static string UploadCharacterUrl { get; private set; }
     }
 }

@@ -209,6 +209,14 @@ namespace IAGrim.Backup.Cloud.Service {
             MemoryCache.Default.Set(CacheKey, AccessStatus.Unauthorized, DateTimeOffset.Now.AddDays(1));
         }
 
+        public AuthenticationProvider GetAuthProvider() {
+            if (CheckAuthentication() == AccessStatus.Authorized) {
+                return _authenticationProvider;
+            }
+
+            return null;
+        }
+
         public RestService GetRestService() {
             if (CheckAuthentication() == AccessStatus.Authorized) {
                 var token = _authenticationProvider.GetToken();

@@ -14,7 +14,8 @@ namespace IAGrim.Settings {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
             Culture = System.Globalization.CultureInfo.InvariantCulture,
             ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver(),
-            NullValueHandling = NullValueHandling.Ignore
+            NullValueHandling = NullValueHandling.Ignore,
+            DateFormatHandling = DateFormatHandling.MicrosoftDateFormat
         };
 
         private readonly SettingsTemplate _data;
