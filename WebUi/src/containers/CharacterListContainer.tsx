@@ -3,7 +3,6 @@ import { CharacterListDto, getBackedUpCharacters, getCharacterDownloadUrl, openU
 import Icon from '@material-ui/icons/CloudDownload';
 import './CharacterListContainer.css';
 
-let characters = getBackedUpCharacters();
 
 class CharacterListContainer extends React.PureComponent<{}, object> {
 
@@ -38,6 +37,7 @@ class CharacterListContainer extends React.PureComponent<{}, object> {
   }
 
   render() {
+    let characters = getBackedUpCharacters();
     return <div className="characters">
       <h1>Backed up characters</h1>
       <ul>

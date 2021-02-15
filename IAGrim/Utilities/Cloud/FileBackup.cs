@@ -140,7 +140,7 @@ namespace IAGrim.Utilities.Cloud {
 
 
             string gameSaves = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "Grim Dawn", "Save");
-            
+
             string[] files = Directory.GetFiles(Path.Combine(gameSaves, "main", character), "*.*", SearchOption.AllDirectories);
 
             using (ZipFile zip = new ZipFile { UseZip64WhenSaving = Zip64Option.AsNecessary }) {
@@ -164,6 +164,44 @@ namespace IAGrim.Utilities.Cloud {
                 }
 
                 zip.Comment = $"This backup of {character} was created at {DateTime.Now:G}.";
+
+                try {
+                    zip.Save(target);
+                }
+                catch (UnauthorizedAccessException) {
+                    Logger.WarnFormat("Access denied writing backup to \"{0}\"", target);
+                    throw;
+                }
+            }
+        }
+        public static void BackupCommon(string target) {
+            var destination = Path.GetDirectoryName(target);
+            if (!Directory.Exists(destination))
+                Directory.CreateDirectory(destination);
+
+
+            string gameSaves = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "Grim Dawn", "Save");
+            string[] files = Directory.GetFiles(gameSaves, "*.*", SearchOption.TopDirectoryOnly);
+
+            using (ZipFile zip = new ZipFile { UseZip64WhenSaving = Zip64Option.AsNecessary }) {
+                Logger.Info($"Backing up transfer files etc..");
+
+                foreach (var f in files) {
+                    if (!IsAcceptedFileFormat(f)) {
+                        Logger.Debug($"Ignoring file {f}, invalid file format.");
+                        continue;
+                    }
+
+                    // Max 1MB
+                    if (new FileInfo(f).Length > 1024 * 1024) {
+                        Logger.Debug($"Ignoring file {f}, size exceeds 1MB");
+                        continue;
+                    }
+
+                    zip.AddFile(f, "");
+                }
+
+                zip.Comment = $"This backup of your stash files was created at {DateTime.Now:G}.";
 
                 try {
                     zip.Save(target);

@@ -8,3 +8,6 @@
   height: auto;
   color: #7db7ff;
 }
+.characters {
+  cursor: pointer;
+}
