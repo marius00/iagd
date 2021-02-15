@@ -49,6 +49,7 @@ namespace IAGrim.UI {
         private readonly DynamicPacker _dynamicPacker;
         private readonly UsageStatisticsReporter _usageStatisticsReporter = new UsageStatisticsReporter();
         private readonly AutomaticUpdateChecker _automaticUpdateChecker;
+        private CharacterBackupService _charBackupService;
 
         private readonly List<IMessageProcessor> _messageProcessors = new List<IMessageProcessor>();
 
@@ -104,7 +105,8 @@ namespace IAGrim.UI {
                     RuntimeSettings.StashStatus = StashAvailability.ERROR;
                     _cefBrowserHandler.ShowHelp(HelpService.HelpType.StashError);
                 }
-                
+
+                _charBackupService.SetIsActive(RuntimeSettings.StashStatus == StashAvailability.CLOSED);
             }
         }
 
@@ -446,8 +448,8 @@ namespace IAGrim.UI {
 
             var itemTagDao = _serviceProvider.Get<IItemTagDao>();
             var backupService = new BackupService(_authService, playerItemDao, settingsService);
-            var charBackupService = new CharacterBackupService(_authService.GetRestService(), settingsService, _authService);
-            _backupServiceWorker = new BackupServiceWorker(backupService, charBackupService);
+            _charBackupService = new CharacterBackupService(settingsService, _authService);
+            _backupServiceWorker = new BackupServiceWorker(backupService, _charBackupService);
             backupService.OnUploadComplete += (o, args) => _searchWindow.UpdateListView();
             searchController.OnSearch += (o, args) => backupService.OnSearch();
 
