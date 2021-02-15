@@ -1,13 +1,15 @@
 import * as React from 'react';
-import { getBackedUpCharacters, getCharacterDownloadUrl, openUrl } from '../integration/integration';
+import { CharacterListDto, getBackedUpCharacters, getCharacterDownloadUrl, openUrl } from '../integration/integration';
+import Icon from '@material-ui/icons/CloudDownload';
+import './CharacterListContainer.css';
 
 let characters = getBackedUpCharacters();
+
 class CharacterListContainer extends React.PureComponent<{}, object> {
 
 
-
-  renderCharacter(c: string) {
-    const clean = (c: string) => c.startsWith("_") ? c.substr(1) : c;
+  renderCharacter(c: CharacterListDto) {
+    const clean = (c: string) => c.startsWith('_') ? c.substr(1) : c;
     const download = (c: string) => {
       console.log('Clickyetyclick');
       const url = getCharacterDownloadUrl(c);
@@ -20,13 +22,23 @@ class CharacterListContainer extends React.PureComponent<{}, object> {
     };
 
 
-    return <li key={c}>
-      <a href='#' onClick={() => download(c)}>{clean(c)}</a>
-    </li>;
+    return (
+      <table key={c.name} onClick={() => download(c.name)}>
+        <tr>
+          <td>
+            <Icon/>
+          </td>
+          <td>
+            <h2>{clean(c.name)}</h2>
+            Last modified: {c.updatedAt}
+          </td>
+        </tr>
+      </table>
+    );
   }
 
   render() {
-    return <div>
+    return <div className="characters">
       <h1>Backed up characters</h1>
       <ul>
         {characters.map(this.renderCharacter)}

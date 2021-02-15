@@ -100,10 +100,7 @@ namespace IAGrim.UI.Misc.CEF {
         }
 
         public string GetBackedUpCharacters() {
-            RequestCharacterListEventArg args = new RequestCharacterListEventArg {
-                Characters = new List<string>()
-            };
-
+            RequestCharacterListEventArg args = new RequestCharacterListEventArg();
             OnRequestBackedUpCharacterList?.Invoke(this, args);
             return JsonConvert.SerializeObject(args.Characters, _settings);
         }

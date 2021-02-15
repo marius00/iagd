@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using IAGrim.Backup.Cloud.Dto;
 using IAGrim.Settings;
 using IAGrim.Utilities;
 using IAGrim.Utilities.Cloud;
@@ -41,15 +42,10 @@ namespace IAGrim.Backup.Cloud.Service {
             _cooldown.ExecuteIfReady(ExecuteInternal);
         }
 
-        class CharacterListDto {
-            public string Name { get; set; }
-            public DateTime CreatedAt { get; set; }
-            public DateTime UpdatedAt { get; set; }
-        }
 
-        public List<string> ListBackedUpCharacters() {
+        public List<CharacterListDto> ListBackedUpCharacters() {
             CharacterListDto[] characters = _authService.GetRestService()?.Get<CharacterListDto[]>(Uris.ListCharacterUrl);
-            return characters?.Select(c => c.Name).ToList() ?? new List<string>();
+            return characters.ToList();
         }
 
         class CharacterDownloadUrlDto {
