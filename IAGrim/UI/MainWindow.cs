@@ -450,6 +450,15 @@ namespace IAGrim.UI {
             var backupService = new BackupService(_authService, playerItemDao, settingsService);
             _charBackupService = new CharacterBackupService(settingsService, _authService);
             _backupServiceWorker = new BackupServiceWorker(backupService, _charBackupService);
+            searchController.JsIntegration.OnRequestBackedUpCharacterList += (_, args) => {
+                RequestCharacterListEventArg a = args as RequestCharacterListEventArg;
+                a.Characters = _charBackupService.ListBackedUpCharacters();
+            };
+            searchController.JsIntegration.OnRequestCharacterDownloadUrl += (_, args) => {
+                RequestCharacterDownloadUrlEventArg a = args as RequestCharacterDownloadUrlEventArg;
+                a.Url = _charBackupService.GetDownloadUrl(a.Character);
+            };
+
             backupService.OnUploadComplete += (o, args) => _searchWindow.UpdateListView();
             searchController.OnSearch += (o, args) => backupService.OnSearch();
 

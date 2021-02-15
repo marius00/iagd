@@ -28,6 +28,8 @@
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pbBuddyItems = new PanelBox();
+            this.btnDeleteBuddy = new FirefoxButton();
+            this.btnModifyBuddy = new FirefoxButton();
             this.buddyList = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -37,6 +39,7 @@
             this.onlineBackup = new PanelBox();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.groupBoxBackupDetails = new System.Windows.Forms.GroupBox();
+            this.linkViewCharacters = new System.Windows.Forms.LinkLabel();
             this.linkViewOnline = new System.Windows.Forms.LinkLabel();
             this.labelBuddyId = new System.Windows.Forms.Label();
             this.lbBuddyId = new System.Windows.Forms.Label();
@@ -47,8 +50,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.cbDontWantBackups = new FirefoxCheckBox();
             this.buttonLogin = new FirefoxButton();
-            this.btnModifyBuddy = new FirefoxButton();
-            this.btnDeleteBuddy = new FirefoxButton();
             this.buddyItemListContextMenu.SuspendLayout();
             this.pbBuddyItems.SuspendLayout();
             this.onlineBackup.SuspendLayout();
@@ -101,6 +102,44 @@
             this.pbBuddyItems.Tag = "iatag_ui_buddies";
             this.pbBuddyItems.Text = "Buddies";
             this.pbBuddyItems.TextLocation = "8; 5";
+            // 
+            // btnDeleteBuddy
+            // 
+            this.btnDeleteBuddy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnDeleteBuddy.BackColorDefault = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
+            this.btnDeleteBuddy.BackColorOverride = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(245)))), ((int)(((byte)(245)))));
+            this.btnDeleteBuddy.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
+            this.btnDeleteBuddy.EnabledCalc = true;
+            this.btnDeleteBuddy.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.btnDeleteBuddy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
+            this.btnDeleteBuddy.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(232)))), ((int)(((byte)(232)))), ((int)(((byte)(232)))));
+            this.btnDeleteBuddy.HoverForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
+            this.btnDeleteBuddy.Location = new System.Drawing.Point(355, 175);
+            this.btnDeleteBuddy.Name = "btnDeleteBuddy";
+            this.btnDeleteBuddy.Size = new System.Drawing.Size(160, 25);
+            this.btnDeleteBuddy.TabIndex = 11;
+            this.btnDeleteBuddy.Tag = "iatag_ui_buddy_delete";
+            this.btnDeleteBuddy.Text = "Delete buddy";
+            this.btnDeleteBuddy.Click += new System.EventHandler(this.btnDeleteBuddy_Click);
+            // 
+            // btnModifyBuddy
+            // 
+            this.btnModifyBuddy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnModifyBuddy.BackColorDefault = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
+            this.btnModifyBuddy.BackColorOverride = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(245)))), ((int)(((byte)(245)))));
+            this.btnModifyBuddy.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
+            this.btnModifyBuddy.EnabledCalc = true;
+            this.btnModifyBuddy.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.btnModifyBuddy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
+            this.btnModifyBuddy.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(232)))), ((int)(((byte)(232)))), ((int)(((byte)(232)))));
+            this.btnModifyBuddy.HoverForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
+            this.btnModifyBuddy.Location = new System.Drawing.Point(189, 175);
+            this.btnModifyBuddy.Name = "btnModifyBuddy";
+            this.btnModifyBuddy.Size = new System.Drawing.Size(160, 25);
+            this.btnModifyBuddy.TabIndex = 10;
+            this.btnModifyBuddy.Tag = "iatag_ui_buddy_modify";
+            this.btnModifyBuddy.Text = "Modify buddy";
+            this.btnModifyBuddy.Click += new System.EventHandler(this.btnModifyBuddy_Click);
             // 
             // buddyList
             // 
@@ -219,6 +258,7 @@
             // groupBoxBackupDetails
             // 
             this.groupBoxBackupDetails.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxBackupDetails.Controls.Add(this.linkViewCharacters);
             this.groupBoxBackupDetails.Controls.Add(this.linkViewOnline);
             this.groupBoxBackupDetails.Controls.Add(this.labelBuddyId);
             this.groupBoxBackupDetails.Controls.Add(this.lbBuddyId);
@@ -234,6 +274,20 @@
             this.groupBoxBackupDetails.TabStop = false;
             this.groupBoxBackupDetails.Tag = "iatag_ui_backup_details";
             this.groupBoxBackupDetails.Text = "Details";
+            // 
+            // linkViewCharacters
+            // 
+            this.linkViewCharacters.AutoSize = true;
+            this.linkViewCharacters.BackColor = System.Drawing.Color.Transparent;
+            this.linkViewCharacters.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.linkViewCharacters.Location = new System.Drawing.Point(6, 90);
+            this.linkViewCharacters.Name = "linkViewCharacters";
+            this.linkViewCharacters.Size = new System.Drawing.Size(89, 13);
+            this.linkViewCharacters.TabIndex = 19;
+            this.linkViewCharacters.TabStop = true;
+            this.linkViewCharacters.Tag = "iatag_ui_backup_viewcharacters";
+            this.linkViewCharacters.Text = "View Characters";
+            this.linkViewCharacters.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkViewCharacters_LinkClicked);
             // 
             // linkViewOnline
             // 
@@ -371,44 +425,6 @@
             this.buttonLogin.Text = "Login";
             this.buttonLogin.Click += new System.EventHandler(this.firefoxButton1_Click);
             // 
-            // btnModifyBuddy
-            // 
-            this.btnModifyBuddy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnModifyBuddy.BackColorDefault = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
-            this.btnModifyBuddy.BackColorOverride = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(245)))), ((int)(((byte)(245)))));
-            this.btnModifyBuddy.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
-            this.btnModifyBuddy.EnabledCalc = true;
-            this.btnModifyBuddy.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.btnModifyBuddy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
-            this.btnModifyBuddy.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(232)))), ((int)(((byte)(232)))), ((int)(((byte)(232)))));
-            this.btnModifyBuddy.HoverForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
-            this.btnModifyBuddy.Location = new System.Drawing.Point(189, 175);
-            this.btnModifyBuddy.Name = "btnModifyBuddy";
-            this.btnModifyBuddy.Size = new System.Drawing.Size(160, 25);
-            this.btnModifyBuddy.TabIndex = 10;
-            this.btnModifyBuddy.Tag = "iatag_ui_buddy_modify";
-            this.btnModifyBuddy.Text = "Modify buddy";
-            this.btnModifyBuddy.Click += new System.EventHandler(this.btnModifyBuddy_Click);
-            // 
-            // btnDeleteBuddy
-            // 
-            this.btnDeleteBuddy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnDeleteBuddy.BackColorDefault = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
-            this.btnDeleteBuddy.BackColorOverride = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(245)))), ((int)(((byte)(245)))));
-            this.btnDeleteBuddy.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
-            this.btnDeleteBuddy.EnabledCalc = true;
-            this.btnDeleteBuddy.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.btnDeleteBuddy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
-            this.btnDeleteBuddy.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(232)))), ((int)(((byte)(232)))), ((int)(((byte)(232)))));
-            this.btnDeleteBuddy.HoverForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
-            this.btnDeleteBuddy.Location = new System.Drawing.Point(355, 175);
-            this.btnDeleteBuddy.Name = "btnDeleteBuddy";
-            this.btnDeleteBuddy.Size = new System.Drawing.Size(160, 25);
-            this.btnDeleteBuddy.TabIndex = 11;
-            this.btnDeleteBuddy.Tag = "iatag_ui_buddy_delete";
-            this.btnDeleteBuddy.Text = "Delete buddy";
-            this.btnDeleteBuddy.Click += new System.EventHandler(this.btnDeleteBuddy_Click);
-            // 
             // OnlineSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -461,5 +477,6 @@
         private System.Windows.Forms.LinkLabel linkViewOnline;
         private FirefoxButton btnDeleteBuddy;
         private FirefoxButton btnModifyBuddy;
+        private System.Windows.Forms.LinkLabel linkViewCharacters;
     }
 }

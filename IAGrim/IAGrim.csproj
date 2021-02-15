@@ -282,6 +282,8 @@
     <Compile Include="UI\Misc\CEF\UserFeedbackService.cs" />
     <Compile Include="UI\DarkMode.cs" />
     <Compile Include="UI\Misc\MinimizeToTrayHandler.cs" />
+    <Compile Include="UI\Misc\RequestCharacterDownloadUrlEventArgs.cs" />
+    <Compile Include="UI\Misc\RequestCharacterListEventArg.cs" />
     <Compile Include="UI\Popups\AddEditBuddy.cs">
       <SubType>Form</SubType>
     </Compile>

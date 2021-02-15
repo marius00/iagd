@@ -41,6 +41,26 @@ namespace IAGrim.Backup.Cloud.Service {
             _cooldown.ExecuteIfReady(ExecuteInternal);
         }
 
+        class CharacterListDto {
+            public string Name { get; set; }
+            public DateTime CreatedAt { get; set; }
+            public DateTime UpdatedAt { get; set; }
+        }
+
+        public List<string> ListBackedUpCharacters() {
+            CharacterListDto[] characters = _authService.GetRestService()?.Get<CharacterListDto[]>(Uris.ListCharacterUrl);
+            return characters?.Select(c => c.Name).ToList() ?? new List<string>();
+        }
+
+        class CharacterDownloadUrlDto {
+            public string Url { get; set; }
+        }
+
+        public string GetDownloadUrl(string character) {
+            var url = $"{Uris.DownloadCharacterUrl}?name={WebUtility.UrlEncode(character)}";
+            return _authService.GetRestService()?.Get<CharacterDownloadUrlDto>(url)?.Url;
+        }
+
         private void ExecuteInternal() {
             var lastSync = _settings.GetLocal().LastCharSyncUtc;
             var highestTimestamp = FileBackup.GetHighestCharacterTimestamp();

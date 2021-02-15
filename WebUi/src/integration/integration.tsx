@@ -23,6 +23,9 @@ interface IntegrationInterface {
   getFeatureSuggestion(): string;
 
   markFeatureSuggestionSeen(feature: string): void;
+
+  getBackedUpCharacters(): string;
+  getCharacterDownloadUrl(character: string): string;
 }
 
 declare let core: IntegrationInterface;
@@ -94,4 +97,24 @@ export function markFeatureSuggestionSeen(feature: string) {
   } else {
     hasSeenMockFeature = true;
   }
+}
+
+export function getBackedUpCharacters(): string[] {
+  if (isEmbedded) {
+    return JSON.parse(core.getBackedUpCharacters());
+  }
+
+  return [];
+}
+
+
+export interface CharacterUrlRequest {
+  url: string|undefined;
+}
+
+export function getCharacterDownloadUrl(character: string): CharacterUrlRequest {
+  if (isEmbedded) {
+    return JSON.parse(core.getCharacterDownloadUrl(character));
+  }
+  return {'url': undefined};
 }

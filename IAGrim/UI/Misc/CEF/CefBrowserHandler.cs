@@ -29,6 +29,21 @@ namespace IAGrim.UI.Misc.CEF {
         ~CefBrowserHandler() {
             Dispose();
         }
+        
+        public void ShowCharacterBackups() {
+            if (BrowserControl != null && BrowserControl.CanExecuteJavascriptInMainFrame) {
+                BrowserControl.ExecuteScriptAsync("window.showCharacterBackups()");
+                if (_tabControl.InvokeRequired) {
+                    _tabControl.Invoke((MethodInvoker)delegate { _tabControl.SelectedIndex = 0; });
+                }
+                else {
+                    _tabControl.SelectedIndex = 0;
+                }
+            }
+            else {
+                Logger.Warn("Attempted to show character backups but CEF not yet initialized.");
+            }
+        }
 
         public void ShowHelp(HelpService.HelpType type) {
             if (BrowserControl != null && BrowserControl.CanExecuteJavascriptInMainFrame) {

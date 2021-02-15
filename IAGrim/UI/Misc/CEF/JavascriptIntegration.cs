@@ -24,6 +24,8 @@ namespace IAGrim.UI.Misc.CEF {
         public event EventHandler OnRequestSetItemAssociations;
         public event EventHandler OnRequestFeatureRecommendation;
         public event EventHandler OnSeenFeatureRecommendation;
+        public event EventHandler OnRequestBackedUpCharacterList;
+        public event EventHandler OnRequestCharacterDownloadUrl;
 
         public string TransferItem(object[] identifier, int numItems) {
             var args = new StashTransferEventArgs(identifier, numItems);
@@ -95,6 +97,24 @@ namespace IAGrim.UI.Misc.CEF {
         // TODO: Weird flow, should just return items.
         public void RequestMoreItems() {
             OnRequestItems?.Invoke(this, null);
+        }
+
+        public string GetBackedUpCharacters() {
+            RequestCharacterListEventArg args = new RequestCharacterListEventArg {
+                Characters = new List<string>()
+            };
+
+            OnRequestBackedUpCharacterList?.Invoke(this, args);
+            return JsonConvert.SerializeObject(args.Characters, _settings);
+        }
+
+        public string GetCharacterDownloadUrl(string c) {
+            RequestCharacterDownloadUrlEventArg args = new RequestCharacterDownloadUrlEventArg {
+                Character = c
+            };
+
+            OnRequestCharacterDownloadUrl?.Invoke(this, args);
+            return JsonConvert.SerializeObject(args, _settings);
         }
 
         public string GetItemSetAssociations() {

@@ -13,6 +13,7 @@ import MockCollectionItemData from './mock/MockCollectionItemData';
 import NewFeaturePromoter from './components/NewFeaturePromoter';
 import Spinner from './components/Spinner';
 import Help from './containers/help/Help';
+import CharacterListContainer from './containers/CharacterListContainer';
 
 
 export interface ApplicationState {
@@ -30,7 +31,6 @@ export interface ApplicationState {
 // TODO: See C#: "What's this?" May be the cause of all the "no stats found" shit.. does it ever DO anything?
 // See code: TODO: Possible to get skill stuff on this? Tooltip + color
 // TODO: Font color red on Set: bonus tag is freaking terrible in light mode (dark tooltip)
-// TODO: Ensure loading works correctly.. no duplicates, in expected order..
 // TODO: Loot button if stash file path is network \\
 // TODO: Onboarding => new user/returning => import flow vs parse flow, explain how it works, nag about backups, explain misc functionality.
 // TODO: Icon next to transfer links?
@@ -39,7 +39,6 @@ export interface ApplicationState {
 // Trivial
 // TODO: Prevent multiple clicks on transfer? or non-issue?
 // TODO: Reset the 'statusLabel' text once in a while, may show 'error' until the end of time.
-// TODO: A no more matches message when scrolling too far?
 
 
 /*
@@ -137,6 +136,14 @@ class App extends React.PureComponent<{}, object> {
       });
     };
 
+    // Show the help screen
+    // @ts-ignore: setIsLoading doesn't exist on window
+    window.showCharacterBackups = () => {
+      this.setState({
+        activeTab: 4,
+      });
+    };
+
     // Show a notification message such as "Item transferred" or "Too close to stash"
     // @ts-ignore: showMessage doesn't exist on window
     window.showMessage = (input: string) => {
@@ -191,6 +198,7 @@ class App extends React.PureComponent<{}, object> {
           </div>
         </div>
         {this.state.activeTab === 0 && !isEmbedded ? <MockItemsButton onClick={(items) => this.setItems(items)}/> : ''}
+        {this.state.activeTab === 4 && <CharacterListContainer />}
 
         {this.state.activeTab === 0 && <ItemContainer
             items={this.state.items}

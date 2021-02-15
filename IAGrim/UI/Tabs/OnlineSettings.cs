@@ -64,6 +64,7 @@ namespace IAGrim.UI.Tabs {
             btnAddBuddy.Enabled = !buttonLogin.Enabled;
             btnModifyBuddy.Enabled = !buttonLogin.Enabled;
             linkViewOnline.Enabled = !buttonLogin.Enabled;
+            linkViewCharacters.Enabled = !buttonLogin.Enabled;
             if (buddyList.Enabled) UpdateBuddyList();
 
 
@@ -288,6 +289,10 @@ namespace IAGrim.UI.Tabs {
 
         private void btnDeleteBuddy_Click(object sender, EventArgs e) {
             deleteToolStripMenuItem_Click(sender, e);
+        }
+
+        private void linkViewCharacters_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            _helpService.ShowCharacterBackups();
         }
     }
 }
