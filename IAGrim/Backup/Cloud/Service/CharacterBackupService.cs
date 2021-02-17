@@ -77,10 +77,10 @@ namespace IAGrim.Backup.Cloud.Service {
                 }
             }
 
-            {
+            if (FileBackup.IsStashFilesNewerThan(lastSync)) {
                 var filename = Path.Combine(GlobalPaths.CharacterBackupLocation, $"{DateTime.Now.DayOfWeek}-common.zip");
                 FileBackup.BackupCommon(filename);
-                var url = $"{Uris.UploadCharacterUrl}?name=StashFiles";
+                var url = $"{Uris.UploadCharacterUrl}?name=StashFiles-{DateTime.Now.DayOfWeek}";
                 var success = Post(url, filename);
                 if (success) {
                     Logger.Info($"Stash files successfully backed up to the cloud");

@@ -122,10 +122,33 @@ namespace IAGrim.Utilities.Cloud {
             return result;
         }
 
+        public static bool IsStashFilesNewerThan(DateTime dt) {
+            string gameSaves = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "Grim Dawn", "Save");
+            foreach (var file in new string[] {"transfer.gst", "transfer.gsh"}) {
+                var filename = Path.Combine(gameSaves, file);
+                if (File.Exists(filename)) {
+                    if (File.GetLastWriteTimeUtc(filename) > dt) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         public static DateTime GetHighestCharacterTimestamp() {
             string characterFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "Grim Dawn", "Save", "main");
-            var characters = Directory.GetDirectories(characterFolder);
-            return characters.Select(File.GetLastWriteTimeUtc).Max();
+            var characters = Directory.GetDirectories(characterFolder).ToList();
+            foreach (var f in new[] {"transfer.gst", "transfer.gsh"}) {
+                var filename = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "Grim Dawn", "Save", f);
+                if (File.Exists(filename)) {
+                    characters.Add(filename);
+                }
+            }
+
+            return characters
+                .Select(File.GetLastWriteTimeUtc)
+                .Max();
         }
 
         /// <summary>
