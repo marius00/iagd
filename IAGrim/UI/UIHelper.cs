@@ -147,8 +147,13 @@ namespace IAGrim.UI
                     },
                     new ComboBoxItem
                     {
-                        Text = language.GetTag("iatag_slot_weaponranged"),
-                        Filter = new[] {"WeaponHunting_Ranged2h", "WeaponHunting_Ranged1h"}
+                        Text = language.GetTag("iatag_slot_weaponranged1h"),
+                        Filter = new[] {"WeaponHunting_Ranged1h"}
+                    },
+                    new ComboBoxItem
+                    {
+                        Text = language.GetTag("iatag_slot_weaponranged2h"),
+                        Filter = new[] {"WeaponHunting_Ranged2h"}
                     },
                     new ComboBoxItem
                     {
