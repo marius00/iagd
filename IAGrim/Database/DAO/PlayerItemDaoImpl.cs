@@ -98,7 +98,11 @@ namespace IAGrim.Database {
         /// <param name="records"></param>
         /// <returns></returns>
         private int GetGreenQualityLevelForRecords(Dictionary<string, List<DBStatRow>> stats, List<string> records) {
-            var classifications = stats.Where(m => records.Contains(m.Key))
+            // Filter out green components
+            var filteredRecords = records.Where(record => !record.StartsWith("records/items/materia/")).ToList();
+
+            var classifications = stats
+                .Where(m => filteredRecords.Contains(m.Key))
                 .SelectMany(m => m.Value.Where(v => v.Stat == "itemClassification"))
                 .Select(m => m.TextValue)
                 .ToList();
