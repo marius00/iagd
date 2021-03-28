@@ -623,9 +623,16 @@ interface Props {
 
 class Help extends React.PureComponent<Props, object> {
   renderHelpEntry(entry: IHelpEntry) {
+
+    const onSelectTag = (tag: string|undefined) => {
+      if (tag) {
+        this.props.onSearch(tag);
+      }
+    };
+
     return (
       <div className="container" key={entry.tag}>
-        <div className="header" data-helptag={entry.tag}>
+        <div className="header" data-helptag={entry.tag} onClick={() => onSelectTag(entry.tag)}>
           {entry.title}
           {entry.type === IHelpEntryType.Informational &&
           <span className="informational">
@@ -643,9 +650,10 @@ class Help extends React.PureComponent<Props, object> {
     );
   }
 
+
   filteredEntries() {
     if (this.props.searchString.trim() === '') {
-      return helpEntries.map(this.renderHelpEntry);
+      return helpEntries.map(e => this.renderHelpEntry(e));
     }
 
     // Convert a JSX element to searchable text
@@ -656,7 +664,7 @@ class Help extends React.PureComponent<Props, object> {
     // Filter items
     return helpEntries
       .filter(s => contains(toSearchableText(s), this.props.searchString))
-      .map(this.renderHelpEntry);
+      .map(e => this.renderHelpEntry(e));
   }
 
   render() {

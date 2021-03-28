@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
+import OnlineHelpPage from './OnlineHelpPage';
 import OnlineApp from './OnlineApp';
 import reportWebVitals from './reportWebVitals';
 const getenv = require('getenv');
@@ -13,6 +14,13 @@ if (buildTarget === 'ONLINE') {
   ReactDOM.render(
     <React.StrictMode>
       <OnlineApp url={url} />
+    </React.StrictMode>,
+    document.getElementById('root')
+  );
+} else if (buildTarget === 'HELP') {
+  ReactDOM.render(
+    <React.StrictMode>
+      <OnlineHelpPage />
     </React.StrictMode>,
     document.getElementById('root')
   );

@@ -182,7 +182,6 @@ class App extends React.PureComponent<{}, object> {
   }
 
   render() {
-    console.log('wtf', this.state.numItems);
     return (
       <div className={'App ' + (this.state.isDarkMode ? 'App-dark' : 'App-Light')}>
         {this.state.isLoading && isEmbedded && <Spinner/>}
