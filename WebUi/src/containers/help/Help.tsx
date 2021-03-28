@@ -129,8 +129,16 @@ const helpEntries = [
       Sometimes bugs can happen which causes an <u>exact duplicate</u> of an item to be spawned. <br/>
       This is an item with the exact same stats etc, it's not an item that was actually found, but was <u>spawned due to a bug.</u><br/><br/>
 
+      <b>It goes as follows:</b> <br/>
+      <ol>
+        <li>IA loots the item</li>
+        <li>IA deletes the item from the game.</li>
+        <li>You open your stash, and Grim Dawn recreates the item (bug) instead of reading the changes made by IA.</li>
+        <li>The item now exists both in the game and in IA. [bugged duplicate]</li>
+        <li>You close your stash again, and IA tells you the item is a duplicate.</li>
+      </ol>
 
-      Enabling this option under settings will cause IA to simply delete these bugged items, instead of just warning you.<br/>
+      Enabling the "delete bugged duplicates" option under settings will cause IA to simply delete these bugged items, instead of just warning you.<br/>
       IA will not loot items it detects to have been spawned due to a duplication bug.
     </div>,
     type: IHelpEntryType.Informational
