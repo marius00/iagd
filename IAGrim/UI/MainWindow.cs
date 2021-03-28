@@ -547,11 +547,11 @@ namespace IAGrim.UI {
                 _cefBrowserHandler,
                 SetFeedback,
                 SetTooltipAtmouse,
-                _settingsController,
                 _searchWindow,
                 playerItemDao,
                 transferStashService,
-                _serviceProvider.Get<ItemStatService>()
+                _serviceProvider.Get<ItemStatService>(),
+                settingsService
             );
             Application.AddMessageFilter(new MousewheelMessageFilter());
 

@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using IAGrim.Settings;
 
 namespace IAGrim.UI.Controller {
     internal class ItemTransferController {
@@ -22,7 +23,7 @@ namespace IAGrim.UI.Controller {
         private readonly IPlayerItemDao _dao;
         private readonly Action<string> _setFeedback;
         private readonly Action<string> _setTooltip;
-        private readonly ISettingsReadController _settingsController;
+        private readonly SettingsService _settingsService;
         private readonly SplitSearchWindow _searchWindow;
         private readonly CefBrowserHandler _browser;
         private readonly TransferStashService _transferStashService;
@@ -32,20 +33,20 @@ namespace IAGrim.UI.Controller {
             CefBrowserHandler browser,
             Action<string> feedback,
             Action<string> setTooltip,
-            ISettingsReadController settingsController,
             SplitSearchWindow searchWindow,
             IPlayerItemDao playerItemDao,
             TransferStashService transferStashService,
-            ItemStatService itemStatService
-        ) {
+            ItemStatService itemStatService, 
+            SettingsService settingsService
+            ) {
             _browser = browser;
             _setFeedback = feedback;
             _setTooltip = setTooltip;
-            _settingsController = settingsController;
             _searchWindow = searchWindow;
             _dao = playerItemDao;
             _transferStashService = transferStashService;
             _itemStatService = itemStatService;
+            _settingsService = settingsService;
         }
 
         List<PlayerItem> GetItemsForTransfer(StashTransferEventArgs args) {
@@ -120,8 +121,9 @@ namespace IAGrim.UI.Controller {
             GDTransferFile mfi = _searchWindow.ModSelectionHandler.SelectedMod;
             bool fileExists = !string.IsNullOrEmpty(mfi.Filename) && File.Exists(mfi.Filename);
 
-            if (_settingsController.TransferAnyMod || !fileExists) {
-                StashPicker picker = new StashPicker();
+            
+            if (_settingsService.GetPersistent().TransferAnyMod || !fileExists) {
+                StashPicker picker = new StashPicker(_browser);
                 if (picker.ShowDialog() == DialogResult.OK) {
                     return picker.Result;
                 }
@@ -137,8 +139,10 @@ namespace IAGrim.UI.Controller {
         }
 
         private bool CanTransfer() {
+            bool secureTransfers = _settingsService.GetLocal().SecureTransfers.GetValueOrDefault(true);
+
             return RuntimeSettings.StashStatus == StashAvailability.CLOSED
-                   || !_settingsController.SecureTransfers
+                   || !secureTransfers
                    || (RuntimeSettings.StashStatus == StashAvailability.ERROR
                        && MessageBox.Show(
                            RuntimeSettings.Language.GetTag("iatag_stash_status_error"),

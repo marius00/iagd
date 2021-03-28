@@ -393,7 +393,9 @@ const helpEntries = [
     tag: 'TransferToAnyMod',
     body: () => <div>
       <b>Transfer to any mod lets you transfer items between the regular campaign and your mods.</b><br/>
-      This is not enabled by default, as it could be considered cheating by some.
+      By enabling this option, any time you wish to transfer an item, you must choose which stash to transfer to. <br/>
+      This is not enabled by default, as it could be considered cheating. <br/><br/>
+      To disable the "StashPicker", disable "Transfer to any mod" under settings.
     </div>,
     type: IHelpEntryType.Informational
   },

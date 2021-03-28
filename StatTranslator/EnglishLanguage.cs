@@ -522,6 +522,7 @@ namespace StatTranslator {
             {"iatag_ui_whatisthis", "What is this?"},
             {"iatag_ui_backupsdisabled", "Why is this disabled?"},
             {"iatag_ui_missing_stash_tabs", "Why are these disabled?"},
+            {"iatag_ui_why_showing_stashpicker", "Why do I need to choose?"},
             {"iatag_no_stash_abort", "No stash chosen. Aborting transfer."},
             {"iatag_stash_status_error", "Could not inject into Grim Dawn, are you sure the bank is CLOSED?"},
             {"iatag_ui_recentonly", "Recent Only"},
