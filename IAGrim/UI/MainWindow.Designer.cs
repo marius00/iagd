@@ -62,9 +62,9 @@
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.statusLabel,
             this.tsStashStatus});
-            this.statusStrip.Location = new System.Drawing.Point(0, 590);
+            this.statusStrip.Location = new System.Drawing.Point(0, 539);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(1106, 22);
+            this.statusStrip.Size = new System.Drawing.Size(1037, 22);
             this.statusStrip.TabIndex = 25;
             this.statusStrip.Text = "statusStrip1";
             // 
@@ -96,10 +96,11 @@
             this.tabControl1.Controls.Add(this.tabPageBackups);
             this.tabControl1.Controls.Add(this.tabPageSettings);
             this.tabControl1.Controls.Add(this.tabPageLog);
-            this.tabControl1.Location = new System.Drawing.Point(0, 1);
+            this.tabControl1.Location = new System.Drawing.Point(0, 0);
+            this.tabControl1.Margin = new System.Windows.Forms.Padding(0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1106, 586);
+            this.tabControl1.Size = new System.Drawing.Size(1037, 539);
             this.tabControl1.TabIndex = 34;
             // 
             // tabPageItems
@@ -107,9 +108,9 @@
             this.tabPageItems.BackColor = System.Drawing.SystemColors.Control;
             this.tabPageItems.Controls.Add(this.searchPanel);
             this.tabPageItems.Location = new System.Drawing.Point(4, 22);
+            this.tabPageItems.Margin = new System.Windows.Forms.Padding(0);
             this.tabPageItems.Name = "tabPageItems";
-            this.tabPageItems.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageItems.Size = new System.Drawing.Size(1098, 560);
+            this.tabPageItems.Size = new System.Drawing.Size(1029, 513);
             this.tabPageItems.TabIndex = 0;
             this.tabPageItems.Tag = "iatag_ui_tab_items";
             this.tabPageItems.Text = "Items";
@@ -120,9 +121,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.searchPanel.BackColor = System.Drawing.Color.Transparent;
-            this.searchPanel.Location = new System.Drawing.Point(-4, 0);
+            this.searchPanel.Location = new System.Drawing.Point(-7, -3);
             this.searchPanel.Name = "searchPanel";
-            this.searchPanel.Size = new System.Drawing.Size(1106, 560);
+            this.searchPanel.Size = new System.Drawing.Size(1043, 519);
             this.searchPanel.TabIndex = 1;
             // 
             // tabPageMods
@@ -271,7 +272,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1106, 612);
+            this.BackColor = System.Drawing.SystemColors.Control;
+            this.ClientSize = new System.Drawing.Size(1037, 561);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.statusStrip);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));

@@ -88,57 +88,62 @@ namespace IAGrim.UI {
 
             _isLightMode = !_isLightMode;
 
-            It(_root.Controls, _isLightMode ? _regularColors : _darkColors);
+            var colorSet = _isLightMode ? _regularColors : _darkColors;
+            HandleControl(_root, colorSet);
+            It(_root.Controls, colorSet);
+        }
+
+        private void HandleControl(Control control, Dictionary<Type, ColorSet> colorSet) {
+            FirefoxButton button = control as FirefoxButton;
+            PanelBox pb = control as PanelBox;
+            LinkLabel linkLabel = control as LinkLabel;
+            FirefoxCheckBox cb = control as FirefoxCheckBox;
+
+            if (button != null && colorSet.ContainsKey(button.GetType())) {
+                var colorset = colorSet[button.GetType()];
+                button.BackColor = colorset.BackColor.Value;
+                button.BackColorOverride = colorset.BackColor.Value;
+                button.ForeColor = colorset.ForeColor.Value;
+                button.HoverColor = colorset.HoverColor.Value;
+                button.HoverForeColor = colorset.HoverForeColor.Value;
+            }
+            else if (pb != null && colorSet.ContainsKey(pb.GetType())) {
+                var colorset = colorSet[pb.GetType()];
+                pb.BackColor = colorset.BackColor.Value;
+                pb.ForeColor = colorset.ForeColor.Value;
+                pb.HeaderColor = colorset.HeaderColor.Value;
+            }
+            else if (linkLabel != null && colorSet.ContainsKey(linkLabel.GetType())) {
+                var colorset = colorSet[linkLabel.GetType()];
+                linkLabel.BackColor = colorset.BackColor.Value;
+                linkLabel.ForeColor = colorset.ForeColor.Value;
+                linkLabel.LinkColor = colorset.LinkColor.Value;
+            }
+            else {
+                if (colorSet.ContainsKey(control.GetType())) {
+                    var colorset = colorSet[control.GetType()];
+                    control.BackColor = colorset.BackColor ?? control.BackColor;
+                    control.ForeColor = colorset.ForeColor ?? control.ForeColor;
+                }
+                else {
+                    var colorset = colorSet[typeof(Control)];
+                    control.BackColor = colorset.BackColor ?? control.BackColor;
+                    control.ForeColor = colorset.ForeColor ?? control.ForeColor;
+                }
+            }
+
+            if (cb != null) {
+                cb.IsDarkMode = !_isLightMode;
+            }
+
+            control.Invalidate();
+            control.Update();
         }
 
         private void It(Control.ControlCollection collection, Dictionary<Type, ColorSet> colorSet) {
             foreach (Control control in collection) {
                 It(control.Controls, colorSet);
-
-                FirefoxButton button = control as FirefoxButton;
-                PanelBox pb = control as PanelBox;
-                LinkLabel linkLabel = control as LinkLabel;
-                FirefoxCheckBox cb = control as FirefoxCheckBox;
-
-                if (button != null && colorSet.ContainsKey(button.GetType())) {
-                    var colorset = colorSet[button.GetType()];
-                    button.BackColor = colorset.BackColor.Value;
-                    button.BackColorOverride = colorset.BackColor.Value;
-                    button.ForeColor = colorset.ForeColor.Value;
-                    button.HoverColor = colorset.HoverColor.Value;
-                    button.HoverForeColor = colorset.HoverForeColor.Value;
-                }
-                else if (pb != null && colorSet.ContainsKey(pb.GetType())) {
-                    var colorset = colorSet[pb.GetType()];
-                    pb.BackColor = colorset.BackColor.Value;
-                    pb.ForeColor = colorset.ForeColor.Value;
-                    pb.HeaderColor = colorset.HeaderColor.Value;
-                }
-                else if (linkLabel != null && colorSet.ContainsKey(linkLabel.GetType())) {
-                    var colorset = colorSet[linkLabel.GetType()];
-                    linkLabel.BackColor = colorset.BackColor.Value;
-                    linkLabel.ForeColor = colorset.ForeColor.Value;
-                    linkLabel.LinkColor = colorset.LinkColor.Value;
-                }
-                else {
-                    if (colorSet.ContainsKey(control.GetType())) {
-                        var colorset = colorSet[control.GetType()];
-                        control.BackColor = colorset.BackColor ?? control.BackColor;
-                        control.ForeColor = colorset.ForeColor ?? control.ForeColor;
-                    }
-                    else {
-                        var colorset = colorSet[typeof(Control)];
-                        control.BackColor = colorset.BackColor ?? control.BackColor;
-                        control.ForeColor = colorset.ForeColor ?? control.ForeColor;
-                    }
-                }
-
-                if (cb != null) {
-                    cb.IsDarkMode = !_isLightMode;
-                }
-
-                control.Invalidate();
-                control.Update();
+                HandleControl(control, colorSet);
             }
         }
 

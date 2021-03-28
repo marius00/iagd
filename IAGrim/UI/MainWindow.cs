@@ -423,7 +423,7 @@ namespace IAGrim.UI {
                 }
             }
 
-            var addAndShow = UIHelper.AddAndShow;
+            
             var buddyItemDao = _serviceProvider.Get<IBuddyItemDao>();
             var buddySubscriptionDao = _serviceProvider.Get<IBuddySubscriptionDao>();
 
@@ -432,18 +432,18 @@ namespace IAGrim.UI {
             var databaseSettingDao = _serviceProvider.Get<IDatabaseSettingDao>();
             _authService = new AuthService(_cefBrowserHandler, new AuthenticationProvider(settingsService), playerItemDao);
             var backupSettings = new BackupSettings(playerItemDao, settingsService, _cefBrowserHandler);
-            addAndShow(backupSettings, backupPanel);
+            UIHelper.AddAndShow(backupSettings, backupPanel);
 
             // TODO: buttonLogin.Visible = !BlockedLogsDetection.DreamcrashBlocked();
             var onlineSettings = new OnlineSettings(playerItemDao, _authService, settingsService, _cefBrowserHandler, buddyItemDao, buddySubscriptionDao);
-            addAndShow(onlineSettings, onlinePanel);
+            UIHelper.AddAndShow(onlineSettings, onlinePanel);
             _cefBrowserHandler.OnAuthSuccess += (_, __) => onlineSettings.UpdateUi();
-            
-            
-            addAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, playerItemDao, _parsingService, databaseSettingDao, grimDawnDetector, settingsService, _cefBrowserHandler), modsPanel);
+
+
+            UIHelper.AddAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, playerItemDao, _parsingService, databaseSettingDao, grimDawnDetector, settingsService, _cefBrowserHandler), modsPanel);
 
             if (!BlockedLogsDetection.DreamcrashBlocked()) {
-                addAndShow(new LoggingWindow(), panelLogging);
+                UIHelper.AddAndShow(new LoggingWindow(), panelLogging);
             }
 
             var itemTagDao = _serviceProvider.Get<IItemTagDao>();
@@ -463,7 +463,10 @@ namespace IAGrim.UI {
             searchController.OnSearch += (o, args) => backupService.OnSearch();
 
             _searchWindow = new SplitSearchWindow(_cefBrowserHandler.BrowserControl, SetFeedback, playerItemDao, searchController, itemTagDao, settingsService);
-            addAndShow(_searchWindow, searchPanel);
+            UIHelper.AddAndShow(_searchWindow, searchPanel);
+
+            searchPanel.Height = searchPanel.Parent.Height;
+            searchPanel.Width = searchPanel.Parent.Width;
 
             transferStashService2.OnUpdate += (_, __) => { _searchWindow.UpdateListView(); };
 
@@ -471,7 +474,7 @@ namespace IAGrim.UI {
 
 
             var dm = new DarkMode(this);
-            addAndShow(
+            UIHelper.AddAndShow(
                 new SettingsWindow(
                     _cefBrowserHandler,
                     _tooltipHelper,
