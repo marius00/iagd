@@ -26,6 +26,7 @@ namespace IAGrim.UI.Filters {
         /// </summary>
         private void InitializeComponent() {
             this.miscPanel = new IAGrim.Theme.CollapseablePanelBox();
+            this.cbCooldownReduction = new FirefoxCheckBox();
             this.cbDamageConversion = new FirefoxCheckBox();
             this.cbWeaponLifeLeech = new FirefoxCheckBox();
             this.cbEnergyRegen = new FirefoxCheckBox();
@@ -46,7 +47,7 @@ namespace IAGrim.UI.Filters {
             this.cbRunspeed = new FirefoxCheckBox();
             this.cbDefense = new FirefoxCheckBox();
             this.exp = new FirefoxCheckBox();
-            this.cbCooldownReduction = new FirefoxCheckBox();
+            this.cbIncreaseArmor = new FirefoxCheckBox();
             this.miscPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -55,6 +56,7 @@ namespace IAGrim.UI.Filters {
             this.miscPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.miscPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.miscPanel.Controls.Add(this.cbIncreaseArmor);
             this.miscPanel.Controls.Add(this.cbCooldownReduction);
             this.miscPanel.Controls.Add(this.cbDamageConversion);
             this.miscPanel.Controls.Add(this.cbWeaponLifeLeech);
@@ -83,11 +85,28 @@ namespace IAGrim.UI.Filters {
             this.miscPanel.Location = new System.Drawing.Point(3, 3);
             this.miscPanel.Name = "miscPanel";
             this.miscPanel.NoRounding = false;
-            this.miscPanel.Size = new System.Drawing.Size(293, 736);
+            this.miscPanel.Size = new System.Drawing.Size(293, 771);
             this.miscPanel.TabIndex = 40;
             this.miscPanel.Tag = "iatag_ui_misc";
             this.miscPanel.Text = "Misc";
             this.miscPanel.TextLocation = "8; 5";
+            // 
+            // cbCooldownReduction
+            // 
+            this.cbCooldownReduction.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbCooldownReduction.Bold = false;
+            this.cbCooldownReduction.EnabledCalc = true;
+            this.cbCooldownReduction.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbCooldownReduction.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbCooldownReduction.IsDarkMode = false;
+            this.cbCooldownReduction.Location = new System.Drawing.Point(4, 701);
+            this.cbCooldownReduction.Name = "cbCooldownReduction";
+            this.cbCooldownReduction.Size = new System.Drawing.Size(272, 27);
+            this.cbCooldownReduction.TabIndex = 20;
+            this.cbCooldownReduction.Tag = "iatag_ui_cooldown_reduction";
+            this.cbCooldownReduction.Text = "Cooldown Reduction";
+            this.cbCooldownReduction.UseVisualStyleBackColor = true;
             // 
             // cbDamageConversion
             // 
@@ -417,22 +436,22 @@ namespace IAGrim.UI.Filters {
             this.exp.Tag = "iatag_ui_experience";
             this.exp.Text = "Experience";
             // 
-            // cbCooldownReduction
+            // cbIncreaseArmor
             // 
-            this.cbCooldownReduction.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.cbIncreaseArmor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbCooldownReduction.Bold = false;
-            this.cbCooldownReduction.EnabledCalc = true;
-            this.cbCooldownReduction.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cbCooldownReduction.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbCooldownReduction.IsDarkMode = false;
-            this.cbCooldownReduction.Location = new System.Drawing.Point(4, 701);
-            this.cbCooldownReduction.Name = "cbCooldownReduction";
-            this.cbCooldownReduction.Size = new System.Drawing.Size(272, 27);
-            this.cbCooldownReduction.TabIndex = 20;
-            this.cbCooldownReduction.Tag = "iatag_ui_cooldown_reduction";
-            this.cbCooldownReduction.Text = "Cooldown Reduction";
-            this.cbCooldownReduction.UseVisualStyleBackColor = true;
+            this.cbIncreaseArmor.Bold = false;
+            this.cbIncreaseArmor.EnabledCalc = true;
+            this.cbIncreaseArmor.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbIncreaseArmor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbIncreaseArmor.IsDarkMode = false;
+            this.cbIncreaseArmor.Location = new System.Drawing.Point(4, 734);
+            this.cbIncreaseArmor.Name = "cbIncreaseArmor";
+            this.cbIncreaseArmor.Size = new System.Drawing.Size(272, 27);
+            this.cbIncreaseArmor.TabIndex = 21;
+            this.cbIncreaseArmor.Tag = "iatag_ui_armorincrease";
+            this.cbIncreaseArmor.Text = "Armor increase";
+            this.cbIncreaseArmor.UseVisualStyleBackColor = true;
             // 
             // Misc
             // 
@@ -440,7 +459,7 @@ namespace IAGrim.UI.Filters {
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.miscPanel);
             this.Name = "Misc";
-            this.Size = new System.Drawing.Size(299, 741);
+            this.Size = new System.Drawing.Size(299, 777);
             this.Load += new System.EventHandler(this.Misc_Load);
             this.miscPanel.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -471,5 +490,6 @@ namespace IAGrim.UI.Filters {
         private FirefoxCheckBox cbWeaponLifeLeech;
         private FirefoxCheckBox cbDamageConversion;
         private FirefoxCheckBox cbCooldownReduction;
+        private FirefoxCheckBox cbIncreaseArmor;
     }
 }

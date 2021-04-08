@@ -50,6 +50,10 @@ namespace IAGrim.UI.Filters {
                     filters.Add(new[] {"characterSpellCastSpeedModifier", "characterTotalSpeedModifier"});
                 }
 
+                if (cbIncreaseArmor.Checked) {
+                    filters.Add(new[] { "defensiveProtectionModifier" });
+                }
+
                 if (cbRunspeed.Checked) {
                     filters.Add(new[] {"characterRunSpeedModifier", "characterTotalSpeedModifier"});
                 }
