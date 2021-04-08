@@ -12,6 +12,8 @@ namespace IAGrim.UI
         public static Action<Form, Panel> AddAndShow = (f, p) => {
             f.TopLevel = false;
             p.Controls.Add(f);
+            p.Width = p.Parent.Width;
+            p.Height = p.Parent.Height;
             f.Show();
         };
 

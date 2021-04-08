@@ -45,7 +45,6 @@ namespace IAGrim.Utilities {
             foreach (Control control in collection) {
                 It(control.Controls);
 
-                TextBox tb = control as TextBox;
                 FirefoxCheckBox cb = control as FirefoxCheckBox;
                 FirefoxRadioButton rb = control as FirefoxRadioButton;
                 GroupBox gb = control as GroupBox;
@@ -53,8 +52,6 @@ namespace IAGrim.Utilities {
                 PanelBox pb = control as PanelBox;
                 Label label = control as Label;
 
-                if (tb != null)
-                    tb.Text = Reverse(tb.Text);
                 if (cb != null)
                     cb.Text = Reverse(cb.Text);
                 if (rb != null)
@@ -70,7 +67,7 @@ namespace IAGrim.Utilities {
             }
         }
 
-        public static string Reverse(string s) {
+        private static string Reverse(string s) {
             char[] charArray = s.ToCharArray();
             Array.Reverse(charArray);
             return new string(charArray);

@@ -71,7 +71,7 @@
             // statusLabel
             // 
             this.statusLabel.Name = "statusLabel";
-            this.statusLabel.Size = new System.Drawing.Size(999, 17);
+            this.statusLabel.Size = new System.Drawing.Size(930, 17);
             this.statusLabel.Spring = true;
             this.statusLabel.Text = "GD Item Assistant";
             this.statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -122,6 +122,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.searchPanel.BackColor = System.Drawing.Color.Transparent;
             this.searchPanel.Location = new System.Drawing.Point(-7, -3);
+            this.searchPanel.Margin = new System.Windows.Forms.Padding(0);
             this.searchPanel.Name = "searchPanel";
             this.searchPanel.Size = new System.Drawing.Size(1043, 519);
             this.searchPanel.TabIndex = 1;
@@ -132,7 +133,7 @@
             this.tabPageMods.Location = new System.Drawing.Point(4, 22);
             this.tabPageMods.Name = "tabPageMods";
             this.tabPageMods.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageMods.Size = new System.Drawing.Size(1098, 560);
+            this.tabPageMods.Size = new System.Drawing.Size(1029, 513);
             this.tabPageMods.TabIndex = 4;
             this.tabPageMods.Tag = "iatag_ui_tab_mods";
             this.tabPageMods.Text = "Grim Dawn";
@@ -153,7 +154,7 @@
             this.tabPageOnline.Controls.Add(this.onlinePanel);
             this.tabPageOnline.Location = new System.Drawing.Point(4, 22);
             this.tabPageOnline.Name = "tabPageOnline";
-            this.tabPageOnline.Size = new System.Drawing.Size(1098, 560);
+            this.tabPageOnline.Size = new System.Drawing.Size(1029, 513);
             this.tabPageOnline.TabIndex = 7;
             this.tabPageOnline.Tag = "iatag_ui_tab_online";
             this.tabPageOnline.Text = "Online";
@@ -175,7 +176,7 @@
             this.tabPageBackups.Location = new System.Drawing.Point(4, 22);
             this.tabPageBackups.Name = "tabPageBackups";
             this.tabPageBackups.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageBackups.Size = new System.Drawing.Size(1098, 560);
+            this.tabPageBackups.Size = new System.Drawing.Size(1029, 513);
             this.tabPageBackups.TabIndex = 3;
             this.tabPageBackups.Tag = "iatag_ui_tab_backups";
             this.tabPageBackups.Text = "Backups";
@@ -196,9 +197,9 @@
             this.tabPageSettings.BackColor = System.Drawing.SystemColors.Control;
             this.tabPageSettings.Controls.Add(this.settingsPanel);
             this.tabPageSettings.Location = new System.Drawing.Point(4, 22);
+            this.tabPageSettings.Margin = new System.Windows.Forms.Padding(0);
             this.tabPageSettings.Name = "tabPageSettings";
-            this.tabPageSettings.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageSettings.Size = new System.Drawing.Size(1098, 560);
+            this.tabPageSettings.Size = new System.Drawing.Size(1029, 513);
             this.tabPageSettings.TabIndex = 1;
             this.tabPageSettings.Tag = "iatag_ui_tab_settings";
             this.tabPageSettings.Text = "Settings";
@@ -209,9 +210,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.settingsPanel.BackColor = System.Drawing.Color.Transparent;
-            this.settingsPanel.Location = new System.Drawing.Point(-4, 0);
+            this.settingsPanel.Location = new System.Drawing.Point(-7, -3);
             this.settingsPanel.Name = "settingsPanel";
-            this.settingsPanel.Size = new System.Drawing.Size(1102, 560);
+            this.settingsPanel.Size = new System.Drawing.Size(1108, 566);
             this.settingsPanel.TabIndex = 0;
             // 
             // tabPageLog
@@ -220,7 +221,7 @@
             this.tabPageLog.Location = new System.Drawing.Point(4, 22);
             this.tabPageLog.Name = "tabPageLog";
             this.tabPageLog.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageLog.Size = new System.Drawing.Size(1098, 560);
+            this.tabPageLog.Size = new System.Drawing.Size(1029, 513);
             this.tabPageLog.TabIndex = 6;
             this.tabPageLog.Tag = "iatag_ui_tab_log";
             this.tabPageLog.Text = "Log";
