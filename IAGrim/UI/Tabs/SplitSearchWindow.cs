@@ -317,7 +317,7 @@ namespace IAGrim.UI.Tabs {
             this._minLevel = new System.Windows.Forms.TextBox();
             this._maxLevel = new System.Windows.Forms.TextBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            ((System.ComponentModel.ISupportInitialize) (this._mainSplitter)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this._mainSplitter)).BeginInit();
             this._mainSplitter.Panel2.SuspendLayout();
             this._mainSplitter.SuspendLayout();
             this._toolStripContainer.SuspendLayout();
@@ -375,10 +375,13 @@ namespace IAGrim.UI.Tabs {
             // 
             // _searchBox
             // 
-            this._searchBox.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                                                                            | System.Windows.Forms.AnchorStyles.Right)));
+            this._searchBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this._searchBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this._searchBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.RecentlyUsedList;
             this._searchBox.Location = new System.Drawing.Point(3, 17);
             this._searchBox.Margin = new System.Windows.Forms.Padding(3, 17, 3, 3);
+            this._searchBox.MaxLength = 255;
             this._searchBox.Name = "_searchBox";
             this._searchBox.Size = new System.Drawing.Size(304, 20);
             this._searchBox.TabIndex = 41;
@@ -386,7 +389,7 @@ namespace IAGrim.UI.Tabs {
             // 
             // _orderByLevel
             // 
-            this._orderByLevel.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this._orderByLevel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this._orderByLevel.AutoSize = true;
             this._orderByLevel.Checked = true;
             this._orderByLevel.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -402,7 +405,7 @@ namespace IAGrim.UI.Tabs {
             // 
             // _itemQuality
             // 
-            this._itemQuality.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this._itemQuality.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this._itemQuality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._itemQuality.FormattingEnabled = true;
             this._itemQuality.Location = new System.Drawing.Point(415, 17);
@@ -414,7 +417,7 @@ namespace IAGrim.UI.Tabs {
             // 
             // _slotFilter
             // 
-            this._slotFilter.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this._slotFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this._slotFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._slotFilter.FormattingEnabled = true;
             this._slotFilter.Location = new System.Drawing.Point(480, 17);
@@ -426,7 +429,7 @@ namespace IAGrim.UI.Tabs {
             // 
             // _modFilter
             // 
-            this._modFilter.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this._modFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this._modFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._modFilter.FormattingEnabled = true;
             this._modFilter.Location = new System.Drawing.Point(606, 17);
@@ -489,7 +492,7 @@ namespace IAGrim.UI.Tabs {
             this.Load += new System.EventHandler(this.SplitSearchWindow_Load);
             this._mainSplitter.Panel2.ResumeLayout(false);
             this._mainSplitter.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize) (this._mainSplitter)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this._mainSplitter)).EndInit();
             this._mainSplitter.ResumeLayout(false);
             this._toolStripContainer.ResumeLayout(false);
             this._toolStripContainer.PerformLayout();
@@ -498,6 +501,7 @@ namespace IAGrim.UI.Tabs {
             this._levelRequirementGroup.ResumeLayout(false);
             this._levelRequirementGroup.PerformLayout();
             this.ResumeLayout(false);
+
         }
 
         private void FlowPanelFilter_Resize(object sender, EventArgs e) {
