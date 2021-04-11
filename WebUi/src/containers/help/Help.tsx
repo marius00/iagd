@@ -257,6 +257,8 @@ const helpEntries = [
         Inside Grim Dawn itself, under "Settings"`)}
       Grim Dawn uses a different save directory with cloud saving disabled.<br/>
       After disabling cloud saving you still need to <a href="https://forums.crateentertainment.com/t/how-to-move-your-saves-from-steam-cloud-to-grim-dawns-default-location/28921">copy your characters to the correct directory</a>.<br/>
+      <br />
+      <b>Obs:</b> After disabling cloud saving, you need to add an item from your <u>shared stash</u> for IA to detect it as the active one.
     </div>,
     type: IHelpEntryType.Help
   },
