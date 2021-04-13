@@ -336,7 +336,7 @@ namespace StatTranslator {
             {"iatag_ui_all_items_backed_up", "All of your items have been backed up."},
             {"iatag_ui_backup_delete", "Delete backup"},
             {"iatag_ui_hc", " (HC)"},
-            {"iatag_ui_vanilla", "Vanilla"},
+            {"iatag_ui_vanilla", "No mod"},
             {"iatag_ui_vanilla_xpac", "AoM"},
             {"iatag_ui_forgottengods", "Forgotten Gods"},
             {"iatag_ui_none", "None"},

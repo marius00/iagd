@@ -149,7 +149,7 @@ const helpEntries = [
     body: () => <div>
       {toNumberedList(`
       Restart IA
-      Make sure you've selected the right mod (upper right corner, most likely Vanilla)`)}
+      Make sure you've selected the right mod (upper right corner, most likely "No Mod")`)}
 
       Typically it's the mod selection that causes items to not be found, as IA supports separating items from both mods and softcore/hardcore.
     </div>,
