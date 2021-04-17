@@ -70,7 +70,7 @@ namespace IAGrim.BuddyShare {
                     }
 
                     if (_authService.GetRestService() == null) {
-                        Logger.Info("Not logged into online backups, skipping buddy sync");
+                        // Logger.Info("Not logged into online backups, skipping buddy sync");
                         _cooldowns.Clear();
                         continue;
                     }
