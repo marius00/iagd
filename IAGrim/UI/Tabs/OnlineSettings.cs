@@ -63,7 +63,6 @@ namespace IAGrim.UI.Tabs {
             pbBuddyItems.Visible = !cbDontWantBackups.Checked;
             btnAddBuddy.Enabled = !buttonLogin.Enabled;
             btnModifyBuddy.Enabled = !buttonLogin.Enabled;
-            linkViewOnline.Enabled = !buttonLogin.Enabled;
             linkViewCharacters.Enabled = !buttonLogin.Enabled;
             if (buddyList.Enabled) UpdateBuddyList();
 
@@ -262,15 +261,6 @@ namespace IAGrim.UI.Tabs {
 
                     UpdateBuddyList();
                 }
-            }
-        }
-
-        private void linkViewOnline_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            if (_settings.GetPersistent().BuddySyncUserIdV3.HasValue && _settings.GetPersistent().BuddySyncUserIdV3 > 0) {
-                Process.Start(Uris.OnlineItemsUrl + "?id=" + _settings.GetPersistent().BuddySyncUserIdV3 + "&hc=0");
-            }
-            else {
-                MessageBox.Show("Unavailable - Not logged in");
             }
         }
 

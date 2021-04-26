@@ -40,7 +40,6 @@
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.groupBoxBackupDetails = new System.Windows.Forms.GroupBox();
             this.linkViewCharacters = new System.Windows.Forms.LinkLabel();
-            this.linkViewOnline = new System.Windows.Forms.LinkLabel();
             this.labelBuddyId = new System.Windows.Forms.Label();
             this.lbBuddyId = new System.Windows.Forms.Label();
             this.btnRefreshBackupDetails = new System.Windows.Forms.Button();
@@ -259,7 +258,6 @@
             // 
             this.groupBoxBackupDetails.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxBackupDetails.Controls.Add(this.linkViewCharacters);
-            this.groupBoxBackupDetails.Controls.Add(this.linkViewOnline);
             this.groupBoxBackupDetails.Controls.Add(this.labelBuddyId);
             this.groupBoxBackupDetails.Controls.Add(this.lbBuddyId);
             this.groupBoxBackupDetails.Controls.Add(this.btnRefreshBackupDetails);
@@ -280,7 +278,7 @@
             this.linkViewCharacters.AutoSize = true;
             this.linkViewCharacters.BackColor = System.Drawing.Color.Transparent;
             this.linkViewCharacters.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.linkViewCharacters.Location = new System.Drawing.Point(6, 90);
+            this.linkViewCharacters.Location = new System.Drawing.Point(6, 107);
             this.linkViewCharacters.Name = "linkViewCharacters";
             this.linkViewCharacters.Size = new System.Drawing.Size(89, 13);
             this.linkViewCharacters.TabIndex = 19;
@@ -288,20 +286,6 @@
             this.linkViewCharacters.Tag = "iatag_ui_backup_viewcharacters";
             this.linkViewCharacters.Text = "View Characters";
             this.linkViewCharacters.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkViewCharacters_LinkClicked);
-            // 
-            // linkViewOnline
-            // 
-            this.linkViewOnline.AutoSize = true;
-            this.linkViewOnline.BackColor = System.Drawing.Color.Transparent;
-            this.linkViewOnline.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.linkViewOnline.Location = new System.Drawing.Point(6, 107);
-            this.linkViewOnline.Name = "linkViewOnline";
-            this.linkViewOnline.Size = new System.Drawing.Size(70, 13);
-            this.linkViewOnline.TabIndex = 18;
-            this.linkViewOnline.TabStop = true;
-            this.linkViewOnline.Tag = "iatag_ui_backup_viewonline";
-            this.linkViewOnline.Text = "View Online";
-            this.linkViewOnline.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkViewOnline_LinkClicked);
             // 
             // labelBuddyId
             // 
@@ -474,7 +458,6 @@
         private System.Windows.Forms.ContextMenuStrip buddyItemListContextMenu;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
-        private System.Windows.Forms.LinkLabel linkViewOnline;
         private FirefoxButton btnDeleteBuddy;
         private FirefoxButton btnModifyBuddy;
         private System.Windows.Forms.LinkLabel linkViewCharacters;
