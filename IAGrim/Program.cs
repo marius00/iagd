@@ -33,11 +33,7 @@ namespace IAGrim {
 
 #if DEBUG
         private static void Test() {
-            var characters = FileBackup.ListCharactersNewerThan(DateTime.MinValue);
-            var xyz = Path.GetFileName(characters[0]);
-            var target = @"f:\temp\backup.zip";
-            FileBackup.BackupCharacter(target, "_Fog");
-            return;
+
         }
 #endif
 

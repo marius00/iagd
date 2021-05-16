@@ -56,7 +56,7 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
                 using (OpenFileDialog diag = new OpenFileDialog {
                     CheckFileExists = true,
                     CheckPathExists = true,
-                    InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "Grim Dawn", "Save"),
+                    InitialDirectory = Path.Combine(GlobalPaths.SavePath, "Save"),
                     Multiselect = false,
                     Title = RuntimeSettings.Language.GetTag("iatag_ui_importexport_selectfile")
                 }) {

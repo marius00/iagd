@@ -107,7 +107,7 @@ namespace IAGrim.Utilities.Cloud {
         public static List<string> ListCharactersNewerThan(DateTime dt) {
             List<string> result = new List<string>();
 
-            string characterFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "Grim Dawn", "Save", "main");
+            string characterFolder = Path.Combine(GlobalPaths.SavePath, "main");
             var characters = Directory.GetDirectories(characterFolder);
             foreach (var character in characters) {
                 var f = Path.Combine(character, "player.gdc");
@@ -123,7 +123,7 @@ namespace IAGrim.Utilities.Cloud {
         }
 
         public static bool IsStashFilesNewerThan(DateTime dt) {
-            string gameSaves = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "Grim Dawn", "Save");
+            string gameSaves = Path.Combine(GlobalPaths.SavePath, "Save");
             foreach (var file in new string[] {"transfer.gst", "transfer.gsh"}) {
                 var filename = Path.Combine(gameSaves, file);
                 if (File.Exists(filename)) {
@@ -137,10 +137,10 @@ namespace IAGrim.Utilities.Cloud {
         }
 
         public static DateTime GetHighestCharacterTimestamp() {
-            string characterFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "Grim Dawn", "Save", "main");
+            string characterFolder = Path.Combine(GlobalPaths.SavePath, "main");
             var characters = Directory.GetDirectories(characterFolder).ToList();
             foreach (var f in new[] {"transfer.gst", "transfer.gsh"}) {
-                var filename = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "Grim Dawn", "Save", f);
+                var filename = Path.Combine(GlobalPaths.SavePath, f);
                 if (File.Exists(filename)) {
                     characters.Add(filename);
                 }
@@ -203,8 +203,7 @@ namespace IAGrim.Utilities.Cloud {
                 Directory.CreateDirectory(destination);
 
 
-            string gameSaves = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "Grim Dawn", "Save");
-            string[] files = Directory.GetFiles(gameSaves, "*.*", SearchOption.TopDirectoryOnly);
+            string[] files = Directory.GetFiles(GlobalPaths.SavePath, "*.*", SearchOption.TopDirectoryOnly);
 
             using (ZipFile zip = new ZipFile { UseZip64WhenSaving = Zip64Option.AsNecessary }) {
                 Logger.Info($"Backing up transfer files etc..");
@@ -258,8 +257,8 @@ namespace IAGrim.Utilities.Cloud {
             using (var file = new TempFile()) {
                 using (ZipFile zip = new ZipFile { UseZip64WhenSaving = Zip64Option.AsNecessary }) {
                     Logger.Info("Backing up characters..");
-                    string gameSaves = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "Grim Dawn", "Save");
-                    string[] files = Directory.GetFiles(gameSaves, "*.*", SearchOption.AllDirectories);
+                    
+                    string[] files = Directory.GetFiles(GlobalPaths.SavePath, "*.*", SearchOption.AllDirectories);
                     foreach (var f in files) {
                         if (!IsAcceptedFileFormat(f)) {
                             Logger.Debug($"Ignoring file {f}, invalid file format.");
@@ -273,7 +272,7 @@ namespace IAGrim.Utilities.Cloud {
                         }
 
 
-                        var relativePath = f.Replace(gameSaves, "").Replace(Path.GetFileName(f), "");
+                        var relativePath = f.Replace(GlobalPaths.SavePath, "").Replace(Path.GetFileName(f), "");
                         zip.AddFile(f, relativePath);
                     }
 

@@ -35,6 +35,7 @@ namespace IAGrim.Utilities {
                 return path;
             }
         }
+
         public static string CharacterBackupLocation {
             get {
                 string path = Path.Combine(BackupLocation, "characters");
@@ -60,17 +61,22 @@ namespace IAGrim.Utilities {
                 if (!File.Exists(formulasHardcore))
                     formulasHardcore = string.Empty;
 
-                return new string[] { formulasSoftcore, formulasHardcore };
+                return new string[] {formulasSoftcore, formulasHardcore};
             }
         }
-
 
 
         public static bool IsHardcore(string filename) {
             return filename.EndsWith(".gsh") || filename.EndsWith(".csh") || filename.EndsWith(".bsh");
         }
 
-        public static string SavePath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "Grim Dawn", "Save");
+        public static string SavePath {
+            get {
+                var p = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "Grim Dawn", "Save");
+                Directory.CreateDirectory(Path.Combine(p, "main"));
+                return p;
+            }
+        }
 
         /// <summary>
         /// Map of [mod][transfer file]
@@ -80,11 +86,10 @@ namespace IAGrim.Utilities {
                 string documents = SavePath;
 
                 if (Directory.Exists(documents)) {
-
                     // Generate a list of the interesting files
                     List<string> files = new List<string>();
                     // transfer.bst / transfer.cst / transfer.csh
-                    foreach (string filename in new string[] { "transfer.gst", "transfer.gsh" }) {
+                    foreach (string filename in new string[] {"transfer.gst", "transfer.gsh"}) {
                         string vanilla = Path.Combine(documents, filename);
                         if (File.Exists(vanilla) && !ParsedFiles.Contains(vanilla)) {
                             files.Add(vanilla);
@@ -126,8 +131,6 @@ namespace IAGrim.Utilities {
         }
 
 
-
-
         public static string UserdataFolder {
             get {
                 string path = Path.Combine(CoreFolder, "data");
@@ -139,7 +142,10 @@ namespace IAGrim.Utilities {
 
         public static string StorageFolder {
             get {
-                string path = Path.Combine(CoreFolder, "storage").Replace("#", ""); // Some brilliant people have hashtags in their windows usernames..  That works poorly when opening HTML files with a # in the path.
+                string
+                    path = Path.Combine(CoreFolder, "storage")
+                        .Replace("#",
+                            ""); // Some brilliant people have hashtags in their windows usernames..  That works poorly when opening HTML files with a # in the path.
                 Directory.CreateDirectory(path);
 
                 return path;
@@ -163,6 +169,5 @@ namespace IAGrim.Utilities {
 #else
         public static string USERDATA_FILE => "userdata.db";
 #endif
-
     }
 }
