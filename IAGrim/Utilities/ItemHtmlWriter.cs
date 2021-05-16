@@ -1,9 +1,7 @@
 ﻿using IAGrim.Database;
 using IAGrim.Database.Interfaces;
-using IAGrim.UI.Controller;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using EvilsoftCommons.Exceptions;
@@ -11,7 +9,6 @@ using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Model;
 using IAGrim.UI.Controller.dto;
 using log4net;
-using MoreLinq;
 using Newtonsoft.Json;
 using StatTranslator;
 

@@ -23,7 +23,7 @@ Name: "{commondesktop}\GD Item Assistant"; Filename: "{app}\\IAGrim.exe"; Tasks:
 
 
 [Files]
-Source: "..\IAGrim\bin\Release\*"; Excludes: "*.pdb,NDP461-KB3102438-Web.exe,vcredist_x86.exe,2010sp1_vcredist_x86.exe,2015rc3_vc_redist.x86.exe"; DestDir: "{app}"; Flags: overwritereadonly replacesameversion recursesubdirs createallsubdirs touch ignoreversion
+Source: "..\IAGrim\bin\Release\*"; Excludes: "*.pdb,ndp472-kb4054531-web,vcredist_x86.exe,2010sp1_vcredist_x86.exe,2015rc3_vc_redist.x86.exe"; DestDir: "{app}"; Flags: overwritereadonly replacesameversion recursesubdirs createallsubdirs touch ignoreversion
 
 [Run]
 
