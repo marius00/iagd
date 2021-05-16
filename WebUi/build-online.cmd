@@ -1,4 +1,3 @@
-SET BUILD_TARGET=ONLINE
-npm run build
+npm run build:online
 
 pause

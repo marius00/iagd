@@ -515,6 +515,26 @@ const helpEntries = [
       If you are seeing this icon, you are viewing your <u>private stash</u>, not your shared stash.
     </div>
   },
+  {
+    title: `Can I transfer/store items on a different harddrive?`,
+    tag: 'StoreOnDifferentDisk',
+    body: () => <div>
+      Sorta..<br/><br/>
+
+      <ol>
+      <li>Close IA</li>
+      <li>Open "%appdata%\..\local\evilsoft"</li>
+      <li>Copy the folder "IAGD" into "D:\mystuff\"</li>
+      <li>Rename the folder to "IAGD-backup"</li>
+      <li>Open command line (win+r on keyboard, then "run" and enter)</li>
+      <li>"cd %appdata%\..\local\evilsoft"</li>
+      <li>"mklink /j iagd d:\stuff\iagd"</li>
+      <li>Start IA</li>
+      <li>If everything works fine, delete the "IAGD-backup" folder.</li>
+      </ol>
+      This creates a type of shortcut that is transparant to IA. The items/etc will be on "D:\mystuff" but IA can keep reading it from "%appdata%\..\local\evilsoft"
+    </div>
+  },
   /*
   {
     title: `aaaaaaaaaaaaaaaaaaa`,
