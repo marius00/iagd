@@ -146,6 +146,10 @@ namespace IAGrim.Utilities.Cloud {
                 }
             }
 
+            if (characters.Count == 0)
+                return default(DateTime);
+
+
             return characters
                 .Select(File.GetLastWriteTimeUtc)
                 .Max();
