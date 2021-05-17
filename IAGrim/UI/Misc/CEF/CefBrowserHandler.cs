@@ -186,11 +186,11 @@ namespace IAGrim.UI.Misc.CEF {
 
 
                 // TODO: Read and analyze https://github.com/cefsharp/CefSharp/issues/2246 -- Is this the correct way to do things in the future?
-                CefSharpSettings.LegacyJavascriptBindingEnabled = true;
                 CefSharpSettings.WcfEnabled = true;
                 BrowserControl = new ChromiumWebBrowser(GetSiteUri());
 
                 // TODO: browser.JavascriptObjectRepository.ObjectBoundInJavascript += (sender, e) =>
+                BrowserControl.JavascriptObjectRepository.Settings.LegacyBindingEnabled = true;
                 BrowserControl.JavascriptObjectRepository.Register("core", bindable, isAsync: false, options: BindingOptions.DefaultBinder);
                 BrowserControl.IsBrowserInitializedChanged += browserIsBrowserInitializedChanged;
                 BrowserControl.FrameLoadEnd += (sender, args) => browserIsBrowserInitializedChanged(this, args);
