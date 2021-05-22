@@ -129,10 +129,8 @@ namespace IAGrim.Services {
             services.Add(itemStatService);
 
             var cacher = new TransferStashServiceCache(databaseItemDao);
-            var stashWriter = new SafeTransferStashWriter(settingsService);
-            var transferStashService = new TransferStashService(databaseItemStatDao, settingsService, stashWriter);
-            services.Add(transferStashService);
             services.Add(cacher);
+
 
             Logger.Debug("All services created");
             return new ServiceProvider(services);

@@ -8,6 +8,7 @@ using EvilsoftCommons;
 using EvilsoftCommons.Exceptions;
 using IAGrim.Parsers.Arz;
 using IAGrim.Properties;
+using IAGrim.Services;
 using IAGrim.Settings;
 using IAGrim.StashFile;
 using IAGrim.Utilities;
@@ -17,9 +18,11 @@ namespace IAGrim.Parsers.TransferStash {
     class SafeTransferStashWriter {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(SafeTransferStashWriter));
         private readonly SettingsService _settings;
+        private readonly IHelpService _helpService;
 
-        public SafeTransferStashWriter(SettingsService settings) {
+        public SafeTransferStashWriter(SettingsService settings, IHelpService helpService) {
             _settings = settings;
+            _helpService = helpService;
         }
 
         /// <summary>
@@ -62,6 +65,7 @@ namespace IAGrim.Parsers.TransferStash {
                 Logger.Warn(ex.Message);
                 Logger.Warn(ex.StackTrace);
                 ExceptionReporter.ReportException(ex, "SafelyWriteDatabase");
+                _helpService.ShowHelp(HelpService.HelpType.WindowsAntiRansomwareIssue);
                 return false;
             }
             catch (UnauthorizedAccessException ex) {

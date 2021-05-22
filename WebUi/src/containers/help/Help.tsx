@@ -535,6 +535,17 @@ const helpEntries = [
       This creates a type of shortcut that is transparant to IA. The items/etc will be on "D:\mystuff" but IA can keep reading it from "%appdata%\..\local\evilsoft"
     </div>
   },
+  {
+    title: `IA is looting items, but they never get removed in-game!`,
+    tag: 'WindowsAntiRansomwareIssue',
+    body: () => <div>
+      Item assistant is looting items, they never vanish in-game, and it cannot transfer items back into the game? <br/>
+      The most common cause here is the anti-ransomware protection in Windows 10.<br/>
+      If you have recently enabled this on the <i>my documents</i> folder, it's most likely preventing Item Assistant from writing to files under <i>my games</i>, which is under my documents. <br/><br/>
+
+      If this help entry opened automatically for you in item assistant, something is preventing Item Assistant from writing it's changes.
+    </div>
+  },
   /*
   {
     title: `aaaaaaaaaaaaaaaaaaa`,

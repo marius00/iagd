@@ -32,6 +32,7 @@ namespace IAGrim.Services {
             OnlineBackups,
             NotEnoughStashTabs,
             StashError,
+            WindowsAntiRansomwareIssue,
         }
 
         public void ShowHelp(HelpType type) {
