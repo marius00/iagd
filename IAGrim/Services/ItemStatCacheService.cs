@@ -84,11 +84,10 @@ namespace IAGrim.Services {
             if (items.Count <= 0) return true;
 
             Logger.Debug($"Updated cache for {items.Count} items");
-            _itemStatService.ApplyStats(items, false);
+            _itemStatService.ApplyStats(items);
 
             foreach (var item in items) {
                 var rendered = ItemHtmlWriter.GetJsonItem(item);
-                var json = JsonConvert.SerializeObject(rendered, _settings);
 
                 List<string> searchableText = new List<string>();
                 searchableText.AddRange(rendered.HeaderStats.Select(ToString));
@@ -104,14 +103,15 @@ namespace IAGrim.Services {
                 }
 
                 searchableText.Add(rendered.Extras);
-
-
                 item.SearchableText = string.Join("\n", searchableText);
-                item.CachedStats = json;
 
                 if (string.IsNullOrEmpty(item.SearchableText)) {
                     if (string.IsNullOrEmpty(item.Name)) {
                         continue;
+                    }
+                    else {
+                        // Typically potions and writs, they wont have any stats listed, so set a dummy value to prevent an infinite loop here.
+                        item.SearchableText = "-";
                     }
                 }
             }

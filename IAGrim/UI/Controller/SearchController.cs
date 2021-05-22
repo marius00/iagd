@@ -20,7 +20,6 @@ namespace IAGrim.UI.Controller {
         private const int TakeSize = 64;
 
         private static readonly ILog Logger = LogManager.GetLogger(typeof(SearchController));
-        private readonly bool useCache = false; // Temporarily disabled
         private readonly IDatabaseItemDao _dbItemDao;
         private readonly IPlayerItemDao _playerItemDao;
         private readonly ItemStatService _itemStatService;
@@ -89,12 +88,10 @@ namespace IAGrim.UI.Controller {
                 Browser.AddItems(new List<JsonItem>());
                 return false;
             }
+            
+            _itemStatService.ApplyStats(items);
 
-            // TODO: For player items, use cached stats if present
-
-            _itemStatService.ApplyStats(items, useCache);
-
-            var convertedItems = ItemHtmlWriter.ToJsonSerializable(items, useCache);
+            var convertedItems = ItemHtmlWriter.ToJsonSerializable(items);
             if (append) {
                 Browser.AddItems(convertedItems);
             }

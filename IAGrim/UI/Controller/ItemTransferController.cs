@@ -90,7 +90,7 @@ namespace IAGrim.UI.Controller {
             int numItemsReceived = (int) items.Sum(item => Math.Max(1, item.StackCount));
             int numItemsRequested = Math.Min(maxItemsToTransfer, numItemsReceived);
 
-            _itemStatService.ApplyStatsToPlayerItems(items, true); // For item class? 'IsStackable' maybe?
+            _itemStatService.ApplyStatsToPlayerItems(items); // For item class? 'IsStackable' maybe?
             try {
                 _transferStashService.Deposit(transferFile, items, maxItemsToTransfer, out error);
                 _dao.Update(items, true);

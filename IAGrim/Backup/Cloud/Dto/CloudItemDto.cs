@@ -28,7 +28,5 @@
         public string NameLowercase { get; set; }
         public string Rarity { get; set; }
         public int LevelRequirement { get; set; }
-        public string SearchableText { get; set; }
-        public string CachedStats { get; set; }
     }
 }

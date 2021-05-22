@@ -186,14 +186,14 @@ namespace IAGrim.Services {
             }
         }
 
-        public void ApplyStats(IEnumerable<PlayerHeldItem> itemSource, bool useCache) {
+        public void ApplyStats(IEnumerable<PlayerHeldItem> itemSource) {
             var items = itemSource.ToList();
             if (items.Count > 0) {
                 Logger.Debug($"Applying stats to {items.Count()} items");
 
                 var playerItems = GetPlayerItems(items);
                 if (playerItems.Count > 0) {
-                    ApplyStatsToPlayerItems(playerItems, !useCache);
+                    ApplyStatsToPlayerItems(playerItems);
                 }
 
                 var buddyItems = GetBuddyItems(items);
@@ -281,10 +281,7 @@ namespace IAGrim.Services {
             }
         }
 
-        public void ApplyStatsToPlayerItems(List<PlayerItem> candidates, bool ignoreCache) {
-            // Filter out items with cached stats
-            var items = candidates.Where(item => string.IsNullOrEmpty(item.CachedStats) || ignoreCache).ToList();
-            
+        public void ApplyStatsToPlayerItems(List<PlayerItem> items) {
             if (items.Count > 0) {
                 Logger.Debug($"Applying stats to {items.Count} items");
                 var records = items.SelectMany(GetRecordsForItem).Distinct();

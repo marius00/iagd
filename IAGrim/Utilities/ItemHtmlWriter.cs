@@ -163,29 +163,8 @@ namespace IAGrim.Utilities {
             Logger.Debug("Copy complete");
         }
 
-        public static List<JsonItem> ToJsonSerializable(List<PlayerHeldItem> items, bool useCache) {
-            var jsonItems = new List<JsonItem>(items.Count);
-            foreach (var item in items) {
-                if (useCache && item is PlayerItem pi && !string.IsNullOrEmpty(pi.CachedStats)) {
-                    try {
-                        var cached = JsonConvert.DeserializeObject<JsonItem>(pi.CachedStats);
-                        cached.NumItems = (uint) item.Count; // Can't use a cached item count, no idea how many items are left.
-                        cached.InitialNumItems = (uint) item.Count;
-                        cached.HasCloudBackup = pi.IsCloudSynchronized;
-                        cached.Buddies = pi.Buddies.ToArray();
-                        jsonItems.Add(cached);
-                    }
-                    catch (Exception ex) {
-                        Logger.Warn("Error deserializing items, please update player item stats on the Grim Dawn tab", ex);
-                        // TODO: Is it safe to do a regular conversion here?
-                    }
-                }
-                else {
-                    jsonItems.Add(GetJsonItem(item));
-                }
-            }
-
-            return jsonItems;
+        public static List<JsonItem> ToJsonSerializable(List<PlayerHeldItem> items) {
+            return items.Select(GetJsonItem).ToList();
         }
 
 
