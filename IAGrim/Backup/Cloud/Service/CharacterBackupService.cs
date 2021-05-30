@@ -3,18 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Threading.Tasks;
 using IAGrim.Backup.Cloud.Dto;
 using IAGrim.Settings;
 using IAGrim.Utilities;
 using IAGrim.Utilities.Cloud;
-using IAGrim.Utilities.HelperClasses;
 using log4net;
-using Newtonsoft.Json;
 
 namespace IAGrim.Backup.Cloud.Service {
     class CharacterBackupService {

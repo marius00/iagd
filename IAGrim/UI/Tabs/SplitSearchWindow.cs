@@ -103,7 +103,12 @@ namespace IAGrim.UI.Tabs {
         /// Update view
         /// </summary>
         public void UpdateListView() {
-            UpdateListView(_filterWindow.Filters);
+            if (InvokeRequired) {
+                Invoke((MethodInvoker)delegate { UpdateListView(_filterWindow.Filters); });
+            }
+            else {
+                UpdateListView(_filterWindow.Filters);
+            }
         }
 
         /// <summary>
