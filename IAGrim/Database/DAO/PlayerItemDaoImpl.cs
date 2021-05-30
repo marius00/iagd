@@ -154,11 +154,6 @@ namespace IAGrim.Database {
                             Restrictions.IsNull(nameof(PlayerItem.IsCloudSynchronizedValue))
                         )
                     )
-                    .Add(Restrictions.Not(Restrictions.Or(
-                            Restrictions.Eq(nameof(PlayerItem.SearchableText), ""),
-                            Restrictions.IsNull(nameof(PlayerItem.SearchableText))
-                        ))
-                    )
                     .List<PlayerItem>();
             }
         }
