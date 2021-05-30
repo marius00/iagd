@@ -42,7 +42,7 @@ namespace IAGrim.Parsers.TransferStash {
             BackgroundWorker worker = sender as BackgroundWorker;
             while (!worker.CancellationPending) {
                 try {
-                    Thread.Sleep(10);
+                    Thread.Sleep(1000);
                 }
                 catch (ThreadInterruptedException) {
                 }

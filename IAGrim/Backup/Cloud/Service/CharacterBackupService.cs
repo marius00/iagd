@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using IAGrim.Backup.Cloud.Dto;
@@ -13,6 +14,7 @@ using IAGrim.Utilities;
 using IAGrim.Utilities.Cloud;
 using IAGrim.Utilities.HelperClasses;
 using log4net;
+using Newtonsoft.Json;
 
 namespace IAGrim.Backup.Cloud.Service {
     class CharacterBackupService {
@@ -62,6 +64,7 @@ namespace IAGrim.Backup.Cloud.Service {
             var highestTimestamp = FileBackup.GetHighestCharacterTimestamp();
             var characters = FileBackup.ListCharactersNewerThan(lastSync);
 
+            bool everythingSucceeded = true;
             foreach (var c in characters) {
                 Logger.Info($"Backup up character {c} to the cloud");
                 var filename = Path.Combine(GlobalPaths.CharacterBackupLocation, $"{DateTime.Now.DayOfWeek}-{c}.zip");
@@ -74,6 +77,7 @@ namespace IAGrim.Backup.Cloud.Service {
                 }
                 else {
                     Logger.Info($"An error occurred backing up character {c} to the cloud");
+                    everythingSucceeded = false;
                 }
             }
 
@@ -87,10 +91,14 @@ namespace IAGrim.Backup.Cloud.Service {
                 }
                 else {
                     Logger.Info($"An error occurred backing up stash files to the cloud");
+                    everythingSucceeded = false;
                 }
             }
 
-            _settings.GetLocal().LastCharSyncUtc = highestTimestamp;
+            if (everythingSucceeded) {
+                Logger.Info($"Character sync complete, updating character sync timestamp");
+                _settings.GetLocal().LastCharSyncUtc = highestTimestamp;
+            }
         }
 
 
@@ -111,7 +119,14 @@ namespace IAGrim.Backup.Cloud.Service {
                 }
             }
             catch (WebException ex) {
+                var resp = new StreamReader(ex.Response.GetResponseStream()).ReadToEnd();
                 Logger.Warn(ex.Message, ex);
+                Logger.Warn(resp);
+
+                if (resp.Contains("The provided file does not appear to be a valid zip file")) {
+                    // TODO: Somehow have to notify dev.. open a help page?
+                }
+                
                 return false;
             }
         }

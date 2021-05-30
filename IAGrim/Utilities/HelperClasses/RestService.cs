@@ -50,6 +50,9 @@ namespace IAGrim.Utilities.HelperClasses {
 
         public bool Post(string url, string json) {
             var result = _client.PostAsync(url, new StringContent(json, Encoding.UTF8, "application/json")).Result;
+            if (!result.IsSuccessStatusCode) {
+                Logger.Warn($"POST {url} returned {result.StatusCode}, {result.Content}");
+            }
             return result.IsSuccessStatusCode;
         }
 
