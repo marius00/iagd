@@ -108,6 +108,8 @@ namespace IAGrim {
                 Logger.Info($"The path to Grim Dawn is \"{gdPath}\"");
             }
 
+            Logger.Info($"Using IA on multiple PCs: {settings.GetPersistent().UsingDualComputer}");
+
             Logger.Info("Startup data dump complete");
         }
 
