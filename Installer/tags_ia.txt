@@ -395,6 +395,7 @@ iatag_ui_health=Health
 iatag_ui_help=Discord / Help
 iatag_ui_hideskills=Hide Skills
 iatag_ui_howdoifindgrimdawn=How can I find the Grim Dawn install?
+iatag_ui_howtorestore=How do I restore backups?
 iatag_ui_iastash=IA Stash
 iatag_ui_import=Import
 iatag_ui_import_filetype=File Type

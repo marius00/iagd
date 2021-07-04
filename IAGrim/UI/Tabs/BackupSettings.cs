@@ -153,5 +153,9 @@ namespace IAGrim.UI.Tabs {
         private void lbOpenCustomBackupFolder_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             Process.Start(_settings.GetLocal().BackupCustomLocation); // TODO: Should open the \evilsoft\iagd folder.. but not this class` responsibility to know that..
         }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            _helpService.ShowHelp(HelpService.HelpType.RestoreBackup);
+        }
     }
 }

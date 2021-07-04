@@ -18,7 +18,11 @@ namespace StatTranslator {
         }
 
         public string Export() {
-            return string.Join("\r\n", _stats.Select((entry, idx) => $"{entry.Key}={entry.Value.Replace("\n", "\\n")}"));
+            return string.Join("\r\n",
+                _stats
+                    .OrderBy(entry => entry.Key)
+                    .Select((entry, idx) => $"{entry.Key}={entry.Value.Replace("\n", "\\n")}")
+                );
         }
 
         private readonly Dictionary<string, string> _stats = new Dictionary<string, string> {
@@ -305,6 +309,7 @@ namespace StatTranslator {
             {"iatag_html_nomoreitems", "No more items"},
             {"iatag_html_setconsistsof", "This set consists of the following items: "},
 
+            { "iatag_ui_howtorestore", "How do I restore backups?"},
             {"iatag_ui_updatingstats_title", "Updating stats for owned items.." },
             {"iatag_ui_updatingstats", "Updating stats for your items..." },
             {"iatag_ui_darkmode", "Dark mode" },

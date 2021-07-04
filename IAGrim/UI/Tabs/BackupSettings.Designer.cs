@@ -33,10 +33,11 @@
             this.cbCustom = new FirefoxCheckBox();
             this.cbOneDrive = new FirefoxCheckBox();
             this.cbDropbox = new FirefoxCheckBox();
-            this.cbGoogle = new FirefoxCheckBox();
             this.pbSkydrive = new System.Windows.Forms.PictureBox();
             this.pbDropbox = new System.Windows.Forms.PictureBox();
             this.pbGoogle = new System.Windows.Forms.PictureBox();
+            this.cbGoogle = new FirefoxCheckBox();
+            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.panelBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbSkydrive)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbDropbox)).BeginInit();
@@ -48,6 +49,7 @@
             this.panelBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.panelBox5.Controls.Add(this.linkLabel1);
             this.panelBox5.Controls.Add(this.lbOpenCustomBackupFolder);
             this.panelBox5.Controls.Add(this.helpWhyOnedriveDisabled);
             this.panelBox5.Controls.Add(this.helpWhyDropboxDisabled);
@@ -196,18 +198,6 @@
             this.cbDropbox.Size = new System.Drawing.Size(29, 27);
             this.cbDropbox.TabIndex = 5;
             // 
-            // cbGoogle
-            // 
-            this.cbGoogle.Bold = false;
-            this.cbGoogle.EnabledCalc = true;
-            this.cbGoogle.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cbGoogle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbGoogle.IsDarkMode = false;
-            this.cbGoogle.Location = new System.Drawing.Point(17, 70);
-            this.cbGoogle.Name = "cbGoogle";
-            this.cbGoogle.Size = new System.Drawing.Size(29, 27);
-            this.cbGoogle.TabIndex = 0;
-            // 
             // pbSkydrive
             // 
             this.pbSkydrive.BackgroundImage = global::IAGrim.Properties.Resources.onedrive;
@@ -240,6 +230,32 @@
             this.pbGoogle.TabIndex = 2;
             this.pbGoogle.TabStop = false;
             this.pbGoogle.Click += new System.EventHandler(this.pictureBox2_Click);
+            // 
+            // cbGoogle
+            // 
+            this.cbGoogle.Bold = false;
+            this.cbGoogle.EnabledCalc = true;
+            this.cbGoogle.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbGoogle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbGoogle.IsDarkMode = false;
+            this.cbGoogle.Location = new System.Drawing.Point(17, 70);
+            this.cbGoogle.Name = "cbGoogle";
+            this.cbGoogle.Size = new System.Drawing.Size(29, 27);
+            this.cbGoogle.TabIndex = 0;
+            // 
+            // linkLabel1
+            // 
+            this.linkLabel1.AutoSize = true;
+            this.linkLabel1.BackColor = System.Drawing.Color.Transparent;
+            this.linkLabel1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.linkLabel1.Location = new System.Drawing.Point(216, 278);
+            this.linkLabel1.Name = "linkLabel1";
+            this.linkLabel1.Size = new System.Drawing.Size(144, 13);
+            this.linkLabel1.TabIndex = 18;
+            this.linkLabel1.TabStop = true;
+            this.linkLabel1.Tag = "iatag_ui_howtorestore";
+            this.linkLabel1.Text = "How do I restore backups?";
+            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
             // BackupSettings
             // 
@@ -280,5 +296,6 @@
         private System.Windows.Forms.LinkLabel helpWhyOnedriveDisabled;
         private System.Windows.Forms.LinkLabel helpWhyDropboxDisabled;
         private System.Windows.Forms.LinkLabel lbOpenCustomBackupFolder;
+        private System.Windows.Forms.LinkLabel linkLabel1;
     }
 }
