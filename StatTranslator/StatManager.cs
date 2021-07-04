@@ -537,7 +537,7 @@ namespace StatTranslator {
                 "skillProjectileNumber",
                 "projectileExplosionRadius",
                 "defensiveStun",
-                "offensiveTotalDamageModifier"
+                "offensiveTotalDamageModifier",
             };
 
             Dictionary<string, string> translationTable = new Dictionary<string, string>();
@@ -785,6 +785,20 @@ namespace StatTranslator {
                     Type = TranslatedStatType.FOOTER
                 });
             }
+
+            // +x to summon <skill>
+            {
+                var petBurstSpawn = stats.FirstOrDefault(m => m.Stat == "petBurstSpawn");
+                if (petBurstSpawn != null) {
+                    result.Add(new TranslatedStat {
+                        Param0 = petBurstSpawn.Value,
+                        Param3 = skill,
+                        Text = _language.GetTag("petBurstSpawn"),
+                        Type = TranslatedStatType.BODY
+                    });
+                }
+            }
+           
 
             AddSimpleStat("offensiveDamageMultModifier", "customtag_xpac_modif_offensiveDamageMultModifier", stats, skill, result);
 

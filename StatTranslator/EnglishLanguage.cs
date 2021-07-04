@@ -32,6 +32,7 @@ namespace StatTranslator {
             {"offensivePierceRatioMin", "{0}% Armor Piercing"},
             {"defensiveProtection", "{0} Armor"},
             {"defensiveStun", "{0}% Reduced Stun Duration"},
+            {"petBurstSpawn", "+{0} Summons to {3}"},
             {"skillChanceWeight", "{0}% Chance to be Used"},
             {"skillProjectileNumber", "{0} Projectile"},
             {"skillCooldownTime", "{0} Seconds Skill Recharge"},
