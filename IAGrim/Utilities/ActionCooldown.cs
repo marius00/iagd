@@ -35,5 +35,9 @@ namespace IAGrim.Utilities {
 
             _stopwatch.Restart();
         }
+
+        public override string ToString() {
+            return $"AC[{_cooldown}]";
+        }
     }
 }

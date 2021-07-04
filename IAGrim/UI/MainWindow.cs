@@ -89,6 +89,7 @@ namespace IAGrim.UI {
                 if (e.ProgressPercentage == InjectionHelper.INJECTION_ERROR) {
                     RuntimeSettings.StashStatus = StashAvailability.ERROR;
                     statusLabel.Text = e.UserState as string;
+                    _cefBrowserHandler.ShowHelp(HelpService.HelpType.StashError);
                 }
                 // No grim dawn client, so stash is closed!
                 else if (e.ProgressPercentage == InjectionHelper.NO_PROCESS_FOUND_ON_STARTUP) {
