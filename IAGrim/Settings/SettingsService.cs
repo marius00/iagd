@@ -15,7 +15,7 @@ namespace IAGrim.Settings {
             Culture = System.Globalization.CultureInfo.InvariantCulture,
             ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver(),
             NullValueHandling = NullValueHandling.Ignore,
-            DateFormatHandling = DateFormatHandling.MicrosoftDateFormat
+            DateFormatHandling = DateFormatHandling.MicrosoftDateFormat,
         };
 
         private readonly SettingsTemplate _data;
@@ -48,7 +48,7 @@ namespace IAGrim.Settings {
 
 
         private void Persist() {
-            string json = JsonConvert.SerializeObject(_data, Settings);
+            string json = JsonConvert.SerializeObject(_data, Formatting.Indented, Settings);
             try {
                 File.WriteAllText(_persistentStorage, json);
                 _numSequentialErrors = 0;
