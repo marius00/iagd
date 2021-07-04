@@ -15,7 +15,7 @@ namespace IAGrim.Backup.Cloud.Service {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(CharacterBackupService));
         private readonly SettingsService _settings;
         private readonly AuthService _authService;
-        private readonly ActionCooldown _cooldown = new ActionCooldown(1000 * 60);
+        private readonly ActionCooldown _cooldown = new ActionCooldown(1000 * 60 * 10);
         private bool _isActive = true;
 
         public CharacterBackupService(SettingsService settings, AuthService authService) {

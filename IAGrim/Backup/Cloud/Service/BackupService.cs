@@ -21,6 +21,7 @@ namespace IAGrim.Backup.Cloud.Service {
         private Limitations _cooldowns;
         private bool _hasSyncedDownOnce = false; // When not using DualPC enabled, IA will only download items once per session. They won't be updating anyways.
         private DateTimeOffset _lastSearchDt = DateTimeOffset.UtcNow;
+        const int MaxBatchSize = 100;
 
         public event EventHandler OnUploadComplete;
 
@@ -53,6 +54,8 @@ namespace IAGrim.Backup.Cloud.Service {
             var isDualPc = _settings.GetPersistent().UsingDualComputer;
             var limitations = isDualPc ? _cooldowns.MultiUsage : _cooldowns.Regular;
 
+            //Logger.Debug($"UploadCooldown IsReady={limitations.UploadCooldown.IsReady}, isDualPc={isDualPc}");
+            //Logger.Debug(limitations.ToString());
             limitations.DeletionCooldown.ExecuteIfReady(SyncDeletions);
             limitations.UploadCooldown.ExecuteIfReady(SyncUp);
 
@@ -107,7 +110,7 @@ namespace IAGrim.Backup.Cloud.Service {
 
             // Max 100 items per batch, no mix of partitions in a batch.
             foreach (var item in items) {
-                if (currentBatch.Count > 99) {
+                if (currentBatch.Count >= MaxBatchSize) {
                     batches.Add(currentBatch);
                     currentBatch = new List<PlayerItem>();
                 }
@@ -126,6 +129,7 @@ namespace IAGrim.Backup.Cloud.Service {
             var items = _playerItemDao.GetUnsynchronizedItems();
             var batches = ToBatches(items);
 
+            Logger.Debug($"Got {items.Count} items to sync up");
             foreach (var batch in batches) {
                 Logger.Info($"Synchronizing batch with {batch.Count} items to cloud");
                 try {
@@ -177,7 +181,6 @@ namespace IAGrim.Backup.Cloud.Service {
                     .Select(ItemConverter.ToPlayerItem)
                     .ToList();
 
-
                 // Store items in batches, to prevent IA just freezing up if we happen to get 10-20,000 items.
                 var batches = ToBatches(items);
                 foreach (var batch in batches) {
@@ -216,6 +219,11 @@ namespace IAGrim.Backup.Cloud.Service {
                 DeletionCooldown = new ActionCooldown(cooldownDeletion);
                 UploadCooldown = new ActionCooldown(cooldownUpload);
                 DownloadCooldown = new ActionCooldown(cooldownDownload);
+            }
+
+
+            public override string ToString() {
+                return $"DeletionCooldown[{DeletionCooldown}], UploadCooldown[{UploadCooldown}], DownloadCooldown[{DownloadCooldown}]";
             }
         }
 
