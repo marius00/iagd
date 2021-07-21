@@ -542,7 +542,6 @@ namespace IAGrim.Database {
                         Logger.Warn("Unable to mark item for deletion, duplication may occur");
                         Logger.Warn(ex.Message);
                         Logger.Warn(ex.StackTrace);
-                        ExceptionReporter.ReportException(ex);
                     }
                 }
             }

@@ -36,7 +36,7 @@ namespace IAGrim.Services {
         }
 
         public void ShowHelp(HelpType type) {
-            Process.Start($"http://grimdawn.dreamcrash.org/ia/help.html?q={type.ToString()}&r={DateTime.UtcNow.Ticks}");
+            Process.Start($"https://grimdawn.evilsoft.net/help/?q={type.ToString()}&r={DateTime.UtcNow.Ticks}");
         }
 
         public void ShowCharacterBackups() {
@@ -44,7 +44,7 @@ namespace IAGrim.Services {
         }
 
         public static string GetUrl(HelpType type) {
-            return $"http://grimdawn.dreamcrash.org/ia/help.html?q={type.ToString()}&r={DateTime.UtcNow.Ticks}";
+            return $"https://grimdawn.evilsoft.net/help/?q={type.ToString()}&r={DateTime.UtcNow.Ticks}";
         }
     }
 

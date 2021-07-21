@@ -16,7 +16,7 @@ namespace DllInjector.UI {
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            Process.Start($"http://grimdawn.dreamcrash.org/ia/help.html?q=Avasted&r={DateTime.UtcNow.Ticks}");
+            Process.Start($"https://grimdawn.evilsoft.net/help/?q=Avasted&r={DateTime.UtcNow.Ticks}");
         }
 
         private void buttonOk_Click(object sender, EventArgs e) {

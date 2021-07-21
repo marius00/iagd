@@ -110,7 +110,6 @@ namespace IAGrim.BuddyShare {
                 catch (Exception ex) {
                     Logger.Error(ex.Message);
                     Logger.Error(ex.StackTrace);
-                    ExceptionReporter.ReportException(ex);
                 }
             }
         }
@@ -153,18 +152,8 @@ namespace IAGrim.BuddyShare {
 
                 Logger.Debug($"Fetched {items.Count} items, new timestamp is {sync.Timestamp}");
             }
-            catch (AggregateException ex) {
-                Logger.Warn(ex.Message, ex);
-                return;
-            }
-            catch (WebException ex) {
-                Logger.Warn(ex.Message, ex);
-                return;
-            }
             catch (Exception ex) {
-                ExceptionReporter.ReportException(ex, "SyncDown");
                 Logger.Warn(ex);
-                return;
             }
         }
 

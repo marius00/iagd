@@ -263,7 +263,6 @@ namespace IAGrim.Parsers.TransferStash {
             catch (Exception ex) {
                 Logger.Warn(ex.Message);
                 Logger.Warn(ex.StackTrace);
-                ExceptionReporter.ReportException(ex, "StoreItems");
                 return false;
             }
 

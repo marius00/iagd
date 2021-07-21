@@ -44,7 +44,6 @@ namespace IAGrim.Services.MessageProcessor {
                 var error = Errors.FirstOrDefault(m => m == type);
                 
                 logger.Fatal($"GD Hook reports error detecting {error}, unable to detect stash status");
-                ExceptionReporter.ReportIssue($"DLL Incompatability: {error}");
                 MessageBox.Show("Alert dev - Possible version incompatibility", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else if (Relevants.Contains(type)) {

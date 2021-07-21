@@ -74,7 +74,6 @@ namespace EvilsoftCommons.DllInjector {
                 }
                 catch (Exception ex) {
                     Logger.Warn("Exception while attempting to verify injection.. " + ex.Message + ex.StackTrace);
-                    ExceptionReporter.ReportException(ex);
                 }
             }
             else {

@@ -29,16 +29,8 @@ namespace IAGrim.Backup.Cloud.Service {
                 var json = JsonConvert.SerializeObject(items);
                 return _restService.Post(Uris.DeleteItemsUrl, json);
             }
-            catch (AggregateException ex) {
-                Logger.Warn(ex.Message, ex);
-                return false;
-            }
-            catch (WebException ex) {
-                Logger.Warn(ex.Message, ex);
-                return false;
-            }
             catch (Exception ex) {
-                ExceptionReporter.ReportException(ex, "CloudSyncService");
+                Logger.Warn(ex.Message, ex);
                 return false;
             }
         }

@@ -39,7 +39,6 @@ namespace EvilsoftCommons.Cloud {
             catch (Exception ex) {
                 logger.Fatal(ex.Message);
                 logger.Fatal(ex.StackTrace);
-                ExceptionReporter.ReportException(ex);
                 throw;
             }
         }

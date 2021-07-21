@@ -38,7 +38,6 @@ namespace IAGrim.Backup.Cloud.Util {
             catch (Exception ex) {
                 Logger.Error(ex.Message);
                 Logger.Error(ex.StackTrace);
-                ExceptionReporter.ReportException(ex);
             }
 
             BackgroundWorker worker = sender as BackgroundWorker;
@@ -51,7 +50,6 @@ namespace IAGrim.Backup.Cloud.Util {
                 catch (Exception ex) {
                     Logger.Error(ex.Message);
                     Logger.Error(ex.StackTrace);
-                    ExceptionReporter.ReportException(ex);
                 }
             }
         }

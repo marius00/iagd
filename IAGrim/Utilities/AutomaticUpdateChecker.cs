@@ -24,9 +24,9 @@ namespace IAGrim.Utilities {
 
                 
                 if (_settings.GetPersistent().SubscribeExperimentalUpdates) {
-                    return $"http://grimdawn.dreamcrash.org/ia/version.php?beta&version={version}";
+                    return $"https://grimdawn.evilsoft.net/version.php?beta&version={version}";
                 }
-                return $"http://grimdawn.dreamcrash.org/ia/version.php?version={version}";
+                return $"https://grimdawn.evilsoft.net/version.php?version={version}";
             }
         }
 

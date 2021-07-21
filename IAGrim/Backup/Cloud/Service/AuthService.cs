@@ -65,13 +65,11 @@ namespace IAGrim.Backup.Cloud.Service {
                         return AccessStatus.Unauthorized;
                     }
                     else if (status == HttpStatusCode.InternalServerError) {
-                        ExceptionReporter.ReportIssue("Server response 500 verifying access token");
                         Logger.Warn("Server response 500 verifying access token towards backup service");
                         return AccessStatus.Unknown;
                     }
                     else {
                         Logger.Error($"Got Status {result} verifying authentication token");
-                        ExceptionReporter.ReportIssue($"Server response {result} verifying access token");
                         return AccessStatus.Unknown;
                     }
                 }
@@ -115,13 +113,11 @@ namespace IAGrim.Backup.Cloud.Service {
                     return AccessStatus.Unauthorized;
                 }
                 else if (status == HttpStatusCode.InternalServerError) {
-                    ExceptionReporter.ReportIssue("Server response 500 migrating access token");
                     Logger.Warn("Server response 500 migrating access token towards backup service");
                     return AccessStatus.Unknown;
                 }
                 else {
                     Logger.Error($"Got Status {result} migrating authentication token");
-                    ExceptionReporter.ReportIssue($"Server response {result} migrating access oken");
 
                     return AccessStatus.Unknown;
                 }

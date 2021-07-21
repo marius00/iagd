@@ -59,9 +59,8 @@ export default function Tabs({activeTab, setActiveTab, isDarkMode, showVideoGuid
 
       {renderTabEntry(translate('app.tab.items'), idx++, <Home/>, activeTab === 0)}
       {renderTabEntry(translate('app.tab.collections'), idx++, <Web/>, activeTab === 1)}
-      {renderTabEntry(translate('app.tab.crafting'), idx++, <CraftingIcon/>, activeTab === 2, 'CraftingTab')}
       {renderTabEntry(translate('app.tab.help'), idx++, <Help/>, activeTab === 3, "HelpTab")}
-      {renderLinkEntry(translate('app.tab.components'), idx++, <OpenInNew/>, 'http://dev.dreamcrash.org/enchantments/')}
+      {renderLinkEntry(translate('app.tab.components'), idx++, <OpenInNew/>, 'https://grimdawn.evilsoft.net/enchantments/')}
       {showVideoGuide && translate('app.tab.videoGuide').length > 0 && renderLinkEntry(translate('app.tab.videoGuide'), idx++, <VideoLibrary/>, translate('app.tab.videoGuideUrl'))}
 
       {renderLinkEntry(translate('app.tab.discord'), idx++, <LiveHelp/>, 'https://discord.gg/5wuCPbB')}

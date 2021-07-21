@@ -154,16 +154,9 @@ namespace IAGrim.Parsers {
                     Logger.InfoFormat("Updated internal recipe database with {0} recipes.", formulas.Count);
                 }
             }
-            catch (NHibernate.MappingException ex) {
-                Logger.Warn(ex.Message);
-                Logger.Warn(ex.StackTrace);
-                    
-                ExceptionReporter.ReportException(ex, "UpdateFormulas");
-            }
             catch (Exception ex) {
                 Logger.Warn(ex.Message);
                 Logger.Warn(ex.StackTrace);
-                ExceptionReporter.ReportException(ex, "UpdateFormulas");
             }
             
         }

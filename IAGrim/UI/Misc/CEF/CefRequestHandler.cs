@@ -47,13 +47,8 @@ namespace IAGrim.UI.Misc.CEF {
                 return false;
             }
 
-            else if (request.Url.StartsWith("https://items.dreamcrash.org")) {
-                Logger.Debug($"URL Requested: {request.Url}, Status: Allowed");
-                return false;
-            }
-
             // TODO: Rewrite this, who the hell knows what this does.
-            else if (!request.Url.StartsWith("http://iagd.evilsoft.net") && !request.Url.StartsWith("https://api.iagd.evilsoft.net") && !request.Url.Contains("grimdawn.dreamcrash") && !frame.Url.Contains("dreamcrash.org") && !frame.Url.Contains("iagd.evilsoft.net") && (request.Url.StartsWith("http://") || request.Url.StartsWith("https://"))) {
+            else if (!request.Url.StartsWith("http://iagd.evilsoft.net") && !request.Url.StartsWith("https://api.iagd.evilsoft.net") && !frame.Url.Contains("grimdawn.evilsoft.net") && !frame.Url.Contains("iagd.evilsoft.net") && (request.Url.StartsWith("http://") || request.Url.StartsWith("https://"))) {
                 Logger.Debug($"URL Requested: {request.Url}, Status: Deny, Action: DefaultBrowser");
                 System.Diagnostics.Process.Start(request.Url);
                 return true;

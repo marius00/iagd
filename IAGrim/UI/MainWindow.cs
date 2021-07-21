@@ -435,7 +435,6 @@ namespace IAGrim.UI {
             var backupSettings = new BackupSettings(playerItemDao, settingsService, _cefBrowserHandler);
             UIHelper.AddAndShow(backupSettings, backupPanel);
 
-            // TODO: buttonLogin.Visible = !BlockedLogsDetection.DreamcrashBlocked();
             var onlineSettings = new OnlineSettings(playerItemDao, _authService, settingsService, _cefBrowserHandler, buddyItemDao, buddySubscriptionDao);
             UIHelper.AddAndShow(onlineSettings, onlinePanel);
             _cefBrowserHandler.OnAuthSuccess += (_, __) => onlineSettings.UpdateUi();
@@ -443,9 +442,7 @@ namespace IAGrim.UI {
 
             UIHelper.AddAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, playerItemDao, _parsingService, databaseSettingDao, grimDawnDetector, settingsService, _cefBrowserHandler), modsPanel);
 
-            if (!BlockedLogsDetection.DreamcrashBlocked()) {
-                UIHelper.AddAndShow(new LoggingWindow(), panelLogging);
-            }
+            UIHelper.AddAndShow(new LoggingWindow(), panelLogging);
 
             var itemTagDao = _serviceProvider.Get<IItemTagDao>();
             var backupService = new BackupService(_authService, playerItemDao, settingsService);
@@ -491,11 +488,9 @@ namespace IAGrim.UI {
                 ),
                 settingsPanel);
 
+            ThreadPool.QueueUserWorkItem(m => ExceptionReporter.ReportUsage());
 #if !DEBUG
-            if (!BlockedLogsDetection.DreamcrashBlocked()) { // Uses dreamcrash server
-                ThreadPool.QueueUserWorkItem(m => ExceptionReporter.ReportUsage());
-                _automaticUpdateChecker.CheckForUpdates();
-            }
+            _automaticUpdateChecker.CheckForUpdates();
 #endif
 
             Shown += (_, __) => { StartInjector(); };
@@ -568,17 +563,14 @@ namespace IAGrim.UI {
 
             // Popup login diag
             if (_authService.CheckAuthentication() == AuthService.AccessStatus.Unauthorized && !settingsService.GetLocal().OptOutOfBackups) {
-                if (!BlockedLogsDetection.DreamcrashBlocked()) {
-                    // Backup login wont work
-                    var t = new System.Windows.Forms.Timer {Interval = 100};
-                    t.Tick += (o, args) => {
-                        if (_cefBrowserHandler.BrowserControl.CanExecuteJavascriptInMainFrame) {
-                            _authService.Authenticate();
-                            t.Stop();
-                        }
-                    };
-                    t.Start();
-                }
+                var t = new System.Windows.Forms.Timer {Interval = 100};
+                t.Tick += (o, args) => {
+                    if (_cefBrowserHandler.BrowserControl.CanExecuteJavascriptInMainFrame) {
+                        _authService.Authenticate();
+                        t.Stop();
+                    }
+                };
+                t.Start();
             }
 
 

@@ -326,7 +326,6 @@
       <DependentUpon>OnlineSettings.cs</DependentUpon>
     </Compile>
     <Compile Include="Utilities\AutomaticUpdateChecker.cs" />
-    <Compile Include="Utilities\Detection\BlockedLogsDetection.cs" />
     <Compile Include="Utilities\Detection\SteamDetection.cs" />
     <Compile Include="Utilities\HelperClasses\IComboBoxItemToggle.cs" />
     <Compile Include="UI\Misc\CEF\CefRequestHandler.cs" />

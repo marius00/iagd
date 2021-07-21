@@ -97,7 +97,6 @@ namespace IAGrim.Utilities.Cloud {
             } catch (Exception ex) {
                 Logger.Warn(ex.Message);
                 Logger.Warn(ex.StackTrace);
-                ExceptionReporter.ReportException(ex, "Creating a backup");
                 return false;
             }
 

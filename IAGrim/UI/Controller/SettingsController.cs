@@ -155,7 +155,7 @@ namespace IAGrim.UI.Controller {
         }
 
         public void DonateNow() {
-            System.Diagnostics.Process.Start("http://grimdawn.dreamcrash.org/ia/?donate");
+            System.Diagnostics.Process.Start("https://grimdawn.evilsoft.net/?donate");
             DateTime dt = DateTime.Now.AddDays(new Random().Next(14, 25));
             _settings.GetLocal().LastNagTimestamp = dt.Ticks;
         }

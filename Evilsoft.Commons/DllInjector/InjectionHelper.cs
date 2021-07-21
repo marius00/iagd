@@ -86,7 +86,6 @@ namespace DllInjector {
             catch (Exception ex) {
                 Logger.Fatal(ex.Message);
                 Logger.Fatal(ex.StackTrace);
-                ExceptionReporter.ReportException(ex);
                 throw;
             }
         }
@@ -178,7 +177,6 @@ namespace DllInjector {
                 }
                 catch (Exception ex) {
                     Logger.Warn($"Exception while attempting to verify injection.. {ex.Message}", ex);
-                    ExceptionReporter.ReportException(ex);
                 }
             }
             else {

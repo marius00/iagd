@@ -66,19 +66,13 @@ namespace IAGrim {
 
 
             Logger.Info("Starting IA:GD..");
-            if (BlockedLogsDetection.DreamcrashBlocked()) {
-                Logger.Debug("Crash report server blocked, disabling reporting");
-            }
-            else {
-                ExceptionReporter.UrlCrashreport = "http://ribbs.dreamcrash.org/iagd/crashreport.php";
-                ExceptionReporter.UrlStats = "http://ribbs.dreamcrash.org/iagd/stats.php";
+            ExceptionReporter.UrlStats = "https://webstats.evilsoft.net/report/iagd";
 #if !DEBUG
-                ExceptionReporter.LogExceptions = true;
+            ExceptionReporter.LogExceptions = true;
 #endif
-            }
 
             Logger.Info("Starting exception monitor for bug reports..");
-            Logger.Debug("Crash reports can be seen at http://ribbs.dreamcrash.org/iagd/logs.html");
+            Logger.Debug("Anonymous usage statistics can be seen at https://webstats.evilsoft.net/iagd");
             ExceptionReporter.EnableLogUnhandledOnThread();
 
             Uris.Initialize(Uris.EnvCloud);
@@ -86,7 +80,7 @@ namespace IAGrim {
 
 #if DEBUG
             Test();
-            //Uris.Initialize(Uris.EnvLocalDev);
+            Uris.Initialize(Uris.EnvLocalDev);
 #endif
 
             // Prevent running in RELEASE mode by accident
@@ -139,7 +133,7 @@ namespace IAGrim {
                 }
             }
             catch (Exception ex) {
-                ExceptionReporter.ReportException(ex, "singleInstance_ArgumentsReceived");
+                Logger.Warn(ex.Message, ex);
             }
         }
 

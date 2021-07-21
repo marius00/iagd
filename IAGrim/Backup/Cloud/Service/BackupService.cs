@@ -142,16 +142,8 @@ namespace IAGrim.Backup.Cloud.Service {
                         Logger.Warn($"Upload of {batch.Count} items unsuccessful");
                     }
                 }
-                catch (AggregateException ex) {
-                    Logger.Warn(ex.Message, ex);
-                    return;
-                }
-                catch (WebException ex) {
-                    Logger.Warn(ex.Message, ex);
-                    return;
-                }
                 catch (Exception ex) {
-                    ExceptionReporter.ReportException(ex, "SyncUp");
+                    Logger.Warn(ex.Message, ex);
                     return;
                 }
             }
@@ -204,7 +196,6 @@ namespace IAGrim.Backup.Cloud.Service {
                 return false;
             }
             catch (Exception ex) {
-                ExceptionReporter.ReportException(ex, "SyncDown");
                 Logger.Warn(ex);
                 return false;
             }

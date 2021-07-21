@@ -59,7 +59,6 @@ namespace IAGrim.Parsers.Arz {
             catch (Exception ex) {
                 Logger.Fatal(ex.Message);
                 Logger.Fatal(ex.StackTrace);
-                ExceptionReporter.ReportException(ex);
                 throw;
             }
         }

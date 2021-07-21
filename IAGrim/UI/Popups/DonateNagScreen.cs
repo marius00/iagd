@@ -107,7 +107,7 @@ namespace IAGrim.UI {
         }
 
         private void button1_Click(object sender, EventArgs e) {
-            System.Diagnostics.Process.Start("http://grimdawn.dreamcrash.org/ia/?donate");
+            System.Diagnostics.Process.Start("https://grimdawn.evilsoft.net/?donate");
 
             DateTime dt = DateTime.Now.AddDays(62 + new Random().Next(0, 5));
             _settings.GetLocal().LastNagTimestamp = dt.Ticks;

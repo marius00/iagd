@@ -74,7 +74,6 @@ namespace IAGrim.Parsers.TransferStash {
                 catch (Exception ex) {
                     Logger.Warn(ex.Message);
                     Logger.Warn(ex.StackTrace);
-                    ExceptionReporter.ReportException(ex, "EmptyPageX??");
                     feedback = UserFeedback.FromTagSingleton("iatag_feedback_unable_to_loot_stash");
                 }
 

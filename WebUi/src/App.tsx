@@ -211,15 +211,6 @@ class App extends React.PureComponent<{}, object> {
           />}
 
         {this.state.activeTab === 1 && <CollectionItemContainer items={this.state.collectionItems}/>}
-
-        {this.state.activeTab === 2 && <div className="legacy-crafting">
-          <h2>Legacy functionality</h2>
-          <p>This used to be a part of IA, automagically detecting which components you already had. <br/>
-            If you'd like to see to see the functionality return, give a shout out!</p>
-          <iframe title="Crafting tab" src="https://items.dreamcrash.org/ComponentAssembler?record=d009_relic.dbr"
-                  style={{width: '100%', height: '100%', overflow: 'hidden', position: 'absolute'}} scrolling="yes" frameBorder={0}/>
-        </div>}
-
         {this.state.activeTab === 3 && <Help searchString={this.state.helpSearchFilter} onSearch={(v: string) => this.setState({helpSearchFilter: v})}/>}
 
 
