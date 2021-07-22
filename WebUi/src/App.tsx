@@ -131,7 +131,7 @@ class App extends React.PureComponent<{}, object> {
     // @ts-ignore: setIsLoading doesn't exist on window
     window.showHelp = (tag: string) => {
       this.setState({
-        activeTab: 3,
+        activeTab: 2,
         helpSearchFilter: tag
       });
     };
@@ -140,7 +140,7 @@ class App extends React.PureComponent<{}, object> {
     // @ts-ignore: setIsLoading doesn't exist on window
     window.showCharacterBackups = () => {
       this.setState({
-        activeTab: 4,
+        activeTab: 3,
       });
     };
 
@@ -181,7 +181,9 @@ class App extends React.PureComponent<{}, object> {
     // TODO: Fix this weird loop? This one will request more items.. which will end up in a call from C# to window.addItems().. is that how we wanna do this?
   }
 
+
   render() {
+    console.log('tab', this.state.activeTab);
     return (
       <div className={'App ' + (this.state.isDarkMode ? 'App-dark' : 'App-Light')}>
         {this.state.isLoading && isEmbedded && <Spinner/>}
@@ -197,7 +199,7 @@ class App extends React.PureComponent<{}, object> {
           </div>
         </div>
         {this.state.activeTab === 0 && !isEmbedded ? <MockItemsButton onClick={(items) => this.setItems(items)}/> : ''}
-        {this.state.activeTab === 4 && <CharacterListContainer />}
+        {this.state.activeTab === 3 && <CharacterListContainer />}
 
         {this.state.activeTab === 0 && <ItemContainer
             items={this.state.items}
@@ -207,11 +209,11 @@ class App extends React.PureComponent<{}, object> {
             onRequestMoreItems={() => this.requestMoreItems()}
             collectionItems={this.state.collectionItems}
             isDarkMode={this.state.isDarkMode}
-            requestUnknownItemHelp={() => this.setState({helpSearchFilter: 'UnknownItem', activeTab: 3})}
+            requestUnknownItemHelp={() => this.setState({helpSearchFilter: 'UnknownItem', activeTab: 2})}
           />}
 
         {this.state.activeTab === 1 && <CollectionItemContainer items={this.state.collectionItems}/>}
-        {this.state.activeTab === 3 && <Help searchString={this.state.helpSearchFilter} onSearch={(v: string) => this.setState({helpSearchFilter: v})}/>}
+        {this.state.activeTab === 2 && <Help searchString={this.state.helpSearchFilter} onSearch={(v: string) => this.setState({helpSearchFilter: v})}/>}
 
 
         <NewFeaturePromoter/>

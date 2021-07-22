@@ -67,9 +67,7 @@ namespace IAGrim {
 
             Logger.Info("Starting IA:GD..");
             ExceptionReporter.UrlStats = "https://webstats.evilsoft.net/report/iagd";
-#if !DEBUG
-            ExceptionReporter.LogExceptions = true;
-#endif
+
 
             Logger.Info("Starting exception monitor for bug reports..");
             Logger.Debug("Anonymous usage statistics can be seen at https://webstats.evilsoft.net/iagd");

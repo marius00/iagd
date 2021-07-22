@@ -41,7 +41,7 @@ namespace IAGrim.Backup.Cloud.Service {
 
         public List<CharacterListDto> ListBackedUpCharacters() {
             CharacterListDto[] characters = _authService.GetRestService()?.Get<CharacterListDto[]>(Uris.ListCharacterUrl);
-            return characters.ToList();
+            return characters?.ToList() ?? new List<CharacterListDto>(0);
         }
 
         class CharacterDownloadUrlDto {
