@@ -8,9 +8,9 @@
     <id name="Id" column="id_databaseitemstat">
       <generator class="identity"/>
     </id>
-    <many-to-one name="Parent" column="id_databaseitem" index="idx_databaseitemstatv2_parent" />
+    <many-to-one name="Parent" column="id_databaseitem" index="idx_databaseitemstatv2_parent_stat" />
 
-    <property name="Stat" index="idx_databaseitemstatv2_stat" />
+    <property name="Stat" index="idx_databaseitemstatv2_parent_stat" />
 
     <property name="TextValue" length="4000" index="idx_databaseitemstatv2_tv" />
     <property name="Value" column="val1" />
