@@ -28,8 +28,15 @@ namespace IAGrim.Utilities.HelperClasses {
         }
 
         public T Get<T>(string url) {
-            var result = _client.GetStringAsync(url).Result;
-            return JsonConvert.DeserializeObject<T>(result, _settings);
+            var result = _client.GetAsync(url).Result;
+            if (result.IsSuccessStatusCode) {
+                string body = result.Content.ReadAsStringAsync().Result;
+                return JsonConvert.DeserializeObject<T>(body, _settings);
+            }
+            else {
+                Logger.Warn($"Got response code {result.StatusCode} on GET {url}");
+                throw new HttpException();
+            }
         }
 
         public HttpStatusCode VerifyGet(string url) {
