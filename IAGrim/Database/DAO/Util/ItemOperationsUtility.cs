@@ -19,7 +19,7 @@ namespace IAGrim.Database.DAO.Util {
             Dictionary<string, PlayerItem> map = new Dictionary<string, PlayerItem>();
             foreach (var item in items) {
 
-                var key = item.BaseRecord + item.PrefixRecord + item.SuffixRecord + item.ModifierRecord;
+                var key = item.BaseRecord + item.PrefixRecord + item.SuffixRecord + item.ModifierRecord + item.MateriaRecord;
                 if (map.ContainsKey(key)) {
                     map[key].Count += item.Count;
                 }
