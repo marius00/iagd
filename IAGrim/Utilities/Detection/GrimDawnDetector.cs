@@ -179,7 +179,7 @@ namespace IAGrim {
                 try {
                     // Horrible copy from pluralized version.
                     var steamPath = SteamDetection.GetSteamDirectory();
-                    var steamInstallPaths = SteamDetection.ExtractSteamLibraryPaths(Path.Combine(steamPath, "config", "config.vdf"));
+                    var steamInstallPaths = SteamDetection.ExtractSteamLibraryPaths(Path.Combine(steamPath, "config", "libraryfolders.vdf"));
                     steamInstallPaths.Add(steamPath); // May not be included in the VDF
                     var locations = new List<string>();
                     SteamDetection.GetGrimFolderFromSteamLibrary(steamInstallPaths).ForEach(loc => locations.Add(CleanInvertedSlashes(loc)));
@@ -218,7 +218,7 @@ namespace IAGrim {
         public static void AppendSteamPaths(ICollection<string> locations) {
             try {
                 var steamPath = SteamDetection.GetSteamDirectory();
-                var steamInstallPaths = SteamDetection.ExtractSteamLibraryPaths(Path.Combine(steamPath, "config", "config.vdf"));
+                var steamInstallPaths = SteamDetection.ExtractSteamLibraryPaths(Path.Combine(steamPath, "config", "libraryfolders.vdf"));
                 steamInstallPaths.Add(steamPath); // May not be included in the VDF
                 SteamDetection.GetGrimFolderFromSteamLibrary(steamInstallPaths).ForEach(loc => locations.Add(CleanInvertedSlashes(loc)));
             }

@@ -78,63 +78,20 @@ namespace IAGrim.Utilities.Detection {
         /// <returns></returns>
         public static List<string> ExtractSteamLibraryPaths(string vdf) {
             List<string> paths = new List<string>();
-
             if (File.Exists(vdf)) {
                 dynamic config = VdfConvert.Deserialize(File.ReadAllText(vdf));
-                try {
-                    var root = config.Value.Software.valve.Steam;
+                var root = config.Value;
+
+                for (int i = 1; i < 8; i++) {
 
                     try {
-                        var p = root.BaseInstallFolder_1.Value.ToString();
-                        paths.Add(p);
-                        Logger.Debug($"Located a steam install folder at \"{p}\"");
+                        paths.Add(root[$"{i}"].path.ToString());
                     }
                     catch (KeyNotFoundException) {
-                        Logger.Warn($"Could not locate any steam install folders in \"{vdf}\"");
-                        return paths;
-                    }
-
-                    try {
-                        var p = root.BaseInstallFolder_2.Value.ToString();
-                        paths.Add(p);
-                        Logger.Debug($"Located a steam install folder at \"{p}\"");
-                    }
-                    catch (KeyNotFoundException) {
-                        return paths;
-                    }
-
-                    try {
-                        var p = root.BaseInstallFolder_3.Value.ToString();
-                        paths.Add(p);
-                        Logger.Debug($"Located a steam install folder at \"{p}\"");
-                    }
-                    catch (KeyNotFoundException) {
-                        return paths;
-                    }
-
-                    try {
-                        var p = root.BaseInstallFolder_4.Value.ToString();
-                        paths.Add(p);
-                        Logger.Debug($"Located a steam install folder at \"{p}\"");
-                    }
-                    catch (KeyNotFoundException) {
-                        return paths;
-                    }
-
-                    try {
-                        var p = root.BaseInstallFolder_5.Value.ToString();
-                        paths.Add(p);
-                        Logger.Debug($"Located a steam install folder at \"{p}\"");
-                    }
-                    catch (KeyNotFoundException) {
+                        Logger.Debug("Key #1 not found, stopping parse of steam config");
                         return paths;
                     }
                 }
-                catch (KeyNotFoundException) {
-                    Logger.Debug("Key not found, stopping parse of steam config");
-                    return paths;
-                }
-
             }
             return paths;
         }
