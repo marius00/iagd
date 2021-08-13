@@ -42,6 +42,7 @@ namespace IAGrim.Settings.Dto {
         public List<FeatureRecommendation> FeaturesNotShown {
             get {
                 var result = new List<FeatureRecommendation>();
+                /*
                 foreach (var feature in new[] {
                     FeatureRecommendation.SetBonus,
                     FeatureRecommendation.CollectionsTab,
@@ -51,7 +52,7 @@ namespace IAGrim.Settings.Dto {
                     if (_shownFeatureRecommendations == null || !_shownFeatureRecommendations.Contains(feature)) {
                         result.Add(feature);
                     }
-                }
+                }*/
 
                 return result;
             }
