@@ -100,10 +100,8 @@ class Item extends React.PureComponent<Props, object> {
 
   render() {
     const item = this.props.item;
-    const name = item.name.length > 0 ? item.name : 'Unknown';
+    const name = item.name.length > 0 ? item.name.replace(/{\^.*}/g, '') : 'Unknown';
     const socket = item.socket.replace(" ", "");
-
-
 
     const headerStats = item.headerStats.map((stat) =>
       <ItemStat {...stat} key={`stat-head-${getUniqueId(item)}-${socket}-${statToString(stat)}`.replace(' ', '_')} />
