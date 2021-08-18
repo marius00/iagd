@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Drawing;
 using System.Drawing.Imaging;
 using log4net;
 using System.IO;
 using EvilsoftCommons;
-using System.Threading.Tasks;
 
 namespace IAGrim.Parser.Arc {
     public class DDSImageReader {
@@ -27,48 +23,68 @@ namespace IAGrim.Parser.Arc {
         private const int X8B8G8R8 = 131076;
         private const int A8R8G8B8 = 196612;
         private const int X8R8G8B8 = 262148;
-        private static int[] A1R5G5B5_MASKS = new int[] { 31744, 992, 31, 32768 };
-        private static int[] X1R5G5B5_MASKS = new int[] { 31744, 992, 31, 0 };
-        private static int[] A4R4G4B4_MASKS = new int[] { 3840, 240, 15, 61440 };
-        private static int[] X4R4G4B4_MASKS = new int[] { 3840, 240, 15, 0 };
-        private static int[] R5G6B5_MASKS = new int[] { 63488, 2016, 31, 0 };
-        private static int[] R8G8B8_MASKS = new int[] { 16711680, 65280, 255, 0 };
-        private static int[] A8B8G8R8_MASKS = new int[] { 255, 65280, 16711680, -16777216 };
-        private static int[] X8B8G8R8_MASKS = new int[] { 255, 65280, 16711680, 0 };
-        private static int[] A8R8G8B8_MASKS = new int[] { 16711680, 65280, 255, -16777216 };
-        private static int[] X8R8G8B8_MASKS = new int[] { 16711680, 65280, 255, 0 };
-        private static int[] BIT5 = new int[] { 0, 8, 16, 25, 33, 41, 49, 58, 66, 74, 82, 90, 99, 107, 115, 123, 132, 140, 148, 156, 165, 173, 181, 189, 197, 206, 214, 222, 230, 239, 247, 255 };
-        private static int[] BIT6 = new int[] { 0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 45, 49, 53, 57, 61, 65, 69, 73, 77, 81, 85, 89, 93, 97, 101, 105, 109, 113, 117, 121, 125, 130, 134, 138, 142, 146, 150, 154, 158, 162, 166, 170, 174, 178, 182, 186, 190, 194, 198, 202, 206, 210, 215, 219, 223, 227, 231, 235, 239, 243, 247, 251, 255 };
+        private static int[] A1R5G5B5_MASKS = { 31744, 992, 31, 32768 };
+        private static int[] X1R5G5B5_MASKS = { 31744, 992, 31, 0 };
+        private static int[] A4R4G4B4_MASKS = { 3840, 240, 15, 61440 };
+        private static int[] X4R4G4B4_MASKS = { 3840, 240, 15, 0 };
+        private static int[] R5G6B5_MASKS = { 63488, 2016, 31, 0 };
+        private static int[] R8G8B8_MASKS = { 16711680, 65280, 255, 0 };
+        private static int[] A8B8G8R8_MASKS = { 255, 65280, 16711680, -16777216 };
+        private static int[] X8B8G8R8_MASKS = { 255, 65280, 16711680, 0 };
+        private static int[] A8R8G8B8_MASKS = { 16711680, 65280, 255, -16777216 };
+        private static int[] X8R8G8B8_MASKS = { 16711680, 65280, 255, 0 };
+        private static int[] BIT5 = { 0, 8, 16, 25, 33, 41, 49, 58, 66, 74, 82, 90, 99, 107, 115, 123, 132, 140, 148, 156, 165, 173, 181, 189, 197, 206, 214, 222, 230, 239, 247, 255 };
+        private static int[] BIT6 = { 0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 45, 49, 53, 57, 61, 65, 69, 73, 77, 81, 85, 89, 93, 97, 101, 105, 109, 113, 117, 121, 125, 130, 134, 138, 142, 146, 150, 154, 158, 162, 166, 170, 174, 178, 182, 186, 190, 194, 198, 202, 206, 210, 215, 219, 223, 227, 231, 235, 239, 243, 247, 251, 255 };
 
         /// <summary>
         /// Extract item icons to the target destination
         /// </summary>
-        /// <param name="itemsArcFullpath">Full path to items.arc</param>
+        /// <param name="itemsArcFullPath">Full path to items.arc</param>
         /// <param name="destinationFolder"></param>
-        public static void ExtractItemIcons(string itemsArcFullpath, string destinationFolder) {
-            logger.Debug($"Extracting item icons from {itemsArcFullpath} to {destinationFolder}");
+        public static void ExtractItemIcons(string itemsArcFullPath, string destinationFolder) {
+            logger.Debug($"Extracting item icons from {itemsArcFullPath} to {destinationFolder}");
+
             try {
-
-                if (!File.Exists(itemsArcFullpath)) {
-                    logger.Warn($"The file {itemsArcFullpath} does not exist, icon extraction aborted.");
-
+                if (!File.Exists(itemsArcFullPath)) {
+                    logger.Warn($"The file {itemsArcFullPath} does not exist, icon extraction aborted.");
                 }
                 else if (!Directory.Exists(destinationFolder)) {
                     logger.Warn($"The specified output folder {destinationFolder} does not exist, icon extraction aborted.");
                 }
                 else {
-                    Decompress dc = new Decompress(itemsArcFullpath, true);
+                    var dc = new Decompress(itemsArcFullPath, true);
                     dc.decompress();
 
-                    foreach (string icon in dc.strings) {
-                        byte[] b = dc.GetTexture(icon);
-                        if (b != null && !icon.EndsWith("_dif.tex") && !icon.EndsWith("_nml.tex")) {
-                            try {
-                                Image img = ExtractImage(b);
-                                img?.Save(Path.Combine(destinationFolder, $@"{Path.GetFileName(icon)}.png"), ImageFormat.Png);
-                            }
-                            catch (Exception ex) {
-                                logger.Warn($"Error extracting icon \"{icon}\", {ex.Message}", ex);
+                    foreach (var icon in dc.strings) {
+                        var b = dc.GetTexture(icon);
+
+                        if (b != null) {
+                            if (icon.EndsWith(".png")) {
+                                try {
+                                    using (var image = Image.FromStream(new MemoryStream(b)))
+                                    {
+                                        image.Save(Path.Combine(destinationFolder, $@"{Path.GetFileName(icon)}"));
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    logger.Warn($"Error extracting icon \"{icon}\", {ex.Message}", ex);
+                                }
+                            } 
+                            else if (!icon.EndsWith("_dif.tex")
+                                     && !icon.EndsWith("_nml.tex")
+                                     && !icon.EndsWith(".anm")
+                                     && !icon.EndsWith(".pfx")
+                                     && !icon.EndsWith(".wav")) {
+                                try
+                                {
+                                    var img = ExtractImage(b);
+                                    img?.Save(Path.Combine(destinationFolder, $@"{Path.GetFileName(icon)}.png"), ImageFormat.Png);
+                                }
+                                catch (Exception ex)
+                                {
+                                    logger.Warn($"Error extracting icon \"{icon}\", {ex.Message}", ex);
+                                }
                             }
                         }
 
@@ -83,35 +99,31 @@ namespace IAGrim.Parser.Arc {
             logger.Debug("Item icon extraction complete");
         }
 
-
         public static Image ExtractImage(byte[] bytes) {
-
-            int size = IOHelper.GetInt(bytes, 8);
-            byte[] rawPixels = new byte[size];
+            var size = IOHelper.GetInt(bytes, 8);
+            var rawPixels = new byte[size];
             Array.Copy(bytes, 12, rawPixels, 0, rawPixels.Length);
 
-
-            DDSHeader ddsHdr = getDDSHeader(rawPixels);
+            var ddsHdr = GetDDSHeader(rawPixels);
             if (ddsHdr == null)
                 return null;
-            fixDDSHeader(rawPixels, ddsHdr);
+            FixDDSHeader(rawPixels, ddsHdr);
 
-            int w = GetWidth(rawPixels);
-            int h = GetHeight(rawPixels);
-            if (w > 96 || w > 96)
+            var w = GetWidth(rawPixels);
+            var h = GetHeight(rawPixels);
+            if (w > 96 || h > 96)
                 return null;
 
-            int[] decodedPixels = read(rawPixels, 0);
+            var decodedPixels = Read(rawPixels, 0);
             if (decodedPixels == null)
                 return null;
 
-            Bitmap bitmap1 = bitmapFromBytes(GetWidth(rawPixels), GetHeight(rawPixels), decodedPixels);
+            var bitmap1 = BitmapFromBytes(GetWidth(rawPixels), GetHeight(rawPixels), decodedPixels);
             return bitmap1;
         }
 
-        private static Bitmap bitmapFromBytes(int width, int height, int[] arr) {
+        private static Bitmap BitmapFromBytes(int width, int height, int[] arr) {
             var b = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-
 
             /*
                         ColorPalette ncp = b.Palette;
@@ -119,12 +131,12 @@ namespace IAGrim.Parser.Arc {
                             ncp.Entries[i] = Color.FromArgb(255, 255 - i, 255 - i, 255 - i);
                         b.Palette = ncp;*/
 
-            var BoundsRect = new Rectangle(0, 0, width, height);
-            BitmapData bmpData = b.LockBits(BoundsRect,
-                                            ImageLockMode.WriteOnly,
-                                            b.PixelFormat);
-            IntPtr ptr = bmpData.Scan0;
-            int bytes = bmpData.Width * b.Height;
+            var boundsRect = new Rectangle(0, 0, width, height);
+            var bmpData = b.LockBits(boundsRect,
+                ImageLockMode.WriteOnly,
+                b.PixelFormat);
+            var ptr = bmpData.Scan0;
+            var bytes = bmpData.Width * b.Height;
 
             // fill in rgbValues, e.g. with a for loop over an input array
             System.Runtime.InteropServices.Marshal.Copy(arr, 0, ptr, bytes);
@@ -133,9 +145,8 @@ namespace IAGrim.Parser.Arc {
             return b;
         }
 
-        private static Bitmap bitmapFromBytes(int width, int height, byte[] arr) {
+        private static Bitmap BitmapFromBytes(int width, int height, byte[] arr) {
             var b = new Bitmap(width, height, PixelFormat.Format32bppPArgb);
-
 
             /*
                         ColorPalette ncp = b.Palette;
@@ -143,12 +154,12 @@ namespace IAGrim.Parser.Arc {
                             ncp.Entries[i] = Color.FromArgb(255, 255 - i, 255 - i, 255 - i);
                         b.Palette = ncp;*/
 
-            var BoundsRect = new Rectangle(0, 0, width, height);
-            BitmapData bmpData = b.LockBits(BoundsRect,
-                                            ImageLockMode.WriteOnly,
-                                            b.PixelFormat);
-            IntPtr ptr = bmpData.Scan0;
-            int bytes = bmpData.Stride * b.Height;
+            var boundsRect = new Rectangle(0, 0, width, height);
+            var bmpData = b.LockBits(boundsRect,
+                ImageLockMode.WriteOnly,
+                b.PixelFormat);
+            var ptr = bmpData.Scan0;
+            var bytes = bmpData.Stride * b.Height;
 
             // fill in rgbValues, e.g. with a for loop over an input array
             System.Runtime.InteropServices.Marshal.Copy(arr, 0, ptr, bytes);
@@ -175,9 +186,9 @@ namespace IAGrim.Parser.Arc {
         }*/
         #region Fix
 
-        private static DDSHeader getDDSHeader(byte[] bytes) {
-            DDSHeader header = new DDSHeader();
-            int offset = 0;
+        private static DDSHeader GetDDSHeader(byte[] bytes) {
+            var header = new DDSHeader();
+            var offset = 0;
 
             if (bytes.Length < 4)
                 return null;
@@ -198,7 +209,7 @@ namespace IAGrim.Parser.Arc {
             header.depth = IOHelper.GetInt(bytes, offset += 4);
             header.num_mipmap = IOHelper.GetInt(bytes, offset += 4);
             offset += 4;
-            for (int i = 0; i < header.reserved1.Length; ++i) {
+            for (var i = 0; i < header.reserved1.Length; ++i) {
                 header.reserved1[i] = IOHelper.GetInt(bytes, offset);
                 offset += 4;
             }
@@ -218,17 +229,17 @@ namespace IAGrim.Parser.Arc {
             header.caps2 = IOHelper.GetInt(bytes, offset += 4);
             header.caps3 = IOHelper.GetInt(bytes, offset += 4);
             header.caps4 = IOHelper.GetInt(bytes, offset += 4);
-            header.reserved2 = IOHelper.GetInt(bytes, offset += 4);
-            offset += 4;
+            header.reserved2 = IOHelper.GetInt(bytes, offset + 4);
+
             return header;
         }
 
-        private static void fixDDSHeader(byte[] bytes, DDSHeader header) {
+        private static void FixDDSHeader(byte[] bytes, DDSHeader header) {
             if (header.version[3] == 82) {
                 bytes[3] = 32;
             }
-            int flags = header.flags | 1 | 2 | 4 | 4096;
-            int caps = header.caps | 4096;
+            var flags = header.flags | 1 | 2 | 4 | 4096;
+            var caps = header.caps | 4096;
             if (header.num_mipmap > 1) {
                 header.flags |= 131072;
                 header.caps = header.caps | 8 | 4194304;
@@ -271,48 +282,48 @@ namespace IAGrim.Parser.Arc {
         private static int GetMipmap(byte[] buffer) {
             return buffer[28] & 255 | (buffer[29] & 255) << 8 | (buffer[30] & 255) << 16 | (buffer[31] & 255) << 24;
         }
-        public static int getBitCount(byte[] buffer) {
+        public static int GetBitCount(byte[] buffer) {
             return buffer[88] & 255 | (buffer[89] & 255) << 8 | (buffer[90] & 255) << 16 | (buffer[91] & 255) << 24;
         }
 
-        public static int getRedMask(byte[] buffer) {
+        public static int GetRedMask(byte[] buffer) {
             return buffer[92] & 255 | (buffer[93] & 255) << 8 | (buffer[94] & 255) << 16 | (buffer[95] & 255) << 24;
         }
 
-        public static int getGreenMask(byte[] buffer) {
+        public static int GetGreenMask(byte[] buffer) {
             return buffer[96] & 255 | (buffer[97] & 255) << 8 | (buffer[98] & 255) << 16 | (buffer[99] & 255) << 24;
         }
 
-        public static int getBlueMask(byte[] buffer) {
+        public static int GetBlueMask(byte[] buffer) {
             return buffer[100] & 255 | (buffer[101] & 255) << 8 | (buffer[102] & 255) << 16 | (buffer[103] & 255) << 24;
         }
 
-        public static int getAlphaMask(byte[] buffer) {
+        public static int GetAlphaMask(byte[] buffer) {
             return buffer[104] & 255 | (buffer[105] & 255) << 8 | (buffer[106] & 255) << 16 | (buffer[107] & 255) << 24;
         }
-        public static int getPixelFormatFlags(byte[] buffer) {
+        public static int GetPixelFormatFlags(byte[] buffer) {
             return buffer[80] & 255 | (buffer[81] & 255) << 8 | (buffer[82] & 255) << 16 | (buffer[83] & 255) << 24;
         }
 
-        public static int getFourCC(byte[] buffer) {
+        public static int GetFourCc(byte[] buffer) {
             return (buffer[84] & 255) << 24 | (buffer[85] & 255) << 16 | (buffer[86] & 255) << 8 | buffer[87] & 255;
         }
 
         #endregion
 
-        private static int getType(byte[] buffer) {
-            int type = 0;
-            int flags = getPixelFormatFlags(buffer);
+        private static int GetType(byte[] buffer) {
+            var type = 0;
+            var flags = GetPixelFormatFlags(buffer);
             if ((flags & 4) != 0) {
-                type = getFourCC(buffer);
+                type = GetFourCc(buffer);
             }
             else if ((flags & 64) != 0) {
                 int alphaMask;
-                int bitCount = getBitCount(buffer);
-                int redMask = getRedMask(buffer);
-                int greenMask = getGreenMask(buffer);
-                int blueMask = getBlueMask(buffer);
-                int n = alphaMask = (flags & 1) != 0 ? getAlphaMask(buffer) : 0;
+                var bitCount = GetBitCount(buffer);
+                var redMask = GetRedMask(buffer);
+                var greenMask = GetGreenMask(buffer);
+                var blueMask = GetBlueMask(buffer);
+                var n = alphaMask = (flags & 1) != 0 ? GetAlphaMask(buffer) : 0;
                 if (bitCount == 16) {
                     if (redMask == A1R5G5B5_MASKS[0] && greenMask == A1R5G5B5_MASKS[1] && blueMask == A1R5G5B5_MASKS[2] && alphaMask == A1R5G5B5_MASKS[3]) {
                         type = 65538;
@@ -353,18 +364,17 @@ namespace IAGrim.Parser.Arc {
             return type;
         }
 
-
-        public static int[] read(byte[] buffer, int mipmapLevel) {
-            int width = GetWidth(buffer);
-            int height = GetHeight(buffer);
-            int mipmap = GetMipmap(buffer);
-            int type = getType(buffer);
+        public static int[] Read(byte[] buffer, int mipmapLevel) {
+            var width = GetWidth(buffer);
+            var height = GetHeight(buffer);
+            var mipmap = GetMipmap(buffer);
+            var type = GetType(buffer);
             if (type == 0) {
                 return null;
             }
-            int offset = 128;
+            var offset = 128;
             if (mipmapLevel > 0 && mipmapLevel < mipmap) {
-                for (int i = 0; i < mipmapLevel; ++i) {
+                for (var i = 0; i < mipmapLevel; ++i) {
                     switch (type) {
                         case 1146639409: {
                                 offset += 8 * ((width + 3) / 4) * ((height + 3) / 4);
@@ -403,156 +413,155 @@ namespace IAGrim.Parser.Arc {
             int[] pixels = null;
             switch (type) {
                 case 1146639409: {
-                        pixels = decodeDXT1(width, height, offset, buffer);
+                        pixels = DecodeDxt1(width, height, offset, buffer);
                         break;
                     }
                 case 1146639410: {
-                        pixels = decodeDXT2(width, height, offset, buffer);
+                        pixels = DecodeDxt2(width, height, offset, buffer);
                         break;
                     }
                 case 1146639411: {
-                        pixels = decodeDXT3(width, height, offset, buffer);
+                        pixels = DecodeDxt3(width, height, offset, buffer);
                         break;
                     }
                 case 1146639412: {
-                        pixels = decodeDXT4(width, height, offset, buffer);
+                        pixels = DecodeDxt4(width, height, offset, buffer);
                         break;
                     }
                 case 1146639413: {
-                        pixels = decodeDXT5(width, height, offset, buffer);
+                        pixels = DecodeDxt5(width, height, offset, buffer);
                         break;
                     }
                 case 65538: {
-                        pixels = readA1R5G5B5(width, height, offset, buffer);
+                        pixels = ReadA1R5G5B5(width, height, offset, buffer);
                         break;
                     }
                 case 131074: {
-                        pixels = readX1R5G5B5(width, height, offset, buffer);
+                        pixels = ReadX1R5G5B5(width, height, offset, buffer);
                         break;
                     }
                 case 196610: {
-                        pixels = readA4R4G4B4(width, height, offset, buffer);
+                        pixels = ReadA4R4G4B4(width, height, offset, buffer);
                         break;
                     }
                 case 262146: {
-                        pixels = readX4R4G4B4(width, height, offset, buffer);
+                        pixels = ReadX4R4G4B4(width, height, offset, buffer);
                         break;
                     }
                 case 327682: {
-                        pixels = readR5G6B5(width, height, offset, buffer);
+                        pixels = ReadR5G6B5(width, height, offset, buffer);
                         break;
                     }
                 case 65539: {
-                        pixels = readR8G8B8(width, height, offset, buffer);
+                        pixels = ReadR8G8B8(width, height, offset, buffer);
                         break;
                     }
                 case 65540: {
-                        pixels = readA8B8G8R8(width, height, offset, buffer);
+                        pixels = ReadA8B8G8R8(width, height, offset, buffer);
                         break;
                     }
                 case 131076: {
-                        pixels = readX8B8G8R8(width, height, offset, buffer);
+                        pixels = ReadX8B8G8R8(width, height, offset, buffer);
                         break;
                     }
                 case 196612: {
-                        pixels = readA8R8G8B8(width, height, offset, buffer);
+                        pixels = ReadA8R8G8B8(width, height, offset, buffer);
                         break;
                     }
                 case 262148: {
-                        pixels = readA8R8G8B8(width, height, offset, buffer);
+                        pixels = ReadA8R8G8B8(width, height, offset, buffer);
                     } break;
             }
             return pixels;
         }
 
-
         #region Decoders
 
-        private static int[] decodeDXT1(int width, int height, int offset, byte[] buffer) {
-            int[] pixels = new int[width * height];
-            int index = offset;
-            int w = (width + 3) / 4;
-            int h = (height + 3) / 4;
-            for (int i = 0; i < h; ++i) {
-                for (int j = 0; j < w; ++j) {
-                    int c0 = buffer[index] & 255 | (buffer[index + 1] & 255) << 8;
-                    int c1 = buffer[index] & 255 | (buffer[(index += 2) + 1] & 255) << 8;
+        private static int[] DecodeDxt1(int width, int height, int offset, byte[] buffer) {
+            var pixels = new int[width * height];
+            var index = offset;
+            var w = (width + 3) / 4;
+            var h = (height + 3) / 4;
+            for (var i = 0; i < h; ++i) {
+                for (var j = 0; j < w; ++j) {
+                    var c0 = buffer[index] & 255 | (buffer[index + 1] & 255) << 8;
+                    var c1 = buffer[index] & 255 | (buffer[(index += 2) + 1] & 255) << 8;
                     index += 2;
-                    for (int k = 0; k < 4 && 4 * i + k < height; ++k) {
-                        int t0 = buffer[index] & 3;
-                        int t1 = (buffer[index] & 12) >> 2;
-                        int t2 = (buffer[index] & 48) >> 4;
-                        int t3 = (buffer[index++] & 192) >> 6;
-                        pixels[4 * width * i + 4 * j + width * k + 0] = getDXTColor(c0, c1, 255, t0);
+                    for (var k = 0; k < 4 && 4 * i + k < height; ++k) {
+                        var t0 = buffer[index] & 3;
+                        var t1 = (buffer[index] & 12) >> 2;
+                        var t2 = (buffer[index] & 48) >> 4;
+                        var t3 = (buffer[index++] & 192) >> 6;
+                        pixels[4 * width * i + 4 * j + width * k + 0] = GetDxtColor(c0, c1, 255, t0);
                         if (4 * j + 1 >= width) continue;
-                        pixels[4 * width * i + 4 * j + width * k + 1] = getDXTColor(c0, c1, 255, t1);
+                        pixels[4 * width * i + 4 * j + width * k + 1] = GetDxtColor(c0, c1, 255, t1);
                         if (4 * j + 2 >= width) continue;
-                        pixels[4 * width * i + 4 * j + width * k + 2] = getDXTColor(c0, c1, 255, t2);
+                        pixels[4 * width * i + 4 * j + width * k + 2] = GetDxtColor(c0, c1, 255, t2);
                         if (4 * j + 3 >= width) continue;
-                        pixels[4 * width * i + 4 * j + width * k + 3] = getDXTColor(c0, c1, 255, t3);
+                        pixels[4 * width * i + 4 * j + width * k + 3] = GetDxtColor(c0, c1, 255, t3);
                     }
                 }
             }
             return pixels;
         }
 
-        private static int[] decodeDXT2(int width, int height, int offset, byte[] buffer) {
-            return decodeDXT3(width, height, offset, buffer);
+        private static int[] DecodeDxt2(int width, int height, int offset, byte[] buffer) {
+            return DecodeDxt3(width, height, offset, buffer);
         }
 
-        private static int[] decodeDXT3(int width, int height, int offset, byte[] buffer) {
-            int index = offset;
-            int w = (width + 3) / 4;
-            int h = (height + 3) / 4;
-            int[] pixels = new int[width * height];
-            int[] alphaTable = new int[16];
-            for (int i = 0; i < h; ++i) {
-                for (int j = 0; j < w; ++j) {
-                    for (int k = 0; k < 4; ++k) {
-                        int a0 = buffer[index++] & 255;
-                        int a1 = buffer[index++] & 255;
+        private static int[] DecodeDxt3(int width, int height, int offset, byte[] buffer) {
+            var index = offset;
+            var w = (width + 3) / 4;
+            var h = (height + 3) / 4;
+            var pixels = new int[width * height];
+            var alphaTable = new int[16];
+            for (var i = 0; i < h; ++i) {
+                for (var j = 0; j < w; ++j) {
+                    for (var k = 0; k < 4; ++k) {
+                        var a0 = buffer[index++] & 255;
+                        var a1 = buffer[index++] & 255;
                         alphaTable[4 * k + 0] = 17 * ((a0 & 240) >> 4);
                         alphaTable[4 * k + 1] = 17 * (a0 & 15);
                         alphaTable[4 * k + 2] = 17 * ((a1 & 240) >> 4);
                         alphaTable[4 * k + 3] = 17 * (a1 & 15);
                     }
-                    int c0 = buffer[index] & 255 | (buffer[index + 1] & 255) << 8;
-                    int c1 = buffer[index] & 255 | (buffer[(index += 2) + 1] & 255) << 8;
+                    var c0 = buffer[index] & 255 | (buffer[index + 1] & 255) << 8;
+                    var c1 = buffer[index] & 255 | (buffer[(index += 2) + 1] & 255) << 8;
                     index += 2;
-                    for (int k2 = 0; k2 < 4 && 4 * i + k2 < height; ++k2) {
-                        int t0 = buffer[index] & 3;
-                        int t1 = (buffer[index] & 12) >> 2;
-                        int t2 = (buffer[index] & 48) >> 4;
-                        int t3 = (buffer[index++] & 192) >> 6;
-                        pixels[4 * width * i + 4 * j + width * k2 + 0] = getDXTColor(c0, c1, alphaTable[4 * k2 + 0], t0);
+                    for (var k2 = 0; k2 < 4 && 4 * i + k2 < height; ++k2) {
+                        var t0 = buffer[index] & 3;
+                        var t1 = (buffer[index] & 12) >> 2;
+                        var t2 = (buffer[index] & 48) >> 4;
+                        var t3 = (buffer[index++] & 192) >> 6;
+                        pixels[4 * width * i + 4 * j + width * k2 + 0] = GetDxtColor(c0, c1, alphaTable[4 * k2 + 0], t0);
                         if (4 * j + 1 >= width) continue;
-                        pixels[4 * width * i + 4 * j + width * k2 + 1] = getDXTColor(c0, c1, alphaTable[4 * k2 + 1], t1);
+                        pixels[4 * width * i + 4 * j + width * k2 + 1] = GetDxtColor(c0, c1, alphaTable[4 * k2 + 1], t1);
                         if (4 * j + 2 >= width) continue;
-                        pixels[4 * width * i + 4 * j + width * k2 + 2] = getDXTColor(c0, c1, alphaTable[4 * k2 + 2], t2);
+                        pixels[4 * width * i + 4 * j + width * k2 + 2] = GetDxtColor(c0, c1, alphaTable[4 * k2 + 2], t2);
                         if (4 * j + 3 >= width) continue;
-                        pixels[4 * width * i + 4 * j + width * k2 + 3] = getDXTColor(c0, c1, alphaTable[4 * k2 + 3], t3);
+                        pixels[4 * width * i + 4 * j + width * k2 + 3] = GetDxtColor(c0, c1, alphaTable[4 * k2 + 3], t3);
                     }
                 }
             }
             return pixels;
         }
 
-        private static int[] decodeDXT4(int width, int height, int offset, byte[] buffer) {
-            return decodeDXT5(width, height, offset, buffer);
+        private static int[] DecodeDxt4(int width, int height, int offset, byte[] buffer) {
+            return DecodeDxt5(width, height, offset, buffer);
         }
 
-        private static int[] decodeDXT5(int width, int height, int offset, byte[] buffer) {
-            int index = offset;
-            int w = (width + 3) / 4;
-            int h = (height + 3) / 4;
-            int[] pixels = new int[width * height];
-            int[] alphaTable = new int[16];
-            for (int i = 0; i < h; ++i) {
-                for (int j = 0; j < w; ++j) {
-                    int a0 = buffer[index++] & 255;
-                    int a1 = buffer[index++] & 255;
-                    int b0 = buffer[index] & 255 | (buffer[index + 1] & 255) << 8 | (buffer[index + 2] & 255) << 16;
-                    int b1 = buffer[index] & 255 | (buffer[index + 1] & 255) << 8 | (buffer[(index += 3) + 2] & 255) << 16;
+        private static int[] DecodeDxt5(int width, int height, int offset, byte[] buffer) {
+            var index = offset;
+            var w = (width + 3) / 4;
+            var h = (height + 3) / 4;
+            var pixels = new int[width * height];
+            var alphaTable = new int[16];
+            for (var i = 0; i < h; ++i) {
+                for (var j = 0; j < w; ++j) {
+                    var a0 = buffer[index++] & 255;
+                    var a1 = buffer[index++] & 255;
+                    var b0 = buffer[index] & 255 | (buffer[index + 1] & 255) << 8 | (buffer[index + 2] & 255) << 16;
+                    var b1 = buffer[index] & 255 | (buffer[index + 1] & 255) << 8 | (buffer[(index += 3) + 2] & 255) << 16;
                     alphaTable[0] = b0 & 7;
                     alphaTable[1] = b0 >> 3 & 7;
                     alphaTable[2] = b0 >> 6 & 7;
@@ -569,21 +578,21 @@ namespace IAGrim.Parser.Arc {
                     alphaTable[13] = b1 >> 15 & 7;
                     alphaTable[14] = b1 >> 18 & 7;
                     alphaTable[15] = b1 >> 21 & 7;
-                    int c0 = buffer[index] & 255 | (buffer[(index += 3) + 1] & 255) << 8;
-                    int c1 = buffer[index] & 255 | (buffer[(index += 2) + 1] & 255) << 8;
+                    var c0 = buffer[index] & 255 | (buffer[(index += 3) + 1] & 255) << 8;
+                    var c1 = buffer[index] & 255 | (buffer[(index += 2) + 1] & 255) << 8;
                     index += 2;
-                    for (int k = 0; k < 4 && 4 * i + k < height; ++k) {
-                        int t0 = buffer[index] & 3;
-                        int t1 = (buffer[index] & 12) >> 2;
-                        int t2 = (buffer[index] & 48) >> 4;
-                        int t3 = (buffer[index++] & 192) >> 6;
-                        pixels[4 * width * i + 4 * j + width * k + 0] = getDXTColor(c0, c1, getDXT5Alpha(a0, a1, alphaTable[4 * k + 0]), t0);
+                    for (var k = 0; k < 4 && 4 * i + k < height; ++k) {
+                        var t0 = buffer[index] & 3;
+                        var t1 = (buffer[index] & 12) >> 2;
+                        var t2 = (buffer[index] & 48) >> 4;
+                        var t3 = (buffer[index++] & 192) >> 6;
+                        pixels[4 * width * i + 4 * j + width * k + 0] = GetDxtColor(c0, c1, GetDxt5Alpha(a0, a1, alphaTable[4 * k + 0]), t0);
                         if (4 * j + 1 >= width) continue;
-                        pixels[4 * width * i + 4 * j + width * k + 1] = getDXTColor(c0, c1, getDXT5Alpha(a0, a1, alphaTable[4 * k + 1]), t1);
+                        pixels[4 * width * i + 4 * j + width * k + 1] = GetDxtColor(c0, c1, GetDxt5Alpha(a0, a1, alphaTable[4 * k + 1]), t1);
                         if (4 * j + 2 >= width) continue;
-                        pixels[4 * width * i + 4 * j + width * k + 2] = getDXTColor(c0, c1, getDXT5Alpha(a0, a1, alphaTable[4 * k + 2]), t2);
+                        pixels[4 * width * i + 4 * j + width * k + 2] = GetDxtColor(c0, c1, GetDxt5Alpha(a0, a1, alphaTable[4 * k + 2]), t2);
                         if (4 * j + 3 >= width) continue;
-                        pixels[4 * width * i + 4 * j + width * k + 3] = getDXTColor(c0, c1, getDXT5Alpha(a0, a1, alphaTable[4 * k + 3]), t3);
+                        pixels[4 * width * i + 4 * j + width * k + 3] = GetDxtColor(c0, c1, GetDxt5Alpha(a0, a1, alphaTable[4 * k + 3]), t3);
                     }
                 }
             }
@@ -591,145 +600,144 @@ namespace IAGrim.Parser.Arc {
         }
         #endregion
 
-
         #region Readers
 
-        private static int[] readA1R5G5B5(int width, int height, int offset, byte[] buffer) {
-            int index = offset;
-            int[] pixels = new int[width * height];
-            for (int i = 0; i < height * width; ++i) {
-                int rgba = buffer[index] & 255 | (buffer[index + 1] & 255) << 8;
+        private static int[] ReadA1R5G5B5(int width, int height, int offset, byte[] buffer) {
+            var index = offset;
+            var pixels = new int[width * height];
+            for (var i = 0; i < height * width; ++i) {
+                var rgba = buffer[index] & 255 | (buffer[index + 1] & 255) << 8;
                 index += 2;
-                int r = BIT5[(rgba & A1R5G5B5_MASKS[0]) >> 10];
-                int g = BIT5[(rgba & A1R5G5B5_MASKS[1]) >> 5];
-                int b = BIT5[rgba & A1R5G5B5_MASKS[2]];
-                int a = 255 * ((rgba & A1R5G5B5_MASKS[3]) >> 15);
+                var r = BIT5[(rgba & A1R5G5B5_MASKS[0]) >> 10];
+                var g = BIT5[(rgba & A1R5G5B5_MASKS[1]) >> 5];
+                var b = BIT5[rgba & A1R5G5B5_MASKS[2]];
+                var a = 255 * ((rgba & A1R5G5B5_MASKS[3]) >> 15);
                 pixels[i] = a << 24 | r << 16 | g << 8 | b << 0;
             }
             return pixels;
         }
 
-        private static int[] readX1R5G5B5(int width, int height, int offset, byte[] buffer) {
-            int index = offset;
-            int[] pixels = new int[width * height];
-            for (int i = 0; i < height * width; ++i) {
-                int rgba = buffer[index] & 255 | (buffer[index + 1] & 255) << 8;
+        private static int[] ReadX1R5G5B5(int width, int height, int offset, byte[] buffer) {
+            var index = offset;
+            var pixels = new int[width * height];
+            for (var i = 0; i < height * width; ++i) {
+                var rgba = buffer[index] & 255 | (buffer[index + 1] & 255) << 8;
                 index += 2;
-                int r = BIT5[(rgba & X1R5G5B5_MASKS[0]) >> 10];
-                int g = BIT5[(rgba & X1R5G5B5_MASKS[1]) >> 5];
-                int b = BIT5[rgba & X1R5G5B5_MASKS[2]];
-                int a = 255;
+                var r = BIT5[(rgba & X1R5G5B5_MASKS[0]) >> 10];
+                var g = BIT5[(rgba & X1R5G5B5_MASKS[1]) >> 5];
+                var b = BIT5[rgba & X1R5G5B5_MASKS[2]];
+                var a = 255;
                 pixels[i] = a << 24 | r << 16 | g << 8 | b << 0;
             }
             return pixels;
         }
 
-        private static int[] readA4R4G4B4(int width, int height, int offset, byte[] buffer) {
-            int index = offset;
-            int[] pixels = new int[width * height];
-            for (int i = 0; i < height * width; ++i) {
-                int rgba = buffer[index] & 255 | (buffer[index + 1] & 255) << 8;
+        private static int[] ReadA4R4G4B4(int width, int height, int offset, byte[] buffer) {
+            var index = offset;
+            var pixels = new int[width * height];
+            for (var i = 0; i < height * width; ++i) {
+                var rgba = buffer[index] & 255 | (buffer[index + 1] & 255) << 8;
                 index += 2;
-                int r = 17 * ((rgba & A4R4G4B4_MASKS[0]) >> 8);
-                int g = 17 * ((rgba & A4R4G4B4_MASKS[1]) >> 4);
-                int b = 17 * (rgba & A4R4G4B4_MASKS[2]);
-                int a = 17 * ((rgba & A4R4G4B4_MASKS[3]) >> 12);
+                var r = 17 * ((rgba & A4R4G4B4_MASKS[0]) >> 8);
+                var g = 17 * ((rgba & A4R4G4B4_MASKS[1]) >> 4);
+                var b = 17 * (rgba & A4R4G4B4_MASKS[2]);
+                var a = 17 * ((rgba & A4R4G4B4_MASKS[3]) >> 12);
                 pixels[i] = a << 24 | r << 16 | g << 8 | b << 0;
             }
             return pixels;
         }
 
-        private static int[] readX4R4G4B4(int width, int height, int offset, byte[] buffer) {
-            int index = offset;
-            int[] pixels = new int[width * height];
-            for (int i = 0; i < height * width; ++i) {
-                int rgba = buffer[index] & 255 | (buffer[index + 1] & 255) << 8;
+        private static int[] ReadX4R4G4B4(int width, int height, int offset, byte[] buffer) {
+            var index = offset;
+            var pixels = new int[width * height];
+            for (var i = 0; i < height * width; ++i) {
+                var rgba = buffer[index] & 255 | (buffer[index + 1] & 255) << 8;
                 index += 2;
-                int r = 17 * ((rgba & A4R4G4B4_MASKS[0]) >> 8);
-                int g = 17 * ((rgba & A4R4G4B4_MASKS[1]) >> 4);
-                int b = 17 * (rgba & A4R4G4B4_MASKS[2]);
-                int a = 255;
+                var r = 17 * ((rgba & A4R4G4B4_MASKS[0]) >> 8);
+                var g = 17 * ((rgba & A4R4G4B4_MASKS[1]) >> 4);
+                var b = 17 * (rgba & A4R4G4B4_MASKS[2]);
+                var a = 255;
                 pixels[i] = a << 24 | r << 16 | g << 8 | b << 0;
             }
             return pixels;
         }
 
-        private static int[] readR5G6B5(int width, int height, int offset, byte[] buffer) {
-            int index = offset;
-            int[] pixels = new int[width * height];
-            for (int i = 0; i < height * width; ++i) {
-                int rgba = buffer[index] & 255 | (buffer[index + 1] & 255) << 8;
+        private static int[] ReadR5G6B5(int width, int height, int offset, byte[] buffer) {
+            var index = offset;
+            var pixels = new int[width * height];
+            for (var i = 0; i < height * width; ++i) {
+                var rgba = buffer[index] & 255 | (buffer[index + 1] & 255) << 8;
                 index += 2;
-                int r = BIT5[(rgba & R5G6B5_MASKS[0]) >> 11];
-                int g = BIT6[(rgba & R5G6B5_MASKS[1]) >> 5];
-                int b = BIT5[rgba & R5G6B5_MASKS[2]];
-                int a = 255;
+                var r = BIT5[(rgba & R5G6B5_MASKS[0]) >> 11];
+                var g = BIT6[(rgba & R5G6B5_MASKS[1]) >> 5];
+                var b = BIT5[rgba & R5G6B5_MASKS[2]];
+                var a = 255;
                 pixels[i] = a << 24 | r << 16 | g << 8 | b << 0;
             }
             return pixels;
         }
 
-        private static int[] readR8G8B8(int width, int height, int offset, byte[] buffer) {
-            int index = offset;
-            int[] pixels = new int[width * height];
-            for (int i = 0; i < height * width; ++i) {
-                int b = buffer[index++] & 255;
-                int g = buffer[index++] & 255;
-                int r = buffer[index++] & 255;
-                int a = 255;
+        private static int[] ReadR8G8B8(int width, int height, int offset, byte[] buffer) {
+            var index = offset;
+            var pixels = new int[width * height];
+            for (var i = 0; i < height * width; ++i) {
+                var b = buffer[index++] & 255;
+                var g = buffer[index++] & 255;
+                var r = buffer[index++] & 255;
+                var a = 255;
                 pixels[i] = a << 24 | r << 16 | g << 8 | b << 0;
             }
             return pixels;
         }
 
-        private static int[] readA8B8G8R8(int width, int height, int offset, byte[] buffer) {
-            int index = offset;
-            int[] pixels = new int[width * height];
-            for (int i = 0; i < height * width; ++i) {
-                int r = buffer[index++] & 255;
-                int g = buffer[index++] & 255;
-                int b = buffer[index++] & 255;
-                int a = buffer[index++] & 255;
+        private static int[] ReadA8B8G8R8(int width, int height, int offset, byte[] buffer) {
+            var index = offset;
+            var pixels = new int[width * height];
+            for (var i = 0; i < height * width; ++i) {
+                var r = buffer[index++] & 255;
+                var g = buffer[index++] & 255;
+                var b = buffer[index++] & 255;
+                var a = buffer[index++] & 255;
                 pixels[i] = a << 24 | r << 16 | g << 8 | b << 0;
             }
             return pixels;
         }
 
-        private static int[] readX8B8G8R8(int width, int height, int offset, byte[] buffer) {
-            int index = offset;
-            int[] pixels = new int[width * height];
-            for (int i = 0; i < height * width; ++i) {
-                int r = buffer[index++] & 255;
-                int g = buffer[index++] & 255;
-                int b = buffer[index++] & 255;
-                int a = 255;
+        private static int[] ReadX8B8G8R8(int width, int height, int offset, byte[] buffer) {
+            var index = offset;
+            var pixels = new int[width * height];
+            for (var i = 0; i < height * width; ++i) {
+                var r = buffer[index++] & 255;
+                var g = buffer[index++] & 255;
+                var b = buffer[index++] & 255;
+                var a = 255;
                 ++index;
                 pixels[i] = a << 24 | r << 16 | g << 8 | b << 0;
             }
             return pixels;
         }
 
-        private static int[] readA8R8G8B8(int width, int height, int offset, byte[] buffer) {
-            int index = offset;
-            int[] pixels = new int[width * height];
-            for (int i = 0; i < height * width; ++i) {
-                int b = buffer[index++] & 255;
-                int g = buffer[index++] & 255;
-                int r = buffer[index++] & 255;
-                int a = buffer[index++] & 255;
+        private static int[] ReadA8R8G8B8(int width, int height, int offset, byte[] buffer) {
+            var index = offset;
+            var pixels = new int[width * height];
+            for (var i = 0; i < height * width; ++i) {
+                var b = buffer[index++] & 255;
+                var g = buffer[index++] & 255;
+                var r = buffer[index++] & 255;
+                var a = buffer[index++] & 255;
                 pixels[i] = a << 24 | r << 16 | g << 8 | b << 0;
             }
             return pixels;
         }
 
-        private static int[] readX8R8G8B8(int width, int height, int offset, byte[] buffer) {
-            int index = offset;
-            int[] pixels = new int[width * height];
-            for (int i = 0; i < height * width; ++i) {
-                int b = buffer[index++] & 255;
-                int g = buffer[index++] & 255;
-                int r = buffer[index++] & 255;
-                int a = 255;
+        private static int[] ReadX8R8G8B8(int width, int height, int offset, byte[] buffer) {
+            var index = offset;
+            var pixels = new int[width * height];
+            for (var i = 0; i < height * width; ++i) {
+                var b = buffer[index++] & 255;
+                var g = buffer[index++] & 255;
+                var r = buffer[index++] & 255;
+                var a = 255;
                 ++index;
                 //pixels[i] = a << 24 | r << 16 | g << 8 | b << 0;
                 pixels[i] = a << 24 | r << 16 | g << 8 | b << 0;
@@ -738,16 +746,14 @@ namespace IAGrim.Parser.Arc {
         }
         #endregion
 
-
-
         #region Colors
-        private static int getDXTColor(int c0, int c1, int a, int t) {
+        private static int GetDxtColor(int c0, int c1, int a, int t) {
             switch (t) {
                 case 0: {
-                        return getDXTColor1(c0, a);
+                        return GetDxtColor1(c0, a);
                     }
                 case 1: {
-                        return getDXTColor1(c1, a);
+                        return GetDxtColor1(c1, a);
                     }
                 case 2: {
                         return c0 > c1 ? getDXTColor2_1(c0, c1, a) : getDXTColor1_1(c0, c1, a);
@@ -760,27 +766,27 @@ namespace IAGrim.Parser.Arc {
         }
 
         private static int getDXTColor2_1(int c0, int c1, int a) {
-            int r = (2 * BIT5[(c0 & 64512) >> 11] + BIT5[(c1 & 64512) >> 11]) / 3;
-            int g = (2 * BIT6[(c0 & 2016) >> 5] + BIT6[(c1 & 2016) >> 5]) / 3;
-            int b = (2 * BIT5[c0 & 31] + BIT5[c1 & 31]) / 3;
+            var r = (2 * BIT5[(c0 & 64512) >> 11] + BIT5[(c1 & 64512) >> 11]) / 3;
+            var g = (2 * BIT6[(c0 & 2016) >> 5] + BIT6[(c1 & 2016) >> 5]) / 3;
+            var b = (2 * BIT5[c0 & 31] + BIT5[c1 & 31]) / 3;
             return a << 16 | r << 8 | g << 0 | b << 24;
         }
 
         private static int getDXTColor1_1(int c0, int c1, int a) {
-            int r = (BIT5[(c0 & 64512) >> 11] + BIT5[(c1 & 64512) >> 11]) / 2;
-            int g = (BIT6[(c0 & 2016) >> 5] + BIT6[(c1 & 2016) >> 5]) / 2;
-            int b = (BIT5[c0 & 31] + BIT5[c1 & 31]) / 2;
+            var r = (BIT5[(c0 & 64512) >> 11] + BIT5[(c1 & 64512) >> 11]) / 2;
+            var g = (BIT6[(c0 & 2016) >> 5] + BIT6[(c1 & 2016) >> 5]) / 2;
+            var b = (BIT5[c0 & 31] + BIT5[c1 & 31]) / 2;
             return a << 16 | r << 8 | g << 0 | b << 24;
         }
 
-        private static int getDXTColor1(int c, int a) {
-            int r = BIT5[(c & 64512) >> 11];
-            int g = BIT6[(c & 2016) >> 5];
-            int b = BIT5[c & 31];
+        private static int GetDxtColor1(int c, int a) {
+            var r = BIT5[(c & 64512) >> 11];
+            var g = BIT6[(c & 2016) >> 5];
+            var b = BIT5[c & 31];
             return a << 16 | r << 8 | g << 0 | b << 24;
         }
 
-        private static int getDXT5Alpha(int a0, int a1, int t) {
+        private static int GetDxt5Alpha(int a0, int a1, int t) {
             if (a0 > a1) {
                 switch (t) {
                     case 0: {
