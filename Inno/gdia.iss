@@ -26,7 +26,7 @@ Name: "{commondesktop}\GD Item Assistant"; Filename: "{app}\\IAGrim.exe"; Tasks:
 Source: "..\IAGrim\bin\Release\*"; Excludes: "*.pdb"; DestDir: "{app}"; Flags: overwritereadonly replacesameversion recursesubdirs createallsubdirs touch ignoreversion
 
 [Run]
-Filename: "{app}\ndp472-kb4054531-web"; Parameters: "/passive /showfinalerror"; Description: "Install .NET 4.7.2"; Flags: postinstall runascurrentuser
+Filename: "{app}\ndp472-kb4054531-web.exe"; Parameters: "/passive /showfinalerror"; Description: "Install .NET 4.7.2"; Flags: postinstall runascurrentuser
 Filename: "{app}\vcredist_x86.exe"; Parameters: "/install /quiet /norestart"; Description: "Install VC++ Redistributable 2013 (x86)"; Flags: runhidden runascurrentuser
 Filename: "{app}\2010sp1_vcredist_x86.exe"; Parameters: "/install /quiet /norestart"; Description: "Install VC++ Redistributable 2010 SP1 (x86)"; Flags: runhidden runascurrentuser
 Filename: "{app}\2015rc3_vc_redist.x86.exe"; Parameters: "/install /quiet /norestart"; Description: "Install VC++ Redistributable 2015 RC3 (x86)"; Flags: runhidden runascurrentuser
