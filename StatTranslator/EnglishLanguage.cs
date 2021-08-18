@@ -69,7 +69,7 @@ namespace StatTranslator {
             {"characterIncreasedExperience", "+{0}% Experience Gain"},
             {"characterIntelligenceModifier", "+{0}% Spirit"},
             {"skillCooldownReduction", "-{0}% Skill Cooldown Reduction"},
-            {"retaliationTotalDamageModifier", "+{0}% Total Retaliation Damage"},  // not caught by the .replace("Modifier") for some reason..
+            {"retaliationTotalDamageModifier", "+{0}% Total Retaliation Damage"}, // not caught by the .replace("Modifier") for some reason..
             {"characterAttackSpeedModifier", "+{0}% Attack Speed"},
             {"characterAttackSpeed", "+{0}% Attack Speed"},
             {"offensiveLifeLeechMin", "{0}% of Attack Damage converted to Health"},
@@ -184,14 +184,8 @@ namespace StatTranslator {
             {"customtag_xpac_modif_skillTargetAngle", "{0} Degree Attack Arc to {3}"},
             {"customtag_xpac_modif_skillTargetNumber", "{0} Target Maximum to {3}"},
             {"customtag_xpac_modif_skillCooldownReductionChance", "{0}% Chance of +{1}% Skill Cooldown Reduction to {3}"}, 
-            {
-                "customtag_xpac_modif_offensiveTotalDamageReductionPercentDurationMin",
-                "{0}% Reduced target's Damage for {1} Seconds to {3}"
-            },
-            {
-                "customtag_xpac_modif_offensiveTotalResistanceReductionAbsoluteMin",
-                "{0} Reduced target's Resistances for {1} Seconds to {3}"
-            },
+            {"customtag_xpac_modif_offensiveTotalDamageReductionPercentDurationMin", "{0}% Reduced target's Damage for {1} Seconds to {3}"},
+            {"customtag_xpac_modif_offensiveTotalResistanceReductionAbsoluteMin", "{0} Reduced target's Resistances for {1} Seconds to {3}"},
             {"customtag_xpac_modif_offensiveDamageMultModifier", "Total Damage Modified by {0}% to {3}"},
             {"customtag_xpac_modif_retaliationTotalDamageModifier", "+{0}% to All Retaliation Damage to {3}"},
             {"offensiveXDurationModifier", "+{1}% {5} Damage with +{0}% Increased Duration to {3}"},
@@ -668,14 +662,14 @@ namespace StatTranslator {
             {"iatag_ui_import_filetype", "File Type"},
             {"iatag_ui_gamestash", "Game Stash"},
             {"iatag_ui_gdstash", "GD Stash"},
-            {"iatag_ui_iastash", "IA Stash"}, 
-            {"iatag_ui_translation", "Item Assistant is available in your language! Go to settings and click \"Language\" to change to English."}, 
+            {"iatag_ui_iastash", "IA Stash"},
+            {"iatag_ui_translation", "Item Assistant is available in your language! Go to settings and click \"Language\" to change to English."},
             {"iatag_ui_database_modified_body", "The Grim Dawn database appears to have been modified.\nIf there has been a recent patch to Grim Dawn:\nGo to \"Database\\Mods\" and parse the database to discover new items and sets."},
             {"iatag_ui_database_modified_title", "New patch?"},
             // These cannot currently be translated.
             // Once the injection code is moved back into the "core" IA, this should be possible.
             {"iatag_ui_avasted", "Avasted!"},
-            {"iatag_ui_avast1", "It appears that one or several essential components of Grim Dawn Item Assistant has been deleted."}, 
+            {"iatag_ui_avast1", "It appears that one or several essential components of Grim Dawn Item Assistant has been deleted."},
             {"iatag_ui_avast2", "This is typically caused by Avast \"anti virus\" flagging Item Assistant as a false positive, without informing the user."},
             {"iatag_ui_avast3", "In order to keep using IA, you must first whitelist it in whichever anti virus/similar software, and then reinstall IA to restore the missing files.!"},
             {"iatag_ui_avast_ok", "OK"},
@@ -704,11 +698,9 @@ namespace StatTranslator {
         }
 
         public string GetTag(string tag) {
-            if (_stats.ContainsKey(tag)) {
-                return _stats[tag];
-            }
-
-            return string.Empty;
+            return _stats.ContainsKey(tag) 
+                ? _stats[tag] 
+                : string.Empty;
         }
 
         public string GetTag(string tag, object[] args) {
