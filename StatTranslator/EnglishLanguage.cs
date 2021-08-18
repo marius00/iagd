@@ -183,7 +183,7 @@ namespace StatTranslator {
             {"customtag_xpac_modif_skillLifePercent", "{0}% Health Restored to {3}"},
             {"customtag_xpac_modif_skillTargetAngle", "{0} Degree Attack Arc to {3}"},
             {"customtag_xpac_modif_skillTargetNumber", "{0} Target Maximum to {3}"},
-            {"customtag_xpac_modif_skillCooldownReductionChance", "{0}% Chance of +{1}% Skill Cooldown Reduction to {3}"}, 
+            {"customtag_xpac_modif_skillCooldownReductionChance", "{0}% Chance of +{1}% Skill Cooldown Reduction to {3}"},
             {"customtag_xpac_modif_offensiveTotalDamageReductionPercentDurationMin", "{0}% Reduced target's Damage for {1} Seconds to {3}"},
             {"customtag_xpac_modif_offensiveTotalResistanceReductionAbsoluteMin", "{0} Reduced target's Resistances for {1} Seconds to {3}"},
             {"customtag_xpac_modif_offensiveDamageMultModifier", "Total Damage Modified by {0}% to {3}"},
