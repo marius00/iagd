@@ -6,8 +6,9 @@ using log4net;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Windows.Forms;
-using IAGrim.Database.Synchronizer;
+using IAGrim.Parsers.Arz;
 using IAGrim.Services;
 using IAGrim.Settings;
 using IAGrim.Utilities;
@@ -139,6 +140,12 @@ namespace IAGrim.UI
             foreach (ListViewItem lvi in listViewInstalls.SelectedItems) {
                 var mod = listViewMods.SelectedItems[0].Tag as ListViewEntry;
                 var entry = lvi.Tag as ListViewEntry;
+
+                if (mod != null)
+                {
+                    // Load selected mod icons
+                    ThreadPool.QueueUserWorkItem((m) => ArzParser.LoadSelectedModIcons(mod.Path));
+                }
 
                 ForceDatabaseUpdate(entry.Path, mod?.Path);
                 _databaseSettingRepo.UpdateCurrentDatabase(entry.Path);
