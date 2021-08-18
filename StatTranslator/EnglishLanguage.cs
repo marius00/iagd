@@ -3,10 +3,10 @@ using System.Linq;
 
 namespace StatTranslator {
     public class EnglishLanguage : ILocalizedLanguage {
-        public bool WarnIfMissing { get; } = true;
+        public bool WarnIfMissing => true;
 
         public EnglishLanguage(Dictionary<string, string> existingTags) {
-            foreach (var tag in existingTags.Keys) {
+            foreach (string tag in existingTags.Keys) {
                 SetTagIfMissing(tag, existingTags[tag]);
             }
         }
@@ -22,7 +22,7 @@ namespace StatTranslator {
                 _stats
                     .OrderBy(entry => entry.Key)
                     .Select((entry, idx) => $"{entry.Key}={entry.Value.Replace("\n", "\\n")}")
-                );
+            );
         }
 
         private readonly Dictionary<string, string> _stats = new Dictionary<string, string> {
@@ -69,7 +69,7 @@ namespace StatTranslator {
             {"characterIncreasedExperience", "+{0}% Experience Gain"},
             {"characterIntelligenceModifier", "+{0}% Spirit"},
             {"skillCooldownReduction", "-{0}% Skill Cooldown Reduction"},
-            {"retaliationTotalDamageModifier", "+{0}% Total Retaliation Damage"}, // not caught by the .replace("Modifier") for some reason..
+            {"retaliationTotalDamageModifier", "+{0}% Total Retaliation Damage"},  // not caught by the .replace("Modifier") for some reason..
             {"characterAttackSpeedModifier", "+{0}% Attack Speed"},
             {"characterAttackSpeed", "+{0}% Attack Speed"},
             {"offensiveLifeLeechMin", "{0}% of Attack Damage converted to Health"},
@@ -87,6 +87,7 @@ namespace StatTranslator {
             {"blockRecoveryTime", "{0} second Block Recovery"},
             {"characterLifeRegen", "+{0} Health regenerated per second"},
             {"characterDexterity", "+{0} Cunning"},
+            {"characterDexterityModifier", "+{0}% Cunning"},
             {"defensiveTrap", "{0}% Reduced Entrapment Duration"},
             {"characterLifeRegenModifier", "+{0}% Health regenerated per second"},
             {"characterDeflectProjectile", "+{0}% Chance to Avoid Projectiles"},
@@ -182,9 +183,15 @@ namespace StatTranslator {
             {"customtag_xpac_modif_skillLifePercent", "{0}% Health Restored to {3}"},
             {"customtag_xpac_modif_skillTargetAngle", "{0} Degree Attack Arc to {3}"},
             {"customtag_xpac_modif_skillTargetNumber", "{0} Target Maximum to {3}"},
-            {"customtag_xpac_modif_skillCooldownReductionChance", "{0}% Chance of +{1}% Skill Cooldown Reduction to {3}"},
-            {"customtag_xpac_modif_offensiveTotalDamageReductionPercentDurationMin", "{0}% Reduced target's Damage for {1} Seconds to {3}"},
-            {"customtag_xpac_modif_offensiveTotalResistanceReductionAbsoluteMin", "{0} Reduced target's Resistances for {1} Seconds to {3}"},
+            {"customtag_xpac_modif_skillCooldownReductionChance", "{0}% Chance of +{1}% Skill Cooldown Reduction to {3}"}, 
+            {
+                "customtag_xpac_modif_offensiveTotalDamageReductionPercentDurationMin",
+                "{0}% Reduced target's Damage for {1} Seconds to {3}"
+            },
+            {
+                "customtag_xpac_modif_offensiveTotalResistanceReductionAbsoluteMin",
+                "{0} Reduced target's Resistances for {1} Seconds to {3}"
+            },
             {"customtag_xpac_modif_offensiveDamageMultModifier", "Total Damage Modified by {0}% to {3}"},
             {"customtag_xpac_modif_retaliationTotalDamageModifier", "+{0}% to All Retaliation Damage to {3}"},
             {"offensiveXDurationModifier", "+{1}% {5} Damage with +{0}% Increased Duration to {3}"},
@@ -310,10 +317,10 @@ namespace StatTranslator {
             {"iatag_html_nomoreitems", "No more items"},
             {"iatag_html_setconsistsof", "This set consists of the following items: "},
 
-            { "iatag_ui_howtorestore", "How do I restore backups?"},
-            {"iatag_ui_updatingstats_title", "Updating stats for owned items.." },
-            {"iatag_ui_updatingstats", "Updating stats for your items..." },
-            {"iatag_ui_darkmode", "Dark mode" },
+            {"iatag_ui_howtorestore", "How do I restore backups?"},
+            {"iatag_ui_updatingstats_title", "Updating stats for owned items.."},
+            {"iatag_ui_updatingstats", "Updating stats for your items..."},
+            {"iatag_ui_darkmode", "Dark mode"},
             {"iatag_ui_nagscreen1_button", "Maybe later..."},
             {"iatag_ui_nagscreen2_button", "Hah, as if!"},
             {"iatag_ui_nagscreen3_button", "Never! Muhaha!"},
@@ -356,16 +363,16 @@ namespace StatTranslator {
             {"iatag_ui_backup_complete", "Backup complete!"},
             {"iatag_ui_backup_failed", "Backup failed, see the log file for more detailed information."},
             {"iatag_ui_backup_details", "Details"},
-            {"iatag_ui_backup_logout", "Logout" },
+            {"iatag_ui_backup_logout", "Logout"},
             {"iatag_ui_backup_status_label", "Status:"},
-            {"iatag_ui_backup_logout_successful_body", "You have been signed out of online backups\n\nGood luck!" },
-            {"iatag_ui_backup_logout_successful_header", "Online backups disabled" },
-            {"iatag_ui_backup_deleteaccount_header", "Delete online backups" },
-            {"iatag_ui_backup_deleteaccount_body", "Are you sure you wish to delete your online backups?" },
-            {"iatag_ui_backup_deleteaccount_success_header", "Online backups deleted" },
-            {"iatag_ui_backup_deleteaccount_success_body", "Your online backups has been deleted" },
-            {"iatag_ui_backup_deleteaccount_failure_header", "An error has occurred" },
-            {"iatag_ui_backup_deleteaccount_failure_body", "An error has occurred while deleting the online backups, please try again later." },
+            {"iatag_ui_backup_logout_successful_body", "You have been signed out of online backups\n\nGood luck!"},
+            {"iatag_ui_backup_logout_successful_header", "Online backups disabled"},
+            {"iatag_ui_backup_deleteaccount_header", "Delete online backups"},
+            {"iatag_ui_backup_deleteaccount_body", "Are you sure you wish to delete your online backups?"},
+            {"iatag_ui_backup_deleteaccount_success_header", "Online backups deleted"},
+            {"iatag_ui_backup_deleteaccount_success_body", "Your online backups has been deleted"},
+            {"iatag_ui_backup_deleteaccount_failure_header", "An error has occurred"},
+            {"iatag_ui_backup_deleteaccount_failure_body", "An error has occurred while deleting the online backups, please try again later."},
             {"iatag_ui_load_database", "Load Database"},
             {"iatag_ui_backup_loggedinas", "Logged in as {0}"},
             {"iatag_ui_backup_statusunknown", "Unknown/Error"},
@@ -376,14 +383,14 @@ namespace StatTranslator {
             {"iatag_ui_source_code", "Source code"},
             {"iatag_ui_online_backup", "Cloud Backup"},
             {"iatag_ui_language_select", "Language Select"},
-            {"iatag_ui_backup_viewcharacters", "View Characters" },
+            {"iatag_ui_backup_viewcharacters", "View Characters"},
             {"iatag_ui_change_language", "Change Language"},
             {"iatag_ui_language_selection", "Language Selection"},
             {"iatag_ui_language_by_author", "{0} by {1}"},
             {"iatag_ui_classes", "Classes"},
             {"iatag_ui_tab_items", "Items"},
             {"iatag_ui_devtools", "Devtools"},
-            {"iatag_ui_lootmanually", "Loot Manually" },
+            {"iatag_ui_lootmanually", "Loot Manually"},
             {"iatag_ui_misc", "Misc"},
             {"iatag_ui_socketedonly", "Has components"},
             {"iatag_ui_duplicatesonly", "Duplicates Only"},
@@ -412,7 +419,7 @@ namespace StatTranslator {
             {"iatag_ui_resistance_vitality", "Vitality"},
             {"iatag_ui_resistance_aether", "Aether"},
             {"iatag_ui_resistance_stun", "Stun"},
-            
+
             {"iatag_ui_dot", "Damage over Time"},
             {"iatag_ui_lifeleech", "Life Leech"},
             {"iatag_ui_decay", "Decay"},
@@ -459,7 +466,7 @@ namespace StatTranslator {
             {"iatag_ui_viewbackups", "View Backups"},
             {"iatag_ui_viewlogs", "View Logs"},
             {"iatag_ui_tab_mods", "Grim Dawn"},
-            {"iatag_ui_tab_online", "Online" },
+            {"iatag_ui_tab_online", "Online"},
             {"iatag_ui_mods_header", "Grim Dawn Database"},
             {"iatag_ui_mod_database_mods_header", "Mod"},
             {"iatag_ui_mod_path", "Path"},
@@ -470,11 +477,11 @@ namespace StatTranslator {
             {"iatag_ui_custom", "Custom"},
             {"iatag_ui_tab_buddy", "Buddy"},
             {"iatag_ui_buddies", "Buddies"},
-            {"iatag_ui_backup_buddy_id", "BuddyId:" },
+            {"iatag_ui_backup_buddy_id", "BuddyId:"},
             {"iatag_ui_buddy_descriptive_help_text", "Buddy items lets you see which items your friends have."},
             {"iatag_ui_buddy_add", "Add buddy"},
-            {"iatag_ui_buddy_modify", "Modify buddy" },
-            {"iatag_ui_buddy_delete", "Delete buddy" },
+            {"iatag_ui_buddy_modify", "Modify buddy"},
+            {"iatag_ui_buddy_delete", "Delete buddy"},
             {"iatag_ui_buddy_header_buddy", "Buddy"},
             {"iatag_ui_buddy_header_items", "Items"},
             {"iatag_ui_configuration", "Configuration"},
@@ -520,7 +527,6 @@ namespace StatTranslator {
             {"class07", "Inquisitor"},
             {"class08", "Necromancer"},
             {"class09", "Oathkeeper"},
-
 
             {"iatag_ui_questionmark", " ? "},
             {"iatag_ui_howdoifindgrimdawn", "How can I find the Grim Dawn install?"},
@@ -579,7 +585,7 @@ namespace StatTranslator {
             {"iatag_rarity_green_p2", "Green (+2)"},
             {"iatag_rarity_blue", "Blue"},
             {"iatag_rarity_epic", "Epic"},
-            {"TagQualityOld", "Obsolete" },
+            {"TagQualityOld", "Obsolete"},
 
             {"iatag_feedback_already_logged_in", "You are already logged in"},
             {"iatag_feedback_too_close_to_stash", "Delaying stash loot - Standing too close to stash!"},
@@ -633,7 +639,6 @@ namespace StatTranslator {
             {"tagFactionUser10_ia", "Barrowholm"},
             {"tagFactionUser11_ia", "Malmouth Resistance"},
             {"iatag_ui_dontwantbackups", "I don't want online features, stop asking me!"},
-
             {"iatag_ui_clean_body", "The internal IA cache has been deleted.\nYour items are still fine, but will shown up as 'Unknown Item'.\n\nIn order to display items, re-parse the GD database."},
             {"iatag_ui_clean_caption", "Cache wiped"},
             {"iatag_ui_tab_secondtolast", "Second to last tab"},
@@ -663,29 +668,28 @@ namespace StatTranslator {
             {"iatag_ui_import_filetype", "File Type"},
             {"iatag_ui_gamestash", "Game Stash"},
             {"iatag_ui_gdstash", "GD Stash"},
-            {"iatag_ui_iastash", "IA Stash"},
-            {"iatag_ui_translation", "Item Assistant is available in your language! Go to settings and click \"Language\" to change to English."},
+            {"iatag_ui_iastash", "IA Stash"}, 
+            {"iatag_ui_translation", "Item Assistant is available in your language! Go to settings and click \"Language\" to change to English."}, 
             {"iatag_ui_database_modified_body", "The Grim Dawn database appears to have been modified.\nIf there has been a recent patch to Grim Dawn:\nGo to \"Database\\Mods\" and parse the database to discover new items and sets."},
             {"iatag_ui_database_modified_title", "New patch?"},
             // These cannot currently be translated.
             // Once the injection code is moved back into the "core" IA, this should be possible.
             {"iatag_ui_avasted", "Avasted!"},
-            {"iatag_ui_avast1", "It appears that one or several essential components of Grim Dawn Item Assistant has been deleted."},
+            {"iatag_ui_avast1", "It appears that one or several essential components of Grim Dawn Item Assistant has been deleted."}, 
             {"iatag_ui_avast2", "This is typically caused by Avast \"anti virus\" flagging Item Assistant as a false positive, without informing the user."},
             {"iatag_ui_avast3", "In order to keep using IA, you must first whitelist it in whichever anti virus/similar software, and then reinstall IA to restore the missing files.!"},
             {"iatag_ui_avast_ok", "OK"},
             {"iatag_ui_avastlink", "Click here for more information"},
 
-            {"iatag_ui_copiedclipboard", "Copied to clipboard" },
-            {"iatag_ui_importexport_nothinginzip_body", "This zip file does not contain any .ias backup files" },
-            {"iatag_ui_importexport_nothinginzip_title", "Error" },
-            {"iatag_ui_importexport_import_success", "Items imported!" },
-            {"iatag_ui_importexport_import_success_body", "Items imported\nIf you already had items, you may have gotten duplicates." },
-            {"iatag_ui_importexport_selectfile", "Select the file to import" },
-            {"iatag_ui_settings_securetransferdsable_body", "Are you sure you wish to disable secure transfers?\n\nIt will be YOUR responsibility to make sure the bank is closed when transferring." },
-            {"iatag_ui_settings_securetransferdsable_title", "Are you sure?" },
-            {"iatag_ui_opencustombackup", "Open folder" },
-
+            {"iatag_ui_copiedclipboard", "Copied to clipboard"},
+            {"iatag_ui_importexport_nothinginzip_body", "This zip file does not contain any .ias backup files"},
+            {"iatag_ui_importexport_nothinginzip_title", "Error"},
+            {"iatag_ui_importexport_import_success", "Items imported!"},
+            {"iatag_ui_importexport_import_success_body", "Items imported\nIf you already had items, you may have gotten duplicates."},
+            {"iatag_ui_importexport_selectfile", "Select the file to import"},
+            {"iatag_ui_settings_securetransferdsable_body", "Are you sure you wish to disable secure transfers?\n\nIt will be YOUR responsibility to make sure the bank is closed when transferring."},
+            {"iatag_ui_settings_securetransferdsable_title", "Are you sure?"},
+            {"iatag_ui_opencustombackup", "Open folder"}
         };
 
         private const string English = "{%_s0}{%_s1}{%_s2}{%_s3}{%_s4}";
