@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using DataAccess;
 using EvilsoftCommons;
-using EvilsoftCommons.Exceptions;
 using IAGrim.Database;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parser.Arc;
@@ -20,16 +17,14 @@ namespace IAGrim.Parsers.Arz {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ArzParser));
         private readonly IDatabaseSettingDao _databaseSettingDao;
         
-
-
         public ArzParser(IDatabaseSettingDao databaseSettingDao) {
             _databaseSettingDao = databaseSettingDao;
         }
         
-        public static void LoadIconsOnly(string grimdawnLocation) {
+        public static void LoadIconsOnly(string grimDawnLocation) {
             Logger.Debug("Icon loading requested");
             {
-                var arcItemsFile = GrimFolderUtility.FindArcFile(grimdawnLocation, "items.arc");
+                var arcItemsFile = GrimFolderUtility.FindArcFile(grimDawnLocation, "items.arc");
                 if (!string.IsNullOrEmpty(arcItemsFile)) {
                     Logger.Debug($"Loading vanilla icons from {arcItemsFile}");
                     LoadIcons(arcItemsFile);
@@ -39,7 +34,7 @@ namespace IAGrim.Parsers.Arz {
                 }
             }
             
-            foreach (string path in GrimFolderUtility.GetGrimExpansionFolders(grimdawnLocation)) {
+            foreach (var path in GrimFolderUtility.GetGrimExpansionFolders(grimDawnLocation)) {
                 var arcItemsFile = GrimFolderUtility.FindArcFile(path, "items.arc");
                 if (!string.IsNullOrEmpty(arcItemsFile)) {
                     Logger.Debug($"Loading expansion icons from {arcItemsFile}");
@@ -48,27 +43,48 @@ namespace IAGrim.Parsers.Arz {
                 else {
                     Logger.Warn("Could not find the expansion, skipping.");
                 }
+            }
+        }
 
+        /// <summary>
+        /// Load icons for the selected mod
+        /// </summary>
+        /// <param name="modPath"></param>
+        public static void LoadSelectedModIcons(string modPath) {
+            var fileNames = Directory.EnumerateFiles(modPath, "*items.arc", SearchOption.AllDirectories).ToList();
+
+            foreach (var fileName in fileNames) {
+                var arcFile = GrimFolderUtility.FindArcFile(modPath, fileName);
+
+                if (!string.IsNullOrEmpty(arcFile))
+                {
+                    Logger.Debug($"Loading mods icons from {arcFile} ({modPath})");
+                    LoadIcons(arcFile);
+                }
+                else
+                {
+                    Logger.Warn($"Could not find the file {arcFile}, skipping.");
+                }
             }
         }
 
         private static void LoadIcons(string arcItemsFile) {
-            Logger.Info($"Loading item icons from {arcItemsFile}..");
+            Logger.Info($"Loading item icons from {arcItemsFile}.");
 
-            bool arcfileLocked = IOHelper.IsFileLocked(new FileInfo(arcItemsFile));
-            TemporaryCopy arcTempFile = new TemporaryCopy(arcItemsFile, arcfileLocked);
-            string arcItemfile = arcTempFile.Filename;
+            var isArcFileLocked = IOHelper.IsFileLocked(new FileInfo(arcItemsFile));
+            var arcTempFile = new TemporaryCopy(arcItemsFile, isArcFileLocked);
+            var arcItemFileName = arcTempFile.Filename;
 
-            if (arcfileLocked) {
+            if (isArcFileLocked) {
                 Logger.Info($"The file {arcItemsFile} is currently locked for reading. Perhaps Grim Dawn is running?");
-                Logger.Info($"A copy of {arcItemsFile} has been created at {arcItemfile}");
+                Logger.Info($"A copy of {arcItemsFile} has been created at {arcItemFileName}");
             }
-            if (!File.Exists(arcItemfile)) {
-                Logger.Warn($"Item icon file \"{arcItemfile}\" could not be located..");
+            if (!File.Exists(arcItemFileName)) {
+                Logger.Warn($"Item icon file \"{arcItemFileName}\" could not be located.");
             }
 
             try {
-                DDSImageReader.ExtractItemIcons(arcItemfile, GlobalPaths.StorageFolder);
+                DDSImageReader.ExtractItemIcons(arcItemFileName, GlobalPaths.StorageFolder);
             }
             catch (ArgumentException ex) {
                 // Ideally we'd like to catch the specific exception, but the available log files don't contain the exception name..
@@ -78,14 +94,14 @@ namespace IAGrim.Parsers.Arz {
         }
 
         public static string ExtractClassFromRecord(string record, IEnumerable<DatabaseItem> items) {
-            Regex playerClassRx = new Regex(@".*/player(class\d+)/.*");
+            var playerClassRx = new Regex(@".*/player(class\d+)/.*");
             // "MasteryEnumeration"	"SkillClass24" => tagSkillClassName24
             var rExSkillClass = playerClassRx.Match(record);
             if (rExSkillClass.Success && rExSkillClass.Groups.Count == 2)
                 return rExSkillClass.Groups[1].Value;
 
             var viaRecord = items.FirstOrDefault(m => m.Record == record);
-            var stat = viaRecord?.Stats.Where(m => m.Stat == "MasteryEnumeration").FirstOrDefault()?.TextValue;
+            var stat = (viaRecord?.Stats).FirstOrDefault(m => m.Stat == "MasteryEnumeration")?.TextValue;
             if (stat != null && stat.Length >= 2) {
                 return stat.Substring(stat.Length - 2);
             }
@@ -94,7 +110,7 @@ namespace IAGrim.Parsers.Arz {
         }
 
         public static string ExtractClassFromRecord(string record) {
-            Regex playerClassRx = new Regex(@".*/player(class\d+)/.*");
+            var playerClassRx = new Regex(@".*/player(class\d+)/.*");
             // "MasteryEnumeration"	"SkillClass24" => tagSkillClassName24
             var rExSkillClass = playerClassRx.Match(record);
             if (rExSkillClass.Success && rExSkillClass.Groups.Count == 2)
@@ -109,19 +125,18 @@ namespace IAGrim.Parsers.Arz {
         /// </summary>
         /// <param name="result"></param>
         /// <param name="item"></param>
+        /// <param name="items"></param>
         public static void GetSpecialMasteryStats(List<DatabaseItemStat> result, DatabaseItem item,
             IEnumerable<DatabaseItem> items) {
             var stats = item.Stats;
 
             // Special case for "+1 to occultist" etc, since its a combination of 2 stats
-            for (int i = 1; i <= 4; i++) {
-                bool hasLevel = stats.Any(m => m.Stat.Equals("augmentMasteryLevel" + i));
-                bool hasClass = stats.Any(m => m.Stat.Equals("augmentMasteryName" + i));
+            for (var i = 1; i <= 4; i++) {
+                var hasLevel = stats.Any(m => m.Stat.Equals("augmentMasteryLevel" + i));
+                var hasClass = stats.Any(m => m.Stat.Equals("augmentMasteryName" + i));
                 if (hasLevel && hasClass) {
-                    float amount = stats.First(m => m.Stat.Equals("augmentMasteryLevel" + i)).Value;
-                    string profession = stats.First(m => m.Stat.Equals("augmentMasteryName" + i)).TextValue;
-
-
+                    var amount = stats.First(m => m.Stat.Equals("augmentMasteryLevel" + i)).Value;
+                    var profession = stats.First(m => m.Stat.Equals("augmentMasteryName" + i)).TextValue;
                     var professionTag = ExtractClassFromRecord(profession, items);
 
                     result.Add(new DatabaseItemStat {
@@ -131,11 +146,11 @@ namespace IAGrim.Parsers.Arz {
                         TextValue = professionTag
                     });
                 }
-                else
+                else {
                     break;
+                }
             }
         }
-
 
         private static string GetSkillDisplayName(IEnumerable<DatabaseItem> items, string skillRecord) {
             var skill = items?.Where(m => m.Record == skillRecord).FirstOrDefault()?.Stats;
@@ -160,7 +175,6 @@ namespace IAGrim.Parsers.Arz {
             }
             return null;
         }
-
 
         public static string GetRootSkillRecord(List<DatabaseItem> statLoader, string skillRecord) {
             //var skill = allRecords.Where(m => m.Record.Equals(skillRecord))
@@ -199,15 +213,15 @@ namespace IAGrim.Parsers.Arz {
         ) {
             var stats = item.Stats;
             // Special case for "+1 to specific skill" etc, since its a combination of 2 stats
-            for (int i = 1; i <= 4; i++) {
-                bool hasLevel = stats.Any(m => m.Stat.Equals("augmentSkillLevel" + i));
-                bool hasClass = stats.Any(m => m.Stat.Equals("augmentSkillName" + i));
+            for (var i = 1; i <= 4; i++) {
+                var hasLevel = stats.Any(m => m.Stat.Equals("augmentSkillLevel" + i));
+                var hasClass = stats.Any(m => m.Stat.Equals("augmentSkillName" + i));
                 if (hasLevel && hasClass) {
-                    float amount = stats.First(m => m.Stat.Equals("augmentSkillLevel" + i)).Value;
-                    string skillRecord = stats.First(m => m.Stat.Equals("augmentSkillName" + i)).TextValue;
+                    var amount = stats.First(m => m.Stat.Equals("augmentSkillLevel" + i)).Value;
+                    var skillRecord = stats.First(m => m.Stat.Equals("augmentSkillName" + i)).TextValue;
 
                     // Get the tag-name from the skill
-                    string skillNameEntry = GetSkillDisplayName(skills, skillRecord);
+                    var skillNameEntry = GetSkillDisplayName(skills, skillRecord);
                     if (skillNameEntry == null)
                         continue;
 
@@ -225,14 +239,12 @@ namespace IAGrim.Parsers.Arz {
                         TextValue = tag
                     });
 
-
                     // Extra data (class and tier for +1 to someskill)
-                    string rootSkill = GetRootSkillRecord(skills, skillRecord);
-
+                    var rootSkill = GetRootSkillRecord(skills, skillRecord);
 
                     var dbstat = (skills.FirstOrDefault(m => m.Record == rootSkill)?.Stats).FirstOrDefault(m => m.Stat == "skillTier");
                     if (dbstat != null) {
-                        string skillClass = ExtractClassFromRecord(skillRecord, items);
+                        var skillClass = ExtractClassFromRecord(skillRecord, items);
                         result.Add(new DatabaseItemStat {
                             Parent = item,
                             Stat = "augmentSkill" + i + "Extras",
@@ -241,8 +253,9 @@ namespace IAGrim.Parsers.Arz {
                         });
                     }
                 }
-                else
+                else {
                     break;
+                }
             }
         }
     }
