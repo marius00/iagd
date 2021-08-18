@@ -4,7 +4,6 @@ using System.Drawing.Imaging;
 using log4net;
 using System.IO;
 using EvilsoftCommons;
-using log4net.Repository.Hierarchy;
 
 namespace IAGrim.Parser.Arc {
     public class DDSImageReader {
