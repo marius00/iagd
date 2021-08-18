@@ -4,6 +4,7 @@ using System.Drawing.Imaging;
 using log4net;
 using System.IO;
 using EvilsoftCommons;
+using log4net.Repository.Hierarchy;
 
 namespace IAGrim.Parser.Arc {
     public class DDSImageReader {
@@ -61,8 +62,20 @@ namespace IAGrim.Parser.Arc {
                         if (b != null) {
                             if (icon.EndsWith(".png")) {
                                 try {
-                                    using (var image = Image.FromStream(new MemoryStream(b)))
-                                    {
+                                    using (var image = Image.FromStream(new MemoryStream(b))) {
+                                        var h = image.Height;
+                                        var w = image.Width;
+
+                                        // Anything bigger than 128 is likely a real texture
+                                        if (w > 128 || h > 128) {
+                                            continue;
+                                        }
+
+                                        // Anything bigger than 96, and square is most likely a real texture
+                                        if ((w > 96 || h > 96) && w == h) {
+                                            continue;
+                                        }
+
                                         image.Save(Path.Combine(destinationFolder, $@"{Path.GetFileName(icon)}"));
                                     }
                                 }
@@ -111,8 +124,16 @@ namespace IAGrim.Parser.Arc {
 
             var w = GetWidth(rawPixels);
             var h = GetHeight(rawPixels);
-            if (w > 96 || h > 96)
+
+            // Anything bigger than 128 is likely a real texture
+            if (w > 128 || h > 128) {
                 return null;
+            }
+
+            // Anything bigger than 96, and square is most likely a real texture
+            if ((w > 96 || h > 96) && w == h) { 
+                return null;
+            }
 
             var decodedPixels = Read(rawPixels, 0);
             if (decodedPixels == null)
