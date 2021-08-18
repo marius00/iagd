@@ -8,10 +8,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
-namespace IAGrim.Parser.Arz
-{
-    public class ArzParser
-    {
+namespace IAGrim.Parser.Arz {
+    public class ArzParser {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ArzParser));
 
         /// <summary>
@@ -20,19 +18,16 @@ namespace IAGrim.Parser.Arz
         /// <param name="fs"></param>
         /// <param name="start"></param>
         /// <param name="numBytes"></param>
-        private static List<string> LoadStringTable(FileStream fs, uint start, uint numBytes)
-        {
+        private static List<string> LoadStringTable(FileStream fs, uint start, uint numBytes) {
             List<string> stringTable = new List<string>();
             fs.Seek(start, SeekOrigin.Begin);
 
             uint end = start + numBytes;
 
-            while (fs.Position < end)
-            {
+            while (fs.Position < end) {
                 uint count = IOHelper.ReadUInteger(fs);
 
-                for (int i = 0; i < count; i++)
-                {
+                for (int i = 0; i < count; i++) {
                     string s = IOHelper.ReadString(fs);
                     stringTable.Add(s);
                 }
@@ -41,10 +36,8 @@ namespace IAGrim.Parser.Arz
             return stringTable;
         }
 
-        private static bool IsInteresting(string record)
-        {
-            string[] interesting =
-            {
+        private static bool IsInteresting(string record) {
+            string[] interesting = {
                 "/scriptentities/",
                 "/items/",
                 "/storyelements/",
@@ -55,28 +48,24 @@ namespace IAGrim.Parser.Arz
             return interesting.Any(record.Contains);
         }
 
-        private static IItem ExtractItem(Record record, IReadOnlyList<string> stringTable, bool skipLots)
-        {
+        private static IItem ExtractItem(Record record, IReadOnlyList<string> stringTable, bool skipLots) {
             int tmp = 0;
 
             string itemName = stringTable[(int)record.StringIndex];
 
             // Skip effects/procs/etc
-            if (skipLots && !IsInteresting(itemName))
-            {
+            if (skipLots && !IsInteresting(itemName)) {
                 return null;
             }
 
-            IItem item = new Item
-            {
+            IItem item = new Item {
                 Record = itemName,
                 Stats = new List<IItemStat>(),
             };
 
             uint offset = 0;
 
-            while (tmp < record.Uncompressed.Length / 4)
-            {
+            while (tmp < record.Uncompressed.Length / 4) {
                 byte[] data = record.Uncompressed;
                 ushort type = IOHelper.GetShort(data, offset + 0);
                 ushort numEntries = IOHelper.GetShort(data, offset + 2);
@@ -87,43 +76,35 @@ namespace IAGrim.Parser.Arz
                 // Store the interesting records
                 string recordstring = stringTable[(int)stringIndex];
                 {
-                    for (uint n = 0; n < numEntries; n++)
-                    {
+                    for (uint n = 0; n < numEntries; n++) {
                         uint pos = 8 + 4 * n;
 
-                        switch (type)
-                        {
-                            case 1:
-                            {
+                        switch (type) {
+                            case 1: {
                                 float f = IOHelper.GetFloat(data, offset + pos);
 
-                                if (Math.Abs(f) > 0.01)
-                                {
+                                if (Math.Abs(f) > 0.01) {
                                     item.Stats.Add(new ItemStat { Stat = recordstring, Value = f });
                                 }
 
                                 break;
                             }
 
-                            case 2:
-                            {
+                            case 2: {
                                 // Could technically continue to be stored as an int.. 
                                 string val = stringTable[(int)IOHelper.GetUInt(data, offset + pos)];
 
-                                if (!string.IsNullOrEmpty(val))
-                                {
+                                if (!string.IsNullOrEmpty(val)) {
                                     item.Stats.Add(new ItemStat { Stat = recordstring, TextValue = val });
                                 }
 
                                 break;
                             }
 
-                            default:
-                            {
+                            default: {
                                 uint val = IOHelper.GetUInt(data, offset + pos);
 
-                                if (val > 0)
-                                {
+                                if (val > 0) {
                                     item.Stats.Add(new ItemStat { Stat = recordstring, Value = (int)val });
                                 }
 
@@ -142,22 +123,24 @@ namespace IAGrim.Parser.Arz
         /// <summary>
         /// Load items from the Grim Dawn client
         /// </summary>
-        private static List<IItem> LoadRecords(FileStream fs, uint start, uint numRecords, IReadOnlyList<string> stringTable, bool skipLots)
-        {
+        private static List<IItem> LoadRecords(
+            FileStream fs,
+            uint start,
+            uint numRecords,
+            IReadOnlyList<string> stringTable,
+            bool skipLots) {
             fs.Seek(start, SeekOrigin.Begin);
 
             List<Record> tempRecords = new List<Record>();
 
             // Read all the records
-            for (int i = 0; i < numRecords; i++)
-            {
+            for (int i = 0; i < numRecords; i++) {
                 Record record = ReadRecord(fs);
                 tempRecords.Add(record);
             }
 
             // Read and decompress the data
-            foreach (Record record in tempRecords)
-            {
+            foreach (Record record in tempRecords) {
                 Decompress(fs, record);
             }
 
@@ -167,12 +150,10 @@ namespace IAGrim.Parser.Arz
             List<IItem> items = new List<IItem>();
 
             // Parse the uncompressed data
-            while (tempRecords.Count > 0)
-            {
+            while (tempRecords.Count > 0) {
                 IItem item = ExtractItem(tempRecords[0], stringTable, skipLots);
 
-                if (item != null)
-                {
+                if (item != null) {
                     items.Add(item);
                 }
 
@@ -182,23 +163,19 @@ namespace IAGrim.Parser.Arz
             return new List<IItem>(items);
         }
 
-        private static void Decompress(FileStream fs, Record record)
-        {
+        private static void Decompress(FileStream fs, Record record) {
             fs.Seek(record.Offset + 24, SeekOrigin.Begin); // 24?
 
-            if (fs.Read(record.Compressed, 0, record.Compressed.Length) != record.Compressed.Length)
-            {
+            if (fs.Read(record.Compressed, 0, record.Compressed.Length) != record.Compressed.Length) {
                 Logger.Warn("Could not read an entire record..");
             }
-            else
-            {
+            else {
                 record.Uncompressed = LZ4.LZ4Codec.Decode(record.Compressed, 0, record.Compressed.Length, record.Uncompressed.Length);
                 record.Compressed = null;
             }
         }
 
-        private static Record ReadRecord(FileStream fs)
-        {
+        private static Record ReadRecord(FileStream fs) {
             Record record = new Record();
             record.StringIndex = IOHelper.ReadUInteger(fs);
             record.Type = IOHelper.ReadString(fs);
@@ -214,25 +191,20 @@ namespace IAGrim.Parser.Arz
             return record;
         }
 
-        public static List<IItemTag> ParseArcFile(string file)
-        {
+        public static List<IItemTag> ParseArcFile(string file) {
             // Load the ARC data (item names etc)
-            if (!string.IsNullOrEmpty(file))
-            {
+            if (!string.IsNullOrEmpty(file)) {
                 Decompress decompresser = new Decompress(file, true);
                 decompresser.decompress();
 
                 List<IItemTag> tags = new List<IItemTag>();
 
-                foreach (string s in decompresser.strings)
-                {
-                    if (s.ToLowerInvariant().EndsWith(".txt"))
-                    {
+                foreach (string s in decompresser.strings) {
+                    if (s.ToLowerInvariant().EndsWith(".txt")) {
                         tags.AddRange(decompresser.GetTags(s));
                         Logger.Debug($"Loading tags from {s}");
                     }
-                    else
-                    {
+                    else {
                         Logger.Debug($"Skipping tag file \"{s}\"");
                     }
                 }
@@ -247,12 +219,10 @@ namespace IAGrim.Parser.Arz
             return null;
         }
 
-        public static List<IItem> LoadItemRecords(string arzFile, bool skipLots)
-        {
+        public static List<IItem> LoadItemRecords(string arzFile, bool skipLots) {
             GRIMDAWN_ARZ_V3_HEADER header = new GRIMDAWN_ARZ_V3_HEADER();
 
-            using (FileStream fs = new FileStream(arzFile, FileMode.Open))
-            {
+            using (FileStream fs = new FileStream(arzFile, FileMode.Open)) {
                 header.Unknown = IOHelper.ReadUShort(fs);
                 header.Version = IOHelper.ReadUShort(fs);
                 header.RecordTableStart = IOHelper.ReadUInteger(fs);
