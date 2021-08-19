@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace StatTranslator {
     public class StatManager {
@@ -39,9 +40,9 @@ namespace StatTranslator {
         }
 
         private void ProcessConversionDamage(ISet<IItemStat> stats, List<TranslatedStat> result) {
-            IItemStat conversionPercentage = stats.FirstOrDefault(m => m.Stat == "conversionPercentage");
-            IItemStat conversionOutType = stats.FirstOrDefault(m => m.Stat == "conversionOutType");
-            IItemStat conversionInType = stats.FirstOrDefault(m => m.Stat == "conversionInType");
+            var conversionPercentage = stats.FirstOrDefault(m => m.Stat == "conversionPercentage");
+            var conversionOutType = stats.FirstOrDefault(m => m.Stat == "conversionOutType");
+            var conversionInType = stats.FirstOrDefault(m => m.Stat == "conversionInType");
 
             if (conversionPercentage != null && conversionOutType != null && conversionInType != null) {
                 result.Add(new TranslatedStat {
@@ -54,9 +55,9 @@ namespace StatTranslator {
             }
             
             // A bit of a lame way of doing this.. maybe look into a better way? stats has a "pet" prefix from earlier preprocessing when loading the database
-            IItemStat petConversionPercentage = stats.FirstOrDefault(m => m.Stat == "petconversionPercentage");
-            IItemStat petConversionOutType = stats.FirstOrDefault(m => m.Stat == "petconversionOutType");
-            IItemStat petConversionInType = stats.FirstOrDefault(m => m.Stat == "petconversionInType");
+            var petConversionPercentage = stats.FirstOrDefault(m => m.Stat == "petconversionPercentage");
+            var petConversionOutType = stats.FirstOrDefault(m => m.Stat == "petconversionOutType");
+            var petConversionInType = stats.FirstOrDefault(m => m.Stat == "petconversionInType");
 
             if (petConversionPercentage != null && petConversionOutType != null && petConversionInType != null) {
                 result.Add(new TranslatedStat {
@@ -70,6 +71,27 @@ namespace StatTranslator {
         }
 
         /// <summary>
+        /// Try to get the class name. Replaces [ms]{0}[fs]{1} format by {0}/{1}.
+        /// </summary>
+        /// <param name="initialTag">Initial tag</param>
+        /// <returns>Class name</returns>
+        private string TryGetClassName(string initialTag) {
+            const string namePattern = @"\[ms\](.*)\[fs\](.*)";
+
+            var className = _language.GetTag(initialTag);
+
+            // Probably a custom class. Try to get via tagSkillClassName.
+            if (string.IsNullOrEmpty(className))
+            {
+                className = _language.GetTag(initialTag.Replace("class", "tagSkillClassName"));
+            }
+
+            return Regex.IsMatch(className, namePattern)
+                ? Regex.Replace(className, namePattern, "$1/$2")
+                : className;
+        }
+
+        /// <summary>
         /// Process skill stats
         /// These are non-standard skills, pre-processed by the parser.
         /// 
@@ -80,14 +102,14 @@ namespace StatTranslator {
         /// <param name="stats"></param>
         /// <param name="result"></param>
         private void ProcessAddSkill(ISet<IItemStat> stats, List<TranslatedStat> result) {
-            List<IItemStat> skillCandidates = stats.Where(m => m.Stat.StartsWith("augmentSkill") && m.Stat.Length == "augmentSkill".Length + 1)
+            var skillCandidates = stats.Where(m => m.Stat.StartsWith("augmentSkill") && m.Stat.Length == "augmentSkill".Length + 1)
                 .ToList();
 
             // "augmentSkill1", "augmentSkill2",
-            foreach (IItemStat stat in skillCandidates) {
-                string statName = stat.Stat;
+            foreach (var stat in skillCandidates) {
+                var statName = stat.Stat;
                 // Record is requires as we may have "augmentSkill1" multiple times, from different records.
-                IItemStat statExtras = stats.FirstOrDefault(m => m.Stat == statName + "Extras" && m.Record == stat.Record);
+                var statExtras = stats.FirstOrDefault(m => m.Stat == statName + "Extras" && m.Record == stat.Record);
 
                 TranslatedStat extraStat = null;
 
@@ -95,7 +117,7 @@ namespace StatTranslator {
                     extraStat = new TranslatedStat {
                         Text = _language.GetTag(statName + "Extras"),
                         Param0 = statExtras.Value, // Tier
-                        Param3 = _language.GetTag(statExtras.TextValue) // Class
+                        Param3 = TryGetClassName(statExtras.TextValue)
                     };
                 }
 
@@ -109,30 +131,30 @@ namespace StatTranslator {
         }
         private void ProcessAddMastery(ISet<IItemStat> stats, List<TranslatedStat> result) {
             // "augmentSkill1", "augmentSkill2",
-            for (int i = 1; i <= 4; i++) {
-                string statName = "augmentMastery" + i;
-                IItemStat stat = stats.FirstOrDefault(m => m.Stat == statName);
+            for (var i = 1; i <= 4; i++) {
+                var statName = "augmentMastery" + i;
+                var stat = stats.FirstOrDefault(m => m.Stat == statName);
 
                 if (stat != null) {
                     result.Add(new TranslatedStat {
                         Text = _language.GetTag(statName),
                         Param0 = stat.Value,
-                        Param3 = _language.GetTag(stat.TextValue)
+                        Param3 = TryGetClassName(stat.TextValue)
                     });
                 }
             }
         }
 
         private void ProcessStun(ISet<IItemStat> stats, List<TranslatedStat> result) {
-            IItemStat min = stats.FirstOrDefault(m => m.Stat == "offensiveStunMin");
-            IItemStat max = stats.FirstOrDefault(m => m.Stat == "offensiveStunMax");
-            IItemStat chance = stats.FirstOrDefault(m => m.Stat == "offensiveStunChance");
+            var min = stats.FirstOrDefault(m => m.Stat == "offensiveStunMin");
+            var max = stats.FirstOrDefault(m => m.Stat == "offensiveStunMax");
+            var chance = stats.FirstOrDefault(m => m.Stat == "offensiveStunChance");
 
             if (min == null) {
                 return;
             }
 
-            string tag = _language.GetTag(max != null ? "offensiveStunMax" : "offensiveStunMin");
+            var tag = _language.GetTag(max != null ? "offensiveStunMax" : "offensiveStunMin");
 
             if (chance != null) {
                 tag = _language.GetTag("offensiveStunChance") + tag;
@@ -147,8 +169,8 @@ namespace StatTranslator {
         }
 
         private void ProcessAngleDamage(ISet<IItemStat> stats, List<TranslatedStat> result) {
-            IItemStat angle = stats.FirstOrDefault(m => m.Stat == "skillTargetAngle");
-            IItemStat numTargets = stats.FirstOrDefault(m => m.Stat == "skillTargetNumber");
+            var angle = stats.FirstOrDefault(m => m.Stat == "skillTargetAngle");
+            var numTargets = stats.FirstOrDefault(m => m.Stat == "skillTargetNumber");
 
             if (angle != null) {
                 result.Add(new TranslatedStat {
@@ -160,9 +182,9 @@ namespace StatTranslator {
         }
 
         private void ProcessChainDamage(ISet<IItemStat> stats, List<TranslatedStat> result) {
-            IItemStat sparkChance = stats.FirstOrDefault(m => m.Stat == "sparkChance");
-            IItemStat sparkGap = stats.FirstOrDefault(m => m.Stat == "sparkGap");
-            IItemStat sparkMaxNumber = stats.FirstOrDefault(m => m.Stat == "sparkMaxNumber");
+            var sparkChance = stats.FirstOrDefault(m => m.Stat == "sparkChance");
+            var sparkGap = stats.FirstOrDefault(m => m.Stat == "sparkGap");
+            var sparkMaxNumber = stats.FirstOrDefault(m => m.Stat == "sparkMaxNumber");
 
             if (sparkChance != null && sparkGap != null && sparkMaxNumber != null) {
                 result.Add(new TranslatedStat {
@@ -175,8 +197,8 @@ namespace StatTranslator {
         }
 
         private void ProcessFactionWrits(ISet<IItemStat> stats, List<TranslatedStat> result) {
-            IItemStat faction = stats.FirstOrDefault(m => m.Stat == "boostedFaction");
-            IItemStat multiplier = stats.FirstOrDefault(m => m.Stat == "boostedMultiplier");
+            var faction = stats.FirstOrDefault(m => m.Stat == "boostedFaction");
+            var multiplier = stats.FirstOrDefault(m => m.Stat == "boostedMultiplier");
 
             if (faction != null && multiplier != null) {
                 result.Add(new TranslatedStat {
@@ -189,9 +211,9 @@ namespace StatTranslator {
         }
 
         private void ProcessReducedResistances(ISet<IItemStat> stats, List<TranslatedStat> result) {
-            IItemStat chance = stats.FirstOrDefault(m => m.Stat == "offensiveTotalResistanceReductionPercentChance");
-            IItemStat duration = stats.FirstOrDefault(m => m.Stat == "offensiveTotalResistanceReductionPercentDurationMin");
-            IItemStat min = stats.FirstOrDefault(m => m.Stat == "offensiveTotalResistanceReductionPercentMin");
+            var chance = stats.FirstOrDefault(m => m.Stat == "offensiveTotalResistanceReductionPercentChance");
+            var duration = stats.FirstOrDefault(m => m.Stat == "offensiveTotalResistanceReductionPercentDurationMin");
+            var min = stats.FirstOrDefault(m => m.Stat == "offensiveTotalResistanceReductionPercentMin");
 
             if (chance != null && duration != null && min != null) {
                 result.Add(new TranslatedStat {
@@ -205,12 +227,12 @@ namespace StatTranslator {
         }
 
         private void ProcessRacialBonuses(ISet<IItemStat> stats, List<TranslatedStat> result) {
-            IItemStat racialBonusPercentDamage = stats.FirstOrDefault(m => m.Stat == "racialBonusPercentDamage");
-            List<IItemStat> racialBonusRace = stats.Where(m => m.Stat == "racialBonusRace").ToList();
+            var racialBonusPercentDamage = stats.FirstOrDefault(m => m.Stat == "racialBonusPercentDamage");
+            var racialBonusRace = stats.Where(m => m.Stat == "racialBonusRace").ToList();
 
             if (racialBonusPercentDamage != null && racialBonusRace.Count >= 1) {
-                string race01 = _language.GetTag(racialBonusRace.FirstOrDefault().TextValue);
-                string race02 = racialBonusRace.Count >= 2 ? _language.GetTag(racialBonusRace.FirstOrDefault().TextValue) : null;
+                var race01 = _language.GetTag(racialBonusRace.FirstOrDefault().TextValue);
+                var race02 = racialBonusRace.Count >= 2 ? _language.GetTag(racialBonusRace.FirstOrDefault().TextValue) : null;
 
                 result.Add(new TranslatedStat {
                     Text = _language.GetTag("customtag_damage_racial"),
@@ -221,14 +243,14 @@ namespace StatTranslator {
                 });
             }
 
-            IItemStat racialBonusPercentDefense = stats.FirstOrDefault(m => m.Stat == "racialBonusPercentDefense");
+            var racialBonusPercentDefense = stats.FirstOrDefault(m => m.Stat == "racialBonusPercentDefense");
 
             if (racialBonusPercentDefense == null || racialBonusRace.Count < 1) {
                 return;
             }
 
-            string raceDef01 = _language.GetTag(racialBonusRace[0].TextValue);
-            string raceDef02 = racialBonusRace.Count >= 2 ? _language.GetTag(racialBonusRace.FirstOrDefault().TextValue) : null;
+            var raceDef01 = _language.GetTag(racialBonusRace[0].TextValue);
+            var raceDef02 = racialBonusRace.Count >= 2 ? _language.GetTag(racialBonusRace.FirstOrDefault().TextValue) : null;
 
             if (raceDef02 == null) {
                 result.Add(new TranslatedStat {
@@ -250,13 +272,13 @@ namespace StatTranslator {
         }
 
         private void ProcessAttackSpeed(ISet<IItemStat> stats, List<TranslatedStat> result) {
-            IItemStat characterBaseAttackSpeed = stats.FirstOrDefault(m => m.Stat == "characterBaseAttackSpeed");
+            var characterBaseAttackSpeed = stats.FirstOrDefault(m => m.Stat == "characterBaseAttackSpeed");
 
             if (characterBaseAttackSpeed == null) {
                 return;
             }
 
-            string tag = stats.FirstOrDefault(m => m.Stat == "characterBaseAttackSpeedTag")?.TextValue;
+            var tag = stats.FirstOrDefault(m => m.Stat == "characterBaseAttackSpeedTag")?.TextValue;
             tag = tag != null ? _language.GetTag(tag) : "Unknown";
 
             result.Add(new TranslatedStat {
@@ -268,8 +290,8 @@ namespace StatTranslator {
 
         // TODO: Surely there can be some generic way to do this? Input 2 stats and a translation string?
         private void ProcessSlowRetaliation(ISet<IItemStat> stats, List<TranslatedStat> result) {
-            IItemStat duration = stats.FirstOrDefault(m => m.Stat == "retaliationSlowAttackSpeedDurationMin");
-            IItemStat amount = stats.FirstOrDefault(m => m.Stat == "retaliationSlowAttackSpeedMin");
+            var duration = stats.FirstOrDefault(m => m.Stat == "retaliationSlowAttackSpeedDurationMin");
+            var amount = stats.FirstOrDefault(m => m.Stat == "retaliationSlowAttackSpeedMin");
 
             if (duration != null && amount != null) {
                 result.Add(new TranslatedStat {
@@ -281,14 +303,14 @@ namespace StatTranslator {
         }
 
         private void ProcessShieldBlock(ISet<IItemStat> stats, List<TranslatedStat> result) {
-            IItemStat defensiveBlockChance = stats.FirstOrDefault(m => m.Stat == "defensiveBlockChance");
+            var defensiveBlockChance = stats.FirstOrDefault(m => m.Stat == "defensiveBlockChance");
 
             if (defensiveBlockChance == null) {
                 return;
             }
 
-            IItemStat defensiveBlock = stats.FirstOrDefault(m => m.Stat == "defensiveBlock");
-            IItemStat blockAbsorption = stats.FirstOrDefault(m => m.Stat == "blockAbsorption");
+            var defensiveBlock = stats.FirstOrDefault(m => m.Stat == "defensiveBlock");
+            var blockAbsorption = stats.FirstOrDefault(m => m.Stat == "blockAbsorption");
 
             if (defensiveBlock != null && blockAbsorption != null) {
                 result.Add(new TranslatedStat {
@@ -312,7 +334,7 @@ namespace StatTranslator {
         private string DamageTypeTranslation(string d) {
             d = d.Replace("Modifier", "");
 
-            string localized = _language.GetTag(d);
+            var localized = _language.GetTag(d);
 
             if (!string.IsNullOrEmpty(localized)) {
                 return localized;
@@ -335,12 +357,12 @@ namespace StatTranslator {
                 "BasePhysical",
                 "BaseLife"
             };
-            List<string> damageTypes = _damageTypes.Select(m => $"offensive{m}Min").ToList();
+            var damageTypes = _damageTypes.Select(m => $"offensive{m}Min").ToList();
             _ProcessDamage(stats, result, damageTypes, TranslatedStatType.HEADER);
         }
 
         private void ProcessBodyDamage(ISet<IItemStat> stats, List<TranslatedStat> result) {
-            List<string> damageTypes = BodyDamageTypes.Select(m => $"offensive{m}Min").ToList();
+            var damageTypes = BodyDamageTypes.Select(m => $"offensive{m}Min").ToList();
             _ProcessDamage(stats, result, damageTypes, TranslatedStatType.BODY);
 
             damageTypes = BodyDamageTypes.Select(m => $"offensive{m}Modifier").ToList();
@@ -350,18 +372,18 @@ namespace StatTranslator {
         }
 
         private void ProccessBodyRetaliation(ISet<IItemStat> stats, List<TranslatedStat> result) {
-            List<string> damageTypes = BodyDamageTypes.Select(m => $"retaliation{m}Min").ToList();
+            var damageTypes = BodyDamageTypes.Select(m => $"retaliation{m}Min").ToList();
 
-            IEnumerable<IItemStat> candidates = stats.Where(m => damageTypes.Contains(m.Stat));
+            var candidates = stats.Where(m => damageTypes.Contains(m.Stat));
 
-            foreach (IItemStat minDmg in candidates) {
-                string type = minDmg.Stat.Replace("retaliation", "").Replace("Min", "");
-                IItemStat maxDmg = stats.FirstOrDefault(m => m.Stat.Equals($"retaliation{type}Max"));
-                IItemStat duration = stats.FirstOrDefault(m => m.Stat.Equals($"retaliation{type}DurationMin"));
+            foreach (var minDmg in candidates) {
+                var type = minDmg.Stat.Replace("retaliation", "").Replace("Min", "");
+                var maxDmg = stats.FirstOrDefault(m => m.Stat.Equals($"retaliation{type}Max"));
+                var duration = stats.FirstOrDefault(m => m.Stat.Equals($"retaliation{type}DurationMin"));
 
-                float minDmgVal = minDmg.Value;
+                var minDmgVal = minDmg.Value;
 
-                StringBuilder sb = new StringBuilder();
+                var sb = new StringBuilder();
 
                 if (maxDmg != null) {
                     sb.Append(_language.GetTag("customtag_013_retaliation"));
@@ -391,17 +413,17 @@ namespace StatTranslator {
             List<TranslatedStat> result,
             List<string> damageTypes,
             TranslatedStatType location) {
-            IEnumerable<IItemStat> candidates = stats.Where(m => damageTypes.Contains(m.Stat));
+            var candidates = stats.Where(m => damageTypes.Contains(m.Stat));
 
-            foreach (IItemStat minDmg in candidates) {
-                string type = minDmg.Stat.Replace("offensive", "").Replace("Min", "");
-                IItemStat maxDmg = stats.FirstOrDefault(m => m.Stat.Equals($"offensive{type}Max"));
-                IItemStat chance = stats.FirstOrDefault(m => m.Stat.Equals($"offensive{type}Chance"));
-                IItemStat duration = stats.FirstOrDefault(m => m.Stat.Equals($"offensive{type}DurationMin"));
+            foreach (var minDmg in candidates) {
+                var type = minDmg.Stat.Replace("offensive", "").Replace("Min", "");
+                var maxDmg = stats.FirstOrDefault(m => m.Stat.Equals($"offensive{type}Max"));
+                var chance = stats.FirstOrDefault(m => m.Stat.Equals($"offensive{type}Chance"));
+                var duration = stats.FirstOrDefault(m => m.Stat.Equals($"offensive{type}DurationMin"));
 
-                float minDmgVal = minDmg.Value;
+                var minDmgVal = minDmg.Value;
 
-                StringBuilder sb = new StringBuilder();
+                var sb = new StringBuilder();
 
                 if (chance != null) {
                     sb.Append(_language.GetTag("customtag_damage_chanceof"));
@@ -421,7 +443,7 @@ namespace StatTranslator {
                     minDmgVal *= duration.Value;
                 }
 
-                TranslatedStat sm = new TranslatedStat {
+                var sm = new TranslatedStat {
                     Text = sb.ToString(),
                     Param0 = chance?.Value,
                     Param1 = minDmgVal,
@@ -447,13 +469,13 @@ namespace StatTranslator {
                 "skillActiveDuration"
             };
 
-            Dictionary<string, string> headerTranslationTable = new Dictionary<string, string>();
+            var headerTranslationTable = new Dictionary<string, string>();
 
-            foreach (string tag in tags) {
+            foreach (var tag in tags) {
                 headerTranslationTable[tag] = _language.GetTag(tag);
             }
 
-            foreach (IItemStat elem in stats.Where(m => headerTranslationTable.Keys.Contains(m.Stat))) {
+            foreach (var elem in stats.Where(m => headerTranslationTable.Keys.Contains(m.Stat))) {
                 result.Add(new TranslatedStat {
                     Text = headerTranslationTable[elem.Stat],
                     Param0 = elem.Value
@@ -465,13 +487,13 @@ namespace StatTranslator {
             try {
                 // The tag names are 'cast_@allyonattack' etc, without the preceding record path, and without the parameterized chance%
 
-                string tagName = record.Replace("records/controllers/itemskills/", "");
+                var tagName = record.Replace("records/controllers/itemskills/", "");
                 tagName = tagName.Substring(0, tagName.IndexOf('_', 5));
 
-                string localized = _language.GetTag(tagName);
+                var localized = _language.GetTag(tagName);
 
                 if (!string.IsNullOrEmpty(localized)) {
-                    string result = System.Text.RegularExpressions.Regex.Match(record, @"\d+").Value;
+                    var result = System.Text.RegularExpressions.Regex.Match(record, @"\d+").Value;
 
                     return new TranslatedStat {
                         Param0 = float.Parse(result),
@@ -480,7 +502,7 @@ namespace StatTranslator {
                 }
 
                 if (record.StartsWith("records/controllers/itemskills/cast_@selfat")) {
-                    string result = System.Text.RegularExpressions.Regex.Match(record, @"\d+").Value;
+                    var result = System.Text.RegularExpressions.Regex.Match(record, @"\d+").Value;
 
                     return new TranslatedStat {
                         Param0 = 100, // this is bound to be wrong some day
@@ -563,24 +585,24 @@ namespace StatTranslator {
                 "offensiveTotalDamageModifier",
             };
 
-            Dictionary<string, string> translationTable = new Dictionary<string, string>();
+            var translationTable = new Dictionary<string, string>();
 
-            foreach (string tag in tags) {
+            foreach (var tag in tags) {
                 translationTable[tag] = _language.GetTag(tag);
             }
 
-            string[] damageTypes = BodyDamageTypes;
-            string resistance = _language.GetTag("Resistance");
-            string toMaxResistance = _language.GetTag("ResistanceMaxResist");
+            var damageTypes = BodyDamageTypes;
+            var resistance = _language.GetTag("Resistance");
+            var toMaxResistance = _language.GetTag("ResistanceMaxResist");
 
-            foreach (string damageType in damageTypes) {
-                string r = DamageTypeTranslation(damageType);
+            foreach (var damageType in damageTypes) {
+                var r = DamageTypeTranslation(damageType);
                 translationTable[$"defensive{damageType}"] = $"{{0}}% {r} {resistance}";
                 translationTable[$"defensive{damageType}Resistance"] = $"{{0}}% {r} {resistance}";
                 translationTable[$"defensive{damageType}MaxResist"] = $"{{0}}% {toMaxResistance}{r} {resistance}";
             }
 
-            foreach (IItemStat elem in stats.Where(m => translationTable.Keys.Contains(m.Stat))) {
+            foreach (var elem in stats.Where(m => translationTable.Keys.Contains(m.Stat))) {
                 result.Add(new TranslatedStat {
                     Text = translationTable[elem.Stat],
                     Param0 = (float)Math.Round(elem.Value, 1, MidpointRounding.AwayFromZero),
@@ -589,20 +611,20 @@ namespace StatTranslator {
             }
         }
 
-        public List<TranslatedStat> ProcessSkillModifierStats(ISet<IItemStat> stats, string skill, string classtag, float? tier) {
-            List<TranslatedStat> result = new List<TranslatedStat>();
-            IItemStat weaponDamageEffect = stats.FirstOrDefault(m => m.Stat == "weaponDamagePct");
-            IItemStat offensivePhysicalResistanceReduction =
+        public List<TranslatedStat> ProcessSkillModifierStats(ISet<IItemStat> stats, string skill, string classTag, float? tier) {
+            var result = new List<TranslatedStat>();
+            var weaponDamageEffect = stats.FirstOrDefault(m => m.Stat == "weaponDamagePct");
+            var offensivePhysicalResistanceReduction =
                 stats.FirstOrDefault(m => m.Stat == "offensivePhysicalResistanceReductionAbsoluteMin");
-            IItemStat petLimit = stats.FirstOrDefault(m => m.Stat == "petLimit");
+            var petLimit = stats.FirstOrDefault(m => m.Stat == "petLimit");
 
             TranslatedStat tooltip = null;
 
-            if (classtag != null && tier != null) {
+            if (classTag != null && tier != null) {
                 tooltip = new TranslatedStat {
                     Text = _language.GetTag("augmentSkill1Extras"),
                     Param0 = tier,
-                    Param3 = _language.GetTag(classtag)
+                    Param3 = _language.GetTag(classTag)
                 };
             }
 
@@ -616,7 +638,7 @@ namespace StatTranslator {
             }
 
             if (offensivePhysicalResistanceReduction != null) {
-                IItemStat offensivePhysicalResistanceReductionAbsoluteDurationMin =
+                var offensivePhysicalResistanceReductionAbsoluteDurationMin =
                     stats.FirstOrDefault(m => m.Stat == "offensivePhysicalResistanceReductionAbsoluteDurationMin");
 
                 if (offensivePhysicalResistanceReductionAbsoluteDurationMin != null) {
@@ -649,22 +671,22 @@ namespace StatTranslator {
                 });
             }
 
-            IItemStat conversionIn1 = stats.FirstOrDefault(m => m.Stat == "conversionInType");
-            IItemStat conversionOutType1 = stats.FirstOrDefault(m => m.Stat == "conversionOutType");
-            IItemStat conversionPercentage1 = stats.FirstOrDefault(m => m.Stat == "conversionPercentage");
+            var conversionIn1 = stats.FirstOrDefault(m => m.Stat == "conversionInType");
+            var conversionOutType1 = stats.FirstOrDefault(m => m.Stat == "conversionOutType");
+            var conversionPercentage1 = stats.FirstOrDefault(m => m.Stat == "conversionPercentage");
             AddConversionStat(result, skill, conversionIn1, conversionOutType1, conversionPercentage1);
 
-            IItemStat conversionIn2 = stats.FirstOrDefault(m => m.Stat == "conversionInType2");
-            IItemStat conversionOutType2 = stats.FirstOrDefault(m => m.Stat == "conversionOutType2");
-            IItemStat conversionPercentage2 = stats.FirstOrDefault(m => m.Stat == "conversionPercentage2");
+            var conversionIn2 = stats.FirstOrDefault(m => m.Stat == "conversionInType2");
+            var conversionOutType2 = stats.FirstOrDefault(m => m.Stat == "conversionOutType2");
+            var conversionPercentage2 = stats.FirstOrDefault(m => m.Stat == "conversionPercentage2");
             AddConversionStat(result, skill, conversionIn2, conversionOutType2, conversionPercentage2);
 
             // 12-85 Lightning Damage to Callidor's Tempest
             // "offensiveLightningMax"
             // "offensiveLightningMin"
-            foreach (string damageType in BodyDamageTypes) {
-                IItemStat min = stats.FirstOrDefault(m => m.Stat == $"offensive{damageType}Min");
-                IItemStat max = stats.FirstOrDefault(m => m.Stat == $"offensive{damageType}Max");
+            foreach (var damageType in BodyDamageTypes) {
+                var min = stats.FirstOrDefault(m => m.Stat == $"offensive{damageType}Min");
+                var max = stats.FirstOrDefault(m => m.Stat == $"offensive{damageType}Max");
 
                 if (min != null) {
                     if (max != null) {
@@ -687,8 +709,8 @@ namespace StatTranslator {
                         });
                     }
 
-                    IItemStat offensiveXDurationModifier = stats.FirstOrDefault(m => m.Stat == $"offensive{damageType}DurationModifier");
-                    IItemStat offensiveXModifier = stats.FirstOrDefault(m => m.Stat == $"offensive{damageType}Modifier");
+                    var offensiveXDurationModifier = stats.FirstOrDefault(m => m.Stat == $"offensive{damageType}DurationModifier");
+                    var offensiveXModifier = stats.FirstOrDefault(m => m.Stat == $"offensive{damageType}Modifier");
 
                     if (offensiveXDurationModifier != null && offensiveXModifier != null) {
                         result.Add(new TranslatedStat {
@@ -702,7 +724,7 @@ namespace StatTranslator {
                     }
                 }
 
-                IItemStat defensive = stats.FirstOrDefault(m => m.Stat == $"defensive{damageType}");
+                var defensive = stats.FirstOrDefault(m => m.Stat == $"defensive{damageType}");
 
                 if (defensive != null) {
                     result.Add(new TranslatedStat {
@@ -723,7 +745,7 @@ namespace StatTranslator {
             AddSimpleStat("retaliationTotalDamageModifier", "customtag_xpac_modif_retaliationTotalDamageModifier", stats, skill, result);
             AddSimpleStat("characterAttackSpeedModifier", "customtag_xpac_modif_characterAttackSpeedModifier", stats, skill, result);
 
-            IItemStat projectileLaunchNumber = stats.FirstOrDefault(m => m.Stat == "projectileLaunchNumber");
+            var projectileLaunchNumber = stats.FirstOrDefault(m => m.Stat == "projectileLaunchNumber");
 
             if (projectileLaunchNumber != null) {
                 if (projectileLaunchNumber.Value > 1) {
@@ -746,8 +768,8 @@ namespace StatTranslator {
             AddSimpleStat("skillManaCostReduction", "customtag_xpac_modif_skillManaCostReduction", stats, skill, result);
             AddSimpleStat("skillTargetRadius", "customtag_xpac_modif_skillTargetRadius", stats, skill, result);
 
-            IItemStat sparkChance = stats.FirstOrDefault(m => m.Stat == "sparkChance");
-            IItemStat sparkMaxNumber = stats.FirstOrDefault(m => m.Stat == "sparkMaxNumber");
+            var sparkChance = stats.FirstOrDefault(m => m.Stat == "sparkChance");
+            var sparkMaxNumber = stats.FirstOrDefault(m => m.Stat == "sparkMaxNumber");
 
             if (sparkChance != null && sparkMaxNumber != null) {
                 result.Add(new TranslatedStat {
@@ -763,8 +785,8 @@ namespace StatTranslator {
             AddSimpleStat("offensiveCritDamageModifier", "customtag_xpac_modif_offensiveCritDamageModifier", stats, skill, result);
             AddSimpleStat("skillActiveDuration", "customtag_xpac_modif_skillActiveDuration", stats, skill, result);
 
-            IItemStat offensiveSlowDefensiveAbilityDurationMin = stats.FirstOrDefault(m => m.Stat == "offensiveSlowDefensiveAbilityDurationMin");
-            IItemStat offensiveSlowDefensiveAbilityMin = stats.FirstOrDefault(m => m.Stat == "offensiveSlowDefensiveAbilityMin");
+            var offensiveSlowDefensiveAbilityDurationMin = stats.FirstOrDefault(m => m.Stat == "offensiveSlowDefensiveAbilityDurationMin");
+            var offensiveSlowDefensiveAbilityMin = stats.FirstOrDefault(m => m.Stat == "offensiveSlowDefensiveAbilityMin");
 
             if (offensiveSlowDefensiveAbilityDurationMin != null && offensiveSlowDefensiveAbilityMin != null) {
                 result.Add(new TranslatedStat {
@@ -780,8 +802,8 @@ namespace StatTranslator {
             AddSimpleStat("skillTargetAngle", "customtag_xpac_modif_skillTargetAngle", stats, skill, result);
             AddSimpleStat("skillTargetNumber", "customtag_xpac_modif_skillTargetNumber", stats, skill, result);
 
-            IItemStat skillCooldownReductionChance = stats.FirstOrDefault(m => m.Stat == "skillCooldownReductionChance");
-            IItemStat skillCooldownReduction = stats.FirstOrDefault(m => m.Stat == "skillCooldownReduction");
+            var skillCooldownReductionChance = stats.FirstOrDefault(m => m.Stat == "skillCooldownReductionChance");
+            var skillCooldownReduction = stats.FirstOrDefault(m => m.Stat == "skillCooldownReduction");
 
             if (skillCooldownReduction != null && skillCooldownReductionChance != null) {
                 result.Add(new TranslatedStat {
@@ -793,8 +815,8 @@ namespace StatTranslator {
                 });
             }
 
-            IItemStat offensiveTotalDamageReductionPercentMin = stats.FirstOrDefault(m => m.Stat == "offensiveTotalDamageReductionPercentMin");
-            IItemStat offensiveTotalDamageReductionPercentDurationMin =
+            var offensiveTotalDamageReductionPercentMin = stats.FirstOrDefault(m => m.Stat == "offensiveTotalDamageReductionPercentMin");
+            var offensiveTotalDamageReductionPercentDurationMin =
                 stats.FirstOrDefault(m => m.Stat == "offensiveTotalDamageReductionPercentDurationMin");
 
             if (offensiveTotalDamageReductionPercentMin != null && offensiveTotalDamageReductionPercentDurationMin != null) {
@@ -807,9 +829,9 @@ namespace StatTranslator {
                 });
             }
 
-            IItemStat offensiveTotalResistanceReductionAbsoluteMin =
+            var offensiveTotalResistanceReductionAbsoluteMin =
                 stats.FirstOrDefault(m => m.Stat == "offensiveTotalResistanceReductionAbsoluteMin");
-            IItemStat offensiveTotalResistanceReductionAbsoluteDurationMin =
+            var offensiveTotalResistanceReductionAbsoluteDurationMin =
                 stats.FirstOrDefault(m => m.Stat == "offensiveTotalResistanceReductionAbsoluteDurationMin");
 
             if (offensiveTotalResistanceReductionAbsoluteMin != null && offensiveTotalResistanceReductionAbsoluteDurationMin != null) {
@@ -823,7 +845,7 @@ namespace StatTranslator {
             }
 
             // +x to summon <skill>
-            IItemStat petBurstSpawn = stats.FirstOrDefault(m => m.Stat == "petBurstSpawn");
+            var petBurstSpawn = stats.FirstOrDefault(m => m.Stat == "petBurstSpawn");
 
             if (petBurstSpawn != null) {
                 result.Add(new TranslatedStat {
@@ -847,7 +869,7 @@ namespace StatTranslator {
             }*/
 
             // Apply the same tooltip to all
-            foreach (TranslatedStat entry in result.Where(entry => entry.Extra == null)) {
+            foreach (var entry in result.Where(entry => entry.Extra == null)) {
                 entry.Extra = tooltip;
             }
 
@@ -860,7 +882,7 @@ namespace StatTranslator {
             ISet<IItemStat> stats,
             string skill,
             List<TranslatedStat> result) {
-            IItemStat stat = stats.FirstOrDefault(m => m.Stat == statName);
+            var stat = stats.FirstOrDefault(m => m.Stat == statName);
 
             if (stat != null) {
                 result.Add(new TranslatedStat {
@@ -899,7 +921,7 @@ namespace StatTranslator {
         }
 
         public List<TranslatedStat> ProcessStats(ISet<IItemStat> stats, TranslatedStatType type) {
-            List<TranslatedStat> result = new List<TranslatedStat>();
+            var result = new List<TranslatedStat>();
 
             if (stats == null) {
                 return result;
@@ -934,9 +956,9 @@ namespace StatTranslator {
 
                 case TranslatedStatType.PET: {
                     // In earlier preprocessing the pet stats were prefixed with "pet"
-                    List<TranslatedStat> petResults = new List<TranslatedStat>();
+                    var petResults = new List<TranslatedStat>();
 
-                    HashSet<IItemStat> petStats = new HashSet<IItemStat>(stats.Where(m => m.Stat.StartsWith("pet") && m.Stat != "petBonusName")
+                    var petStats = new HashSet<IItemStat>(stats.Where(m => m.Stat.StartsWith("pet") && m.Stat != "petBonusName")
                         .Select(m => new ItemStat {
                             Stat = m.Stat.Remove(0, 3),
                             TextValue = m.TextValue,

@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.GameDataParsing.Model;
 using log4net;
-using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Transform;
 
@@ -12,23 +12,25 @@ namespace IAGrim.Database.DAO {
     class ItemTagDaoImpl : BaseDao<ItemTag>, IItemTagDao {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ItemTagDaoImpl));
 
-        public ItemTagDaoImpl(ISessionCreator sessionCreator, SqlDialect dialect) : base(sessionCreator, dialect) {
-        }
+        public ItemTagDaoImpl(ISessionCreator sessionCreator, SqlDialect dialect) : base(sessionCreator, dialect) { }
 
         public void Save(ICollection<ItemTag> items, ProgressTracker tracker) {
-            int commitSize = items.Count / 10;
+            var commitSize = items.Count / 10;
             tracker.MaxValue = items.Count + commitSize;
+
             using (var session = SessionCreator.OpenStatelessSession()) {
-                using (ITransaction transaction = session.BeginTransaction()) {
+                using (var transaction = session.BeginTransaction()) {
                     session.CreateQuery("DELETE FROM ItemTag").ExecuteUpdate();
-                    foreach (ItemTag item in items) {
+
+                    foreach (var item in items) {
                         session.Insert(item);
                         tracker.Increment();
                     }
+
                     transaction.Commit();
 
                     // A bit of 'fake pending progress' for commit
-                    for (int i = 0; i < commitSize; i++) {
+                    for (var i = 0; i < commitSize; i++) {
                         tracker.Increment();
                     }
                 }
@@ -37,31 +39,43 @@ namespace IAGrim.Database.DAO {
             Logger.InfoFormat("Stored {0} item tags to database..", items.Count);
         }
 
-
         public IList<ItemTag> GetClassItemTags() {
+            const string namePattern = @"\[ms\](.*)\[fs\](.*)";
+
             using (var session = SessionCreator.OpenStatelessSession()) {
                 using (session.BeginTransaction()) {
                     return session.CreateCriteria<ItemTag>()
                         .Add(Restrictions.Like(nameof(ItemTag.Tag), "tagSkillClassName%"))
                         .List<ItemTag>()
-                        .Select(m => new ItemTag { Name = m.Name, Tag = m.Tag.Replace("tagSkillClassName", "class") })
+                        .Select(m => new ItemTag {
+                            Name = Regex.IsMatch(m.Name, namePattern)
+                                ? Regex.Replace(m.Name, namePattern, "$1/$2")
+                                : m.Name,
+                            Tag = m.Tag.Replace("tagSkillClassName", "class")
+                        })
                         .ToList();
                 }
             }
         }
 
         public ISet<ItemTag> GetValidClassItemTags() {
+            const string gdxClassesPattern = @"tagGDX\dClass(\d+)SkillName00A";
+            const string namePattern = @"\[ms\](.*)\[fs\](.*)";
+
             using (var session = SessionCreator.OpenStatelessSession()) {
                 using (session.BeginTransaction()) {
-                    return session.CreateSQLQuery("SELECT * FROM ItemTag WHERE (Tag LIKE 'tagSkillClassName%' OR Tag LIKE 'tag%Class%SkillName00A') AND LENGTH(Name) > 1")
+                    return session
+                        .CreateSQLQuery(
+                            "SELECT * FROM ItemTag WHERE (Tag LIKE 'tagSkillClassName%' OR Tag LIKE 'tag%Class%SkillName00A') AND LENGTH(Name) > 1")
                         .SetResultTransformer(new AliasToBeanResultTransformer(typeof(ItemTag)))
                         .List<ItemTag>()
                         .Select(m => new ItemTag {
-                            Name = m.Name,
-                            Tag = m.Tag.Replace("tagSkillClassName", "class")
-                                .Replace("tagGDX1Class07SkillName00A", "class07")
-                                .Replace("tagGDX1Class08SkillName00A", "class08")
-                                .Replace("tagGDX2Class09SkillName00A", "class09") // TODO: A regex or similar to auto detect new classes?
+                            Name = Regex.IsMatch(m.Name, namePattern)
+                                ? Regex.Replace(m.Name, namePattern, "$1/$2")
+                                : m.Name,
+                            Tag = Regex.IsMatch(m.Tag, gdxClassesPattern) 
+                                ? Regex.Replace(m.Tag, gdxClassesPattern, "class$1")
+                                : m.Tag.Replace("tagSkillClassName", "class")
                         })
                         .ToHashSet();
                 }
