@@ -60,6 +60,12 @@ namespace IAGrim.Parser.Arc {
 
                         if (b != null) {
                             if (icon.EndsWith(".png")) {
+                                var imagePath = Path.Combine(destinationFolder, $@"{Path.GetFileName(icon)}");
+
+                                if (File.Exists(imagePath)) {
+                                    continue;
+                                }
+
                                 try {
                                     using (var image = Image.FromStream(new MemoryStream(b))) {
                                         var h = image.Height;
@@ -75,7 +81,7 @@ namespace IAGrim.Parser.Arc {
                                             continue;
                                         }
 
-                                        image.Save(Path.Combine(destinationFolder, $@"{Path.GetFileName(icon)}"));
+                                        image.Save(imagePath);
                                     }
                                 }
                                 catch (Exception ex)
@@ -94,8 +100,14 @@ namespace IAGrim.Parser.Arc {
                                      && !icon.EndsWith("_g.tex")) {
                                 try
                                 {
+                                    var imagePath = Path.Combine(destinationFolder, $@"{Path.GetFileName(icon)}.png");
+
+                                    if (File.Exists(imagePath)) {
+                                        continue;
+                                    }
+
                                     var img = ExtractImage(b);
-                                    img?.Save(Path.Combine(destinationFolder, $@"{Path.GetFileName(icon)}.png"), ImageFormat.Png);
+                                    img?.Save(imagePath, ImageFormat.Png);
                                 }
                                 catch (Exception ex)
                                 {
