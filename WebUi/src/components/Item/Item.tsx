@@ -64,7 +64,9 @@ class Item extends React.PureComponent<Props, object> {
       const addFont = (numOwned: number, s: string) => (numOwned <= 0) ? `<font color="red">${s}</font>` : s;
       var setItemsList = GetSetItems(setName)
         .map(this.props.getItemName)
-        .map(entry => addFont(entry.numOwned, `${("  " + entry.numOwned).substr(-2,2)}x ${entry.name}`))
+        .map(entry => addFont(
+          entry.numOwned, 
+          `${("  " + entry.numOwned).substr(-2,2)}x ${entry.name.replace(/{\^.*}/g, '')}`))
         .join("<br>");
 
       setItemsList = `<b>${translate('item.label.setConsistsOf')}</b><br><br>` + setItemsList;

@@ -45,7 +45,13 @@ namespace IAGrim.Parser.Arz {
                 "/npcgear/"
             };
 
-            return interesting.Any(record.Contains);
+            string[] notInteresting = {
+                "/lootchests/",
+                "/loottables/",
+                "/lootaffixes/"
+            };
+
+            return interesting.Any(record.Contains) && !notInteresting.Any(record.Contains);
         }
 
         private static IItem ExtractItem(Record record, IReadOnlyList<string> stringTable, bool skipLots) {

@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using IAGrim.Database;
 
@@ -17,20 +13,13 @@ namespace IAGrim.UI.Filters {
         public Classes(IList<ItemTag> classTags) {
             InitializeComponent();
             _classes = new Dictionary<string, FirefoxCheckBox>();
-            this._classTags = classTags;
-            this.Load += Classes_Load;
+            _classTags = classTags;
+            Load += Classes_Load;
         }
 
         public List<string> DesiredClasses {
             get {
-                var result = new List<string>();
-                foreach (var key in _classes.Keys) {
-                    if (_classes[key].Checked) {
-                        result.Add(key);
-                    }
-                }
-
-                return result;
+                return _classes.Keys.Where(key => _classes[key].Checked).ToList();
             }
         }
 
@@ -58,17 +47,22 @@ namespace IAGrim.UI.Filters {
             _classes["class09"] = cbOathkeeper;
 
             // Hardcoded classes from the base game -- Helps a bit with 4k scaling to not create these dynamically.
-            var prefilled = new[] {"iatag_ui_soldier", "iatag_ui_demolitionist", "iatag_ui_occultist", "iatag_ui_nightblade", "iatag_ui_arcanist", "iatag_ui_shaman", "iatag_ui_inquisitor", "iatag_ui_necromancer", "iatag_ui_oathkeeper"};
+            var prefilled = new[] {
+                "iatag_ui_soldier", "iatag_ui_demolitionist", "iatag_ui_occultist", "iatag_ui_nightblade", "iatag_ui_arcanist",
+                "iatag_ui_shaman", "iatag_ui_inquisitor", "iatag_ui_necromancer", "iatag_ui_oathkeeper"
+            };
             int yOffsetHeight = cbDemolitionist.Location.Y - cbSoldier.Location.Y;
             int cbHeight = cbDemolitionist.Height;
+
             foreach (var tag in _classTags) {
                 var translationTag = $"iatag_ui_{tag.Name.ToLowerInvariant()}";
+
                 if (!prefilled.Contains(translationTag)) {
                     var cb = new FirefoxCheckBox {
-                        Size = new Size {Height = cbHeight, Width = 121},
+                        Size = new Size {Height = cbHeight, Width = classesPanelBox.Size.Width - 15},
                         Tag = translationTag,
                         Text = tag.Name,
-                        Location = new Point {X = 3, Y = 3 + cbNum * yOffsetHeight }
+                        Location = new Point {X = 3, Y = 3 + cbNum * yOffsetHeight}
                     };
 
                     _classes[tag.Tag] = cb;
