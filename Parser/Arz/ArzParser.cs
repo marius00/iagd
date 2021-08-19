@@ -38,7 +38,7 @@ namespace IAGrim.Parser.Arz {
 
         private static bool IsInteresting(string record) {
             string[] interesting = {
-                "/scriptentities/", // TODO: Why?
+                "/scriptentities/", // Totally Normal Shield
                 "/items/",
                 "/storyelements/signs/", // Lokarr's set
                 "/skills/",

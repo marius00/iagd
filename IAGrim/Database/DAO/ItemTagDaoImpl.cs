@@ -73,7 +73,7 @@ namespace IAGrim.Database.DAO {
                             Name = Regex.IsMatch(m.Name, namePattern)
                                 ? Regex.Replace(m.Name, namePattern, "$1/$2")
                                 : m.Name,
-                            Tag = Regex.IsMatch(m.Tag, gdxClassesPattern) 
+                            Tag = Regex.IsMatch(m.Tag, gdxClassesPattern)
                                 ? Regex.Replace(m.Tag, gdxClassesPattern, "class$1")
                                 : m.Tag.Replace("tagSkillClassName", "class")
                         })
