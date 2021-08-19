@@ -87,7 +87,11 @@ namespace IAGrim.Parser.Arc {
                                      && !icon.EndsWith("_nml.tex")
                                      && !icon.EndsWith(".anm")
                                      && !icon.EndsWith(".pfx")
-                                     && !icon.EndsWith(".wav")) {
+                                     && !icon.EndsWith(".wav")
+                                     && !icon.EndsWith("bmp.tex")
+                                     && !icon.EndsWith("_spec.tex")
+                                     && !icon.EndsWith("_glo.tex")
+                                     && !icon.EndsWith("_g.tex")) {
                                 try
                                 {
                                     var img = ExtractImage(b);
