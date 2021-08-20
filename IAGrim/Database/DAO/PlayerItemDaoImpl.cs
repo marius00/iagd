@@ -629,27 +629,27 @@ namespace IAGrim.Database {
                 var sql =
                     $@"PI.Id IN (
                         SELECT pir.Playeritemid
-	                    FROM PlayerItemRecord pir
-	                    WHERE PI.baserecord IN (
+                        FROM PlayerItemRecord pir
+                        WHERE PI.baserecord IN (
                             SELECT db.baserecord
-			                FROM DatabaseItem_v2 db
-			                WHERE db.baserecord IN (
-					            SELECT playeritem.baserecord
-					            FROM playeritem UNION
-					            SELECT playeritem.prefixrecord
-					            FROM playeritem UNION
+                            FROM DatabaseItem_v2 db
+                            WHERE db.baserecord IN (
+                                SELECT playeritem.baserecord
+                                FROM playeritem UNION
+                                SELECT playeritem.prefixrecord
+                                FROM playeritem UNION
                                 SELECT playeritem.suffixrecord
                                 FROM playeritem UNION
-					            SELECT playeritem.materiarecord
+                                SELECT playeritem.materiarecord
                                 FROM playeritem
-				    ))
+                    ))
                     AND PI.Id IN (
                         SELECT pir.PlayerItemId
-	                    FROM PlayerItemRecord pir
-	                    WHERE pir.record IN (
-			                SELECT db.baserecord
-			                FROM DatabaseItem_v2 db
-			                WHERE db.id_databaseitem IN (
+                        FROM PlayerItemRecord pir
+                        WHERE pir.record IN (
+                            SELECT db.baserecord
+                            FROM DatabaseItem_v2 db
+                            WHERE db.id_databaseitem IN (
                         {string.Join(joinString, queryFragments)}
                     ))))";
 
@@ -901,22 +901,22 @@ namespace IAGrim.Database {
                     session.CreateSQLQuery(@"
 INSERT INTO deletedplayeritem_v3(id)
 SELECT cloudid FROM playeritem WHERE Id IN (
-	SELECT Id FROM (
-		SELECT MAX(Id) AS Id, (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) AS UQ FROM PlayerItem WHERE (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) IN (
-			SELECT UQ FROM (
-				SELECT (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) AS UQ, COUNT(*) AS C FROM PlayerItem
-					WHERE baserecord NOT LIKE '%materia%'
-					AND baserecord NOT LIKE '%questitems%'
-					AND baserecord NOT LIKE '%potions%'
-					AND baserecord NOT LIKE '%crafting%'
-					AND StackCount < 2 -- Potions, components, etc
-					GROUP BY UQ
-				) X 
-			WHERE C > 1
-		)
+    SELECT Id FROM (
+        SELECT MAX(Id) AS Id, (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) AS UQ FROM PlayerItem WHERE (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) IN (
+            SELECT UQ FROM (
+                SELECT (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) AS UQ, COUNT(*) AS C FROM PlayerItem
+                    WHERE baserecord NOT LIKE '%materia%'
+                    AND baserecord NOT LIKE '%questitems%'
+                    AND baserecord NOT LIKE '%potions%'
+                    AND baserecord NOT LIKE '%crafting%'
+                    AND StackCount < 2 -- Potions, components, etc
+                    GROUP BY UQ
+                ) X 
+            WHERE C > 1
+        )
 
-		GROUP BY UQ
-	) Z
+        GROUP BY UQ
+    ) Z
 )
 
 AND cloud_hassync
@@ -927,22 +927,22 @@ AND cloudid != ''
                     // Delete duplicates (if there are multiple, only one will be deleted)
                     session.CreateSQLQuery(@"
 DELETE FROM PlayerItem WHERE Id IN (
-	SELECT Id FROM (
-		SELECT MAX(Id) AS Id, (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) AS UQ FROM PlayerItem WHERE (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) IN (
-			SELECT UQ FROM (
-				SELECT (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) AS UQ, COUNT(*) AS C FROM PlayerItem
-					WHERE baserecord NOT LIKE '%materia%'
-					AND baserecord NOT LIKE '%questitems%'
-					AND baserecord NOT LIKE '%potions%'
-					AND baserecord NOT LIKE '%crafting%'
-					AND StackCount < 2 -- Potions, components, etc
-					GROUP BY UQ
-				) X 
-			WHERE C > 1
-		)
+    SELECT Id FROM (
+        SELECT MAX(Id) AS Id, (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) AS UQ FROM PlayerItem WHERE (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) IN (
+            SELECT UQ FROM (
+                SELECT (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) AS UQ, COUNT(*) AS C FROM PlayerItem
+                    WHERE baserecord NOT LIKE '%materia%'
+                    AND baserecord NOT LIKE '%questitems%'
+                    AND baserecord NOT LIKE '%potions%'
+                    AND baserecord NOT LIKE '%crafting%'
+                    AND StackCount < 2 -- Potions, components, etc
+                    GROUP BY UQ
+                ) X 
+            WHERE C > 1
+        )
 
-		GROUP BY UQ
-	) Z
+        GROUP BY UQ
+    ) Z
 )
 ").ExecuteUpdate();
 
