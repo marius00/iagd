@@ -19,8 +19,12 @@ class CollectionItemContainer extends React.PureComponent<Props, object> {
     super(props);
   }
 
+  stripColorCodes(initialString: string): string {
+    return initialString.replaceAll(/{?\^.}?/g, '');
+  }
+
   openItemSite(item: ICollectionItem) {
-    let url = `http://www.grimtools.com/db/search?src=itemassistant&query=${item.name}`;
+    let url = `http://www.grimtools.com/db/search?src=itemassistant&query=${this.stripColorCodes(item.name)}`;
     openUrl(url);
   }
 
@@ -75,12 +79,12 @@ class CollectionItemContainer extends React.PureComponent<Props, object> {
         </div>
 
         {items.filter(filterItems).map((item) =>
-          <a className={'collectionItem'} onClick={() => this.openItemSite(item)} key={'collected-' + item.baseRecord} data-tip={(item.numOwned > 0 ? `${item.name} (x${item.numOwned})` : item.name)}>
+          <a className={'collectionItem'} onClick={() => this.openItemSite(item)} key={'collected-' + item.baseRecord} data-tip={(item.numOwned > 0 ? `${this.stripColorCodes(item.name)} (x${item.numOwned})` : this.stripColorCodes(item.name))}>
             <div className={(item.numOwned > 0 ? 'collected' : 'uncollected') + ' imageContainer'}>
               <img src={item.icon} />
             </div>
             <div className={'textContainer'}>
-            {item.name}
+              {this.stripColorCodes(item.name)}
             </div>
           </a>
         )}

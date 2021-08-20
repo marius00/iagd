@@ -30,8 +30,12 @@ export function getUniqueId(item: IItem): string {
 }
 
 class Item extends React.PureComponent<Props, object> {
+  stripColorCodes(initialString: string): string {
+    return initialString.replaceAll(/{?\^.}?/g, '');
+  }
+
   openItemSite() {
-    openUrl(`http://www.grimtools.com/db/search?src=itemassistant&query=${this.props.item.name}`);
+    openUrl(`http://www.grimtools.com/db/search?src=itemassistant&query=${this.stripColorCodes(this.props.item.name)}`);
   }
 
   renderBuddyItem(item: IItem) {
@@ -57,8 +61,7 @@ class Item extends React.PureComponent<Props, object> {
   translateQualityToClass(quality: string): string {
     return `item-quality-${quality.toLowerCase()}`;
   }
-
-
+  
   getSetItemTooltip(setName: string|undefined): string {
     if (setName !== undefined && isEmbedded) {
       const addFont = (numOwned: number, s: string) => (numOwned <= 0) ? `<font color="red">${s}</font>` : s;
@@ -66,7 +69,7 @@ class Item extends React.PureComponent<Props, object> {
         .map(this.props.getItemName)
         .map(entry => addFont(
           entry.numOwned, 
-          `${("  " + entry.numOwned).substr(-2,2)}x ${entry.name.replace(/{\^.*}/g, '')}`))
+          `${("  " + entry.numOwned).substr(-2,2)}x ${this.stripColorCodes(entry.name)}`))
         .join("<br>");
 
       setItemsList = `<b>${translate('item.label.setConsistsOf')}</b><br><br>` + setItemsList;
@@ -102,7 +105,7 @@ class Item extends React.PureComponent<Props, object> {
 
   render() {
     const item = this.props.item;
-    const name = item.name.length > 0 ? item.name.replace(/{\^.*}/g, '') : 'Unknown';
+    const name = item.name.length > 0 ? this.stripColorCodes(item.name) : 'Unknown';
     const socket = item.socket.replace(" ", "");
 
     const headerStats = item.headerStats.map((stat) =>
