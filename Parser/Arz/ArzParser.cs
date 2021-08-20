@@ -48,7 +48,6 @@ namespace IAGrim.Parser.Arz {
             string[] notInteresting = {
                 "/lootchests/",
                 "/loottables/",
-                "/lootaffixes/",
                 "/devotion/",
                 "/nonplayerskills",
                 "bossskills/",
