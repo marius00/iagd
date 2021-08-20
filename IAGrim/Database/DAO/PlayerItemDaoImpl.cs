@@ -603,36 +603,73 @@ namespace IAGrim.Database {
             // Add the damage/resist filter
             foreach (var filter in query.Filters) {
                 queryFragments.Add(
-                    $"exists (select id_databaseitem from databaseitemstat_v2 dbs where stat in ( :filter_{filter.GetHashCode()} ) and db.id_databaseitem = dbs.id_databaseitem)");
+                    $@" SELECT dbs.id_databaseitem 
+                            FROM databaseitemstat_v2 dbs
+                            WHERE  dbs.stat IN ( :filter_{filter.GetHashCode()} ) 
+                            AND db.id_databaseitem = dbs.id_databaseitem");
                 queryParamsList.Add($"filter_{filter.GetHashCode()}", filter);
             }
 
             if (query.IsRetaliation) {
                 queryFragments.Add(
-                    "exists (select id_databaseitem from databaseitemstat_v2 dbs where stat like 'retaliation%' and db.id_databaseitem = dbs.id_databaseitem)");
+                    @"SELECT dbs.id_databaseitem
+                        FROM databaseitemstat_v2 dbs
+                        WHERE dbs.stat LIKE 'retaliation%'
+                        AND db.id_databaseitem = dbs.id_databaseitem");
             }
 
             // TODO: Seems we only have LIST parameters here.. won't work for this, since we'd get OR not AND on classes.
             // No way to get a non-list param?
             foreach (var desiredClass in query.Classes) {
                 queryFragments.Add(
-                    "exists (select id_databaseitem from databaseitemstat_v2 dbs where stat IN ('augmentSkill1Extras','augmentSkill2Extras','augmentSkill3Extras','augmentSkill4Extras','augmentMastery1','augmentMastery2','augmentMastery3','augmentMastery4') "
-                    + $" AND TextValue = '{desiredClass}'" // Not ideal
-                    + " AND db.id_databaseitem = dbs.id_databaseitem)");
+                    $@"SELECT dbs.id_databaseitem
+                        FROM databaseitemstat_v2 dbs 
+                        WHERE stat IN (
+                            'augmentSkill1Extras',
+                            'augmentSkill2Extras',
+                            'augmentSkill3Extras',
+                            'augmentSkill4Extras',
+                            'augmentMastery1',
+                            'augmentMastery2',
+                            'augmentMastery3',
+                            'augmentMastery4') 
+                        AND TextValue = '{desiredClass}'
+                        AND db.id_databaseitem = dbs.id_databaseitem");
             }
 
             if (queryFragments.Count > 0) {
-                var sql = $@"
-                SELECT Playeritemid FROM PlayerItemRecord WHERE record IN (
-                    select baserecord from databaseitem_V2 db where db.baserecord in (
-                        select baserecord from playeritem union 
-                        select prefixrecord from playeritem union 
-                        select suffixrecord from playeritem union 
-                        select materiarecord from playeritem
-                    )
-                    AND {string.Join(" AND ", queryFragments)}
-                )
-                ";
+                const string joinString = 
+                    @"))) AND PI.Id IN (SELECT pir.PlayerItemId
+                        FROM PlayerItemRecord pir
+                        WHERE pir.record IN (
+                            SELECT db.baserecord FROM DatabaseItem_v2 db WHERE db.id_databaseitem IN (";
+
+                var sql = 
+                    $@"PI.Id IN (
+                        SELECT pir.Playeritemid 
+	                    FROM PlayerItemRecord pir
+	                    WHERE PI.baserecord IN (
+                            SELECT db.baserecord
+			                FROM DatabaseItem_v2 db
+			                WHERE db.baserecord IN (
+					            SELECT playeritem.baserecord 
+					            FROM playeritem UNION
+					            SELECT playeritem.prefixrecord 
+					            FROM playeritem UNION
+					            SELECT playeritem.suffixrecord 
+                                FROM playeritem UNION
+					            SELECT playeritem.materiarecord
+                                FROM playeritem
+				    ))
+                    AND PI.Id IN (
+                        SELECT pir.PlayerItemId
+	                    FROM PlayerItemRecord pir
+	                    WHERE pir.record IN (
+			                SELECT db.baserecord
+			                FROM DatabaseItem_v2 db
+			                WHERE db.id_databaseitem IN ( 
+                        {string.Join(joinString, queryFragments)}
+                    ))))";
 
                 return new DatabaseItemStatQuery {
                     SQL = sql,
@@ -707,7 +744,7 @@ namespace IAGrim.Database {
             }
 
             if (query.SocketedOnly) {
-                queryFragments.Add("PI.MateriaRecord is not null and PI.MateriaRecord != ''");
+                queryFragments.Add("PI.MateriaRecord IS NOT NULL AND PI.MateriaRecord != ''");
             }
 
             // Add the MINIMUM level requirement (if any)
@@ -731,62 +768,62 @@ namespace IAGrim.Database {
             // Only items which grants new skills
             if (query.WithGrantSkillsOnly) {
                 // TODO: Are there any prefixes or suffixes which grants skills?
-                queryFragments.Add($"PI.baserecord IN (SELECT PlayerItemRecord from ({ItemSkillDaoImpl.ListItemsQuery}) y)");
+                queryFragments.Add($"PI.baserecord IN (SELECT PlayerItemRecord FROM ({ItemSkillDaoImpl.ListItemsQuery}) y)");
             }
 
             if (query.WithSummonerSkillOnly) {
-                queryFragments.Add(@"PI.baserecord IN (SELECT p.baserecord as PlayerItemRecord
-                    from itemskill_v2 s, itemskill_mapping map, DatabaseItem_v2 db,  playeritem p, DatabaseItemStat_v2 stat  
-                    where s.id_skill = map.id_skill 
-                    and map.id_databaseitem = db.id_databaseitem  
-                    and db.baserecord = p.baserecord 
-                    and stat.id_databaseitem = s.id_databaseitem
-                    and stat.stat = 'spawnObjects')");
+                queryFragments.Add(@"PI.baserecord IN (SELECT p.baserecord AS PlayerItemRecord
+                    FROM itemskill_v2 s, itemskill_mapping map, DatabaseItem_v2 db, playeritem p, DatabaseItemStat_v2 stat  
+                    WHERE s.id_skill = map.id_skill 
+                    AND map.id_databaseitem = db.id_databaseitem  
+                    AND db.baserecord = p.baserecord 
+                    AND stat.id_databaseitem = s.id_databaseitem
+                    AND stat.stat = 'spawnObjects')");
             }
 
             var sql = new List<string> {
-                $@"select name as Name, 
-                StackCount, 
-                rarity as Rarity, 
-                levelrequirement as LevelRequirement, 
-                baserecord as BaseRecord, 
-                prefixrecord as PrefixRecord, 
-                suffixrecord as SuffixRecord, 
-                ModifierRecord as ModifierRecord, 
-                MateriaRecord as MateriaRecord,
-                {PlayerItemTable.PrefixRarity} as PrefixRarity,
-                {PlayerItemTable.AzureUuid} as AzureUuid,
-                {PlayerItemTable.CloudId} as CloudId,
-                {PlayerItemTable.IsCloudSynchronized} as IsCloudSynchronizedValue,
-                {PlayerItemTable.Id} as Id,
-                coalesce((SELECT group_concat(Record, '|') FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord)), '') AS PetRecord
-                FROM PlayerItem PI WHERE " + string.Join(" AND ", queryFragments)
+                $@" SELECT name AS Name, 
+                    StackCount, 
+                    rarity AS Rarity, 
+                    levelrequirement AS LevelRequirement, 
+                    baserecord AS BaseRecord, 
+                    prefixrecord AS PrefixRecord, 
+                    suffixrecord AS SuffixRecord, 
+                    ModifierRecord AS ModifierRecord, 
+                    MateriaRecord AS MateriaRecord,
+                    {PlayerItemTable.PrefixRarity} AS PrefixRarity,
+                    {PlayerItemTable.AzureUuid} AS AzureUuid,
+                    {PlayerItemTable.CloudId} AS CloudId,
+                    {PlayerItemTable.IsCloudSynchronized} AS IsCloudSynchronizedValue,
+                    {PlayerItemTable.Id} AS Id,
+                    COALESCE((SELECT group_concat(Record, '|') 
+                    FROM PlayerItemRecord pir 
+                    WHERE pir.PlayerItemId = PI.Id 
+                    AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord)), '') AS PetRecord
+                    FROM PlayerItem PI WHERE " + string.Join(" AND ", queryFragments)
             };
 
             var subQuery = CreateDatabaseStatQueryParams(query);
 
             if (subQuery != null) {
-                sql.Add(" AND PI.Id IN (" + subQuery.SQL + ")");
+                sql.Add(" AND " + subQuery.SQL);
             }
 
             // Can be several slots for stuff like "2 Handed"
             if (query.Slot?.Length > 0) {
                 var subQuerySql = $@"
                 SELECT Playeritemid FROM PlayerItemRecord WHERE record IN (
-                    select baserecord from databaseitem_V2 db where db.baserecord in (
-                        select baserecord from {PlayerItemTable.Table} union 
-                        select prefixrecord from {PlayerItemTable.Table} union 
-                        select suffixrecord from {PlayerItemTable.Table} union 
-                        select materiarecord from {PlayerItemTable.Table}
-                    )
-                    AND exists (
-                        select id_databaseitem from databaseitemstat_v2 dbs 
+                    SELECT baserecord FROM databaseitem_V2 db WHERE db.baserecord IN (
+                        SELECT baserecord FROM {PlayerItemTable.Table} UNION
+                        SELECT prefixrecord FROM {PlayerItemTable.Table} UNION
+                        SELECT suffixrecord FROM {PlayerItemTable.Table} UNION
+                        SELECT materiarecord FROM {PlayerItemTable.Table} )
+                    AND EXISTS (
+                        SELECT id_databaseitem 
+                        FROM databaseitemstat_v2 dbs 
                         WHERE stat = 'Class' 
-                        AND TextValue in ( :class ) 
-                        AND db.id_databaseitem = dbs.id_databaseitem
-                    )
-                )
-                ";
+                        AND TextValue IN ( :class ) 
+                        AND db.id_databaseitem = dbs.id_databaseitem))";
 
                 sql.Add($" AND PI.Id IN ({subQuerySql})");
 
@@ -835,7 +872,7 @@ namespace IAGrim.Database {
         }
 
         public IList<ModSelection> GetModSelection() {
-            const string query = "SELECT DISTINCT Mod as Mod, IsHardcore as IsHardcore FROM PlayerItem WHERE Mod IS NOT NULL";
+            const string query = "SELECT DISTINCT Mod as Mod, IsHardcore AS IsHardcore FROM PlayerItem WHERE Mod IS NOT NULL";
 
             using (var session = SessionCreator.OpenSession()) {
                 using (session.BeginTransaction()) {
@@ -888,12 +925,12 @@ namespace IAGrim.Database {
                 using (var transaction = session.BeginTransaction()) {
                     // Mark all duplicates for deletion from online backups
                     session.CreateSQLQuery(@"
-insert into deletedplayeritem_v3(id)
-select cloudid FROM playeritem WHERE Id IN (
+INSERT INTO deletedplayeritem_v3(id)
+SELECT cloudid FROM playeritem WHERE Id IN (
 	SELECT Id FROM (
-		SELECT MAX(Id) as Id, (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) as UQ FROM PlayerItem WHERE (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) IN (
+		SELECT MAX(Id) AS Id, (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) AS UQ FROM PlayerItem WHERE (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) IN (
 			SELECT UQ FROM (
-				SELECT (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) as UQ, COUNT(*) as C FROM PlayerItem
+				SELECT (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) AS UQ, COUNT(*) AS C FROM PlayerItem
 					WHERE baserecord NOT LIKE '%materia%'
 					AND baserecord NOT LIKE '%questitems%'
 					AND baserecord NOT LIKE '%potions%'
@@ -904,7 +941,7 @@ select cloudid FROM playeritem WHERE Id IN (
 			WHERE C > 1
 		)
 
-		Group BY UQ
+		GROUP BY UQ
 	) Z
 )
 
@@ -917,9 +954,9 @@ AND cloudid != ''
                     session.CreateSQLQuery(@"
 DELETE FROM PlayerItem WHERE Id IN (
 	SELECT Id FROM (
-		SELECT MAX(Id) as Id, (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) as UQ FROM PlayerItem WHERE (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) IN (
+		SELECT MAX(Id) AS Id, (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) AS UQ FROM PlayerItem WHERE (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) IN (
 			SELECT UQ FROM (
-				SELECT (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) as UQ, COUNT(*) as C FROM PlayerItem
+				SELECT (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) AS UQ, COUNT(*) AS C FROM PlayerItem
 					WHERE baserecord NOT LIKE '%materia%'
 					AND baserecord NOT LIKE '%questitems%'
 					AND baserecord NOT LIKE '%potions%'
@@ -930,7 +967,7 @@ DELETE FROM PlayerItem WHERE Id IN (
 			WHERE C > 1
 		)
 
-		Group BY UQ
+		GROUP BY UQ
 	) Z
 )
 ").ExecuteUpdate();
@@ -942,21 +979,21 @@ DELETE FROM PlayerItem WHERE Id IN (
 
         public IList<PlayerItem> ListWithMissingStatCache() {
             var sql = $@"
-                select name as Name, 
-                {PlayerItemTable.Id} as Id,
+                SELECT name AS Name, 
+                {PlayerItemTable.Id} AS Id,
                 {PlayerItemTable.Stackcount}, 
-                rarity as Rarity, 
-                levelrequirement as LevelRequirement, 
-                {PlayerItemTable.Record} as BaseRecord, 
-                {PlayerItemTable.Prefix} as PrefixRecord, 
-                {PlayerItemTable.Suffix} as SuffixRecord, 
-                {PlayerItemTable.ModifierRecord} as ModifierRecord, 
-                MateriaRecord as MateriaRecord,
-                {PlayerItemTable.PrefixRarity} as PrefixRarity,
-                {PlayerItemTable.AzureUuid} as AzureUuid,
-                {PlayerItemTable.CloudId} as CloudId,
-                {PlayerItemTable.IsCloudSynchronized} as IsCloudSynchronizedValue,
-                coalesce((SELECT group_concat(Record, '|') FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord)),'') AS PetRecord
+                rarity AS Rarity, 
+                levelrequirement AS LevelRequirement, 
+                {PlayerItemTable.Record} AS BaseRecord, 
+                {PlayerItemTable.Prefix} AS PrefixRecord, 
+                {PlayerItemTable.Suffix} AS SuffixRecord, 
+                {PlayerItemTable.ModifierRecord} AS ModifierRecord, 
+                MateriaRecord AS MateriaRecord,
+                {PlayerItemTable.PrefixRarity} AS PrefixRarity,
+                {PlayerItemTable.AzureUuid} AS AzureUuid,
+                {PlayerItemTable.CloudId} AS CloudId,
+                {PlayerItemTable.IsCloudSynchronized} AS IsCloudSynchronizedValue,
+                COALESCE((SELECT group_concat(Record, '|') FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord)),'') AS PetRecord
                 FROM PlayerItem PI WHERE SearchableText IS NULL OR SearchableText = '' LIMIT 50";
 
             using (var session = SessionCreator.OpenSession()) {
