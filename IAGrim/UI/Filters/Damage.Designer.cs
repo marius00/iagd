@@ -32,7 +32,7 @@
             this.dmgFire = new FirefoxCheckBox();
             this.dmgAether = new FirefoxCheckBox();
             this.dmgCold = new FirefoxCheckBox();
-            this.dmgPoison = new FirefoxCheckBox();
+            this.dmgAcid = new FirefoxCheckBox();
             this.dmgLightning = new FirefoxCheckBox();
             this.dmgVitality = new FirefoxCheckBox();
             this.dmgChaos = new FirefoxCheckBox();
@@ -50,7 +50,7 @@
             this.damagePanel.Controls.Add(this.dmgFire);
             this.damagePanel.Controls.Add(this.dmgAether);
             this.damagePanel.Controls.Add(this.dmgCold);
-            this.damagePanel.Controls.Add(this.dmgPoison);
+            this.damagePanel.Controls.Add(this.dmgAcid);
             this.damagePanel.Controls.Add(this.dmgLightning);
             this.damagePanel.Controls.Add(this.dmgVitality);
             this.damagePanel.Controls.Add(this.dmgChaos);
@@ -187,20 +187,20 @@
             this.dmgCold.Tag = "iatag_ui_cold";
             this.dmgCold.Text = "Cold";
             // 
-            // dmgPoison
+            // dmgAcid
             // 
-            this.dmgPoison.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.dmgAcid.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.dmgPoison.Bold = false;
-            this.dmgPoison.EnabledCalc = true;
-            this.dmgPoison.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.dmgPoison.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.dmgPoison.Location = new System.Drawing.Point(3, 302);
-            this.dmgPoison.Name = "dmgPoison";
-            this.dmgPoison.Size = new System.Drawing.Size(275, 27);
-            this.dmgPoison.TabIndex = 32;
-            this.dmgPoison.Tag = "iatag_ui_poison";
-            this.dmgPoison.Text = "Poison";
+            this.dmgAcid.Bold = false;
+            this.dmgAcid.EnabledCalc = true;
+            this.dmgAcid.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.dmgAcid.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.dmgAcid.Location = new System.Drawing.Point(3, 302);
+            this.dmgAcid.Name = "dmgAcid";
+            this.dmgAcid.Size = new System.Drawing.Size(275, 27);
+            this.dmgAcid.TabIndex = 32;
+            this.dmgAcid.Tag = "iatag_ui_acid";
+            this.dmgAcid.Text = "Acid";
             // 
             // dmgLightning
             // 
@@ -270,7 +270,7 @@
         private FirefoxCheckBox dmgFire;
         private FirefoxCheckBox dmgAether;
         private FirefoxCheckBox dmgCold;
-        private FirefoxCheckBox dmgPoison;
+        private FirefoxCheckBox dmgAcid;
         private FirefoxCheckBox dmgLightning;
         private FirefoxCheckBox dmgVitality;
         private FirefoxCheckBox dmgChaos;
