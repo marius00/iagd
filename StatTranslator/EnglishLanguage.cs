@@ -430,6 +430,7 @@ namespace StatTranslator {
             {"iatag_ui_fire", "Fire"},
             {"iatag_ui_aether", "Aether"},
             {"iatag_ui_cold", "Cold"},
+            {"iatag_ui_acid", "Acid"},
             {"iatag_ui_poison", "Poison"},
             {"iatag_ui_lightning", "Lightning"},
             {"iatag_ui_vitality", "Vitality"},

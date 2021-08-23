@@ -46,6 +46,10 @@ namespace IAGrim.UI.Filters {
                     dotTypes.Add("Cold");
                 }
 
+                if (dmgPoison.Checked) {
+                    dotTypes.Add("Poison");
+                }
+
                 var filters = new List<string[]>();
                 foreach (var dot in dotTypes) {
                     filters.Add(new[]
@@ -61,7 +65,7 @@ namespace IAGrim.UI.Filters {
                     });
                 }
 
-                if (cbLifeLeech.Checked) {
+                if (dmgLifeLeech.Checked) {
                     filters.Add(new[] { "offensiveLifeLeechMin", "offensiveSlowLifeLeachMin" });
                 }
 

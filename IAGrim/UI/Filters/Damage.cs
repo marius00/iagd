@@ -54,7 +54,7 @@ namespace IAGrim.UI.Filters {
                     dmgTypes.Add("Chaos");
                 }
 
-                if (dmgPoison.Checked) {
+                if (dmgAcid.Checked) {
                     dmgTypes.Add("Poison");
                 }
 
@@ -77,18 +77,14 @@ namespace IAGrim.UI.Filters {
                             $"offensive{damageType}",
                             $"offensive{damageType}Modifier",
                             "offensiveElemental",
-                            "offensiveElementalModifier",
-                            $"offensiveSlow{damageType}",
-                            $"offensiveSlow{damageType}Modifier"
+                            "offensiveElementalModifier"
                         });
                     }
                     else {
                         filters.Add(new[]
                         {
                             $"offensive{damageType}",
-                            $"offensive{damageType}Modifier",
-                            $"offensiveSlow{damageType}",
-                            $"offensiveSlow{damageType}Modifier"
+                            $"offensive{damageType}Modifier"
                         });
                     }
                 }
