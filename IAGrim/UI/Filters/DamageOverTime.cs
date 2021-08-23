@@ -1,18 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace IAGrim.UI.Filters {
     partial class DamageOverTimeFilter : UserControl {
         public DamageOverTimeFilter() {
             InitializeComponent();
-            this.Load += DamageOverTimeFilter_Load;
+            Load += DamageOverTimeFilter_Load;
         }
 
         public void DamageOverTimeFilter_Load(object sender, EventArgs e) {
@@ -22,38 +16,30 @@ namespace IAGrim.UI.Filters {
         public List<string[]> Filters {
             get {
                 var dotTypes = new List<string>();
-                if (dmgBleeding.Checked) {
+                if (dmgBleeding.Checked)
                     dotTypes.Add("Bleeding");
-                }
 
-                if (dmgTrauma.Checked) {
+                if (dmgTrauma.Checked)
                     dotTypes.Add("Physical");
-                }
 
-                if (dmgBurn.Checked) {
+                if (dmgBurn.Checked)
                     dotTypes.Add("Fire");
-                }
 
-                if (dmgElectrocute.Checked) {
+                if (dmgElectrocute.Checked)
                     dotTypes.Add("Lightning");
-                }
 
-                if (dmgVitalityDecay.Checked) {
+                if (dmgVitalityDecay.Checked)
                     dotTypes.Add("Life");
-                }
 
-                if (dmgFrost.Checked) {
+                if (dmgFrost.Checked)
                     dotTypes.Add("Cold");
-                }
 
-                if (dmgPoison.Checked) {
+                if (dmgPoison.Checked)
                     dotTypes.Add("Poison");
-                }
 
                 var filters = new List<string[]>();
-                foreach (var dot in dotTypes) {
-                    filters.Add(new[]
-                    {
+                foreach (var dot in dotTypes)
+                    filters.Add(new[] {
                         $"offensiveSlow{dot}",
                         $"offensiveSlow{dot}Modifier",
                         $"offensiveSlow{dot}ModifierChance",
@@ -63,11 +49,9 @@ namespace IAGrim.UI.Filters {
                         $"retaliationSlow{dot}Duration",
                         $"retaliationSlow{dot}DurationMin"
                     });
-                }
 
-                if (dmgLifeLeech.Checked) {
-                    filters.Add(new[] { "offensiveLifeLeechMin", "offensiveSlowLifeLeachMin" });
-                }
+                if (dmgLifeLeech.Checked)
+                    filters.Add(new[] {"offensiveLifeLeechMin", "offensiveSlowLifeLeachMin"});
 
                 return filters;
             }
