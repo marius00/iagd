@@ -42,30 +42,17 @@ namespace IAGrim.UI.Filters {
                 if (dmgAcid.Checked)
                     dmgTypes.Add("Poison");
 
-                if (dmgElemental.Checked)
+                if (dmgElemental.Checked || dmgTypes.Contains("Fire") || dmgTypes.Contains("Cold") || dmgTypes.Contains("Lightning"))
                     dmgTypes.Add("Elemental");
 
                 if (totalDamage.Checked)
                     filters.Add(new[] {"offensiveTotalDamageModifier"});
 
-                foreach (var damageType in dmgTypes) {
-                    var isElemental = damageType.Equals("Fire") ||
-                                      damageType.Equals("Cold") ||
-                                      damageType.Equals("Lightning");
-
-                    if (isElemental)
-                        filters.Add(new[] {
-                            $"offensive{damageType}",
-                            $"offensive{damageType}Modifier",
-                            "offensiveElemental",
-                            "offensiveElementalModifier"
-                        });
-                    else
-                        filters.Add(new[] {
-                            $"offensive{damageType}",
-                            $"offensive{damageType}Modifier"
-                        });
-                }
+                foreach (var damageType in dmgTypes)
+                    filters.Add(new[] {
+                        $"offensive{damageType}",
+                        $"offensive{damageType}Modifier"
+                    });
 
                 return filters;
             }
