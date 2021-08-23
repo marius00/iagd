@@ -6,15 +6,13 @@ namespace StatTranslator {
         public bool WarnIfMissing => true;
 
         public EnglishLanguage(Dictionary<string, string> existingTags) {
-            foreach (string tag in existingTags.Keys) {
+            foreach (var tag in existingTags.Keys)
                 SetTagIfMissing(tag, existingTags[tag]);
-            }
         }
 
         public void SetTagIfMissing(string tag, string value) {
-            if (!_stats.ContainsKey(tag)) {
+            if (!_stats.ContainsKey(tag))
                 _stats[tag] = value;
-            }
         }
 
         public string Export() {
@@ -699,8 +697,8 @@ namespace StatTranslator {
         }
 
         public string GetTag(string tag) {
-            return _stats.ContainsKey(tag) 
-                ? _stats[tag] 
+            return _stats.ContainsKey(tag)
+                ? _stats[tag]
                 : string.Empty;
         }
 
