@@ -42,6 +42,7 @@ namespace IAGrim.Parser.Arc {
         /// <param name="itemsArcFullPath">Full path to items.arc</param>
         /// <param name="destinationFolder"></param>
         public static void ExtractItemIcons(string itemsArcFullPath, string destinationFolder) {
+            const int KiloByte30 = 1024 * 45;
             logger.Debug($"Extracting item icons from {itemsArcFullPath} to {destinationFolder}");
 
             try {
@@ -57,64 +58,75 @@ namespace IAGrim.Parser.Arc {
 
                     foreach (var icon in dc.strings) {
                         var b = dc.GetTexture(icon);
+                        if (b == null)
+                            continue;
 
-                        if (b != null) {
-                            if (icon.EndsWith(".png")) {
-                                var imagePath = Path.Combine(destinationFolder, $@"{Path.GetFileName(icon)}");
+                        if (b.Length > KiloByte30) {
+                            logger.Warn($"Skipping {icon}, size is {b.Length / 1024}kb, max limit {KiloByte30 / 1024}kb");
+                            continue; 
+                        }
+
+                        
+                        if (icon.EndsWith(".png")) {
+                            var imagePath = Path.Combine(destinationFolder, $@"{Path.GetFileName(icon)}");
+
+                            if (File.Exists(imagePath)) {
+                                continue;
+                            }
+
+                            try {
+                                using (var image = Image.FromStream(new MemoryStream(b))) {
+                                    var h = image.Height;
+                                    var w = image.Width;
+
+                                    // Anything bigger than 128 is likely a real texture
+                                    if (w > 128 || h > 128) {
+                                        continue;
+                                    }
+
+                                    // Anything bigger than 96, and square is most likely a real texture
+                                    if ((w > 96 || h > 96) && w == h) {
+                                        continue;
+                                    }
+
+                                    image.Save(imagePath);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                logger.Warn($"Error extracting icon \"{icon}\", {ex.Message}", ex);
+                            }
+                        } 
+                        else if (!icon.EndsWith("_dif.tex")
+                                    && !icon.EndsWith("_nml.tex")
+                                    && !icon.EndsWith(".anm")
+                                    && !icon.EndsWith(".pfx")
+                                    && !icon.EndsWith(".wav")
+                                    && !icon.EndsWith("bmp.tex")
+                                    && !icon.EndsWith("_spec.tex")
+                                    && !icon.EndsWith("_glo.tex")
+                                    && !icon.EndsWith("_g.tex")
+                                    && !icon.EndsWith(".txt")
+                                    && !icon.EndsWith(".mt1")
+                                    && !icon.EndsWith(".obj")) { // TODO: Should make this a whitelist instead
+                            try
+                            {
+                                var imagePath = Path.Combine(destinationFolder, $@"{Path.GetFileName(icon)}.png");
+                                logger.Debug($"Parsing icon {icon}");
 
                                 if (File.Exists(imagePath)) {
                                     continue;
                                 }
 
-                                try {
-                                    using (var image = Image.FromStream(new MemoryStream(b))) {
-                                        var h = image.Height;
-                                        var w = image.Width;
-
-                                        // Anything bigger than 128 is likely a real texture
-                                        if (w > 128 || h > 128) {
-                                            continue;
-                                        }
-
-                                        // Anything bigger than 96, and square is most likely a real texture
-                                        if ((w > 96 || h > 96) && w == h) {
-                                            continue;
-                                        }
-
-                                        image.Save(imagePath);
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    logger.Warn($"Error extracting icon \"{icon}\", {ex.Message}", ex);
-                                }
-                            } 
-                            else if (!icon.EndsWith("_dif.tex")
-                                     && !icon.EndsWith("_nml.tex")
-                                     && !icon.EndsWith(".anm")
-                                     && !icon.EndsWith(".pfx")
-                                     && !icon.EndsWith(".wav")
-                                     && !icon.EndsWith("bmp.tex")
-                                     && !icon.EndsWith("_spec.tex")
-                                     && !icon.EndsWith("_glo.tex")
-                                     && !icon.EndsWith("_g.tex")) {
-                                try
-                                {
-                                    var imagePath = Path.Combine(destinationFolder, $@"{Path.GetFileName(icon)}.png");
-
-                                    if (File.Exists(imagePath)) {
-                                        continue;
-                                    }
-
-                                    var img = ExtractImage(b);
-                                    img?.Save(imagePath, ImageFormat.Png);
-                                }
-                                catch (Exception ex)
-                                {
-                                    logger.Warn($"Error extracting icon \"{icon}\", {ex.Message}", ex);
-                                }
+                                var img = ExtractImage(b);
+                                img?.Save(imagePath, ImageFormat.Png);
+                            }
+                            catch (Exception ex)
+                            {
+                                logger.Warn($"Error extracting icon \"{icon}\", {ex.Message}", ex);
                             }
                         }
+                        
 
                     }
                 }

@@ -281,6 +281,7 @@ iatag_stash_status_error=Could not inject into Grim Dawn, are you sure the bank 
 iatag_stash_unknown=Stash: Unknown
 iatag_stash3_failure=Cannot deposit item, please ensure SHARED Stash tab is empty.
 iatag_stash3_success=Successfully deposited {0} out of {1} items
+iatag_ui_acid=Acid
 iatag_ui_actions_title=Actions
 iatag_ui_advancedsettings=Advanced
 iatag_ui_aether=Aether
