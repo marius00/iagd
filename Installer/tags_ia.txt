@@ -58,6 +58,7 @@ characterDefensiveAbilityModifier=+{0}% Defensive Ability
 characterDefensiveBlockRecoveryReduction=+{0}% Shield Recovery Time
 characterDeflectProjectile=+{0}% Chance to Avoid Projectiles
 characterDexterity=+{0} Cunning
+characterDexterityModifier=+{0}% Cunning
 characterDodgePercent=+{0}% Chance to Avoid Melee Attacks
 characterEnergyAbsorptionPercent={0}% Energy Absorption From Enemy Spells
 characterHuntingDexterityReqReduction=-{0}% Cunning Req. for Ranged Weapons

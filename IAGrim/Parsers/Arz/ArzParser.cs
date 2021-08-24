@@ -105,7 +105,7 @@ namespace IAGrim.Parsers.Arz {
                 return rExSkillClass.Groups[1].Value;
 
             var viaRecord = items.FirstOrDefault(m => m.Record == record);
-            var stat = (viaRecord?.Stats).FirstOrDefault(m => m.Stat == "MasteryEnumeration")?.TextValue;
+            var stat = (viaRecord?.Stats)?.FirstOrDefault(m => m.Stat == "MasteryEnumeration")?.TextValue;
 
             if (stat != null && stat.Length >= 2) {
                 return $"class{stat.Substring(stat.Length - 2)}";
