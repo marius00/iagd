@@ -1,8 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace IAGrim.Utilities.HelperClasses
-{
+namespace IAGrim.Utilities.HelperClasses {
     public class GDTransferFile : IComboBoxItemToggle, IEquatable<GDTransferFile> {
         public string Filename { get; set; }
 
@@ -14,70 +13,72 @@ namespace IAGrim.Utilities.HelperClasses
 
         public bool IsExpansion1 { get; set; }
 
-        [JsonIgnore]
-        public virtual DateTime LastAccess { get; set; }
-        
-        public override string ToString() {
-            var text = string.IsNullOrEmpty(Mod) 
-                ? RuntimeSettings.Language.GetTag("iatag_ui_vanilla") 
-                : Mod;
+        public DowngradeType Downgrade { get; set; }
 
-            if (IsHardcore)
-            {
+        [JsonIgnore] public virtual DateTime LastAccess { get; set; }
+
+        public override string ToString() {
+            var text = string.IsNullOrEmpty(Mod) ? RuntimeSettings.Language.GetTag("iatag_ui_vanilla") : Mod;
+            if (Downgrade == DowngradeType.AoM) {
+                text = RuntimeSettings.Language.GetTag("iatag_ui_no_fg");
+            }
+            else if (Downgrade == DowngradeType.NoExpansions) {
+                text = RuntimeSettings.Language.GetTag("iatag_ui_no_expansion");
+            }
+
+            if (IsHardcore) {
                 return $"{text}{RuntimeSettings.Language.GetTag("iatag_ui_hc")}";
             }
-               
+
             return text;
         }
 
-        public bool Equals(GDTransferFile other)
-        {
-            if (ReferenceEquals(null, other))
-            {
+        public bool Equals(GDTransferFile other) {
+            if (ReferenceEquals(null, other)) {
                 return false;
             }
 
-            if (ReferenceEquals(this, other))
-            {
+            if (ReferenceEquals(this, other)) {
                 return true;
             }
 
-            return string.Equals(Filename, other.Filename) 
-                   && IsHardcore == other.IsHardcore 
-                   && string.Equals(Mod, other.Mod) 
-                   && IsExpansion1 == other.IsExpansion1;
+            return string.Equals(Filename, other.Filename)
+                   && IsHardcore == other.IsHardcore
+                   && string.Equals(Mod, other.Mod)
+                   && IsExpansion1 == other.IsExpansion1
+                   && Downgrade == other.Downgrade;
         }
 
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj))
-            {
+        public override bool Equals(object obj) {
+            if (ReferenceEquals(null, obj)) {
                 return false;
             }
 
-            if (ReferenceEquals(this, obj))
-            {
+            if (ReferenceEquals(this, obj)) {
                 return true;
             }
 
-            if (obj.GetType() != GetType())
-            {
+            if (obj.GetType() != GetType()) {
                 return false;
             }
 
             return Equals((GDTransferFile) obj);
         }
 
-        public override int GetHashCode()
-        {
-            unchecked
-            {
+        public override int GetHashCode() {
+            unchecked {
                 var hashCode = (Filename != null ? Filename.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ IsHardcore.GetHashCode();
                 hashCode = (hashCode * 397) ^ (Mod != null ? Mod.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ IsExpansion1.GetHashCode();
                 return hashCode;
             }
+        }
+
+        public enum DowngradeType {
+            None,
+            AoM,
+            NoExpansions
         }
     }
 }

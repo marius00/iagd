@@ -37,6 +37,7 @@ namespace IAGrim.Parsers.TransferStash {
                 Thread.CurrentThread.Name = "TransferStashWorker";
                 Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
             }
+
             ExceptionReporter.EnableLogUnhandledOnThread();
 
             BackgroundWorker worker = sender as BackgroundWorker;
@@ -51,12 +52,14 @@ namespace IAGrim.Parsers.TransferStash {
                 if (_queuedTransferFiles.Count == 0) {
                     continue;
                 }
+
                 List<UserFeedback> feedback;
                 try {
                     var (isLootable, lootableFeedback) = _transferStashService.IsTransferStashLootable();
                     if (isLootable) {
                         feedback = Execute();
-                    } else {
+                    }
+                    else {
                         feedback = lootableFeedback;
                     }
                 }

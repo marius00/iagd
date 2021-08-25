@@ -342,6 +342,8 @@ namespace StatTranslator {
             {"iatag_ui_backup_delete", "Delete backup"},
             {"iatag_ui_hc", " (HC)"},
             {"iatag_ui_vanilla", "No mod"},
+            {"iatag_ui_no_fg", "FG Disabled"},
+            {"iatag_ui_no_expansion", "AOM/FG disabled"},
             {"iatag_ui_vanilla_xpac", "AoM"},
             {"iatag_ui_forgottengods", "Forgotten Gods"},
             {"iatag_ui_none", "None"},

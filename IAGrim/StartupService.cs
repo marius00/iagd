@@ -85,7 +85,7 @@ namespace IAGrim {
                 Logger.Info("The following transfer files has been found:");
 
                 foreach (GDTransferFile mod in mods) {
-                    Logger.Info($"\"{mod.Filename}\": Mod: \"{mod.Mod}\", HC: {mod.IsHardcore}");
+                    Logger.Info($"\"{mod.Filename}\": Mod: \"{mod.Mod}\", HC: {mod.IsHardcore}, Downgrade: {mod.Downgrade}");
                 }
             }
 

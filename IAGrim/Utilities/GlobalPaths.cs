@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using log4net;
+using static IAGrim.Utilities.HelperClasses.GDTransferFile;
 
 namespace IAGrim.Utilities {
     internal static class GlobalPaths {
@@ -70,9 +71,27 @@ namespace IAGrim.Utilities {
             return filename.EndsWith(".gsh") || filename.EndsWith(".csh") || filename.EndsWith(".bsh");
         }
 
+        /// <summary>
+        /// Fetches the "downgrade type" of the transfer file.
+        /// Transfer files ending with .cst/.csh have disabled the FG expansion.
+        /// Transfer files ending with .bst/.bsh have disabled the AoM and FG expansions.
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        public static DowngradeType GetDowngradeType(string filename) {
+            var withoutLastLetter = filename.Substring(0, filename.Length - 1);
+            if (withoutLastLetter.EndsWith(".cs"))
+                return DowngradeType.AoM;
+            else if (withoutLastLetter.EndsWith(".bs"))
+                return DowngradeType.NoExpansions;
+            else
+                return DowngradeType.None;
+        }
+
         public static string SavePath {
             get {
-                var p = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "Grim Dawn", "Save");
+                var p = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games",
+                    "Grim Dawn", "Save");
                 Directory.CreateDirectory(Path.Combine(p, "main"));
                 return p;
             }
@@ -84,47 +103,58 @@ namespace IAGrim.Utilities {
         public static List<GDTransferFile> TransferFiles {
             get {
                 string documents = SavePath;
+                var transferFilenames = new string[] {
+                    "transfer.gst", // Softcore
+                    "transfer.gsh", // Hardcore
+                    "transfer.bst", // Softcore Vanilla FG/AOM disabled (Vanilla only, owns expansions)
+                    "transfer.cst", // Softcore FG disabled (Vanilla+AOM) 
+                    "transfer.csh", // Hardcore FG disabled (Vanilla+AOM) 
+                    "transfer.bsh" // Hardcore FG/AOM disabled (Vanilla only, owns expansions)
+                };
 
-                if (Directory.Exists(documents)) {
-                    // Generate a list of the interesting files
-                    List<string> files = new List<string>();
-                    // transfer.bst / transfer.cst / transfer.csh
-                    foreach (string filename in new string[] {"transfer.gst", "transfer.gsh"}) {
-                        string vanilla = Path.Combine(documents, filename);
-                        if (File.Exists(vanilla) && !ParsedFiles.Contains(vanilla)) {
-                            files.Add(vanilla);
-                        }
-
-
-                        foreach (var possibleMod in Directory.GetDirectories(documents)) {
-                            string mod = Path.Combine(possibleMod, filename);
-                            if (File.Exists(mod) && !ParsedFiles.Contains(mod)) {
-                                files.Add(mod);
-                            }
-                        }
-                    }
-
-
-                    foreach (string potential in files) {
-                        if (TransferStashService.TryGetModLabel(potential, out var mod)) {
-                            ParsedFiles.Add(potential);
-                            var lastAccess = File.GetLastWriteTime(potential);
-                            TransferFilesCache.Add(new GDTransferFile {
-                                Filename = potential,
-                                Mod = mod,
-                                IsHardcore = IsHardcore(potential),
-                                LastAccess = lastAccess
-                            });
-                        }
-                    }
-
-                    if (TransferFilesCache.Count == 0) {
-                        Logger.Warn($"No stash files detected in {documents}");
-                    }
-                }
-                else {
+                if (!Directory.Exists(documents)) {
                     Logger.Warn($"Could not locate the folder \"{documents}\"");
+                    return new List<GDTransferFile>(TransferFilesCache);
                 }
+
+
+                // Generate a list of the interesting files
+                List<string> files = new List<string>();
+                // transfer.bst / transfer.cst / transfer.csh
+                foreach (string filename in transferFilenames) {
+                    string vanilla = Path.Combine(documents, filename);
+                    if (File.Exists(vanilla) && !ParsedFiles.Contains(vanilla)) {
+                        files.Add(vanilla);
+                    }
+
+
+                    foreach (var possibleMod in Directory.GetDirectories(documents)) {
+                        string mod = Path.Combine(possibleMod, filename);
+                        if (File.Exists(mod) && !ParsedFiles.Contains(mod)) {
+                            files.Add(mod);
+                        }
+                    }
+                }
+
+
+                foreach (string potential in files) {
+                    if (TransferStashService.TryGetModLabel(potential, out var mod)) {
+                        ParsedFiles.Add(potential);
+                        var lastAccess = File.GetLastWriteTime(potential);
+                        TransferFilesCache.Add(new GDTransferFile {
+                            Filename = potential,
+                            Mod = mod,
+                            IsHardcore = IsHardcore(potential),
+                            LastAccess = lastAccess,
+                            Downgrade = GetDowngradeType(potential)
+                        });
+                    }
+                }
+
+                if (TransferFilesCache.Count == 0) {
+                    Logger.Warn($"No stash files detected in {documents}");
+                }
+
 
                 return new List<GDTransferFile>(TransferFilesCache);
             }
