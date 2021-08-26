@@ -557,7 +557,8 @@ const helpEntries = [
         body: () => <div>
             In order to use Item Assistant with expansions disabled, check the Mod filter in the upper right corner. <br/>
             Set this to "No expansions" or "FG Disabled" depending on which setup you're using.<br/><br/>
-            Item Assistant should automatically detect disabled expansions and provide these options.
+            Item Assistant should automatically detect disabled expansions and provide these options. <br/>
+            Typically recognized by transferring items from IA not appearing in-game.
         </div>
     },
     {
