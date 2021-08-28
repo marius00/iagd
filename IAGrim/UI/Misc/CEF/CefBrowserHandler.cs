@@ -19,6 +19,7 @@ namespace IAGrim.UI.Misc.CEF {
         private TabControl _tabControl; // TODO: UGh.. why?
         public ChromiumWebBrowser BrowserControl { get; private set; }
         private readonly object _lockObj = new object();
+
         private readonly JsonSerializerSettings _settings = new JsonSerializerSettings {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
             Culture = System.Globalization.CultureInfo.InvariantCulture,
@@ -29,12 +30,12 @@ namespace IAGrim.UI.Misc.CEF {
         ~CefBrowserHandler() {
             Dispose();
         }
-        
+
         public void ShowCharacterBackups() {
             if (BrowserControl != null && BrowserControl.CanExecuteJavascriptInMainFrame) {
                 BrowserControl.ExecuteScriptAsync("window.showCharacterBackups()");
                 if (_tabControl.InvokeRequired) {
-                    _tabControl.Invoke((MethodInvoker)delegate { _tabControl.SelectedIndex = 0; });
+                    _tabControl.Invoke((MethodInvoker) delegate { _tabControl.SelectedIndex = 0; });
                 }
                 else {
                     _tabControl.SelectedIndex = 0;
@@ -89,9 +90,8 @@ namespace IAGrim.UI.Misc.CEF {
             else {
                 Logger.Warn("Attempted to update items but CEF not yet initialized.");
             }
-
         }
-        
+
         /// <summary>
         /// Set the current batch of items
         /// </summary>
@@ -135,9 +135,18 @@ namespace IAGrim.UI.Misc.CEF {
             }
         }
 
+        private class QuickTimeoutWebClient : WebClient {
+            protected override WebRequest GetWebRequest(Uri uri) {
+                WebRequest w = base.GetWebRequest(uri);
+                w.Timeout = 500;
+                return w;
+            }
+        }
+
         private string GetSiteUri() {
 #if DEBUG
-            var client = new WebClient();
+            var client = new QuickTimeoutWebClient();
+
             try {
                 Logger.Debug("Checking if NodeJS is running...");
                 client.DownloadString("http://localhost:3000/");
@@ -156,7 +165,6 @@ namespace IAGrim.UI.Misc.CEF {
             string levelLowercased = level.ToString().ToLowerInvariant();
             var m = message.Replace("\n", "\\n").Replace("'", "\\'");
             if (!string.IsNullOrEmpty(message)) {
-
                 if (BrowserControl.CanExecuteJavascriptInMainFrame) {
                     var ret = new Dictionary<string, string> {
                         {"message", m},
@@ -200,21 +208,24 @@ namespace IAGrim.UI.Misc.CEF {
                 var requestHandler = new CefRequestHandler();
                 requestHandler.OnAuthentication += (sender, args) => OnAuthSuccess?.Invoke(sender, args);
                 BrowserControl.RequestHandler = requestHandler;
-                
+
                 BrowserControl.LifeSpanHandler = new AzureOnClosePopupHijack();
-                
+
                 Logger.Info("Chromium created..");
-            } catch (System.IO.FileNotFoundException ex) {
+            }
+            catch (System.IO.FileNotFoundException ex) {
                 MessageBox.Show("Error \"File Not Found\" loading Chromium, did you forget to install Visual C++ runtimes?\n\nvc_redist86 in the IA folder.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 Logger.Warn(ex.Message);
                 Logger.Warn(ex.StackTrace);
                 throw;
-            } catch (IOException ex) {
+            }
+            catch (IOException ex) {
                 MessageBox.Show("Error loading Chromium, did you forget to install Visual C++ runtimes?\n\nvc_redist86 in the IA folder.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 Logger.Warn(ex.Message);
                 Logger.Warn(ex.StackTrace);
                 throw;
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 MessageBox.Show("Unknown error loading Chromium, please see log file for more information.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 Logger.Warn(ex.Message);
                 Logger.Warn(ex.StackTrace);
