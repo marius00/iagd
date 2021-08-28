@@ -75,6 +75,7 @@ namespace IAGrim {
 
             Logger.Info("Transfer to any mod is " + (settings.GetPersistent().TransferAnyMod ? "enabled" : "disabled"));
             Logger.Info("Experimental updates is " + (settings.GetPersistent().SubscribeExperimentalUpdates ? "enabled" : "disabled"));
+            Logger.Info("Delete duplicates is " + (settings.GetPersistent().DeleteDuplicates ? "enabled" : "disabled"));
 
             List<GDTransferFile> mods = GlobalPaths.TransferFiles;
 
