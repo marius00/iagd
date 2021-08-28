@@ -578,6 +578,7 @@
     <Compile Include="Utilities\DependencyChecker.cs" />
     <Compile Include="Utilities\EasterEgg.cs" />
     <Compile Include="Utilities\GlobalPaths.cs" />
+    <Compile Include="Utilities\LoggerUsernameConverter.cs" />
     <Compile Include="Utilities\RuntimeSettings.cs" />
     <Compile Include="Utilities\Detection\GrimDawnDetector.cs" />
     <Compile Include="Program.cs" />

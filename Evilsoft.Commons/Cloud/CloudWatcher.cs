@@ -12,10 +12,7 @@ using System.Text;
 namespace EvilsoftCommons.Cloud {
     public class CloudWatcher {
         static ILog logger = LogManager.GetLogger(typeof(CloudWatcher));
-        public HashSet<CloudProvider> Providers {
-            get;
-            protected set;
-        }
+        public HashSet<CloudProvider> Providers { get; protected set; }
 
         public CloudWatcher() {
             Providers = new HashSet<CloudProvider>();
@@ -25,21 +22,23 @@ namespace EvilsoftCommons.Cloud {
         }
 
 
-
         private void FindDropbox() {
             try {
-                String roaming = System.Environment.GetEnvironmentVariable("AppData");
-                String local = System.Environment.GetEnvironmentVariable("LocalAppData");
+                string roaming = System.Environment.GetEnvironmentVariable("AppData");
+                string local = System.Environment.GetEnvironmentVariable("LocalAppData");
 
-                if (Directory.Exists(Path.Combine(roaming, "Dropbox")) && File.Exists(Path.Combine(roaming, "Dropbox", "info.json"))) {
+                if (Directory.Exists(Path.Combine(roaming, "Dropbox")) &&
+                    File.Exists(Path.Combine(roaming, "Dropbox", "info.json"))) {
                     FindDropbox(File.ReadAllText(Path.Combine(roaming, "Dropbox", "info.json")));
                 }
 
-                if (Directory.Exists(Path.Combine(local, "Dropbox")) && File.Exists(Path.Combine(local, "Dropbox", "info.json"))) {
+                if (Directory.Exists(Path.Combine(local, "Dropbox")) &&
+                    File.Exists(Path.Combine(local, "Dropbox", "info.json"))) {
                     FindDropbox(File.ReadAllText(Path.Combine(local, "Dropbox", "info.json")));
                 }
 
-                if (Directory.Exists(Path.Combine(roaming, "Dropbox")) && File.Exists(Path.Combine(roaming, "Dropbox", "host.db"))) {
+                if (Directory.Exists(Path.Combine(roaming, "Dropbox")) &&
+                    File.Exists(Path.Combine(roaming, "Dropbox", "host.db"))) {
                     var data = File.ReadAllLines(Path.Combine(roaming, "Dropbox", "host.db"));
                     if (data.Length >= 2) {
                         var path = ASCIIEncoding.ASCII.GetString(Convert.FromBase64String(data[1]));
@@ -52,7 +51,8 @@ namespace EvilsoftCommons.Cloud {
                     }
                 }
 
-                if (Directory.Exists(Path.Combine(local, "Dropbox")) && File.Exists(Path.Combine(local, "Dropbox", "host.db"))) {
+                if (Directory.Exists(Path.Combine(local, "Dropbox")) &&
+                    File.Exists(Path.Combine(local, "Dropbox", "host.db"))) {
                     var data = File.ReadAllLines(Path.Combine(local, "Dropbox", "host.db"));
                     if (data.Length >= 2) {
                         var path = ASCIIEncoding.ASCII.GetString(Convert.FromBase64String(data[1]));
@@ -64,8 +64,6 @@ namespace EvilsoftCommons.Cloud {
                         }
                     }
                 }
-
-
             }
             catch (Exception ex) {
                 logger.Warn(ex.Message);
@@ -77,7 +75,7 @@ namespace EvilsoftCommons.Cloud {
             var providers = JObject.Parse(json);
             foreach (var provider in providers) {
                 var y = provider.Value;
-                string path = (string)y["path"];
+                string path = (string) y["path"];
 
 
                 if (Directory.Exists(path)) {
@@ -87,13 +85,12 @@ namespace EvilsoftCommons.Cloud {
                     });
                 }
             }
-
         }
 
         private static string FindOnedriveByRegistry() {
             using (RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\OneDrive")) {
                 if (registryKey != null) {
-                    string location = (string)registryKey.GetValue("UserFolder");
+                    string location = (string) registryKey.GetValue("UserFolder");
                     if (!string.IsNullOrEmpty(location) && Directory.Exists(location)) {
                         logger.Info("OneDrive install location located using registry key");
                         return location;
@@ -125,15 +122,16 @@ namespace EvilsoftCommons.Cloud {
                     }
                 }
                 catch (Exception ex) {
-                    logger.Debug($"Error detecting OneDrive installation path (this is fine, don't worry): {ex.Message}");
+                    logger.Debug(
+                        $"Error detecting OneDrive installation path (this is fine, don't worry): {ex.Message}");
                     logger.Debug(ex.StackTrace);
                 }
             }
-
         }
 
         private void FindGoogleDrive() {
-            string drivePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Google", "Drive");
+            string drivePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "Google", "Drive");
 
             try {
                 if (Directory.Exists(drivePath)) {
@@ -177,7 +175,8 @@ namespace EvilsoftCommons.Cloud {
 
 
         [DllImport("shell32.dll")]
-        static extern int SHGetKnownFolderPath([MarshalAs(UnmanagedType.LPStruct)] Guid rfid, uint dwFlags, IntPtr hToken, out IntPtr pszPath);
+        static extern int SHGetKnownFolderPath([MarshalAs(UnmanagedType.LPStruct)] Guid rfid, uint dwFlags,
+            IntPtr hToken, out IntPtr pszPath);
 
         public static string GetKnownFolderPath(Guid knownFolderId) {
             IntPtr pszPath = IntPtr.Zero;
@@ -192,6 +191,5 @@ namespace EvilsoftCommons.Cloud {
                     Marshal.FreeCoTaskMem(pszPath);
             }
         }
-
     }
 }
