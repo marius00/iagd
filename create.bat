@@ -8,4 +8,8 @@ copy /y IAGrim\bin\release\IAGrim.exe Installer\IAGrim.exe
 copy /y %appdata%\..\local\evilsoft\iagd\tags_ia.template.txt installer\tags_ia.txt
 
 Inno\iscc Inno\gdia.iss
+
+echo "Checking for unstaged changes before tagging to git.."
+git diff --exit-code || exit
 set-commit-tags.cmd
+
