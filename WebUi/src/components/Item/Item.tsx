@@ -19,6 +19,7 @@ interface Props {
   transferAll: (x: any) => void;
   getItemName: (baseRecord: string) => ICollectionItem;
   requestUnknownItemHelp: () => void;
+  showBackupCloudIcon: boolean;
 }
 
 export function getUniqueId(item: IItem): string {
@@ -35,7 +36,7 @@ class Item extends React.PureComponent<Props, object> {
   }
 
   openItemSite() {
-    openUrl(`http://www.grimtools.com/db/search?src=itemassistant&query=${this.stripColorCodes(this.props.item.name)}`);
+    openUrl(`https://www.grimtools.com/db/search?src=itemassistant&query=${this.stripColorCodes(this.props.item.name)}`);
   }
 
   renderBuddyItem(item: IItem) {
@@ -181,7 +182,7 @@ class Item extends React.PureComponent<Props, object> {
           : ''
         }
 
-        <ItemCornerContainer {...item} />
+        <ItemCornerContainer {...item} showBackupCloudIcon={this.props.showBackupCloudIcon} />
 
         {item.hasRecipe && item.type === IItemType.Recipe ?
           <div className="recipe-item">

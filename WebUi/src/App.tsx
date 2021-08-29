@@ -24,6 +24,7 @@ export interface ApplicationState {
   isDarkMode: boolean;
   helpSearchFilter: string;
   numItems: number;
+  showBackupCloudIcon: boolean;
 }
 
 
@@ -67,6 +68,7 @@ class App extends React.PureComponent<{}, object> {
     isDarkMode: false,
     helpSearchFilter: '',
     numItems: 0,
+    showBackupCloudIcon: true,
   } as ApplicationState;
 
   componentDidMount() {
@@ -144,6 +146,13 @@ class App extends React.PureComponent<{}, object> {
       });
     };
 
+      // @ts-ignore:
+    window.setOnlineBackupsEnabled = (enabled: boolean) => {
+        this.setState({
+            showBackupCloudIcon: enabled
+        });
+    };
+
     // Show a notification message such as "Item transferred" or "Too close to stash"
     // @ts-ignore: showMessage doesn't exist on window
     window.showMessage = (input: string) => {
@@ -202,6 +211,7 @@ class App extends React.PureComponent<{}, object> {
         {this.state.activeTab === 3 && <CharacterListContainer />}
 
         {this.state.activeTab === 0 && <ItemContainer
+            showBackupCloudIcon={this.state.showBackupCloudIcon}
             items={this.state.items}
             numItems={this.state.numItems}
             isLoading={this.state.isLoading}

@@ -135,17 +135,20 @@ namespace IAGrim.UI.Misc.CEF {
             }
         }
 
-        private class QuickTimeoutWebClient : WebClient {
-            protected override WebRequest GetWebRequest(Uri uri) {
-                WebRequest w = base.GetWebRequest(uri);
-                w.Timeout = 500;
-                return w;
+        public bool SetOnlineBackupsEnabled(bool enabled) {
+            if (BrowserControl.CanExecuteJavascriptInMainFrame) {
+                BrowserControl.ExecuteScriptAsync("window.setOnlineBackupsEnabled", enabled);
+                return true;
+            } else {
+                Logger.Warn("Attempted to set dark/light mode but CEF not yet initialized.");
+                return false;
             }
         }
 
+
         private string GetSiteUri() {
 #if DEBUG
-            var client = new QuickTimeoutWebClient();
+            var client = new WebClient();
 
             try {
                 Logger.Debug("Checking if NodeJS is running...");

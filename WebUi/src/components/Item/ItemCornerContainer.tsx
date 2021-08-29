@@ -4,11 +4,18 @@ import { isEmbedded } from '../../integration/integration';
 import translate from '../../translations/EmbeddedTranslator';
 import IItemType from '../../interfaces/IItemType';
 
-class ItemCornerContainer extends React.PureComponent<IItem, object> {
+
+interface Props {
+    showBackupCloudIcon: boolean;
+}
+type IItemWithshowBackupCloudIcon = Props & IItem;
+
+class ItemCornerContainer extends React.PureComponent<IItemWithshowBackupCloudIcon, object> {
   render() {
     const item = {...this.props};
-    const showCloudOkIcon = item.type === IItemType.Player && item.hasCloudBackup && isEmbedded;
-    const showCloudErrorIcon = item.type === IItemType.Player && !item.hasCloudBackup && isEmbedded;
+    const showBackupCloudIcon = item.showBackupCloudIcon;
+    const showCloudOkIcon = item.type === IItemType.Player && item.hasCloudBackup && isEmbedded && showBackupCloudIcon;
+    const showCloudErrorIcon = item.type === IItemType.Player && !item.hasCloudBackup && isEmbedded && showBackupCloudIcon;
     const showSingularBuddyItemIcon = item.type !== IItemType.Buddy && item.buddies.length === 1;
     const showPluralBuddyItemIcon = item.type !== IItemType.Buddy && item.buddies.length > 1;
     const showRecipeIcon = item.hasRecipe && item.type !== 0;

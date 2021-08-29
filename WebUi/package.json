@@ -20,7 +20,7 @@
   },
   "scripts": {
     "start": "cross-env REACT_APP_BUILD_TARGET=GDIA react-scripts start",
-    "start:online": "cross-env REACT_APP_BUILD_TARGET=ONLINE REACT_APP_SERVER_URL=http://localhost:8080 react-scripts start",
+    "dev": "cross-env REACT_APP_BUILD_TARGET=GDIA react-scripts start",
     "start:help": "cross-env REACT_APP_BUILD_TARGET=HELP react-scripts start",
     "build": "react-scripts build",
     "build:online": "cross-env REACT_APP_BUILD_TARGET=ONLINE react-scripts build",

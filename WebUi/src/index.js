@@ -3,21 +3,12 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import OnlineHelpPage from './OnlineHelpPage';
-import OnlineApp from './OnlineApp';
 import reportWebVitals from './reportWebVitals';
 const getenv = require('getenv');
 const buildTarget = getenv.string('REACT_APP_BUILD_TARGET', 'GDIA');
 
 console.log('Build target:', buildTarget, process.env.REACT_APP_BUILD_TARGET);
-if (buildTarget === 'ONLINE') {
-  const url = getenv.string('REACT_APP_SERVER_URL', 'https://api.iagd.evilsoft.net');
-  ReactDOM.render(
-    <React.StrictMode>
-      <OnlineApp url={url} />
-    </React.StrictMode>,
-    document.getElementById('root')
-  );
-} else if (buildTarget === 'HELP') {
+if (buildTarget === 'HELP') {
   ReactDOM.render(
     <React.StrictMode>
       <OnlineHelpPage />

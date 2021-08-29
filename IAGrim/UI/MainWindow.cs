@@ -133,6 +133,7 @@ namespace IAGrim.UI {
 
                         var settingsService = _serviceProvider.Get<SettingsService>();
                         _cefBrowserHandler.SetDarkMode(settingsService.GetPersistent().DarkMode);
+                        _cefBrowserHandler.SetOnlineBackupsEnabled(!settingsService.GetLocal().OptOutOfBackups);
                     }
                 }
             }
@@ -593,6 +594,10 @@ namespace IAGrim.UI {
                 dm.Activate(); // Needs a lot more work before its ready, for example custom components uses Draw and does not respect coloring.
                 _cefBrowserHandler.SetDarkMode(settingsService.GetPersistent().DarkMode);
             }
+
+            settingsService.GetLocal().OnMutate += delegate(object o, EventArgs args) { _cefBrowserHandler.SetOnlineBackupsEnabled(!settingsService.GetLocal().OptOutOfBackups); };
+            
+            
 
             Logger.Debug("UI initialization complete");
         }

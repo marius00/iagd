@@ -18,6 +18,7 @@ interface Props {
   collectionItems: ICollectionItem[];
   isDarkMode: boolean;
   requestUnknownItemHelp: () => void;
+  showBackupCloudIcon: boolean;
 }
 
 
@@ -86,6 +87,7 @@ class ItemContainer extends React.PureComponent<Props, object> {
               transferSingle={(url: object[]) => this.transferSingle(url)}
               getItemName={(baseRecord:string) => this.findByRecord(baseRecord)}
               requestUnknownItemHelp={this.props.requestUnknownItemHelp}
+              showBackupCloudIcon={this.props.showBackupCloudIcon}
             />
           )}
 
