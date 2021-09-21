@@ -24,6 +24,7 @@ Name: "{commondesktop}\GD Item Assistant"; Filename: "{app}\\IAGrim.exe"; Tasks:
 
 [Files]
 Source: "..\IAGrim\bin\Release\*"; Excludes: "*.pdb"; DestDir: "{app}"; Flags: overwritereadonly replacesameversion recursesubdirs createallsubdirs touch ignoreversion
+Source: "readme.txt"; DestDir: "{app}";
 
 [Run]
 Filename: "{app}\ndp472-kb4054531-web.exe"; Parameters: "/passive /showfinalerror"; Description: "Install .NET 4.7.2"; Flags: postinstall runascurrentuser
@@ -47,6 +48,7 @@ ArchitecturesInstallIn64BitMode=x64
 AlwaysShowDirOnReadyPage=Yes
 DisableDirPage=No
 OutputBaseFilename=GDItemAssistant
+InfoAfterFile=readme.txt
 
 [InstallDelete]
 Type: files; Name: "{app}\SQLite.Interop.dll"

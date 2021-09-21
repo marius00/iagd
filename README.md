@@ -21,21 +21,6 @@ It can be obtained in two ways:
 Place this file under IAGrim\bin\Release
 
 
-## The process cannot access the file 'IAGrim\obj\x86\Debug\IAGrim.exe.tmp' because it is being used by another process.
-StackTrace:
-   at System.IO.__Error.WinIOError(Int32 errorCode, String maybeFullPath)  
-   at System.IO.File.InternalCopy(String sourceFileName, String destFileName, Boolean overwrite, Boolean checkHost)  
-   at System.IO.File.Copy(String sourceFileName, String destFileName, Boolean overwrite)  
-   at InnerWeaver.ReadModule() in C:\projects\\__fody__\FodyIsolated\ModuleReader.cs:line 22  
-   at InnerWeaver.Execute() in C:\projects\\__fody__\FodyIsolated\InnerWeaver.cs:line 93  
-
-When cloning IA and redownloading nuget packages, the settings for __fody__ may have gotten messed up.  
-In `IAGrim\IAGrim\IAGrim.csproj` make sure that the Nuget import for __fody__ is as following: `<Import Project="..\packages\Fody.2.0.0\build\netstandard1.4\Fody.targets" Condition="Exists('..\packages\Fody.2.0.0\build\netstandard1.4\Fody.targets') And '$(Configuration)' == 'Release' " />`
-
-Particulary the `And '$(Configuration)' == 'Release'` to prevent __fody__ from stamping debug builds.
-   
-
-
 
 ## ItemAssistantHook.dll
 IAGrim also depends on ItemAssistantHook.dll for detecting the status of various things ingame.

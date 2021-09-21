@@ -24,10 +24,9 @@ Name: "{commondesktop}\GD Item Assistant"; Filename: "{app}\\IAGrim.exe"; Tasks:
 
 [Files]
 Source: "..\IAGrim\bin\Release\*"; Excludes: "*.pdb,ndp472-kb4054531-web,vcredist_x86.exe,2010sp1_vcredist_x86.exe,2015rc3_vc_redist.x86.exe"; DestDir: "{app}"; Flags: overwritereadonly replacesameversion recursesubdirs createallsubdirs touch ignoreversion
+Source: "readme.txt"; DestDir: "{app}";
 
 [Run]
-
-
 Filename: "{app}\IAGrim.exe"; Description: "Launch GD Item Assistant"; Flags: postinstall nowait
  
 
@@ -44,6 +43,7 @@ ArchitecturesInstallIn64BitMode=x64
 AlwaysShowDirOnReadyPage=Yes
 DisableDirPage=No
 OutputBaseFilename=GDItemAssistantBeta-{#ApplicationVersion}
+InfoAfterFile=readme.txt
 
 [InstallDelete]
 Type: files; Name: "{app}\SQLite.Interop.dll"
