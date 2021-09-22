@@ -81,9 +81,9 @@ namespace IAGrim.Database {
                 var result = new Dictionary<string, int>();
 
                 foreach (var row in rows) {
-                    var sum = (long)row[0];
-                    var record = (string)row[1];
-                    result[record] = (int)sum + (result.ContainsKey(record) ? result[record] : 0);
+                    var sum = (long) row[0];
+                    var record = (string) row[1];
+                    result[record] = (int) sum + (result.ContainsKey(record) ? result[record] : 0);
                 }
 
                 return result;
@@ -206,7 +206,7 @@ namespace IAGrim.Database {
         /// </summary>
         /// <param name="item"></param>
         public override void Save(PlayerItem item) {
-            Save(new List<PlayerItem> { item });
+            Save(new List<PlayerItem> {item});
             Logger.Info("Stored player item to database.");
         }
 
@@ -232,7 +232,7 @@ namespace IAGrim.Database {
         }
 
         public override void Update(PlayerItem item) {
-            Update(new List<PlayerItem> { item }, false);
+            Update(new List<PlayerItem> {item}, false);
         }
 
         public void ResetOnlineSyncState() {
@@ -350,7 +350,7 @@ namespace IAGrim.Database {
                 .SetParameter("namelowercase", itemName.ToLowerInvariant())
                 .SetParameter("prefixrarity", GetGreenQualityLevelForRecords(stats, records))
                 .SetParameter("rarity", ItemOperationsUtility.GetRarityForRecords(stats, records))
-                .SetParameter("levelreq", (double)ItemOperationsUtility.GetMinimumLevelForRecords(stats, records))
+                .SetParameter("levelreq", (double) ItemOperationsUtility.GetMinimumLevelForRecords(stats, records))
                 .SetParameter("id", item.Id)
                 .ExecuteUpdate();
         }
@@ -535,7 +535,7 @@ namespace IAGrim.Database {
 
                 try {
                     using (var transaction = session.BeginTransaction()) {
-                        session.SaveOrUpdate(new DeletedPlayerItem { Id = cloudId });
+                        session.SaveOrUpdate(new DeletedPlayerItem {Id = cloudId});
                         transaction.Commit();
                     }
                 }
@@ -592,7 +592,7 @@ namespace IAGrim.Database {
         }
 
         class DatabaseItemStatQuery {
-            public string SQL;
+            public List<string> SQL;
             public Dictionary<string, string[]> Parameters;
         }
 
@@ -622,17 +622,20 @@ namespace IAGrim.Database {
             }
 
             if (queryFragments.Count > 0) {
-                var sql = $@"
-                SELECT Playeritemid FROM PlayerItemRecord WHERE record IN (
-                    select baserecord from databaseitem_V2 db where db.baserecord in (
-                        select baserecord from playeritem union 
-                        select prefixrecord from playeritem union 
-                        select suffixrecord from playeritem union 
-                        select materiarecord from playeritem
-                    )
-                    AND {string.Join(" AND ", queryFragments)}
-                )
-                ";
+                List<string> sql = new List<string>();
+                foreach (var fragment in queryFragments) {
+                    sql.Add($@"
+                        SELECT Playeritemid FROM PlayerItemRecord WHERE record IN (
+                            select baserecord from databaseitem_V2 db where db.baserecord in (
+                                select baserecord from playeritem union 
+                                select prefixrecord from playeritem union 
+                                select suffixrecord from playeritem union 
+                                select materiarecord from playeritem
+                            )
+                            AND {fragment}
+                        )");
+                }
+
 
                 return new DatabaseItemStatQuery {
                     SQL = sql,
@@ -642,42 +645,7 @@ namespace IAGrim.Database {
 
             return null;
         }
-        /*
-        private static PlayerItem ToPlayerItem(object o) {
-            object[] arr = (object[]) o;
-            int idx = 0;
-            string name = arr[idx++] as string;
-            long stackCount = (long) arr[idx++];
-            string rarity = (string) arr[idx++];
-            int levelrequirement = (int) (double) arr[idx++];
-            string baserecord = (string) arr[idx++];
-            string prefixrecord = (string) arr[idx++];
-            string suffixrecord = (string) arr[idx++];
-            string ModifierRecord = (string) arr[idx++];
-            string MateriaRecord = (string) arr[idx++];
-            int PrefixRarity = (int) arr[idx++];
-            string AzureUuid = (string) arr[idx++];
-            string CloudId = (string) arr[idx++];
-            long? IsCloudSynchronized = (long?) arr[idx++];
-            string PetRecord = (string) arr[idx++];
 
-            return new PlayerItem {
-                Name = name,
-                StackCount = stackCount,
-                Rarity = rarity,
-                LevelRequirement = levelrequirement,
-                BaseRecord = baserecord,
-                PrefixRecord = prefixrecord,
-                SuffixRecord = suffixrecord,
-                ModifierRecord = ModifierRecord,
-                MateriaRecord = MateriaRecord,
-                PrefixRarity = PrefixRarity,
-                AzureUuid = AzureUuid,
-                CloudId = CloudId,
-                IsCloudSynchronized = IsCloudSynchronized.HasValue && IsCloudSynchronized.Value == 1,
-                PetRecord = PetRecord
-            };
-        }*/
 
         public List<PlayerItem> SearchForItems(ItemSearchRequest query) {
             Logger.Debug($"Searching for items with query {query}");
@@ -766,7 +734,9 @@ namespace IAGrim.Database {
             var subQuery = CreateDatabaseStatQueryParams(query);
 
             if (subQuery != null) {
-                sql.Add(" AND PI.Id IN (" + subQuery.SQL + ")");
+                foreach (var sub in subQuery.SQL) {
+                    sql.Add($" AND PI.Id IN ({sub})");
+                }
             }
 
             // Can be several slots for stuff like "2 Handed"
