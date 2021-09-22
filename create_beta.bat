@@ -8,3 +8,5 @@ git diff --exit-code || exit
 set-commit-tags.cmd
 
 echo All good
+
+pause

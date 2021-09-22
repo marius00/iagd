@@ -13,3 +13,4 @@ echo "Checking for unstaged changes before tagging to git.."
 git diff --exit-code || exit
 set-commit-tags.cmd
 
+pause
