@@ -14,10 +14,8 @@ using System.Windows.Forms;
 using IAGrim.Settings;
 using IAGrim.Settings.Dto;
 
-namespace IAGrim.UI
-{
-    public partial class LanguagePackPicker : Form
-    {
+namespace IAGrim.UI {
+    public partial class LanguagePackPicker : Form {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(LanguagePackPicker));
         private IEnumerable<string> _paths;
         private readonly List<FirefoxRadioButton> _checkboxes = new List<FirefoxRadioButton>();
@@ -29,9 +27,9 @@ namespace IAGrim.UI
         public LanguagePackPicker(
             IItemTagDao itemTagDao,
             IPlayerItemDao playerItemDao,
-            ParsingService parsingService, 
+            ParsingService parsingService,
             SettingsService settings
-            ) {
+        ) {
             InitializeComponent();
 
             _parsingService = parsingService;
@@ -45,17 +43,14 @@ namespace IAGrim.UI
             return ShowDialog();
         }
 
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-        {
-            if (keyData == Keys.Enter)
-            {
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
+            if (keyData == Keys.Enter) {
                 buttonSelect_Click(null, null);
 
                 return true;
             }
 
-            if (keyData == Keys.Escape)
-            {
+            if (keyData == Keys.Escape) {
                 Close();
             }
 
@@ -64,15 +59,13 @@ namespace IAGrim.UI
 
         private void buttonSelect_Click(object sender, EventArgs e) {
             var cb = _checkboxes.FirstOrDefault(m => m.Checked);
-            if (cb != null)
-            {
+            if (cb != null) {
                 var package = cb.Tag.ToString();
-                
+
                 if (package != _settings.GetLocal().LocalizationFile) {
                     _settings.GetLocal().LocalizationFile = package;
 
-                    if (!string.IsNullOrEmpty(_settings.GetLocal().LocalizationFile))
-                    {
+                    if (!string.IsNullOrEmpty(_settings.GetLocal().LocalizationFile)) {
                         var loader = new LocalizationLoader();
                         RuntimeSettings.Language = loader.LoadLanguage(package, new EnglishLanguage(new Dictionary<string, string>()));
 
@@ -83,22 +76,18 @@ namespace IAGrim.UI
                         x.ShowDialog();
                     }
                     // Load the GD one
-                    else
-                    {
+                    else {
                         // Override timestamp to force an update
                         RuntimeSettings.InitializeLanguage(string.Empty, new Dictionary<string, string>()); // TODO: Not ideal, will need a restart
 
-                        foreach (var location in _paths)
-                        {
-                            if (!string.IsNullOrEmpty(location) && Directory.Exists(location))
-                            {
+                        foreach (var location in _paths) {
+                            if (!string.IsNullOrEmpty(location) && Directory.Exists(location)) {
                                 _parsingService.Update(location, string.Empty);
                                 _parsingService.Execute();
                                 break;
                             }
 
                             Logger.Warn("Could not find the Grim Dawn install location");
-
                         }
 
                         // Update item stats as well
@@ -107,6 +96,7 @@ namespace IAGrim.UI
                     }
                 }
             }
+
             Close();
         }
 
@@ -118,8 +108,7 @@ namespace IAGrim.UI
 
             // Default language: English
             {
-                var cb = new FirefoxRadioButton
-                {
+                var cb = new FirefoxRadioButton {
                     Location = new Point(10, 25 + n * 33),
                     Text = "English (Official)",
                     Tag = string.Empty,
@@ -133,18 +122,15 @@ namespace IAGrim.UI
                 n++;
             }
 
-            foreach (var path in _paths)
-            {
-                if (Directory.Exists(Path.Combine(path, "localization")))
-                {
-                    foreach (var file in Directory.EnumerateFiles(Path.Combine(path, "localization"), "*.zip"))
-                    {
+            foreach (var path in _paths) {
+                if (Directory.Exists(Path.Combine(path, "localization"))) {
+                    foreach (var file in Directory.EnumerateFiles(Path.Combine(path, "localization"), "*.zip")) {
                         loc.CheckLanguage(file, out var author, out var language);
 
-                        var cb = new FirefoxRadioButton
-                        {
+                        var isFullyTranslatedTag = LocalizationLoader.IsFullySupportedTranslation(file) ? "" : "[Partial] ";
+                        var cb = new FirefoxRadioButton {
                             Location = new Point(10, 25 + n * 33),
-                            Text = RuntimeSettings.Language.GetTag("iatag_ui_language_by_author", language, author),
+                            Text = isFullyTranslatedTag + RuntimeSettings.Language.GetTag("iatag_ui_language_by_author", language, author),
                             Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top,
                             Width = groupBox1.Width - pictureBox1.Width,
                             Tag = file,
@@ -160,11 +146,18 @@ namespace IAGrim.UI
                 }
             }
 
-            Height = Height + n * 33;
+
+            var delta = Math.Min(Math.Max(0, n - 5), 15) * 33; // We already have space for 5, only expand if we exceed this.
+            if (delta > 0) {
+                var newHeight = Height + delta;
+                MaximumSize = new Size(MaximumSize.Width, newHeight);
+                MinimumSize = new Size(MinimumSize.Width, newHeight);
+                Height = newHeight;
+                lblWarning.Location = new Point(lblWarning.Location.X, lblWarning.Location.Y + delta);
+            }
         }
 
-        private void LanguagePackPicker_FormClosing(object sender, FormClosingEventArgs e)
-        {
+        private void LanguagePackPicker_FormClosing(object sender, FormClosingEventArgs e) {
             Program.MainWindow?.UpdateLanguage();
         }
     }

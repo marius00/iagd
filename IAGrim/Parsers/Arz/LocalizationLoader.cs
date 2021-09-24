@@ -194,7 +194,7 @@ namespace IAGrim.Parsers.Arz {
             return false;
         }
 
-        private static bool IsFullySupportedTranslation(string filename) {
+        public static bool IsFullySupportedTranslation(string filename) {
             if (!File.Exists(filename)) {
                 return false;
             }

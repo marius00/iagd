@@ -120,6 +120,9 @@ namespace IAGrim.UI.Controller {
         private string GetTransferFile() {
             GDTransferFile mfi = _searchWindow.ModSelectionHandler.SelectedMod;
             bool fileExists = !string.IsNullOrEmpty(mfi.Filename) && File.Exists(mfi.Filename);
+            if (!fileExists) {
+                Logger.Warn($"The transfer file {mfi.Filename} does not exist, switching to stash picker");
+            }
 
             
             if (_settingsService.GetPersistent().TransferAnyMod || !fileExists) {
