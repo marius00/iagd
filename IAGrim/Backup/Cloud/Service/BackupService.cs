@@ -125,6 +125,31 @@ namespace IAGrim.Backup.Cloud.Service {
             return batches;
         }
 
+        private static List<List<DeleteItemDto>> ToBatches(IList<DeleteItemDto> items) {
+            List<DeleteItemDto> currentBatch = new List<DeleteItemDto>();
+            List<List<DeleteItemDto>> batches = new List<List<DeleteItemDto>>();
+
+            if (items == null)
+                return batches;
+
+
+            // Max 100 items per batch, no mix of partitions in a batch.
+            foreach (var item in items) {
+                if (currentBatch.Count >= MaxBatchSize) {
+                    batches.Add(currentBatch);
+                    currentBatch = new List<DeleteItemDto>();
+                }
+
+                currentBatch.Add(item);
+            }
+
+            if (currentBatch.Count > 0) {
+                batches.Add(currentBatch);
+            }
+
+            return batches;
+        }
+
         private void SyncUp() {
             var items = _playerItemDao.GetUnsynchronizedItems();
             var batches = ToBatches(items);
@@ -180,7 +205,10 @@ namespace IAGrim.Backup.Cloud.Service {
                     _playerItemDao.Save(batch);
                 }
 
-                _playerItemDao.Delete(sync.Removed);
+                foreach (var batch in ToBatches(sync.Removed)) {
+                    _playerItemDao.Delete(batch);
+                }
+                
                 _settings.GetPersistent().CloudUploadTimestamp = sync.Timestamp;
 
                 Logger.Debug($"Updated/Merged in {items.Count} items, new timestamp is {sync.Timestamp}");
