@@ -398,7 +398,7 @@ namespace IAGrim.Database {
         public IList<BuddyItem> ListAll(string where) {
             if (string.IsNullOrEmpty(where))
                 where = "WHERE 1=1";
-            var sql = $@"SELECT {BuddyItemsTable.BaseRecord} as BaseRecord,
+            var sql = SqlProviderSafeQuery(SqlProviderSafeQuery($@"SELECT {BuddyItemsTable.BaseRecord} as BaseRecord,
                                 {BuddyItemsTable.PrefixRecord} as PrefixRecord,
                                 {BuddyItemsTable.SuffixRecord} as SuffixRecord,
                                 {BuddyItemsTable.ModifierRecord} as ModifierRecord,
@@ -413,7 +413,7 @@ namespace IAGrim.Database {
                         FROM {BuddyItemsTable.Table}, {BuddySubscriptionTable.Table}
                         {where}
                         AND {BuddyItemsTable.SubscriptionId} = {BuddySubscriptionTable.Id}
-            ";
+            "));
 
 
             using (ISession session = SessionCreator.OpenSession()) {
@@ -661,7 +661,7 @@ public void SetItems(long userid, string description, List<JsonBuddyItem> items)
             }
 
             List<string> sql = new List<string>();
-            sql.Add($@"SELECT
+            sql.Add(SqlProviderSafeQuery($@"SELECT
                                 {BuddyItemsTable.BaseRecord} as BaseRecord,
                                 {BuddyItemsTable.PrefixRecord} as PrefixRecord,
                                 {BuddyItemsTable.SuffixRecord} as SuffixRecord,
@@ -671,6 +671,7 @@ public void SetItems(long userid, string description, List<JsonBuddyItem> items)
                                 {BuddyItemsTable.Rarity} as Rarity,
                                 {BuddyItemsTable.PrefixRarity} as PrefixRarity,
                                 {BuddyItemsTable.Name} as Name,
+                                {BuddyItemsTable.RemoteItemId} as Id,
  
                                 {BuddyItemsTable.LevelRequirement} as MinimumLevel,
                                 {BuddyItemsTable.RemoteItemId} as RemoteItemId,
@@ -681,9 +682,9 @@ public void SetItems(long userid, string description, List<JsonBuddyItem> items)
 
 
                 FROM {BuddyItemsTable.Table} PI, {BuddySubscriptionTable.Table} S WHERE "
-                    + string.Join(" AND ", queryFragments)
-                    + $" AND {BuddyItemsTable.SubscriptionId} = {BuddySubscriptionTable.Id} "
-            );
+                                        + string.Join(" AND ", queryFragments)
+                                        + $" AND {BuddyItemsTable.SubscriptionId} = {BuddySubscriptionTable.Id} "
+            ));
 
             var subquery = CreateDatabaseStatQueryParams(query);
             if (subquery != null) {

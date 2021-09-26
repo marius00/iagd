@@ -75,21 +75,21 @@ namespace IAGrim.Database {
                 IList<object[]> rows;
 
                 if (string.IsNullOrEmpty(mod)) {
-                    var sql = string.Join(" ",
+                    var sql = SqlProviderSafeQuery(string.Join(" ",
                         $"SELECT sum(max(1, {PlayerItemTable.Stackcount})), {PlayerItemTable.Record} ",
                         $"FROM {PlayerItemTable.Table}",
                         $"WHERE {PlayerItemTable.Mod} IS NULL OR {PlayerItemTable.Mod} = ''",
-                        $"GROUP BY {PlayerItemTable.Record}"
+                        $"GROUP BY {PlayerItemTable.Record}")
                     );
                     rows = session.CreateSQLQuery(sql).List<object[]>();
                 }
                 else {
-                    var sql = string.Join(" ",
+                    var sql = SqlProviderSafeQuery(string.Join(" ",
                         $"SELECT sum(max(1, {PlayerItemTable.Stackcount})), {PlayerItemTable.Record} ",
                         $"FROM {PlayerItemTable.Table}",
                         $"WHERE {PlayerItemTable.Mod} = :mod",
                         $"GROUP BY {PlayerItemTable.Record}"
-                    );
+                    ));
 
                     rows = session.CreateSQLQuery(sql).SetParameter("mod", mod)
                         .List<object[]>();
@@ -730,7 +730,7 @@ namespace IAGrim.Database {
             }
 
             var sql = new List<string> {
-                $@"select name as Name, 
+                SqlProviderSafeQuery($@"select name as Name, 
                 StackCount, 
                 rarity as Rarity, 
                 levelrequirement as LevelRequirement, 
@@ -745,7 +745,7 @@ namespace IAGrim.Database {
                 {PlayerItemTable.IsCloudSynchronized} as IsCloudSynchronizedValue,
                 {PlayerItemTable.Id} as Id,
                 coalesce((SELECT group_concat(Record, '|') FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord)), '') AS PetRecord
-                FROM PlayerItem PI WHERE " + string.Join(" AND ", queryFragments)
+                FROM PlayerItem PI WHERE " + string.Join(" AND ", queryFragments))
             };
 
             var subQuery = CreateDatabaseStatQueryParams(query);
@@ -871,56 +871,42 @@ namespace IAGrim.Database {
         /// Delete duplicate items (items duplicated via bugs, not simply similar items)
         /// </summary>
         public void DeleteDuplicates() {
+
+            const string innerQuery =
+                @"		SELECT Id, (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) as UQ FROM PlayerItem tOuter WHERE (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) IN (
+			SELECT UQ FROM (
+				SELECT (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) as UQ, COUNT(*) as C FROM PlayerItem
+					WHERE baserecord NOT LIKE '%materia%'
+					AND baserecord NOT LIKE '%questitems%'
+					AND baserecord NOT LIKE '%potions%'
+					AND baserecord NOT LIKE '%crafting%'
+					AND StackCount < 2 -- Potions, components, etc
+					GROUP BY UQ
+				) X 
+			WHERE C > 1
+		)
+		AND Id = (SELECT Max(tInner.Id) FROM PlayerItem tInner WHERE (tInner.baserecord || tInner.prefixrecord || tInner.modifierrecord || tInner.suffixrecord || tInner.materiarecord || tInner.transmuterecord || tInner.seed) = (tOuter.baserecord || tOuter.prefixrecord || tOuter.modifierrecord || tOuter.suffixrecord || tOuter.materiarecord || tOuter.transmuterecord || tOuter.seed))
+";
             using (var session = SessionCreator.OpenSession()) {
                 using (var transaction = session.BeginTransaction()) {
                     // Mark all duplicates for deletion from online backups
-                    session.CreateSQLQuery(@"
+                    session.CreateSQLQuery(SqlProviderSafeQuery($@"
 insert into deletedplayeritem_v3(id)
 select cloudid FROM playeritem WHERE Id IN (
-	SELECT Id FROM (
-		SELECT MAX(Id) as Id, (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) as UQ FROM PlayerItem WHERE (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) IN (
-			SELECT UQ FROM (
-				SELECT (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) as UQ, COUNT(*) as C FROM PlayerItem
-					WHERE baserecord NOT LIKE '%materia%'
-					AND baserecord NOT LIKE '%questitems%'
-					AND baserecord NOT LIKE '%potions%'
-					AND baserecord NOT LIKE '%crafting%'
-					AND StackCount < 2 -- Potions, components, etc
-					GROUP BY UQ
-				) X 
-			WHERE C > 1
-		)
-
-		Group BY UQ
-	) Z
+	SELECT Id FROM ({innerQuery}) Z
 )
 
-AND cloud_hassync
+AND cloud_hassync = 1
 AND cloudid IS NOT NULL 
 AND cloudid NOT IN (SELECT id FROM deletedplayeritem_v3)
 AND cloudid != ''
-").ExecuteUpdate();
+")).ExecuteUpdate();
                     // Delete duplicates (if there are multiple, only one will be deleted)
-                    session.CreateSQLQuery(@"
+                    session.CreateSQLQuery(SqlProviderSafeQuery($@"
 DELETE FROM PlayerItem WHERE Id IN (
-	SELECT Id FROM (
-		SELECT MAX(Id) as Id, (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) as UQ FROM PlayerItem WHERE (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) IN (
-			SELECT UQ FROM (
-				SELECT (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) as UQ, COUNT(*) as C FROM PlayerItem
-					WHERE baserecord NOT LIKE '%materia%'
-					AND baserecord NOT LIKE '%questitems%'
-					AND baserecord NOT LIKE '%potions%'
-					AND baserecord NOT LIKE '%crafting%'
-					AND StackCount < 2 -- Potions, components, etc
-					GROUP BY UQ
-				) X 
-			WHERE C > 1
-		)
-
-		Group BY UQ
-	) Z
+SELECT Id FROM ({innerQuery}) Z
 )
-").ExecuteUpdate();
+")).ExecuteUpdate();
 
                     transaction.Commit();
                 }
@@ -928,7 +914,7 @@ DELETE FROM PlayerItem WHERE Id IN (
         }
 
         public IList<PlayerItem> ListWithMissingStatCache() {
-            var sql = $@"
+            var sql = SqlProviderSafeQuery($@"
                 select name as Name, 
                 {PlayerItemTable.Id} as Id,
                 {PlayerItemTable.Stackcount}, 
@@ -944,7 +930,7 @@ DELETE FROM PlayerItem WHERE Id IN (
                 {PlayerItemTable.CloudId} as CloudId,
                 {PlayerItemTable.IsCloudSynchronized} as IsCloudSynchronizedValue,
                 coalesce((SELECT group_concat(Record, '|') FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord)),'') AS PetRecord
-                FROM PlayerItem PI WHERE SearchableText IS NULL OR SearchableText = '' LIMIT 50";
+                FROM PlayerItem PI WHERE SearchableText IS NULL OR SearchableText = '' LIMIT 50");
 
             using (var session = SessionCreator.OpenSession()) {
                 using (session.BeginTransaction()) {

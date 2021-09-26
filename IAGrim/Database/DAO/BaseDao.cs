@@ -157,6 +157,20 @@ namespace IAGrim.Database {
             }
         }
 
+        /// <summary>
+        /// Ensures that the provided query is safe for all SQL providers
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public string SqlProviderSafeQuery(string query) {
+            if (Dialect == SqlDialect.Postgres) {
+                return query.Replace("group_concat", "string_agg")
+                    .Replace(" MAX(", " GREATEST(");
+            }
+
+            return query;
+        }
+
     }
     
 }

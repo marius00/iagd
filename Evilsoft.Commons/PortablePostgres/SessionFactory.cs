@@ -19,7 +19,7 @@ namespace PortablePostgres {
 
                 var db = "";
 #if DEBUG
-                db = "-test3";
+                // db = "-test3";
 #endif
 
                 var connectionString = configuration.GetProperty("connection.connection_string");
