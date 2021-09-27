@@ -43,15 +43,16 @@
             // 
             this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar1.Location = new System.Drawing.Point(12, 157);
+            this.progressBar1.Location = new System.Drawing.Point(15, 123);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(622, 23);
+            this.progressBar1.Size = new System.Drawing.Size(194, 23);
             this.progressBar1.TabIndex = 8;
             this.progressBar1.Click += new System.EventHandler(this.progressBar1_Click);
             // 
             // panelBox3
             // 
             this.panelBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.panelBox3.Controls.Add(this.progressBar1);
             this.panelBox3.Controls.Add(this.cbItemSelection);
             this.panelBox3.Controls.Add(this.buttonImport);
             this.panelBox3.Font = new System.Drawing.Font("Segoe UI Semibold", 20F);
@@ -61,7 +62,7 @@
             this.panelBox3.Location = new System.Drawing.Point(406, 12);
             this.panelBox3.Name = "panelBox3";
             this.panelBox3.NoRounding = false;
-            this.panelBox3.Size = new System.Drawing.Size(228, 142);
+            this.panelBox3.Size = new System.Drawing.Size(228, 164);
             this.panelBox3.TabIndex = 7;
             this.panelBox3.Tag = "iatag_ui_import_import";
             this.panelBox3.Text = "Import";
@@ -106,7 +107,7 @@
             this.panelBox1.Location = new System.Drawing.Point(172, 12);
             this.panelBox1.Name = "panelBox1";
             this.panelBox1.NoRounding = false;
-            this.panelBox1.Size = new System.Drawing.Size(228, 142);
+            this.panelBox1.Size = new System.Drawing.Size(228, 164);
             this.panelBox1.TabIndex = 4;
             this.panelBox1.Tag = "iatag_ui_import_stashfile";
             this.panelBox1.Text = "Stash File";
@@ -122,7 +123,7 @@
             this.buttonBrowse.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
             this.buttonBrowse.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(232)))), ((int)(((byte)(232)))), ((int)(((byte)(232)))));
             this.buttonBrowse.HoverForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
-            this.buttonBrowse.Location = new System.Drawing.Point(14, 85);
+            this.buttonBrowse.Location = new System.Drawing.Point(17, 52);
             this.buttonBrowse.Name = "buttonBrowse";
             this.buttonBrowse.Size = new System.Drawing.Size(192, 32);
             this.buttonBrowse.TabIndex = 6;
@@ -144,7 +145,7 @@
             this.panelBox2.Location = new System.Drawing.Point(12, 12);
             this.panelBox2.Name = "panelBox2";
             this.panelBox2.NoRounding = false;
-            this.panelBox2.Size = new System.Drawing.Size(154, 142);
+            this.panelBox2.Size = new System.Drawing.Size(154, 164);
             this.panelBox2.TabIndex = 3;
             this.panelBox2.Tag = "iatag_ui_import_filetype";
             this.panelBox2.Text = "File Type";
@@ -215,7 +216,6 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(643, 188);
-            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.panelBox3);
             this.Controls.Add(this.panelBox1);
             this.Controls.Add(this.panelBox2);

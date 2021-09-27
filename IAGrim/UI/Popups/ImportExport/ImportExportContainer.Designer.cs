@@ -34,14 +34,14 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.contentPanel.Location = new System.Drawing.Point(0, 0);
             this.contentPanel.Name = "contentPanel";
-            this.contentPanel.Size = new System.Drawing.Size(670, 185);
+            this.contentPanel.Size = new System.Drawing.Size(670, 224);
             this.contentPanel.TabIndex = 0;
             // 
             // ImportExportContainer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(670, 184);
+            this.ClientSize = new System.Drawing.Size(670, 223);
             this.Controls.Add(this.contentPanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));

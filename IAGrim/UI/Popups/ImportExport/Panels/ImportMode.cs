@@ -5,7 +5,9 @@ using IAGrim.Utilities.HelperClasses;
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
+using EvilsoftCommons.Exceptions;
 using IAGrim.Backup;
 using IAGrim.Database;
 using IAGrim.Parsers.TransferStash;
@@ -21,6 +23,7 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
         private readonly IPlayerItemDao _playerItemDao;
         private string _filename;
         private readonly TransferStashService2 _sm;
+        private volatile bool isLocked = false;
 
         public ImportMode(GDTransferFile[] modSelection, IPlayerItemDao playerItemDao, TransferStashService2 sm) {
             InitializeComponent();
@@ -37,6 +40,11 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
 
             cbItemSelection.Items.AddRange(_modSelection);
             LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
+
+            (this.Parent.Parent as Form).FormClosing += Form1_FormClosing;
+        }
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e) {
+            e.Cancel = isLocked;
         }
 
         private void radioIAStash_CheckedChanged(object sender, EventArgs e) {
@@ -152,18 +160,27 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
                 var items = io.Read(Read(_filename));
                 Logger.Debug($"Storing {items.Count} items to db");
                 progressBar1.Maximum = items.Count;
-                var batches = BatchUtil.ToBatches<PlayerItem>(items);
-                foreach (var batch in batches) {
-                    _playerItemDao.Import(batch);
-                    progressBar1.Value += batch.Count;
-                }
+                buttonImport.Enabled = false;
+                Thread t = new Thread(() => {
+                    ExceptionReporter.EnableLogUnhandledOnThread();
+                    isLocked = true;
 
-                MessageBox.Show(
-                    RuntimeSettings.Language.GetTag("iatag_ui_importexport_import_success_body"),
-                    RuntimeSettings.Language.GetTag("iatag_ui_importexport_import_success"),
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information
-                );
+                    var batches = BatchUtil.ToBatches<PlayerItem>(items);
+                    foreach (var batch in batches) {
+                        _playerItemDao.Import(batch);
+                        Invoke((MethodInvoker)delegate { progressBar1.Value += batch.Count; });
+                    }
+
+                    isLocked = false;
+                    MessageBox.Show(
+                        RuntimeSettings.Language.GetTag("iatag_ui_importexport_import_success_body"),
+                        RuntimeSettings.Language.GetTag("iatag_ui_importexport_import_success"),
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
+                });
+
+                t.Start();
             }
         }
 
