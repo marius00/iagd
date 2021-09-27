@@ -8,6 +8,35 @@ namespace StatTranslator {
         public EnglishLanguage(Dictionary<string, string> existingTags) {
             foreach (var tag in existingTags.Keys)
                 SetTagIfMissing(tag, existingTags[tag]);
+
+            
+            var damageTypes = StatManager.BodyDamageTypes;
+            var resistance = GetTag("Resistance");
+            var toMaxResistance = GetTag("ResistanceMaxResist");
+
+            foreach (var damageType in damageTypes) {
+                var r = DamageTypeTranslation(damageType);
+                SetTagIfMissing($"defensive{damageType}", $"{{0}}% {r} {resistance}");
+                SetTagIfMissing($"defensive{damageType}Resistance", $"{{0}}% {r} {resistance}");
+                SetTagIfMissing($"defensive{damageType}MaxResist", $"{{0}}% {toMaxResistance}{r} {resistance}");
+            }
+        }
+
+        /// <summary>
+        /// Copied from StatManager::DamageTypeTranslation
+        /// </summary>
+        /// <param name="d"></param>
+        /// <returns></returns>
+        private string DamageTypeTranslation(string d) {
+            d = d.Replace("Modifier", "");
+
+            var localized = GetTag(d);
+
+            if (!string.IsNullOrEmpty(localized)) {
+                return localized;
+            }
+
+            return d.Replace("Base", "");
         }
 
         public void SetTagIfMissing(string tag, string value) {
@@ -25,6 +54,7 @@ namespace StatTranslator {
 
         private readonly Dictionary<string, string> _stats = new Dictionary<string, string> {
             {"tagItemNameOrder", "{%_s0}{%_s1}{%_s2}{%_s3}{%_s4}"},
+
 
             // Simply Header stats
             {"offensivePierceRatioMin", "{0}% Armor Piercing"},
@@ -267,6 +297,46 @@ namespace StatTranslator {
             {"BaseLife", "Vitality"},
             {"Resistance", "Resistance"},
             {"ResistanceMaxResist", "to Maximum "},
+
+
+            {"iatag_damage_Physical", "Physical"},
+            {"iatag_damage_Fire", "Fire"},
+            {"iatag_damage_Cold", "Cold"},
+            {"iatag_damage_Vitality", "Vitality"},
+            {"iatag_damage_Lightning", "Lightning"},
+            {"iatag_damage_Chaos", "Chaos"},
+            {"iatag_damage_Bleeding", "Bleeding"},
+            {"iatag_damage_Elemental", "Elemental"},
+            {"iatag_damage_Pierce", "Pierce"},
+            {"iatag_damage_Aether", "Aether"},
+
+            // Damage version (ref spanish "el fuego", "al fuego")
+            {"iatag_damage_BasePhysical", "Physical"},
+            {"iatag_damage_BaseFire", "Fire"},
+            {"iatag_damage_BaseCold", "Cold"},
+            {"iatag_damage_BaseVitality", "Vitality"},
+            {"iatag_damage_BaseLightning", "Lightning"},
+            {"iatag_damage_BaseChaos", "Chaos"},
+            {"iatag_damage_BaseBleeding", "Bleeding"},
+            {"iatag_damage_BaseElemental", "Elemental"},
+            {"iatag_damage_BasePierce", "Pierce"},
+            {"iatag_damage_BaseAether", "Aether"},
+            {"iatag_damage_BaseLife", "Vitality"},
+            {"iatag_damage_SlowPhysical", "Internal Trauma"},
+            {"iatag_damage_SlowFire", "Burn"},
+            {"iatag_damage_SlowCold", "Frost"},
+            {"iatag_damage_SlowLightning", "Electrocute"},
+            {"iatag_damage_SlowVitality", "Vitality Decay"},
+            {"iatag_damage_SlowPoison", "Poison"},
+            {"iatag_damage_SlowLife", "Vitality Decay"},
+            {"iatag_damage_SlowBleeding", "Bleeding"},
+            {"iatag_damage_Poison", "Acid"},
+            {"iatag_damage_BasePoison", "Acid"},
+            {"iatag_damage_BonusPhysical", "Bonus"},
+            {"iatag_damage_Life", "Vitality"},
+            {"iatag_damage_TotalDamage", "to All"},
+            {"iatag_damage_iatag_ui_physical", "Physical"},
+            {"iatag_damage_PercentCurrentLife", "Life Reduction"},
 
             // HTML
             {"iatag_html_choose_a_relic", "Choose a Relic"},

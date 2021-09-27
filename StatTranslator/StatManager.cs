@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace StatTranslator {
     public class StatManager {
-        private static readonly string[] BodyDamageTypes = {
+        public static readonly string[] BodyDamageTypes = {
             "SlowPoison",
             "SlowPhysical",
             "SlowBleeding",
@@ -334,14 +334,19 @@ namespace StatTranslator {
         private string DamageTypeTranslation(string d) {
             d = d.Replace("Modifier", "");
 
-            var localized = _language.GetTag(d);
+            var localized = _language.GetTag($"iatag_damage_{d}");
 
             if (!string.IsNullOrEmpty(localized)) {
                 return localized;
             }
 
-            Logger.Warn($"Missing translations for tag \"{d}\"");
+            localized = _language.GetTag(d);
+            if (!string.IsNullOrEmpty(localized)) {
+                Logger.Warn($"Missing translations for tag \"iatag_damage_{d}\", falling back to legacy tag \"{d}\"");
+                return localized;
+            }
 
+            Logger.Warn($"Missing translations for tag \"iatag_damage_{d}\"");
             return d.Replace("Base", "");
         }
 
@@ -592,14 +597,11 @@ namespace StatTranslator {
             }
 
             var damageTypes = BodyDamageTypes;
-            var resistance = _language.GetTag("Resistance");
-            var toMaxResistance = _language.GetTag("ResistanceMaxResist");
 
             foreach (var damageType in damageTypes) {
-                var r = DamageTypeTranslation(damageType);
-                translationTable[$"defensive{damageType}"] = $"{{0}}% {r} {resistance}";
-                translationTable[$"defensive{damageType}Resistance"] = $"{{0}}% {r} {resistance}";
-                translationTable[$"defensive{damageType}MaxResist"] = $"{{0}}% {toMaxResistance}{r} {resistance}";
+                translationTable[$"defensive{damageType}"] = _language.GetTag($"defensive{damageType}");
+                translationTable[$"defensive{damageType}Resistance"] = _language.GetTag($"defensive{damageType}Resistance");
+                translationTable[$"defensive{damageType}MaxResist"] = _language.GetTag($"defensive{damageType}MaxResist");
             }
 
             foreach (var elem in stats.Where(m => translationTable.Keys.Contains(m.Stat))) {
