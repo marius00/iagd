@@ -141,6 +141,7 @@ namespace StatTranslator {
             {"offensiveStunChance", "{3}% chance to "},
             {"defensiveProtectionModifier", "Increases Armor by {0}%"},
             {"projectilePiercingChance", "{0}% Chance to pass through Enemies"},
+            {"characterGlobalReqReduction", "{0}% Reduction to Attribute Requirements"},
             {"projectileExplosionRadius", "{0} Meter Radius"},
             {"sparkChance", "{0}% Chance of affecting up to {1} targets within {2} Meters"},
 

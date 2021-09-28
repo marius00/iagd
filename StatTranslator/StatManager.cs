@@ -588,6 +588,7 @@ namespace StatTranslator {
                 "projectileExplosionRadius",
                 "defensiveStun",
                 "offensiveTotalDamageModifier",
+                "characterGlobalReqReduction"
             };
 
             var translationTable = new Dictionary<string, string>();
@@ -739,6 +740,7 @@ namespace StatTranslator {
                 }
             }
 
+            
             AddSimpleStat("characterTotalSpeedModifier", "customtag_xpac_modif_speedModifier", stats, skill, result);
             AddSimpleStat("characterDefensiveAbility", "customtag_xpac_modif_defensiveAbilityDebuff", stats, skill, result);
             AddSimpleStat("characterDefensiveAbilityModifier", "customtag_xpac_modif_defensiveAbilityBuff", stats, skill, result);
