@@ -41,6 +41,8 @@ namespace IAGrim.Database.Synchronizer.Core {
             while (!_isCancelled) {
                 if (_queue.TryDequeue(out var elem)) {
                     try {
+                        elem.IsStarted = true;
+
                         if (elem.Func != null)
                             _results[elem.Trigger] = elem.Func();
                         else
@@ -67,13 +69,14 @@ namespace IAGrim.Database.Synchronizer.Core {
                 throw new InvalidOperationException("Object has been disposed");
             AutoResetEvent ev = new AutoResetEvent(false);
 
-            _queue.Enqueue(new QueuedExecution {
+            var item = new QueuedExecution {
                 Action = () => func(),
                 Trigger = ev
-            });
+            };
+            _queue.Enqueue(item);
 
             if (!ev.WaitOne(timeout, true)) {
-                throw new Exception("Operation never terminated");
+                throw new Exception($"Operation never terminated: Started: {item.IsStarted}");
             }
 
             if (_results.ContainsKey(ev)) {
@@ -96,13 +99,14 @@ namespace IAGrim.Database.Synchronizer.Core {
                 throw new InvalidOperationException("Object has been disposed");
             AutoResetEvent ev = new AutoResetEvent(false);
 
-            _queue.Enqueue(new QueuedExecution {
+            var item = new QueuedExecution {
                 Func = () => func(),
                 Trigger = ev
-            });
+            };
+            _queue.Enqueue(item);
 
             if (!ev.WaitOne(timeout, true)) {
-                throw new Exception("Operation never terminated");
+                throw new Exception($"Operation never terminated: Started: {item.IsStarted}");
             }
 
             
@@ -134,6 +138,12 @@ namespace IAGrim.Database.Synchronizer.Core {
             public Func<object> Func { get; set; }
             public Action Action { get; set; }
             public AutoResetEvent Trigger { get; set; }
+
+            /// <summary>
+            /// Helps track down which operation stalled.
+            /// Multiple operations can be queued and time out, but only one of them will have started.
+            /// </summary>
+            public volatile bool IsStarted = false;
         }
     }
 }
