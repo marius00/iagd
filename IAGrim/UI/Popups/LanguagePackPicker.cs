@@ -63,6 +63,7 @@ namespace IAGrim.UI {
                 var package = cb.Tag.ToString();
 
                 if (package != _settings.GetLocal().LocalizationFile) {
+                    Logger.Info($"Loading localization file at {package}");
                     _settings.GetLocal().LocalizationFile = package;
 
                     if (!string.IsNullOrEmpty(_settings.GetLocal().LocalizationFile)) {

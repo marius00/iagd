@@ -132,7 +132,7 @@ namespace IAGrim.Utilities {
                 }
 
                 if (translated.Count == 0 && !(modifiedSkill.Class == null || modifiedSkill.Tier == null)) {
-                    string[] uri = json.URL.Select(o => o.ToString()).ToArray();
+                    string[] uri = json.URL.Select(o => (o ?? string.Empty).ToString()).ToArray();
 
                     var error = $@"Could not translate skill-modifier on: '{item.Name}', {json.BaseRecord} - {string.Join(";", uri)}";
                     Logger.Debug($"Could not translate skill-modifier stats for \"{item.Name}\"");

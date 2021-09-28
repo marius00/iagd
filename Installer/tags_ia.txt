@@ -61,6 +61,7 @@ characterDexterity=+{0} Cunning
 characterDexterityModifier=+{0}% Cunning
 characterDodgePercent=+{0}% Chance to Avoid Melee Attacks
 characterEnergyAbsorptionPercent={0}% Energy Absorption From Enemy Spells
+characterGlobalReqReduction={0}% Reduction to Attribute Requirements
 characterHuntingDexterityReqReduction=-{0}% Cunning Req. for Ranged Weapons
 characterIncreasedExperience=+{0}% Experience Gain
 characterIntelligence=+{0} Spirit
