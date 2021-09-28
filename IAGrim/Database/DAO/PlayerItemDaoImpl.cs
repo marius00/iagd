@@ -35,15 +35,32 @@ namespace IAGrim.Database {
         /// List all player items
         /// </summary>
         /// <returns></returns>
-        public IList<PlayerItem> GetByRecord(string prefixRecord, string baseRecord, string suffixRecord, string materiaRecord) {
+        public IList<PlayerItem> GetByRecord(string prefixRecord, string baseRecord, string suffixRecord, string materiaRecord, string mod, bool isHardcore) {
             using (var session = SessionCreator.OpenSession()) {
                 using (session.BeginTransaction()) {
-                    return session.CreateCriteria<PlayerItem>()
+                    // TODO:
+                    var crits = session.CreateCriteria<PlayerItem>()
                         .Add(Restrictions.Eq("BaseRecord", baseRecord))
                         .Add(Restrictions.Eq("PrefixRecord", prefixRecord))
                         .Add(Restrictions.Eq("SuffixRecord", suffixRecord))
-                        .Add(Restrictions.Eq("MateriaRecord", materiaRecord))
-                        .List<PlayerItem>();
+                        .Add(Restrictions.Eq("MateriaRecord", materiaRecord));
+
+                    if (string.IsNullOrEmpty(mod)) {
+                        crits = crits.Add(Restrictions.Or(Restrictions.Eq("Mod", ""), Restrictions.IsNull("Mod")));
+                    }
+                    else {
+                        crits = crits.Add(Restrictions.Eq("Mod", mod));
+                    }
+
+
+                    if (isHardcore) {
+                        crits = crits.Add(Restrictions.Eq("IsHardcore", true));
+                    }
+                    else {
+                        crits = crits.Add(Restrictions.Not(Restrictions.Eq("IsHardcore", true)));
+                    }
+
+                    return crits.List<PlayerItem>();
                 }
             }
         }

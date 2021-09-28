@@ -54,9 +54,9 @@ namespace IAGrim.Database.Synchronizer {
             );
         }
 
-        public IList<PlayerItem> GetByRecord(string prefixRecord, string baseRecord, string suffixRecord, string materiaRecord) {
+        public IList<PlayerItem> GetByRecord(string prefixRecord, string baseRecord, string suffixRecord, string materiaRecord, string mod, bool isHardcore) {
             return ThreadExecuter.Execute(
-                () => _repo.GetByRecord(prefixRecord, baseRecord, suffixRecord, materiaRecord)
+                () => _repo.GetByRecord(prefixRecord, baseRecord, suffixRecord, materiaRecord, mod, isHardcore)
             );
         }
 

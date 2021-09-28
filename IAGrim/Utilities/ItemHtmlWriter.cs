@@ -56,7 +56,7 @@ namespace IAGrim.Utilities {
             object[] transferUrl = {"", "", "", ""};
             string uniqueIdentifier;
             if (item is PlayerItem pi) {
-                transferUrl = new object[] {pi.BaseRecord, pi.PrefixRecord, pi.SuffixRecord, pi.MateriaRecord};
+                transferUrl = new object[] {pi.BaseRecord, pi.PrefixRecord, pi.SuffixRecord, pi.MateriaRecord, pi.Mod, pi.IsHardcore};
                 isCloudSynced = pi.IsCloudSynchronized;
                 uniqueIdentifier = $"PI/{pi.Id}/{pi.CloudId}";
             }

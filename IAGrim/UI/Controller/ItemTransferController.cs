@@ -54,7 +54,7 @@ namespace IAGrim.UI.Controller {
 
             // Detect the record type (long or string) and add the item(s)
             if (args.HasValidId) {
-                IList<PlayerItem> tmp = _dao.GetByRecord(args.Prefix, args.BaseRecord, args.Suffix, args.Materia);
+                IList<PlayerItem> tmp = _dao.GetByRecord(args.Prefix, args.BaseRecord, args.Suffix, args.Materia, args.Mod, args.IsHardcore);
                 if (tmp.Count > 0) {
                     if (args.Count == 1)
                         items.Add(tmp[0]);
