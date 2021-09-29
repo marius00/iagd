@@ -361,6 +361,7 @@ namespace StatTranslator {
             {"iatag_html_bonustopets", "Bonus to All Pets"},
             {"iatag_html_copytoclipboard", "Copy to Clipboard"},
             {"iatag_html_tab_header_items", "Items"},
+            {"iatag_html_tab_header_help", "Help"},
             {"iatag_html_tab_header_collections", "Collections"},
             {"iatag_html_tab_header_crafting", "Crafting"},
             {"iatag_html_tab_header_components", "Components"},
@@ -380,6 +381,7 @@ namespace StatTranslator {
             {"iatag_html_nomoreitems", "No more items"},
             {"iatag_html_setconsistsof", "This set consists of the following items: "},
 
+            {"iatag_ui_itemassistant", "Item Assistant"},
             {"iatag_ui_howtorestore", "How do I restore backups?"},
             {"iatag_ui_updatingstats_title", "Updating stats for owned items.."},
             {"iatag_ui_updatingstats", "Updating stats for your items..."},

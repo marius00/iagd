@@ -1,7 +1,5 @@
-﻿namespace StatTranslator
-{
+﻿namespace StatTranslator {
     public interface ILocalizedLanguage {
-
         string GetTag(string tag);
 
         string GetTag(string tag, params object[] args);

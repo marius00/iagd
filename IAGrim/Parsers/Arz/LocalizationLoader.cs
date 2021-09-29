@@ -44,6 +44,7 @@ namespace IAGrim.Parsers.Arz {
                 ApplyLanguage(control.Controls, lang);
             }
         }
+
         private static void ApplyLanguage(Control control, ILocalizedLanguage lang) {
             var tag = control.Tag?.ToString();
             bool hasTag = tag?.StartsWith("iatag_") ?? false;
@@ -67,6 +68,7 @@ namespace IAGrim.Parsers.Arz {
                 }
             }
         }
+
         private static void ApplyLanguage(ColumnHeader control, ILocalizedLanguage lang) {
             var tag = control.Tag?.ToString();
             bool hasTag = tag?.StartsWith("iatag_") ?? false;
@@ -86,13 +88,14 @@ namespace IAGrim.Parsers.Arz {
             if (_tagsItems == null || _tagsItems.Count == 0) {
                 Load(filename);
             }
+
             var dataset = new Dictionary<string, string>(_tagsItems);
             if (_tagsIa != null) {
                 foreach (var tag in _tagsIa) {
                     dataset[tag.Key] = tag.Value;
                 }
-                
             }
+
             var language = new ThirdPartyLanguage(dataset, fallback);
             return language;
         }
@@ -102,7 +105,7 @@ namespace IAGrim.Parsers.Arz {
             foreach (var line in data.Split('\n')) {
                 var sline = line.Split('=');
                 if (sline.Length == 2) {
-                    result[sline[0].Trim()] = sline[1].Trim().Replace("^k", "");
+                    result[sline[0].Trim()] = sline[1].Replace("^k", "");
                 }
             }
 
@@ -134,7 +137,8 @@ namespace IAGrim.Parsers.Arz {
 
                     return true;
                 }
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 Logger.Warn(ex.Message);
                 Logger.Warn(ex.StackTrace);
                 return false;
