@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IAGrim.Database.DAO.Util;
 
 namespace IAGrim.Database.Migrations {
     class MigrationHandler {
@@ -13,6 +14,9 @@ namespace IAGrim.Database.Migrations {
         }
         public void Migrate() {
             new DatabaseItemHashFixMigration().Migrate(_sessionCreator);
+            if (_sessionCreator.GetDialect() == SqlDialect.Postgres) {
+                new PostgresMigrations().Migrate(_sessionCreator);
+            }
         }
     }
 }

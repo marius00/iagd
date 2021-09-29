@@ -30,10 +30,8 @@ namespace IAGrim {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(Program));
         private static MainWindow _mw;
         private static readonly StartupService StartupService = new StartupService();
-
 #if DEBUG
         private static void Test() {
-
         }
 #endif
 
@@ -146,7 +144,7 @@ namespace IAGrim {
         }
 
         private static void Run(string[] args, ThreadExecuter threadExecuter) {
-            var dialect = SqlDialect.Sqlite;
+            var dialect = SqlDialect.Postgres;
             var factory = new SessionFactory(dialect);
             var serviceProvider = ServiceProvider.Initialize(threadExecuter, dialect);
 

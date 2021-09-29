@@ -30,12 +30,12 @@
 		<property name="IsHardcore" />
 
 		<property name="AzureUuid" column="azuuid_v2" />
-		<property name="CloudId" column="cloudid" />
+		<property name="CloudId" column="cloudid" index="idx_playeritem_cloudid" />
 		<property name="IsCloudSynchronizedValue" column="cloud_hassync" />
 		
 
 		<property name="CreationDate" column="created_at" />
-		<property name="SearchableText" column="searchabletext" />
+		<property name="SearchableText" column="searchabletext" type="string" length="5120" />
 
 		<!--  cascade="all-delete-orphan"  -->
 		<!--

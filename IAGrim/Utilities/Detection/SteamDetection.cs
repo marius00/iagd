@@ -29,12 +29,11 @@ namespace IAGrim.Utilities.Detection {
         }
 
         private static string GetSteamDirectoryFromValveRegistry() {
-            foreach (string candidate in new[] { VALVE_32BIT_PATH, VALVE_64BIT_PATH }) {
-
+            foreach (string candidate in new[] {VALVE_32BIT_PATH, VALVE_64BIT_PATH}) {
                 using (RegistryKey registryKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\Valve\Steam")) {
                     Logger.Debug("Looking for steam registry key..");
                     if (registryKey != null) {
-                        string location = (string)registryKey.GetValue("SteamPath");
+                        string location = (string) registryKey.GetValue("SteamPath");
                         if (IsSteamDirectory(location)) {
                             Logger.Info("Steam config location located");
                             return location;
@@ -52,7 +51,7 @@ namespace IAGrim.Utilities.Detection {
         private static string GetSteamDirectoryFromShellRegistry() {
             // Attempt to locate steam via the shell command, registry entry "Computer\HKEY_CLASSES_ROOT\steam\Shell\Open\Command"
             using (RegistryKey registryKey = Microsoft.Win32.Registry.ClassesRoot.OpenSubKey(@"steam\Shell\Open\Command")) {
-                string content = (string)registryKey?.GetValue("");
+                string content = (string) registryKey?.GetValue("");
                 if (!String.IsNullOrEmpty(content) && content.Contains(".exe")) {
                     var sub = content.Substring(0, 4 + content.IndexOf(".exe", StringComparison.InvariantCultureIgnoreCase)).Replace("\"", "");
                     var exe = Path.GetFullPath(sub);
@@ -83,7 +82,6 @@ namespace IAGrim.Utilities.Detection {
                 var root = config.Value;
 
                 for (int i = 1; i < 8; i++) {
-
                     try {
                         paths.Add(root[$"{i}"].path.ToString());
                     }
@@ -93,6 +91,7 @@ namespace IAGrim.Utilities.Detection {
                     }
                 }
             }
+
             return paths;
         }
 
@@ -110,5 +109,4 @@ namespace IAGrim.Utilities.Detection {
             return validPaths;
         }
     }
-
 }

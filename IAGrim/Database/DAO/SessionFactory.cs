@@ -9,6 +9,8 @@ namespace IAGrim.Database {
     public interface ISessionCreator {
         ISession OpenSession();
         IStatelessSession OpenStatelessSession();
+
+        SqlDialect GetDialect();
     }
 
     public class SessionFactory : ISessionCreator {
@@ -64,6 +66,10 @@ namespace IAGrim.Database {
 
             //logger.DebugFormat("Stateless session opened on thread {0}, Stacktrace: {1}", System.Threading.Thread.CurrentThread.Name, new System.Diagnostics.StackTrace());
             return _sessionFactory.OpenStatelessSession();
+        }
+
+        public SqlDialect GetDialect() {
+            return _dialect;
         }
     }
 }

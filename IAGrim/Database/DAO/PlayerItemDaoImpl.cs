@@ -871,8 +871,7 @@ namespace IAGrim.Database {
         /// Delete duplicate items (items duplicated via bugs, not simply similar items)
         /// </summary>
         public void DeleteDuplicates() {
-
-            const string innerQuery =
+            const string innerQuerySqlite =
                 @"		SELECT Id, (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) as UQ FROM PlayerItem tOuter WHERE (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) IN (
 			SELECT UQ FROM (
 				SELECT (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) as UQ, COUNT(*) as C FROM PlayerItem
@@ -887,6 +886,26 @@ namespace IAGrim.Database {
 		)
 		AND Id = (SELECT Max(tInner.Id) FROM PlayerItem tInner WHERE (tInner.baserecord || tInner.prefixrecord || tInner.modifierrecord || tInner.suffixrecord || tInner.materiarecord || tInner.transmuterecord || tInner.seed) = (tOuter.baserecord || tOuter.prefixrecord || tOuter.modifierrecord || tOuter.suffixrecord || tOuter.materiarecord || tOuter.transmuterecord || tOuter.seed))
 ";
+
+            const string innerQueryPostgres = @"
+	SELECT distinct on(uq) * FROM (SELECT Id, (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) as UQ FROM PlayerItem tOuter WHERE (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) IN (
+			SELECT UQ FROM (
+				SELECT (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) as UQ, COUNT(*) as C FROM PlayerItem
+					WHERE baserecord NOT LIKE '%materia%'
+					AND baserecord NOT LIKE '%questitems%'
+					AND baserecord NOT LIKE '%potions%'
+					AND baserecord NOT LIKE '%crafting%'
+					AND StackCount < 2 -- Potions, components, etc
+					GROUP BY UQ
+				) X 
+			WHERE C > 1
+		) ) xx
+
+		order by uq, id desc";
+
+            string innerQuery = Dialect == SqlDialect.Sqlite ? innerQuerySqlite : innerQueryPostgres;
+
+
             using (var session = SessionCreator.OpenSession()) {
                 using (var transaction = session.BeginTransaction()) {
                     // Mark all duplicates for deletion from online backups
