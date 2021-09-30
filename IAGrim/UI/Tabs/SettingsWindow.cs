@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
+using AutoUpdaterDotNET;
 using EvilsoftCommons;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.Arz;
@@ -30,6 +31,7 @@ namespace IAGrim.UI.Tabs {
         private readonly SettingsService _settings;
         private readonly GrimDawnDetector _grimDawnDetector;
         private readonly DarkMode _darkModeToggler;
+        private readonly AutomaticUpdateChecker _automaticUpdateChecker;
 
 
         public SettingsWindow(
@@ -41,7 +43,7 @@ namespace IAGrim.UI.Tabs {
             TransferStashService transferStashService,
             TransferStashService2 transferStashService2,
             LanguagePackPicker languagePackPicker, 
-            SettingsService settings, GrimDawnDetector grimDawnDetector, DarkMode darkModeToggler) {            
+            SettingsService settings, GrimDawnDetector grimDawnDetector, DarkMode darkModeToggler, AutomaticUpdateChecker automaticUpdateChecker) {            
             InitializeComponent();
             _controller = new SettingsController(settings);
             this._cefBrowserHandler = cefBrowserHandler;
@@ -55,6 +57,7 @@ namespace IAGrim.UI.Tabs {
             _settings = settings;
             _grimDawnDetector = grimDawnDetector;
             _darkModeToggler = darkModeToggler;
+            _automaticUpdateChecker = automaticUpdateChecker;
 
             _controller.BindCheckbox(cbMinimizeToTray);
 
@@ -218,6 +221,12 @@ namespace IAGrim.UI.Tabs {
             }
 
             _settings.GetPersistent().DarkMode = (sender as FirefoxCheckBox).Checked;
+        }
+
+        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            _automaticUpdateChecker.CheckForUpdates(false);
+            
+            MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_update_body"), RuntimeSettings.Language.GetTag("iatag_ui_update_header"));
         }
     }
 }

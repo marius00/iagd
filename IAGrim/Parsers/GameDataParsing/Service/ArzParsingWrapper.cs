@@ -49,7 +49,7 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
             }
             catch (ArgumentException ex) {
                 Logger.Warn(ex.Message, ex);
-                MessageBox.Show("Game installation is corrupted.\nPlease verify the integrity of your Grim Dawn installation and try again.\n\n(Easily done in steam)");
+                MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_corrupted"));
                 throw ex;
             }
 

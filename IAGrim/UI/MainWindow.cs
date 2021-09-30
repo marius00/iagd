@@ -392,7 +392,8 @@ namespace IAGrim.UI {
             };
 
             if (!_stashFileMonitor.StartMonitorStashfile(GlobalPaths.SavePath)) {
-                MessageBox.Show("Ooops!\nIt seems you are synchronizing your saves to steam cloud..\nThis tool is unfortunately not compatible.\n");
+                
+                MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_cloudsync_mb"));
                 _cefBrowserHandler.ShowHelp(HelpService.HelpType.CloudSavesEnabled);
 
                 Logger.Warn("Shutting down IA, unable to monitor stash files.");
@@ -485,7 +486,8 @@ namespace IAGrim.UI {
                     languagePackPicker,
                     settingsService,
                     grimDawnDetector,
-                    dm
+                    dm,
+                    _automaticUpdateChecker
                 ),
                 settingsPanel);
 

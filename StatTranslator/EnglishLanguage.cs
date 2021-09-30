@@ -381,6 +381,12 @@ namespace StatTranslator {
             {"iatag_html_nomoreitems", "No more items"},
             {"iatag_html_setconsistsof", "This set consists of the following items: "},
 
+            {"iatag_ui_exportsuccess", "Items exported!"},
+            { "iatag_ui_cloudsync_mb", "Ooops!\nIt seems you are synchronizing your saves to steam cloud..\nThis tool is unfortunately not compatible.\n"},
+            { "iatag_ui_corrupted", "Game installation is corrupted.\nPlease verify the integrity of your Grim Dawn installation and try again.\n\n(Easily done in steam)"},
+            { "iatag_ui_update_header", "Check for updates"},
+            { "iatag_ui_update_body", "Checking for updates.. if there is a new version, the update dialogue will appear.."},
+            { "iatag_ui_checkforupdates", "Check for updates"},
             {"iatag_ui_itemassistant", "Item Assistant"},
             {"iatag_ui_howtorestore", "How do I restore backups?"},
             {"iatag_ui_updatingstats_title", "Updating stats for owned items.."},

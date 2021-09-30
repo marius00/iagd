@@ -60,8 +60,8 @@ namespace IAGrim.Utilities {
 
 
         // Intentionally public -- Do not refactor.
-        public void CheckForUpdates() {
-            AutoUpdater.LetUserSelectRemindLater = true;
+        public void CheckForUpdates(bool allowRemindLater = true) {
+            AutoUpdater.LetUserSelectRemindLater = allowRemindLater;
             AutoUpdater.RemindLaterTimeSpan = RemindLaterFormat.Days;
             AutoUpdater.RemindLaterAt = 7;
             AutoUpdater.Start(UpdateXml);

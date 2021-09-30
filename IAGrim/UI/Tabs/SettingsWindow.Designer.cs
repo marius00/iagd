@@ -64,6 +64,7 @@
             this.buttonLanguageSelect = new FirefoxButton();
             this.buttonViewBackups = new FirefoxButton();
             this.buttonViewLogs = new FirefoxButton();
+            this.linkLabel2 = new System.Windows.Forms.LinkLabel();
             this.contextMenuStrip1.SuspendLayout();
             this.panelBox4.SuspendLayout();
             this.panelBox3.SuspendLayout();
@@ -406,6 +407,7 @@
             // panelBox3
             // 
             this.panelBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.panelBox3.Controls.Add(this.linkLabel2);
             this.panelBox3.Controls.Add(this.helpWhatIsExperimentalUpdates);
             this.panelBox3.Controls.Add(this.helpWhatIsRegularUpdates);
             this.panelBox3.Controls.Add(this.radioBeta);
@@ -698,6 +700,19 @@
             this.buttonViewLogs.Text = "View Logs";
             this.buttonViewLogs.Click += new System.EventHandler(this.buttonViewLogs_Click);
             // 
+            // linkLabel2
+            // 
+            this.linkLabel2.AutoSize = true;
+            this.linkLabel2.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.linkLabel2.Location = new System.Drawing.Point(374, 47);
+            this.linkLabel2.Name = "linkLabel2";
+            this.linkLabel2.Size = new System.Drawing.Size(101, 13);
+            this.linkLabel2.TabIndex = 21;
+            this.linkLabel2.TabStop = true;
+            this.linkLabel2.Tag = "iatag_ui_checkforupdates";
+            this.linkLabel2.Text = "Check for updates";
+            this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
+            // 
             // SettingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -768,5 +783,6 @@
         private FirefoxButton buttonLootManually;
         private FirefoxCheckBox cbStartMinimized;
         private FirefoxCheckBox cbDarkMode;
+        private System.Windows.Forms.LinkLabel linkLabel2;
     }
 }

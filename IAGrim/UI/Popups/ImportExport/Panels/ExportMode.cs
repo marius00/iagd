@@ -94,8 +94,8 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
                     var items = _playerItemDao.ListAll();
                     io.Write(items);
                 }
-
-                MessageBox.Show("Items Exported!", "Items exported!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                
+                MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_exportsuccess"), RuntimeSettings.Language.GetTag("iatag_ui_exportsuccess"), MessageBoxButtons.OK, MessageBoxIcon.Information);
                 this.onClose();
             }
         }
