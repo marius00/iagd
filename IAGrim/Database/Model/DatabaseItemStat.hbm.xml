@@ -12,7 +12,7 @@
 
     <property name="Stat" index="idx_databaseitemstatv2_stat" />
 
-    <property name="TextValue" length="4000" index="idx_databaseitemstatv2_tv" />
+    <property name="TextValue" length="4000" />
     <property name="Value" column="val1" />
   </class>
 
