@@ -1,0 +1,68 @@
+.help {
+  margin: 15px;
+  padding-bottom: 50px;
+  color: #c3c3c3;
+}
+
+.help .container {
+  border: 1px solid #ddd;
+  background-color: var(--item-background);
+  box-shadow: 0 1px 1px rgba(0,0,0,.05);
+  margin: 15px 15px 15px 0px;
+  border-radius: 4px;
+}
+
+.help .header {
+  color: #333;
+  background-color: #eae9e9;
+  border-color: #ddd;
+  font-size: 16px;
+
+  padding: 10px 15px;
+  border-bottom: 1px solid transparent;
+  position: relative;
+}
+
+.help .content {
+  min-height: 70px;
+  padding: 15px;
+  color: var(--item-stat-label);
+}
+
+.help .attention {
+  color: red;
+}
+
+.help .informational {
+  color: #155724;
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+  padding: 0 12px 0 12px;
+  border-radius: 10px;
+  position: absolute;
+  right: 5px
+}
+
+.help .needhelp {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+  padding: 0 12px 0 12px;
+  border-radius: 10px;
+  position: absolute;
+  right: 5px
+}
+
+.help input {
+  max-width: 1140px;
+}
+
+
+.App-dark .help input {
+  background-color: #000000;
+  color: #a5a1a1;
+}
+
+.App-dark .help .header {
+  background-color: #afafaf;
+}
