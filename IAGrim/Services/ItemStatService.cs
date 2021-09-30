@@ -33,6 +33,7 @@ namespace IAGrim.Services {
 
             Thread thread = new Thread(() => {
                 ExceptionReporter.EnableLogUnhandledOnThread();
+                Thread.Sleep(15 * 1000);
                 _xpacSkills = _databaseItemStatDao.GetExpacSkillModifierSkills();
             });
             thread.Start();
