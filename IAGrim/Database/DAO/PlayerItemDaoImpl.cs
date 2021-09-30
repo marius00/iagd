@@ -744,6 +744,7 @@ namespace IAGrim.Database {
                 {PlayerItemTable.CloudId} as CloudId,
                 {PlayerItemTable.IsCloudSynchronized} as IsCloudSynchronizedValue,
                 {PlayerItemTable.Id} as Id,
+                {PlayerItemTable.Mod} as Mod,
                 coalesce((SELECT group_concat(Record, '|') FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord)), '') AS PetRecord
                 FROM PlayerItem PI WHERE " + string.Join(" AND ", queryFragments)
             };

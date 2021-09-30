@@ -94,7 +94,7 @@ namespace IAGrim.Database.Synchronizer.Core {
             return Execute(func, ThreadTimeout);
         }
 
-        public T Execute<T>(Func<T> func, int timeout) {
+        private T Execute<T>(Func<T> func, int timeout) {
             if (_thread == null)
                 throw new InvalidOperationException("Object has been disposed");
             AutoResetEvent ev = new AutoResetEvent(false);
