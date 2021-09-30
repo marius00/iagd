@@ -9,7 +9,6 @@ namespace IAGrim.Parser.Stash {
 
         // TODO: Load this dynamically
         // select s.id_databaseitem, i.name from databaseitemstat_v2 s, databaseitem_v2 i where stat = 'preventEasyDrops' and i.id_databaseitem = s.id_databaseitem -- These are stackable
-        [Obsolete] // See _databaseItemDao.GetSpecialStackableRecords()
         public static readonly string[] HardcodedRecords = {
             "records/items/crafting/materials/craft_bloodchthon.dbr",
             "records/items/crafting/materials/craft_manticore.dbr",
@@ -25,7 +24,35 @@ namespace IAGrim.Parser.Stash {
             "records/items/crafting/materials/craft_aetherialmutagen.dbr",
             "records/items/crafting/materials/craft_heartofdarkness.dbr",
             "records/items/crafting/materials/craft_wendigospirit.dbr",
-            "records/items/questitems/quest_dynamite.dbr"
+            "records/items/questitems/quest_dynamite.dbr",
+            "records/items/crafting/materials/craft_skeletonkey.dbr",
+            "records/items/crafting/materials/craft_sacrifice.dbr",
+            "records/items/crafting/materials/craft_ironexchange_02.dbr",
+            "records/items/crafting/materials/craft_ironexchange_01.dbr",
+            "records/items/crafting/materials/craft_celestiallotus.dbr",
+            "records/items/crafting/materials/craft_eldritchessence.dbr",
+            "records/items/crafting/materials/craft_aethercrystalcluster.dbr",
+            "records/items/crafting/consumables/potion_freezeresist01.dbr",
+            "records/items/crafting/blueprints/other/craft_potion_chaosresist.dbr",
+            "records/items/crafting/blueprints/other/craft_potion_lightningresist.dbr",
+            "records/items/crafting/blueprints/other/craft_potion_freezeresist.dbr",
+            "records/items/crafting/consumables/potion_aetherresist01.dbr",
+            "records/items/crafting/blueprints/other/craft_potion_coldresist.dbr",
+            "records/items/crafting/blueprints/other/craft_potion_aetherresist.dbr",
+            "records/items/crafting/blueprints/other/craft_potion_fireresist.dbr",
+            "records/items/crafting/blueprints/other/craft_potion_poisonresist.dbr",
+            "records/items/crafting/blueprints/other/craft_potion_royaljellyointment.dbr",
+            "records/items/crafting/blueprints/other/craft_potion_vitalityresist.dbr",
+            "records/items/crafting/consumables/potion_chaosresist01.dbr",
+            "records/items/crafting/consumables/potion_coldresist01.dbr",
+            "records/items/crafting/consumables/potion_fireresist01.dbr",
+            "records/items/crafting/consumables/potion_lightningresist01.dbr",
+            "records/items/crafting/consumables/potion_poisonresist01.dbr",
+            "records/items/crafting/consumables/potion_royaljellyointment.dbr",
+            "records/items/crafting/consumables/potion_vitalityresist01.dbr",
+            "records/items/crafting/blueprints/other/craft_potionb103.dbr",
+            "records/items/crafting/consumables/potion_bleedresist01.dbr"
+
         };
 
         private Block _block = new Block();

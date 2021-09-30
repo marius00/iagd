@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IAGrim.Database.Interfaces;
+using IAGrim.Parser.Stash;
 
 namespace IAGrim.Parsers.TransferStash {
     public class TransferStashServiceCache {
@@ -21,7 +22,10 @@ namespace IAGrim.Parsers.TransferStash {
         }
 
         public void Refresh() {
-            SpecialRecords = _databaseItemDao.GetSpecialStackableRecords();
+            var special = new List<string>();
+            special.AddRange(StashTab.HardcodedRecords);
+            special.AddRange(_databaseItemDao.GetSpecialStackableRecords());
+            SpecialRecords = special;
             AllRecords = new HashSet<string>(_databaseItemDao.ListAllRecords());
             StackableRecords = new HashSet<string>(_databaseItemDao.GetStackableComponentsPotionsMisc());
         }
