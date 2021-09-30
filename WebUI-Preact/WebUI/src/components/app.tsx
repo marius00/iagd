@@ -12,9 +12,7 @@ import '../style/App.css';
 import MockItemsButton from "./LoadMockItemsButton";
 import CharacterListContainer from "../containers/CharacterListContainer";
 import ItemContainer from "../containers/ItemContainer";
-import Tabs from "./Tabs/Tabs";
 import CollectionItemContainer from "../containers/CollectionItemContainer";
-
 
 interface ApplicationState {
   items: IItem[];
@@ -26,7 +24,6 @@ interface ApplicationState {
   numItems: number;
   showBackupCloudIcon: boolean;
 }
-
 
 class App extends PureComponent<object, object> {
   state = {
@@ -164,18 +161,14 @@ class App extends PureComponent<object, object> {
   render() {
     return (
       <div className={'App ' + (this.state.isDarkMode ? 'App-dark' : 'App-Light')}>
-        { /*<Header/> */ }
+        <Header
+          activeTab={this.state.activeTab}
+          setActiveTab={(idx: number) => this.setState({activeTab: idx})}
+          showVideoGuide={this.state.items.length <= 100}
+        />
         {this.state.isLoading && isEmbedded && <Spinner/>}
         <ReactNotification/>
-        <div className={'container'}>
-          <Tabs
-            activeTab={this.state.activeTab}
-            setActiveTab={(idx: number) => this.setState({activeTab: idx})}
-            showVideoGuide={this.state.items.length <= 100}
-          />
-          <div id="myTabContent" className="tab-content" aria-live="polite">
-          </div>
-        </div>
+
 
         {this.state.activeTab === 0 && !isEmbedded ? <MockItemsButton onClick={(items) => this.setItems(items)}/> : ''}
         {this.state.activeTab === 3 && <CharacterListContainer />}

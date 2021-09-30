@@ -1,24 +1,53 @@
-import { FunctionalComponent, h } from 'preact';
-import { Link } from 'preact-router/match';
+import {h} from 'preact';
+import {Link} from 'preact-router/match';
 import style from './style.css';
+import translate from "../../translations/EmbeddedTranslator";
+import Patreon from "./Patreon";
+import {openUrl} from "../../integration/integration";
+import OpenInNew from '@material-ui/icons/OpenInNew'; //https://material.io/resources/icons/?style=baseline
+import VideoLibrary from '@material-ui/icons/VideoLibrary';
+import LiveHelp from '@material-ui/icons/LiveHelp';
+import Help from '@material-ui/icons/Help';
 
-const Header: FunctionalComponent = () => {
-    return (
-        <header class={style.header}>
-            <h1>Preact App</h1>
-            <nav>
-                <Link activeClassName={style.active} href="/">
-                    Home
-                </Link>
-                <Link activeClassName={style.active} href="/profile">
-                    Me
-                </Link>
-                <Link activeClassName={style.active} href="/profile/john">
-                    John
-                </Link>
-            </nav>
-        </header>
-    );
+import Web from '@material-ui/icons/Web';
+import Home from '@material-ui/icons/Home';
+
+export interface Props {
+  activeTab: number;
+  showVideoGuide: boolean;
+
+  setActiveTab(idx: number): void;
+}
+
+function Header({activeTab, setActiveTab, showVideoGuide}: Props) {
+  const videoGuideVisible = showVideoGuide && translate('app.tab.discord').length > 0;
+  return (
+    <header class={style.header}>
+      <nav>
+        <Link activeClassName={style.active} href="#" onClick={() => setActiveTab(0)}>
+          <Home/> {translate('app.tab.items')}
+        </Link>
+        <Link activeClassName={style.active} href="#" onClick={() => setActiveTab(1)}>
+          <Web/> {translate('app.tab.collections')}
+        </Link>
+        <Link activeClassName={style.active} href="#" onClick={() => setActiveTab(2)}>
+          <Help/> {translate('app.tab.help')}
+        </Link>
+        <Link activeClassName={style.active} href="#" onClick={() => openUrl("https://grimdawn.evilsoft.net/enchantments/")}>
+          <OpenInNew/> {translate('app.tab.components')}
+        </Link>
+        {videoGuideVisible && <Link activeClassName={style.active} href="#" onClick={() => openUrl(translate('app.tab.videoGuideUrl'))}>
+            <VideoLibrary/> {translate('app.tab.videoGuide')}
+        </Link>}
+        <Link activeClassName={style.active} href="#" onClick={() => openUrl("https://discord.gg/5wuCPbB")}>
+          <LiveHelp/> {translate('app.tab.discord')}
+        </Link>
+        <Link activeClassName={style.active} href="#" onClick={() => openUrl("https://www.patreon.com/itemassistant")}>
+          <Patreon/> Patreon
+        </Link>
+      </nav>
+    </header>
+  );
 };
 
 export default Header;
