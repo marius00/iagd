@@ -33,7 +33,7 @@ declare let core: IntegrationInterface;
 export function transferItem(url: object[], numItems: number): TransferResult {
   const id = url.join(';');
   if (isEmbedded) {
-    var response = JSON.parse(core.transferItem(url, numItems));
+    const response = JSON.parse(core.transferItem(url, numItems));
     return {success: response.success, numTransferred: response.numTransferred};
   } else {
     console.debug('Transfer Single', id);

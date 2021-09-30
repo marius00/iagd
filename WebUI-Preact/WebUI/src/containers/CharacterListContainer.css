@@ -1,0 +1,13 @@
+.characters h2, h1 {
+  color: #dedeff;
+  margin-bottom: 0;
+}
+
+.characters svg {
+  width: 64px;
+  height: auto;
+  color: #7db7ff;
+}
+.characters {
+  cursor: pointer;
+}
