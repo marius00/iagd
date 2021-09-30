@@ -9,7 +9,7 @@ import Patreon from './Patreon';
 
 import { openUrl } from '../../integration/integration';
 import translate from '../../translations/EmbeddedTranslator';
-import './Tabs.css';
+import '../../style/Tabs.css';
 
 export interface Props {
   activeTab: number;

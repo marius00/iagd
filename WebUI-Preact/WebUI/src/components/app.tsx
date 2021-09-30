@@ -8,7 +8,7 @@ import {isEmbedded, requestMoreItems} from "../integration/integration";
 import MockCollectionItemData from "../mock/MockCollectionItemData";
 import ReactNotification, {store} from 'react-notifications-component';
 import Spinner from "./Spinner";
-import './App.css';
+import '../style/App.css';
 import MockItemsButton from "./LoadMockItemsButton";
 import CharacterListContainer from "../containers/CharacterListContainer";
 import ItemContainer from "../containers/ItemContainer";
@@ -164,10 +164,9 @@ class App extends PureComponent<object, object> {
   render() {
     return (
       <div className={'App ' + (this.state.isDarkMode ? 'App-dark' : 'App-Light')}>
-        <Header/>
+        { /*<Header/> */ }
         {this.state.isLoading && isEmbedded && <Spinner/>}
         <ReactNotification/>
-        <Spinner/>
         <div className={'container'}>
           <Tabs
             activeTab={this.state.activeTab}

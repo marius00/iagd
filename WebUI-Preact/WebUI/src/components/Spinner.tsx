@@ -1,5 +1,5 @@
 import {h} from "preact";
-import './Spinner.css';
+import '../style/Spinner.css';
 
 function Spinner() {
   return (
