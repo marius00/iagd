@@ -13,6 +13,7 @@ import MockItemsButton from "./LoadMockItemsButton";
 import CharacterListContainer from "../containers/CharacterListContainer";
 import ItemContainer from "../containers/ItemContainer";
 import CollectionItemContainer from "../containers/CollectionItemContainer";
+import 'react-notifications-component/dist/theme.css';
 
 interface ApplicationState {
   items: IItem[];

@@ -20,10 +20,6 @@ interface IntegrationInterface {
 
   getItemSetAssociations(): string;
 
-  getFeatureSuggestion(): string;
-
-  markFeatureSuggestionSeen(feature: string): void;
-
   getBackedUpCharacters(): string;
   getCharacterDownloadUrl(character: string): string;
 }
@@ -76,26 +72,6 @@ export function openUrl(url: string) {
     document.location.href = url;
   } else {
     window.open(url, '_blank');
-  }
-}
-
-let hasSeenMockFeature = false;
-
-export function getFeatureSuggestion() {
-  if (isEmbedded) {
-    console.debug("Requesting feature suggestions");
-    return core.getFeatureSuggestion();
-  } else {
-    const f = hasSeenMockFeature ? '' : (Math.random() < 0.5 ? 'SetBonus' : 'CollectionsTab');
-    return f;
-  }
-}
-
-export function markFeatureSuggestionSeen(feature: string) {
-  if (isEmbedded) {
-    return core.markFeatureSuggestionSeen(feature);
-  } else {
-    hasSeenMockFeature = true;
   }
 }
 

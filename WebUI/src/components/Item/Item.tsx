@@ -165,7 +165,7 @@ class Item extends PureComponent<Props, object> {
           }
 
           {setName !== undefined && <div><br />
-            <span className="set-name">{translate('item.label.setbonus')}</span> <span className="set-name" data-feature="SetBonus" data-tip={setItemsList}>{setName}</span></div>}
+            <span className="set-name">{translate('item.label.setbonus')}</span> <span className="set-name" data-tip={setItemsList}>{setName}</span></div>}
 
           {item.skill ? <Skill skill={item.skill} keyPrefix={getUniqueId(item)}/> : ''}
 
