@@ -7,8 +7,10 @@ using log4net;
 using System;
 using System.Linq;
 using System.Windows.Forms;
+using IAGrim.Parsers.Arz;
 using IAGrim.Settings;
 using IAGrim.Settings.Dto;
+using IAGrim.Utilities;
 
 namespace IAGrim.UI.Tabs {
     internal sealed class SplitSearchWindow : Form {
@@ -276,6 +278,8 @@ namespace IAGrim.UI.Tabs {
 
             _flowPanelFilter.SizeChanged += FlowPanelFilter_Resize;
             _mainSplitter.SizeChanged += FlowPanelFilter_Resize;
+
+            LocalizationLoader.ApplyTooltipLanguage(toolTip1, Controls, RuntimeSettings.Language);
         }
 
         private void SearchBox_TextChanged(object sender, EventArgs e) {
@@ -390,6 +394,7 @@ namespace IAGrim.UI.Tabs {
             this._searchBox.Name = "_searchBox";
             this._searchBox.Size = new System.Drawing.Size(304, 20);
             this._searchBox.TabIndex = 41;
+            this._searchBox.Tag = "iatag_ui_searchbox_tooltip";
             this.toolTip1.SetToolTip(this._searchBox, "The item name, partially works fine.");
             // 
             // _orderByLevel
@@ -418,6 +423,7 @@ namespace IAGrim.UI.Tabs {
             this._itemQuality.Name = "_itemQuality";
             this._itemQuality.Size = new System.Drawing.Size(59, 21);
             this._itemQuality.TabIndex = 43;
+            this._itemQuality.Tag = "iatag_ui_itemquality_tooltip";
             this.toolTip1.SetToolTip(this._itemQuality, "The minimum item quality");
             // 
             // _slotFilter
@@ -430,6 +436,7 @@ namespace IAGrim.UI.Tabs {
             this._slotFilter.Name = "_slotFilter";
             this._slotFilter.Size = new System.Drawing.Size(120, 21);
             this._slotFilter.TabIndex = 44;
+            this._slotFilter.Tag = "iatag_ui_slotfilter_tooltip";
             this.toolTip1.SetToolTip(this._slotFilter, "Slot/Type");
             // 
             // _modFilter
@@ -442,6 +449,7 @@ namespace IAGrim.UI.Tabs {
             this._modFilter.Name = "_modFilter";
             this._modFilter.Size = new System.Drawing.Size(102, 21);
             this._modFilter.TabIndex = 45;
+            this._modFilter.Tag = "iatag_ui_modfilter_tooltip";
             this.toolTip1.SetToolTip(this._modFilter, "Mod / Hardcore / Vanilla");
             // 
             // _levelRequirementGroup
@@ -466,6 +474,7 @@ namespace IAGrim.UI.Tabs {
             this._minLevel.TabIndex = 46;
             this._minLevel.Text = "0";
             this._minLevel.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this._minLevel.Tag = "iatag_ui_minlevel_tooltip";
             this.toolTip1.SetToolTip(this._minLevel, "The minimum level required to use this item");
             this._minLevel.WordWrap = false;
             // 
@@ -478,6 +487,7 @@ namespace IAGrim.UI.Tabs {
             this._maxLevel.TabIndex = 47;
             this._maxLevel.Text = "110";
             this._maxLevel.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this._maxLevel.Tag = "iatag_ui_maxlevel_tooltip";
             this.toolTip1.SetToolTip(this._maxLevel, "The maximum level required to use this item");
             this._maxLevel.WordWrap = false;
             // 

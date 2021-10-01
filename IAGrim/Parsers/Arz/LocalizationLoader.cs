@@ -40,22 +40,44 @@ namespace IAGrim.Parsers.Arz {
         public static void ApplyLanguage(Control.ControlCollection c, ILocalizedLanguage lang) {
             foreach (Control control in c) {
                 ApplyLanguage(control, lang);
-
                 ApplyLanguage(control.Controls, lang);
             }
         }
 
-        private static void ApplyLanguage(Control control, ILocalizedLanguage lang) {
+        public static void ApplyTooltipLanguage(ToolTip toolTip, Control.ControlCollection c, ILocalizedLanguage lang) {
+            foreach (Control control in c) {
+                ApplyLanguage(control, lang, toolTip);
+                ApplyTooltipLanguage(toolTip, control.Controls, lang);
+            }
+        }
+
+        private static void ApplyLanguage(Control control, ILocalizedLanguage lang, ToolTip toolTip = null) {
             var tag = control.Tag?.ToString();
             bool hasTag = tag?.StartsWith("iatag_") ?? false;
+
             if (hasTag) {
-                var localizedTag = lang.GetTag(tag);
-                if (!string.IsNullOrEmpty(localizedTag)) {
-                    control.Text = localizedTag;
+                // Some controls like TextBox will only have a _tooltip tag, don't insert the text into them.
+                if (!tag.EndsWith("_tooltip")) {
+
+                    var localizedTag = lang.GetTag(tag);
+                    if (!string.IsNullOrEmpty(localizedTag)) {
+                        control.Text = localizedTag;
+                    } else if (lang.WarnIfMissing) {
+                        Logger.WarnFormat("Could not find tag {0} in localization, defaulting to {0}={1}", tag, control.Text);
+                    }
                 }
-                else if (lang.WarnIfMissing) {
-                    Logger.WarnFormat("Could not find tag {0} in localization, defaulting to {0}={1}", tag,
-                        control.Text);
+
+                // Most controls only has a regular tag, but may contain a _tooltip tag too.
+                if (toolTip != null && !string.IsNullOrEmpty(toolTip.GetToolTip(control))) {
+                    var tooltipTagName = (tag + "_tooltip").Replace("_tooltip_tooltip", "_tooltip");
+
+                    var localizedTooltipTag = lang.GetTag(tooltipTagName);
+                    if (!string.IsNullOrEmpty(localizedTooltipTag)) {
+                        toolTip.SetToolTip(control, localizedTooltipTag);
+                    }
+                    else if (lang.WarnIfMissing) {
+                        Logger.WarnFormat("Could not find tag {0} in localization, defaulting to {0}={1}", tooltipTagName, toolTip.GetToolTip(control));
+                    }
                 }
             }
             else {
