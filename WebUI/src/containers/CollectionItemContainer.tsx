@@ -5,6 +5,7 @@ import ICollectionItem from '../interfaces/ICollectionItem';
 import './CollectionItemContainer.css';
 import { openUrl } from '../integration/integration';
 import {PureComponent} from "preact/compat";
+import translate from "../translations/EmbeddedTranslator";
 
 interface Props {
   items: ICollectionItem[];
@@ -54,10 +55,10 @@ class CollectionItemContainer extends PureComponent<Props, object> {
 
     return (
       <div className="collectionItems">
-        <h2>Experimental feature</h2>
+        <h2>{translate('collections.h2')}</h2>
         <p>
-          This feature was added as Proof-of-concept at request from a user.<br/>
-          It may get improved or removed in the future, depending on usage.
+          {translate('collections.ingress1')}<br/>
+          {translate('collections.ingress2')}
         </p>
         <div className={'toggleContainer'}>
 
@@ -67,7 +68,7 @@ class CollectionItemContainer extends PureComponent<Props, object> {
               <span className="slider round"/>
             </label>
 
-            <label htmlFor={'cbOnlyGreen'} className={'sliderLabel'}>Owned only</label>
+            <label htmlFor={'cbOnlyGreen'} className={'sliderLabel'}>{translate('collections.filter.owned')}</label>
           </div>
 
           <div className={'sliderContainer'}>
@@ -75,7 +76,7 @@ class CollectionItemContainer extends PureComponent<Props, object> {
               <input type="checkbox" id={'cbOnlyRed'} onChange={swapRed} />
               <span className="slider round"/>
             </label>
-            <label htmlFor={'cbOnlyRed'} className={'sliderLabel'}>Missing only</label>
+            <label htmlFor={'cbOnlyRed'} className={'sliderLabel'}>{translate('collections.filter.missing')}</label>
           </div>
         </div>
 

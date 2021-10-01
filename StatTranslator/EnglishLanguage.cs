@@ -9,7 +9,7 @@ namespace StatTranslator {
             foreach (var tag in existingTags.Keys)
                 SetTagIfMissing(tag, existingTags[tag]);
 
-            
+
             var damageTypes = StatManager.BodyDamageTypes;
             var resistance = GetTag("Resistance");
             var toMaxResistance = GetTag("ResistanceMaxResist");
@@ -380,13 +380,27 @@ namespace StatTranslator {
             {"iatag_html_setbonus", "Set:"},
             {"iatag_html_nomoreitems", "No more items"},
             {"iatag_html_setconsistsof", "This set consists of the following items: "},
+            {"iatag_html_displaying", "Displaying {0}"},
+            {"iatag_html_filter_owned", "Owned only"},
+            {"iatag_html_filter_missing", "Missing only"},
+            {"iatag_html_h2", "Experimental feature"},
+            {"iatag_html_ingress1", "This feature was added as Proof-of-concept at request from a user."},
+            {"iatag_html_ingress2", "It may get improved or removed in the future, depending on usage."},
 
+            {"iatag_ui_orderbylevel_tooltip", "If items should be ordered by level, instead of alphabetically."},
+            {"iatag_ui_level_requirement_tooltip", "Level requirements for the item"},
+            {"iatag_ui_searchbox_tooltip", "The item name, partially works fine."},
+            {"iatag_ui_itemquality_tooltip", "The minimum item quality"},
+            {"iatag_ui_slotfilter_tooltip", "Slot/Type"},
+            {"iatag_ui_modfilter_tooltip", "Mod / Hardcore / Vanilla"},
+            {"iatag_ui_minlevel_tooltip", "The minimum level required to use this item"},
+            {"iatag_ui_maxlevel_tooltip", "The maximum level required to use this item"},
             {"iatag_ui_exportsuccess", "Items exported!"},
-            { "iatag_ui_cloudsync_mb", "Ooops!\nIt seems you are synchronizing your saves to steam cloud..\nThis tool is unfortunately not compatible.\n"},
-            { "iatag_ui_corrupted", "Game installation is corrupted.\nPlease verify the integrity of your Grim Dawn installation and try again.\n\n(Easily done in steam)"},
-            { "iatag_ui_update_header", "Check for updates"},
-            { "iatag_ui_update_body", "Checking for updates.. if there is a new version, the update dialogue will appear.."},
-            { "iatag_ui_checkforupdates", "Check for updates"},
+            {"iatag_ui_cloudsync_mb", "Ooops!\nIt seems you are synchronizing your saves to steam cloud..\nThis tool is unfortunately not compatible.\n"},
+            {"iatag_ui_corrupted", "Game installation is corrupted.\nPlease verify the integrity of your Grim Dawn installation and try again.\n\n(Easily done in steam)"},
+            {"iatag_ui_update_header", "Check for updates"},
+            {"iatag_ui_update_body", "Checking for updates.. if there is a new version, the update dialogue will appear.."},
+            {"iatag_ui_checkforupdates", "Check for updates"},
             {"iatag_ui_itemassistant", "Item Assistant"},
             {"iatag_ui_howtorestore", "How do I restore backups?"},
             {"iatag_ui_updatingstats_title", "Updating stats for owned items.."},

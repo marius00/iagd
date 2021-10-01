@@ -66,7 +66,7 @@ class ItemContainer extends PureComponent<Props, object> {
   render() {
     const items = this.props.items;
     const canLoadMoreItems = this.props.numItems !== undefined ? this.props.numItems > items.length : true;
-    console.log('num', this.props.numItems);
+
 
     if (items.length > 0) {
       return (
@@ -75,7 +75,7 @@ class ItemContainer extends PureComponent<Props, object> {
             <div class="clipboard-link" onClick={() => setClipboard(this.getClipboardContent())}>
               {translate('app.copyToClipboard')}
             </div>
-            <div>Displaying {items.length + '/' + this.props.numItems}</div>
+            <div>{translate('items.displaying', items.length + '/' + this.props.numItems)}</div>
           </div>
 
           {items.map((item) =>

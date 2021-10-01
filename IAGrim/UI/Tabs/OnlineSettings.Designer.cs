@@ -37,7 +37,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.btnAddBuddy = new FirefoxButton();
             this.onlineBackup = new PanelBox();
-            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.lbWhatIsCloudBackup = new System.Windows.Forms.LinkLabel();
             this.groupBoxBackupDetails = new System.Windows.Forms.GroupBox();
             this.linkViewCharacters = new System.Windows.Forms.LinkLabel();
             this.labelBuddyId = new System.Windows.Forms.Label();
@@ -223,7 +223,7 @@
             this.onlineBackup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.onlineBackup.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
-            this.onlineBackup.Controls.Add(this.linkLabel1);
+            this.onlineBackup.Controls.Add(this.lbWhatIsCloudBackup);
             this.onlineBackup.Controls.Add(this.groupBoxBackupDetails);
             this.onlineBackup.Controls.Add(this.cbDontWantBackups);
             this.onlineBackup.Controls.Add(this.buttonLogin);
@@ -240,19 +240,19 @@
             this.onlineBackup.Text = "Cloud Backup";
             this.onlineBackup.TextLocation = "8; 5";
             // 
-            // linkLabel1
+            // lbWhatIsCloudBackup
             // 
-            this.linkLabel1.AutoSize = true;
-            this.linkLabel1.BackColor = System.Drawing.Color.Transparent;
-            this.linkLabel1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.linkLabel1.Location = new System.Drawing.Point(186, 21);
-            this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(73, 13);
-            this.linkLabel1.TabIndex = 10;
-            this.linkLabel1.TabStop = true;
-            this.linkLabel1.Tag = "iatag_ui_whatisthis";
-            this.linkLabel1.Text = "What is this?";
-            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked_1);
+            this.lbWhatIsCloudBackup.AutoSize = true;
+            this.lbWhatIsCloudBackup.BackColor = System.Drawing.Color.Transparent;
+            this.lbWhatIsCloudBackup.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbWhatIsCloudBackup.Location = new System.Drawing.Point(686, 0);
+            this.lbWhatIsCloudBackup.Name = "lbWhatIsCloudBackup";
+            this.lbWhatIsCloudBackup.Size = new System.Drawing.Size(73, 13);
+            this.lbWhatIsCloudBackup.TabIndex = 10;
+            this.lbWhatIsCloudBackup.TabStop = true;
+            this.lbWhatIsCloudBackup.Tag = "iatag_ui_whatisthis";
+            this.lbWhatIsCloudBackup.Text = "What is this?";
+            this.lbWhatIsCloudBackup.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked_1);
             // 
             // groupBoxBackupDetails
             // 
@@ -453,7 +453,7 @@
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.Label lbBuddyId;
-        private System.Windows.Forms.LinkLabel linkLabel1;
+        private System.Windows.Forms.LinkLabel lbWhatIsCloudBackup;
         private System.Windows.Forms.Label labelBuddyId;
         private System.Windows.Forms.ContextMenuStrip buddyItemListContextMenu;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;

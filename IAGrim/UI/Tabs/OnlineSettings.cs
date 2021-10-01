@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Windows.Forms;
 using EvilsoftCommons;
 using IAGrim.Backup.Cloud;
@@ -91,6 +92,8 @@ namespace IAGrim.UI.Tabs {
                 _tooltipHelper?.Dispose();
                 _tooltipHelper = null;
             };
+
+            lbWhatIsCloudBackup.Location = new Point(lbWhatIsCloudBackup.Location.X, lbWhatIsCloudBackup.Location.Y);
         }
 
         private void firefoxButton1_Click(object sender, EventArgs e) {

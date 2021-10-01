@@ -82,6 +82,13 @@ namespace IAGrim.UI.Misc.CEF {
                 {"item.label.setConsistsOf", lang.GetTag("iatag_html_setconsistsof") },
                 {"app.tab.darkMode", lang.GetTag("iatag_html_darkmode") },
                 {"app.tab.lightMode", lang.GetTag("iatag_html_lightmode") },
+
+                {"items.displaying", lang.GetTag("iatag_html_displaying") },
+                {"collections.filter.owned", lang.GetTag("iatag_html_filter_owned") },
+                {"collections.filter.missing", lang.GetTag("iatag_html_filter_missing") },
+                {"collections.h2", lang.GetTag("iatag_html_h2") },
+                {"collections.ingress1", lang.GetTag("iatag_html_ingress1") },
+                {"collections.ingress12", lang.GetTag("iatag_html_ingress2") },
             };
 
             // Attempting to return a Dictionary<..> object will only work if this object is bound with "async: true"
