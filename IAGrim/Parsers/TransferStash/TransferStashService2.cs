@@ -225,15 +225,15 @@ namespace IAGrim.Parsers.TransferStash {
             var unknownItems = tab.Items.Where(item => !_cache.AllRecords.Contains(item.BaseRecord)).ToList();
 
             var duplicates = tab.Items
-                .SkipWhile(item => stacked.Contains(item))
-                .SkipWhile(item => unknownItems.Contains(item))
+                .Where(item => stacked.All(st => st.BaseRecord != item.BaseRecord))
+                .Where(item => unknownItems.All(uk => uk.BaseRecord != item.BaseRecord))
                 .Where(item => _playerItemDao.Exists(TransferStashService.Map(item, null, false))) // We don't care about mod/hardcore for dupe checking.
                 .ToList();
 
             var remaining = tab.Items
-                .SkipWhile(item => duplicates.Contains(item))
-                .SkipWhile(item => stacked.Contains(item))
-                .SkipWhile(item => unknownItems.Contains(item))
+                .Where(item => duplicates.All(dup => dup.BaseRecord != item.BaseRecord))
+                .Where(item => stacked.All(st => st.BaseRecord != item.BaseRecord))
+                .Where(item => unknownItems.All(uk => uk.BaseRecord != item.BaseRecord))
                 .ToList();
 
             return new ClassifiedItems {

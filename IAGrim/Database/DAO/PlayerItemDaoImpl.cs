@@ -996,7 +996,7 @@ DELETE FROM PlayerItem WHERE Id IN (
                 {PlayerItemTable.CloudId} as CloudId,
                 {PlayerItemTable.IsCloudSynchronized} as IsCloudSynchronizedValue,
                 coalesce((SELECT group_concat(Record, '|') FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord)),'') AS PetRecord
-                FROM PlayerItem PI WHERE SearchableText IS NULL OR SearchableText = '' LIMIT 50";
+                FROM PlayerItem PI WHERE SearchableText IS NULL OR SearchableText = '' LIMIT 500";
 
             using (var session = SessionCreator.OpenSession()) {
                 using (session.BeginTransaction()) {

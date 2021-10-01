@@ -182,7 +182,11 @@ namespace IAGrim.Utilities {
             }
         }
 
+#if DEBUG
+        public static string SettingsFile => Path.Combine(CoreFolder, "settings-debug.json").Replace("#", "");
+#else
         public static string SettingsFile => Path.Combine(CoreFolder, "settings.json").Replace("#", "");
+#endif
 
         public static string CoreFolder {
             get {

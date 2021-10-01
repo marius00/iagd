@@ -168,7 +168,6 @@ class App extends PureComponent<object, object> {
           showVideoGuide={this.state.items.length <= 100}
         />
         {this.state.isLoading && isEmbedded && <Spinner/>}
-        <ReactNotification/>
 
 
         {this.state.activeTab === 0 && !isEmbedded ? <MockItemsButton onClick={(items) => this.setItems(items)}/> : ''}
@@ -188,6 +187,7 @@ class App extends PureComponent<object, object> {
         {this.state.activeTab === 1 && <CollectionItemContainer items={this.state.collectionItems}/>}
         {this.state.activeTab === 2 && <Help searchString={this.state.helpSearchFilter}
                                              onSearch={(v: string) => this.setState({helpSearchFilter: v})}/>}
+        <ReactNotification/>
       </div>
     );
   }
