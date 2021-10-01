@@ -117,7 +117,7 @@ namespace IAGrim.Database.Synchronizer.Core {
                 if (ex != null) {
                     Logger.Warn(ex.Message);
                     Logger.Warn(ex.StackTrace);
-                    ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
+                    ExceptionDispatchInfo.Capture(ex.InnerException ?? ex).Throw();
                 }
             }
 

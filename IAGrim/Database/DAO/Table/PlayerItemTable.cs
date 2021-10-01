@@ -23,5 +23,6 @@ namespace IAGrim.Database.DAO.Table {
         public const string AzureUuid = "azuuid_v2";
         public const string CloudId = "cloudid";
         public const string IsCloudSynchronized = "cloud_hassync";
+        public const string IsHardcore = "ishardcore";
     }
 }

@@ -745,6 +745,7 @@ namespace IAGrim.Database {
                 {PlayerItemTable.IsCloudSynchronized} as IsCloudSynchronizedValue,
                 {PlayerItemTable.Id} as Id,
                 {PlayerItemTable.Mod} as Mod,
+                CAST({PlayerItemTable.IsHardcore} as bit) as IsHardcore,
                 coalesce((SELECT group_concat(Record, '|') FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord)), '') AS PetRecord
                 FROM PlayerItem PI WHERE " + string.Join(" AND ", queryFragments)
             };
@@ -786,7 +787,10 @@ namespace IAGrim.Database {
 
             using (var session = SessionCreator.OpenSession()) {
                 using (session.BeginTransaction()) {
-                    IQuery q = session.CreateSQLQuery(string.Join(" ", sql));
+                    ISQLQuery q = session.CreateSQLQuery(string.Join(" ", sql));
+
+                    
+                    
 
                     foreach (var key in queryParams.Keys) {
                         q.SetParameter(key, queryParams[key]);
@@ -806,14 +810,15 @@ namespace IAGrim.Database {
                     }
 
                     Logger.Debug(q.QueryString);
-                    q.SetResultTransformer(new AliasToBeanResultTransformer(typeof(PlayerItem)));
+                    //q.SetResultTransformer(new AliasToBeanResultTransformer(typeof(PlayerItem)));
                     /*
                     List<PlayerItem> items = new List<PlayerItem>();
                     foreach (var item in q.List()) {
                         items.Add(ToPlayerItem(item));
                     }*/
 
-                    var items = ItemOperationsUtility.MergeStackSize(q.List<PlayerItem>());
+                    var items = q.List<object>().Select(ToPlayerItem).ToList();
+                    items = ItemOperationsUtility.MergeStackSize(items);
 
                     Logger.Debug($"Search returned {items.Count} items");
 
@@ -821,6 +826,52 @@ namespace IAGrim.Database {
                 }
             }
         }
+
+
+
+        private static PlayerItem ToPlayerItem(object o) {
+            object[] arr = (object[])o;
+            int idx = 0;
+            string name = arr[idx++] as string;
+            long stackCount = (long)arr[idx++];
+            string rarity = (string)arr[idx++];
+            int levelrequirement = (int)(double)arr[idx++];
+            string baserecord = (string)arr[idx++];
+            string prefixrecord = (string)arr[idx++];
+            string suffixrecord = (string)arr[idx++];
+            string ModifierRecord = (string)arr[idx++];
+            string MateriaRecord = (string)arr[idx++];
+            long PrefixRarity = (long)arr[idx++];
+            string AzureUuid = (string)arr[idx++];
+            string CloudId = (string)arr[idx++];
+            long? IsCloudSynchronized = (long?)arr[idx++];
+            long Id = (long)arr[idx++];
+            string Mod = (string)arr[idx++];
+            long IsHardcore = ((long?)arr[idx++]) ?? 0;
+            string PetRecord = (string)arr[idx++];
+
+
+            return new PlayerItem {
+                Name = name,
+                StackCount = stackCount,
+                Rarity = rarity,
+                LevelRequirement = levelrequirement,
+                BaseRecord = baserecord,
+                PrefixRecord = prefixrecord,
+                SuffixRecord = suffixrecord,
+                ModifierRecord = ModifierRecord,
+                MateriaRecord = MateriaRecord,
+                PrefixRarity = PrefixRarity,
+                AzureUuid = AzureUuid,
+                CloudId = CloudId,
+                IsCloudSynchronized = IsCloudSynchronized.HasValue && IsCloudSynchronized.Value == 1,
+                PetRecord = PetRecord,
+                Id = Id,
+                Mod = Mod,
+                IsHardcore = IsHardcore > 0
+            };
+        }
+
 
         public IList<ModSelection> GetModSelection() {
             const string query = "SELECT DISTINCT Mod as Mod, IsHardcore as IsHardcore FROM PlayerItem WHERE Mod IS NOT NULL";
