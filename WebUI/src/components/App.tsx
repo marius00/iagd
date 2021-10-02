@@ -36,32 +36,7 @@ class App extends PureComponent<object, object> {
     helpSearchFilter: '',
     numItems: 0,
     showBackupCloudIcon: true,
-    notifications: [
-      {
-        message: 'fddddd3dddddsd ddwddddddddddx',
-        type: 'success',
-        id: "1"
-      },
-      {
-        message: 'this is an error',
-        type: 'danger',
-        id: "12"
-      },
-      {
-        message: 'this is a warningthis is a warningthis is a warningthis is a warningthis is a warningthis is a warningthis is a warningthis is a warningthis is a warning',
-        type: 'warning',
-        id: "13"
-      },
-      {
-        message: 'hello3 32',
-        type: 'success',
-        id: "14"
-      },
-      {
-        message: 'hello 55  ',
-        type: 'success',
-        id: "15"
-      }]
+    notifications: []
   } as ApplicationState;
 
   componentDidMount() {
