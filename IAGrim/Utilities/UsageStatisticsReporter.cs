@@ -16,7 +16,7 @@ using Timer = System.Timers.Timer;
 namespace IAGrim.Utilities {
     class UsageStatisticsReporter : IDisposable {
         private Timer _timer;
-        private DateTime _lastTimeNotMinimized = DateTime.UtcNow;
+        private DateTime _lastTimeNotMinimized = DateTime.UtcNow.AddDays(-7); // Skips initial report on startup
 
         public UsageStatisticsReporter() {
             var reportUsageStatistics = new Stopwatch();

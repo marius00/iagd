@@ -492,7 +492,6 @@ namespace IAGrim.UI {
                 settingsPanel);
 
 #if !DEBUG
-            ThreadPool.QueueUserWorkItem(m => ExceptionReporter.ReportUsage());
             _automaticUpdateChecker.CheckForUpdates();
 #endif
 
