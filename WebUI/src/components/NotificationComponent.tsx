@@ -5,6 +5,7 @@ import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import WarningIcon from '@material-ui/icons/Warning';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import CloseIcon from '@material-ui/icons/Close';
+import translate from "../translations/EmbeddedTranslator";
 
 type NotificationTypes = 'success' | 'danger' | 'info' | 'default' | 'warning';
 
@@ -44,7 +45,7 @@ class NotificationContainer extends PureComponent<NotificationProps, object> {
         <span class={styles.close} onClick={() => this.props.onClose(notification.id)}>
           <CloseIcon/>
         </span>
-        {isLastElement && <span class={styles.closeAll} onClick={() => this.props.onClose()}>Close all</span>}
+        {isLastElement && <span class={styles.closeAll} onClick={() => this.props.onClose()}>{translate('notification.clearall')}</span>}
       </div>
     );
   }

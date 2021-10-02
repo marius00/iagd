@@ -386,6 +386,7 @@ namespace StatTranslator {
             {"iatag_html_h2", "Experimental feature"},
             {"iatag_html_ingress1", "This feature was added as Proof-of-concept at request from a user."},
             {"iatag_html_ingress2", "It may get improved or removed in the future, depending on usage."},
+            {"iatag_html_clearall", "Clear all"},
 
             {"iatag_ui_orderbylevel_tooltip", "If items should be ordered by level, instead of alphabetically."},
             {"iatag_ui_level_requirement_tooltip", "Level requirements for the item"},

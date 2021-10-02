@@ -89,6 +89,7 @@ namespace IAGrim.UI.Misc.CEF {
                 {"collections.h2", lang.GetTag("iatag_html_h2") },
                 {"collections.ingress1", lang.GetTag("iatag_html_ingress1") },
                 {"collections.ingress2", lang.GetTag("iatag_html_ingress2") },
+                {"notification.clearall", lang.GetTag("iatag_html_clearall")},
             };
 
             // Attempting to return a Dictionary<..> object will only work if this object is bound with "async: true"

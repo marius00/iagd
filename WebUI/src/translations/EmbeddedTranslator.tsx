@@ -47,7 +47,8 @@ class EmbeddedTranslator {
     'collections.filter.missing': 'Missing only',
     'collections.h2': 'Experimental feature',
     'collections.ingress1': 'This feature was added as Proof-of-concept at request from a user.',
-    'collections.ingress2': 'It may get improved or removed in the future, depending on usage.'
+    'collections.ingress2': 'It may get improved or removed in the future, depending on usage.',
+    'notification.clearall': 'Clear all'
   };
 
 
