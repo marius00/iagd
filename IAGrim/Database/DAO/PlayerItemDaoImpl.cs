@@ -828,27 +828,55 @@ namespace IAGrim.Database {
         }
 
 
+        private static T Convert<T>(object obj) {
+            if (obj == null)
+                return default(T);
+
+            if (obj is T t) {
+                return t;
+            } else {
+                var message = $"Expected value \"{obj}\" to be type \"{typeof(T)}\", but is \"{obj?.GetType()}\"";
+                Logger.Error(message);
+                throw new Exception(message);
+            }
+        }
+
+        private static long Convert(object obj) {
+            if (obj is long t) {
+                return t;
+            } else if (obj is int i) {
+                return i;
+
+            } else if (obj is double d) {
+                return (long)d;
+
+            } else {
+                var message = $"Expected value \"{obj}\" to be type long|int|double, but is \"{obj?.GetType()}\"";
+                Logger.Error(message);
+                throw new Exception(message);
+            }
+        }
 
         private static PlayerItem ToPlayerItem(object o) {
             object[] arr = (object[])o;
             int idx = 0;
-            string name = arr[idx++] as string;
-            long stackCount = (long)arr[idx++];
-            string rarity = (string)arr[idx++];
-            int levelrequirement = (int)(double)arr[idx++];
-            string baserecord = (string)arr[idx++];
-            string prefixrecord = (string)arr[idx++];
-            string suffixrecord = (string)arr[idx++];
-            string ModifierRecord = (string)arr[idx++];
-            string MateriaRecord = (string)arr[idx++];
-            long PrefixRarity = (long)arr[idx++];
-            string AzureUuid = (string)arr[idx++];
-            string CloudId = (string)arr[idx++];
-            long? IsCloudSynchronized = (long?)arr[idx++];
-            long Id = (long)arr[idx++];
-            string Mod = (string)arr[idx++];
-            long IsHardcore = ((long?)arr[idx++]) ?? 0;
-            string PetRecord = (string)arr[idx++];
+            string name = Convert<string>(arr[idx++]);
+            long stackCount = Convert(arr[idx++]);
+            string rarity = Convert<string>(arr[idx++]);
+            int levelrequirement = (int)Convert(arr[idx++]);
+            string baserecord = Convert<string>(arr[idx++]);
+            string prefixrecord = Convert<string>(arr[idx++]);
+            string suffixrecord = Convert<string>(arr[idx++]);
+            string ModifierRecord = Convert<string>(arr[idx++]);
+            string MateriaRecord = Convert<string>(arr[idx++]);
+            long PrefixRarity = Convert(arr[idx++]);
+            string AzureUuid = Convert<string>(arr[idx++]);
+            string CloudId = Convert<string>(arr[idx++]);
+            long? IsCloudSynchronized = Convert<long?>(arr[idx++]);
+            long Id = Convert(arr[idx++]);
+            string Mod = Convert<string>(arr[idx++]);
+            long IsHardcore = Convert<long?>(arr[idx++]) ?? 0;
+            string PetRecord = Convert<string>(arr[idx++]);
 
 
             return new PlayerItem {
@@ -996,7 +1024,7 @@ DELETE FROM PlayerItem WHERE Id IN (
                 {PlayerItemTable.CloudId} as CloudId,
                 {PlayerItemTable.IsCloudSynchronized} as IsCloudSynchronizedValue,
                 coalesce((SELECT group_concat(Record, '|') FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord)),'') AS PetRecord
-                FROM PlayerItem PI WHERE SearchableText IS NULL OR SearchableText = '' LIMIT 500";
+                FROM PlayerItem PI WHERE SearchableText IS NULL OR SearchableText = '' LIMIT 50";
 
             using (var session = SessionCreator.OpenSession()) {
                 using (session.BeginTransaction()) {
