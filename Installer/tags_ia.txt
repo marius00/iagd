@@ -283,6 +283,7 @@ iatag_html_bonustopets=Bonus to All Pets
 iatag_html_choose_a_component=Choose a Component
 iatag_html_choose_a_recipe=Choose a Recipe
 iatag_html_choose_a_relic=Choose a Relic
+iatag_html_clearall=Clear all
 iatag_html_cloud_err=This item has not been backed up to the cloud
 iatag_html_cloud_ok=This item has been backed up to the cloud
 iatag_html_copytoclipboard=Copy to Clipboard

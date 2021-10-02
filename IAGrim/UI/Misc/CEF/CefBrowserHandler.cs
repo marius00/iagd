@@ -5,6 +5,7 @@ using System.Net;
 using System.Windows.Forms;
 using CefSharp;
 using CefSharp.WinForms;
+using CefSharp.WinForms.Internals;
 using IAGrim.Backup.Cloud.CefSharp;
 using IAGrim.Database.Model;
 using IAGrim.Services;
@@ -171,7 +172,8 @@ namespace IAGrim.UI.Misc.CEF {
                 if (BrowserControl.CanExecuteJavascriptInMainFrame) {
                     var ret = new Dictionary<string, string> {
                         {"message", m},
-                        {"type", levelLowercased}
+                        {"type", levelLowercased},
+                        {"fade", IsProgramActive.IsActive() ? "true" : "false"},
                     };
 
                     BrowserControl.ExecuteScriptAsync("window.showMessage", JsonConvert.SerializeObject(ret, _settings));

@@ -301,6 +301,7 @@
     <Compile Include="UI\Misc\CEF\UserFeedback.cs" />
     <Compile Include="UI\Misc\CEF\UserFeedbackService.cs" />
     <Compile Include="UI\DarkMode.cs" />
+    <Compile Include="UI\Misc\IsProgramActive.cs" />
     <Compile Include="UI\Misc\MinimizeToTrayHandler.cs" />
     <Compile Include="UI\Misc\RequestCharacterDownloadUrlEventArgs.cs" />
     <Compile Include="UI\Misc\RequestCharacterListEventArg.cs" />

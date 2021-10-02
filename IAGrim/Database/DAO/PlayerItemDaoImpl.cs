@@ -857,6 +857,13 @@ namespace IAGrim.Database {
             }
         }
 
+        private static bool ConvertToBoolean(object obj) {
+            if (obj == null)
+                return false;
+
+            return Convert(obj) > 0;
+        }
+
         private static PlayerItem ToPlayerItem(object o) {
             object[] arr = (object[])o;
             int idx = 0;
@@ -872,10 +879,10 @@ namespace IAGrim.Database {
             long PrefixRarity = Convert(arr[idx++]);
             string AzureUuid = Convert<string>(arr[idx++]);
             string CloudId = Convert<string>(arr[idx++]);
-            long? IsCloudSynchronized = Convert<long?>(arr[idx++]);
+            bool IsCloudSynchronized = ConvertToBoolean(arr[idx++]);
             long Id = Convert(arr[idx++]);
             string Mod = Convert<string>(arr[idx++]);
-            long IsHardcore = Convert<long?>(arr[idx++]) ?? 0;
+            bool IsHardcore = ConvertToBoolean(arr[idx++]);
             string PetRecord = Convert<string>(arr[idx++]);
 
 
@@ -892,11 +899,11 @@ namespace IAGrim.Database {
                 PrefixRarity = PrefixRarity,
                 AzureUuid = AzureUuid,
                 CloudId = CloudId,
-                IsCloudSynchronized = IsCloudSynchronized.HasValue && IsCloudSynchronized.Value == 1,
+                IsCloudSynchronized = IsCloudSynchronized,
                 PetRecord = PetRecord,
                 Id = Id,
                 Mod = Mod,
-                IsHardcore = IsHardcore > 0
+                IsHardcore = IsHardcore
             };
         }
 

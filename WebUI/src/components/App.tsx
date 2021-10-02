@@ -13,6 +13,7 @@ import CharacterListContainer from "../containers/CharacterListContainer";
 import ItemContainer from "../containers/ItemContainer";
 import CollectionItemContainer from "../containers/CollectionItemContainer";
 import NotificationContainer, {NotificationMessage} from "./NotificationComponent";
+import ReactTooltip from "react-tooltip";
 
 interface ApplicationState {
   items: IItem[];
@@ -131,11 +132,23 @@ class App extends PureComponent<object, object> {
         notifications.shift();
       }
 
+      let id = "" + Math.random();
       notifications.push({
         message: s.message,
         type: s.type,
-        id: "" + Math.random()
+        id: id
       });
+
+      // If IA has focus, we don't need to keep these messages
+      if (s.fade === "true") {
+        setTimeout(() => {
+          let notifications = [...this.state.notifications].filter(n => n.id !== id);
+          this.setState({
+            notifications: notifications
+          });
+
+        }, 3500);
+      }
 
       this.setState({
         notifications: notifications
