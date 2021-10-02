@@ -6,14 +6,13 @@ import ICollectionItem from "../interfaces/ICollectionItem";
 import {PureComponent} from "preact/compat";
 import {isEmbedded, requestMoreItems} from "../integration/integration";
 import MockCollectionItemData from "../mock/MockCollectionItemData";
-import ReactNotification, {store} from 'react-notifications-component';
 import Spinner from "./Spinner";
 import '../style/App.css';
 import MockItemsButton from "./LoadMockItemsButton";
 import CharacterListContainer from "../containers/CharacterListContainer";
 import ItemContainer from "../containers/ItemContainer";
 import CollectionItemContainer from "../containers/CollectionItemContainer";
-import 'react-notifications-component/dist/theme.css';
+import NotificationContainer, {NotificationMessage} from "./NotificationComponent";
 
 interface ApplicationState {
   items: IItem[];
@@ -24,6 +23,7 @@ interface ApplicationState {
   helpSearchFilter: string;
   numItems: number;
   showBackupCloudIcon: boolean;
+  notifications: NotificationMessage[];
 }
 
 class App extends PureComponent<object, object> {
@@ -36,6 +36,32 @@ class App extends PureComponent<object, object> {
     helpSearchFilter: '',
     numItems: 0,
     showBackupCloudIcon: true,
+    notifications: [
+      {
+        message: 'fddddd3dddddsd ddwddddddddddx',
+        type: 'success',
+        id: "1"
+      },
+      {
+        message: 'this is an error',
+        type: 'danger',
+        id: "12"
+      },
+      {
+        message: 'this is a warningthis is a warningthis is a warningthis is a warningthis is a warningthis is a warningthis is a warningthis is a warningthis is a warning',
+        type: 'warning',
+        id: "13"
+      },
+      {
+        message: 'hello3 32',
+        type: 'success',
+        id: "14"
+      },
+      {
+        message: 'hello 55  ',
+        type: 'success',
+        id: "15"
+      }]
   } as ApplicationState;
 
   componentDidMount() {
@@ -124,7 +150,21 @@ class App extends PureComponent<object, object> {
     // @ts-ignore: showMessage doesn't exist on window
     window.showMessage = (input: string) => {
       let s = JSON.parse(input);
-      ShowMessage(s.message, s.type);
+
+      let notifications = [...this.state.notifications]
+      while (notifications.length >= 15) {
+        notifications.shift();
+      }
+
+      notifications.push({
+        message: s.message,
+        type: s.type,
+        id: "" + Math.random()
+      });
+
+      this.setState({
+        notifications: notifications
+      });
     };
   }
 
@@ -158,6 +198,21 @@ class App extends PureComponent<object, object> {
     // TODO: Fix this weird loop? This one will request more items.. which will end up in a call from C# to window.addItems().. is that how we wanna do this?
   }
 
+  closeNotification = (id?: string) => {
+    let notifications = [...this.state.notifications];
+
+    if (id) {
+      this.setState({
+        notifications: notifications.filter(n => n.id !== id)
+      });
+    } else {
+
+      this.setState({
+        notifications: []
+      });
+    }
+  }
+
 
   render() {
     return (
@@ -171,7 +226,7 @@ class App extends PureComponent<object, object> {
 
 
         {this.state.activeTab === 0 && !isEmbedded ? <MockItemsButton onClick={(items) => this.setItems(items)}/> : ''}
-        {this.state.activeTab === 3 && <CharacterListContainer />}
+        {this.state.activeTab === 3 && <CharacterListContainer/>}
 
         {this.state.activeTab === 0 && <ItemContainer
             showBackupCloudIcon={this.state.showBackupCloudIcon}
@@ -187,32 +242,12 @@ class App extends PureComponent<object, object> {
         {this.state.activeTab === 1 && <CollectionItemContainer items={this.state.collectionItems}/>}
         {this.state.activeTab === 2 && <Help searchString={this.state.helpSearchFilter}
                                              onSearch={(v: string) => this.setState({helpSearchFilter: v})}/>}
-        <ReactNotification/>
+
+        <NotificationContainer notifications={this.state.notifications} onClose={this.closeNotification}/>
       </div>
     );
   }
 };
-
-
-function ShowMessage(message: string, type: 'success' | 'danger' | 'info' | 'default' | 'warning') {
-  let duration = 2500;
-  if (type === 'danger') {
-    duration = 4500;
-  }
-
-  store.addNotification({
-    message: message,
-    type: type,
-    insert: 'top',
-    container: 'bottom-center',
-    animationIn: ['animate__animated', 'animate__fadeIn'],
-    animationOut: ['animate__animated', 'animate__fadeOut'],
-    dismiss: {
-      duration: duration,
-      onScreen: true
-    }
-  });
-}
 
 
 export default App;

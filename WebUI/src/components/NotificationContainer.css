@@ -1,0 +1,53 @@
+.NotificationContainer {
+    position: fixed;
+    right: 0px;
+    bottom: 0px;
+    width: 450px;
+
+    padding: 0 20px 20px 0;
+
+    display: grid;
+    gap: 20px;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.NotificationContainer .toast {
+    background-color: var(--notification-background-color);
+    border: 1px;
+    box-shadow: 1px 1px 4px #cecece;
+    padding: 10px 14px 18px 14px;
+    color: var(--notification-text-color);
+    position: relative;
+}
+
+.NotificationContainer .toastLastElement {
+    padding: 10px 14px 26px 14px;
+}
+
+
+.NotificationContainer .toast .success {
+    color: #00ff00;
+}
+
+.NotificationContainer .toast .close {
+    position: absolute;
+    right: 3px;
+    top: 50%;
+    transform: translate(0, -50%);
+    cursor: pointer;
+}
+
+.NotificationContainer .toast .closeAll {
+    position: absolute;
+    right: 3px;
+    bottom: 3px;
+    cursor: pointer;
+}
+
+.NotificationContainer .toast .icon {
+    position: relative;
+    left: 0px;
+    top: 6px;
+    margin-right: 4px;
+}

@@ -51,6 +51,9 @@ body {
 	--item-color-unknown: #81551a;
 	--item-color-yellow: #7d7703;
 	--item-warning-zero: orange;
+
+	--notification-background-color: #1f2024;
+	--notification-text-color: #ffffff;
 }
 
 .App-dark {
@@ -82,4 +85,7 @@ body {
 	--item-color-unknown: #81551a;
 	--item-color-yellow: #f1e51b;
 	--item-warning-zero: red;
+
+	--notification-background-color: #171614;
+	--notification-text-color: #acaaaa;
 }
