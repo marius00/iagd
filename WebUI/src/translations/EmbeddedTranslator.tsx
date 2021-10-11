@@ -21,6 +21,8 @@ class EmbeddedTranslator {
     'items.label.youCanCraftThisItem': 'You can craft this item',
     'items.label.cloudOk': 'This item has been backed up to the cloud',
     'items.label.cloudError': 'This item has not been backed up to the cloud',
+    'items.label.cloudOk.hw': 'This item has been flown up to the clouds',
+    'items.label.cloudError.hw': 'This item has not been flown up to the clouds',
     'item.buddies.singular': '«{0}» also has this item.',
     'item.buddies.singularOnly': '«{0}» has this item.',
     'item.buddies.plural': 'These buddies also have this item: {0}',

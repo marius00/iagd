@@ -22,6 +22,12 @@ class ItemCornerContainer extends PureComponent<IItemWithshowBackupCloudIcon, ob
     const showRecipeIcon = item.hasRecipe && item.type !== 0;
     const showAugmentationIcon = item.type === IItemType.Augmentation;
 
+    const isHalloween = new Date().getMonth() == 9 && new Date().getDate() >= 24;
+    const cloudIconOk = isHalloween ? "static/cloud-ok-hw.png" : "static/cloud-ok.png";
+    const cloudIconErr = isHalloween ? "static/cloud-err-hw.png" : "static/cloud-err.png";
+    const cloudLabelOk = isHalloween ? 'items.label.cloudOk.hw' : 'items.label.cloudOk';
+    const cloudLabelError = isHalloween ? 'items.label.cloudError.hw' : 'items.label.cloudError';
+
     return (
       <div className="recipe-item-corner">
         {showAugmentationIcon &&
@@ -39,8 +45,8 @@ class ItemCornerContainer extends PureComponent<IItemWithshowBackupCloudIcon, ob
         {showCloudOkIcon &&
         <img
           className="cursor-help"
-          src="static/cloud-ok.png"
-          data-tip={translate('items.label.cloudOk')}
+          src={cloudIconOk}
+          data-tip={translate(cloudLabelOk)}
           alt={"Synced to the cloud"}
         />
         }
@@ -48,8 +54,8 @@ class ItemCornerContainer extends PureComponent<IItemWithshowBackupCloudIcon, ob
         {showCloudErrorIcon &&
         <img
           className="cursor-help"
-          src="static/cloud-err.png"
-          data-tip={translate('items.label.cloudError')}
+          src={cloudIconErr}
+          data-tip={translate(cloudLabelError)}
           alt={"Not synced to the cloud"}
         />
         }

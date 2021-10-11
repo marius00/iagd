@@ -61,6 +61,8 @@ namespace IAGrim.UI.Misc.CEF {
                 {"items.label.youCanCraftThisItem", lang.GetTag("iatag_html_items_youcancraftthisitem")},
                 {"items.label.cloudOk", lang.GetTag("iatag_html_cloud_ok")},
                 {"items.label.cloudError", lang.GetTag("iatag_html_cloud_err")},
+                {"items.label.cloudOk.hw", lang.GetTag("iatag_html_cloud_ok_hw")},
+                {"items.label.cloudError.hw", lang.GetTag("iatag_html_cloud_err_hw")},
                 {"item.buddies.singular", lang.GetTag("iatag_html_items_buddy_alsohasthisitem1")},
                 {"item.buddies.plural", lang.GetTag("iatag_html_items_buddy_alsohasthisitem3")},
                 {"item.buddies.singularOnly", lang.GetTag("iatag_html_items_buddy_alsohasthisitem4")},
