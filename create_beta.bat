@@ -7,7 +7,6 @@ echo "Checking for unstaged changes before tagging to git.."
 git diff --exit-code || exit
 set-commit-tags.cmd
 
-powershell -ExecutionPolicy Bypass -file makehash.ps1
 echo All good
 
 pause
