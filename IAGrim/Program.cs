@@ -180,7 +180,7 @@ namespace IAGrim {
                 }
             }
 
-            using (CefBrowserHandler browser = new CefBrowserHandler()) {
+            using (CefBrowserHandler browser = new CefBrowserHandler(settingsService)) {
                 _mw = new MainWindow(
                     serviceProvider,
                     browser,

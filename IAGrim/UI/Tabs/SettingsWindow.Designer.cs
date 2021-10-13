@@ -48,6 +48,7 @@
             this.cbShowRecipesAsItems = new FirefoxCheckBox();
             this.cbSecureTransfers = new FirefoxCheckBox();
             this.panelBox3 = new PanelBox();
+            this.linkLabel2 = new System.Windows.Forms.LinkLabel();
             this.helpWhatIsExperimentalUpdates = new System.Windows.Forms.LinkLabel();
             this.helpWhatIsRegularUpdates = new System.Windows.Forms.LinkLabel();
             this.radioBeta = new FirefoxRadioButton();
@@ -64,7 +65,7 @@
             this.buttonLanguageSelect = new FirefoxButton();
             this.buttonViewBackups = new FirefoxButton();
             this.buttonViewLogs = new FirefoxButton();
-            this.linkLabel2 = new System.Windows.Forms.LinkLabel();
+            this.cbAutoDismiss = new FirefoxCheckBox();
             this.contextMenuStrip1.SuspendLayout();
             this.panelBox4.SuspendLayout();
             this.panelBox3.SuspendLayout();
@@ -105,6 +106,7 @@
             // panelBox4
             // 
             this.panelBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.panelBox4.Controls.Add(this.cbAutoDismiss);
             this.panelBox4.Controls.Add(this.cbDarkMode);
             this.panelBox4.Controls.Add(this.cbStartMinimized);
             this.panelBox4.Controls.Add(this.helpWhatIsDeleteDuplicates);
@@ -425,6 +427,19 @@
             this.panelBox3.Text = "Automatic Updates";
             this.panelBox3.TextLocation = "8; 5";
             // 
+            // linkLabel2
+            // 
+            this.linkLabel2.AutoSize = true;
+            this.linkLabel2.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.linkLabel2.Location = new System.Drawing.Point(374, 47);
+            this.linkLabel2.Name = "linkLabel2";
+            this.linkLabel2.Size = new System.Drawing.Size(101, 13);
+            this.linkLabel2.TabIndex = 21;
+            this.linkLabel2.TabStop = true;
+            this.linkLabel2.Tag = "iatag_ui_checkforupdates";
+            this.linkLabel2.Text = "Check for updates";
+            this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
+            // 
             // helpWhatIsExperimentalUpdates
             // 
             this.helpWhatIsExperimentalUpdates.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -700,18 +715,20 @@
             this.buttonViewLogs.Text = "View Logs";
             this.buttonViewLogs.Click += new System.EventHandler(this.buttonViewLogs_Click);
             // 
-            // linkLabel2
+            // cbAutoDismiss
             // 
-            this.linkLabel2.AutoSize = true;
-            this.linkLabel2.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.linkLabel2.Location = new System.Drawing.Point(374, 47);
-            this.linkLabel2.Name = "linkLabel2";
-            this.linkLabel2.Size = new System.Drawing.Size(101, 13);
-            this.linkLabel2.TabIndex = 21;
-            this.linkLabel2.TabStop = true;
-            this.linkLabel2.Tag = "iatag_ui_checkforupdates";
-            this.linkLabel2.Text = "Check for updates";
-            this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
+            this.cbAutoDismiss.Bold = false;
+            this.cbAutoDismiss.EnabledCalc = true;
+            this.cbAutoDismiss.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbAutoDismiss.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbAutoDismiss.IsDarkMode = false;
+            this.cbAutoDismiss.Location = new System.Drawing.Point(3, 384);
+            this.cbAutoDismiss.Name = "cbAutoDismiss";
+            this.cbAutoDismiss.Size = new System.Drawing.Size(268, 27);
+            this.cbAutoDismiss.TabIndex = 32;
+            this.cbAutoDismiss.Tag = "iatag_ui_autodismiss";
+            this.cbAutoDismiss.Text = "Auto dismiss notifications";
+            this.cbAutoDismiss.CheckedChanged += new System.EventHandler(this.cbAutoDismiss_CheckedChanged);
             // 
             // SettingsWindow
             // 
@@ -784,5 +801,6 @@
         private FirefoxCheckBox cbStartMinimized;
         private FirefoxCheckBox cbDarkMode;
         private System.Windows.Forms.LinkLabel linkLabel2;
+        private FirefoxCheckBox cbAutoDismiss;
     }
 }

@@ -9,6 +9,7 @@ using CefSharp.WinForms.Internals;
 using IAGrim.Backup.Cloud.CefSharp;
 using IAGrim.Database.Model;
 using IAGrim.Services;
+using IAGrim.Settings;
 using IAGrim.UI.Controller.dto;
 using IAGrim.Utilities;
 using log4net;
@@ -18,15 +19,21 @@ namespace IAGrim.UI.Misc.CEF {
     public class CefBrowserHandler : IDisposable, ICefBackupAuthentication, IUserFeedbackHandler, IBrowserCallbacks, IHelpService {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(CefBrowserHandler));
         private TabControl _tabControl; // TODO: UGh.. why?
+        private readonly SettingsService _settings;
+
         public ChromiumWebBrowser BrowserControl { get; private set; }
         private readonly object _lockObj = new object();
 
-        private readonly JsonSerializerSettings _settings = new JsonSerializerSettings {
+        private readonly JsonSerializerSettings _serializerSettings = new JsonSerializerSettings {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
             Culture = System.Globalization.CultureInfo.InvariantCulture,
             ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver(),
             NullValueHandling = NullValueHandling.Ignore
         };
+
+        public CefBrowserHandler(SettingsService settings) {
+            _settings = settings;
+        }
 
         ~CefBrowserHandler() {
             Dispose();
@@ -100,7 +107,7 @@ namespace IAGrim.UI.Misc.CEF {
         /// <param name="numItemsFound">The number of items found, total (eg 3000 found, but batch has 64)</param>
         public void SetItems(List<JsonItem> items, int numItemsFound) {
             if (BrowserControl != null && BrowserControl.CanExecuteJavascriptInMainFrame) {
-                BrowserControl.ExecuteScriptAsync("window.setItems", JsonConvert.SerializeObject(items, _settings), numItemsFound);
+                BrowserControl.ExecuteScriptAsync("window.setItems", JsonConvert.SerializeObject(items, _serializerSettings), numItemsFound);
             }
             else {
                 Logger.Warn("Attempted to update items but CEF not yet initialized.");
@@ -109,7 +116,7 @@ namespace IAGrim.UI.Misc.CEF {
 
         public void SetCollectionItems(IList<CollectionItem> items) {
             if (BrowserControl.CanExecuteJavascriptInMainFrame) {
-                BrowserControl.ExecuteScriptAsync("window.setCollectionItems", JsonConvert.SerializeObject(items, _settings));
+                BrowserControl.ExecuteScriptAsync("window.setCollectionItems", JsonConvert.SerializeObject(items, _serializerSettings));
             }
             else {
                 Logger.Warn("Attempted to update items but CEF not yet initialized.");
@@ -118,7 +125,7 @@ namespace IAGrim.UI.Misc.CEF {
 
         public void AddItems(List<JsonItem> items) {
             if (BrowserControl.CanExecuteJavascriptInMainFrame) {
-                BrowserControl.ExecuteScriptAsync("window.addItems", JsonConvert.SerializeObject(items, _settings));
+                BrowserControl.ExecuteScriptAsync("window.addItems", JsonConvert.SerializeObject(items, _serializerSettings));
             }
             else {
                 Logger.Warn("Attempted to update items but CEF not yet initialized.");
@@ -170,13 +177,14 @@ namespace IAGrim.UI.Misc.CEF {
             var m = message.Replace("\n", "\\n").Replace("'", "\\'");
             if (!string.IsNullOrEmpty(message)) {
                 if (BrowserControl.CanExecuteJavascriptInMainFrame) {
+                    var autoDismissMessage = IsProgramActive.IsActive() || _settings.GetPersistent().AutoDismissNotifications;
                     var ret = new Dictionary<string, string> {
                         {"message", m},
                         {"type", levelLowercased},
-                        {"fade", IsProgramActive.IsActive() ? "true" : "false"},
+                        {"fade", autoDismissMessage ? "true" : "false"},
                     };
 
-                    BrowserControl.ExecuteScriptAsync("window.showMessage", JsonConvert.SerializeObject(ret, _settings));
+                    BrowserControl.ExecuteScriptAsync("window.showMessage", JsonConvert.SerializeObject(ret, _serializerSettings));
                 }
                 else {
                     Logger.Warn($"Attempted to display message \"{message}\" but browser is not yet initialized");

@@ -409,6 +409,7 @@ namespace StatTranslator {
             {"iatag_ui_updatingstats_title", "Updating stats for owned items.."},
             {"iatag_ui_updatingstats", "Updating stats for your items..."},
             {"iatag_ui_darkmode", "Dark mode"},
+            {"iatag_ui_autodismiss", "Auto dismiss notifications"},
             {"iatag_ui_nagscreen1_button", "Maybe later..."},
             {"iatag_ui_nagscreen2_button", "Hah, as if!"},
             {"iatag_ui_nagscreen3_button", "Never! Muhaha!"},

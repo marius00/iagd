@@ -22,7 +22,8 @@ namespace IAGrim.Settings.Dto {
         private bool _autoUpdateModSettings;
         private bool _hideSkills;
         private bool _deleteDuplicates;
-        
+        private bool _autoDismissNotifications;
+
         private long _cloudUploadTimestamp;
         private List<FeatureRecommendation> _shownFeatureRecommendations;
 
@@ -198,6 +199,16 @@ namespace IAGrim.Settings.Dto {
                 OnMutate?.Invoke(null, null);
             }
         }
+
+        public bool AutoDismissNotifications {
+            get => _autoDismissNotifications;
+            set {
+                _autoDismissNotifications = value;
+                OnMutate?.Invoke(null, null);
+            }
+        }
+
+        
 
         public long CloudUploadTimestamp {
             get => _cloudUploadTimestamp;

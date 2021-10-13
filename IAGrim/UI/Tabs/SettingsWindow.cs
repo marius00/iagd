@@ -79,6 +79,7 @@ namespace IAGrim.UI.Tabs {
             cbDeleteDuplicates.Checked = _settings.GetPersistent().DeleteDuplicates;
             cbStartMinimized.Checked = _settings.GetLocal().StartMinimized;
             cbDarkMode.Checked = _settings.GetPersistent().DarkMode;
+            cbAutoDismiss.Checked = _settings.GetPersistent().AutoDismissNotifications;
         }
 
         private void buttonViewBackups_Click(object sender, EventArgs e) {
@@ -213,9 +214,7 @@ namespace IAGrim.UI.Tabs {
         }
 
         private void cbDarkMode_CheckedChanged(object sender, EventArgs e) {
-            
             if (_settings.GetPersistent().DarkMode != (sender as FirefoxCheckBox).Checked) {
-                // TODO: No translations for this, will most likely remove the restart requirement
                 _darkModeToggler.Activate();
                 _cefBrowserHandler.SetDarkMode((sender as FirefoxCheckBox).Checked);
             }
@@ -227,6 +226,10 @@ namespace IAGrim.UI.Tabs {
             _automaticUpdateChecker.CheckForUpdates(true);
             
             MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_update_body"), RuntimeSettings.Language.GetTag("iatag_ui_update_header"));
+        }
+
+        private void cbAutoDismiss_CheckedChanged(object sender, EventArgs e) {
+            _settings.GetPersistent().AutoDismissNotifications = ((FirefoxCheckBox) sender).Checked;
         }
     }
 }
