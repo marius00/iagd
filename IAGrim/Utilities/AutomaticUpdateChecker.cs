@@ -17,17 +17,16 @@ namespace IAGrim.Utilities {
         [DllImport("kernel32")]
         private static extern UInt64 GetTickCount64();
 
-        private string UpdateXml {
-            get {
-                var v = Assembly.GetExecutingAssembly().GetName().Version;
-                string version = $"{v.Major}.{v.Minor}.{v.Build}.{v.Revision}";
+        private string GetUpdateXml(bool requestLAtest) {
+            var v = Assembly.GetExecutingAssembly().GetName().Version;
+            string version = $"{v.Major}.{v.Minor}.{v.Build}.{v.Revision}";
 
-                
-                if (_settings.GetPersistent().SubscribeExperimentalUpdates) {
-                    return $"https://grimdawn.evilsoft.net/version.php?beta&version={version}";
-                }
-                return $"https://grimdawn.evilsoft.net/version.php?version={version}";
+
+            if (requestLAtest) {
+                return $"https://grimdawn.evilsoft.net/version.php?beta&version={version}";
             }
+
+            return $"https://grimdawn.evilsoft.net/version.php?version={version}";
         }
 
         public AutomaticUpdateChecker(SettingsService settings) {
@@ -60,11 +59,11 @@ namespace IAGrim.Utilities {
 
 
         // Intentionally public -- Do not refactor.
-        public void CheckForUpdates(bool allowRemindLater = true) {
-            AutoUpdater.LetUserSelectRemindLater = allowRemindLater;
+        public void CheckForUpdates(bool manualUpdate = false) {
+            AutoUpdater.LetUserSelectRemindLater = !manualUpdate;
             AutoUpdater.RemindLaterTimeSpan = RemindLaterFormat.Days;
             AutoUpdater.RemindLaterAt = 7;
-            AutoUpdater.Start(UpdateXml);
+            AutoUpdater.Start(GetUpdateXml(manualUpdate || _settings.GetPersistent().SubscribeExperimentalUpdates));
         }
 
         public void Dispose() {

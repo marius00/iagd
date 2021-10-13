@@ -224,7 +224,7 @@ namespace IAGrim.UI.Tabs {
         }
 
         private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            _automaticUpdateChecker.CheckForUpdates(false);
+            _automaticUpdateChecker.CheckForUpdates(true);
             
             MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_update_body"), RuntimeSettings.Language.GetTag("iatag_ui_update_header"));
         }
