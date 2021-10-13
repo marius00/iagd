@@ -72,8 +72,7 @@
 .items .item {
   position: relative;
   border-radius: 15px;
-  padding: 20px;
-  padding-bottom: 65px;
+  padding: 20px 20px 65px;
 
   border: 1px solid var(--item-border);
   margin: 10px;
@@ -132,7 +131,9 @@
   padding: 10px;
   margin: 0;
   -webkit-user-select: none; /* Chrome/Safari */
+  display: block;
 }
+
 .items .item .buddy-item-mix {
   position: absolute;
   bottom: 0;
@@ -155,6 +156,7 @@
 .items .item .link-container a {
   text-decoration: none;
   color: var(--item-transfer);
+  padding: 18px;
 }
 .items .item .level a:hover,
 .items .item .recipe-item a:hover,
