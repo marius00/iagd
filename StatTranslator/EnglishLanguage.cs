@@ -351,6 +351,8 @@ namespace StatTranslator {
             {"iatag_html_cloud_err", "This item has not been backed up to the cloud"},
             {"iatag_html_cloud_ok_hw", "This item has been flown up to the clouds"},
             {"iatag_html_cloud_err_hw", "This item has not been flown up to the clouds"},
+            {"iatag_html_cloud_ok_easter", "The easter bunny has safely stored this item away"},
+            {"iatag_html_cloud_err_easter", "The easter bunny has not yet found this egg"},
             {"iatag_html_items_buddy_alsohasthisitem1", "«{0}» also has this item"},
             {"iatag_html_items_buddy_alsohasthisitem2", "These buddies also have this item: {0}"},
             {"iatag_html_items_buddy_alsohasthisitem3", "of your Buddies have this item"},

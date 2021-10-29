@@ -23,6 +23,8 @@ class EmbeddedTranslator {
     'items.label.cloudError': 'This item has not been backed up to the cloud',
     'items.label.cloudOk.hw': 'This item has been flown up to the clouds',
     'items.label.cloudError.hw': 'This item has not been flown up to the clouds',
+    'items.label.cloudOk.easter': 'The easter bunny has safely stored this item away',
+    'items.label.cloudError.easter': 'The easter bunny has not yet found this egg',
     'item.buddies.singular': '«{0}» also has this item.',
     'item.buddies.singularOnly': '«{0}» has this item.',
     'item.buddies.plural': 'These buddies also have this item: {0}',

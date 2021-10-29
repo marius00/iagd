@@ -63,6 +63,8 @@ namespace IAGrim.UI.Misc.CEF {
                 {"items.label.cloudError", lang.GetTag("iatag_html_cloud_err")},
                 {"items.label.cloudOk.hw", lang.GetTag("iatag_html_cloud_ok_hw")},
                 {"items.label.cloudError.hw", lang.GetTag("iatag_html_cloud_err_hw")},
+                {"items.label.cloudOk.easter", lang.GetTag("iatag_html_cloud_ok_easter")},
+                {"items.label.cloudError.easter", lang.GetTag("iatag_html_cloud_err_easter")},
                 {"item.buddies.singular", lang.GetTag("iatag_html_items_buddy_alsohasthisitem1")},
                 {"item.buddies.plural", lang.GetTag("iatag_html_items_buddy_alsohasthisitem3")},
                 {"item.buddies.singularOnly", lang.GetTag("iatag_html_items_buddy_alsohasthisitem4")},

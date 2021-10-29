@@ -11,6 +11,57 @@ interface Props {
 }
 type IItemWithshowBackupCloudIcon = Props & IItem;
 
+
+function getEaster(Y: number) {
+  let C = Math.floor(Y/100);
+  let N = Y - 19*Math.floor(Y/19);
+  let K = Math.floor((C - 17)/25);
+  let I = C - Math.floor(C/4) - Math.floor((C - K)/3) + 19*N + 15;
+  I = I - 30*Math.floor((I/30));
+  I = I - Math.floor(I/28)*(1 - Math.floor(I/28)*Math.floor(29/(I + 1))*Math.floor((21 - N)/11));
+  let J = Y + Math.floor(Y/4) + I + 2 - C + Math.floor(C/4);
+  J = J - 7*Math.floor(J/7);
+  let L = I - J;
+  let M = 3 + Math.floor((L + 40)/44);
+  let D = L + 28 - 31*Math.floor(M/4);
+
+  return new Date(Y, M - 1, D);
+}
+
+function isItEaster(): boolean {
+  const easterSunday = getEaster(new Date().getFullYear());
+  const startOfEaster = new Date(easterSunday.getFullYear(), easterSunday.getMonth(), easterSunday.getDay() - 7);
+  return new Date() >= startOfEaster && new Date <= easterSunday;
+}
+
+function getCloudIcon(isOk: boolean) {
+  const isHalloween = new Date().getMonth() == 9 && new Date().getDate() >= 24;
+  const isEaster = isItEaster();
+
+  let suffix = '';
+  if (isHalloween) {
+    suffix = '-hw';
+  } else if (isEaster) {
+    suffix = '-easter';
+  }
+
+  return isOk ? `static/cloud-ok${suffix}.png` : `static/cloud-err${suffix}.png`;
+}
+
+function getCloudLabel(isOk: boolean) {
+  const isHalloween = new Date().getMonth() == 9 && new Date().getDate() >= 24;
+  const isEaster = isItEaster();
+
+  let suffix = '';
+  if (isHalloween) {
+    suffix = '.hw';
+  } else if (isEaster) {
+    suffix = '.easter';
+  }
+
+  return isOk ? `items.label.cloudOk${suffix}` : `items.label.cloudError${suffix}`;
+}
+
 class ItemCornerContainer extends PureComponent<IItemWithshowBackupCloudIcon, object> {
   render() {
     const item = {...this.props};
@@ -22,11 +73,10 @@ class ItemCornerContainer extends PureComponent<IItemWithshowBackupCloudIcon, ob
     const showRecipeIcon = item.hasRecipe && item.type !== 0;
     const showAugmentationIcon = item.type === IItemType.Augmentation;
 
-    const isHalloween = new Date().getMonth() == 9 && new Date().getDate() >= 24;
-    const cloudIconOk = isHalloween ? "static/cloud-ok-hw.png" : "static/cloud-ok.png";
-    const cloudIconErr = isHalloween ? "static/cloud-err-hw.png" : "static/cloud-err.png";
-    const cloudLabelOk = isHalloween ? 'items.label.cloudOk.hw' : 'items.label.cloudOk';
-    const cloudLabelError = isHalloween ? 'items.label.cloudError.hw' : 'items.label.cloudError';
+    const cloudIconOk = getCloudIcon(true);
+    const cloudIconErr = getCloudIcon(false);
+    const cloudLabelOk = getCloudLabel(true);
+    const cloudLabelError = getCloudLabel(false);
 
     return (
       <div className="recipe-item-corner">
