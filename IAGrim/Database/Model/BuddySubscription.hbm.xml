@@ -8,5 +8,6 @@
     <id name="Id" />
     <property name="Nickname" />
     <property name="LastSyncTimestamp" />
+	<property name="IsHidden" />
   </class>
 </hibernate-mapping>

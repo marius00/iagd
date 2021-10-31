@@ -660,6 +660,8 @@ public void SetItems(long userid, string description, List<JsonBuddyItem> items)
                 queryParams.Add("maxlevel", query.MaximumLevel);
             }
 
+            queryFragments.Add($"NOT S.{BuddySubscriptionTable.IsHidden}");
+
             List<string> sql = new List<string>();
             sql.Add($@"SELECT
                                 {BuddyItemsTable.BaseRecord} as BaseRecord,
@@ -677,7 +679,8 @@ public void SetItems(long userid, string description, List<JsonBuddyItem> items)
                                 {BuddyItemsTable.StackCount} as Count,
                                 {BuddyItemsTable.SubscriptionId} as BuddyId,
                                 S.{BuddySubscriptionTable.Nickname} as Stash,
-                                coalesce((SELECT group_concat(Record, '|') FROM {BuddyItemRecordTable.Table} pir WHERE pir.{BuddyItemRecordTable.Item} = PI.{BuddyItemsTable.RemoteItemId} AND NOT {BuddyItemRecordTable.Record} IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord)), '') AS PetRecord
+                                coalesce((SELECT group_concat(Record, '|') FROM {BuddyItemRecordTable.Table} pir
+                WHERE pir.{BuddyItemRecordTable.Item} = PI.{BuddyItemsTable.RemoteItemId} AND NOT {BuddyItemRecordTable.Record} IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord)), '') AS PetRecord
 
 
                 FROM {BuddyItemsTable.Table} PI, {BuddySubscriptionTable.Table} S WHERE "
@@ -687,7 +690,7 @@ public void SetItems(long userid, string description, List<JsonBuddyItem> items)
 
             var subquery = CreateDatabaseStatQueryParams(query);
             if (subquery != null) {
-                sql.Add($" AND PI.{BuddyItemsTable.RemoteItemId} IN (" + subquery.SQL + ")");
+                sql.Add($" AND PI.{BuddyItemsTable.RemoteItemId} IN ({subquery.SQL})");
             }
 
 

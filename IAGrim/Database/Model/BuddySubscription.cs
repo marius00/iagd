@@ -10,6 +10,7 @@ namespace IAGrim.Database {
     public class BuddySubscription {
         public virtual long Id { get; set; }
         public virtual string Nickname { get; set; }
+        public virtual bool IsHidden { get; set; }
         public virtual long LastSyncTimestamp { get; set; }
     }
 }

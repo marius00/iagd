@@ -199,6 +199,8 @@ namespace IAGrim.UI.Tabs {
         public void UpdateBuddyList() {
             buddyList.Items.Clear();
 
+            var visible = RuntimeSettings.Language.GetTag("iatag_ui_buddy_column_visible");
+            var hidden = RuntimeSettings.Language.GetTag("iatag_ui_buddy_column_hidden");
             var subscriptions = _buddySubscriptionDao.ListAll();
             foreach (var subscription in subscriptions) {
                 var label = subscription.Id.ToString();
@@ -212,6 +214,7 @@ namespace IAGrim.UI.Tabs {
 
                 var lvi = new ListViewItem(label);
                 lvi.SubItems.Add(numItems.ToString());
+                lvi.SubItems.Add(subscription.IsHidden ? hidden : visible);
                 lvi.Tag = subscription.Id;
                 buddyList.Items.Add(lvi);
             }
@@ -286,6 +289,39 @@ namespace IAGrim.UI.Tabs {
 
         private void linkViewCharacters_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             _helpService.ShowCharacterBackups();
+        }
+
+        private void btnToggleBuddyVisibility_Click(object sender, EventArgs e) {
+            foreach (ListViewItem item in buddyList.SelectedItems) {
+                if (item != null && long.TryParse(item.Tag.ToString(), out var id)) {
+                    var entry = _buddySubscriptionDao.GetById(id);
+                    entry.IsHidden = !entry.IsHidden;
+                    _buddySubscriptionDao.Update(entry);
+                }
+            }
+            UpdateBuddyList();
+        }
+
+        private void showToolStripMenuItem_Click(object sender, EventArgs e) {
+            foreach (ListViewItem item in buddyList.SelectedItems) {
+                if (item != null && long.TryParse(item.Tag.ToString(), out var id)) {
+                    var entry = _buddySubscriptionDao.GetById(id);
+                    entry.IsHidden = false;
+                    _buddySubscriptionDao.Update(entry);
+                }
+            }
+            UpdateBuddyList();
+        }
+
+        private void hideToolStripMenuItem_Click(object sender, EventArgs e) {
+            foreach (ListViewItem item in buddyList.SelectedItems) {
+                if (item != null && long.TryParse(item.Tag.ToString(), out var id)) {
+                    var entry = _buddySubscriptionDao.GetById(id);
+                    entry.IsHidden = true;
+                    _buddySubscriptionDao.Update(entry);
+                }
+            }
+            UpdateBuddyList();
         }
     }
 }

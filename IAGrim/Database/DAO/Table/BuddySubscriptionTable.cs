@@ -10,5 +10,6 @@ namespace IAGrim.Database.DAO.Table {
         public const string Id = "id";
         public const string LastSyncTimestamp = "lastsynctimestamp";
         public const string Nickname = "nickname";
+        public const string IsHidden = "ishidden";
     }
 }

@@ -27,12 +27,16 @@
             this.buddyItemListContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pbBuddyItems = new PanelBox();
-            this.btnDeleteBuddy = new FirefoxButton();
-            this.btnModifyBuddy = new FirefoxButton();
             this.buddyList = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.btnToggleBuddyVisibility = new FirefoxButton();
+            this.btnDeleteBuddy = new FirefoxButton();
+            this.btnModifyBuddy = new FirefoxButton();
             this.helpWhatIsThis = new System.Windows.Forms.LinkLabel();
             this.label2 = new System.Windows.Forms.Label();
             this.btnAddBuddy = new FirefoxButton();
@@ -58,10 +62,12 @@
             // buddyItemListContextMenu
             // 
             this.buddyItemListContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.showToolStripMenuItem,
+            this.hideToolStripMenuItem,
             this.editToolStripMenuItem,
             this.deleteToolStripMenuItem});
             this.buddyItemListContextMenu.Name = "contextMenuStrip1";
-            this.buddyItemListContextMenu.Size = new System.Drawing.Size(108, 48);
+            this.buddyItemListContextMenu.Size = new System.Drawing.Size(108, 92);
             this.buddyItemListContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.buddyItemListContextMenu_Opening);
             // 
             // editToolStripMenuItem
@@ -78,14 +84,29 @@
             this.deleteToolStripMenuItem.Text = "Delete";
             this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
             // 
+            // showToolStripMenuItem
+            // 
+            this.showToolStripMenuItem.Name = "showToolStripMenuItem";
+            this.showToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.showToolStripMenuItem.Text = "Show";
+            this.showToolStripMenuItem.Click += new System.EventHandler(this.showToolStripMenuItem_Click);
+            // 
+            // hideToolStripMenuItem
+            // 
+            this.hideToolStripMenuItem.Name = "hideToolStripMenuItem";
+            this.hideToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.hideToolStripMenuItem.Text = "Hide";
+            this.hideToolStripMenuItem.Click += new System.EventHandler(this.hideToolStripMenuItem_Click);
+            // 
             // pbBuddyItems
             // 
             this.pbBuddyItems.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pbBuddyItems.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.pbBuddyItems.Controls.Add(this.buddyList);
+            this.pbBuddyItems.Controls.Add(this.btnToggleBuddyVisibility);
             this.pbBuddyItems.Controls.Add(this.btnDeleteBuddy);
             this.pbBuddyItems.Controls.Add(this.btnModifyBuddy);
-            this.pbBuddyItems.Controls.Add(this.buddyList);
             this.pbBuddyItems.Controls.Add(this.helpWhatIsThis);
             this.pbBuddyItems.Controls.Add(this.label2);
             this.pbBuddyItems.Controls.Add(this.btnAddBuddy);
@@ -101,6 +122,65 @@
             this.pbBuddyItems.Tag = "iatag_ui_buddies";
             this.pbBuddyItems.Text = "Buddies";
             this.pbBuddyItems.TextLocation = "8; 5";
+            // 
+            // buddyList
+            // 
+            this.buddyList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.buddyList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2,
+            this.columnHeader3});
+            this.buddyList.ContextMenuStrip = this.buddyItemListContextMenu;
+            this.buddyList.Font = new System.Drawing.Font("Segoe UI Semibold", 12F);
+            this.buddyList.FullRowSelect = true;
+            this.buddyList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.buddyList.HideSelection = false;
+            this.buddyList.Location = new System.Drawing.Point(25, 52);
+            this.buddyList.MultiSelect = false;
+            this.buddyList.Name = "buddyList";
+            this.buddyList.Size = new System.Drawing.Size(730, 117);
+            this.buddyList.TabIndex = 4;
+            this.buddyList.UseCompatibleStateImageBehavior = false;
+            this.buddyList.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Tag = "iatag_ui_buddy_header_buddy";
+            this.columnHeader1.Text = "Buddy";
+            this.columnHeader1.Width = 308;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Tag = "iatag_ui_buddy_header_items";
+            this.columnHeader2.Text = "Items";
+            this.columnHeader2.Width = 180;
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Tag = "iatag_ui_buddy_header_isvisible";
+            this.columnHeader3.Text = "Visible/Active";
+            this.columnHeader3.Width = 120;
+            // 
+            // btnToggleBuddyVisibility
+            // 
+            this.btnToggleBuddyVisibility.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnToggleBuddyVisibility.BackColorDefault = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
+            this.btnToggleBuddyVisibility.BackColorOverride = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(245)))), ((int)(((byte)(245)))));
+            this.btnToggleBuddyVisibility.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
+            this.btnToggleBuddyVisibility.EnabledCalc = true;
+            this.btnToggleBuddyVisibility.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.btnToggleBuddyVisibility.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
+            this.btnToggleBuddyVisibility.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(232)))), ((int)(((byte)(232)))), ((int)(((byte)(232)))));
+            this.btnToggleBuddyVisibility.HoverForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
+            this.btnToggleBuddyVisibility.Location = new System.Drawing.Point(521, 175);
+            this.btnToggleBuddyVisibility.Name = "btnToggleBuddyVisibility";
+            this.btnToggleBuddyVisibility.Size = new System.Drawing.Size(160, 25);
+            this.btnToggleBuddyVisibility.TabIndex = 12;
+            this.btnToggleBuddyVisibility.Tag = "iatag_ui_buddy_toggle";
+            this.btnToggleBuddyVisibility.Text = "Toggle visibility";
+            this.btnToggleBuddyVisibility.Click += new System.EventHandler(this.btnToggleBuddyVisibility_Click);
             // 
             // btnDeleteBuddy
             // 
@@ -139,39 +219,6 @@
             this.btnModifyBuddy.Tag = "iatag_ui_buddy_modify";
             this.btnModifyBuddy.Text = "Modify buddy";
             this.btnModifyBuddy.Click += new System.EventHandler(this.btnModifyBuddy_Click);
-            // 
-            // buddyList
-            // 
-            this.buddyList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.buddyList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2});
-            this.buddyList.ContextMenuStrip = this.buddyItemListContextMenu;
-            this.buddyList.Font = new System.Drawing.Font("Segoe UI Semibold", 12F);
-            this.buddyList.FullRowSelect = true;
-            this.buddyList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.buddyList.HideSelection = false;
-            this.buddyList.Location = new System.Drawing.Point(25, 52);
-            this.buddyList.MultiSelect = false;
-            this.buddyList.Name = "buddyList";
-            this.buddyList.Size = new System.Drawing.Size(730, 117);
-            this.buddyList.TabIndex = 4;
-            this.buddyList.UseCompatibleStateImageBehavior = false;
-            this.buddyList.View = System.Windows.Forms.View.Details;
-            // 
-            // columnHeader1
-            // 
-            this.columnHeader1.Tag = "iatag_ui_buddy_header_buddy";
-            this.columnHeader1.Text = "Buddy";
-            this.columnHeader1.Width = 308;
-            // 
-            // columnHeader2
-            // 
-            this.columnHeader2.Tag = "iatag_ui_buddy_header_items";
-            this.columnHeader2.Text = "Items";
-            this.columnHeader2.Width = 161;
             // 
             // helpWhatIsThis
             // 
@@ -461,5 +508,9 @@
         private FirefoxButton btnDeleteBuddy;
         private FirefoxButton btnModifyBuddy;
         private System.Windows.Forms.LinkLabel linkViewCharacters;
+        private FirefoxButton btnToggleBuddyVisibility;
+        private System.Windows.Forms.ToolStripMenuItem showToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem hideToolStripMenuItem;
+        private System.Windows.Forms.ColumnHeader columnHeader3;
     }
 }
