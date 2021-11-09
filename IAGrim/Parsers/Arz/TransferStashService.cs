@@ -213,6 +213,7 @@ namespace IAGrim.Parsers.Arz {
                     }
 
                     // Store to stash
+                    Logger.Debug($"Depositing {stashItems.Count} items to {filename}");
                     if (!_stashWriter.SafelyWriteStash(filename, stash)) {
                         Logger.Error("Could not deposit items");
                         throw new DepositException();
