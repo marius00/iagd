@@ -175,6 +175,23 @@ namespace IAGrim.Parsers.Arz {
         public class DepositException : Exception {
         }
 
+        private static string ClassifyStashfile(string filename) {
+            if (filename.EndsWith("transfer.gst"))
+                return "Softcore";
+            if (filename.EndsWith("transfer.gsh"))
+                return "Hardcore";
+            if (filename.EndsWith("transfer.bst"))
+                return "Softcore, FG/AOM Disabled";
+            if (filename.EndsWith("transfer.bsh"))
+                return "Hardcore, FG/AOM Disabled";
+            if (filename.EndsWith("transfer.cst"))
+                return "Softcore, FG Disabled";
+            if (filename.EndsWith("transfer.csh"))
+                return "Hardcore, FG Disabled";
+
+            return "Unknown";
+        }
+
         /// <summary>
         ///     Deposit the provided items to bank page Y
         ///     The items deposited, caller responsibility to delete them from DB if stacksize is LE 0, and update if not
@@ -213,7 +230,7 @@ namespace IAGrim.Parsers.Arz {
                     }
 
                     // Store to stash
-                    Logger.Debug($"Depositing {stashItems.Count} items to {filename}");
+                    Logger.Debug($"Depositing {stashItems.Count} items to \"{filename}\", classification: {ClassifyStashfile(filename.ToLower())}");
                     if (!_stashWriter.SafelyWriteStash(filename, stash)) {
                         Logger.Error("Could not deposit items");
                         throw new DepositException();
