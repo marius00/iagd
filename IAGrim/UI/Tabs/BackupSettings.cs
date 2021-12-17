@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using EvilsoftCommons.Cloud;
@@ -62,7 +63,7 @@ namespace IAGrim.UI.Tabs {
             cbGoogle.Checked = _settings.GetLocal().BackupGoogle;
             cbOneDrive.Checked = _settings.GetLocal().BackupOnedrive;
             cbCustom.Checked = _settings.GetLocal().BackupCustom;
-            lbOpenCustomBackupFolder.Visible = cbCustom.Checked;
+            lbOpenCustomBackupFolder.Visible = cbCustom.Checked && IsCustomLocationValid();
 
             cbDropbox.CheckedChanged += cbDropbox_CheckedChanged;
             cbGoogle.CheckedChanged += cbGoogle_CheckedChanged;
@@ -106,7 +107,8 @@ namespace IAGrim.UI.Tabs {
         private void cbCustom_CheckedChanged(object sender, EventArgs e) {
             var cb = sender as FirefoxCheckBox;
             _settings.GetLocal().BackupCustom = cb.Checked;
-            lbOpenCustomBackupFolder.Visible = cb.Checked;
+            lbOpenCustomBackupFolder.Visible = cbCustom.Checked && IsCustomLocationValid();
+
         }
 
         private void buttonCustom_Click(object sender, EventArgs e) {
@@ -115,6 +117,7 @@ namespace IAGrim.UI.Tabs {
                 if (folderBrowserDialog.ShowDialog() == DialogResult.OK) {
                     DialogResult = DialogResult.None;
                     _settings.GetLocal().BackupCustomLocation = folderBrowserDialog.SelectedPath;
+                    lbOpenCustomBackupFolder.Visible = cbCustom.Checked && IsCustomLocationValid();
                 }
             }
         }
@@ -150,8 +153,16 @@ namespace IAGrim.UI.Tabs {
             _helpService.ShowHelp(HelpService.HelpType.BackupAutodetectDisabled);
         }
 
+        private bool IsCustomLocationValid() {
+            return _settings.GetLocal().BackupCustomLocation != null && Directory.Exists(_settings.GetLocal().BackupCustomLocation);
+        }
         private void lbOpenCustomBackupFolder_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            Process.Start(_settings.GetLocal().BackupCustomLocation); // TODO: Should open the \evilsoft\iagd folder.. but not this class` responsibility to know that..
+            if (!IsCustomLocationValid()) {
+                MessageBox.Show("bla bla folder dont exist"); // TODO: Localize etc
+            }
+            else {
+                Process.Start(_settings.GetLocal().BackupCustomLocation);
+            }
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
