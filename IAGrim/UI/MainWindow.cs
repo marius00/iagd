@@ -20,7 +20,6 @@ using IAGrim.Utilities.Cloud;
 using IAGrim.Utilities.HelperClasses;
 using IAGrim.Utilities.RectanglePacker;
 using log4net;
-using MoreLinq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -516,7 +515,9 @@ namespace IAGrim.UI {
 
                 var transferFiles = GlobalPaths.TransferFiles;
                 if (transferFiles.Count > 0) {
-                    var file = transferFiles.MaxBy(m => m.LastAccess);
+                    var maxLastAccess = transferFiles.Max(m => m.LastAccess);
+                    var file = transferFiles.First(x => x.LastAccess == maxLastAccess);
+
                     var stash = TransferStashService.GetStash(file.Filename);
                     if (stash != null) {
                         _dynamicPacker.Initialize(stash.Width, stash.Height);

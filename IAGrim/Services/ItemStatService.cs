@@ -10,7 +10,6 @@ using IAGrim.Database.DAO.Dto;
 using IAGrim.Database.Model;
 using IAGrim.Parsers.Arz;
 using IAGrim.Settings;
-using MoreLinq;
 
 namespace IAGrim.Services {
     public class ItemStatService {
@@ -88,9 +87,7 @@ namespace IAGrim.Services {
         }
 
         private List<BuddyItem> GetBuddyItems(List<PlayerHeldItem> items) {
-            var result = new List<BuddyItem>();
-            items.Where(IsBuddyItem).ForEach(item => result.Add(item as BuddyItem));
-            return result;
+            return items.Where(IsBuddyItem).Select(item => item as BuddyItem).ToList();
         }
 
         private void ApplyStatsToAugmentations(List<PlayerHeldItem> items) {
