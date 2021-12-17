@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\CefSharp.Common.91.1.230\build\CefSharp.Common.props" Condition="Exists('..\packages\CefSharp.Common.91.1.230\build\CefSharp.Common.props')" />
-  <Import Project="..\packages\cef.redist.x86.91.1.23\build\cef.redist.x86.props" Condition="Exists('..\packages\cef.redist.x86.91.1.23\build\cef.redist.x86.props')" />
-  <Import Project="..\packages\cef.redist.x64.91.1.23\build\cef.redist.x64.props" Condition="Exists('..\packages\cef.redist.x64.91.1.23\build\cef.redist.x64.props')" />
+  <Import Project="..\packages\CefSharp.Common.96.0.180\build\CefSharp.Common.props" Condition="Exists('..\packages\CefSharp.Common.96.0.180\build\CefSharp.Common.props')" />
+  <Import Project="..\packages\cef.redist.x86.96.0.18\build\cef.redist.x86.props" Condition="Exists('..\packages\cef.redist.x86.96.0.18\build\cef.redist.x86.props')" />
+  <Import Project="..\packages\cef.redist.x64.96.0.18\build\cef.redist.x64.props" Condition="Exists('..\packages\cef.redist.x64.96.0.18\build\cef.redist.x64.props')" />
   <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" />
   <Import Project="..\packages\Microsoft.Net.Compilers.3.0.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.3.0.0\build\Microsoft.Net.Compilers.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -89,14 +89,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Auto updater\AutoUpdater.NET\bin\Release\AutoUpdater.NET.dll</HintPath>
     </Reference>
-    <Reference Include="CefSharp, Version=91.1.230.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=MSIL">
-      <HintPath>..\packages\CefSharp.Common.91.1.230\lib\net452\CefSharp.dll</HintPath>
+    <Reference Include="CefSharp, Version=96.0.180.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=MSIL">
+      <HintPath>..\packages\CefSharp.Common.96.0.180\lib\net452\CefSharp.dll</HintPath>
     </Reference>
-    <Reference Include="CefSharp.Core, Version=91.1.230.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=MSIL">
-      <HintPath>..\packages\CefSharp.Common.91.1.230\lib\net452\CefSharp.Core.dll</HintPath>
+    <Reference Include="CefSharp.Core, Version=96.0.180.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=MSIL">
+      <HintPath>..\packages\CefSharp.Common.96.0.180\lib\net452\CefSharp.Core.dll</HintPath>
     </Reference>
-    <Reference Include="CefSharp.WinForms, Version=91.1.230.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=MSIL">
-      <HintPath>..\packages\CefSharp.WinForms.91.1.230\lib\net452\CefSharp.WinForms.dll</HintPath>
+    <Reference Include="CefSharp.WinForms, Version=96.0.180.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=MSIL">
+      <HintPath>..\packages\CefSharp.WinForms.96.0.180\lib\net462\CefSharp.WinForms.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
@@ -115,9 +115,8 @@
     <Reference Include="Ionic.Zip">
       <HintPath>Required_Bins\Ionic.Zip.dll</HintPath>
     </Reference>
-    <Reference Include="log4net, Version=2.0.12.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <HintPath>..\packages\log4net.2.0.12\lib\net45\log4net.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="log4net, Version=2.0.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.13\lib\net45\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.1.1.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
@@ -156,14 +155,14 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Linq" />
-    <Reference Include="System.Data.SQLite, Version=1.0.114.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <HintPath>..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.114.0\lib\net46\System.Data.SQLite.dll</HintPath>
+    <Reference Include="System.Data.SQLite, Version=1.0.115.5, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.115.5\lib\net46\System.Data.SQLite.dll</HintPath>
     </Reference>
-    <Reference Include="System.Data.SQLite.EF6, Version=1.0.114.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Data.SQLite.EF6.1.0.114.0\lib\net46\System.Data.SQLite.EF6.dll</HintPath>
+    <Reference Include="System.Data.SQLite.EF6, Version=1.0.115.5, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.EF6.1.0.115.5\lib\net46\System.Data.SQLite.EF6.dll</HintPath>
     </Reference>
-    <Reference Include="System.Data.SQLite.Linq, Version=1.0.114.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Data.SQLite.Linq.1.0.114.0\lib\net46\System.Data.SQLite.Linq.dll</HintPath>
+    <Reference Include="System.Data.SQLite.Linq, Version=1.0.115.5, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.Linq.1.0.115.5\lib\net46\System.Data.SQLite.Linq.dll</HintPath>
     </Reference>
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Drawing" />
@@ -892,15 +891,15 @@
     <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.3.0.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.3.0.0\build\Microsoft.Net.Compilers.props'))" />
     <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.props'))" />
     <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.targets'))" />
-    <Error Condition="!Exists('..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.114.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.114.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets'))" />
-    <Error Condition="!Exists('..\packages\cef.redist.x64.91.1.23\build\cef.redist.x64.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\cef.redist.x64.91.1.23\build\cef.redist.x64.props'))" />
-    <Error Condition="!Exists('..\packages\cef.redist.x86.91.1.23\build\cef.redist.x86.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\cef.redist.x86.91.1.23\build\cef.redist.x86.props'))" />
-    <Error Condition="!Exists('..\packages\CefSharp.Common.91.1.230\build\CefSharp.Common.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Common.91.1.230\build\CefSharp.Common.props'))" />
-    <Error Condition="!Exists('..\packages\CefSharp.Common.91.1.230\build\CefSharp.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Common.91.1.230\build\CefSharp.Common.targets'))" />
+    <Error Condition="!Exists('..\packages\cef.redist.x64.96.0.18\build\cef.redist.x64.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\cef.redist.x64.96.0.18\build\cef.redist.x64.props'))" />
+    <Error Condition="!Exists('..\packages\cef.redist.x86.96.0.18\build\cef.redist.x86.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\cef.redist.x86.96.0.18\build\cef.redist.x86.props'))" />
+    <Error Condition="!Exists('..\packages\CefSharp.Common.96.0.180\build\CefSharp.Common.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Common.96.0.180\build\CefSharp.Common.props'))" />
+    <Error Condition="!Exists('..\packages\CefSharp.Common.96.0.180\build\CefSharp.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Common.96.0.180\build\CefSharp.Common.targets'))" />
+    <Error Condition="!Exists('..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.115.5\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.115.5\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets'))" />
   </Target>
   <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" />
-  <Import Project="..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.114.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets" Condition="Exists('..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.114.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets')" />
-  <Import Project="..\packages\CefSharp.Common.91.1.230\build\CefSharp.Common.targets" Condition="Exists('..\packages\CefSharp.Common.91.1.230\build\CefSharp.Common.targets')" />
+  <Import Project="..\packages\CefSharp.Common.96.0.180\build\CefSharp.Common.targets" Condition="Exists('..\packages\CefSharp.Common.96.0.180\build\CefSharp.Common.targets')" />
+  <Import Project="..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.115.5\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets" Condition="Exists('..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.115.5\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
