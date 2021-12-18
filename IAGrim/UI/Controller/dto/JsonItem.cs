@@ -29,5 +29,7 @@ namespace IAGrim.UI.Controller.dto {
         public JsonSkill Skill { get; set; }
         public bool IsMonsterInfrequent { get; set; }
         public string Extras { get; set; } // TODO: This should be a custom object
+
+        public bool IsHardcore { get; set; }
     }
 }

@@ -25,5 +25,6 @@ export default interface IItem {
   slot?: string;
   extras?: string | undefined;
   isMonsterInfrequent?: boolean;
+  isHardcore: boolean;
 }
 

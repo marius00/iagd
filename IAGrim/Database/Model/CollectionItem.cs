@@ -8,7 +8,8 @@ namespace IAGrim.Database.Model {
     public class CollectionItem {
         public string BaseRecord { get; set; }
         public string Name { get; set; }
-        public long NumOwned { get; set; }
+        public long NumOwnedSc { get; set; }
+        public long NumOwnedHc { get; set; }
 
         private string _icon;
         public string Icon {

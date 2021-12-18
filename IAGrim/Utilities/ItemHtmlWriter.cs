@@ -52,6 +52,7 @@ namespace IAGrim.Utilities {
         public static JsonItem GetJsonItem(PlayerHeldItem item) {
             // TODO: Modifiers
 
+            bool isHardcore = false;
             bool isCloudSynced = false;
             object[] transferUrl = {"", "", "", ""};
             string uniqueIdentifier;
@@ -59,6 +60,7 @@ namespace IAGrim.Utilities {
                 transferUrl = new object[] {pi.BaseRecord, pi.PrefixRecord, pi.SuffixRecord, pi.MateriaRecord, pi.Mod, pi.IsHardcore};
                 isCloudSynced = pi.IsCloudSynchronized;
                 uniqueIdentifier = $"PI/{pi.Id}/{pi.CloudId}";
+                isHardcore = pi.IsHardcore;
             }
             else if (item is BuddyItem bi) {
                 // TODO: Remove this, buddy items are never transferable. Gotta provide a better unique id.
@@ -122,6 +124,7 @@ namespace IAGrim.Utilities {
                 Slot = SlotTranslator.Translate(RuntimeSettings.Language, item.Slot ?? ""),
                 Extras = extras,
                 IsMonsterInfrequent = item.ModifiedSkills.Any(s => s.IsMonsterInfrequent),
+                IsHardcore = isHardcore
             };
 
             var modifiedSkills = item.ModifiedSkills;

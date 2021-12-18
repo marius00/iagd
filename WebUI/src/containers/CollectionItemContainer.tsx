@@ -33,10 +33,11 @@ class CollectionItemContainer extends PureComponent<Props, object> {
   render() {
     const items = this.props.items;
 
+    // TODO: Use both numOwnedSc and numOwnedHc (if support is ever added)
     const filterItems = (item: ICollectionItem) => {
-      if (this.state.onlyGreen && item.numOwned < 1) {
+      if (this.state.onlyGreen && item.numOwnedSc < 1) {
         return false;
-      } else if (this.state.onlyRed && item.numOwned > 0) {
+      } else if (this.state.onlyRed && item.numOwnedSc > 0) {
         return false;
       }
 
@@ -81,8 +82,8 @@ class CollectionItemContainer extends PureComponent<Props, object> {
         </div>
 
         {items.filter(filterItems).map((item) =>
-          <a className={'collectionItem'} onClick={() => this.openItemSite(item)} key={'collected-' + item.baseRecord} data-tip={(item.numOwned > 0 ? `${this.stripColorCodes(item.name)} (x${item.numOwned})` : this.stripColorCodes(item.name))}>
-            <div className={(item.numOwned > 0 ? 'collected' : 'uncollected') + ' imageContainer'}>
+          <a className={'collectionItem'} onClick={() => this.openItemSite(item)} key={'collected-' + item.baseRecord} data-tip={(item.numOwnedSc > 0 ? `${this.stripColorCodes(item.name)} (x${item.numOwnedSc})` : this.stripColorCodes(item.name))}>
+            <div className={(item.numOwnedSc > 0 ? 'collected' : 'uncollected') + ' imageContainer'}>
               <img src={item.icon} />
             </div>
             <div className={'textContainer'}>

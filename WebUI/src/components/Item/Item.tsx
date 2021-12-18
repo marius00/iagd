@@ -64,14 +64,16 @@ class Item extends PureComponent<Props, object> {
     return `item-quality-${quality.toLowerCase()}`;
   }
   
-  getSetItemTooltip(setName: string|undefined): string {
+  getSetItemTooltip(setName: string|undefined, isHardcore: boolean): string {
+    const getNumItems = (item: ICollectionItem) => isHardcore ? item.numOwnedHc : item.numOwnedSc;
+
     if (setName !== undefined && isEmbedded) {
       const addFont = (numOwned: number, s: string) => (numOwned <= 0) ? `<font color="red">${s}</font>` : s;
       let setItemsList = GetSetItems(setName)
         .map(this.props.getItemName)
         .map(entry => addFont(
-          entry.numOwned, 
-          `${("  " + entry.numOwned).substr(-2,2)}x ${this.stripColorCodes(entry.name)}`))
+          getNumItems(entry),
+          `${("  " + getNumItems(entry)).substr(-2,2)}x ${this.stripColorCodes(entry.name)}`))
         .join("<br>");
 
       setItemsList = `<b>${translate('item.label.setConsistsOf')}</b><br><br>` + setItemsList;
@@ -123,7 +125,7 @@ class Item extends PureComponent<Props, object> {
     );
 
     const setName = GetSetName(item.baseRecord);
-    let setItemsList = this.getSetItemTooltip(setName);
+    let setItemsList = this.getSetItemTooltip(setName, item.isHardcore);
 
     const mainClasses = [
       "item",
