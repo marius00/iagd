@@ -41,6 +41,7 @@ namespace IAGrim.Parser.Arz {
                 "/scriptentities/", // Totally Normal Shield
                 "/items/",
                 "/storyelements/signs/", // Lokarr's set
+                "/storyelements/questassets/", // Gazer Man
                 "/skills/",
                 "/npcgear/"
             };
@@ -65,7 +66,7 @@ namespace IAGrim.Parser.Arz {
         private static IItem ExtractItem(Record record, IReadOnlyList<string> stringTable, bool skipLots) {
             var tmp = 0;
 
-            var itemName = stringTable[(int)record.StringIndex];
+            var itemName = stringTable[(int) record.StringIndex];
 
             // Skip effects/procs/etc
             if (skipLots && !IsInteresting(itemName)) {
@@ -88,7 +89,7 @@ namespace IAGrim.Parser.Arz {
                 tmp += 2 + numEntries;
 
                 // Store the interesting records
-                var recordString = stringTable[(int)stringIndex];
+                var recordString = stringTable[(int) stringIndex];
                 {
                     for (uint n = 0; n < numEntries; n++) {
                         var pos = 8 + 4 * n;
@@ -106,7 +107,7 @@ namespace IAGrim.Parser.Arz {
 
                             case 2: {
                                 // Could technically continue to be stored as an int.. 
-                                var val = stringTable[(int)IOHelper.GetUInt(data, offset + pos)];
+                                var val = stringTable[(int) IOHelper.GetUInt(data, offset + pos)];
 
                                 if (!string.IsNullOrEmpty(val)) {
                                     item.Stats.Add(new ItemStat {Stat = recordString, TextValue = val});
@@ -119,7 +120,7 @@ namespace IAGrim.Parser.Arz {
                                 var val = IOHelper.GetUInt(data, offset + pos);
 
                                 if (val > 0) {
-                                    item.Stats.Add(new ItemStat {Stat = recordString, Value = (int)val});
+                                    item.Stats.Add(new ItemStat {Stat = recordString, Value = (int) val});
                                 }
 
                                 break;
@@ -128,7 +129,7 @@ namespace IAGrim.Parser.Arz {
                     }
                 }
 
-                offset += 8 + (uint)numEntries * 4;
+                offset += 8 + (uint) numEntries * 4;
             }
 
             return item;
@@ -137,12 +138,7 @@ namespace IAGrim.Parser.Arz {
         /// <summary>
         /// Load items from the Grim Dawn client
         /// </summary>
-        private static List<IItem> LoadRecords(
-            FileStream fs,
-            uint start,
-            uint numRecords,
-            IReadOnlyList<string> stringTable,
-            bool skipLots) {
+        private static List<IItem> LoadRecords(FileStream fs, uint start, uint numRecords, IReadOnlyList<string> stringTable, bool skipLots) {
             fs.Seek(start, SeekOrigin.Begin);
 
             var tempRecords = new List<Record>();
