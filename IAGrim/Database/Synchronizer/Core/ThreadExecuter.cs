@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Runtime.ExceptionServices;
 using System.Threading;
+using CefSharp.DevTools.SystemInfo;
 using EvilsoftCommons.Exceptions;
 using log4net;
 
@@ -73,6 +74,20 @@ namespace IAGrim.Database.Synchronizer.Core {
             }
         }
 
+        private void AwaitTimeout(AutoResetEvent ev, int timeout, QueuedExecution item) {
+            if (ev.WaitOne(timeout, true)) return;
+
+
+            // We're in a expected long running operation. Just wait.
+            while (_exceptionOverride) {
+                Logger.Info("Timed out during long running operation, awaiting..");
+                if (ev.WaitOne(timeout / 10, true)) {
+                    return; // Success
+                }
+            }
+
+            throw new Exception($"Operation never terminated: Started: {item.IsStarted}");
+        }
 
         public void Execute(Action func, int timeout = ThreadTimeout, bool expectLongOperation = false) {
             if (_thread == null)
@@ -86,14 +101,7 @@ namespace IAGrim.Database.Synchronizer.Core {
             };
             _queue.Enqueue(item);
 
-            if (!ev.WaitOne(timeout, true)) {
-                // We're in a expected long running operation. Just wait.
-                while (_exceptionOverride) {
-                    Logger.Info("Timed out during long running operation, awaiting..");
-                    ev.WaitOne(timeout / 10, true);
-                }
-                throw new Exception($"Operation never terminated: Started: {item.IsStarted}");
-            }
+            AwaitTimeout(ev, timeout, item);
 
             if (_results.ContainsKey(ev)) {
                 object val;
@@ -121,16 +129,10 @@ namespace IAGrim.Database.Synchronizer.Core {
             };
             _queue.Enqueue(item);
 
-            if (!ev.WaitOne(timeout, true)) {
-                // We're in a expected long running operation. Just wait.
-                while (_exceptionOverride) {
-                    Logger.Info("Timed out during long running operation, awaiting..");
-                    ev.WaitOne(timeout / 10, true);
-                }
-                throw new Exception($"Operation never terminated: Started: {item.IsStarted}");
-            }
 
-            
+            AwaitTimeout(ev, timeout, item);
+
+
             object result;
 
             if (_results.TryRemove(ev, out result)) {
