@@ -22,29 +22,23 @@ namespace IAGrim.Parsers.Arz {
         }
 
         public static void LoadIconsOnly(string grimDawnLocation) {
-            Logger.Debug("Icon loading requested");
-            {
-                var arcItemsFile = GrimFolderUtility.FindArcFile(grimDawnLocation, "items.arc");
-
-                if (!string.IsNullOrEmpty(arcItemsFile)) {
-                    Logger.Debug($"Loading vanilla icons from {arcItemsFile}");
-                    LoadIcons(arcItemsFile);
+            void LoadIconsOrWarn(string arcfile) {
+                if (!string.IsNullOrEmpty(arcfile)) {
+                    Logger.Debug($"Loading icons from {arcfile}");
+                    LoadIcons(arcfile);
                 }
                 else {
-                    Logger.Warn("Could not find the vanilla icons, skipping.");
+                    Logger.Warn("Could not find the icons, skipping.");
                 }
             }
 
-            foreach (var path in GrimFolderUtility.GetGrimExpansionFolders(grimDawnLocation)) {
-                var arcItemsFile = GrimFolderUtility.FindArcFile(path, "items.arc");
+            Logger.Debug("Icon loading requested");
+            LoadIconsOrWarn(GrimFolderUtility.FindArcFile(grimDawnLocation, "items.arc"));
+            LoadIconsOrWarn(GrimFolderUtility.FindArcFile(grimDawnLocation, "Level Art.arc"));
 
-                if (!string.IsNullOrEmpty(arcItemsFile)) {
-                    Logger.Debug($"Loading expansion icons from {arcItemsFile}");
-                    LoadIcons(arcItemsFile);
-                }
-                else {
-                    Logger.Warn("Could not find the expansion, skipping.");
-                }
+            foreach (var path in GrimFolderUtility.GetGrimExpansionFolders(grimDawnLocation)) {
+                LoadIconsOrWarn(GrimFolderUtility.FindArcFile(path, "items.arc"));
+                LoadIconsOrWarn(GrimFolderUtility.FindArcFile(path, "Level Art.arc"));
             }
         }
 
@@ -266,7 +260,7 @@ namespace IAGrim.Parsers.Arz {
                     var dbStat = (skills.FirstOrDefault(m => m.Record == rootSkill)?.Stats).FirstOrDefault(m => m.Stat == "skillTier");
 
                     if (dbStat != null) {
-                        var skillClass = !string.IsNullOrEmpty(classTrainingRecord) 
+                        var skillClass = !string.IsNullOrEmpty(classTrainingRecord)
                             ? ExtractClassFromRecord(classTrainingRecord, items)
                             : ExtractClassFromRecord(skillRecord, items);
 
@@ -288,7 +282,7 @@ namespace IAGrim.Parsers.Arz {
             var currentSkillFolder = skillRecordPath.Substring(0, skillRecordPath.LastIndexOf('/') + 1);
 
             return dbItems
-                .FirstOrDefault(x => 
+                .FirstOrDefault(x =>
                     x.Record.Contains($"{currentSkillFolder}_classtraining_")
                     && x.Stats.Any(y => y.Stat == "MasteryEnumeration"))
                 ?.Record;

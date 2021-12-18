@@ -23,18 +23,22 @@ namespace IAGrim.Parser.Arc {
         private const int X8B8G8R8 = 131076;
         private const int A8R8G8B8 = 196612;
         private const int X8R8G8B8 = 262148;
-        private static int[] A1R5G5B5_MASKS = { 31744, 992, 31, 32768 };
-        private static int[] X1R5G5B5_MASKS = { 31744, 992, 31, 0 };
-        private static int[] A4R4G4B4_MASKS = { 3840, 240, 15, 61440 };
-        private static int[] X4R4G4B4_MASKS = { 3840, 240, 15, 0 };
-        private static int[] R5G6B5_MASKS = { 63488, 2016, 31, 0 };
-        private static int[] R8G8B8_MASKS = { 16711680, 65280, 255, 0 };
-        private static int[] A8B8G8R8_MASKS = { 255, 65280, 16711680, -16777216 };
-        private static int[] X8B8G8R8_MASKS = { 255, 65280, 16711680, 0 };
-        private static int[] A8R8G8B8_MASKS = { 16711680, 65280, 255, -16777216 };
-        private static int[] X8R8G8B8_MASKS = { 16711680, 65280, 255, 0 };
-        private static int[] BIT5 = { 0, 8, 16, 25, 33, 41, 49, 58, 66, 74, 82, 90, 99, 107, 115, 123, 132, 140, 148, 156, 165, 173, 181, 189, 197, 206, 214, 222, 230, 239, 247, 255 };
-        private static int[] BIT6 = { 0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 45, 49, 53, 57, 61, 65, 69, 73, 77, 81, 85, 89, 93, 97, 101, 105, 109, 113, 117, 121, 125, 130, 134, 138, 142, 146, 150, 154, 158, 162, 166, 170, 174, 178, 182, 186, 190, 194, 198, 202, 206, 210, 215, 219, 223, 227, 231, 235, 239, 243, 247, 251, 255 };
+        private static int[] A1R5G5B5_MASKS = {31744, 992, 31, 32768};
+        private static int[] X1R5G5B5_MASKS = {31744, 992, 31, 0};
+        private static int[] A4R4G4B4_MASKS = {3840, 240, 15, 61440};
+        private static int[] X4R4G4B4_MASKS = {3840, 240, 15, 0};
+        private static int[] R5G6B5_MASKS = {63488, 2016, 31, 0};
+        private static int[] R8G8B8_MASKS = {16711680, 65280, 255, 0};
+        private static int[] A8B8G8R8_MASKS = {255, 65280, 16711680, -16777216};
+        private static int[] X8B8G8R8_MASKS = {255, 65280, 16711680, 0};
+        private static int[] A8R8G8B8_MASKS = {16711680, 65280, 255, -16777216};
+        private static int[] X8R8G8B8_MASKS = {16711680, 65280, 255, 0};
+        private static int[] BIT5 = {0, 8, 16, 25, 33, 41, 49, 58, 66, 74, 82, 90, 99, 107, 115, 123, 132, 140, 148, 156, 165, 173, 181, 189, 197, 206, 214, 222, 230, 239, 247, 255};
+
+        private static int[] BIT6 = {
+            0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 45, 49, 53, 57, 61, 65, 69, 73, 77, 81, 85, 89, 93, 97, 101, 105, 109, 113, 117, 121, 125, 130, 134, 138, 142, 146, 150, 154, 158, 162, 166, 170, 174, 178, 182, 186, 190, 194, 198, 202, 206, 210, 215, 219, 223, 227, 231, 235,
+            239, 243, 247, 251, 255
+        };
 
         /// <summary>
         /// Extract item icons to the target destination
@@ -57,16 +61,19 @@ namespace IAGrim.Parser.Arc {
                     dc.decompress();
 
                     foreach (var icon in dc.strings) {
+                        if (icon != null && icon.Contains("sign_h01a_dif")) {
+                            int x = 9;
+                        }
                         var b = dc.GetTexture(icon);
                         if (b == null)
                             continue;
 
                         if (b.Length > KiloByte30) {
                             logger.Warn($"Skipping {icon}, size is {b.Length / 1024}kb, max limit {KiloByte30 / 1024}kb");
-                            continue; 
+                            continue;
                         }
 
-                        
+
                         if (icon.EndsWith(".png")) {
                             var imagePath = Path.Combine(destinationFolder, $@"{Path.GetFileName(icon)}");
 
@@ -92,25 +99,23 @@ namespace IAGrim.Parser.Arc {
                                     image.Save(imagePath);
                                 }
                             }
-                            catch (Exception ex)
-                            {
+                            catch (Exception ex) {
                                 logger.Warn($"Error extracting icon \"{icon}\", {ex.Message}", ex);
                             }
-                        } 
-                        else if (!icon.EndsWith("_dif.tex")
-                                    && !icon.EndsWith("_nml.tex")
-                                    && !icon.EndsWith(".anm")
-                                    && !icon.EndsWith(".pfx")
-                                    && !icon.EndsWith(".wav")
-                                    && !icon.EndsWith("bmp.tex")
-                                    && !icon.EndsWith("_spec.tex")
-                                    && !icon.EndsWith("_glo.tex")
-                                    && !icon.EndsWith("_g.tex")
-                                    && !icon.EndsWith(".txt")
-                                    && !icon.EndsWith(".mt1")
-                                    && !icon.EndsWith(".obj")) { // TODO: Should make this a whitelist instead
-                            try
-                            {
+                        }
+                        else if (!icon.EndsWith("_nml.tex")
+                                 && !icon.EndsWith(".anm")
+                                 && !icon.EndsWith(".pfx")
+                                 && !icon.EndsWith(".wav")
+                                 && !icon.EndsWith("bmp.tex")
+                                 && !icon.EndsWith("_spec.tex")
+                                 && !icon.EndsWith("_glo.tex")
+                                 && !icon.EndsWith("_g.tex")
+                                 && !icon.EndsWith(".txt")
+                                 && !icon.EndsWith(".mt1")
+                                 && !icon.EndsWith(".obj")) {
+                            // TODO: Should make this a whitelist instead
+                            try {
                                 var imagePath = Path.Combine(destinationFolder, $@"{Path.GetFileName(icon)}.png");
                                 logger.Debug($"Parsing icon {icon}");
 
@@ -121,13 +126,10 @@ namespace IAGrim.Parser.Arc {
                                 var img = ExtractImage(b);
                                 img?.Save(imagePath, ImageFormat.Png);
                             }
-                            catch (Exception ex)
-                            {
+                            catch (Exception ex) {
                                 logger.Warn($"Error extracting icon \"{icon}\", {ex.Message}", ex);
                             }
                         }
-                        
-
                     }
                 }
             }
@@ -158,7 +160,7 @@ namespace IAGrim.Parser.Arc {
             }
 
             // Anything bigger than 96, and square is most likely a real texture
-            if ((w > 96 || h > 96) && w == h) { 
+            if ((w > 96 || h > 96) && w == h) {
                 return null;
             }
 
@@ -215,6 +217,7 @@ namespace IAGrim.Parser.Arc {
 
             return b;
         }
+
         /*
         private static byte[] convert(int[] data) {
             byte[] result = new byte[data.Length * 4];
@@ -232,6 +235,7 @@ namespace IAGrim.Parser.Arc {
 
             return result;
         }*/
+
         #region Fix
 
         private static DDSHeader GetDDSHeader(byte[] bytes) {
@@ -261,11 +265,13 @@ namespace IAGrim.Parser.Arc {
                 header.reserved1[i] = IOHelper.GetInt(bytes, offset);
                 offset += 4;
             }
+
             header.pixelFormat.size = IOHelper.GetInt(bytes, offset);
             offset += 4;
             if (header.pixelFormat.size != 32) {
                 throw new Exception("ERR_UNSUPPORTED_PIX_SIZE");
             }
+
             header.pixelFormat.flags = IOHelper.GetInt(bytes, offset);
             header.pixelFormat.fourCC = IOHelper.GetInt(bytes, offset += 4);
             header.pixelFormat.rgbBitCount = IOHelper.GetInt(bytes, offset += 4);
@@ -286,22 +292,27 @@ namespace IAGrim.Parser.Arc {
             if (header.version[3] == 82) {
                 bytes[3] = 32;
             }
+
             var flags = header.flags | 1 | 2 | 4 | 4096;
             var caps = header.caps | 4096;
             if (header.num_mipmap > 1) {
                 header.flags |= 131072;
                 header.caps = header.caps | 8 | 4194304;
             }
+
             if ((header.caps2 & 512) != 0) {
                 caps |= 8;
             }
+
             if (header.depth > 1) {
                 flags |= 8388608;
                 caps |= 8;
             }
+
             if ((header.pixelFormat.flags & 4) != 0 && header.linearSize != 0) {
                 flags |= 524288;
             }
+
             if (((header.pixelFormat.flags & 64) == 64 || (header.pixelFormat.flags & 512) == 512 || (header.pixelFormat.flags & 131072) == 131072 || (header.pixelFormat.flags & 2) == 2) && header.linearSize != 0) {
                 flags |= 8;
             }
@@ -316,9 +327,11 @@ namespace IAGrim.Parser.Arc {
             IOHelper.SetInt(bytes, 104, 255);
             IOHelper.SetInt(bytes, 108, caps);
         }
+
         #endregion
 
         #region helpers
+
         private static int GetHeight(byte[] buffer) {
             return buffer[12] & 255 | (buffer[13] & 255) << 8 | (buffer[14] & 255) << 16 | (buffer[15] & 255) << 24;
         }
@@ -330,6 +343,7 @@ namespace IAGrim.Parser.Arc {
         private static int GetMipmap(byte[] buffer) {
             return buffer[28] & 255 | (buffer[29] & 255) << 8 | (buffer[30] & 255) << 16 | (buffer[31] & 255) << 24;
         }
+
         public static int GetBitCount(byte[] buffer) {
             return buffer[88] & 255 | (buffer[89] & 255) << 8 | (buffer[90] & 255) << 16 | (buffer[91] & 255) << 24;
         }
@@ -349,6 +363,7 @@ namespace IAGrim.Parser.Arc {
         public static int GetAlphaMask(byte[] buffer) {
             return buffer[104] & 255 | (buffer[105] & 255) << 8 | (buffer[106] & 255) << 16 | (buffer[107] & 255) << 24;
         }
+
         public static int GetPixelFormatFlags(byte[] buffer) {
             return buffer[80] & 255 | (buffer[81] & 255) << 8 | (buffer[82] & 255) << 16 | (buffer[83] & 255) << 24;
         }
@@ -409,6 +424,7 @@ namespace IAGrim.Parser.Arc {
                     }
                 }
             }
+
             return type;
         }
 
@@ -420,21 +436,22 @@ namespace IAGrim.Parser.Arc {
             if (type == 0) {
                 return null;
             }
+
             var offset = 128;
             if (mipmapLevel > 0 && mipmapLevel < mipmap) {
                 for (var i = 0; i < mipmapLevel; ++i) {
                     switch (type) {
                         case 1146639409: {
-                                offset += 8 * ((width + 3) / 4) * ((height + 3) / 4);
-                                break;
-                            }
+                            offset += 8 * ((width + 3) / 4) * ((height + 3) / 4);
+                            break;
+                        }
                         case 1146639410:
                         case 1146639411:
                         case 1146639412:
                         case 1146639413: {
-                                offset += 16 * ((width + 3) / 4) * ((height + 3) / 4);
-                                break;
-                            }
+                            offset += 16 * ((width + 3) / 4) * ((height + 3) / 4);
+                            break;
+                        }
                         case 65538:
                         case 65539:
                         case 65540:
@@ -445,81 +462,88 @@ namespace IAGrim.Parser.Arc {
                         case 262146:
                         case 262148:
                         case 327682: {
-                                offset += (type & 255) * width * height;
-                            } break;
+                            offset += (type & 255) * width * height;
+                        }
+                            break;
                     }
+
                     width /= 2;
                     height /= 2;
                 }
+
                 if (width <= 0) {
                     width = 1;
                 }
+
                 if (height <= 0) {
                     height = 1;
                 }
             }
+
             int[] pixels = null;
             switch (type) {
                 case 1146639409: {
-                        pixels = DecodeDxt1(width, height, offset, buffer);
-                        break;
-                    }
+                    pixels = DecodeDxt1(width, height, offset, buffer);
+                    break;
+                }
                 case 1146639410: {
-                        pixels = DecodeDxt2(width, height, offset, buffer);
-                        break;
-                    }
+                    pixels = DecodeDxt2(width, height, offset, buffer);
+                    break;
+                }
                 case 1146639411: {
-                        pixels = DecodeDxt3(width, height, offset, buffer);
-                        break;
-                    }
+                    pixels = DecodeDxt3(width, height, offset, buffer);
+                    break;
+                }
                 case 1146639412: {
-                        pixels = DecodeDxt4(width, height, offset, buffer);
-                        break;
-                    }
+                    pixels = DecodeDxt4(width, height, offset, buffer);
+                    break;
+                }
                 case 1146639413: {
-                        pixels = DecodeDxt5(width, height, offset, buffer);
-                        break;
-                    }
+                    pixels = DecodeDxt5(width, height, offset, buffer);
+                    break;
+                }
                 case 65538: {
-                        pixels = ReadA1R5G5B5(width, height, offset, buffer);
-                        break;
-                    }
+                    pixels = ReadA1R5G5B5(width, height, offset, buffer);
+                    break;
+                }
                 case 131074: {
-                        pixels = ReadX1R5G5B5(width, height, offset, buffer);
-                        break;
-                    }
+                    pixels = ReadX1R5G5B5(width, height, offset, buffer);
+                    break;
+                }
                 case 196610: {
-                        pixels = ReadA4R4G4B4(width, height, offset, buffer);
-                        break;
-                    }
+                    pixels = ReadA4R4G4B4(width, height, offset, buffer);
+                    break;
+                }
                 case 262146: {
-                        pixels = ReadX4R4G4B4(width, height, offset, buffer);
-                        break;
-                    }
+                    pixels = ReadX4R4G4B4(width, height, offset, buffer);
+                    break;
+                }
                 case 327682: {
-                        pixels = ReadR5G6B5(width, height, offset, buffer);
-                        break;
-                    }
+                    pixels = ReadR5G6B5(width, height, offset, buffer);
+                    break;
+                }
                 case 65539: {
-                        pixels = ReadR8G8B8(width, height, offset, buffer);
-                        break;
-                    }
+                    pixels = ReadR8G8B8(width, height, offset, buffer);
+                    break;
+                }
                 case 65540: {
-                        pixels = ReadA8B8G8R8(width, height, offset, buffer);
-                        break;
-                    }
+                    pixels = ReadA8B8G8R8(width, height, offset, buffer);
+                    break;
+                }
                 case 131076: {
-                        pixels = ReadX8B8G8R8(width, height, offset, buffer);
-                        break;
-                    }
+                    pixels = ReadX8B8G8R8(width, height, offset, buffer);
+                    break;
+                }
                 case 196612: {
-                        pixels = ReadA8R8G8B8(width, height, offset, buffer);
-                        break;
-                    }
+                    pixels = ReadA8R8G8B8(width, height, offset, buffer);
+                    break;
+                }
                 case 262148: {
-                        pixels = ReadA8R8G8B8(width, height, offset, buffer);
-                    } break;
+                    pixels = ReadA8R8G8B8(width, height, offset, buffer);
+                }
+                    break;
             }
+
             return pixels;
         }
 
@@ -550,6 +574,7 @@ namespace IAGrim.Parser.Arc {
                     }
                 }
             }
+
             return pixels;
         }
 
@@ -573,6 +598,7 @@ namespace IAGrim.Parser.Arc {
                         alphaTable[4 * k + 2] = 17 * ((a1 & 240) >> 4);
                         alphaTable[4 * k + 3] = 17 * (a1 & 15);
                     }
+
                     var c0 = buffer[index] & 255 | (buffer[index + 1] & 255) << 8;
                     var c1 = buffer[index] & 255 | (buffer[(index += 2) + 1] & 255) << 8;
                     index += 2;
@@ -591,6 +617,7 @@ namespace IAGrim.Parser.Arc {
                     }
                 }
             }
+
             return pixels;
         }
 
@@ -644,8 +671,10 @@ namespace IAGrim.Parser.Arc {
                     }
                 }
             }
+
             return pixels;
         }
+
         #endregion
 
         #region Readers
@@ -662,6 +691,7 @@ namespace IAGrim.Parser.Arc {
                 var a = 255 * ((rgba & A1R5G5B5_MASKS[3]) >> 15);
                 pixels[i] = a << 24 | r << 16 | g << 8 | b << 0;
             }
+
             return pixels;
         }
 
@@ -677,6 +707,7 @@ namespace IAGrim.Parser.Arc {
                 var a = 255;
                 pixels[i] = a << 24 | r << 16 | g << 8 | b << 0;
             }
+
             return pixels;
         }
 
@@ -692,6 +723,7 @@ namespace IAGrim.Parser.Arc {
                 var a = 17 * ((rgba & A4R4G4B4_MASKS[3]) >> 12);
                 pixels[i] = a << 24 | r << 16 | g << 8 | b << 0;
             }
+
             return pixels;
         }
 
@@ -707,6 +739,7 @@ namespace IAGrim.Parser.Arc {
                 var a = 255;
                 pixels[i] = a << 24 | r << 16 | g << 8 | b << 0;
             }
+
             return pixels;
         }
 
@@ -722,6 +755,7 @@ namespace IAGrim.Parser.Arc {
                 var a = 255;
                 pixels[i] = a << 24 | r << 16 | g << 8 | b << 0;
             }
+
             return pixels;
         }
 
@@ -735,6 +769,7 @@ namespace IAGrim.Parser.Arc {
                 var a = 255;
                 pixels[i] = a << 24 | r << 16 | g << 8 | b << 0;
             }
+
             return pixels;
         }
 
@@ -748,6 +783,7 @@ namespace IAGrim.Parser.Arc {
                 var a = buffer[index++] & 255;
                 pixels[i] = a << 24 | r << 16 | g << 8 | b << 0;
             }
+
             return pixels;
         }
 
@@ -762,6 +798,7 @@ namespace IAGrim.Parser.Arc {
                 ++index;
                 pixels[i] = a << 24 | r << 16 | g << 8 | b << 0;
             }
+
             return pixels;
         }
 
@@ -775,6 +812,7 @@ namespace IAGrim.Parser.Arc {
                 var a = buffer[index++] & 255;
                 pixels[i] = a << 24 | r << 16 | g << 8 | b << 0;
             }
+
             return pixels;
         }
 
@@ -790,26 +828,30 @@ namespace IAGrim.Parser.Arc {
                 //pixels[i] = a << 24 | r << 16 | g << 8 | b << 0;
                 pixels[i] = a << 24 | r << 16 | g << 8 | b << 0;
             }
+
             return pixels;
         }
+
         #endregion
 
         #region Colors
+
         private static int GetDxtColor(int c0, int c1, int a, int t) {
             switch (t) {
                 case 0: {
-                        return GetDxtColor1(c0, a);
-                    }
+                    return GetDxtColor1(c0, a);
+                }
                 case 1: {
-                        return GetDxtColor1(c1, a);
-                    }
+                    return GetDxtColor1(c1, a);
+                }
                 case 2: {
-                        return c0 > c1 ? getDXTColor2_1(c0, c1, a) : getDXTColor1_1(c0, c1, a);
-                    }
+                    return c0 > c1 ? getDXTColor2_1(c0, c1, a) : getDXTColor1_1(c0, c1, a);
+                }
                 case 3: {
-                        return c0 > c1 ? getDXTColor2_1(c1, c0, a) : 0;
-                    }
+                    return c0 > c1 ? getDXTColor2_1(c1, c0, a) : 0;
+                }
             }
+
             return 0;
         }
 
@@ -838,59 +880,60 @@ namespace IAGrim.Parser.Arc {
             if (a0 > a1) {
                 switch (t) {
                     case 0: {
-                            return a0;
-                        }
+                        return a0;
+                    }
                     case 1: {
-                            return a1;
-                        }
+                        return a1;
+                    }
                     case 2: {
-                            return (6 * a0 + a1) / 7;
-                        }
+                        return (6 * a0 + a1) / 7;
+                    }
                     case 3: {
-                            return (5 * a0 + 2 * a1) / 7;
-                        }
+                        return (5 * a0 + 2 * a1) / 7;
+                    }
                     case 4: {
-                            return (4 * a0 + 3 * a1) / 7;
-                        }
+                        return (4 * a0 + 3 * a1) / 7;
+                    }
                     case 5: {
-                            return (3 * a0 + 4 * a1) / 7;
-                        }
+                        return (3 * a0 + 4 * a1) / 7;
+                    }
                     case 6: {
-                            return (2 * a0 + 5 * a1) / 7;
-                        }
+                        return (2 * a0 + 5 * a1) / 7;
+                    }
                     case 7: {
-                            return (a0 + 6 * a1) / 7;
-                        }
+                        return (a0 + 6 * a1) / 7;
+                    }
                 }
             }
             else {
                 switch (t) {
                     case 0: {
-                            return a0;
-                        }
+                        return a0;
+                    }
                     case 1: {
-                            return a1;
-                        }
+                        return a1;
+                    }
                     case 2: {
-                            return (4 * a0 + a1) / 5;
-                        }
+                        return (4 * a0 + a1) / 5;
+                    }
                     case 3: {
-                            return (3 * a0 + 2 * a1) / 5;
-                        }
+                        return (3 * a0 + 2 * a1) / 5;
+                    }
                     case 4: {
-                            return (2 * a0 + 3 * a1) / 5;
-                        }
+                        return (2 * a0 + 3 * a1) / 5;
+                    }
                     case 5: {
-                            return (a0 + 4 * a1) / 5;
-                        }
+                        return (a0 + 4 * a1) / 5;
+                    }
                     case 6: {
-                            return 0;
-                        }
+                        return 0;
+                    }
                     case 7: {
-                            return 255;
-                        }
+                        return 255;
+                    }
                 }
             }
+
             return 0;
         }
 

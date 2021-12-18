@@ -157,6 +157,7 @@ namespace IAGrim {
                 if (!string.IsNullOrEmpty(gdPath) && Directory.Exists(gdPath)) {
                     int numFiles = Directory.GetFiles(GlobalPaths.StorageFolder).Length;
                     int numFilesExpected = 2100;
+                    bool missingLokarrIcons = false;
 
                     if (Directory.Exists(Path.Combine(gdPath, "gdx2"))) {
                         numFilesExpected += 850;
@@ -164,9 +165,14 @@ namespace IAGrim {
 
                     if (Directory.Exists(Path.Combine(gdPath, "gdx1"))) {
                         numFilesExpected += 890;
+
+                        // Lokarr boots. Need a re-parse if missing.
+                        if (!File.Exists(Path.Combine(GlobalPaths.StorageFolder, "sign_f01a_dif.tex.png"))) {
+                            missingLokarrIcons = true;
+                        }
                     }
 
-                    if (numFiles >= numFilesExpected) {
+                    if (numFiles >= numFilesExpected && !missingLokarrIcons) {
                         return;
                     }
 
