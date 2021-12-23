@@ -122,26 +122,32 @@ namespace IAGrim.UI {
             _itemViewUpdateTrigger?.Invoke();
         }
 
+        private static ListViewEntry GetFirst(ListView lv) {
+            foreach (ListViewItem lvi in lv.SelectedItems) {
+                return lvi.Tag as ListViewEntry;
+            }
+
+            return null;
+        }
+
         private void buttonForceUpdate_Click(object sender, EventArgs e) {
             _databaseSettingRepo.Clean();
 
-            foreach (ListViewItem lvi in listViewInstalls.SelectedItems) {
-                var mod = listViewMods.SelectedItems[0].Tag as ListViewEntry;
-                var entry = lvi.Tag as ListViewEntry;
+            var mod = GetFirst(listViewMods);
+            var entry = GetFirst(listViewInstalls);
 
-                if (mod != null) {
-                    // Load selected mod icons
-                    ThreadPool.QueueUserWorkItem((m) => ArzParser.LoadSelectedModIcons(mod.Path));
-                }
-
-                ForceDatabaseUpdate(entry.Path, mod?.Path);
-                _databaseSettingRepo.UpdateCurrentDatabase(entry.Path);
-
-                // Store the loaded GD path, so we can poll it for updates later.
-                //_settingsService.GetLocal().GrimDawnLocation = new List<string> { entry.Path }; // TODO: Wtf is this? Why overwrite any existing?
-                _settingsService.GetLocal().GrimDawnLocationLastModified = ParsingService.GetHighestTimestamp(entry.Path);
-                _settingsService.GetLocal().HasWarnedGrimDawnUpdate = false;
+            if (mod != null) {
+                // Load selected mod icons
+                ThreadPool.QueueUserWorkItem((m) => ArzParser.LoadSelectedModIcons(mod.Path));
             }
+
+            ForceDatabaseUpdate(entry.Path, mod?.Path);
+            _databaseSettingRepo.UpdateCurrentDatabase(entry.Path);
+
+            // Store the loaded GD path, so we can poll it for updates later.
+            //_settingsService.GetLocal().GrimDawnLocation = new List<string> { entry.Path }; // TODO: Wtf is this? Why overwrite any existing?
+            _settingsService.GetLocal().GrimDawnLocationLastModified = ParsingService.GetHighestTimestamp(entry.Path);
+            _settingsService.GetLocal().HasWarnedGrimDawnUpdate = false;
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e) {
