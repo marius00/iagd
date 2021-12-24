@@ -33,6 +33,17 @@ const typicalParseDbMessage = <Fragment>{toNumberedList(`
 
 const helpEntries = [
     {
+        title: `IA deposits items, but they never show up in-game`,
+        tag: 'ExpansionsDisabledItemsMissing',
+        body: () => <div>
+            IA is looting items just fine, depositing just fine, but they never show up in-game? <br/>
+            Most likely you have the wrong setting on the "mod filter" in the upper right corner. <br/>
+            The mod filter might be set to "no expansions", while you're playing with expansions or similar.<br/><br/>
+            This filter lets you use IA even when you own expansions that you've disabled in order to play with friends.
+        </div>,
+        type: IHelpEntryType.Help
+    },
+    {
         title: `IA says "Stash: Error"`,
         tag: 'StashError',
         body: () => <div>
