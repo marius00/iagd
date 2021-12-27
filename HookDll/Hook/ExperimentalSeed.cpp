@@ -6,11 +6,8 @@
 #include "ExperimentalSeed.h"
 #include "Exports.h"
 
-HANDLE ExperimentalSeed::m_hEvent;
-DataQueue* ExperimentalSeed::m_dataQueue;
-ExperimentalSeed::OriginalMethodPtr ExperimentalSeed::originalMethod;
-HookLog* ExperimentalSeed::g_log;
 
+ExperimentalSeed* ExperimentalSeed::g_self;
 void ExperimentalSeed::EnableHook() {
 	originalMethod = (OriginalMethodPtr)HookGame(
 		EXPERIMENTAL_HOOK,
@@ -22,9 +19,9 @@ void ExperimentalSeed::EnableHook() {
 }
 
 ExperimentalSeed::ExperimentalSeed(DataQueue* dataQueue, HANDLE hEvent, HookLog* g_log) {
-	ExperimentalSeed::m_dataQueue = dataQueue;
-	ExperimentalSeed::m_hEvent = hEvent;
-	ExperimentalSeed::g_log = g_log;
+	g_self = this;
+	this->m_dataQueue = dataQueue;
+	this->m_hEvent = hEvent;
 }
 
 ExperimentalSeed::ExperimentalSeed() {
@@ -47,7 +44,7 @@ auto fnItemGetItemReplicaInfo = ItemGetItemReplicaInfo(GetProcAddress(GetModuleH
 
 // void GAME::ItemEquipment::GetUIDisplayText(class GAME::Character const *,class mem::vector<struct GAME::GameTextLine> &)
 void* __fastcall ExperimentalSeed::HookedMethod(void* This, void* character, std::vector<GAME::GameTextLine>& gameTextLines) {
-	void* v = originalMethod(This, character, gameTextLines);
+	void* v = g_self->originalMethod(This, character, gameTextLines);
 
 	std::wstringstream stream;
 
@@ -62,9 +59,7 @@ void* __fastcall ExperimentalSeed::HookedMethod(void* This, void* character, std
 	}
 
 	std::wstring str = stream.str();
-	const DataItemPtr item(new DataItem(TYPE_EXPERIMENTAL, str.size() * sizeof(wchar_t), (char*)str.c_str()));
-	m_dataQueue->push(item);
-	SetEvent(m_hEvent);
+	g_self->TransferData(str.size() * sizeof(wchar_t), (char*)str.c_str());
 
 	return v;
 }
