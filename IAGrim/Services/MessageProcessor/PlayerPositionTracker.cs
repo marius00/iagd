@@ -11,7 +11,7 @@ namespace IAGrim.Services.MessageProcessor {
             _debugPlayerPositions = debugPlayerPositions;
         }
 
-        public void Process(MessageType type, byte[] data) {
+        public void Process(MessageType type, byte[] data, string dataString) {
              switch (type) {
                 case MessageType.TYPE_ControllerRequestMoveAction: {
                     GrimStateTracker.LastKnownPosition = new GrimStateTracker.WorldVector {

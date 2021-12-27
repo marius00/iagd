@@ -8,7 +8,7 @@ namespace GAME {
 		stream << replica.suffixName.c_str() << ";";
 		stream << replica.seed << ";";
 		stream << replica.modifierName.c_str() << ";";
-		stream << replica.relicName.c_str() << ";";
+		stream << replica.materiaRecord.c_str() << ";";
 		stream << replica.relicBonus.c_str() << ";";
 		stream << replica.relicSeed << ";";
 		stream << replica.enchantmentName.c_str() << ";";

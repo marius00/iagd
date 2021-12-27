@@ -12,7 +12,7 @@ namespace IAGrim.Services.MessageProcessor {
     class GenericErrorHandler : IMessageProcessor {
         private readonly ILog _logger = LogManager.GetLogger(typeof(GenericErrorHandler));
 
-        public void Process(MessageType type, byte[] data) {
+        public void Process(MessageType type, byte[] data, string dataString) {
             if (type == MessageType.TYPE_ERROR_HOOKING_GENERIC) {
                 int method = IOHelper.GetInt(data, 0);
                 _logger.Error($"Error Hooking method \"{method}\"");

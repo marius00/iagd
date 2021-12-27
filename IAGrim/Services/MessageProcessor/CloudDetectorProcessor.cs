@@ -16,7 +16,7 @@ namespace IAGrim.Services.MessageProcessor {
             this._setFeedback = feedback;
         }
 
-        public void Process(MessageType type, byte[] data) {
+        public void Process(MessageType type, byte[] data, string dataString) {
 
             switch (type) {
                 case MessageType.TYPE_CloudGetNumFiles:

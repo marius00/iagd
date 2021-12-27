@@ -231,13 +231,10 @@ namespace IAGrim.UI {
 
             MessageType type = (MessageType) bt.Type;
             foreach (IMessageProcessor t in _messageProcessors) {
-                t.Process(type, bt.Data);
+                t.Process(type, bt.Data, bt.StringData);
             }
 
             switch (type) {
-                case MessageType.TYPE_EXPERIMENTAL:
-                    // Logger.Info($"Experimental hook success: {bt.StringData}");
-                    break;
 
                 case MessageType.TYPE_REPORT_WORKER_THREAD_LAUNCHED:
                     Logger.Info("Grim Dawn hook reports successful launch.");
@@ -545,6 +542,7 @@ namespace IAGrim.UI {
             _messageProcessors.Add(new StashStatusHandler());
             _messageProcessors.Add(new CloudDetectorProcessor(SetFeedback));
             _messageProcessors.Add(new GenericErrorHandler());
+            _messageProcessors.Add(new ItemSeedProcessor());
 
 
             RuntimeSettings.StashStatusChanged += GlobalSettings_StashStatusChanged;
