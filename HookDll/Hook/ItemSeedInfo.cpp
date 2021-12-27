@@ -47,7 +47,7 @@ void* __fastcall ItemSeedInfo::HookedMethod(void* This, void* character, std::ve
 
 	// iterate through all text lines
 	for (auto& it : gameTextLines) {
-		stream << it.textClass << "@@$$::" << it.text.c_str() << "\n";
+		stream << it.textClass << ";" << it.text.c_str() << "\n";
 	}
 
 	std::wstring str = stream.str();

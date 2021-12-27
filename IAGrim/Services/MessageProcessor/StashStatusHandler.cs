@@ -39,7 +39,7 @@ namespace IAGrim.Services.MessageProcessor {
             
         
 
-        public void Process(MessageType type, byte[] data) {
+        public void Process(MessageType type, byte[] data, string dataString) {
             if (Errors.Contains(type)) {
                 var error = Errors.FirstOrDefault(m => m == type);
                 

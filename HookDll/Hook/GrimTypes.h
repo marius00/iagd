@@ -22,7 +22,7 @@ namespace GAME
 		std::basic_string<char, std::char_traits<char>, std::allocator<char> > suffixName;
 		unsigned int seed;
 		std::basic_string<char, std::char_traits<char>, std::allocator<char> > modifierName;
-		std::basic_string<char, std::char_traits<char>, std::allocator<char> > relicName;
+		std::basic_string<char, std::char_traits<char>, std::allocator<char> > materiaRecord;
 		std::basic_string<char, std::char_traits<char>, std::allocator<char> > relicBonus;
 		unsigned int relicSeed;
 		std::basic_string<char, std::char_traits<char>, std::allocator<char> > enchantmentName;

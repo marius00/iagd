@@ -7,6 +7,6 @@ using System.Threading.Tasks;
 
 namespace IAGrim.Services.MessageProcessor {
     interface IMessageProcessor {
-        void Process(MessageType type, byte[] data);
+        void Process(MessageType type, byte[] data, string dataString);
     }
 }
