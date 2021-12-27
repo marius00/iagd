@@ -6,9 +6,7 @@
 #include "CanUseDismantle.h"
 #include "Exports.h"
 
-HANDLE CanUseDismantle::m_hEvent;
-DataQueue* CanUseDismantle::m_dataQueue;
-CanUseDismantle::OriginalMethodPtr CanUseDismantle::originalMethod;
+CanUseDismantle* CanUseDismantle::g_self;
 
 void CanUseDismantle::EnableHook() {
 	originalMethod = (OriginalMethodPtr)HookGame(
@@ -21,12 +19,13 @@ void CanUseDismantle::EnableHook() {
 }
 
 CanUseDismantle::CanUseDismantle(DataQueue* dataQueue, HANDLE hEvent) {
-	CanUseDismantle::m_dataQueue = dataQueue;
-	CanUseDismantle::m_hEvent = hEvent;
+	g_self = this;
+	m_dataQueue = dataQueue;
+	m_hEvent = hEvent;
 }
 
 CanUseDismantle::CanUseDismantle() {
-	CanUseDismantle::m_hEvent = nullptr;
+	m_hEvent = nullptr;
 }
 
 void CanUseDismantle::DisableHook() {
@@ -34,10 +33,8 @@ void CanUseDismantle::DisableHook() {
 }
 
 void* __fastcall CanUseDismantle::HookedMethod(void* This) {
-	const DataItemPtr item(new DataItem(TYPE_CAN_USE_DISMANTLE, 0, nullptr));
-	m_dataQueue->push(item);
-	SetEvent(m_hEvent);
+	g_self->TransferData(0, nullptr);
 
-	void* v = originalMethod(This);
+	void* v = g_self->originalMethod(This);
 	return v;
 }

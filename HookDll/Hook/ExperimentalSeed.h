@@ -7,10 +7,6 @@
 #include "HookLog.h"
 #include "GrimTypes.h"
 
-typedef std::basic_string<char, std::char_traits<char>, std::allocator<char>> SpecificString;
-
-
-
 class ExperimentalSeed : public BaseMethodHook {
 public:
 	ExperimentalSeed();
@@ -18,15 +14,10 @@ public:
 	void EnableHook() override;
 	void DisableHook() override;
 
-private:
-	// typedef void* (__thiscall *OriginalMethodPtr)(void* This);
-	//typedef int* (__thiscall* InventorySack_InventorySackParam)(void* This, void* character, class mem::vector<struct GAME::GameTextLine>&);
+protected:
 	typedef void* (__thiscall* OriginalMethodPtr)(void* This, void* character, std::vector<GAME::GameTextLine>& gameTextLines);
-	static HANDLE m_hEvent;
-	static OriginalMethodPtr originalMethod;
+	OriginalMethodPtr originalMethod;
 
-	static DataQueue* m_dataQueue;
-	static HookLog* g_log;
-
+	static ExperimentalSeed* g_self;
 	static void* __fastcall HookedMethod(void* This, void* character, std::vector<GAME::GameTextLine>& gameTextLines);
 };
