@@ -29,6 +29,7 @@
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelBox4 = new PanelBox();
+            this.cbAutoDismiss = new FirefoxCheckBox();
             this.cbDarkMode = new FirefoxCheckBox();
             this.cbStartMinimized = new FirefoxCheckBox();
             this.helpWhatIsDeleteDuplicates = new System.Windows.Forms.LinkLabel();
@@ -47,8 +48,8 @@
             this.cbTransferAnyMod = new FirefoxCheckBox();
             this.cbShowRecipesAsItems = new FirefoxCheckBox();
             this.cbSecureTransfers = new FirefoxCheckBox();
-            this.panelBox3 = new PanelBox();
-            this.linkLabel2 = new System.Windows.Forms.LinkLabel();
+            this.pbAutomaticUpdates = new PanelBox();
+            this.linkCheckForUpdates = new System.Windows.Forms.LinkLabel();
             this.helpWhatIsExperimentalUpdates = new System.Windows.Forms.LinkLabel();
             this.helpWhatIsRegularUpdates = new System.Windows.Forms.LinkLabel();
             this.radioBeta = new FirefoxRadioButton();
@@ -65,10 +66,9 @@
             this.buttonLanguageSelect = new FirefoxButton();
             this.buttonViewBackups = new FirefoxButton();
             this.buttonViewLogs = new FirefoxButton();
-            this.cbAutoDismiss = new FirefoxCheckBox();
             this.contextMenuStrip1.SuspendLayout();
             this.panelBox4.SuspendLayout();
-            this.panelBox3.SuspendLayout();
+            this.pbAutomaticUpdates.SuspendLayout();
             this.panelBox2.SuspendLayout();
             this.panelBox1.SuspendLayout();
             this.SuspendLayout();
@@ -137,6 +137,21 @@
             this.panelBox4.Tag = "iatag_ui_settings_title";
             this.panelBox4.Text = "Settings";
             this.panelBox4.TextLocation = "8; 5";
+            // 
+            // cbAutoDismiss
+            // 
+            this.cbAutoDismiss.Bold = false;
+            this.cbAutoDismiss.EnabledCalc = true;
+            this.cbAutoDismiss.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbAutoDismiss.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbAutoDismiss.IsDarkMode = false;
+            this.cbAutoDismiss.Location = new System.Drawing.Point(3, 384);
+            this.cbAutoDismiss.Name = "cbAutoDismiss";
+            this.cbAutoDismiss.Size = new System.Drawing.Size(268, 27);
+            this.cbAutoDismiss.TabIndex = 32;
+            this.cbAutoDismiss.Tag = "iatag_ui_autodismiss";
+            this.cbAutoDismiss.Text = "Auto dismiss notifications";
+            this.cbAutoDismiss.CheckedChanged += new System.EventHandler(this.cbAutoDismiss_CheckedChanged);
             // 
             // cbDarkMode
             // 
@@ -406,39 +421,39 @@
             this.cbSecureTransfers.Tag = "iatag_ui_securetransfers";
             this.cbSecureTransfers.Text = "Secure Transfers";
             // 
-            // panelBox3
+            // pbAutomaticUpdates
             // 
-            this.panelBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
-            this.panelBox3.Controls.Add(this.linkLabel2);
-            this.panelBox3.Controls.Add(this.helpWhatIsExperimentalUpdates);
-            this.panelBox3.Controls.Add(this.helpWhatIsRegularUpdates);
-            this.panelBox3.Controls.Add(this.radioBeta);
-            this.panelBox3.Controls.Add(this.radioRelease);
-            this.panelBox3.Font = new System.Drawing.Font("Segoe UI Semibold", 20F);
-            this.panelBox3.ForeColor = System.Drawing.Color.Black;
-            this.panelBox3.HeaderColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(231)))), ((int)(((byte)(231)))));
-            this.panelBox3.HeaderHeight = 40;
-            this.panelBox3.Location = new System.Drawing.Point(12, 264);
-            this.panelBox3.Name = "panelBox3";
-            this.panelBox3.NoRounding = false;
-            this.panelBox3.Size = new System.Drawing.Size(478, 133);
-            this.panelBox3.TabIndex = 6;
-            this.panelBox3.Tag = "iatag_ui_update_title";
-            this.panelBox3.Text = "Automatic Updates";
-            this.panelBox3.TextLocation = "8; 5";
+            this.pbAutomaticUpdates.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.pbAutomaticUpdates.Controls.Add(this.linkCheckForUpdates);
+            this.pbAutomaticUpdates.Controls.Add(this.helpWhatIsExperimentalUpdates);
+            this.pbAutomaticUpdates.Controls.Add(this.helpWhatIsRegularUpdates);
+            this.pbAutomaticUpdates.Controls.Add(this.radioBeta);
+            this.pbAutomaticUpdates.Controls.Add(this.radioRelease);
+            this.pbAutomaticUpdates.Font = new System.Drawing.Font("Segoe UI Semibold", 20F);
+            this.pbAutomaticUpdates.ForeColor = System.Drawing.Color.Black;
+            this.pbAutomaticUpdates.HeaderColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(231)))), ((int)(((byte)(231)))));
+            this.pbAutomaticUpdates.HeaderHeight = 40;
+            this.pbAutomaticUpdates.Location = new System.Drawing.Point(12, 264);
+            this.pbAutomaticUpdates.Name = "pbAutomaticUpdates";
+            this.pbAutomaticUpdates.NoRounding = false;
+            this.pbAutomaticUpdates.Size = new System.Drawing.Size(478, 133);
+            this.pbAutomaticUpdates.TabIndex = 6;
+            this.pbAutomaticUpdates.Tag = "iatag_ui_update_title";
+            this.pbAutomaticUpdates.Text = "Automatic Updates";
+            this.pbAutomaticUpdates.TextLocation = "8; 5";
             // 
-            // linkLabel2
+            // linkCheckForUpdates
             // 
-            this.linkLabel2.AutoSize = true;
-            this.linkLabel2.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.linkLabel2.Location = new System.Drawing.Point(374, 47);
-            this.linkLabel2.Name = "linkLabel2";
-            this.linkLabel2.Size = new System.Drawing.Size(101, 13);
-            this.linkLabel2.TabIndex = 21;
-            this.linkLabel2.TabStop = true;
-            this.linkLabel2.Tag = "iatag_ui_checkforupdates";
-            this.linkLabel2.Text = "Check for updates";
-            this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
+            this.linkCheckForUpdates.AutoSize = true;
+            this.linkCheckForUpdates.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.linkCheckForUpdates.Location = new System.Drawing.Point(374, 47);
+            this.linkCheckForUpdates.Name = "linkCheckForUpdates";
+            this.linkCheckForUpdates.Size = new System.Drawing.Size(101, 13);
+            this.linkCheckForUpdates.TabIndex = 21;
+            this.linkCheckForUpdates.TabStop = true;
+            this.linkCheckForUpdates.Tag = "iatag_ui_checkforupdates";
+            this.linkCheckForUpdates.Text = "Check for updates";
+            this.linkCheckForUpdates.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
             // 
             // helpWhatIsExperimentalUpdates
             // 
@@ -715,28 +730,13 @@
             this.buttonViewLogs.Text = "View Logs";
             this.buttonViewLogs.Click += new System.EventHandler(this.buttonViewLogs_Click);
             // 
-            // cbAutoDismiss
-            // 
-            this.cbAutoDismiss.Bold = false;
-            this.cbAutoDismiss.EnabledCalc = true;
-            this.cbAutoDismiss.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cbAutoDismiss.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbAutoDismiss.IsDarkMode = false;
-            this.cbAutoDismiss.Location = new System.Drawing.Point(3, 384);
-            this.cbAutoDismiss.Name = "cbAutoDismiss";
-            this.cbAutoDismiss.Size = new System.Drawing.Size(268, 27);
-            this.cbAutoDismiss.TabIndex = 32;
-            this.cbAutoDismiss.Tag = "iatag_ui_autodismiss";
-            this.cbAutoDismiss.Text = "Auto dismiss notifications";
-            this.cbAutoDismiss.CheckedChanged += new System.EventHandler(this.cbAutoDismiss_CheckedChanged);
-            // 
             // SettingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(876, 511);
             this.Controls.Add(this.panelBox4);
-            this.Controls.Add(this.panelBox3);
+            this.Controls.Add(this.pbAutomaticUpdates);
             this.Controls.Add(this.panelBox2);
             this.Controls.Add(this.panelBox1);
             this.Controls.Add(this.linkLabel1);
@@ -751,8 +751,8 @@
             this.contextMenuStrip1.ResumeLayout(false);
             this.panelBox4.ResumeLayout(false);
             this.panelBox4.PerformLayout();
-            this.panelBox3.ResumeLayout(false);
-            this.panelBox3.PerformLayout();
+            this.pbAutomaticUpdates.ResumeLayout(false);
+            this.pbAutomaticUpdates.PerformLayout();
             this.panelBox2.ResumeLayout(false);
             this.panelBox1.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -765,7 +765,7 @@
         private PanelBox panelBox2;
         private FirefoxButton buttonViewBackups;
         private FirefoxButton buttonViewLogs;
-        private PanelBox panelBox3;
+        private PanelBox pbAutomaticUpdates;
         private FirefoxRadioButton radioBeta;
         private FirefoxRadioButton radioRelease;
         private System.Windows.Forms.LinkLabel linkLabel1;
@@ -800,7 +800,7 @@
         private FirefoxButton buttonLootManually;
         private FirefoxCheckBox cbStartMinimized;
         private FirefoxCheckBox cbDarkMode;
-        private System.Windows.Forms.LinkLabel linkLabel2;
+        private System.Windows.Forms.LinkLabel linkCheckForUpdates;
         private FirefoxCheckBox cbAutoDismiss;
     }
 }

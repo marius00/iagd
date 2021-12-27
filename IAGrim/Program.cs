@@ -63,7 +63,7 @@ namespace IAGrim {
                 Thread.CurrentThread.Name = "Main";
                 Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
             }
-
+            
 
             Logger.Info("Starting IA:GD..");
             ExceptionReporter.UrlStats = "https://webstats.evilsoft.net/report/iagd";

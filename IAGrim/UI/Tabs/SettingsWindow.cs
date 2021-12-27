@@ -67,6 +67,9 @@ namespace IAGrim.UI.Tabs {
             _controller.BindCheckbox(cbAutoUpdateModSettings);
             _controller.BindCheckbox(cbHideSkills);
             _controller.LoadDefaults();
+
+            linkCheckForUpdates.Visible = Environment.Is64BitOperatingSystem;
+            pbAutomaticUpdates.Visible = Environment.Is64BitOperatingSystem;
         }
 
         private void SettingsWindow_Load(object sender, EventArgs e) {
