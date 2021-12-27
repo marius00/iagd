@@ -50,6 +50,9 @@
 #define SAVE_MANAGER_DIRECTREAD "?DirectRead@SaveManager@GAME@@QEAA_NAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEAPEAXAEAI_N3@Z"
 #define LOAD_PLAYER_TRANSFER "?LoadPlayerTransfer@GameEngine@GAME@@QEAAXXZ"
 #define READ_PLAYER_TRANSFER "?ReadPlayerTransfer@GameEngine@GAME@@QEAA_NAEAVCheckedReader@2@@Z"
-#define EXPERIMENTAL_HOOK "?GetUIDisplayText@ItemEquipment@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@@Z"
+#define ITEM_GETUIDISPLAYTEXT "?GetUIDisplayText@Item@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@@Z"
+#define ITEM_EQUIPMENT_GETUIDISPLAYTEXT "?GetUIDisplayText@ItemEquipment@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@@Z"
+#define ITEM_RELIC_GETUIDISPLAYTEXT "?GetUIDisplayText@ItemRelic@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@@Z"
+// #define ITEM_SET_GETUIDISPLAYTEXT "?GetUIDisplayText@ItemSet@GAME@@UEBAXAEBV?$vector@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@mem@@AEAV?$vector@UGameTextLine@GAME@@@4@@Z"
 
 #define GET_ITEM_REPLICAINFO "?GetItemReplicaInfo@Item@GAME@@UEBAXAEAUItemReplicaInfo@2@@Z"

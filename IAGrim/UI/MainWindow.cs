@@ -236,7 +236,7 @@ namespace IAGrim.UI {
 
             switch (type) {
                 case MessageType.TYPE_EXPERIMENTAL:
-                    Logger.Info($"Experimental hook success: {bt.StringData}");
+                    // Logger.Info($"Experimental hook success: {bt.StringData}");
                     break;
 
                 case MessageType.TYPE_REPORT_WORKER_THREAD_LAUNCHED:

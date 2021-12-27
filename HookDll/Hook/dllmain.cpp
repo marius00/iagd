@@ -14,7 +14,7 @@
 #include "SaveTransferStash.h"
 #include "Exports.h"
 #include "CanUseDismantle.h"
-#include "ExperimentalSeed.h"
+#include "EquipmentSeedInfo.h"
 
 #pragma region Variables
 // Switches hook logging on/off
@@ -173,7 +173,7 @@ int ProcessAttach(HINSTANCE _hModule) {
 	ConfigureCloudDetectionHooks(hooks);
 	ConfigureStashDetectionHooks(hooks);
 
-	hooks.push_back(new ExperimentalSeed(&g_dataQueue, g_hEvent, &g_log));
+	hooks.push_back(new EquipmentSeedInfo(&g_dataQueue, g_hEvent, &g_log));
 
 	std::stringstream msg;
 	msg << "Starting hook enabling.. " << hooks.size() << " hooks.";
