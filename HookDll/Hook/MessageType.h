@@ -31,4 +31,6 @@ enum MessageType {
 	TYPE_SUCCESS_HOOKING_GENERIC = 52,
 	TYPE_Display_Transmute = 55,
 	TYPE_CAN_USE_DISMANTLE = 56,
+
+	TYPE_EXPERIMENTAL = 8000,
 };

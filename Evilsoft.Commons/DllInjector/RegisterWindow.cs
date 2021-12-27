@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using log4net;
 using System.Security.Principal;
+using System.Text;
 
 namespace EvilsoftCommons.DllInjector {
 
@@ -92,11 +93,15 @@ namespace EvilsoftCommons.DllInjector {
             public DataAndType(COPYDATASTRUCT cps) {
                 Type = (int)cps.cbData;
                 Data = new byte[(int)cps.dwData];
+                StringData = Marshal.PtrToStringUni(cps.lpData);
+
+
                 System.Runtime.InteropServices.Marshal.Copy(cps.lpData, Data, 0, (int)cps.dwData);
             }
 
             public byte[] Data { get; }
             public int Type { get; }
+            public string StringData { get; }
         }
 
 

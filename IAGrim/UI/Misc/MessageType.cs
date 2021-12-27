@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 // ReSharper disable InconsistentNaming
 
 namespace IAGrim.UI.Misc {
-
     // See [MessageType.h] from the C++ project in IA\ItemAssistantHook
     // Must be identical
     public enum MessageType {
@@ -40,5 +40,6 @@ namespace IAGrim.UI.Misc {
         TYPE_SUCCESS_HOOKING_GENERIC = 52,
         TYPE_Display_Transmute = 55,
         TYPE_CAN_USE_DISMANTLE = 56,
+        TYPE_EXPERIMENTAL = 8000,
     };
 }

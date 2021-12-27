@@ -49,6 +49,8 @@ namespace IAGrim.Database {
 
         public virtual string Slot {
             get {
+                if (Tags == null)
+                    return string.Empty;
                 if (Tags.Any(m => "Class".Equals(m.Stat)))
                     return Tags.FirstOrDefault(m => "Class".Equals(m.Stat)).TextValue;
                 else

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include <windows.h>
 #include <stdlib.h>
-#include <boost/thread.hpp>
+//#include <boost/thread.hpp>
 #include "DataQueue.h"
 #include "MessageType.h"
 #include "StateRequestNpcAction.h"
@@ -14,6 +14,7 @@
 #include "SaveTransferStash.h"
 #include "Exports.h"
 #include "CanUseDismantle.h"
+#include "ExperimentalSeed.h"
 
 #pragma region Variables
 // Switches hook logging on/off
@@ -31,6 +32,7 @@ HookLog g_log;
 #define LOG(streamdef) \
     __noop;
 #endif
+
 
 DWORD g_lastThreadTick = 0;
 HANDLE g_hEvent;
@@ -157,6 +159,9 @@ static void ConfigureStashDetectionHooks(std::vector<BaseMethodHook*>& hooks) {
 	hooks.push_back(new InventorySack_AddItem(&g_dataQueue, g_hEvent)); // Includes GetPrivateStash internally
 }
 
+void DoLog(const wchar_t* staaaaa) {
+	LOG(staaaaa);
+}
 std::vector<BaseMethodHook*> hooks;
 int ProcessAttach(HINSTANCE _hModule) {
 	LOG("Attatching to process..");
@@ -167,6 +172,8 @@ int ProcessAttach(HINSTANCE _hModule) {
 	ConfigurePlayerPositionHooks(hooks);
 	ConfigureCloudDetectionHooks(hooks);
 	ConfigureStashDetectionHooks(hooks);
+
+	hooks.push_back(new ExperimentalSeed(&g_dataQueue, g_hEvent, &g_log));
 
 	std::stringstream msg;
 	msg << "Starting hook enabling.. " << hooks.size() << " hooks.";

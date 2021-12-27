@@ -72,6 +72,10 @@
     <ClInclude Include="CanUseDismantle.h">
       <Filter>CoreHooks\StashDetection</Filter>
     </ClInclude>
+    <ClInclude Include="ExperimentalSeed.h" />
+    <ClInclude Include="GrimTypes.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -118,6 +122,10 @@
     </ClCompile>
     <ClCompile Include="CanUseDismantle.cpp">
       <Filter>CoreHooks\StashDetection</Filter>
+    </ClCompile>
+    <ClCompile Include="ExperimentalSeed.cpp" />
+    <ClCompile Include="GrimTypes.cpp">
+      <Filter>Shared</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
