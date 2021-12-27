@@ -19,6 +19,9 @@
     <Filter Include="CoreHooks\StashDetection">
       <UniqueIdentifier>{af07545a-97de-4a4c-9bc3-ffbfc51487a5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="CoreHooks\ItemSeed">
+      <UniqueIdentifier>{4d9ebb39-ad92-4146-8815-ba96a80c9eb2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -72,9 +75,17 @@
     <ClInclude Include="CanUseDismantle.h">
       <Filter>CoreHooks\StashDetection</Filter>
     </ClInclude>
-    <ClInclude Include="ExperimentalSeed.h" />
     <ClInclude Include="GrimTypes.h">
       <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="EquipmentSeedInfo.h">
+      <Filter>CoreHooks\ItemSeed</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemRelicSeedInfo.h">
+      <Filter>CoreHooks\ItemSeed</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemSeedInfo.h">
+      <Filter>CoreHooks\ItemSeed</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -123,9 +134,17 @@
     <ClCompile Include="CanUseDismantle.cpp">
       <Filter>CoreHooks\StashDetection</Filter>
     </ClCompile>
-    <ClCompile Include="ExperimentalSeed.cpp" />
     <ClCompile Include="GrimTypes.cpp">
       <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="EquipmentSeedInfo.cpp">
+      <Filter>CoreHooks\ItemSeed</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemRelicSeedInfo.cpp">
+      <Filter>CoreHooks\ItemSeed</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemSeedInfo.cpp">
+      <Filter>CoreHooks\ItemSeed</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

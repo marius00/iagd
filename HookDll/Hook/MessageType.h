@@ -32,5 +32,5 @@ enum MessageType {
 	TYPE_Display_Transmute = 55,
 	TYPE_CAN_USE_DISMANTLE = 56,
 
-	TYPE_EXPERIMENTAL = 8000,
+	TYPE_ITEMSEEDDATA = 60,
 };

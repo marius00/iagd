@@ -3,47 +3,39 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "MessageType.h"
-#include "ExperimentalSeed.h"
+#include "ItemSeedInfo.h"
 #include "Exports.h"
 
 
-ExperimentalSeed* ExperimentalSeed::g_self;
-void ExperimentalSeed::EnableHook() {
+ItemSeedInfo* ItemSeedInfo::g_self;
+void ItemSeedInfo::EnableHook() {
 	originalMethod = (OriginalMethodPtr)HookGame(
-		EXPERIMENTAL_HOOK,
+		ITEM_GETUIDISPLAYTEXT,
 		HookedMethod,
 		m_dataQueue,
 		m_hEvent,
-		TYPE_EXPERIMENTAL
+		TYPE_ITEMSEEDDATA
 	);
 }
 
-ExperimentalSeed::ExperimentalSeed(DataQueue* dataQueue, HANDLE hEvent, HookLog* g_log) {
+ItemSeedInfo::ItemSeedInfo(DataQueue* dataQueue, HANDLE hEvent, HookLog* g_log) {
 	g_self = this;
 	this->m_dataQueue = dataQueue;
 	this->m_hEvent = hEvent;
 }
 
-ExperimentalSeed::ExperimentalSeed() {
-	ExperimentalSeed::m_hEvent = nullptr;
+ItemSeedInfo::ItemSeedInfo() {
+	ItemSeedInfo::m_hEvent = nullptr;
 }
 
-void ExperimentalSeed::DisableHook() {
+void ItemSeedInfo::DisableHook() {
 	Unhook((PVOID*)&originalMethod, HookedMethod);
-}
-
-#define LOG(streamdef) \
-{ \
-    std::string msg = (((std::ostringstream&)(std::ostringstream().flush() << streamdef)).str()); \
-    ExperimentalSeed::g_log.out(msg); \
-    msg += _T("\n"); \
-    OutputDebugString(msg.c_str()); \
 }
 
 auto fnItemGetItemReplicaInfo = ItemGetItemReplicaInfo(GetProcAddress(GetModuleHandle(TEXT("game.dll")), GET_ITEM_REPLICAINFO));
 
 // void GAME::ItemEquipment::GetUIDisplayText(class GAME::Character const *,class mem::vector<struct GAME::GameTextLine> &)
-void* __fastcall ExperimentalSeed::HookedMethod(void* This, void* character, std::vector<GAME::GameTextLine>& gameTextLines) {
+void* __fastcall ItemSeedInfo::HookedMethod(void* This, void* character, std::vector<GAME::GameTextLine>& gameTextLines) {
 	void* v = g_self->originalMethod(This, character, gameTextLines);
 
 	std::wstringstream stream;
