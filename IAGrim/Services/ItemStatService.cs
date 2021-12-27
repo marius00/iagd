@@ -186,7 +186,7 @@ namespace IAGrim.Services {
 
         public void ApplyStats(IEnumerable<PlayerHeldItem> itemSource) {
             var items = itemSource.ToList();
-            if (items.Count > 0) {
+            if (items.Count > 10) {
                 Logger.Debug($"Applying stats to {items.Count()} items");
 
                 var playerItems = GetPlayerItems(items);

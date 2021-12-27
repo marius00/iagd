@@ -81,7 +81,7 @@ namespace IAGrim.Services {
 
         bool Tick() {
             var items = _playerItemDao.ListWithMissingStatCache();
-            if (items.Count <= 0) return true;
+            if (items.Count <= 10) return true;
 
             Logger.Debug($"Updated cache for {items.Count} items");
             _itemStatService.ApplyStats(items);
