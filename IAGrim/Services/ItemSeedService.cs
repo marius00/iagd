@@ -10,9 +10,12 @@ using log4net.Repository.Hierarchy;
 
 namespace IAGrim.Services {
     class ItemSeedService {
-        private readonly ILog _logger = LogManager.GetLogger(typeof(ItemSeedService));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(ItemSeedService));
         public bool DispatchItemSeedInfoRequest(PlayerItem pi) {
             List<byte> buffer = Serialize(pi);
+            if (buffer == null) {
+                return false;
+            }
 
             using (NamedPipeClientStream pipeStream = new NamedPipeClientStream(".", "gdiahook", PipeDirection.InOut, PipeOptions.Asynchronous)) {
                 try {
@@ -20,17 +23,17 @@ namespace IAGrim.Services {
                 }
                 catch (TimeoutException) {
                     // TODO: Verify if GD is running before even trying. Prevent infinite logspam
-                    _logger.Debug("Timed out connecting to GD");
+                    Logger.Debug("Timed out connecting to GD");
                     return false;
                 }
                 catch (Exception ex) {
                     // TODO: Verify if GD is running before even trying. Prevent infinite logspam
-                    _logger.Warn("Exception connecting to GD", ex);
+                    Logger.Warn("Exception connecting to GD", ex);
                     return false;
                 }
 
                 pipeStream.Write(buffer.ToArray(), 0, buffer.Count);
-                _logger.Debug("Wrote item to pipe");
+                Logger.Debug("Wrote item to pipe");
             }
 
             return true;
@@ -40,8 +43,14 @@ namespace IAGrim.Services {
         private static List<byte> Serialize(PlayerItem pi) {
             List<byte> buffer = new List<byte>();
 
-            // TODO: Safety check, if record length > 255 abort.
-            buffer.AddRange(BitConverter.GetBytes((int)pi.Id));
+            if (pi.BaseRecord?.Length > 255 || pi.SuffixRecord?.Length > 255 || pi.PrefixRecord?.Length > 255
+                || pi.MateriaRecord?.Length > 255 || pi.ModifierRecord?.Length > 255 || pi.EnchantmentRecord?.Length > 255
+                || pi.TransmuteRecord?.Length > 255) {
+                Logger.Warn("Received a player item with one or more records having a length of >255. Stat reproduction not possible.");
+                return null;
+            }
+
+            buffer.AddRange(BitConverter.GetBytes((long)pi.Id));
             buffer.AddRange(BitConverter.GetBytes((int)pi.Seed));
             buffer.AddRange(BitConverter.GetBytes((int)pi.RelicSeed));
             buffer.AddRange(BitConverter.GetBytes((int)pi.EnchantmentSeed));

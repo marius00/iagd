@@ -185,7 +185,7 @@ int ProcessAttach(HINSTANCE _hModule) {
 	ConfigureStashDetectionHooks(hooks);
 
 	hooks.push_back(new EquipmentSeedInfo(&g_dataQueue, g_hEvent, &g_log));
-	hooks.push_back(new ItemRelicSeedInfo(&g_dataQueue, g_hEvent, &g_log));
+	//hooks.push_back(new ItemRelicSeedInfo(&g_dataQueue, g_hEvent, &g_log));
 	//hooks.push_back(new ItemSeedInfo(&g_dataQueue, g_hEvent, &g_log));
 
 	std::stringstream msg;

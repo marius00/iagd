@@ -75,9 +75,9 @@ ParsedSeedRequest OnDemandSeedInfo::Parse(char* databuffer, size_t length) {
 	int pos = 0;
 	__int32 recordLength;
 
-	__int32 playerItemId;
-	memcpy(&playerItemId, databuffer + pos, sizeof(__int32));
-	pos += sizeof(__int32);
+	__int64 playerItemId;
+	memcpy(&playerItemId, databuffer + pos, sizeof(__int64));
+	pos += sizeof(__int64);
 
 	__int32 seed;
 	memcpy(&seed, databuffer + pos, sizeof(__int32));

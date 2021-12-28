@@ -13,24 +13,15 @@ namespace IAGrim.Services.MessageProcessor {
         private readonly ILog _logger = LogManager.GetLogger(typeof(ItemSeedProcessor));
         private const char Separator = ';';
 
-        enum ExpectedRowType {
-            PlayerId,
-            ItemReplicaInfo,
-            Text,
-        }
 
         public void Process(MessageType type, byte[] data, string dataString) {
-            ExpectedRowType expectedType;
             switch (type) {
-
                 case MessageType.TYPE_ITEMSEEDDATA_EQ:
                 case MessageType.TYPE_ITEMSEEDDATA_REL:
                 case MessageType.TYPE_ITEMSEEDDATA_BASE:
-                    expectedType = ExpectedRowType.ItemReplicaInfo;
                     break;
 
                 case MessageType.TYPE_ITEMSEEDDATA_PLAYERID:
-                    expectedType = ExpectedRowType.PlayerId;
                     break;
 
                 default:
@@ -39,30 +30,35 @@ namespace IAGrim.Services.MessageProcessor {
 
             _logger.Info($"Experimental hook success: {type} {dataString}");
 
-
-            GameItem item = null;
             var lines = dataString.Split('\n');
-            foreach (var line in lines) {
-                if (expectedType == ExpectedRowType.PlayerId) {
-                    expectedType = ExpectedRowType.ItemReplicaInfo;
-                    // TODO:
-                }
-                else if (expectedType == ExpectedRowType.ItemReplicaInfo) {
-                    expectedType = ExpectedRowType.Text;
-                    item = ToGameItem(line);
-                    if (item == null) {
-                        int x3 = 9;// // TODO: Log and return
-                    }
-                }
-                else {
-                    var row = Parse(line);
-                    if (row != null)
-                        item.Text.Add(row);
-                }
+            if (lines.Length < 2) {
+                _logger.Debug("Discarding replica, text too short");
+                return;
+            }
+
+            int s = 1;
+            long itemId;
+            if (type == MessageType.TYPE_ITEMSEEDDATA_PLAYERID) {
+                long.TryParse(lines[0].Trim(), out itemId);
+                s++;
+            }
+
+            var item = ToGameItem(lines[s]);
+            if (item == null) {
+                _logger.Warn("Unable to create ItemReplica");
+                return;
+            }
+
+            for (int i = s; i < lines.Length; i++) {
+                var line = lines[i];
+                var row = Parse(line);
+                if (row != null)
+                    item.Text.Add(row);
             }
 
             if (item.Text.Count <= 1) {
-                // Discard
+                _logger.Debug("Only got a single text row, discarding replica");
+                return;
             }
 
             int x = 9;
@@ -71,32 +67,19 @@ namespace IAGrim.Services.MessageProcessor {
 
         class GameItem {
             public string BaseRecord { get; set; } = "";
-
             public string PrefixRecord { get; set; } = "";
-
             public string SuffixRecord { get; set; } = "";
-
             public string ModifierRecord { get; set; } = "";
-
             public string TransmuteRecord { get; set; } = "";
-
             public uint Seed { get; set; } = 0u;
-
             public string MateriaRecord { get; set; } = "";
-
             public string RelicCompletionBonusRecord { get; set; } = "";
-
             public uint RelicSeed { get; set; } = 0u;
-
             public string EnchantmentRecord { get; set; } = "";
-
             public uint EnchantmentSeed { get; set; } = 0u;
-            
             public List<ItemStatInfo> Text { get; set; }
         }
-
-
-
+        
         private GameItem ToGameItem(string line) {
             var pieces = line.Split(Separator);
 
@@ -122,8 +105,7 @@ namespace IAGrim.Services.MessageProcessor {
         }
 
         private uint ToInt(string s) {
-            uint i;
-            uint.TryParse(s, out i);
+            uint.TryParse(s, out var i);
             return i;
         }
 
@@ -134,9 +116,8 @@ namespace IAGrim.Services.MessageProcessor {
 
             var text = line.Substring(idx + 1);
             var typeText = line.Substring(0, idx);
-            int type;
 
-            if (!int.TryParse(typeText, out type))
+            if (!int.TryParse(typeText, out var type))
                 return null;
 
             return new ItemStatInfo {
