@@ -102,13 +102,16 @@ namespace IAGrim.UI.Tabs {
 
                 switch (access) {
                     case AuthService.AccessStatus.Unauthorized:
+                        Logger.Debug($"Login, state {access}, authenticating..");
                         _authAuthService.Authenticate();
                         break;
                     case AuthService.AccessStatus.Unknown:
+                        Logger.Debug($"Login, state {access}, displaying error..");
                         MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_backup_service_error"));
                         break;
                     default: {
-                        var alreadyLoggedIn = RuntimeSettings.Language.GetTag("iatag_feedback_already_logged_in");
+                        Logger.Debug($"Login, state {access}, displaying already logged in..");
+                            var alreadyLoggedIn = RuntimeSettings.Language.GetTag("iatag_feedback_already_logged_in");
 
                         MessageBox.Show(
                             alreadyLoggedIn,
@@ -120,6 +123,7 @@ namespace IAGrim.UI.Tabs {
                     }
                 }
             }
+            Logger.Debug("Cancelling login operation, button is cancelled.");
 
             UpdateUi();
         }

@@ -41,7 +41,7 @@ namespace IAGrim.UI.Misc.CEF {
 
         public void ShowCharacterBackups() {
             if (BrowserControl != null && BrowserControl.CanExecuteJavascriptInMainFrame) {
-                BrowserControl.ExecuteScriptAsync("window.showCharacterBackups()");
+                BrowserControl.ExecuteScriptAsync("window.showCharacterBackups");
                 if (_tabControl.InvokeRequired) {
                     _tabControl.Invoke((MethodInvoker) delegate { _tabControl.SelectedIndex = 0; });
                 }
@@ -249,7 +249,9 @@ namespace IAGrim.UI.Misc.CEF {
         /* Start CefBackupAuthentication Start */
         public void Open(string url) {
             if (BrowserControl.CanExecuteJavascriptInMainFrame) {
-                BrowserControl.ExecuteScriptAsync($"window.open('{url}');");
+                Logger.Debug("Opening IAGD login page..:");
+                Logger.Debug($"window.open('{url}');");
+                BrowserControl.ExecuteScriptAsync("window.open", url);
             }
             else {
                 MessageBox.Show(
