@@ -3,20 +3,35 @@
 namespace GAME {
 	std::wstring itemReplicaToString(GAME::ItemReplicaInfo replica) {
 		std::wstringstream stream;
-		stream << replica.baseName.c_str() << ";";
-		stream << replica.prefixName.c_str() << ";";
-		stream << replica.suffixName.c_str() << ";";
+		stream << replica.baseRecord.c_str() << ";";
+		stream << replica.prefixRecord.c_str() << ";";
+		stream << replica.suffixRecord.c_str() << ";";
 		stream << replica.seed << ";";
-		stream << replica.modifierName.c_str() << ";";
+		stream << replica.modifierRecord.c_str() << ";";
 		stream << replica.materiaRecord.c_str() << ";";
 		stream << replica.relicBonus.c_str() << ";";
 		stream << replica.relicSeed << ";";
-		stream << replica.enchantmentName.c_str() << ";";
+		stream << replica.enchantmentRecord.c_str() << ";";
 		stream << replica.enchantmentSeed << ";";
-		stream << replica.transmuteName.c_str() << ";";
+		stream << replica.transmuteRecord.c_str();
 
 		return stream.str();
 	}
-	//typedef void *(__fastcall * pCreateItem)(GAME::ItemReplicaInfo& info);
 
+	/// <summary>
+	/// Helper method for converting gameTextLine to a CSV string.
+	/// </summary>
+	/// <param name="gameTextLines"></param>
+	/// <returns></returns>
+	std::wstring gameTextLineToString(std::vector<GameTextLine>& gameTextLines) {
+		std::wstringstream stream;
+		GAME::ItemReplicaInfo replica;
+
+		for (auto& it : gameTextLines) {
+			stream << it.textClass << ";" << it.text.c_str() << "\n";
+		}
+
+		std::wstring str = stream.str();
+		return str;
+	}
 }

@@ -8,8 +8,6 @@ namespace EvilsoftCommons.DllInjector {
     public struct COPYDATASTRUCT {
         public int cbData;
         public IntPtr dwData;
-        //[System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.ByValTStr)]
-        //public char[] lpData;
         public IntPtr lpData;
     }
 }

@@ -15,6 +15,9 @@
 #include "Exports.h"
 #include "CanUseDismantle.h"
 #include "EquipmentSeedInfo.h"
+#include "ItemRelicSeedInfo.h"
+#include "ItemSeedInfo.h"
+#include "OnDemandSeedInfo.h"
 
 #pragma region Variables
 // Switches hook logging on/off
@@ -87,10 +90,15 @@ void WorkerThreadMethod() {
     }
 }
 
+OnDemandSeedInfo* listener = nullptr;
 unsigned __stdcall WorkerThreadMethodWrap(void* argss) {
+
+	listener->Start(); // TODO: Seems to mess up. Ia keeps spamming inject.
+
 	WorkerThreadMethod();
 	return 0;
 }
+
 void StartWorkerThread() {
 	LOG("Starting worker thread..");
 	unsigned int pid;
@@ -162,18 +170,23 @@ static void ConfigureStashDetectionHooks(std::vector<BaseMethodHook*>& hooks) {
 void DoLog(const wchar_t* staaaaa) {
 	LOG(staaaaa);
 }
+
 std::vector<BaseMethodHook*> hooks;
 int ProcessAttach(HINSTANCE _hModule) {
 	LOG("Attatching to process..");
 	g_hEvent = CreateEvent(NULL,FALSE,FALSE,"IA_Worker");
 
 	LOG("Preparing hooks..");
+	listener = new OnDemandSeedInfo(&g_dataQueue, g_hEvent);
+
 	// Player position hooks
 	ConfigurePlayerPositionHooks(hooks);
 	ConfigureCloudDetectionHooks(hooks);
 	ConfigureStashDetectionHooks(hooks);
 
 	hooks.push_back(new EquipmentSeedInfo(&g_dataQueue, g_hEvent, &g_log));
+	hooks.push_back(new ItemRelicSeedInfo(&g_dataQueue, g_hEvent, &g_log));
+	//hooks.push_back(new ItemSeedInfo(&g_dataQueue, g_hEvent, &g_log));
 
 	std::stringstream msg;
 	msg << "Starting hook enabling.. " << hooks.size() << " hooks.";
@@ -204,6 +217,9 @@ int ProcessDetach( HINSTANCE _hModule ) {
 		delete hooks[i];
 	}
 	hooks.clear();
+	listener->Stop();
+	delete listener;
+	listener = nullptr;
 
     EndWorkerThread();
     return TRUE;

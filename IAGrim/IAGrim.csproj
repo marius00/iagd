@@ -235,6 +235,7 @@
     <Compile Include="Parsers\TransferStash\TransferStashServiceCache.cs" />
     <Compile Include="Parsers\TransferStash\TransferStashWorker.cs" />
     <Compile Include="Services\HelpService.cs" />
+    <Compile Include="Services\ItemSeedService.cs" />
     <Compile Include="Services\ItemStatCacheService.cs" />
     <Compile Include="Services\MessageProcessor\ItemSeedProcessor.cs" />
     <Compile Include="Services\ServiceProvider.cs" />

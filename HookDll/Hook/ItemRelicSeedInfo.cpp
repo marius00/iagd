@@ -14,7 +14,7 @@ void ItemRelicSeedInfo::EnableHook() {
 		HookedMethod,
 		m_dataQueue,
 		m_hEvent,
-		TYPE_ITEMSEEDDATA
+		TYPE_ITEMSEEDDATA_REL
 	);
 }
 
@@ -44,11 +44,7 @@ void* __fastcall ItemRelicSeedInfo::HookedMethod(void* This, void* character, st
 	GAME::ItemReplicaInfo replica;
 	fnItemGetItemReplicaInfoB(This, replica);
 	stream << GAME::itemReplicaToString(replica) << "\n";
-
-	// iterate through all text lines
-	for (auto& it : gameTextLines) {
-		stream << it.textClass << ";" << it.text.c_str() << "\n";
-	}
+	stream << GAME::gameTextLineToString(gameTextLines);
 
 	std::wstring str = stream.str();
 	g_self->TransferData(str.size() * sizeof(wchar_t), (char*)str.c_str());

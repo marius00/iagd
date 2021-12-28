@@ -24,6 +24,15 @@ namespace IAGrim.Services.MessageProcessor {
                 int method = IOHelper.GetInt(data, 0);
                 _logger.Debug($"Success hooking method \"{(MessageType)method}\" ({method})");
             }
+            else if (type == MessageType.TYPE_ITEMSEEDDATA_PLAYERID_ERR_NOGAME) {
+                _logger.Warn($"Error: ItemSeed NOGAME");
+            }
+            else if (type == MessageType.TYPE_ITEMSEEDDATA_PLAYERID_ERR_NOITEM) {
+                _logger.Warn($"Error: ItemSeed NOITEM");
+            }
+            else if (type == MessageType.TYPE_ITEMSEEDDATA_PLAYERID_DEBUG_RECV) {
+                _logger.Warn($"DEBUG: ItemSeed, Bytes: {IOHelper.GetInt(data, 0)}");
+            }
         }
     }
 }

@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <vector>
 
 #include "Exports.h"
 
@@ -17,18 +18,18 @@ namespace GAME
 	struct ItemReplicaInfo
 	{
 		unsigned int id;
-		std::basic_string<char, std::char_traits<char>, std::allocator<char> > baseName;
-		std::basic_string<char, std::char_traits<char>, std::allocator<char> > prefixName;
-		std::basic_string<char, std::char_traits<char>, std::allocator<char> > suffixName;
+		std::basic_string<char, std::char_traits<char>, std::allocator<char> > baseRecord;
+		std::basic_string<char, std::char_traits<char>, std::allocator<char> > prefixRecord;
+		std::basic_string<char, std::char_traits<char>, std::allocator<char> > suffixRecord;
 		unsigned int seed;
-		std::basic_string<char, std::char_traits<char>, std::allocator<char> > modifierName;
+		std::basic_string<char, std::char_traits<char>, std::allocator<char> > modifierRecord;
 		std::basic_string<char, std::char_traits<char>, std::allocator<char> > materiaRecord;
 		std::basic_string<char, std::char_traits<char>, std::allocator<char> > relicBonus;
 		unsigned int relicSeed;
-		std::basic_string<char, std::char_traits<char>, std::allocator<char> > enchantmentName;
+		std::basic_string<char, std::char_traits<char>, std::allocator<char> > enchantmentRecord;
 		unsigned int enchantmentLevel;
 		unsigned int enchantmentSeed;
-		std::basic_string<char, std::char_traits<char>, std::allocator<char> > transmuteName;
+		std::basic_string<char, std::char_traits<char>, std::allocator<char> > transmuteRecord;
 		unsigned int var1;
 		Vec3 velocity;
 		unsigned int owner;
@@ -36,11 +37,14 @@ namespace GAME
 		unsigned int visiblePlayerId;
 		unsigned int droppedPlayerId;
 	};
+	struct Object { void* dummy; };
 	struct Item { void* dummy; };
 	struct ItemEquipment { void* dummy; };
 	struct GraphicsTexture { void* dummy; };
 	struct Player { void* dummy; };
 	struct GameEngine { void* dummy; };
+	struct ObjectManager { void* dummy; };
+
 	struct Character { void* dummy; };
 
 	enum GameTextClass
@@ -136,6 +140,7 @@ namespace GAME
 	};
 
 	std::wstring itemReplicaToString(GAME::ItemReplicaInfo replica);
+	std::wstring gameTextLineToString(std::vector<GameTextLine>& gameTextLines);
 }
 
 // ?GetItemReplicaInfo@Item@GAME@@UEBAXAEAUItemReplicaInfo@2@@Z

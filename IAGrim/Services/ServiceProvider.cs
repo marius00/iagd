@@ -125,6 +125,7 @@ namespace IAGrim.Services {
             services.Add(recipeItemDao);
             services.Add(itemCollectionRepo);
             services.Add(searchController);
+            services.Add(new ItemSeedService());
 
             services.Add(itemStatService);
 

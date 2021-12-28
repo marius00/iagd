@@ -13,28 +13,56 @@ namespace IAGrim.Services.MessageProcessor {
         private readonly ILog _logger = LogManager.GetLogger(typeof(ItemSeedProcessor));
         private const char Separator = ';';
 
-        public void Process(MessageType type, byte[] data, string dataString) {
-            if (type != MessageType.TYPE_ITEMSEEDDATA)
-                return;
+        enum ExpectedRowType {
+            PlayerId,
+            ItemReplicaInfo,
+            Text,
+        }
 
-            _logger.Info($"Experimental hook success: {dataString}");
+        public void Process(MessageType type, byte[] data, string dataString) {
+            ExpectedRowType expectedType;
+            switch (type) {
+
+                case MessageType.TYPE_ITEMSEEDDATA_EQ:
+                case MessageType.TYPE_ITEMSEEDDATA_REL:
+                case MessageType.TYPE_ITEMSEEDDATA_BASE:
+                    expectedType = ExpectedRowType.ItemReplicaInfo;
+                    break;
+
+                case MessageType.TYPE_ITEMSEEDDATA_PLAYERID:
+                    expectedType = ExpectedRowType.PlayerId;
+                    break;
+
+                default:
+                    return;
+            }
+
+            _logger.Info($"Experimental hook success: {type} {dataString}");
+
 
             GameItem item = null;
-            bool first = true;
             var lines = dataString.Split('\n');
             foreach (var line in lines) {
-                _logger.Debug(line);
-            }
-            foreach (var line in lines) {
-                if (first) {
-                    first = false;
+                if (expectedType == ExpectedRowType.PlayerId) {
+                    expectedType = ExpectedRowType.ItemReplicaInfo;
+                    // TODO:
+                }
+                else if (expectedType == ExpectedRowType.ItemReplicaInfo) {
+                    expectedType = ExpectedRowType.Text;
                     item = ToGameItem(line);
+                    if (item == null) {
+                        int x3 = 9;// // TODO: Log and return
+                    }
                 }
                 else {
                     var row = Parse(line);
                     if (row != null)
                         item.Text.Add(row);
                 }
+            }
+
+            if (item.Text.Count <= 1) {
+                // Discard
             }
 
             int x = 9;
@@ -72,8 +100,9 @@ namespace IAGrim.Services.MessageProcessor {
         private GameItem ToGameItem(string line) {
             var pieces = line.Split(Separator);
 
-            if (pieces.Length != 10) {
-                // TODO: Just throw? What?
+            if (pieces.Length != 11) {
+                _logger.Warn($"Expected 11 columns in row, got {pieces.Length}: {line}");
+                return null;
             }
 
             return new GameItem {

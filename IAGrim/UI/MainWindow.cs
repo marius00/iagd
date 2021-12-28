@@ -34,6 +34,7 @@ using CefSharp.WinForms;
 using DllInjector;
 using IAGrim.Backup.Cloud.Service;
 using IAGrim.Backup.Cloud.Util;
+using IAGrim.Database;
 using IAGrim.Parsers.TransferStash;
 using IAGrim.Settings;
 using IAGrim.Utilities.Detection;
@@ -709,6 +710,16 @@ namespace IAGrim.UI {
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e) {
             _minimizeToTrayHandler.notifyIcon_MouseDoubleClick(sender, null);
+        }
+
+        private void button1_Click(object sender, EventArgs e) {
+            var iss = _serviceProvider.Get<ItemSeedService>();
+            var pi = new PlayerItem {
+                Id = 135964,
+                BaseRecord = "records/items/gearweapons/swords1h/b012b_sword.dbr",
+                Seed = 328274860,
+            };
+            iss.DispatchItemSeedInfoRequest(pi);
         }
     } // CLASS
 }

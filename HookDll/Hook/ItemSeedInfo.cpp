@@ -14,7 +14,7 @@ void ItemSeedInfo::EnableHook() {
 		HookedMethod,
 		m_dataQueue,
 		m_hEvent,
-		TYPE_ITEMSEEDDATA
+		TYPE_ITEMSEEDDATA_BASE
 	);
 }
 
