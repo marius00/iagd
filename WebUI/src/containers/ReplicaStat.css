@@ -21,7 +21,8 @@
 /* +x to SomeSkill */
 .replica-type-79 {
   color: var(--item-stat-modifier);
-
+  text-decoration: underline;
+  cursor: pointer; /* TODO: Add the tooltip */
 }
 
 /* Regular item stats */
