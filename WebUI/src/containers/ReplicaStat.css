@@ -29,7 +29,7 @@
   color: var(--item-stat-modifier);
 }
 .replica-letter-E {
-  color: #000000;
+  color: var(--item-stat-label);;
 }
 
 /* Granted skills */
@@ -41,6 +41,12 @@
 /* Skill name */
 .replica-type-35 {
   font-weight: bold;
+  color: var(--item-grantskill-content);
+}
+
+/* Skill description */
+.replica-type-37 {
+  color: var(--item-misc-info);
 }
 
 /* Level requirement, spirit requirement, etc.. show or noshow? */

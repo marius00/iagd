@@ -500,7 +500,7 @@ namespace IAGrim.UI {
 
             
             _itemReplicaService = _serviceProvider.Get<ItemReplicaService>();
-            _itemReplicaService.Start();
+            // _itemReplicaService.Start(); // Not thread safe yet
             
 
 #if !DEBUG
