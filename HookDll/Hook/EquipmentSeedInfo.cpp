@@ -38,20 +38,24 @@ auto fnItemGetItemReplicaInfoA = ItemGetItemReplicaInfo(GetProcAddress(GetModule
 void* __fastcall EquipmentSeedInfo::HookedMethod(void* This, void* character, std::vector<GAME::GameTextLine>& gameTextLines) {
 	void* v = g_self->originalMethod(This, character, gameTextLines);
 
-	std::wstringstream stream;
 
 	// TODO: GetItemReplicaInfo()
 	GAME::ItemReplicaInfo replica;
 	fnItemGetItemReplicaInfoA(This, replica);
-	stream << GAME::itemReplicaToString(replica) << "\n";
 
-	// iterate through all text lines
-	for (auto& it : gameTextLines) {
-		stream << it.textClass << ";" << it.text.c_str() << "\n";
+	// We don't care about items with transmutes, can't loot those.
+	if (replica.enchantmentRecord.empty()) {
+		std::wstringstream stream;
+		stream << GAME::itemReplicaToString(replica) << "\n";
+
+		// iterate through all text lines
+		for (auto& it : gameTextLines) {
+			stream << it.textClass << ";" << it.text.c_str() << "\n";
+		}
+
+		std::wstring str = stream.str();
+		g_self->TransferData(str.size() * sizeof(wchar_t), (char*)str.c_str());
 	}
-
-	std::wstring str = stream.str();
-	g_self->TransferData(str.size() * sizeof(wchar_t), (char*)str.c_str());
 
 	return v;
 }
