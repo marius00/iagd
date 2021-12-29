@@ -7,6 +7,7 @@ using IAGrim.Database.Interfaces;
 using IAGrim.Parser.Stash;
 using IAGrim.Parsers.Arz;
 using IAGrim.Services;
+using IAGrim.Services.MessageProcessor;
 using IAGrim.Settings;
 using IAGrim.StashFile;
 using IAGrim.UI.Misc.CEF;
@@ -25,15 +26,17 @@ namespace IAGrim.Parsers.TransferStash {
         private readonly SafeTransferStashWriter _stashWriter;
         private readonly SettingsService _settings;
         private readonly IHelpService _helpService;
+        private readonly IReplicaItemDao _replicaItemDao;
         public event EventHandler OnUpdate;
 
-        public TransferStashService2(IPlayerItemDao playerItemDao, TransferStashServiceCache cache, TransferStashService transferStashService, SafeTransferStashWriter stashWriter, SettingsService settings, IHelpService helpService) {
+        public TransferStashService2(IPlayerItemDao playerItemDao, TransferStashServiceCache cache, TransferStashService transferStashService, SafeTransferStashWriter stashWriter, SettingsService settings, IHelpService helpService, IReplicaItemDao replicaItemDao) {
             _playerItemDao = playerItemDao;
             _cache = cache;
             _transferStashService = transferStashService;
             _stashWriter = stashWriter;
             _settings = settings;
             _helpService = helpService;
+            this._replicaItemDao = replicaItemDao;
         }
 
         private List<UserFeedback> Validate(Stash stash, int lootFromIndex) {
@@ -259,6 +262,11 @@ namespace IAGrim.Parsers.TransferStash {
 
             try {
                 _playerItemDao.Save(playerItems);
+
+                foreach (var item in playerItems) {
+                    var hash = ItemSeedProcessor.GetHash(item);
+                    _replicaItemDao.UpdatePlayerItemId(hash, item.Id);
+                }
             }
             catch (Exception ex) {
                 Logger.Warn(ex.Message);

@@ -375,10 +375,11 @@ namespace IAGrim.UI {
             var cacher = _serviceProvider.Get<TransferStashServiceCache>();
             _parsingService.OnParseComplete += (o, args) => cacher.Refresh();
 
-            
+
+            var replicaItemDao = _serviceProvider.Get<IReplicaItemDao>();
             var stashWriter = new SafeTransferStashWriter(settingsService, _cefBrowserHandler);
             var transferStashService = new TransferStashService(_serviceProvider.Get<IDatabaseItemStatDao>(), settingsService, stashWriter);
-            var transferStashService2 = new TransferStashService2(playerItemDao, cacher, transferStashService, stashWriter, settingsService, _cefBrowserHandler);
+            var transferStashService2 = new TransferStashService2(playerItemDao, cacher, transferStashService, stashWriter, settingsService, _cefBrowserHandler, replicaItemDao);
             _serviceProvider.Add(transferStashService2);
 
             _transferStashWorker = new TransferStashWorker(transferStashService2, _userFeedbackService);
@@ -538,12 +539,13 @@ namespace IAGrim.UI {
                 }
             }
 
+            var itemSeedProcessor = _serviceProvider.Get<ItemSeedProcessor>();
             _messageProcessors.Add(new ItemPositionFinder(_dynamicPacker));
             _messageProcessors.Add(new PlayerPositionTracker(Debugger.IsAttached && false));
             _messageProcessors.Add(new StashStatusHandler());
             _messageProcessors.Add(new CloudDetectorProcessor(SetFeedback));
             _messageProcessors.Add(new GenericErrorHandler());
-            _messageProcessors.Add(new ItemSeedProcessor());
+            _messageProcessors.Add(itemSeedProcessor);
 
 
             RuntimeSettings.StashStatusChanged += GlobalSettings_StashStatusChanged;

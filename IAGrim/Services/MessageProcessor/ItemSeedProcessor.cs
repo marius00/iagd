@@ -1,17 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
+using IAGrim.Database;
+using IAGrim.Database.Interfaces;
 using IAGrim.UI.Misc;
 using log4net;
-using log4net.Repository.Hierarchy;
+using Newtonsoft.Json;
 
 namespace IAGrim.Services.MessageProcessor {
     class ItemSeedProcessor : IMessageProcessor {
         private readonly ILog _logger = LogManager.GetLogger(typeof(ItemSeedProcessor));
         private const char Separator = ';';
+        private readonly IReplicaItemDao _replicaItemDao;
+
+        public ItemSeedProcessor(IReplicaItemDao replicaItemDao) {
+            this._replicaItemDao = replicaItemDao;
+        }
 
 
         public void Process(MessageType type, byte[] data, string dataString) {
@@ -36,51 +39,83 @@ namespace IAGrim.Services.MessageProcessor {
                 return;
             }
 
-            int s = 1;
-            long itemId;
+            int s = 0;
+            long? playerItemId = null;
             if (type == MessageType.TYPE_ITEMSEEDDATA_PLAYERID) {
-                long.TryParse(lines[0].Trim(), out itemId);
+                if (long.TryParse(lines[0].Trim(), out var itemId))
+                    playerItemId = itemId;
+
                 s++;
             }
 
-            var item = ToGameItem(lines[s]);
+            var item = ToGameItem(lines[s], playerItemId);
+            s++;
             if (item == null) {
                 _logger.Warn("Unable to create ItemReplica");
                 return;
             }
 
+            var text = new List<ItemStatInfo>();
             for (int i = s; i < lines.Length; i++) {
                 var line = lines[i];
                 var row = Parse(line);
                 if (row != null)
-                    item.Text.Add(row);
+                    text.Add(row);
             }
 
-            if (item.Text.Count <= 1) {
+            if (text.Count <= 1) {
                 _logger.Debug("Only got a single text row, discarding replica");
                 return;
             }
 
-            int x = 9;
-            // TODO: DO something with the item..
+            item.Text = JsonConvert.SerializeObject(text);
+            item.UqHash = GetHash(item);
+
+            _replicaItemDao.Save(item);
         }
 
-        class GameItem {
-            public string BaseRecord { get; set; } = "";
-            public string PrefixRecord { get; set; } = "";
-            public string SuffixRecord { get; set; } = "";
-            public string ModifierRecord { get; set; } = "";
-            public string TransmuteRecord { get; set; } = "";
-            public uint Seed { get; set; } = 0u;
-            public string MateriaRecord { get; set; } = "";
-            public string RelicCompletionBonusRecord { get; set; } = "";
-            public uint RelicSeed { get; set; } = 0u;
-            public string EnchantmentRecord { get; set; } = "";
-            public uint EnchantmentSeed { get; set; } = 0u;
-            public List<ItemStatInfo> Text { get; set; }
+        /// <summary>
+        /// Create a ReplicaItem hash from a PlayerItem instance
+        /// TODO: Move somewhere more fitting?
+        /// </summary>
+        /// <param name="pi"></param>
+        /// <returns></returns>
+        public static int GetHash(PlayerItem pi) {
+            ReplicaItem replica =  new ReplicaItem {
+                BaseRecord = pi.BaseRecord,
+                EnchantmentRecord = pi.EnchantmentRecord,
+                EnchantmentSeed = (uint)pi.EnchantmentSeed,
+                MateriaRecord = pi.MateriaRecord,
+                ModifierRecord = pi.ModifierRecord,
+                PrefixRecord = pi.PrefixRecord,
+                RelicCompletionBonusRecord = pi.RelicCompletionBonusRecord,
+                RelicSeed = (uint)pi.RelicSeed,
+                Seed = pi.USeed,
+                SuffixRecord = pi.SuffixRecord,
+                TransmuteRecord = pi.TransmuteRecord,
+            };
+
+            return GetHash(replica);
+        }
+
+        private static int GetHash(ReplicaItem item) {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(item.BaseRecord);
+            sb.Append(item.PrefixRecord);
+            sb.Append(item.SuffixRecord);
+            sb.Append(item.Seed);
+            sb.Append(item.ModifierRecord);
+            sb.Append(item.MateriaRecord);
+            sb.Append(item.RelicCompletionBonusRecord);
+            sb.Append(item.RelicSeed);
+            sb.Append(item.EnchantmentRecord);
+            sb.Append(item.EnchantmentSeed);
+            sb.Append(item.TransmuteRecord);
+
+            return sb.ToString().GetHashCode(); // WARN: This will fail with .Net 5, as it becomes unique-per-run
         }
         
-        private GameItem ToGameItem(string line) {
+        private ReplicaItem ToGameItem(string line, long? playerItemId) {
             var pieces = line.Split(Separator);
 
             if (pieces.Length != 11) {
@@ -88,7 +123,7 @@ namespace IAGrim.Services.MessageProcessor {
                 return null;
             }
 
-            return new GameItem {
+            return new ReplicaItem {
                 BaseRecord = pieces[0],
                 PrefixRecord = pieces[1],
                 SuffixRecord = pieces[2],
@@ -100,7 +135,7 @@ namespace IAGrim.Services.MessageProcessor {
                 EnchantmentRecord = pieces[8],
                 EnchantmentSeed = ToInt(pieces[9]),
                 TransmuteRecord = pieces[10],
-                Text = new List<ItemStatInfo>()
+                PlayerItemId = playerItemId
             };
         }
 

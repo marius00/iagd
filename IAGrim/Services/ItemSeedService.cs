@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.IO.Pipes;
 using System.Linq;
 using System.Text;
@@ -23,11 +24,18 @@ namespace IAGrim.Services {
                 }
                 catch (TimeoutException) {
                     // TODO: Verify if GD is running before even trying. Prevent infinite logspam
+                    // Typically: The pipe does not exist
                     Logger.Debug("Timed out connecting to GD");
                     return false;
                 }
+                catch (IOException ex) {
+                    // TODO: Some kind of backoff algorithm? Clearly an issue going on.
+                    // Typical scenario: The pipe exists, but nobody are accepting connections.
+                    Logger.Warn("IOException connecting to GD", ex);
+                    return false;
+
+                }
                 catch (Exception ex) {
-                    // TODO: Verify if GD is running before even trying. Prevent infinite logspam
                     Logger.Warn("Exception connecting to GD", ex);
                     return false;
                 }

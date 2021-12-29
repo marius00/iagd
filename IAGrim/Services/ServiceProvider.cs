@@ -14,6 +14,7 @@ using IAGrim.Parsers;
 using IAGrim.Parsers.Arz;
 using IAGrim.Parsers.GameDataParsing.Service;
 using IAGrim.Parsers.TransferStash;
+using IAGrim.Services.MessageProcessor;
 using IAGrim.Settings;
 using IAGrim.UI.Controller;
 using IAGrim.UI.Misc.CEF;
@@ -69,6 +70,7 @@ namespace IAGrim.Services {
             IItemSkillDao itemSkillDao;
             IAugmentationItemDao augmentationItemRepo;
             IItemCollectionDao itemCollectionRepo;
+            IReplicaItemDao replicaItemDao;
 
             if (dialect == SqlDialect.Sqlite) {
                 playerItemDao = new PlayerItemRepo(threadExecuter, factory, dialect);
@@ -82,6 +84,7 @@ namespace IAGrim.Services {
                 itemSkillDao = new ItemSkillRepo(threadExecuter, factory);
                 augmentationItemRepo = new AugmentationItemRepo(threadExecuter, factory, new DatabaseItemStatDaoImpl(factory, dialect), dialect);
                 itemCollectionRepo = new ItemCollectionRepo(threadExecuter, factory, dialect);
+                replicaItemDao = new ItemReplicaRepo(threadExecuter, factory, dialect);
             }
             else {
                 databaseItemStatDao = new DatabaseItemStatDaoImpl(factory, dialect);
@@ -95,6 +98,7 @@ namespace IAGrim.Services {
                 itemSkillDao = new ItemSkillDaoImpl(factory);
                 augmentationItemRepo = new AugmentationItemDaoImpl(factory, databaseItemStatDao, dialect);
                 itemCollectionRepo = new ItemCollectionDaoImpl(factory, dialect);
+                replicaItemDao = new ReplicaItemDaoImpl(factory, dialect);
             }
 
             // Chicken and the egg..
@@ -126,6 +130,9 @@ namespace IAGrim.Services {
             services.Add(itemCollectionRepo);
             services.Add(searchController);
             services.Add(new ItemSeedService());
+            services.Add(replicaItemDao);
+
+            services.Add(new ItemSeedProcessor(replicaItemDao));
 
             services.Add(itemStatService);
 

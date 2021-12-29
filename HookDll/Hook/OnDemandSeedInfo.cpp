@@ -21,7 +21,6 @@ OnDemandSeedInfo::OnDemandSeedInfo(DataQueue* dataQueue, HANDLE hEvent) {
 * Continously listen for new events on the pipe
 */
 void OnDemandSeedInfo::ThreadMain(void*) {
-	
 	while (g_self->isRunning) {
 		g_self->Process();
 	}

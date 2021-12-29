@@ -219,16 +219,20 @@
     <Compile Include="Backup\Cloud\Dto\LimitEntry.cs" />
     <Compile Include="Backup\Cloud\Dto\LimitsDto.cs" />
     <Compile Include="Backup\Cloud\Service\CharacterBackupService.cs" />
+    <Compile Include="Database\DAO\ReplicaItemDaoImpl.cs" />
     <Compile Include="Database\DAO\ItemCollectionDaoImpl.cs" />
     <Compile Include="Database\DAO\Table\BuddySubscriptionTable.cs" />
     <Compile Include="Database\DAO\Util\SqlDialect.cs" />
     <Compile Include="Database\DAO\Util\SqlUtils.cs" />
+    <Compile Include="Database\Interfaces\IReplicaItemDao.cs" />
     <Compile Include="Database\Interfaces\IItemCollectionDao.cs" />
     <Compile Include="Database\Model\BuddyItemRecord.cs" />
     <Compile Include="Database\Model\CollectionItem.cs" />
     <Compile Include="Database\Model\ItemSetAssociation.cs" />
     <Compile Include="Database\Model\ItemSkillMapping.cs" />
+    <Compile Include="Database\Model\ReplicaItem.cs" />
     <Compile Include="Database\Model\SkillTierMapping.cs" />
+    <Compile Include="Database\Synchronizer\ItemReplicaRepo.cs" />
     <Compile Include="Database\Synchronizer\ItemCollectionRepo.cs" />
     <Compile Include="Parsers\TransferStash\SafeTransferStashWriter.cs" />
     <Compile Include="Parsers\TransferStash\TransferStashService2.cs" />
@@ -645,6 +649,9 @@
     <EmbeddedResource Include="Database\Model\ItemSkillMapping.hbm.xml" />
     <EmbeddedResource Include="Database\Model\BuddyItem.hbm.xml" />
     <EmbeddedResource Include="Database\Model\BuddyItemRecord.hbm.xml" />
+    <EmbeddedResource Include="Database\Model\ReplicaItem.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <Content Include="hibernate.postgres.cfg.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -768,6 +775,7 @@
   <ItemGroup>
     <Folder Include="Listener\" />
     <Folder Include="Required_Bins\" />
+    <Folder Include="Services\ItemReplica\" />
     <Folder Include="UI\Extensions\" />
     <Folder Include="Utilities\Service\" />
   </ItemGroup>

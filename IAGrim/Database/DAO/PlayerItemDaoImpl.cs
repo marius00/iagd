@@ -670,7 +670,7 @@ namespace IAGrim.Database {
             var queryParams = new Dictionary<string, object>();
 
             if (!string.IsNullOrEmpty(query.Wildcard)) {
-                queryFragments.Add("(PI.namelowercase LIKE :name OR searchabletext LIKE :wildcard)");
+                queryFragments.Add("(PI.namelowercase LIKE :name OR PI.searchabletext LIKE :wildcard)");
                 queryParams.Add("name", $"%{query.Wildcard.Replace(' ', '%').ToLower()}%");
                 queryParams.Add("wildcard", $"%{query.Wildcard.ToLower()}%");
             }
@@ -730,24 +730,27 @@ namespace IAGrim.Database {
             }
 
             var sql = new List<string> {
-                $@"select name as Name, 
-                StackCount, 
-                rarity as Rarity, 
-                levelrequirement as LevelRequirement, 
-                baserecord as BaseRecord, 
-                prefixrecord as PrefixRecord, 
-                suffixrecord as SuffixRecord, 
-                ModifierRecord as ModifierRecord, 
-                MateriaRecord as MateriaRecord,
-                {PlayerItemTable.PrefixRarity} as PrefixRarity,
-                {PlayerItemTable.AzureUuid} as AzureUuid,
-                {PlayerItemTable.CloudId} as CloudId,
-                {PlayerItemTable.IsCloudSynchronized} as IsCloudSynchronizedValue,
-                {PlayerItemTable.Id} as Id,
-                {PlayerItemTable.Mod} as Mod,
+                $@"select PI.name as Name, 
+                PI.StackCount, 
+                PI.rarity as Rarity, 
+                PI.levelrequirement as LevelRequirement, 
+                PI.baserecord as BaseRecord, 
+                PI.prefixrecord as PrefixRecord, 
+                PI.suffixrecord as SuffixRecord, 
+                PI.ModifierRecord as ModifierRecord, 
+                PI.MateriaRecord as MateriaRecord,
+                PI.{PlayerItemTable.PrefixRarity} as PrefixRarity,
+                PI.{PlayerItemTable.AzureUuid} as AzureUuid,
+                PI.{PlayerItemTable.CloudId} as CloudId,
+                PI.{PlayerItemTable.IsCloudSynchronized} as IsCloudSynchronizedValue,
+                PI.{PlayerItemTable.Id} as Id,
+                PI.{PlayerItemTable.Mod} as Mod,
                 CAST({PlayerItemTable.IsHardcore} as bit) as IsHardcore,
-                coalesce((SELECT group_concat(Record, '|') FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord)), '') AS PetRecord
-                FROM PlayerItem PI WHERE " + string.Join(" AND ", queryFragments)
+                coalesce((SELECT group_concat(Record, '|') FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord)), '') AS PetRecord,
+                R.text AS ReplicaInfo
+                FROM PlayerItem PI 
+                LEFT OUTER JOIN ReplicaItem R ON PI.ID = R.playeritemid
+                WHERE " + string.Join(" AND ", queryFragments)
             };
 
             var subQuery = CreateDatabaseStatQueryParams(query);
@@ -884,6 +887,7 @@ namespace IAGrim.Database {
             string Mod = Convert<string>(arr[idx++]);
             bool IsHardcore = ConvertToBoolean(arr[idx++]);
             string PetRecord = Convert<string>(arr[idx++]);
+            string replicaInfo = Convert<string>(arr[idx++]);
 
 
             return new PlayerItem {
@@ -903,7 +907,8 @@ namespace IAGrim.Database {
                 PetRecord = PetRecord,
                 Id = Id,
                 Mod = Mod,
-                IsHardcore = IsHardcore
+                IsHardcore = IsHardcore,
+                ReplicaInfo = replicaInfo
             };
         }
 
