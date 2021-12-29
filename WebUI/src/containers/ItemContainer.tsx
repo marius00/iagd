@@ -2,6 +2,7 @@ import {h} from "preact";
 import Item, { getUniqueId } from '../components/Item/Item';
 import IItem from '../interfaces/IItem';
 import './ItemContainer.css';
+import './ReplicaStat.css';
 import ReactTooltip from 'react-tooltip';
 import translate from '../translations/EmbeddedTranslator';
 import { setClipboard, transferItem } from '../integration/integration';

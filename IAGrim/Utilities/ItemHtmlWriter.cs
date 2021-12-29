@@ -7,6 +7,7 @@ using System.Linq;
 using EvilsoftCommons.Exceptions;
 using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Model;
+using IAGrim.Services.ItemReplica;
 using IAGrim.UI.Controller.dto;
 using log4net;
 using Newtonsoft.Json;
@@ -49,33 +50,39 @@ namespace IAGrim.Utilities {
         }
 
 
+        private static string GetUniqueIdentifier(PlayerHeldItem item) {
+            switch (item) {
+                case PlayerItem pi:
+                    return $"PI/{pi.Id}/{pi.CloudId}";
+                case BuddyItem bi:
+                    // TODO: Remove this, buddy items are never transferable. Gotta provide a better unique id.
+                    return $"BI/{bi.BuddyId}/{bi.RemoteItemId}";
+                case RecipeItem _:
+                    return $"RI/{item.BaseRecord}";
+                case AugmentationItem _:
+                    return $"AI/{item.BaseRecord}";
+                default:
+                    return $"UK/{item.BaseRecord}";
+            }
+        }
+
         public static JsonItem GetJsonItem(PlayerHeldItem item) {
             // TODO: Modifiers
 
             bool isHardcore = false;
             bool isCloudSynced = false;
             object[] transferUrl = {"", "", "", ""};
-            string uniqueIdentifier;
+            string uniqueIdentifier = GetUniqueIdentifier(item);
+            List<ItemStatInfo> replicaStats = null;
             if (item is PlayerItem pi) {
                 transferUrl = new object[] {pi.BaseRecord, pi.PrefixRecord, pi.SuffixRecord, pi.MateriaRecord, pi.Mod, pi.IsHardcore};
                 isCloudSynced = pi.IsCloudSynchronized;
-                uniqueIdentifier = $"PI/{pi.Id}/{pi.CloudId}";
                 isHardcore = pi.IsHardcore;
-            }
-            else if (item is BuddyItem bi) {
-                // TODO: Remove this, buddy items are never transferable. Gotta provide a better unique id.
-                uniqueIdentifier = $"BI/{bi.BuddyId}/{bi.RemoteItemId}";
-            }
-            else if (item is RecipeItem) {
-                uniqueIdentifier = $"RI/{item.BaseRecord}";
-            }
-            else if (item is AugmentationItem) {
-                uniqueIdentifier = $"AI/{item.BaseRecord}";
-            }
-            else {
-                uniqueIdentifier = $"UK/{item.BaseRecord}";
-            }
 
+                if (!string.IsNullOrEmpty(pi.ReplicaInfo)) {
+                    replicaStats = JsonConvert.DeserializeObject<List<ItemStatInfo>>(pi.ReplicaInfo);
+                }
+            }
 
             ItemTypeDto type;
             string extras = string.Empty;
@@ -86,7 +93,7 @@ namespace IAGrim.Utilities {
             else if (!string.IsNullOrEmpty(item.Stash)) {
                 type = ItemTypeDto.Buddy;
             }
-            else if (item is PlayerItem) {
+            else if (item is PlayerItem playeritem) {
                 type = ItemTypeDto.Player;
             }
             else if (item is AugmentationItem augmentationItem) {
@@ -100,7 +107,7 @@ namespace IAGrim.Utilities {
                 type = ItemTypeDto.Unknown;
             }
 
-
+            bool skipStats = replicaStats != null;
             var json = new JsonItem {
                 UniqueIdentifier = uniqueIdentifier,
                 BaseRecord = item.BaseRecord ?? string.Empty,
@@ -112,19 +119,20 @@ namespace IAGrim.Utilities {
                 Socket = GetSocketFromItem(item?.Name) ?? string.Empty,
                 NumItems = (uint) item.Count,
                 InitialNumItems = (uint) item.Count,
-                PetStats = item.PetStats.Select(ToJsonStat).ToHashSet().ToList(),
-                BodyStats = item.BodyStats.Select(ToJsonStat).ToHashSet().ToList(),
-                HeaderStats = item.HeaderStats.Select(ToJsonStat).ToHashSet().ToList(),
+                PetStats = skipStats ? new List<JsonStat>() : item.PetStats.Select(ToJsonStat).ToHashSet().ToList(),
+                BodyStats = skipStats ? new List<JsonStat>() : item.BodyStats.Select(ToJsonStat).ToHashSet().ToList(),
+                HeaderStats = skipStats ? new List<JsonStat>() : item.HeaderStats.Select(ToJsonStat).ToHashSet().ToList(),
                 Type = type,
                 HasRecipe = item.HasRecipe,
                 Buddies = item.Buddies.ToArray(),
-                Skill = item.Skill != null ? GetJsonSkill(item.Skill) : null,
+                Skill = (item.Skill != null && !skipStats) ? GetJsonSkill(item.Skill) : null,
                 GreenRarity = (int) item.PrefixRarity,
                 HasCloudBackup = isCloudSynced,
                 Slot = SlotTranslator.Translate(RuntimeSettings.Language, item.Slot ?? ""),
                 Extras = extras,
                 IsMonsterInfrequent = item.ModifiedSkills.Any(s => s.IsMonsterInfrequent),
-                IsHardcore = isHardcore
+                IsHardcore = isHardcore,
+                ReplicaStats = replicaStats,
             };
 
             var modifiedSkills = item.ModifiedSkills;

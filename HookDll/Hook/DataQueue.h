@@ -10,7 +10,7 @@
 class DataItem
 {
 public:
-    DataItem(unsigned long _type, unsigned int _size, char* _data);
+    DataItem(unsigned long _type, unsigned int _size, const char* _data);
 
     unsigned long type() const;
     char* data() const;

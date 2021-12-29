@@ -12,6 +12,7 @@ import { IStat, statToString } from '../../interfaces/IStat';
 import ItemCornerContainer from './ItemCornerContainer';
 import { v4 as uuidv4 } from 'uuid';
 import {PureComponent} from "preact/compat";
+import ReplicaStatContainer from "./ReplicaStatContainer";
 
 
 interface Props {
@@ -148,6 +149,7 @@ class Item extends PureComponent<Props, object> {
           <span className="item-socket-label">{item.socket}</span>
           }
 
+          {item.replicaStats && <ReplicaStatContainer rows={item.replicaStats} id={getUniqueId(item)} /> }
           <ul className="headerStats">
             {headerStats}
           </ul>

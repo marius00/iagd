@@ -239,11 +239,10 @@
     <Compile Include="Parsers\TransferStash\TransferStashServiceCache.cs" />
     <Compile Include="Parsers\TransferStash\TransferStashWorker.cs" />
     <Compile Include="Services\HelpService.cs" />
-    <Compile Include="Services\ItemSeedService.cs" />
-    <Compile Include="Services\ItemStatCacheService.cs" />
-    <Compile Include="Services\MessageProcessor\ItemSeedProcessor.cs" />
+    <Compile Include="Services\ItemReplica\ItemStatInfo.cs" />
+    <Compile Include="Services\ItemReplicaService.cs" />
+    <Compile Include="Services\MessageProcessor\ItemReplicaProcessor.cs" />
     <Compile Include="Services\ServiceProvider.cs" />
-    <Compile Include="Settings\Dto\FeatureRecommendation.cs" />
     <Compile Include="Settings\Dto\LocalSettings.cs" />
     <Compile Include="Settings\Dto\PersistentSettings.cs" />
     <Compile Include="Settings\Dto\SettingsTemplate.cs" />
@@ -274,7 +273,6 @@
     <Compile Include="UI\Filters\Resistances.Designer.cs">
       <DependentUpon>Resistances.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Misc\CEF\FeatureSuggestionArgs.cs" />
     <Compile Include="UI\Misc\CEF\GetSetItemAssociationsEventArgs.cs" />
     <Compile Include="UI\Misc\CEF\IBrowserCallbacks.cs" />
     <Compile Include="UI\Misc\CEF\JavascriptIntegration.cs" />
@@ -775,7 +773,6 @@
   <ItemGroup>
     <Folder Include="Listener\" />
     <Folder Include="Required_Bins\" />
-    <Folder Include="Services\ItemReplica\" />
     <Folder Include="UI\Extensions\" />
     <Folder Include="Utilities\Service\" />
   </ItemGroup>

@@ -4,15 +4,27 @@ using System.IO;
 using System.IO.Pipes;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using EvilsoftCommons.Exceptions;
 using IAGrim.Database;
+using IAGrim.Database.Interfaces;
 using log4net;
 using log4net.Repository.Hierarchy;
 
 namespace IAGrim.Services {
-    class ItemSeedService {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(ItemSeedService));
-        public bool DispatchItemSeedInfoRequest(PlayerItem pi) {
+    class ItemReplicaService : IDisposable {
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(ItemReplicaService));
+        private readonly IPlayerItemDao _playerItemDao;
+        private volatile bool _isGrimDawnRunning = false;
+        private volatile bool _isShuttingDown = false;
+        private Thread _t = null;
+
+        public ItemReplicaService(IPlayerItemDao playerItemDao) {
+            _playerItemDao = playerItemDao;
+        }
+
+        private bool DispatchItemSeedInfoRequest(PlayerItem pi) {
             List<byte> buffer = Serialize(pi);
             if (buffer == null) {
                 return false;
@@ -26,12 +38,14 @@ namespace IAGrim.Services {
                     // TODO: Verify if GD is running before even trying. Prevent infinite logspam
                     // Typically: The pipe does not exist
                     Logger.Debug("Timed out connecting to GD");
+                    _isGrimDawnRunning = false;
                     return false;
                 }
                 catch (IOException ex) {
                     // TODO: Some kind of backoff algorithm? Clearly an issue going on.
                     // Typical scenario: The pipe exists, but nobody are accepting connections.
                     Logger.Warn("IOException connecting to GD", ex);
+                    _isGrimDawnRunning = false;
                     return false;
 
                 }
@@ -57,6 +71,20 @@ namespace IAGrim.Services {
                 Logger.Warn("Received a player item with one or more records having a length of >255. Stat reproduction not possible.");
                 return null;
             }
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append(pi.Id + ";");
+            sb.Append(pi.Seed + ";");
+            sb.Append(pi.RelicSeed + ";");
+            sb.Append(pi.EnchantmentSeed + ";");
+            sb.Append(pi.BaseRecord + ";");
+            sb.Append(pi.PrefixRecord + ";");
+            sb.Append(pi.SuffixRecord + ";");
+            sb.Append(pi.ModifierRecord + ";");
+            sb.Append(pi.MateriaRecord + ";");
+            sb.Append(pi.EnchantmentRecord + ";");
+            sb.Append(pi.TransmuteRecord + ";");
+            Logger.Debug($"Dispatching: {sb.ToString()}");
 
             buffer.AddRange(BitConverter.GetBytes((long)pi.Id));
             buffer.AddRange(BitConverter.GetBytes((int)pi.Seed));
@@ -91,6 +119,51 @@ namespace IAGrim.Services {
                 buffer.AddRange(System.Text.Encoding.ASCII.GetBytes(pi.TransmuteRecord));
 
             return buffer;
+        }
+
+        public void SetIsGrimDawnRunning(bool b) {
+            _isGrimDawnRunning = b;
+        }
+
+        public void Start() {
+            if (_t != null)
+                throw new ArgumentException("Max one thread running per instance");
+
+            _t = new Thread(() => {
+                ExceptionReporter.EnableLogUnhandledOnThread();
+
+                while (!_isShuttingDown) {
+                    Process();
+
+                    try {
+                        Thread.Sleep(100);
+                    }
+                    catch (Exception) {
+                        // Don't care
+                    }
+                }
+            });
+
+            _t.Start();
+        }
+
+        private void Process() {
+            if (!_isGrimDawnRunning)
+                return;
+
+            var items = _playerItemDao.ListMissingReplica(100);
+            if (items.Count > 0) {
+                Logger.Debug($"Fetching stats for {items.Count} items");
+            }
+
+            foreach (var item in items) {
+                DispatchItemSeedInfoRequest(item);
+                Thread.Sleep(10);
+            }
+        }
+
+        public void Dispose() {
+            _isShuttingDown = true;
         }
     }
 }

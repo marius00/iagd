@@ -1,6 +1,7 @@
 import { IStat } from './IStat';
 import { ISkill } from './ISkill';
 import IItemType from './IItemType';
+import {IReplicaRow} from "./IReplicaRow";
 
 export default interface IItem {
   uniqueIdentifier: string;
@@ -26,5 +27,6 @@ export default interface IItem {
   extras?: string | undefined;
   isMonsterInfrequent?: boolean;
   isHardcore: boolean;
+  replicaStats: IReplicaRow[];
 }
 

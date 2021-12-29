@@ -1019,7 +1019,7 @@ DELETE FROM PlayerItem WHERE Id IN (
             }
         }
 
-        public IList<PlayerItem> ListWithMissingStatCache() {
+        public IList<PlayerItem> ListMissingReplica(int limit) {
             var sql = $@"
                 select name as Name, 
                 {PlayerItemTable.Id} as Id,
@@ -1034,36 +1034,21 @@ DELETE FROM PlayerItem WHERE Id IN (
                 {PlayerItemTable.PrefixRarity} as PrefixRarity,
                 {PlayerItemTable.AzureUuid} as AzureUuid,
                 {PlayerItemTable.CloudId} as CloudId,
-                {PlayerItemTable.IsCloudSynchronized} as IsCloudSynchronizedValue,
-                coalesce((SELECT group_concat(Record, '|') FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord)),'') AS PetRecord
-                FROM PlayerItem PI WHERE SearchableText IS NULL OR SearchableText = '' LIMIT 50";
+                {PlayerItemTable.IsCloudSynchronized} as IsCloudSynchronizedValue
+                FROM PlayerItem PI 
+                WHERE Id NOT IN (SELECT R.PlayerItemId FROM ReplicaItem R WHERE R.PlayerItemId IS NOT NULL)
+                AND MOD = ''
+                LIMIT :limit ";
 
             using (var session = SessionCreator.OpenSession()) {
                 using (session.BeginTransaction()) {
                     return session.CreateSQLQuery(sql)
                         .SetResultTransformer(new AliasToBeanResultTransformer(typeof(PlayerItem)))
+                        .SetParameter("limit", limit)
                         .List<PlayerItem>();
                 }
             }
         }
 
-        public void UpdateCachedStats(IList<PlayerItem> items) {
-            const string table = nameof(PlayerItem);
-            const string searchableText = nameof(PlayerItem.SearchableText);
-            const string id = nameof(PlayerItem.Id);
-
-            using (var session = SessionCreator.OpenSession()) {
-                using (var transaction = session.BeginTransaction()) {
-                    foreach (var item in items) {
-                        session.CreateQuery($@"UPDATE {table} SET {searchableText} = :searchableText WHERE {id} = :id")
-                            .SetParameter("searchableText", item.SearchableText.ToLowerInvariant())
-                            .SetParameter("id", item.Id)
-                            .ExecuteUpdate();
-                    }
-
-                    transaction.Commit();
-                }
-            }
-        }
     }
 }

@@ -2,7 +2,7 @@
 #include "DataQueue.h"
 
 
-DataItem::DataItem(unsigned long _type, unsigned int _size, char* _data)
+DataItem::DataItem(unsigned long _type, unsigned int _size, const char* _data)
     : m_type(_type)
     , m_size(_size)
 {

@@ -2,17 +2,18 @@
 using System.Text;
 using IAGrim.Database;
 using IAGrim.Database.Interfaces;
+using IAGrim.Services.ItemReplica;
 using IAGrim.UI.Misc;
 using log4net;
 using Newtonsoft.Json;
 
 namespace IAGrim.Services.MessageProcessor {
-    class ItemSeedProcessor : IMessageProcessor {
-        private readonly ILog _logger = LogManager.GetLogger(typeof(ItemSeedProcessor));
+    class ItemReplicaProcessor : IMessageProcessor {
+        private readonly ILog _logger = LogManager.GetLogger(typeof(ItemReplicaProcessor));
         private const char Separator = ';';
         private readonly IReplicaItemDao _replicaItemDao;
 
-        public ItemSeedProcessor(IReplicaItemDao replicaItemDao) {
+        public ItemReplicaProcessor(IReplicaItemDao replicaItemDao) {
             this._replicaItemDao = replicaItemDao;
         }
 
@@ -31,7 +32,7 @@ namespace IAGrim.Services.MessageProcessor {
                     return;
             }
 
-            _logger.Info($"Experimental hook success: {type} {dataString}");
+            _logger.Info($"Experimental hook success: {type} {dataString.Replace('\n','N')}");
 
             var lines = dataString.Split('\n');
             if (lines.Length < 2) {
@@ -161,9 +162,6 @@ namespace IAGrim.Services.MessageProcessor {
             };
         }
 
-        class ItemStatInfo {
-            public int Type { get; set; }
-            public string Text { get; set; }
-        }
+
     }
 }

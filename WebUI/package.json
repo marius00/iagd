@@ -11,6 +11,7 @@
     "test": "jest ./tests"
   },
   "eslintConfig": {
+
     "parser": "@typescript-eslint/parser",
     "extends": [
       "preact",

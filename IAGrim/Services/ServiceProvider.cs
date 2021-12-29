@@ -129,10 +129,10 @@ namespace IAGrim.Services {
             services.Add(recipeItemDao);
             services.Add(itemCollectionRepo);
             services.Add(searchController);
-            services.Add(new ItemSeedService());
+            services.Add(new ItemReplicaService(playerItemDao));
             services.Add(replicaItemDao);
 
-            services.Add(new ItemSeedProcessor(replicaItemDao));
+            services.Add(new ItemReplicaProcessor(replicaItemDao));
 
             services.Add(itemStatService);
 

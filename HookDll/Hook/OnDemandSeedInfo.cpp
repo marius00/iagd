@@ -286,7 +286,8 @@ void OnDemandSeedInfo::GetItemInfo(ParsedSeedRequest obj) {
 			SetEvent(m_hEvent);
 		}
 		else {
-			DataItemPtr item(new DataItem(TYPE_ITEMSEEDDATA_PLAYERID_ERR_NOITEM, 0, nullptr));
+			std::string str = obj.itemReplicaInfo.baseRecord;
+			DataItemPtr item(new DataItem(TYPE_ITEMSEEDDATA_PLAYERID_ERR_NOITEM, str.size(), (char*)str.c_str()));
 			m_dataQueue->push(item);
 			SetEvent(m_hEvent);
 		}

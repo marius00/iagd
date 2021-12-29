@@ -22,6 +22,7 @@ namespace DllInjector {
         public const int NO_PROCESS_FOUND_ON_STARTUP = 1;
         public const int NO_PROCESS_FOUND = 2;
         public const int INJECTION_ERROR_POSSIBLE_ACCESS_DENIED = 3;
+        public const int STILL_RUNNING = 4;
 
         private readonly ProgressChangedEventHandler _registeredProgressCallback;
 
@@ -198,11 +199,8 @@ namespace DllInjector {
 
 
 
-            string dll32Bit = Path.Combine(Directory.GetCurrentDirectory(), arguments.DllName.Replace(".dll", "_x86.dll"));
             string dll64Bit = Path.Combine(Directory.GetCurrentDirectory(), arguments.DllName.Replace(".dll", "_x64.dll"));
-            if (!File.Exists(dll32Bit)) {
-                Logger.FatalFormat("Could not find {1} at \"{0}\"", dll32Bit, arguments.DllName);
-            } else if (!File.Exists(dll64Bit)) {
+            if (!File.Exists(dll64Bit)) {
                 Logger.FatalFormat("Could not find {1} at \"{0}\"", dll64Bit, arguments.DllName);
             }
             else {
@@ -223,21 +221,12 @@ namespace DllInjector {
                             }
                         }
                         else {
-                            if (InjectionVerifier.VerifyInjection(pid, dll32Bit)) {
-                                Logger.Info($"DLL already injected into target process, skipping injection into {pid}");
-                                _dontLog.Add(pid);
-                                _previouslyInjected.Add(pid);
-                            }
-                            else {
-                                //DllInjector.NewInject(pid, dll32Bit);
-                                Inject32Bit("Grim Dawn.exe", dll32Bit);
-
-
-                                if (!InjectionVerifier.VerifyInjection(pid, dll32Bit)) {
-                                    worker.ReportProgress(INJECTION_ERROR, null);
-                                }
-                            }
+                            Logger.Fatal("This version of Item Assistant does not support 32bit Grim Dawn");
                         }
+                    }
+                    else {
+                        worker.ReportProgress(STILL_RUNNING, null);
+
                     }
                 }
             }

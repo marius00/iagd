@@ -25,47 +25,7 @@ namespace IAGrim.Settings.Dto {
         private bool _autoDismissNotifications;
 
         private long _cloudUploadTimestamp;
-        private List<FeatureRecommendation> _shownFeatureRecommendations;
 
-
-        public void AddShownFeature(FeatureRecommendation feature) {
-            if (_shownFeatureRecommendations == null) {
-                _shownFeatureRecommendations = new List<FeatureRecommendation>();
-            }
-
-            if (!_shownFeatureRecommendations.Contains(feature)) {
-                _shownFeatureRecommendations.Add(feature);
-            }
-
-            OnMutate?.Invoke(null, null);
-        }
-
-        public List<FeatureRecommendation> FeaturesNotShown {
-            get {
-                var result = new List<FeatureRecommendation>();
-                /*
-                foreach (var feature in new[] {
-                    FeatureRecommendation.SetBonus,
-                    FeatureRecommendation.CollectionsTab,
-                    FeatureRecommendation.HelpTab,
-                    FeatureRecommendation.CraftingTab
-                }) {
-                    if (_shownFeatureRecommendations == null || !_shownFeatureRecommendations.Contains(feature)) {
-                        result.Add(feature);
-                    }
-                }*/
-
-                return result;
-            }
-        }
-
-        public List<FeatureRecommendation> ShownFeatureRecommendations {
-            get => _shownFeatureRecommendations;
-            set {
-                _shownFeatureRecommendations = value;
-                OnMutate?.Invoke(null, null);
-            }
-        }
 
         // Azure Backups
         [Obsolete]
