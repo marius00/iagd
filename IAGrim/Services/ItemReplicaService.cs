@@ -35,14 +35,12 @@ namespace IAGrim.Services {
                     pipeStream.Connect(250);
                 }
                 catch (TimeoutException) {
-                    // TODO: Verify if GD is running before even trying. Prevent infinite logspam
                     // Typically: The pipe does not exist
                     Logger.Debug("Timed out connecting to GD");
                     _isGrimDawnRunning = false;
                     return false;
                 }
                 catch (IOException ex) {
-                    // TODO: Some kind of backoff algorithm? Clearly an issue going on.
                     // Typical scenario: The pipe exists, but nobody are accepting connections.
                     Logger.Warn("IOException connecting to GD", ex);
                     _isGrimDawnRunning = false;
@@ -134,13 +132,7 @@ namespace IAGrim.Services {
 
                 while (!_isShuttingDown) {
                     Process();
-
-                    try {
-                        Thread.Sleep(500);
-                    }
-                    catch (Exception) {
-                        // Don't care
-                    }
+                    Thread.Sleep(1500); // On a high end pc, any lower than 1000 and we'll be re-dispatching items before we receive a result.
                 }
             });
 
@@ -154,15 +146,18 @@ namespace IAGrim.Services {
             var items = _playerItemDao.ListMissingReplica(300);
             if (items.Count > 0) {
                 Logger.Debug($"Fetching stats for {items.Count} items");
+            } else {
+                Thread.Sleep(1000 * 60 * 5); // Ease off to every 5min
             }
 
-            
             foreach (var item in items) {
                 if (!DispatchItemSeedInfoRequest(item))
                     Thread.Sleep(2000);
 
                 Thread.Sleep(15);
             }
+
+            
         }
 
         public void Dispose() {

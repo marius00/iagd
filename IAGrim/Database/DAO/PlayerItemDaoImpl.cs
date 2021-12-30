@@ -1020,8 +1020,9 @@ DELETE FROM PlayerItem WHERE Id IN (
         }
 
         public IList<PlayerItem> ListMissingReplica(int limit) {
-            var armorSlots = new[] { "ArmorProtective_Head", "ArmorProtective_Hands", "ArmorProtective_Feet", "ArmorProtective_Legs", "ArmorProtective_Chest", "ArmorProtective_Waist", "ArmorJewelry_Medal", "ArmorJewelry_Ring", "ArmorProtective_Shoulders", "ArmorJewelry_Amulet" };
-            var subQuerySql = $@"
+
+            //TODO: Test ItemArtifact
+            var specificItemTypesOnlySql = $@"
                 SELECT Playeritemid FROM PlayerItemRecord WHERE record IN (
                     select baserecord from databaseitem_V2 db where db.baserecord in (
                         select baserecord from {PlayerItemTable.Table} union 
@@ -1032,31 +1033,74 @@ DELETE FROM PlayerItem WHERE Id IN (
                     AND exists (
                         select id_databaseitem from databaseitemstat_v2 dbs 
                         WHERE stat = 'Class' 
-                        AND TextValue in ( 'ArmorProtective_Head', 'ArmorProtective_Hands', 'ArmorProtective_Feet', 'ArmorProtective_Legs', 'ArmorProtective_Chest', 'ArmorProtective_Waist', 'ArmorJewelry_Medal', 'ArmorJewelry_Ring', 'ArmorProtective_Shoulders', 'ArmorJewelry_Amulet' ) 
+                        AND TextValue in ( 
+                            'ArmorProtective_Head', 
+                            'ArmorProtective_Hands', 
+                            'ArmorProtective_Feet', 
+                            'ArmorProtective_Legs', 
+                            'ArmorProtective_Chest', 
+                            'ArmorProtective_Waist', 
+                            'ArmorJewelry_Medal', 
+                            'ArmorJewelry_Ring', 
+                            'ArmorProtective_Shoulders', 
+                            'ArmorJewelry_Amulet',
+                            'WeaponMelee_Dagger', 
+                            'WeaponMelee_Mace', 
+                            'WeaponMelee_Axe',
+                            'WeaponMelee_Scepter',
+                            'WeaponMelee_Sword',
+                            'WeaponMelee_Sword2h',
+                            'WeaponMelee_Mace2h',
+                            'WeaponMelee_Axe2h',
+                            'WeaponHunting_Ranged1h',
+                            'WeaponHunting_Ranged2h',
+                            'WeaponArmor_Offhand',
+                            'WeaponArmor_Shield'
+                        ) 
                         AND db.id_databaseitem = dbs.id_databaseitem
                     )
                 )
                 ";
 
+            var excludeSetBOnusItems = @"
+				AND NOT PI.Id IN (
+				                        SELECT Playeritemid FROM PlayerItemRecord WHERE record IN (
+                            select baserecord from databaseitem_V2 db where db.baserecord in (
+                                select baserecord from playeritem union 
+                                select prefixrecord from playeritem union 
+                                select suffixrecord from playeritem union 
+                                select materiarecord from playeritem
+                            )
+                            AND exists (select id_databaseitem from databaseitemstat_v2 dbs where stat in ( 'setName', 'itemSetName' ) and db.id_databaseitem = dbs.id_databaseitem)
+                        )
+				)
+";
+
+
+            //AND NOT baserecord LIKE '%consumables%'
+            //AND NOT baserecord LIKE '%/potions/%'
+            //AND NOT baserecord LIKE '%/crafting/%'
+
             var sql = $@"
-                select name as Name, 
+                SELECT
                 {PlayerItemTable.Id} as Id,
-                {PlayerItemTable.Stackcount}, 
-                rarity as Rarity, 
-                levelrequirement as LevelRequirement, 
+                {PlayerItemTable.Seed} as Seed,
+                PI.RelicSeed as RelicSeed,
+                PI.EnchantmentSeed as EnchantmentSeed,
                 {PlayerItemTable.Record} as BaseRecord, 
                 {PlayerItemTable.Prefix} as PrefixRecord, 
                 {PlayerItemTable.Suffix} as SuffixRecord, 
                 {PlayerItemTable.ModifierRecord} as ModifierRecord, 
-                MateriaRecord as MateriaRecord,
-                {PlayerItemTable.PrefixRarity} as PrefixRarity,
-                {PlayerItemTable.AzureUuid} as AzureUuid,
-                {PlayerItemTable.CloudId} as CloudId,
-                {PlayerItemTable.IsCloudSynchronized} as IsCloudSynchronizedValue
+                PI.MateriaRecord as MateriaRecord,
+                PI.EnchantmentRecord as EnchantmentRecord,
+                PI.TransmuteRecord as TransmuteRecord
                 FROM PlayerItem PI 
-                WHERE Id NOT IN (SELECT R.PlayerItemId FROM ReplicaItem R WHERE R.PlayerItemId IS NOT NULL)
+                WHERE PI.Id NOT IN (SELECT R.PlayerItemId FROM ReplicaItem R WHERE R.PlayerItemId IS NOT NULL)
                 AND MOD = '' 
-                AND PI.Id IN ({subQuerySql})
+
+                AND PI.Id IN ({specificItemTypesOnlySql})
+                {excludeSetBOnusItems}
+                order by RANDOM ()
                 LIMIT :limit ";
 
 

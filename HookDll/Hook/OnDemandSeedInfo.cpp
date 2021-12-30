@@ -228,7 +228,7 @@ void OnDemandSeedInfo::Process() {
 		// Parse and queue item seed read
 		ParsedSeedRequest* obj = Parse(&buffer[0], numBytesRead);
 		ParsedSeedRequestPtr abc(obj);
-		if (!m_itemQueue.push(abc, 100)) {
+		if (!m_itemQueue.push(abc, 300)) {
 			slowDown = true;
 			// Will just discard data if >100
 			// TODO: Notify IA that it needs to slow the fk down?
