@@ -144,18 +144,20 @@ namespace IAGrim.Utilities {
                 ReplicaStats = replicaStats,
             };
 
-            var modifiedSkills = item.ModifiedSkills;
-            foreach (var modifiedSkill in modifiedSkills) {
-                var translated = modifiedSkill.Translated;
-                foreach (var stat in translated.Select(ToJsonStat)) {
-                    json.BodyStats.Add(stat);
-                }
+            if (!skipStats) {
+                var modifiedSkills = item.ModifiedSkills;
+                foreach (var modifiedSkill in modifiedSkills) {
+                    var translated = modifiedSkill.Translated;
+                    foreach (var stat in translated.Select(ToJsonStat)) {
+                        json.BodyStats.Add(stat);
+                    }
 
-                if (translated.Count == 0 && !(modifiedSkill.Class == null || modifiedSkill.Tier == null)) {
-                    string[] uri = json.URL.Select(o => (o ?? string.Empty).ToString()).ToArray();
+                    if (translated.Count == 0 && !(modifiedSkill.Class == null || modifiedSkill.Tier == null)) {
+                        string[] uri = json.URL.Select(o => (o ?? string.Empty).ToString()).ToArray();
 
-                    var error = $@"Could not translate skill-modifier on: '{item.Name}', {json.BaseRecord} - {string.Join(";", uri)}";
-                    Logger.Debug($"Could not translate skill-modifier stats for \"{item.Name}\"");
+                        var error = $@"Could not translate skill-modifier on: '{item.Name}', {json.BaseRecord} - {string.Join(";", uri)}";
+                        Logger.Debug($"Could not translate skill-modifier stats for \"{item.Name}\"");
+                    }
                 }
             }
 

@@ -39,11 +39,6 @@ namespace IAGrim.UI.Misc.CEF {
             return JsonConvert.SerializeObject(ret, _settings);
         }
 
-        public string RequestStats() {
-            MessageBox.Show("Stuff");
-            return "stuff";
-        }
-
         public string GetTranslationStrings() {
             var lang = RuntimeSettings.Language;
             Dictionary<string, string> translations = new Dictionary<string, string> {
