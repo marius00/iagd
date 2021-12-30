@@ -1,6 +1,13 @@
 .replica p {
   margin: 2px;
 }
+
+/* Item name: Armor */
+.replica-type-4 {
+  display: none;
+}
+
+/* Item Name: Weapon */
 .replica-type-5 {
   display: none;
 }
@@ -16,6 +23,10 @@
   display: block;
 }
 
+/* Weapon damage and total armor */
+.replica-type-17 {
+  color: var(--item-stat-modifier);
+}
 
 
 /* +x to SomeSkill */
@@ -30,7 +41,12 @@
   color: var(--item-stat-modifier);
 }
 .replica-letter-E {
-  color: var(--item-stat-label);;
+  color: var(--item-stat-label);
+
+}
+/* Item stat, number at the end: Increases Armor by ^H-30%*/
+.replica-letter-H {
+  color: var(--item-stat-modifier);
 }
 
 /* Granted skills */
@@ -53,4 +69,38 @@
 /* Level requirement, spirit requirement, etc.. show or noshow? */
 .replica-type-19 {
   color: var(--item-disabled);
+}
+
+/* Component name */
+.replica-type-27 {
+  color: var(--item-color-yellow);
+  display: inline;
+}
+
+/* Just says "Component" */
+.replica-type-29 {
+  display: inline;
+  font-size: 10px;
+}
+.replica-type-29::before {
+  content: '(';
+}
+.replica-type-29::after {
+  content: ')';
+}
+
+/* Component modifiers */
+.replica-type-31 {
+  margin-left: 14px !important;
+  color: var(--item-stat-modifier);
+}
+
+/* "Bonus to all pets" */
+.replica-type-68 {
+  font-weight: bold;
+}
+/* "Bonus to all pets" modifiers */
+.replica-type-69 {
+  margin-left: 14px !important;
+  color: var(--item-stat-modifier);
 }
