@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace IAGrim.UI.Controller {
+    [Obsolete]
     interface ISettingsController {
         bool MinimizeToTray { get; set; }
         bool TransferAnyMod { get; set; }
