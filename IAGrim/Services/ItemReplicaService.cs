@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using EvilsoftCommons.Exceptions;
 using IAGrim.Database;
 using IAGrim.Database.Interfaces;
+using IAGrim.Utilities;
 using log4net;
 using log4net.Repository.Hierarchy;
 
@@ -19,6 +20,7 @@ namespace IAGrim.Services {
         private volatile bool _isGrimDawnRunning = false;
         private volatile bool _isShuttingDown = false;
         private Thread _t = null;
+        private ActionCooldown _cooldown = new ActionCooldown(500);
 
         public ItemReplicaService(IPlayerItemDao playerItemDao) {
             _playerItemDao = playerItemDao;
@@ -131,33 +133,36 @@ namespace IAGrim.Services {
                 ExceptionReporter.EnableLogUnhandledOnThread();
 
                 while (!_isShuttingDown) {
-                    Process();
-                    Thread.Sleep(1500); // On a high end pc, any lower than 1000 and we'll be re-dispatching items before we receive a result.
+                    if (_cooldown.IsReady) {
+                        _cooldown = Process() ? new ActionCooldown(1500) : new ActionCooldown(15000);
+                    }
+                    
+                    Thread.Sleep(1);
                 }
             });
 
             _t.Start();
         }
 
-        private void Process() {
+        private bool Process() {
             if (!_isGrimDawnRunning)
-                return;
+                return false;
 
             var items = _playerItemDao.ListMissingReplica(300);
             if (items.Count > 0) {
                 Logger.Debug($"Fetching stats for {items.Count} items");
             } else {
-                Thread.Sleep(1000 * 60 * 5); // Ease off to every 5min
+                return false;
             }
 
             foreach (var item in items) {
                 if (!DispatchItemSeedInfoRequest(item))
-                    Thread.Sleep(2000);
+                    return false; //
 
-                Thread.Sleep(15);
+                Thread.Sleep(1);
             }
 
-            
+            return true;
         }
 
         public void Dispose() {
