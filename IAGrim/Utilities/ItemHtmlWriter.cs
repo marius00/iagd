@@ -108,6 +108,15 @@ namespace IAGrim.Utilities {
             }
 
             bool skipStats = replicaStats != null;
+            if (skipStats) {
+                extras = string.Join("\n", item.BodyStats
+                    .Where(m => m.Extra != null)
+                    .Select(m => m.Param3 + ": " +  m.Extra.ToString())
+                    .ToList());
+                
+
+            }
+
             var json = new JsonItem {
                 UniqueIdentifier = uniqueIdentifier,
                 BaseRecord = item.BaseRecord ?? string.Empty,
