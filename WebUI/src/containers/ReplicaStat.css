@@ -2,13 +2,13 @@
   margin: 2px;
 }
 
-/* Item name: Armor */
-.replica-type-4 {
-  display: none;
+/* Item description, bla bla text */
+.replica-type-16 {
+  color: var(--item-misc-info);
 }
 
-/* Item Name: Weapon */
-.replica-type-5 {
+/* 4: Item name: Armor, 5: Weapon, 6: Gazer man (head?) */
+.replica-type-4, .replica-type-5, .replica-type-6 {
   display: none;
 }
 
@@ -37,7 +37,7 @@
 }
 
 /* Regular item stats */
-.replica-type-18 {
+.replica-type-18, .replica-type-25 {
   color: var(--item-stat-modifier);
 }
 .replica-letter-E {
@@ -56,13 +56,13 @@
   color: var(--item-grantskill-label);
 }
 /* Skill name */
-.replica-type-35 {
+.replica-type-35, .replica-type-36 {
   font-weight: bold;
   color: var(--item-grantskill-content);
 }
 
 /* Skill description */
-.replica-type-37 {
+.replica-type-37, .replica-type-38 {
   color: var(--item-misc-info);
 }
 
@@ -81,6 +81,7 @@
 .replica-type-29 {
   display: inline;
   font-size: 10px;
+  color: var(--item-color-yellow);
 }
 .replica-type-29::before {
   content: '(';
@@ -95,9 +96,10 @@
   color: var(--item-stat-modifier);
 }
 
-/* "Bonus to all pets" */
-.replica-type-68 {
+/* 68: "Bonus to all pets", 23: Grants skill */
+.replica-type-68, .replica-type-23 {
   font-weight: bold;
+  color: var(--item-grantskill-label);
 }
 /* "Bonus to all pets" modifiers */
 .replica-type-69 {
