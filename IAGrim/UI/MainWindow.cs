@@ -77,6 +77,9 @@ namespace IAGrim.UI {
 
         #region Stash Status
 
+        // TODO: TEMPORARY FIX!
+        private bool _hasShownStashErrorPage = false;
+
         /// <summary>
         /// Toolstrip callback for GDInjector
         /// </summary>
@@ -91,7 +94,10 @@ namespace IAGrim.UI {
                     _itemReplicaService.SetIsGrimDawnRunning(false);
                     RuntimeSettings.StashStatus = StashAvailability.ERROR;
                     statusLabel.Text = e.UserState as string;
-                    _cefBrowserHandler.ShowHelp(HelpService.HelpType.StashError);
+                    if (!_hasShownStashErrorPage) {
+                        _cefBrowserHandler.ShowHelp(HelpService.HelpType.StashError);
+                        _hasShownStashErrorPage = true;
+                    }
                 }
                 // No grim dawn client, so stash is closed!
                 else if (e.ProgressPercentage == InjectionHelper.NO_PROCESS_FOUND_ON_STARTUP) {
@@ -109,7 +115,10 @@ namespace IAGrim.UI {
                 else if (e.ProgressPercentage == InjectionHelper.INJECTION_ERROR_POSSIBLE_ACCESS_DENIED) {
                     _itemReplicaService.SetIsGrimDawnRunning(false);
                     RuntimeSettings.StashStatus = StashAvailability.ERROR;
-                    _cefBrowserHandler.ShowHelp(HelpService.HelpType.StashError);
+                    if (!_hasShownStashErrorPage) {
+                        _cefBrowserHandler.ShowHelp(HelpService.HelpType.StashError);
+                        _hasShownStashErrorPage = true;
+                    }
                 }
 
                 else if (e.ProgressPercentage == InjectionHelper.STILL_RUNNING) {
@@ -500,7 +509,7 @@ namespace IAGrim.UI {
 
             
             _itemReplicaService = _serviceProvider.Get<ItemReplicaService>();
-            // _itemReplicaService.Start(); // Not thread safe yet
+            _itemReplicaService.Start(); // Not thread safe yet
             
 
 #if !DEBUG
