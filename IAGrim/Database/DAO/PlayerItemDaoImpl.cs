@@ -670,7 +670,7 @@ namespace IAGrim.Database {
             var queryParams = new Dictionary<string, object>();
 
             if (!string.IsNullOrEmpty(query.Wildcard)) {
-                queryFragments.Add("(PI.namelowercase LIKE :name OR PI.searchabletext LIKE :wildcard)");
+                queryFragments.Add("(PI.namelowercase LIKE :name OR PI.searchabletext LIKE :wildcard OR R.text LIKE :wildcard)");
                 queryParams.Add("name", $"%{query.Wildcard.Replace(' ', '%').ToLower()}%");
                 queryParams.Add("wildcard", $"%{query.Wildcard.ToLower()}%");
             }
