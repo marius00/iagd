@@ -15,9 +15,8 @@
 #include "Exports.h"
 #include "CanUseDismantle.h"
 #include "EquipmentSeedInfo.h"
-#include "ItemRelicSeedInfo.h"
-#include "ItemSeedInfo.h"
 #include "OnDemandSeedInfo.h"
+#include "GameEngineUpdate.h"
 
 #pragma region Variables
 // Switches hook logging on/off
@@ -185,8 +184,9 @@ int ProcessAttach(HINSTANCE _hModule) {
 	ConfigureStashDetectionHooks(hooks);
 
 	hooks.push_back(new EquipmentSeedInfo(&g_dataQueue, g_hEvent, &g_log));
-	//hooks.push_back(new ItemRelicSeedInfo(&g_dataQueue, g_hEvent, &g_log));
-	//hooks.push_back(new ItemSeedInfo(&g_dataQueue, g_hEvent, &g_log));
+	//hooks.push_back(listener);
+	hooks.push_back(new GameEngineUpdate(&g_dataQueue, g_hEvent, &g_log));
+	
 
 	std::stringstream msg;
 	msg << "Starting hook enabling.. " << hooks.size() << " hooks.";

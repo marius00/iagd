@@ -81,13 +81,10 @@
     <ClInclude Include="EquipmentSeedInfo.h">
       <Filter>CoreHooks\ItemSeed</Filter>
     </ClInclude>
-    <ClInclude Include="ItemRelicSeedInfo.h">
-      <Filter>CoreHooks\ItemSeed</Filter>
-    </ClInclude>
-    <ClInclude Include="ItemSeedInfo.h">
-      <Filter>CoreHooks\ItemSeed</Filter>
-    </ClInclude>
     <ClInclude Include="OnDemandSeedInfo.h">
+      <Filter>CoreHooks\ItemSeed</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEngineUpdate.h">
       <Filter>CoreHooks\ItemSeed</Filter>
     </ClInclude>
   </ItemGroup>
@@ -143,13 +140,10 @@
     <ClCompile Include="EquipmentSeedInfo.cpp">
       <Filter>CoreHooks\ItemSeed</Filter>
     </ClCompile>
-    <ClCompile Include="ItemRelicSeedInfo.cpp">
-      <Filter>CoreHooks\ItemSeed</Filter>
-    </ClCompile>
-    <ClCompile Include="ItemSeedInfo.cpp">
-      <Filter>CoreHooks\ItemSeed</Filter>
-    </ClCompile>
     <ClCompile Include="OnDemandSeedInfo.cpp">
+      <Filter>CoreHooks\ItemSeed</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngineUpdate.cpp">
       <Filter>CoreHooks\ItemSeed</Filter>
     </ClCompile>
   </ItemGroup>

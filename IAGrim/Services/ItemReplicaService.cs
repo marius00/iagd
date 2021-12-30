@@ -136,7 +136,7 @@ namespace IAGrim.Services {
                     Process();
 
                     try {
-                        Thread.Sleep(100);
+                        Thread.Sleep(500);
                     }
                     catch (Exception) {
                         // Don't care
@@ -151,14 +151,17 @@ namespace IAGrim.Services {
             if (!_isGrimDawnRunning)
                 return;
 
-            var items = _playerItemDao.ListMissingReplica(100);
+            var items = _playerItemDao.ListMissingReplica(300);
             if (items.Count > 0) {
                 Logger.Debug($"Fetching stats for {items.Count} items");
             }
 
+            
             foreach (var item in items) {
-                DispatchItemSeedInfoRequest(item);
-                Thread.Sleep(10);
+                if (!DispatchItemSeedInfoRequest(item))
+                    Thread.Sleep(2000);
+
+                Thread.Sleep(15);
             }
         }
 

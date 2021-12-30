@@ -6,6 +6,7 @@
 #include "OnDemandSeedInfo.h"
 #include "Exports.h"
 
+
 OnDemandSeedInfo::pItemEquipmentGetUIDisplayText OnDemandSeedInfo::fnItemEquipmentGetUIDisplayText;
 OnDemandSeedInfo* OnDemandSeedInfo::g_self;
 OnDemandSeedInfo::OnDemandSeedInfo() {}
@@ -15,6 +16,19 @@ OnDemandSeedInfo::OnDemandSeedInfo(DataQueue* dataQueue, HANDLE hEvent) {
 	hPipe = NULL;
 	m_thread = NULL;
 	fnItemEquipmentGetUIDisplayText = pItemEquipmentGetUIDisplayText(GetProcAddress(GetModuleHandle(TEXT("game.dll")), "?GetUIDisplayText@ItemEquipment@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@@Z"));
+}
+
+void OnDemandSeedInfo::EnableHook() {
+	originalMethod = (OriginalMethodPtr)HookGame(
+		"?Update@GameEngine@GAME@@QEAAXH@Z",
+		HookedMethod,
+		m_dataQueue,
+		m_hEvent,
+		TYPE_GAMEENGINE_UPDATE
+	);
+}
+void OnDemandSeedInfo::DisableHook() {
+	Unhook((PVOID*)&originalMethod, HookedMethod);
 }
 
 /*
@@ -70,7 +84,7 @@ void OnDemandSeedInfo::Start() {
 * Parse data from the PIPE
 * As per definition in Item Assistant (sender)
 */
-ParsedSeedRequest OnDemandSeedInfo::Parse(char* databuffer, size_t length) {
+ParsedSeedRequest* OnDemandSeedInfo::Parse(char* databuffer, size_t length) {
 	int pos = 0;
 	__int32 recordLength;
 
@@ -180,9 +194,9 @@ ParsedSeedRequest OnDemandSeedInfo::Parse(char* databuffer, size_t length) {
 	replica.transmuteRecord = std::string(transmuteRecord);
 	replica.stackSize = 1;
 
-	ParsedSeedRequest result = ParsedSeedRequest();
-	result.itemReplicaInfo = replica;
-	result.playerItemId = playerItemId;
+	ParsedSeedRequest* result = new ParsedSeedRequest();
+	result->itemReplicaInfo = replica;
+	result->playerItemId = playerItemId;
 	return result;
 }
 
@@ -208,17 +222,17 @@ void OnDemandSeedInfo::Process() {
 			return;
 	}
 
+	bool slowDown = false;
 	BOOL fSuccess = ReadFile(hPipe, buffer, sizeof(buffer) / sizeof(char), &numBytesRead, nullptr);
-
 	if (fSuccess && numBytesRead > 0) {
-		ParsedSeedRequest obj = Parse(&buffer[0], numBytesRead);
-		GetItemInfo(obj);
-		/*
-		std::wstring str = L"1234\nabc";
-
-		DataItemPtr item(new DataItem(TYPE_ITEMSEEDDATA_PLAYERID, str.size() * sizeof(wchar_t), (char*)str.c_str()));
-		m_dataQueue->push(item);
-		SetEvent(m_hEvent);*/
+		// Parse and queue item seed read
+		ParsedSeedRequest* obj = Parse(&buffer[0], numBytesRead);
+		ParsedSeedRequestPtr abc(obj);
+		if (!m_itemQueue.push(abc, 100)) {
+			slowDown = true;
+			// Will just discard data if >100
+			// TODO: Notify IA that it needs to slow the fk down?
+		}
 
 		DataItemPtr item(new DataItem(TYPE_ITEMSEEDDATA_PLAYERID_DEBUG_RECV, sizeof(numBytesRead), (char*)&numBytesRead));
 		m_dataQueue->push(item);
@@ -233,6 +247,10 @@ void OnDemandSeedInfo::Process() {
 		isConnected = false;
 	}
 
+	// Give the game loop some time to catch up
+	if (slowDown) {
+		Sleep(2500);
+	}
 }
 
 
@@ -271,8 +289,6 @@ void OnDemandSeedInfo::GetItemInfo(ParsedSeedRequest obj) {
 			fnItemEquipmentGetUIDisplayText((GAME::ItemEquipment*)newItem, (GAME::Character*)fnGetMainPlayer(fnGetgGameEngine()), &gameTextLines);
 			fnDestroyObjectEx(fnGetObjectManager(), (GAME::Object*)newItem, nullptr, 0);
 
-
-
 			std::wstringstream stream;
 
 			GAME::ItemReplicaInfo replica;
@@ -299,3 +315,79 @@ void OnDemandSeedInfo::GetItemInfo(ParsedSeedRequest obj) {
 	}
 }
 
+
+
+void* __fastcall OnDemandSeedInfo::HookedMethod(void* This, int v) {
+	void* r = g_self->originalMethod(This, v);
+
+	// Process the queue
+	int num = 0;
+	while (!g_self->m_itemQueue.empty() && num++ < 15) {
+		ParsedSeedRequestPtr ptr = g_self->m_itemQueue.pop();
+		ParsedSeedRequest obj = *ptr.get();
+		// g_self->GetItemInfo(*abc);
+
+
+		auto replicaInfo = GAME::itemReplicaToString(obj.itemReplicaInfo);
+		{
+			std::wofstream itemStatsfile;
+			itemStatsfile.open("DebugDll.txt", std::ofstream::out | std::ofstream::app);
+
+			itemStatsfile << "Processing:\n" << replicaInfo << "\n";
+
+			itemStatsfile.flush();
+			itemStatsfile.close();
+		}
+
+
+		// Check for access to Game.dll
+		if (GetModuleHandleA("Game.dll")) {
+			GAME::ItemReplicaInfo replica = obj.itemReplicaInfo;
+
+			GAME::Item* newItem = fnCreateItem(&replica);
+			if (newItem) {
+				std::vector<GAME::GameTextLine> gameTextLines = {};
+
+				// TODO: We should fetch this earlier, ensure we don't get the hooked method. -- We seem to be getting 4 replies. 4th one is the message below. 
+				// First is probably in Item:: then ItemEquipment:: (both have hooks), 
+				// TODO: What if this is an ItemRelic?
+				fnItemEquipmentGetUIDisplayText((GAME::ItemEquipment*)newItem, (GAME::Character*)fnGetMainPlayer(fnGetgGameEngine()), &gameTextLines);
+				fnDestroyObjectEx(fnGetObjectManager(), (GAME::Object*)newItem, nullptr, 0);
+
+				std::wstringstream stream;
+
+				GAME::ItemReplicaInfo replica;
+				stream << obj.playerItemId << "\n"; // Differs from TYPE_ITEMSEEDDATA
+				stream << GAME::itemReplicaToString(obj.itemReplicaInfo) << "\n";
+				stream << GAME::gameTextLineToString(gameTextLines);
+
+				std::wstring str = stream.str();
+				DataItemPtr item(new DataItem(TYPE_ITEMSEEDDATA_PLAYERID, str.size() * sizeof(wchar_t), (char*)str.c_str()));
+				g_self->m_dataQueue->push(item);
+				SetEvent(g_self->m_hEvent);
+			}
+			else {
+				std::string str = obj.itemReplicaInfo.baseRecord;
+				DataItemPtr item(new DataItem(TYPE_ITEMSEEDDATA_PLAYERID_ERR_NOITEM, str.size(), (char*)str.c_str()));
+				g_self->m_dataQueue->push(item);
+				SetEvent(g_self->m_hEvent);
+			}
+		}
+		else {
+			DataItemPtr item(new DataItem(TYPE_ITEMSEEDDATA_PLAYERID_ERR_NOGAME, 0, nullptr));
+			g_self->m_dataQueue->push(item);
+			SetEvent(g_self->m_hEvent);
+		}
+		{
+			std::wofstream itemStatsfile;
+			itemStatsfile.open("DebugDll.txt", std::ofstream::out | std::ofstream::app);
+
+			itemStatsfile << "---SUCCESS---\n\n";
+
+			itemStatsfile.flush();
+			itemStatsfile.close();
+		}
+	}
+
+	return r;
+}

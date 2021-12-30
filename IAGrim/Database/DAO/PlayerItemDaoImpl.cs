@@ -1020,6 +1020,24 @@ DELETE FROM PlayerItem WHERE Id IN (
         }
 
         public IList<PlayerItem> ListMissingReplica(int limit) {
+            var armorSlots = new[] { "ArmorProtective_Head", "ArmorProtective_Hands", "ArmorProtective_Feet", "ArmorProtective_Legs", "ArmorProtective_Chest", "ArmorProtective_Waist", "ArmorJewelry_Medal", "ArmorJewelry_Ring", "ArmorProtective_Shoulders", "ArmorJewelry_Amulet" };
+            var subQuerySql = $@"
+                SELECT Playeritemid FROM PlayerItemRecord WHERE record IN (
+                    select baserecord from databaseitem_V2 db where db.baserecord in (
+                        select baserecord from {PlayerItemTable.Table} union 
+                        select prefixrecord from {PlayerItemTable.Table} union 
+                        select suffixrecord from {PlayerItemTable.Table} union 
+                        select materiarecord from {PlayerItemTable.Table}
+                    )
+                    AND exists (
+                        select id_databaseitem from databaseitemstat_v2 dbs 
+                        WHERE stat = 'Class' 
+                        AND TextValue in ( 'ArmorProtective_Head', 'ArmorProtective_Hands', 'ArmorProtective_Feet', 'ArmorProtective_Legs', 'ArmorProtective_Chest', 'ArmorProtective_Waist', 'ArmorJewelry_Medal', 'ArmorJewelry_Ring', 'ArmorProtective_Shoulders', 'ArmorJewelry_Amulet' ) 
+                        AND db.id_databaseitem = dbs.id_databaseitem
+                    )
+                )
+                ";
+
             var sql = $@"
                 select name as Name, 
                 {PlayerItemTable.Id} as Id,
@@ -1037,8 +1055,11 @@ DELETE FROM PlayerItem WHERE Id IN (
                 {PlayerItemTable.IsCloudSynchronized} as IsCloudSynchronizedValue
                 FROM PlayerItem PI 
                 WHERE Id NOT IN (SELECT R.PlayerItemId FROM ReplicaItem R WHERE R.PlayerItemId IS NOT NULL)
-                AND MOD = ''
+                AND MOD = '' 
+                AND PI.Id IN ({subQuerySql})
                 LIMIT :limit ";
+
+
 
             using (var session = SessionCreator.OpenSession()) {
                 using (session.BeginTransaction()) {

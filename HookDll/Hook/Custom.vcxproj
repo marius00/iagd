@@ -33,9 +33,8 @@
     <ClInclude Include="CloudRead.h" />
     <ClInclude Include="CloudWrite.h" />
     <ClInclude Include="EquipmentSeedInfo.h" />
+    <ClInclude Include="GameEngineUpdate.h" />
     <ClInclude Include="GrimTypes.h" />
-    <ClInclude Include="ItemRelicSeedInfo.h" />
-    <ClInclude Include="ItemSeedInfo.h" />
     <ClInclude Include="OnDemandSeedInfo.h" />
     <ClInclude Include="StateRequestNpcAction.h" />
     <ClInclude Include="StateRequestMoveAction.h" />
@@ -57,9 +56,8 @@
     <ClCompile Include="CloudRead.cpp" />
     <ClCompile Include="CloudWrite.cpp" />
     <ClCompile Include="EquipmentSeedInfo.cpp" />
+    <ClCompile Include="GameEngineUpdate.cpp" />
     <ClCompile Include="GrimTypes.cpp" />
-    <ClCompile Include="ItemRelicSeedInfo.cpp" />
-    <ClCompile Include="ItemSeedInfo.cpp" />
     <ClCompile Include="OnDemandSeedInfo.cpp" />
     <ClCompile Include="StateRequestNpcAction.cpp" />
     <ClCompile Include="StateRequestMoveAction.cpp" />
