@@ -29,23 +29,23 @@ class ItemStat extends PureComponent<IStat, object> {
 
       // TODO: We have a tooltip.. that means we got a skill in {3}
       return (
-        <li>
+        <p>
           <a data-tip={this.props.extras} className="skill-trigger">
             <span className="modifier">{modifier}</span>&nbsp;
             <span className="label">{label}</span>
             <span className="modified-skill">{this.props.param3}</span>
           </a>
-        </li>
+        </p>
       );
     } else {
       const text = statToString(this.props.text, this.props);
       const modifier = text.substr(0, text.indexOf(' '));
       const label = text.substr(text.indexOf(' ') + 1);
       return (
-        <li>
+        <p>
           <span className="modifier">{modifier}</span>&nbsp;
           <span className="label">{label}</span>
-        </li>
+        </p>
       );
     }
   }

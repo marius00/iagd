@@ -56,7 +56,7 @@ namespace EvilsoftCommons.Exceptions {
                 // threshold
                 using (HttpWebResponse response = (HttpWebResponse) httpWReq.GetResponse()) {
                     if (response.StatusCode != HttpStatusCode.OK) {
-                        Logger.Info("Failed to send anonymous usage statistics to developer.");
+                        Logger.Warn("Failed to send anonymous usage statistics to developer.");
                         return;
                     }
 

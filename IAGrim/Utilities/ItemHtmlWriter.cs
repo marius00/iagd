@@ -108,12 +108,14 @@ namespace IAGrim.Utilities {
             }
 
             bool skipStats = replicaStats != null;
+            var replicaBodyStats = new List<JsonStat>(0);
             if (skipStats) {
-                extras = string.Join("\n", item.BodyStats
+                // Add skillz
+                replicaBodyStats = item.BodyStats
                     .Where(m => m.Extra != null)
-                    .Select(m => m.Param3 + ": " +  m.Extra.ToString())
-                    .ToList());
-                
+                    .Select(ToJsonStat)
+                    .ToHashSet()
+                    .ToList();
 
             }
 
@@ -129,7 +131,7 @@ namespace IAGrim.Utilities {
                 NumItems = (uint) item.Count,
                 InitialNumItems = (uint) item.Count,
                 PetStats = skipStats ? new List<JsonStat>() : item.PetStats.Select(ToJsonStat).ToHashSet().ToList(),
-                BodyStats = skipStats ? new List<JsonStat>() : item.BodyStats.Select(ToJsonStat).ToHashSet().ToList(),
+                BodyStats = skipStats ? replicaBodyStats : item.BodyStats.Select(ToJsonStat).ToHashSet().ToList(),
                 HeaderStats = skipStats ? new List<JsonStat>() : item.HeaderStats.Select(ToJsonStat).ToHashSet().ToList(),
                 Type = type,
                 HasRecipe = item.HasRecipe,
