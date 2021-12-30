@@ -22,9 +22,10 @@ namespace IAGrim.Database {
 
                         // We may be receiving item info from a MouseOver, prior to the item being looted by IA.
                         if (obj.PlayerItemId != 0) {
-                            numRowsAffected = session.CreateSQLQuery("UPDATE ReplicaItem SET playeritemid = :pid WHERE uqhash = :hash")
+                            numRowsAffected = session.CreateSQLQuery("UPDATE ReplicaItem SET playeritemid = :pid, Text = :text WHERE uqhash = :hash")
                                 .SetParameter("pid", obj.PlayerItemId)
                                 .SetParameter("hash", obj.UqHash)
+                                .SetParameter("text", obj.Text)
                                 .ExecuteUpdate();
                         }
 
