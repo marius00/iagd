@@ -230,7 +230,7 @@ void OnDemandSeedInfo::Process() {
 		ParsedSeedRequestPtr abc(obj);
 		if (!m_itemQueue.push(abc, 300)) {
 			slowDown = true;
-			// Will just discard data if >100
+			// Will just discard data if >N
 			// TODO: Notify IA that it needs to slow the fk down?
 		}
 
@@ -325,68 +325,7 @@ void* __fastcall OnDemandSeedInfo::HookedMethod(void* This, int v) {
 	while (!g_self->m_itemQueue.empty() && num++ < 15) {
 		ParsedSeedRequestPtr ptr = g_self->m_itemQueue.pop();
 		ParsedSeedRequest obj = *ptr.get();
-		// g_self->GetItemInfo(*abc);
-
-
-		auto replicaInfo = GAME::itemReplicaToString(obj.itemReplicaInfo);
-		{
-			std::wofstream itemStatsfile;
-			itemStatsfile.open("DebugDll.txt", std::ofstream::out | std::ofstream::app);
-
-			itemStatsfile << "Processing:\n" << replicaInfo << "\n";
-
-			itemStatsfile.flush();
-			itemStatsfile.close();
-		}
-
-
-		// Check for access to Game.dll
-		if (GetModuleHandleA("Game.dll")) {
-			GAME::ItemReplicaInfo replica = obj.itemReplicaInfo;
-
-			GAME::Item* newItem = fnCreateItem(&replica);
-			if (newItem) {
-				std::vector<GAME::GameTextLine> gameTextLines = {};
-
-				// TODO: We should fetch this earlier, ensure we don't get the hooked method. -- We seem to be getting 4 replies. 4th one is the message below. 
-				// First is probably in Item:: then ItemEquipment:: (both have hooks), 
-				// TODO: What if this is an ItemRelic?
-				fnItemEquipmentGetUIDisplayText((GAME::ItemEquipment*)newItem, (GAME::Character*)fnGetMainPlayer(fnGetgGameEngine()), &gameTextLines);
-				fnDestroyObjectEx(fnGetObjectManager(), (GAME::Object*)newItem, nullptr, 0);
-
-				std::wstringstream stream;
-
-				GAME::ItemReplicaInfo replica;
-				stream << obj.playerItemId << "\n"; // Differs from TYPE_ITEMSEEDDATA
-				stream << GAME::itemReplicaToString(obj.itemReplicaInfo) << "\n";
-				stream << GAME::gameTextLineToString(gameTextLines);
-
-				std::wstring str = stream.str();
-				DataItemPtr item(new DataItem(TYPE_ITEMSEEDDATA_PLAYERID, str.size() * sizeof(wchar_t), (char*)str.c_str()));
-				g_self->m_dataQueue->push(item);
-				SetEvent(g_self->m_hEvent);
-			}
-			else {
-				std::string str = obj.itemReplicaInfo.baseRecord;
-				DataItemPtr item(new DataItem(TYPE_ITEMSEEDDATA_PLAYERID_ERR_NOITEM, str.size(), (char*)str.c_str()));
-				g_self->m_dataQueue->push(item);
-				SetEvent(g_self->m_hEvent);
-			}
-		}
-		else {
-			DataItemPtr item(new DataItem(TYPE_ITEMSEEDDATA_PLAYERID_ERR_NOGAME, 0, nullptr));
-			g_self->m_dataQueue->push(item);
-			SetEvent(g_self->m_hEvent);
-		}
-		{
-			std::wofstream itemStatsfile;
-			itemStatsfile.open("DebugDll.txt", std::ofstream::out | std::ofstream::app);
-
-			itemStatsfile << "---SUCCESS---\n\n";
-
-			itemStatsfile.flush();
-			itemStatsfile.close();
-		}
+		g_self->GetItemInfo(obj);
 	}
 
 	return r;
