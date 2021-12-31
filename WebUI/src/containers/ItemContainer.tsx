@@ -30,8 +30,8 @@ class ItemContainer extends PureComponent<Props, object> {
     compareItem: '',
   }
 
+  // TODO: The state should maybe say if these are NEW or MODIFIED items, to support transferring multiple items?
   componentWillReceiveProps(nextProps: any, nextState: any) {
-    console.log('mountyloop');
     if (this.state.isComparing) {
       this.setState({isComparing: false});
     }

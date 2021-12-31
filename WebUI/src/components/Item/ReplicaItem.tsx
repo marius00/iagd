@@ -27,7 +27,7 @@ export function getUniqueId(item: IItem): string {
   else {
     console.warn("Could not find unique identifier for item, defaulting to uuid", item);
     return uuidv4();
-  };
+  }
 }
 
 /**
@@ -174,7 +174,10 @@ class ReplicaItem extends PureComponent<Props, object> {
         }
 
         {type === 1 && <div className={styles.watermarkContainer}>
-          <p className={styles.watermark}>BuddyItem</p>
+          <p className={styles.watermark}>{translate('item.buddies.watermark')}</p>
+        </div>}
+        {type === 2 && !item.replicaStats && <div className={styles.watermarkContainer}>
+            <p className={styles.watermark}>{translate('item.genericstats.watermark')}</p>
         </div>}
       </div>
     );

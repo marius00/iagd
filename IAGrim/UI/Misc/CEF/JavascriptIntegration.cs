@@ -87,6 +87,9 @@ namespace IAGrim.UI.Misc.CEF {
                 {"collections.ingress1", lang.GetTag("iatag_html_ingress1") },
                 {"collections.ingress2", lang.GetTag("iatag_html_ingress2") },
                 {"notification.clearall", lang.GetTag("iatag_html_clearall")},
+
+                {"item.genericstats.watermark", lang.GetTag("iatag_html_genericstats")},
+                {"item.buddies.watermark", lang.GetTag("iatag_html_buddies_watermark")},
             };
 
             // Attempting to return a Dictionary<..> object will only work if this object is bound with "async: true"

@@ -28,6 +28,8 @@ class EmbeddedTranslator {
     'item.buddies.singular': '«{0}» also has this item.',
     'item.buddies.singularOnly': '«{0}» has this item.',
     'item.buddies.plural': 'These buddies also have this item: {0}',
+    'item.buddies.watermark': 'Buddyitem',
+    'item.genericstats.watermark': 'Generic Stats',
     'items.label.doubleGreen': 'This item has two green affixes',
     'items.label.tripleGreen': 'This item has three green affixes! (Rare!)',
     'item.label.bonusToAllPets': 'Bonus to All Pets:',
