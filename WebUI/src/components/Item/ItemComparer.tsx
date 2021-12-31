@@ -15,6 +15,24 @@ interface Props {
 }
 
 class ItemComparer extends PureComponent<Props, object> {
+  componentDidMount() {
+    setTimeout(() => document.addEventListener("click", this.handleOutsideClick, false), 500);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener("click", this.handleOutsideClick, false);
+  }
+
+  handleOutsideClick = (e: any) => {
+    const base = this.base;
+
+    if (base) {
+      const isOutsideModal = !base.contains(e.target);
+      if (isOutsideModal)
+        this.props.onClose();
+    }
+  };
+
   render() {
     const items = this.props.item;
 

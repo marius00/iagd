@@ -32,7 +32,7 @@ class ItemContainer extends PureComponent<Props, object> {
 
   transferSingleWrapper(item: IItem[]) {
     // Switch to comparison dialogue
-    if (item.length > 0) {
+    if (item.length > 1) {
       this.setState({
         isComparing: true,
         compareItem: item[0].mergeIdentifier,
@@ -86,6 +86,12 @@ class ItemContainer extends PureComponent<Props, object> {
     return {baseRecord: "", name: "", icon: "", numOwnedSc: 0, numOwnedHc: 0};
   }
 
+  handleClick = () => {
+    this.setState({
+      isComparing: !this.state.isComparing
+    });
+  };
+
   render() {
     const items = this.props.items;
     const canLoadMoreItems = this.props.numItems !== undefined ? this.props.numItems > items.length : true;
@@ -100,6 +106,7 @@ class ItemContainer extends PureComponent<Props, object> {
       }
     }
 
+
     if (items.length > 0) {
       return (
         <div class="items">
@@ -112,7 +119,7 @@ class ItemContainer extends PureComponent<Props, object> {
 
           {this.state.isComparing && <ItemComparer
               item={comparingItem}
-              onClose={() => this.setState({isComparing: false})}
+              onClose={this.handleClick}
               getItemName={(baseRecord:string) => this.findByRecord(baseRecord)}
               showBackupCloudIcon={this.props.showBackupCloudIcon}
               transferSingle={(item: IItem) => this.transferSingle(item)}
