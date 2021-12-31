@@ -44,7 +44,8 @@ class ItemContainer extends PureComponent<Props, object> {
   }
 
   transferSingle(item: IItem) {
-    const url = (item.url as any) as object[];
+    const id = item.uniqueIdentifier + '/-/-/-';
+    const url = (id.split('/') as any) as object[];
     const r = transferItem(url, false);
     if (r.success) {
       this.props.onItemReduce(item, false);

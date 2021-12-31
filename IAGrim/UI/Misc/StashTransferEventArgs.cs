@@ -12,12 +12,32 @@ namespace IAGrim.UI.Misc {
             this.TransferAll = transferAll;
         }
 
+        public long? PlayerItemId {
+            get {
+                if (InternalId == null || InternalId.Length < 3 || !"PI".Equals(InternalId[0].ToString()))
+                    return null;
+
+                if (long.TryParse(InternalId[1].ToString(), out var id)) {
+                    return id;
+                }
+
+                return null;
+            }
+        }
+
         public string Prefix => InternalId[1] as string;
         public string BaseRecord => InternalId[0] as string;
         public string Suffix => InternalId[2] as string;
         public string Materia => InternalId[3] as string;
         public string Mod => InternalId[4] as string;
-        public Boolean IsHardcore => (bool)InternalId[5];
+        public Boolean IsHardcore {
+            get {
+                if (HasValidId && !"PI".Equals(BaseRecord))
+                    return (bool)InternalId[5];
+
+                return false;// Undefined
+            }
+        }
 
         public bool HasValidId => InternalId != null && InternalId.Length == 6 && BaseRecord != null;
         private object[] InternalId { get; }

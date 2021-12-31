@@ -54,12 +54,19 @@ namespace IAGrim.UI.Controller {
 
             // Detect the record type (long or string) and add the item(s)
             if (args.HasValidId) {
-                IList<PlayerItem> tmp = _dao.GetByRecord(args.Prefix, args.BaseRecord, args.Suffix, args.Materia, args.Mod, args.IsHardcore);
-                if (tmp.Count > 0) {
-                    if (!args.TransferAll)
-                        items.Add(tmp[0]);
-                    else {
-                        items.AddRange(tmp);
+                var pid = args.PlayerItemId;
+                if (pid.HasValue) {
+                    var item = _dao.GetById(pid.Value);
+                    items.Add(item);
+                }
+                else {
+                    IList<PlayerItem> tmp = _dao.GetByRecord(args.Prefix, args.BaseRecord, args.Suffix, args.Materia, args.Mod, args.IsHardcore);
+                    if (tmp.Count > 0) {
+                        if (!args.TransferAll)
+                            Logger.Warn("Error transferring item, transfer all was false, but no player item id was located.");
+                        else {
+                            items.AddRange(tmp);
+                        }
                     }
                 }
             }
