@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using EvilsoftCommons.Exceptions;
 using IAGrim.Database;
 using IAGrim.Database.Interfaces;
+using IAGrim.Services.ItemReplica;
+using IAGrim.Services.MessageProcessor;
 using IAGrim.Utilities;
 using log4net;
 using log4net.Repository.Hierarchy;
@@ -21,6 +23,7 @@ namespace IAGrim.Services {
         private volatile bool _isShuttingDown = false;
         private Thread _t = null;
         private ActionCooldown _cooldown = new ActionCooldown(500);
+        private ReplicaCache _cache = new ReplicaCache();
 
         public ItemReplicaService(IPlayerItemDao playerItemDao) {
             _playerItemDao = playerItemDao;
@@ -156,9 +159,14 @@ namespace IAGrim.Services {
             }
 
             foreach (var item in items) {
+                var hash = ItemReplicaProcessor.GetHash(item);
+                if (_cache.Exists(hash)) // Don't ask for the same item twice. Esp if the user somehow gets two identical items in, this would infinitely loop.
+                    continue;
+
                 if (!DispatchItemSeedInfoRequest(item))
                     return false; //
 
+                _cache.Add(hash);
                 Thread.Sleep(1);
             }
 
@@ -168,5 +176,7 @@ namespace IAGrim.Services {
         public void Dispose() {
             _isShuttingDown = true;
         }
+
+
     }
 }

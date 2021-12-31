@@ -72,6 +72,10 @@ namespace IAGrim.Services.MessageProcessor {
             item.Text = JsonConvert.SerializeObject(text);
             item.UqHash = GetHash(item);
 
+            if (!dataString.Contains("^")) {
+                _logger.Warn("This might be the drones you are looking for...");
+            }
+
             _replicaItemDao.Save(item);
         }
 

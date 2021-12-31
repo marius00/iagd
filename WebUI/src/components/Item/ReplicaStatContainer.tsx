@@ -39,7 +39,6 @@ class ReplicaStatContainer extends PureComponent<Props, object> {
     return (
       <p className="replica">
         {rows.map((row, idx) => {
-          console.log('IsSkillBooster:', row, this.isSkillBooster(row))
           if (!this.isSkillBooster(row)) {
             return <ReplicaStat {...row} key={id + idx}/>
           } else if (!hasShownSkills) {
