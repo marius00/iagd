@@ -30,6 +30,13 @@ class ItemContainer extends PureComponent<Props, object> {
     compareItem: '',
   }
 
+  componentWillReceiveProps(nextProps: any, nextState: any) {
+    console.log('mountyloop');
+    if (this.state.isComparing) {
+      this.setState({isComparing: false});
+    }
+  }
+
   transferSingleWrapper(item: IItem[]) {
     // Switch to comparison dialogue
     if (item.length > 1) {
