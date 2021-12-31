@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 namespace IAGrim.UI.Misc {
 
     internal class StashTransferEventArgs : EventArgs {
-        public StashTransferEventArgs(object[] identifier, int count) {
+        public StashTransferEventArgs(object[] identifier, bool transferAll) {
             this.InternalId = identifier;
-            this.Count = count;
+            this.TransferAll = transferAll;
         }
 
         public string Prefix => InternalId[1] as string;
@@ -21,7 +21,7 @@ namespace IAGrim.UI.Misc {
 
         public bool HasValidId => InternalId != null && InternalId.Length == 6 && BaseRecord != null;
         private object[] InternalId { get; }
-        public int Count { get; }
+        public bool TransferAll { get; }
 
         public override string ToString() {
             return $"StashTransferEventArgs[Prefix:{Prefix} Base:{BaseRecord} Suffix:{Suffix} Materia:{Materia}, Mod:{Mod}, IsHardcore:{IsHardcore}]";

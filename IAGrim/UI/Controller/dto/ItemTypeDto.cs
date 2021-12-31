@@ -6,6 +6,6 @@ using System.Threading.Tasks;
 
 namespace IAGrim.UI.Controller.dto {
     public enum ItemTypeDto {
-        Recipe, Buddy, Player, Augmentation, Unknown
+        Recipe = 0, Buddy = 1, Player = 2, Augmentation = 3, Unknown
     }
 }

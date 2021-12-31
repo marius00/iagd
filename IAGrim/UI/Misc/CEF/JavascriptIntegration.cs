@@ -25,8 +25,8 @@ namespace IAGrim.UI.Misc.CEF {
         public event EventHandler OnRequestBackedUpCharacterList;
         public event EventHandler OnRequestCharacterDownloadUrl;
 
-        public string TransferItem(object[] identifier, int numItems) {
-            var args = new StashTransferEventArgs(identifier, numItems);
+        public string TransferItem(object[] identifier, bool transferAll) {
+            var args = new StashTransferEventArgs(identifier, transferAll);
              
             ItemTransferEvent?.Invoke(this, args);
 

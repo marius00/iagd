@@ -337,3 +337,8 @@ a { cursor: pointer; }
 
 
 
+
+.load-more-items {
+  width: 100%;
+  height: 42px;
+}

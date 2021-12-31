@@ -66,7 +66,7 @@ namespace IAGrim.Utilities {
             }
         }
 
-        public static JsonItem GetJsonItem(PlayerHeldItem item) {
+        private static JsonItem GetJsonItem(PlayerHeldItem item) {
             // TODO: Modifiers
 
             bool isHardcore = false;
@@ -74,6 +74,7 @@ namespace IAGrim.Utilities {
             object[] transferUrl = {"", "", "", ""};
             string uniqueIdentifier = GetUniqueIdentifier(item);
             List<ItemStatInfo> replicaStats = null;
+            var mergeIdentifier = item.BaseRecord ?? string.Empty;
             if (item is PlayerItem pi) {
                 transferUrl = new object[] {pi.BaseRecord, pi.PrefixRecord, pi.SuffixRecord, pi.MateriaRecord, pi.Mod, pi.IsHardcore};
                 isCloudSynced = pi.IsCloudSynchronized;
@@ -82,6 +83,11 @@ namespace IAGrim.Utilities {
                 if (!string.IsNullOrEmpty(pi.ReplicaInfo)) {
                     replicaStats = JsonConvert.DeserializeObject<List<ItemStatInfo>>(pi.ReplicaInfo);
                 }
+
+
+                mergeIdentifier += (pi.PrefixRecord ?? string.Empty) + (pi.SuffixRecord ?? string.Empty);
+            } else if (item is BuddyItem bi) {
+                mergeIdentifier += (bi.PrefixRecord ?? string.Empty) + (bi.SuffixRecord ?? string.Empty);
             }
 
             ItemTypeDto type;
@@ -93,7 +99,7 @@ namespace IAGrim.Utilities {
             else if (!string.IsNullOrEmpty(item.Stash)) {
                 type = ItemTypeDto.Buddy;
             }
-            else if (item is PlayerItem playeritem) {
+            else if (item is PlayerItem) {
                 type = ItemTypeDto.Player;
             }
             else if (item is AugmentationItem augmentationItem) {
@@ -116,11 +122,11 @@ namespace IAGrim.Utilities {
                     .Select(ToJsonStat)
                     .ToHashSet()
                     .ToList();
-
             }
 
             var json = new JsonItem {
                 UniqueIdentifier = uniqueIdentifier,
+                MergeIdentifier = mergeIdentifier,
                 BaseRecord = item.BaseRecord ?? string.Empty,
                 URL = transferUrl,
                 Icon = item.Bitmap ?? string.Empty,
@@ -128,8 +134,6 @@ namespace IAGrim.Utilities {
                 Quality = item.Rarity ?? string.Empty,
                 Level = item.MinimumLevel,
                 Socket = GetSocketFromItem(item?.Name) ?? string.Empty,
-                NumItems = (uint) item.Count,
-                InitialNumItems = (uint) item.Count,
                 PetStats = skipStats ? new List<JsonStat>() : item.PetStats.Select(ToJsonStat).ToHashSet().ToList(),
                 BodyStats = skipStats ? replicaBodyStats : item.BodyStats.Select(ToJsonStat).ToHashSet().ToList(),
                 HeaderStats = skipStats ? new List<JsonStat>() : item.HeaderStats.Select(ToJsonStat).ToHashSet().ToList(),
@@ -144,6 +148,7 @@ namespace IAGrim.Utilities {
                 IsMonsterInfrequent = item.ModifiedSkills.Any(s => s.IsMonsterInfrequent),
                 IsHardcore = isHardcore,
                 ReplicaStats = replicaStats,
+                Children = new List<JsonItem>(),
             };
 
             if (!skipStats) {
@@ -186,8 +191,19 @@ namespace IAGrim.Utilities {
             Logger.Debug("Copy complete");
         }
 
-        public static List<JsonItem> ToJsonSerializable(List<PlayerHeldItem> items) {
-            return items.Select(GetJsonItem).ToList();
+        public static List<List<JsonItem>> ToJsonSerializable(List<PlayerHeldItem> items) {
+            var jsonItems = items.Select(GetJsonItem).ToList();
+
+            var merged = ItemOperationsUtility.MergeStackSize(jsonItems);
+            List<List<JsonItem>> result = new List<List<JsonItem>>(jsonItems.Count);
+            foreach (var item in merged) {
+                var batch = new List<JsonItem> { item };
+                batch.AddRange(item.Children);
+                batch.Sort();
+                result.Add(batch);
+            }
+
+            return result;
         }
 
 

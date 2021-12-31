@@ -13,14 +13,12 @@ import ItemCornerContainer from './ItemCornerContainer';
 import { v4 as uuidv4 } from 'uuid';
 import {PureComponent} from "preact/compat";
 import ReplicaStatContainer from "./ReplicaStatContainer";
-
+import styles from './ReplicaItem.css';
 
 interface Props {
-  item: IItem[];
-  transferSingle: (item: IItem[]) => void;
-  transferAll: (item: IItem[]) => void;
+  item: IItem;
+  transferSingle: (item: IItem) => void;
   getItemName: (baseRecord: string) => ICollectionItem;
-  requestUnknownItemHelp: () => void;
   showBackupCloudIcon: boolean;
 }
 
@@ -29,33 +27,24 @@ export function getUniqueId(item: IItem): string {
   else {
     console.warn("Could not find unique identifier for item, defaulting to uuid", item);
     return uuidv4();
-  }
+  };
 }
 
-class Item extends PureComponent<Props, object> {
+/**
+ * Comparison item
+ */
+class ReplicaItem extends PureComponent<Props, object> {
   stripColorCodes(initialString: any | string): string {
     return initialString.replaceAll(/{?\^.}?/g, '');
   }
 
-  openItemSite() {
-    openUrl(`https://www.grimtools.com/db/search?src=itemassistant&query=${this.stripColorCodes(this.props.item[0].name)}`);
-  }
-
   renderBuddyItem(item: IItem) {
     if (item.type === IItemType.Buddy) {
-      if (item.buddies.length === 1) {
-        return (
-          <div className="buddy-item-mix">
-            &nbsp;{translate('item.buddies.singularOnly', item.buddies[0])}
-          </div>
-        );
-      } else {
-        return (
-          <div className="buddy-item-mix" data-bind="attr: {title: buddies.join()}">
-            <a data-tip={'&laquo;' + item.buddies.length + '&raquo; of your Buddies also have this item.'} />
-          </div>
-        );
-      }
+      return (
+        <div className="buddy-item-mix">
+          &nbsp;{translate('item.buddies.singularOnly', item.buddies[0])}
+        </div>
+      );
     }
 
     return null;
@@ -84,7 +73,6 @@ class Item extends PureComponent<Props, object> {
     return "";
   }
 
-  // TODO:
   statToString(stat: IStat) {
     return stat.text
       .replace("{0}", stat.param0)
@@ -97,7 +85,7 @@ class Item extends PureComponent<Props, object> {
   }
 
   renderIcon() {
-    const item = this.props.item[0];
+    const item = this.props.item;
     let icon = (item.icon && item.icon.length) > 0 ? item.icon : 'weapon1h_focus02a.tex.png';
     if (!isEmbedded) // Online items stores icons separately
       icon = `http://static.iagd.evilsoft.net/img/${icon}`;
@@ -109,9 +97,10 @@ class Item extends PureComponent<Props, object> {
   }
 
   render() {
-    const item = this.props.item[0];
+    const item = this.props.item;
     const name = item.name.length > 0 ? this.stripColorCodes(item.name) : 'Unknown';
     const socket = item.socket.replace(" ", "");
+    const { type } = item;
 
     const headerStats = item.headerStats.map((stat) =>
       <ItemStat {...stat} key={`stat-head-${getUniqueId(item)}-${socket}-${statToString(stat)}`.replace(' ', '_')} />
@@ -128,16 +117,14 @@ class Item extends PureComponent<Props, object> {
     const setName = GetSetName(item.baseRecord);
     let setItemsList = this.getSetItemTooltip(setName, item.isHardcore);
 
-    const numItems = this.props.item.filter(m => m.type === 2).length;
-
     const miText = item.isMonsterInfrequent ? ' / MI' : '';
     return (
-      <div className="item">
+      <div className={"item"}>
         {this.renderIcon()}
         <div className="text">
           <div>
             <span>
-              <a onClick={() => this.openItemSite()} className={this.translateQualityToClass(item.quality)}>{name}</a>
+              <a className={this.translateQualityToClass(item.quality)}>{name}</a>
             </span>
               {item.greenRarity === 3 ? <span className="cursor-help supergreen" data-tip={translate('items.label.tripleGreen')}> (TripleRare{miText})</span> : ''}
               {item.greenRarity === 2 ? <span className="cursor-help supergreen" data-tip={translate('items.label.doubleGreen')}> (DoubleRare{miText})</span> : ''}
@@ -146,7 +133,7 @@ class Item extends PureComponent<Props, object> {
           <span className="item-socket-label">{item.socket}</span>
           }
 
-          {item.replicaStats && <ReplicaStatContainer rows={item.replicaStats} id={getUniqueId(item)} skills={item.bodyStats} hideGrantedSkill={false} /> }
+          {item.replicaStats && <ReplicaStatContainer rows={item.replicaStats} id={getUniqueId(item)} skills={item.bodyStats} hideGrantedSkill /> }
           <ul className="headerStats">
             {headerStats}
           </ul>
@@ -173,49 +160,25 @@ class Item extends PureComponent<Props, object> {
         </div>
         {item.buddies.length > 0 ? this.renderBuddyItem(item) : ''}
 
-        {item.hasRecipe && item.type !== IItemType.Recipe ?
-          <span className="informative">
-            <a data-tip={translate('items.label.youCanCraftThisItem')}>
-              <div className="recipe-item-corner">
-                <img className="cursor-help" src="static\recipe.png"/>
-              </div>
-            </a>
-          </span>
-          : ''
-        }
-
         <ItemCornerContainer {...item} showBackupCloudIcon={this.props.showBackupCloudIcon} />
-
-        {item.hasRecipe && item.type === IItemType.Recipe ?
-          <div className="recipe-item">
-            <img src="static\recipe.png"/>
-            <span className="craft-link">
-              &nbsp;<span>{translate('items.label.youCanCraftThisItem')}</span>
-            </span>
-          </div>
-          : ''
-        }
 
         <div className="level">
           <p>{translate('item.label.levelRequirement', item.level > 1 ? String(item.level) : translate('item.label.levelRequirementAny'))}</p>
         </div>
 
-        {numItems > 1 && item.type === IItemType.Player ?
-          <div className="link-container-all">
-            <a onClick={() => this.props.transferAll(this.props.item)}>{translate('item.label.transferAll')} ({numItems})</a>
+        {type === IItemType.Player ?
+          <div className="link-container">
+            <a onClick={() => this.props.transferSingle(item)}>{translate('item.label.transferSingle')}</a>
           </div>
           : ''
         }
 
-        {item.type === IItemType.Player ?
-          <div className="link-container">
-            <a onClick={() => this.props.transferSingle(this.props.item)}>{translate('item.label.transferSingle')}</a>
-          </div>
-          : ''
-        }
+        {type === 1 && <div className={styles.watermarkContainer}>
+          <p className={styles.watermark}>BuddyItem</p>
+        </div>}
       </div>
     );
   }
 }
 
-export default Item;
+export default ReplicaItem;

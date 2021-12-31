@@ -3,6 +3,10 @@ import {PureComponent} from "preact/compat";
 import {IReplicaRow} from "../../interfaces/IReplicaRow";
 
 
+/**
+ * Renders a single replica stat row
+ * Responsible for parsing ^K ^S ^M color codes and row "type" into css classes
+ */
 class ReplicaStat extends PureComponent<IReplicaRow, object> {
   render() {
     const { text, type } = this.props;

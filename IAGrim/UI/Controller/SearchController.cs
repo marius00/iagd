@@ -67,7 +67,7 @@ namespace IAGrim.UI.Controller {
             var message = Search_(query, duplicatesOnly, includeBuddyItems, orderByLevel);
 
             if (!ApplyItems(false)) {
-                Browser.SetItems(new List<JsonItem>(), 0);
+                Browser.SetItems(new List<List<JsonItem>>(0), 0);
                 UpdateCollectionItems();
             }
 
@@ -85,7 +85,7 @@ namespace IAGrim.UI.Controller {
         private bool ApplyItems(bool append) {
             var items = _itemPaginationService.Fetch();
             if (items.Count == 0) {
-                Browser.AddItems(new List<JsonItem>());
+                Browser.AddItems(new List<List<JsonItem>>(0));
                 return false;
             }
             

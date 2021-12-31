@@ -643,7 +643,7 @@ namespace StatTranslator {
             {"iatag_ui_armorincrease", "Armor increase"},
             {"iatag_ui_cooldown_reduction", "Cooldown Reduction"},
             {"iatag_stash3_failure", "Cannot deposit item, please ensure SHARED Stash tab is empty."},
-            {"iatag_stash3_success", "Successfully deposited {0} out of {1} items"},
+            {"iatag_stash3_success", "Successfully deposited {0} items"},
             {"iatag_deposit_stash_open", "Cannot deposit item, please close your stash in-game"},
             {"iatag_deposit_stash_full", "Could not insert item, stash full"},
             {"iatag_deposit_stash_sorted", "Cannot deposit item, please open or close your stash in-game (stash was sorted)"},

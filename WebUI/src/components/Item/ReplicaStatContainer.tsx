@@ -9,8 +9,12 @@ interface Props {
   rows: IReplicaRow[];
   id: string;
   skills: IStat[];
+  hideGrantedSkill: boolean;
 }
 
+/**
+ * Renders all the replica stats for an item
+ */
 class ReplicaStatContainer extends PureComponent<Props, object> {
   isSkillBooster(row: IReplicaRow) {
     if (row.type !== 18 && row.type !== 79)
@@ -35,13 +39,38 @@ class ReplicaStatContainer extends PureComponent<Props, object> {
       <ItemStat {...stat} key={`stat-body-${id}-${statToString(stat)}`.replace(' ', '_')}/>
     );
 
+    // "Hack" to skip all the rows for a skill
+    let numWhitespaces = 0;
+    let isSkipping = false;
+    const shouldSkip = (row: IReplicaRow) => {
+      if (isSkipping && row.type === 0 /* Newline */)
+        numWhitespaces++;
+
+      if (isSkipping && numWhitespaces < 2) // Second whitespace generally ends the skill description.
+        return true;
+
+      if (this.props.hideGrantedSkill && (row.type === 34) /* Start of skill */) {
+        isSkipping = true;
+        return true;
+      }
+
+      return false;
+    }
+
     let hasShownSkills = false;
     return (
       <p className="replica">
         {rows.map((row, idx) => {
+          // Skip skill information
+          if (shouldSkip(row)) {
+            return null;
+          }
+
           if (!this.isSkillBooster(row)) {
             return <ReplicaStat {...row} key={id + idx}/>
-          } else if (!hasShownSkills) {
+          }
+          // We have our own skill descriptions, superior to that of the replica rows.
+          else if (!hasShownSkills) {
             hasShownSkills = true;
             return bodyStats;
           }

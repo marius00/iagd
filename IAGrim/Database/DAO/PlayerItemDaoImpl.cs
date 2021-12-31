@@ -821,8 +821,6 @@ namespace IAGrim.Database {
                     }*/
 
                     var items = q.List<object>().Select(ToPlayerItem).ToList();
-                    items = ItemOperationsUtility.MergeStackSize(items);
-
                     Logger.Debug($"Search returned {items.Count} items");
 
                     return items;

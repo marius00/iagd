@@ -8,8 +8,8 @@ using IAGrim.UI.Controller.dto;
 
 namespace IAGrim.UI.Misc.CEF {
     public interface IBrowserCallbacks {
-        void AddItems(List<JsonItem> items);
-        void SetItems(List<JsonItem> items, int numItemsFound);
+        void AddItems(List<List<JsonItem>> items);
+        void SetItems(List<List<JsonItem>> items, int numItemsFound);
         void SetCollectionItems(IList<CollectionItem> items);
         void ShowLoadingAnimation();
     }

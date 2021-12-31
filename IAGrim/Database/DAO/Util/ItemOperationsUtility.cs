@@ -4,6 +4,7 @@ using System.Linq;
 using IAGrim.Database.Interfaces;
 using IAGrim.Database.Model;
 using IAGrim.Services.Dto;
+using IAGrim.UI.Controller.dto;
 using IAGrim.Utilities;
 using NHibernate;
 using NHibernate.Criterion;
@@ -15,13 +16,29 @@ namespace IAGrim.Database.DAO.Util {
         /// <summary>
         /// Merges identical items, summing up the stacksize.
         /// </summary>
-        public static List<PlayerItem> MergeStackSize(IEnumerable<PlayerItem> items) {
-            Dictionary<string, PlayerItem> map = new Dictionary<string, PlayerItem>();
-            foreach (var item in items) {
+        //public static List<PlayerItem> MergeStackSize(IEnumerable<PlayerItem> items) {
+        //    Dictionary<string, PlayerItem> map = new Dictionary<string, PlayerItem>();
+        //    foreach (var item in items) {
 
-                var key = item.BaseRecord + item.PrefixRecord + item.SuffixRecord + item.ModifierRecord + item.MateriaRecord;
+        //        var key = item.BaseRecord + item.PrefixRecord + item.SuffixRecord + item.ModifierRecord + item.MateriaRecord;
+        //        if (map.ContainsKey(key)) {
+        //            map[key].Count += item.Count;
+        //        }
+        //        else {
+        //            map[key] = item;
+        //        }
+        //    }
+
+        //    return map.Values.ToList();
+        //}
+        public static List<JsonItem> MergeStackSize(IEnumerable<JsonItem> items) {
+            Dictionary<string, JsonItem> map = new Dictionary<string, JsonItem>();
+            foreach (var item in items) {
+                var key = item.MergeIdentifier;
                 if (map.ContainsKey(key)) {
-                    map[key].Count += item.Count;
+                    map[key].Children.Add(item);
+                    map[key].InitialNumItems = (uint)map[key].Children.Count;
+                    map[key].NumItems = (uint)map[key].Children.Count;
                 }
                 else {
                     map[key] = item;
@@ -30,21 +47,7 @@ namespace IAGrim.Database.DAO.Util {
 
             return map.Values.ToList();
         }
-        public static List<BuddyItem> MergeStackSize(IEnumerable<BuddyItem> items) {
-            Dictionary<string, BuddyItem> map = new Dictionary<string, BuddyItem>();
-            foreach (var item in items) {
 
-                var key = item.BaseRecord + item.PrefixRecord + item.SuffixRecord + item.ModifierRecord;
-                if (map.ContainsKey(key)) {
-                    map[key].Count += item.Count;
-                }
-                else {
-                    map[key] = item;
-                }
-            }
-
-            return map.Values.ToList();
-        }
 
         /// <summary>
         /// Calculate the item rarity for a given set of records (suffix, prefix, etc)

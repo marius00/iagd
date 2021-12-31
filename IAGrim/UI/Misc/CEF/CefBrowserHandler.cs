@@ -105,7 +105,7 @@ namespace IAGrim.UI.Misc.CEF {
         /// </summary>
         /// <param name="items">The current batch</param>
         /// <param name="numItemsFound">The number of items found, total (eg 3000 found, but batch has 64)</param>
-        public void SetItems(List<JsonItem> items, int numItemsFound) {
+        public void SetItems(List<List<JsonItem>> items, int numItemsFound) {
             if (BrowserControl != null && BrowserControl.CanExecuteJavascriptInMainFrame) {
                 BrowserControl.ExecuteScriptAsync("window.setItems", JsonConvert.SerializeObject(items, _serializerSettings), numItemsFound);
             }
@@ -123,7 +123,7 @@ namespace IAGrim.UI.Misc.CEF {
             }
         }
 
-        public void AddItems(List<JsonItem> items) {
+        public void AddItems(List<List<JsonItem>> items) {
             if (BrowserControl.CanExecuteJavascriptInMainFrame) {
                 BrowserControl.ExecuteScriptAsync("window.addItems", JsonConvert.SerializeObject(items, _serializerSettings));
             }
