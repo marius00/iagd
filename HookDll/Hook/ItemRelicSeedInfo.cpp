@@ -37,11 +37,6 @@ auto fnItemGetItemReplicaInfoRelic = ItemGetItemReplicaInfo(GetProcAddress(GetMo
 void* __fastcall ItemRelicSeedInfo::HookedMethod(void* This, void* character, std::vector<GAME::GameTextLine>& gameTextLines) {
 	void* v = g_self->originalMethod(This, character, gameTextLines);
 
-
-	// dump the stats to a file
-	std::wofstream itemStatsfile;
-	itemStatsfile.open("ItemStats.txt", std::ofstream::out | std::ofstream::app);
-	// TODO: GetItemReplicaInfo()
 	GAME::ItemReplicaInfo replica;
 	fnItemGetItemReplicaInfoRelic(This, replica);
 
@@ -55,18 +50,10 @@ void* __fastcall ItemRelicSeedInfo::HookedMethod(void* This, void* character, st
 			stream << it.textClass << ";" << it.text.c_str() << "\n";
 		}
 
-		for (auto& it : gameTextLines)
-			itemStatsfile << "TextClass: " << it.textClass << " Text: " << it.text.c_str() << "\n";
-
 		std::wstring str = stream.str();
 		g_self->TransferData(str.size() * sizeof(wchar_t), (char*)str.c_str());
 	}
-	else {
-		itemStatsfile << "Skipping due to enchantmentRecord: '" << replica.enchantmentRecord.c_str() << "'\n";
-	}
 
-	itemStatsfile.flush();
-	itemStatsfile.close();
 
 	return v;
 }

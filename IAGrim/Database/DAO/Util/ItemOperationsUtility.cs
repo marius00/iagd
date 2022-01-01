@@ -13,17 +13,15 @@ using StatTranslator;
 namespace IAGrim.Database.DAO.Util {
     static class ItemOperationsUtility {
 
-        public static List<JsonItem> MergeStackSize(IEnumerable<JsonItem> items) {
-            Dictionary<string, JsonItem> map = new Dictionary<string, JsonItem>();
+        public static List<List<JsonItem>> MergeStackSize(IEnumerable<JsonItem> items) {
+            Dictionary<string, List<JsonItem>> map = new Dictionary<string, List<JsonItem>>();
             foreach (var item in items) {
                 var key = item.MergeIdentifier;
                 if (map.ContainsKey(key)) {
-                    map[key].Children.Add(item);
-                    map[key].InitialNumItems = (uint)map[key].Children.Count;
-                    map[key].NumItems = (uint)map[key].Children.Count;
+                    map[key].Add(item);
                 }
                 else {
-                    map[key] = item;
+                    map[key] = new List<JsonItem>() { item };
                 }
             }
 

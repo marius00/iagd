@@ -19,10 +19,6 @@ namespace IAGrim.UI.Controller.dto {
         public string Slot { get; set; }
         public float Level { get; set; }
         public object[] URL { get; set; }
-        [Obsolete]
-        public uint NumItems { get; set; }
-        public uint InitialNumItems { get; set; }
-
         public ItemTypeDto Type { get; set; }
         public string[] Buddies { get; set; }
         public bool HasRecipe { get; set; }
@@ -41,7 +37,6 @@ namespace IAGrim.UI.Controller.dto {
 
         public IList<ItemStatInfo> ReplicaStats { get; set; }
 
-        public IList<JsonItem> Children { get; set; }
         public int CompareTo(JsonItem other) {
             if (other.Type != this.Type) {
                 return other.Type - this.Type;

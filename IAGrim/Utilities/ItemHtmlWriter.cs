@@ -148,7 +148,6 @@ namespace IAGrim.Utilities {
                 IsMonsterInfrequent = item.ModifiedSkills.Any(s => s.IsMonsterInfrequent),
                 IsHardcore = isHardcore,
                 ReplicaStats = replicaStats,
-                Children = new List<JsonItem>(),
             };
 
             if (!skipStats) {
@@ -188,15 +187,11 @@ namespace IAGrim.Utilities {
             var jsonItems = items.Select(GetJsonItem).ToList();
 
             var merged = ItemOperationsUtility.MergeStackSize(jsonItems);
-            List<List<JsonItem>> result = new List<List<JsonItem>>(jsonItems.Count);
-            foreach (var item in merged) {
-                var batch = new List<JsonItem> { item };
-                batch.AddRange(item.Children);
-                batch.Sort();
-                result.Add(batch);
+            foreach (var itemList in merged) {
+                itemList.Sort();
             }
 
-            return result;
+            return merged;
         }
 
 
