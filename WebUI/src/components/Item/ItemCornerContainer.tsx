@@ -7,7 +7,8 @@ import {PureComponent} from "preact/compat";
 
 
 interface Props {
-    showBackupCloudIcon: boolean;
+  showBackupCloudIcon: boolean;
+  onClickBuddyIcon: () => void;
 }
 type IItemWithshowBackupCloudIcon = Props & IItem;
 
@@ -72,6 +73,7 @@ class ItemCornerContainer extends PureComponent<IItemWithshowBackupCloudIcon, ob
     const showPluralBuddyItemIcon = item.type !== IItemType.Buddy && item.buddies.length > 1;
     const showRecipeIcon = item.hasRecipe && item.type !== 0;
     const showAugmentationIcon = item.type === IItemType.Augmentation;
+    const onClickBuddyIcon = item.onClickBuddyIcon;
 
     const cloudIconOk = getCloudIcon(true);
     const cloudIconErr = getCloudIcon(false);
@@ -111,12 +113,12 @@ class ItemCornerContainer extends PureComponent<IItemWithshowBackupCloudIcon, ob
         }
 
         {showSingularBuddyItemIcon &&
-        <span>
+        <span onClick={() => onClickBuddyIcon()}>
             <img
               className="cursor-help"
               src="static/buddy.png"
               data-tip={translate('item.buddies.singular', item.buddies[0])}
-              alt={"One of your buddies has this item"}
+              alt={translate('item.buddies.tooltip')}
             />
 
           </span>

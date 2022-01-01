@@ -69,6 +69,8 @@ namespace IAGrim.UI.Misc.CEF {
                 {"item.label.levelRequirement", lang.GetTag("iatag_html_levlerequirement")},
                 {"item.label.levelRequirementAny", lang.GetTag("iatag_html_any")},
                 {"item.label.transferSingle", lang.GetTag("iatag_html_transfer")},
+                {"item.buddies.tooltip", lang.GetTag("iatag_html_buddies_tooltip")},
+                {"item.label.transferCompareSingle", lang.GetTag("iatag_html_transfer_cmp")},
                 {"item.label.transferAll", lang.GetTag("iatag_html_transferall")},
                 {"crafting.header.recipeName", lang.GetTag("iatag_html_badstate_title")},
                 {"crafting.header.currentlyLacking", lang.GetTag("iatag_html_crafting_lacking")},

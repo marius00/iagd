@@ -346,6 +346,8 @@ namespace StatTranslator {
             {"iatag_html_badstate_close", "Close"},
             {"iatag_html_transferall", "Transfer all"},
             {"iatag_html_transfer", "Transfer to Stash"},
+            {"iatag_html_transfer_cmp", "Compare & Transfer"},
+            {"iatag_html_buddies_tooltip", "One of your buddies has this item"},
             {"iatag_html_items_youcancraftthisitem", "You can craft this item."},
             {"iatag_html_cloud_ok", "This item has been backed up to the cloud"},
             {"iatag_html_cloud_err", "This item has not been backed up to the cloud"},

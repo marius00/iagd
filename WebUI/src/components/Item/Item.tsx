@@ -13,6 +13,7 @@ import ItemCornerContainer from './ItemCornerContainer';
 import { v4 as uuidv4 } from 'uuid';
 import {PureComponent} from "preact/compat";
 import ReplicaStatContainer from "./ReplicaStatContainer";
+import styles from "./ReplicaItem.css";
 
 
 interface Props {
@@ -184,7 +185,7 @@ class Item extends PureComponent<Props, object> {
           : ''
         }
 
-        <ItemCornerContainer {...item} showBackupCloudIcon={this.props.showBackupCloudIcon} />
+        <ItemCornerContainer {...item} showBackupCloudIcon={this.props.showBackupCloudIcon} onClickBuddyIcon={() => this.props.transferSingle(this.props.item)} />
 
         {item.hasRecipe && item.type === IItemType.Recipe ?
           <div className="recipe-item">
@@ -209,10 +210,15 @@ class Item extends PureComponent<Props, object> {
 
         {item.type === IItemType.Player ?
           <div className="link-container">
-            <a onClick={() => this.props.transferSingle(this.props.item)}>{translate('item.label.transferSingle')}</a>
+            {numItems === 1 && <a onClick={() => this.props.transferSingle(this.props.item)}>{translate('item.label.transferSingle')}</a>}
+            {numItems > 1 && <a onClick={() => this.props.transferSingle(this.props.item)}>{translate('item.label.transferCompareSingle')}</a>}
           </div>
           : ''
         }
+
+        {item.type === 2 && !item.replicaStats && <div className={styles.watermarkContainer}>
+            <p className={styles.watermark}>{translate('item.genericstats.watermark')}</p>
+        </div>}
       </div>
     );
   }
