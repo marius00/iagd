@@ -82,7 +82,7 @@
   -moz-box-sizing: border-box;
   /* Firefox, other Gecko */
   box-sizing: border-box;
-  width: calc(25% - 20px);
+  width: calc(30% - 20px);
 }
 
 @media only screen and (min-width: 1921px) {

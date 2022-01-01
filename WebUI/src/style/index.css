@@ -28,6 +28,7 @@ body {
 	--item-background-hover: #e8d5b6;
 	--item-stat-label: #000000;
 	--item-stat-modifier: #495057;
+	--item-golden-header: #8e5420;
 	--item-skill-trigger: black;
 	--item-border: #896947;
 	--item-transfer: black;
@@ -51,6 +52,10 @@ body {
 	--item-color-unknown: #81551a;
 	--item-color-yellow: #7d7703;
 	--item-warning-zero: orange;
+	--itemcompare-header-bg: rgb(63, 48, 72);
+	--itemcompare-header-h2: #fff8f8;
+	--itemcompare-header-x-hover: #3c3c3c59;
+	--itemcompare-border: black;
 
 	--notification-background-color: #1f2024;
 	--notification-text-color: #ffffff;
@@ -65,6 +70,7 @@ body {
 	--item-background-hover: #232220;
 	--item-stat-label: #a88054;
 	--item-stat-modifier: #dbb284;
+	--item-golden-header: #e3ba6b;
 	--item-skill-trigger: gray;
 	--item-border: #211e1c;
 	--item-transfer: #ffffff;
@@ -85,6 +91,10 @@ body {
 	--item-color-unknown: #81551a;
 	--item-color-yellow: #f1e51b;
 	--item-warning-zero: red;
+	--itemcompare-header-bg: #2f2a2a82;
+	--itemcompare-header-h2: #c1aeae;
+	--itemcompare-header-x-hover: #3c3c3c59;
+	--itemcompare-border: gray;
 
 	--notification-background-color: #171614;
 	--notification-text-color: #acaaaa;

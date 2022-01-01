@@ -12,6 +12,7 @@
     transform: translateX(-50%);
 
     background: var(--background-color);
+    border: 1px solid var(--itemcompare-border);
 }
 
 .itemList {
@@ -24,11 +25,12 @@
     overflow-y: auto;
 }
 .itemHeader {
-    background-color: white;
+    background-color: var(--itemcompare-header-bg);
     padding: 15px;
 }
 .itemHeader h2 {
     margin: 0;
+    color: var(--itemcompare-header-h2)
 }
 .closeButton {
     color: red; /* TODO: */
@@ -40,5 +42,5 @@
     cursor: pointer;
 }
 .closeButton:hover {
-    background-color: #3eea4a;
+    background-color: var(--itemcompare-header-x-hover);
 }

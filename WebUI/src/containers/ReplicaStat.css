@@ -3,7 +3,7 @@
 }
 
 /* Item description, bla bla text */
-.replica-type-16 {
+.replica-type-16, .replica-type-20, .replica-type-21 {
   color: var(--item-misc-info);
 }
 
@@ -37,13 +37,23 @@
 }
 
 /* Regular item stats */
-.replica-type-18, .replica-type-25 {
-  color: var(--item-stat-modifier);
+ .replica-type-18, .replica-type-25, .replica-type-26 {
+   color: var(--item-stat-modifier);
+ }
+
+p .replica-type-26 {
+  margin-left: 15px;
+
 }
 .replica-letter-E {
   color: var(--item-stat-label);
-
 }
+
+/* "(2) Set", "(3) Set" etc */
+.replica-type-22 {
+  color: var(--item-golden-header);
+}
+
 /* Item stat, number at the end: Increases Armor by ^H-30%*/
 .replica-letter-H {
   color: var(--item-stat-modifier);
