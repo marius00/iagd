@@ -16,13 +16,14 @@ using log4net;
 using log4net.Repository.Hierarchy;
 
 namespace IAGrim.Services {
+    // TODO: Class does too much, and is somewhat of a mess.
     class ItemReplicaService : IDisposable {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ItemReplicaService));
         private readonly IPlayerItemDao _playerItemDao;
         private volatile bool _isGrimDawnRunning = false;
         private volatile bool _isShuttingDown = false;
         private Thread _t = null;
-        private ActionCooldown _cooldown = new ActionCooldown(500);
+        private readonly ActionCooldown _cooldown = new ActionCooldown(2500);
         private ReplicaCache _cache = new ReplicaCache();
 
         public ItemReplicaService(IPlayerItemDao playerItemDao) {
@@ -58,7 +59,9 @@ namespace IAGrim.Services {
                 }
 
                 pipeStream.Write(buffer.ToArray(), 0, buffer.Count);
+#if DEBUG
                 Logger.Debug("Wrote item to pipe");
+#endif
             }
 
             return true;
@@ -75,6 +78,7 @@ namespace IAGrim.Services {
                 return null;
             }
 
+#if DEBUG
             StringBuilder sb = new StringBuilder();
             sb.Append(pi.Id + ";");
             sb.Append(pi.Seed + ";");
@@ -88,6 +92,7 @@ namespace IAGrim.Services {
             sb.Append(pi.EnchantmentRecord + ";");
             sb.Append(pi.TransmuteRecord + ";");
             Logger.Debug($"Dispatching: {sb.ToString()}");
+#endif
 
             buffer.AddRange(BitConverter.GetBytes((long)pi.Id));
             buffer.AddRange(BitConverter.GetBytes((int)pi.Seed));
@@ -137,7 +142,8 @@ namespace IAGrim.Services {
 
                 while (!_isShuttingDown) {
                     if (_cooldown.IsReady) {
-                        _cooldown = Process() ? new ActionCooldown(1500) : new ActionCooldown(15000);
+                        Process();
+                        _cooldown.Reset();
                     }
                     
                     Thread.Sleep(1);

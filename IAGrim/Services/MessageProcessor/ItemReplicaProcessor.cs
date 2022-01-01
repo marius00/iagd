@@ -32,7 +32,9 @@ namespace IAGrim.Services.MessageProcessor {
                     return;
             }
 
+#if DEBUG
             _logger.Info($"Experimental hook success: {type} {dataString.Replace('\n','N')}");
+#endif
 
             var lines = dataString.Split('\n');
             if (lines.Length < 2) {
@@ -72,9 +74,11 @@ namespace IAGrim.Services.MessageProcessor {
             item.Text = JsonConvert.SerializeObject(text);
             item.UqHash = GetHash(item);
 
+#if DEBUG
             if (!dataString.Contains("^")) {
                 _logger.Warn("This might be the drones you are looking for...");
             }
+#endif
 
             _replicaItemDao.Save(item);
         }

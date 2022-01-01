@@ -1019,7 +1019,7 @@ DELETE FROM PlayerItem WHERE Id IN (
 
         public IList<PlayerItem> ListMissingReplica(int limit) {
 
-            //TODO: Test ItemArtifact
+            //TODO: Relics are "ItemArtifact", those will crash the game.
             var specificItemTypesOnlySql = $@"
                 SELECT Playeritemid FROM PlayerItemRecord WHERE record IN (
                     select baserecord from databaseitem_V2 db where db.baserecord in (
@@ -1073,11 +1073,6 @@ DELETE FROM PlayerItem WHERE Id IN (
                         )
 				)
 ";
-
-
-            //AND NOT baserecord LIKE '%consumables%'
-            //AND NOT baserecord LIKE '%/potions/%'
-            //AND NOT baserecord LIKE '%/crafting/%'
 
             var sql = $@"
                 SELECT

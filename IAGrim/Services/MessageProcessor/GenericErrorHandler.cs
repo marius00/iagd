@@ -24,6 +24,7 @@ namespace IAGrim.Services.MessageProcessor {
                 int method = IOHelper.GetInt(data, 0);
                 _logger.Debug($"Success hooking method \"{(MessageType)method}\" ({method})");
             }
+#if DEBUG
             else if (type == MessageType.TYPE_ITEMSEEDDATA_PLAYERID_ERR_NOGAME) {
                 _logger.Warn($"Error: ItemSeed NOGAME");
             }
@@ -36,6 +37,7 @@ namespace IAGrim.Services.MessageProcessor {
             else if (type == MessageType.TYPE_GAMEENGINE_UPDATE) {
                 _logger.Warn($"DEBUG: GameEngine::Update");
             }
+#endif
         }
     }
 }

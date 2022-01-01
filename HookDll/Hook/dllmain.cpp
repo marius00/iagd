@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include <windows.h>
 #include <stdlib.h>
-//#include <boost/thread.hpp>
 #include "DataQueue.h"
 #include "MessageType.h"
 #include "StateRequestNpcAction.h"

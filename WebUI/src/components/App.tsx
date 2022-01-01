@@ -199,7 +199,6 @@ class App extends PureComponent<object, object> {
       return;
     }
 
-    console.log('Reducing item', item, transferAll, 'from', this.state.items[itemIdx]);
     let itemArray;
     if (transferAll) {
       // Filter out all playeritems
@@ -207,7 +206,6 @@ class App extends PureComponent<object, object> {
     } else {
       // Filter out specific item
       itemArray = [...this.state.items[itemIdx]].filter(m => m.uniqueIdentifier !== item.uniqueIdentifier);
-      console.log('New Array', itemArray);
     }
 
 
@@ -218,7 +216,6 @@ class App extends PureComponent<object, object> {
     } else {
       const stateItems = [...this.state.items];
       stateItems[itemIdx] = itemArray;
-      console.log('Set new state', stateItems, itemIdx);
       this.setState({items: stateItems});
     }
   }
