@@ -16,6 +16,7 @@
 #include "EquipmentSeedInfo.h"
 #include "OnDemandSeedInfo.h"
 #include "GameEngineUpdate.h"
+#include "ItemRelicSeedInfo.h"
 
 #pragma region Variables
 // Switches hook logging on/off
@@ -185,6 +186,8 @@ int ProcessAttach(HINSTANCE _hModule) {
 	hooks.push_back(new EquipmentSeedInfo(&g_dataQueue, g_hEvent, &g_log));
 	hooks.push_back(listener);
 	//hooks.push_back(new GameEngineUpdate(&g_dataQueue, g_hEvent, &g_log));
+	
+	hooks.push_back(new ItemRelicSeedInfo(&g_dataQueue, g_hEvent, &g_log));
 	
 
 	std::stringstream msg;

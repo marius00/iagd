@@ -87,6 +87,9 @@
     <ClInclude Include="GameEngineUpdate.h">
       <Filter>CoreHooks\ItemSeed</Filter>
     </ClInclude>
+    <ClInclude Include="ItemRelicSeedInfo.h">
+      <Filter>CoreHooks\ItemSeed</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -144,6 +147,9 @@
       <Filter>CoreHooks\ItemSeed</Filter>
     </ClCompile>
     <ClCompile Include="GameEngineUpdate.cpp">
+      <Filter>CoreHooks\ItemSeed</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemRelicSeedInfo.cpp">
       <Filter>CoreHooks\ItemSeed</Filter>
     </ClCompile>
   </ItemGroup>
