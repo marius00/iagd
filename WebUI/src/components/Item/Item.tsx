@@ -17,7 +17,7 @@ import styles from "./ReplicaItem.css";
 
 
 interface Props {
-  item: IItem[];
+  items: IItem[];
   transferSingle: (item: IItem[]) => void;
   transferAll: (item: IItem[]) => void;
   getItemName: (baseRecord: string) => ICollectionItem;
@@ -39,21 +39,27 @@ class Item extends PureComponent<Props, object> {
   }
 
   openItemSite() {
-    openUrl(`https://www.grimtools.com/db/search?src=itemassistant&query=${this.stripColorCodes(this.props.item[0].name)}`);
+    openUrl(`https://www.grimtools.com/db/search?src=itemassistant&query=${this.stripColorCodes(this.props.items[0].name)}`);
   }
 
-  renderBuddyItem(item: IItem) {
-    if (item.type === IItemType.Buddy) {
-      if (item.buddies.length === 1) {
+  renderBuddyItemText(items: IItem[]) {
+    const buddyItems = items.filter(m => m.type === 1);
+    const hasRegularItems = items.filter(m => m.type === 2).length > 0;
+
+    // If we only have buddy items.
+    // If we also have player items, we don't really care. The corner icon is responsible for that.
+    if (buddyItems.length > 0 && !hasRegularItems) {
+      const buddies = buddyItems.map(m => m.extras).join(", ");
+      if (buddyItems.length === 1) {
         return (
           <div className="buddy-item-mix">
-            &nbsp;{translate('item.buddies.singularOnly', item.buddies[0])}
+            &nbsp;{translate('item.buddies.singularOnly', buddyItems[0].extras)}
           </div>
         );
       } else {
         return (
           <div className="buddy-item-mix" data-bind="attr: {title: buddies.join()}">
-            <a data-tip={'&laquo;' + item.buddies.length + '&raquo; of your Buddies also have this item.'} />
+            <a data-tip={'&laquo;' + buddyItems.length + '&raquo; of your Buddies also have this item.'} />
           </div>
         );
       }
@@ -98,7 +104,7 @@ class Item extends PureComponent<Props, object> {
   }
 
   renderIcon() {
-    const item = this.props.item[0];
+    const item = this.props.items[0];
     let icon = (item.icon && item.icon.length) > 0 ? item.icon : 'weapon1h_focus02a.tex.png';
     if (!isEmbedded) // Online items stores icons separately
       icon = `http://static.iagd.evilsoft.net/img/${icon}`;
@@ -110,7 +116,7 @@ class Item extends PureComponent<Props, object> {
   }
 
   render() {
-    const item = this.props.item[0];
+    const item = this.props.items[0];
     const name = item.name.length > 0 ? this.stripColorCodes(item.name) : 'Unknown';
     const socket = item.socket.replace(" ", "");
 
@@ -129,7 +135,7 @@ class Item extends PureComponent<Props, object> {
     const setName = GetSetName(item.baseRecord);
     let setItemsList = this.getSetItemTooltip(setName, item.isHardcore);
 
-    const numItems = this.props.item.filter(m => m.type === 2).length;
+    const numItems = this.props.items.filter(m => m.type === 2).length;
 
     const miText = item.isMonsterInfrequent ? ' / MI' : '';
     return (
@@ -172,7 +178,7 @@ class Item extends PureComponent<Props, object> {
           {item.skill ? <Skill skill={item.skill} keyPrefix={getUniqueId(item)}/> : ''}
 
         </div>
-        {item.buddies.length > 0 ? this.renderBuddyItem(item) : ''}
+        {this.renderBuddyItemText(this.props.items)}
 
         {item.hasRecipe && item.type !== IItemType.Recipe ?
           <span className="informative">
@@ -185,7 +191,7 @@ class Item extends PureComponent<Props, object> {
           : ''
         }
 
-        <ItemCornerContainer {...item} showBackupCloudIcon={this.props.showBackupCloudIcon} onClickBuddyIcon={() => this.props.transferSingle(this.props.item)} />
+        <ItemCornerContainer items={this.props.items} showBackupCloudIcon={this.props.showBackupCloudIcon} onClickBuddyIcon={() => this.props.transferSingle(this.props.items)} />
 
         {item.hasRecipe && item.type === IItemType.Recipe ?
           <div className="recipe-item">
@@ -203,15 +209,15 @@ class Item extends PureComponent<Props, object> {
 
         {numItems > 1 && item.type === IItemType.Player ?
           <div className="link-container-all">
-            <a onClick={() => this.props.transferAll(this.props.item)}>{translate('item.label.transferAll')} ({numItems})</a>
+            <a onClick={() => this.props.transferAll(this.props.items)}>{translate('item.label.transferAll')} ({numItems})</a>
           </div>
           : ''
         }
 
         {item.type === IItemType.Player ?
           <div className="link-container">
-            {numItems === 1 && <a onClick={() => this.props.transferSingle(this.props.item)}>{translate('item.label.transferSingle')}</a>}
-            {numItems > 1 && <a onClick={() => this.props.transferSingle(this.props.item)}>{translate('item.label.transferCompareSingle')}</a>}
+            {numItems === 1 && <a onClick={() => this.props.transferSingle(this.props.items)}>{translate('item.label.transferSingle')}</a>}
+            {numItems > 1 && <a onClick={() => this.props.transferSingle(this.props.items)}>{translate('item.label.transferCompareSingle')}</a>}
           </div>
           : ''
         }

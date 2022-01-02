@@ -14,7 +14,6 @@ export default interface IItem {
   level: number;
   url: Array<number | string>;
   type: IItemType;
-  buddies: string[];
   hasRecipe: boolean;
   greenRarity: number;
   headerStats: IStat[];

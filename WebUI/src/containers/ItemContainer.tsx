@@ -135,7 +135,7 @@ class ItemContainer extends PureComponent<Props, object> {
 
           {items.map((item) =>
             <Item
-              item={item}
+              items={item}
               key={'item-' + getUniqueId(item[0])}
               transferAll={(item: IItem[]) => this.transferAll(item)}
               transferSingle={(item: IItem[]) => this.transferSingleWrapper(item)}

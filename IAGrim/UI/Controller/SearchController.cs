@@ -146,45 +146,9 @@ namespace IAGrim.UI.Controller {
 
         private void AddBuddyItems(List<PlayerHeldItem> items, ItemSearchRequest query, out string message) {
             var buddyItems = new List<BuddyItem>(_buddyItemDao.FindBy(query));
-            var itemsWithBuddy = items.FindAll(item => buddyItems.Any(buddy => buddy.BaseRecord == item.BaseRecord));
-
-            foreach (var playerItem in items.FindAll(item => buddyItems.Any(buddy => buddy.BaseRecord == item.BaseRecord))) {
-                foreach (PlayerHeldItem buddyItem in buddyItems.FindAll(buddyItem => buddyItem.Equals(playerItem))) {
-                    var buddyName = System.Web.HttpUtility.HtmlEncode(buddyItem.Stash);
-                    if (!playerItem.Buddies.Exists(name => name == buddyName)) {
-                        playerItem.Buddies.Add(buddyName);
-                    }
-                }
-            }
-
-            Logger.Debug($"Merged {itemsWithBuddy.Count} buddy items into player items");
-
-            // TODO: This should use .Except(), find out why its not working with .Except()
-            var remainingBuddyItems = buddyItems.FindAll(buddy => itemsWithBuddy.All(item => !buddy.Equals(item)));
-
-            //We add the Owner name from pure BuddyItems from Stash to BuddyNames
-            foreach (PlayerHeldItem remainingBuddyItem in remainingBuddyItems) {
-                var buddyName = System.Web.HttpUtility.HtmlEncode(remainingBuddyItem.Stash);
-                remainingBuddyItem.Buddies.Add(buddyName);
-            }
-
-            //We see if of the remaining Items there are any items with more than one Buddy and merge them
-            var multiBuddyItems = remainingBuddyItems
-                .FindAll(item => remainingBuddyItems.FindAll(buddy => buddy.BaseRecord == item.BaseRecord).Count() > 1);
-            foreach (PlayerHeldItem multiBuddyItem in multiBuddyItems) {
-                foreach (PlayerHeldItem item in remainingBuddyItems.FindAll(item => multiBuddyItem.BaseRecord == item.BaseRecord)) {
-                    var buddyName = System.Web.HttpUtility.HtmlEncode(item.Stash);
-                    if (!multiBuddyItem.Buddies.Exists(name => name == buddyName)) {
-                        multiBuddyItem.Buddies.Add(buddyName);
-                    }
-                }
-            }
-
-            var buddyPlayerHeldItems = new List<PlayerHeldItem>(remainingBuddyItems);
-            if (buddyPlayerHeldItems.Count > 0) {
-                MergeDuplicates(buddyPlayerHeldItems);
-                items.AddRange(buddyPlayerHeldItems);
-                message = RuntimeSettings.Language.GetTag("iatag_items_found_self_and_buddy", items.Count - buddyPlayerHeldItems.Count, buddyPlayerHeldItems.Count);
+            if (buddyItems.Count > 0) {
+                items.AddRange(buddyItems);
+                message = RuntimeSettings.Language.GetTag("iatag_items_found_self_and_buddy", items.Count - buddyItems.Count, buddyItems.Count);
             } 
             else {
                 message = RuntimeSettings.Language.GetTag("iatag_items_found_selfonly", items.Count);
@@ -212,35 +176,5 @@ namespace IAGrim.UI.Controller {
             items.AddRange(remainingRecipes);
         }
 
-        /// <summary>
-        /// Merge player held items
-        /// IFF MergeDuplicates is enabled in the settings
-        /// </summary>
-        /// <param name="items"></param>
-        private void MergeDuplicates(List<PlayerHeldItem> items) {
-            if (!_settings.GetPersistent().MergeDuplicates) {
-                return;
-            }
-
-            var itemMap = new Dictionary<string, PlayerHeldItem>();
-
-            foreach (var item in items) {
-                if (!item.IsKnown) {
-                    continue;
-                }
-
-                var key = item.Name + item.Stash;
-
-                if (itemMap.ContainsKey(key)) {
-                    itemMap[key].Count += item.Count;
-                }
-                else {
-                    itemMap[key] = item;
-                }
-            }
-
-            items.RemoveAll(m => m.IsKnown);
-            items.AddRange(itemMap.Values);
-        }
     }
 }

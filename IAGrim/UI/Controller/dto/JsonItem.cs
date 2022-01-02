@@ -20,7 +20,6 @@ namespace IAGrim.UI.Controller.dto {
         public float Level { get; set; }
         public object[] URL { get; set; }
         public ItemTypeDto Type { get; set; }
-        public string[] Buddies { get; set; }
         public bool HasRecipe { get; set; }
 
         public IList<JsonStat> HeaderStats { get; set; }

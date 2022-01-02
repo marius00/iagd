@@ -9,8 +9,8 @@ import {PureComponent} from "preact/compat";
 interface Props {
   showBackupCloudIcon: boolean;
   onClickBuddyIcon: () => void;
+  items: IItem[];
 }
-type IItemWithshowBackupCloudIcon = Props & IItem;
 
 
 function getEaster(Y: number) {
@@ -63,17 +63,20 @@ function getCloudLabel(isOk: boolean) {
   return isOk ? `items.label.cloudOk${suffix}` : `items.label.cloudError${suffix}`;
 }
 
-class ItemCornerContainer extends PureComponent<IItemWithshowBackupCloudIcon, object> {
+class ItemCornerContainer extends PureComponent<Props, object> {
   render() {
-    const item = {...this.props};
-    const showBackupCloudIcon = item.showBackupCloudIcon;
+    const buddyItems = this.props.items.filter(m => m.type === 1);
+
+    // Amazingly all of the old logic works pretty well, since buddy items are always LAST in the list, if items[0] is type buddy, then we only have buddy items.
+    const item = this.props.items[0];
+    const showBackupCloudIcon = this.props.showBackupCloudIcon;
     const showCloudOkIcon = item.type === IItemType.Player && item.hasCloudBackup && isEmbedded && showBackupCloudIcon;
     const showCloudErrorIcon = item.type === IItemType.Player && !item.hasCloudBackup && isEmbedded && showBackupCloudIcon;
-    const showSingularBuddyItemIcon = item.type !== IItemType.Buddy && item.buddies.length === 1;
-    const showPluralBuddyItemIcon = item.type !== IItemType.Buddy && item.buddies.length > 1;
+    const showSingularBuddyItemIcon = item.type !== IItemType.Buddy && buddyItems.length === 1;
+    const showPluralBuddyItemIcon = item.type !== IItemType.Buddy && buddyItems.length > 1;
     const showRecipeIcon = item.hasRecipe && item.type !== 0;
     const showAugmentationIcon = item.type === IItemType.Augmentation;
-    const onClickBuddyIcon = item.onClickBuddyIcon;
+    const onClickBuddyIcon = this.props.onClickBuddyIcon;
 
     const cloudIconOk = getCloudIcon(true);
     const cloudIconErr = getCloudIcon(false);
@@ -117,7 +120,7 @@ class ItemCornerContainer extends PureComponent<IItemWithshowBackupCloudIcon, ob
             <img
               className="cursor-help"
               src="static/buddy.png"
-              data-tip={translate('item.buddies.singular', item.buddies[0])}
+              data-tip={translate('item.buddies.singular', buddyItems[0].extras)}
               alt={translate('item.buddies.tooltip')}
             />
 
@@ -129,7 +132,7 @@ class ItemCornerContainer extends PureComponent<IItemWithshowBackupCloudIcon, ob
             <img
               className="cursor-help"
               src="static/buddy.png"
-              data-tip={translate('item.buddies.plural', item.buddies.join('\n'))}
+              data-tip={translate('item.buddies.plural', buddyItems.map(m => m.extras).join('\n'))}
               alt={"Several of your buddies has this item"}
             />
 

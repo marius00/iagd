@@ -42,7 +42,7 @@ class ReplicaItem extends PureComponent<Props, object> {
     if (item.type === IItemType.Buddy) {
       return (
         <div className="buddy-item-mix">
-          &nbsp;{translate('item.buddies.singularOnly', item.buddies[0])}
+          &nbsp;{translate('item.buddies.singularOnly', item.extras)}
         </div>
       );
     }
@@ -158,9 +158,7 @@ class ReplicaItem extends PureComponent<Props, object> {
           {item.skill ? <Skill skill={item.skill} keyPrefix={getUniqueId(item)}/> : ''}
 
         </div>
-        {item.buddies.length > 0 ? this.renderBuddyItem(item) : ''}
-
-        <ItemCornerContainer {...item} showBackupCloudIcon={this.props.showBackupCloudIcon} />
+        {this.renderBuddyItem(item)}
 
         <div className="level">
           <p>{translate('item.label.levelRequirement', item.level > 1 ? String(item.level) : translate('item.label.levelRequirementAny'))}</p>

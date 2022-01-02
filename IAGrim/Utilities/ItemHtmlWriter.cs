@@ -139,7 +139,6 @@ namespace IAGrim.Utilities {
                 HeaderStats = skipStats ? new List<JsonStat>() : item.HeaderStats.Select(ToJsonStat).ToHashSet().ToList(),
                 Type = type,
                 HasRecipe = item.HasRecipe,
-                Buddies = item.Buddies.ToArray(),
                 Skill = (item.Skill != null && !skipStats) ? GetJsonSkill(item.Skill) : null,
                 GreenRarity = (int) item.PrefixRarity,
                 HasCloudBackup = isCloudSynced,
