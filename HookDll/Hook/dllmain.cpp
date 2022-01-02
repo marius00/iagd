@@ -182,7 +182,7 @@ int ProcessAttach(HINSTANCE _hModule) {
 
 	hooks.push_back(new EquipmentSeedInfo(&g_dataQueue, g_hEvent));
 	hooks.push_back(listener);
-	hooks.push_back(new GameEngineUpdate(&g_dataQueue, g_hEvent));
+	// hooks.push_back(new GameEngineUpdate(&g_dataQueue, g_hEvent));
 	
 	hooks.push_back(new ItemRelicSeedInfo(&g_dataQueue, g_hEvent));
 	

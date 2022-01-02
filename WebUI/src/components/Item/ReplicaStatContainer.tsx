@@ -10,6 +10,7 @@ interface Props {
   id: string;
   skills: IStat[];
   hideGrantedSkill: boolean;
+  hideSetBonus: boolean; /* 20-26 */
 }
 
 /**
@@ -43,6 +44,11 @@ class ReplicaStatContainer extends PureComponent<Props, object> {
     let numWhitespaces = 0;
     let isSkipping = false;
     const shouldSkip = (row: IReplicaRow) => {
+      // Set bonus -- Maybe replace "20" with "Set bonus hidden" or similar?
+      if (this.props.hideSetBonus && (row.type >= 20 && row.type <= 26)) {
+        return true;
+      }
+
       if (isSkipping && row.type === 0 /* Newline */)
         numWhitespaces++;
 

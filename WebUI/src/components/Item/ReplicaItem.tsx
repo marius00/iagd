@@ -133,7 +133,7 @@ class ReplicaItem extends PureComponent<Props, object> {
           <span className="item-socket-label">{item.socket}</span>
           }
 
-          {item.replicaStats && <ReplicaStatContainer rows={item.replicaStats} id={getUniqueId(item)} skills={item.bodyStats} hideGrantedSkill /> }
+          {item.replicaStats && <ReplicaStatContainer rows={item.replicaStats} id={getUniqueId(item)} skills={item.bodyStats} hideGrantedSkill hideSetBonus /> }
           <ul className="headerStats">
             {headerStats}
           </ul>

@@ -87,10 +87,10 @@ const helpEntries = [
         type: IHelpEntryType.Help
     },
     {
-        title: `When will IA be updated for the latest GD patch? I cannot see some stats`,
+        title: `When will IA be updated for the latest GD patch?`,
         tag: 'GrimDawnUpdated',
         body: () => <div>
-            Item Assistant rarely requires any update, you just need to parse the database again. <br/><br/>
+            Item Assistant rarely requires any update, though you may need to parse the database again. <br/><br/>
             {typicalParseDbMessage}
         </div>,
         type: IHelpEntryType.Help
@@ -100,10 +100,6 @@ const helpEntries = [
         tag: 'ReproduceStats',
         body: () => <div>
             IA will never modify any of your items, and will always reproduce them exactly as it found them. <br/>
-            Even if merging items is enabled, your items will remain unchanged. <b>Always.</b> <br/> <br/>
-
-            However, the stats displayed in IA will vary from what you see in-game, as IA is unable to display the
-            correct stats itself.
         </div>,
         type: IHelpEntryType.Informational
     },

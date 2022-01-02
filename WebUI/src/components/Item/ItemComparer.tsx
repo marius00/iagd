@@ -37,7 +37,7 @@ class ItemComparer extends PureComponent<Props, object> {
     const items = this.props.item;
 
     return (
-      <div className={styles.itemComparer}>
+      <div className={styles.itemComparer + " itemComparer"}>
         <header className={styles.itemHeader}>
           <h2>Item Comparison</h2>
           <span className={styles.closeButton} onClick={() => this.props.onClose()}>X</span>
