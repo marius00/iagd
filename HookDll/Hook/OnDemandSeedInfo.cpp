@@ -283,17 +283,27 @@ void OnDemandSeedInfo::GetItemInfo(ParsedSeedRequest obj) {
 	}
 }
 
+typedef bool(__thiscall* IsGameLoadingPtr)(void* This);
+typedef bool(__thiscall* IsGameWaitingPtr)(void* This, bool);
+IsGameLoadingPtr IsGameLoading = IsGameLoadingPtr(GetProcAddress(GetModuleHandle(L"game.dll"), "?IsGameLoading@GameEngine@GAME@@QEBA_NXZ"));
+IsGameLoadingPtr IsGameEngineOnline = IsGameLoadingPtr(GetProcAddress(GetModuleHandle(L"game.dll"), "?IsGameEngineOnline@GameEngine@GAME@@QEBA_NXZ"));
+IsGameWaitingPtr IsGameWaiting = IsGameWaitingPtr(GetProcAddress(GetModuleHandle(L"game.dll"), "?IsGameWaiting@GameEngine@GAME@@QEAA_N_N@Z"));
 
 
 void* __fastcall OnDemandSeedInfo::HookedMethod(void* This, int v) {
 	void* r = g_self->originalMethod(This, v);
 
-	// Process the queue
-	int num = 0;
-	while (!g_self->m_itemQueue.empty() && num++ < 15) {
-		ParsedSeedRequestPtr ptr = g_self->m_itemQueue.pop();
-		ParsedSeedRequest obj = *ptr.get();
-		g_self->GetItemInfo(obj);
+	// Only start processing items if the game is running.
+	// Attempting to create items with a set bonus from the main menu may crash the game.
+	// Items with skills may also end up with imssing info if created from the main menu.
+	if (!IsGameLoading(This) && !IsGameWaiting(This, true) && IsGameEngineOnline(This)) {
+		// Process the queue
+		int num = 0;
+		while (!g_self->m_itemQueue.empty() && num++ < 15) {
+			ParsedSeedRequestPtr ptr = g_self->m_itemQueue.pop();
+			ParsedSeedRequest obj = *ptr.get();
+			g_self->GetItemInfo(obj);
+		}
 	}
 
 	return r;

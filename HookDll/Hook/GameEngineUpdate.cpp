@@ -32,6 +32,12 @@ void GameEngineUpdate::DisableHook() {
 	Unhook((PVOID*)&originalMethod, HookedMethod);
 }
 
+//typedef bool(__thiscall* IsGameLoadingPtr)(void* This);
+//typedef bool(__thiscall* IsGameWaitingPtr)(void* This, bool);
+//IsGameLoadingPtr IsGameLoading = IsGameLoadingPtr(GetProcAddress(GetModuleHandle(L"game.dll"), "?IsGameLoading@GameEngine@GAME@@QEBA_NXZ"));
+//IsGameLoadingPtr IsGameEngineOnline = IsGameLoadingPtr(GetProcAddress(GetModuleHandle(L"game.dll"), "?IsGameEngineOnline@GameEngine@GAME@@QEBA_NXZ"));
+//IsGameWaitingPtr IsGameWaiting = IsGameWaitingPtr(GetProcAddress(GetModuleHandle(L"game.dll"), "?IsGameWaiting@GameEngine@GAME@@QEAA_N_N@Z"));
+
 
 void Dump_ItemStats()
 {
@@ -40,65 +46,21 @@ void Dump_ItemStats()
 	itemStatsfile << "Dump_ItemStats()\n";
 	itemStatsfile.flush();
 
-	// check if we have access to the game.dll
-	if (GetModuleHandleA("Game.dll"))
-	{
-		itemStatsfile << "Got GameModuleHandle\n";
-		// example: Vampiric Dermapteran Slicer of Piercing Darkness
-		GAME::ItemReplicaInfo replica;
-		replica.baseRecord = "records/items/gearshoulders/d126_shoulder.dbr"; // Dermapteran Slicer
-		replica.seed = 0x4d807ecb;
-		replica.relicSeed = 0x41fab3a4;
-		replica.stackSize = 1;
-
-		// create the item
-		GAME::Item* newItem = fnCreateItem(&replica);
-		if (newItem)
-		{
-			itemStatsfile << "Item OK\n";
-			itemStatsfile.flush();
-
-			// this vector gets filled with the item stats 
-			std::vector<GAME::GameTextLine> textLine = {};
-
-			// get stats
-			fnItemEquipmentGetUIDisplayText((GAME::ItemEquipment*)newItem, (GAME::Character*)fnGetMainPlayer(fnGetgGameEngine()), &textLine);
-
-			itemStatsfile << "fnItemEquipmentGetUIDisplayText OK\n";
-			itemStatsfile.flush();
-
-			// delete item
-			fnDestroyObjectEx(fnGetObjectManager(), (GAME::Object*)newItem, nullptr, 0);
-			itemStatsfile << "fnDestroyObjectEx OK\n";
-			itemStatsfile.flush();
-
-			// dump the stats to a file
-
-			// iterate through all text lines
-			for (auto& it : textLine)
-				itemStatsfile << "TextClass: " << it.textClass << " Text: " << it.text.c_str() << "\n";
-
-			// close file again
-			itemStatsfile.flush();
-
-		}
-		else {
-			itemStatsfile << "Item == NULL\n";
-			itemStatsfile.flush();
-		}
-	}
-	else {
-		itemStatsfile << "GetModuleHandleA == NULL\n";
-		itemStatsfile.flush();
-	}
-
-	itemStatsfile << "=============\n\n";
-	itemStatsfile.flush();
 	itemStatsfile.close();
 }
-
 void* __fastcall GameEngineUpdate::HookedMethod(void* This, int v) {
 	void* r = g_self->originalMethod(This, v);
-	Dump_ItemStats();
+	
+
+	//std::wofstream itemStatsfile;
+	//itemStatsfile.open("ItemStats.txt");
+	//itemStatsfile << "Dump_ItemStats()\n";
+	//itemStatsfile << "IsGameLoading " << (IsGameLoading(This) ? "true" : "false") << "\n";
+	//itemStatsfile << "IsGameEngineOnline " << (IsGameEngineOnline(This) ? "true" : "false") << "\n";
+	//itemStatsfile << "IsGameWaiting " << (IsGameWaiting(This, true) ? "true" : "false") << "\n";
+	//itemStatsfile.flush();
+
+	//itemStatsfile.close();
+
 	return r;
 }

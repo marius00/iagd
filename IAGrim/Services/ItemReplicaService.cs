@@ -158,9 +158,7 @@ namespace IAGrim.Services {
                 return false;
 
             var items = _playerItemDao.ListMissingReplica(300);
-            if (items.Count > 0) {
-                Logger.Debug($"Fetching stats for {items.Count} items");
-            } else {
+            if (items.Count == 0) {
                 return false;
             }
 
