@@ -1092,7 +1092,7 @@ DELETE FROM PlayerItem WHERE Id IN (
                 AND MOD = '' 
 
                 AND PI.Id IN ({specificItemTypesOnlySql})
-                {excludeSetBOnusItems}
+                
                 order by RANDOM ()
                 LIMIT :limit ";
 

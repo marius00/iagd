@@ -33,29 +33,72 @@ void GameEngineUpdate::DisableHook() {
 }
 
 
-typedef GAME::Item* (__fastcall* pCreateItem)(GAME::ItemReplicaInfo* info);
-auto fnCreateItemQ = pCreateItem(GetProcAddress(GetModuleHandle(TEXT("game.dll")), "?CreateItem@Item@GAME@@SAPEAV12@AEBUItemReplicaInfo@2@@Z"));
+void Dump_ItemStats()
+{
+	std::wofstream itemStatsfile;
+	itemStatsfile.open("ItemStats.txt");
+	itemStatsfile << "Dump_ItemStats()\n";
+	itemStatsfile.flush();
 
-typedef GAME::ObjectManager* (__fastcall* pGetObjectManager)();
-auto fnGetObjectManagerQ = pGetObjectManager(GetProcAddress(GetModuleHandle(TEXT("engine.dll")), "?Get@?$Singleton@VObjectManager@GAME@@@GAME@@SAPEAVObjectManager@2@XZ"));
+	// check if we have access to the game.dll
+	if (GetModuleHandleA("Game.dll"))
+	{
+		itemStatsfile << "Got GameModuleHandle\n";
+		// example: Vampiric Dermapteran Slicer of Piercing Darkness
+		GAME::ItemReplicaInfo replica;
+		replica.baseRecord = "records/items/gearshoulders/d126_shoulder.dbr"; // Dermapteran Slicer
+		replica.seed = 0x4d807ecb;
+		replica.relicSeed = 0x41fab3a4;
+		replica.stackSize = 1;
 
-typedef void(__fastcall* pDestroyObjectEx)(GAME::ObjectManager*, GAME::Object* object, const char* file, int line);
-auto fnDestroyObjectExQ = pDestroyObjectEx(GetProcAddress(GetModuleHandle(TEXT("engine.dll")), "?DestroyObjectEx@ObjectManager@GAME@@QEAAXPEAVObject@2@PEBDH@Z"));
+		// create the item
+		GAME::Item* newItem = fnCreateItem(&replica);
+		if (newItem)
+		{
+			itemStatsfile << "Item OK\n";
+			itemStatsfile.flush();
 
-typedef void(__fastcall* pDissolveItem)(GAME::Item*, const bool bDestroy);
-auto fnDissolveItemQ = pDissolveItem(GetProcAddress(GetModuleHandle(TEXT("game.dll")), "?Dissolve@Item@GAME@@QEAAX_N@Z"));
+			// this vector gets filled with the item stats 
+			std::vector<GAME::GameTextLine> textLine = {};
 
-typedef GAME::Player* (__fastcall* pGetMainPlayer)(GAME::GameEngine*);
-auto fnGetMainPlayerQ = pGetMainPlayer(GetProcAddress(GetModuleHandle(TEXT("game.dll")), "?GetMainPlayer@GameEngine@GAME@@QEBAPEAVPlayer@2@XZ"));
+			// get stats
+			fnItemEquipmentGetUIDisplayText((GAME::ItemEquipment*)newItem, (GAME::Character*)fnGetMainPlayer(fnGetgGameEngine()), &textLine);
 
-typedef void(__fastcall* pItemEquipmentGetUIDisplayText)(GAME::ItemEquipment*, GAME::Character* myCharacter, std::vector<GAME::GameTextLine>* text);
-auto fnItemEquipmentGetUIDisplayTextG = pItemEquipmentGetUIDisplayText(GetProcAddress(GetModuleHandle(TEXT("game.dll")), "?GetUIDisplayText@ItemEquipment@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@@Z"));
+			itemStatsfile << "fnItemEquipmentGetUIDisplayText OK\n";
+			itemStatsfile.flush();
 
-GAME::GameEngine* fnGetgGameEngine();
+			// delete item
+			fnDestroyObjectEx(fnGetObjectManager(), (GAME::Object*)newItem, nullptr, 0);
+			itemStatsfile << "fnDestroyObjectEx OK\n";
+			itemStatsfile.flush();
 
+			// dump the stats to a file
+
+			// iterate through all text lines
+			for (auto& it : textLine)
+				itemStatsfile << "TextClass: " << it.textClass << " Text: " << it.text.c_str() << "\n";
+
+			// close file again
+			itemStatsfile.flush();
+
+		}
+		else {
+			itemStatsfile << "Item == NULL\n";
+			itemStatsfile.flush();
+		}
+	}
+	else {
+		itemStatsfile << "GetModuleHandleA == NULL\n";
+		itemStatsfile.flush();
+	}
+
+	itemStatsfile << "=============\n\n";
+	itemStatsfile.flush();
+	itemStatsfile.close();
+}
 
 void* __fastcall GameEngineUpdate::HookedMethod(void* This, int v) {
 	void* r = g_self->originalMethod(This, v);
-
+	Dump_ItemStats();
 	return r;
 }

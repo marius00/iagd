@@ -34,4 +34,11 @@ namespace GAME {
 		std::wstring str = stream.str();
 		return str;
 	}
+
+
+
+}
+GAME::GameEngine* fnGetgGameEngine()
+{
+	return (GAME::GameEngine*)*(DWORD_PTR*)GetProcAddress(GetModuleHandle(L"game.dll"), "?gGameEngine@GAME@@3PEAVGameEngine@1@EA");
 }

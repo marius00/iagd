@@ -3,6 +3,8 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <Windows.h>
+#include <fstream>
 
 #include "Exports.h"
 
@@ -147,3 +149,22 @@ namespace GAME
 // void GAME::Item::GetItemReplicaInfo(struct GAME::ItemReplicaInfo &)
 //
 typedef void (__thiscall* ItemGetItemReplicaInfo)(void* This, GAME::ItemReplicaInfo& info);
+
+
+typedef GAME::Item* (__fastcall* pCreateItem)(GAME::ItemReplicaInfo* info);
+static auto fnCreateItem = pCreateItem(GetProcAddress(GetModuleHandle(L"game.dll"), "?CreateItem@Item@GAME@@SAPEAV12@AEBUItemReplicaInfo@2@@Z"));
+
+typedef GAME::ObjectManager* (__fastcall* pGetObjectManager)();
+static auto fnGetObjectManager = pGetObjectManager(GetProcAddress(GetModuleHandle(L"engine.dll"), "?Get@?$Singleton@VObjectManager@GAME@@@GAME@@SAPEAVObjectManager@2@XZ"));
+
+typedef void(__fastcall* pDestroyObjectEx)(GAME::ObjectManager*, GAME::Object* object, const char* file, int line);
+static auto fnDestroyObjectEx = pDestroyObjectEx(GetProcAddress(GetModuleHandle(L"engine.dll"), "?DestroyObjectEx@ObjectManager@GAME@@QEAAXPEAVObject@2@PEBDH@Z"));
+
+typedef void(__fastcall* pItemEquipmentGetUIDisplayText)(GAME::ItemEquipment*, GAME::Character* myCharacter, std::vector<GAME::GameTextLine>* text);
+static auto fnItemEquipmentGetUIDisplayText = pItemEquipmentGetUIDisplayText(GetProcAddress(GetModuleHandle(L"game.dll"), "?GetUIDisplayText@ItemEquipment@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@@Z"));
+static auto fnItemGetItemReplicaInfo = ItemGetItemReplicaInfo(GetProcAddress(GetModuleHandle(TEXT("game.dll")), GET_ITEM_REPLICAINFO));
+
+typedef GAME::Player* (__fastcall* pGetMainPlayer)(GAME::GameEngine*);
+static auto fnGetMainPlayer = pGetMainPlayer(GetProcAddress(GetModuleHandle(L"game.dll"), "?GetMainPlayer@GameEngine@GAME@@QEBAPEAVPlayer@2@XZ"));
+
+GAME::GameEngine* fnGetgGameEngine();

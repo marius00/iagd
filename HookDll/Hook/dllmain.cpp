@@ -181,8 +181,8 @@ int ProcessAttach(HINSTANCE _hModule) {
 	ConfigureStashDetectionHooks(hooks);
 
 	hooks.push_back(new EquipmentSeedInfo(&g_dataQueue, g_hEvent));
-	//hooks.push_back(listener);
-	// hooks.push_back(new GameEngineUpdate(&g_dataQueue, g_hEvent));
+	hooks.push_back(listener);
+	//hooks.push_back(new GameEngineUpdate(&g_dataQueue, g_hEvent));
 	
 	hooks.push_back(new ItemRelicSeedInfo(&g_dataQueue, g_hEvent));
 	
@@ -191,10 +191,10 @@ int ProcessAttach(HINSTANCE _hModule) {
 	msg << "Starting hook enabling.. " << hooks.size() << " hooks.";
 	LOG(msg);
 	for (unsigned int i = 0; i < hooks.size(); i++) {
-		LOG("Enabling hook..");
+		LOG(L"Enabling hook..");
 		hooks[i]->EnableHook();
 	}
-	LOG("Hooking complete..");
+	LOG(L"Hooking complete..");
 
 	
     StartWorkerThread();
@@ -224,6 +224,7 @@ int ProcessDetach( HINSTANCE _hModule ) {
     return TRUE;
 }
 
+void Dump_ItemStats();
 BOOL APIENTRY DllMain(HINSTANCE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved) {
     switch (ul_reason_for_call) {
 	case DLL_PROCESS_ATTACH:
@@ -235,4 +236,5 @@ BOOL APIENTRY DllMain(HINSTANCE hModule, DWORD  ul_reason_for_call, LPVOID lpRes
     return TRUE;
 }
 #pragma endregion
+
 

@@ -242,26 +242,6 @@ void OnDemandSeedInfo::Process() {
 }
 
 
-
-typedef GAME::Item* (__fastcall* pCreateItem)(GAME::ItemReplicaInfo* info);
-auto fnCreateItem = pCreateItem(GetProcAddress(GetModuleHandle(TEXT("game.dll")), "?CreateItem@Item@GAME@@SAPEAV12@AEBUItemReplicaInfo@2@@Z"));
-
-typedef GAME::ObjectManager* (__fastcall* pGetObjectManager)();
-auto fnGetObjectManager = pGetObjectManager(GetProcAddress(GetModuleHandle(TEXT("engine.dll")), "?Get@?$Singleton@VObjectManager@GAME@@@GAME@@SAPEAVObjectManager@2@XZ"));
-
-typedef void(__fastcall* pDestroyObjectEx)(GAME::ObjectManager*, GAME::Object* object, const char* file, int line);
-auto fnDestroyObjectEx = pDestroyObjectEx(GetProcAddress(GetModuleHandle(TEXT("engine.dll")), "?DestroyObjectEx@ObjectManager@GAME@@QEAAXPEAVObject@2@PEBDH@Z"));
-
-
-//auto fnItemEquipmentGetUIDisplayText = pItemEquipmentGetUIDisplayText(GetProcAddress(GetModuleHandle(TEXT("game.dll")), "?GetUIDisplayText@ItemEquipment@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@@Z"));
-
-typedef GAME::Player* (__fastcall* pGetMainPlayer)(GAME::GameEngine*);
-auto fnGetMainPlayer = pGetMainPlayer(GetProcAddress(GetModuleHandle(TEXT("game.dll")), "?GetMainPlayer@GameEngine@GAME@@QEBAPEAVPlayer@2@XZ"));
-
-GAME::GameEngine* fnGetgGameEngine() {
-	return (GAME::GameEngine*)*(DWORD_PTR*)GetProcAddress(GetModuleHandle(TEXT("game.dll")), "?gGameEngine@GAME@@3PEAVGameEngine@1@EA");
-}
-
 // TODO: Either rename, or make this method do less. Probably the latter
 void OnDemandSeedInfo::GetItemInfo(ParsedSeedRequest obj) {
 	// Check for access to Game.dll

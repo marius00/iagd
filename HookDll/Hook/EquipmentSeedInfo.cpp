@@ -32,7 +32,6 @@ void EquipmentSeedInfo::DisableHook() {
 	Unhook((PVOID*)&originalMethod, HookedMethod);
 }
 
-auto fnItemGetItemReplicaInfoA = ItemGetItemReplicaInfo(GetProcAddress(GetModuleHandle(TEXT("game.dll")), GET_ITEM_REPLICAINFO));
 
 // void GAME::ItemEquipment::GetUIDisplayText(class GAME::Character const *,class mem::vector<struct GAME::GameTextLine> &)
 void* __fastcall EquipmentSeedInfo::HookedMethod(void* This, void* character, std::vector<GAME::GameTextLine>& gameTextLines) {
@@ -41,7 +40,7 @@ void* __fastcall EquipmentSeedInfo::HookedMethod(void* This, void* character, st
 
 	// TODO: GetItemReplicaInfo()
 	GAME::ItemReplicaInfo replica;
-	fnItemGetItemReplicaInfoA(This, replica);
+	fnItemGetItemReplicaInfo(This, replica);
 
 	// We don't care about items with transmutes, can't loot those.
 	if (replica.enchantmentRecord.empty()) {
