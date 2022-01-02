@@ -26,7 +26,7 @@ void BaseMethodHook::TransferData(unsigned int size, char* data) {
 	SetEvent(m_hEvent);
 }
 
-void* BaseMethodHook::HookDll(char* dll, char* procAddress, void* HookedMethod, DataQueue* m_dataQueue, HANDLE m_hEvent, int id) {
+void* BaseMethodHook::HookDll(const wchar_t* dll, char* procAddress, void* HookedMethod, DataQueue* m_dataQueue, HANDLE m_hEvent, int id) {
 	void* originalMethod = GetProcAddress(::GetModuleHandle(dll), procAddress);
 	m_messageId = id;
 	if (originalMethod == NULL) {
@@ -46,11 +46,11 @@ void* BaseMethodHook::HookDll(char* dll, char* procAddress, void* HookedMethod, 
 }
 
 void* BaseMethodHook::HookGame(char* procAddress, void* HookedMethod, DataQueue* m_dataQueue, HANDLE m_hEvent, int id) {
-	return HookDll("Game.dll", procAddress, HookedMethod, m_dataQueue, m_hEvent, id);
+	return HookDll(L"Game.dll", procAddress, HookedMethod, m_dataQueue, m_hEvent, id);
 }
 
 void* BaseMethodHook::HookEngine(char* procAddress, void* HookedMethod, DataQueue* m_dataQueue, HANDLE m_hEvent, int id) {
-	return HookDll("Engine.dll", procAddress, HookedMethod, m_dataQueue, m_hEvent, id);
+	return HookDll(L"Engine.dll", procAddress, HookedMethod, m_dataQueue, m_hEvent, id);
 }
 
 void BaseMethodHook::Unhook(void* originalMethod, void* Method) {

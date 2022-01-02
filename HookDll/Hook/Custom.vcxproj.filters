@@ -42,9 +42,6 @@
     <ClInclude Include="MessageType.h">
       <Filter>CoreHooks</Filter>
     </ClInclude>
-    <ClInclude Include="HookLog.h">
-      <Filter>Shared</Filter>
-    </ClInclude>
     <ClInclude Include="InventorySack_AddItem.h">
       <Filter>CoreHooks\StashDetection</Filter>
     </ClInclude>
@@ -108,9 +105,6 @@
       <Filter>CoreHooks\CloudDetection</Filter>
     </ClCompile>
     <ClCompile Include="DataQueue.cpp">
-      <Filter>Shared</Filter>
-    </ClCompile>
-    <ClCompile Include="HookLog.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
     <ClCompile Include="InventorySack_AddItem.cpp">

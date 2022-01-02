@@ -5,7 +5,6 @@
 #include "BaseMethodHook.h"
 #include <string>
 #include <thread>
-#include "HookLog.h"
 #include "GrimTypes.h"
 
 

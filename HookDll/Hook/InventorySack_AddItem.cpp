@@ -21,7 +21,7 @@ GetPrivateStash InventorySack_AddItem::privateStashHook;
 void InventorySack_AddItem::EnableHook() {
 
 
-	dll_GameEngine_SetTransferOpen = (GameEngine_SetTransferOpen)GetProcAddress(::GetModuleHandle("Game.dll"), SET_TRANSFER_OPEN);
+	dll_GameEngine_SetTransferOpen = (GameEngine_SetTransferOpen)GetProcAddress(::GetModuleHandle(L"Game.dll"), SET_TRANSFER_OPEN);
 	if (dll_GameEngine_SetTransferOpen != NULL) {
 		DetourTransactionBegin();
 		DetourUpdateThread(GetCurrentThread());
@@ -36,13 +36,13 @@ void InventorySack_AddItem::EnableHook() {
 
 
 	// GameInfo::
-	dll_GameInfo_GameInfo_Param = (GameInfo_GameInfo_Param)GetProcAddress(::GetModuleHandle("Engine.dll"), GAMEINFO_CONSTRUCTOR_ARGS);
+	dll_GameInfo_GameInfo_Param = (GameInfo_GameInfo_Param)GetProcAddress(::GetModuleHandle(L"Engine.dll"), GAMEINFO_CONSTRUCTOR_ARGS);
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
 	DetourAttach((PVOID*)&dll_GameInfo_GameInfo_Param, Hooked_GameInfo_GameInfo_Param);
 	DetourTransactionCommit();
 
-	dll_GameInfo_SetHardcore = (GameInfo_SetHardcore)GetProcAddress(::GetModuleHandle("Engine.dll"), SET_IS_HARDCORE);
+	dll_GameInfo_SetHardcore = (GameInfo_SetHardcore)GetProcAddress(::GetModuleHandle(L"Engine.dll"), SET_IS_HARDCORE);
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
 	DetourAttach((PVOID*)&dll_GameInfo_SetHardcore, Hooked_GameInfo_SetHardcore);
@@ -51,7 +51,7 @@ void InventorySack_AddItem::EnableHook() {
 	privateStashHook.EnableHook();
 
 	// bool GAME::GameInfo::GetHardcore(void)
-	dll_GameInfo_GetHardcore = (GameInfo_GetHardcore)GetProcAddress(::GetModuleHandle("Engine.dll"), GET_HARDCORE);
+	dll_GameInfo_GetHardcore = (GameInfo_GetHardcore)GetProcAddress(::GetModuleHandle(L"Engine.dll"), GET_HARDCORE);
 
 
 }

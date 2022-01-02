@@ -4,13 +4,12 @@
 #include "DataQueue.h"
 #include "BaseMethodHook.h"
 #include <string>
-#include "HookLog.h"
 #include "GrimTypes.h"
 
 class ItemRelicSeedInfo : public BaseMethodHook {
 public:
 	ItemRelicSeedInfo();
-	ItemRelicSeedInfo(DataQueue* dataQueue, HANDLE hEvent, HookLog* g_log);
+	ItemRelicSeedInfo(DataQueue* dataQueue, HANDLE hEvent);
 	void EnableHook() override;
 	void DisableHook() override;
 

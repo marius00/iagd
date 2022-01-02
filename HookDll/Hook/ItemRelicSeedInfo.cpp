@@ -18,7 +18,7 @@ void ItemRelicSeedInfo::EnableHook() {
 	);
 }
 
-ItemRelicSeedInfo::ItemRelicSeedInfo(DataQueue* dataQueue, HANDLE hEvent, HookLog* g_log) {
+ItemRelicSeedInfo::ItemRelicSeedInfo(DataQueue* dataQueue, HANDLE hEvent) {
 	g_self = this;
 	this->m_dataQueue = dataQueue;
 	this->m_hEvent = hEvent;

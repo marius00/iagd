@@ -21,12 +21,9 @@
 #pragma region Variables
 // Switches hook logging on/off
 #if 1
-#include "HookLog.h"
-HookLog g_log;
 #define LOG(streamdef) \
 { \
-    std::string msg = (((std::ostringstream&)(std::ostringstream().flush() << streamdef)).str()); \
-    g_log.out(msg); \
+    std::wstring msg = (((std::wostringstream&)(std::wostringstream().flush() << streamdef)).str()); \
     msg += _T("\n"); \
     OutputDebugString(msg.c_str()); \
 }
@@ -64,9 +61,9 @@ void WorkerThreadMethod() {
 
         if ((tick - g_lastThreadTick > 1000) || (g_targetWnd == NULL)) {
             // We either don't have a valid window target OR it has been more than 1 sec since we last update the target.
-            g_targetWnd = FindWindow( "GDIAWindowClass", NULL);
+            g_targetWnd = FindWindow( L"GDIAWindowClass", NULL);
             g_lastThreadTick = GetTickCount();
-            LOG("FindWindow returned: " << g_targetWnd);
+            LOG(L"FindWindow returned: " << g_targetWnd);
         }
 
         while (!g_dataQueue.empty()) {
@@ -84,7 +81,7 @@ void WorkerThreadMethod() {
 
             // To avoid blocking the main thread, we should not have a lock on the queue while we process the message.
 			SendMessage( g_targetWnd, WM_COPYDATA, 0, ( LPARAM ) &data );
-            LOG("After SendMessage error code is " << GetLastError());
+            LOG(L"After SendMessage error code is " << GetLastError());
         }
     }
 }
@@ -99,7 +96,7 @@ unsigned __stdcall WorkerThreadMethodWrap(void* argss) {
 }
 
 void StartWorkerThread() {
-	LOG("Starting worker thread..");
+	LOG(L"Starting worker thread..");
 	unsigned int pid;
 	g_thread = (HANDLE)_beginthreadex(NULL, 0, &WorkerThreadMethodWrap, NULL, 0, &pid);
 	
@@ -107,12 +104,12 @@ void StartWorkerThread() {
 	DataItemPtr item(new DataItem(TYPE_REPORT_WORKER_THREAD_LAUNCHED, 0, NULL));
 	g_dataQueue.push(item);
 	SetEvent(g_hEvent);
-	LOG("Started worker thread..");
+	LOG(L"Started worker thread..");
 }
 
 
 void EndWorkerThread() {
-	LOG("Ending worker thread..");
+	LOG(L"Ending worker thread..");
 	if (g_hEvent != NULL) {
 		SetEvent(g_hEvent);
 		HANDLE h = g_hEvent;
@@ -172,10 +169,10 @@ void DoLog(const wchar_t* staaaaa) {
 
 std::vector<BaseMethodHook*> hooks;
 int ProcessAttach(HINSTANCE _hModule) {
-	LOG("Attatching to process..");
-	g_hEvent = CreateEvent(NULL,FALSE,FALSE,"IA_Worker");
+	LOG(L"Attatching to process..");
+	g_hEvent = CreateEvent(NULL,FALSE,FALSE, L"IA_Worker");
 
-	LOG("Preparing hooks..");
+	LOG(L"Preparing hooks..");
 	listener = new OnDemandSeedInfo(&g_dataQueue, g_hEvent);
 
 	// Player position hooks
@@ -183,11 +180,11 @@ int ProcessAttach(HINSTANCE _hModule) {
 	ConfigureCloudDetectionHooks(hooks);
 	ConfigureStashDetectionHooks(hooks);
 
-	hooks.push_back(new EquipmentSeedInfo(&g_dataQueue, g_hEvent, &g_log));
-	hooks.push_back(listener);
-	//hooks.push_back(new GameEngineUpdate(&g_dataQueue, g_hEvent, &g_log));
+	hooks.push_back(new EquipmentSeedInfo(&g_dataQueue, g_hEvent));
+	//hooks.push_back(listener);
+	// hooks.push_back(new GameEngineUpdate(&g_dataQueue, g_hEvent));
 	
-	hooks.push_back(new ItemRelicSeedInfo(&g_dataQueue, g_hEvent, &g_log));
+	hooks.push_back(new ItemRelicSeedInfo(&g_dataQueue, g_hEvent));
 	
 
 	std::stringstream msg;
@@ -211,7 +208,7 @@ int ProcessDetach( HINSTANCE _hModule ) {
 	// Signal that we are shutting down
 	// This message is not at all guaranteed to get sent.
 
-	OutputDebugString("ProcessDetach");
+	OutputDebugString(L"ProcessDetach");
 
 
 	for (unsigned int i = 0; i < hooks.size(); i++) {

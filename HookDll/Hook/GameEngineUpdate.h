@@ -4,13 +4,12 @@
 #include "DataQueue.h"
 #include "BaseMethodHook.h"
 #include <string>
-#include "HookLog.h"
 #include "GrimTypes.h"
 
 class GameEngineUpdate : public BaseMethodHook {
 public:
 	GameEngineUpdate();
-	GameEngineUpdate(DataQueue* dataQueue, HANDLE hEvent, HookLog* g_log);
+	GameEngineUpdate(DataQueue* dataQueue, HANDLE hEvent);
 	void EnableHook() override;
 	void DisableHook() override;
 

@@ -18,7 +18,7 @@ void EquipmentSeedInfo::EnableHook() {
 	);
 }
 
-EquipmentSeedInfo::EquipmentSeedInfo(DataQueue* dataQueue, HANDLE hEvent, HookLog* g_log) {
+EquipmentSeedInfo::EquipmentSeedInfo(DataQueue* dataQueue, HANDLE hEvent) {
 	g_self = this;
 	this->m_dataQueue = dataQueue;
 	this->m_hEvent = hEvent;

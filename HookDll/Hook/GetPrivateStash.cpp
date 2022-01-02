@@ -12,7 +12,7 @@ GetPrivateStash::OriginalMethodPtr GetPrivateStash::originalMethod;
 void* GetPrivateStash::privateStashSack;
 
 void GetPrivateStash::EnableHook() {
-	originalMethod = (OriginalMethodPtr)GetProcAddress(::GetModuleHandle("Game.dll"), GET_PRIVATE_STASH);
+	originalMethod = (OriginalMethodPtr)GetProcAddress(::GetModuleHandle(L"Game.dll"), GET_PRIVATE_STASH);
 	if (originalMethod == NULL) {
 		DataItemPtr item(new DataItem(TYPE_ERROR_HOOKING_PRIVATE_STASH, 0, 0));
 		m_dataQueue->push(item);

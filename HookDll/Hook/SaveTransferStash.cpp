@@ -14,7 +14,7 @@ void* SaveTransferStash::privateStashSack;
 
 void SaveTransferStash::EnableHook() {
 
-	originalMethod = (OriginalMethodPtr)GetProcAddress(::GetModuleHandle("Game.dll"), SAVE_TRANSFER_STASH);
+	originalMethod = (OriginalMethodPtr)GetProcAddress(::GetModuleHandle(L"Game.dll"), SAVE_TRANSFER_STASH);
 	if (originalMethod == NULL) {
 		DataItemPtr item(new DataItem(TYPE_ERROR_HOOKING_SAVETRANSFER_STASH, 0, 0));
 		m_dataQueue->push(item);
