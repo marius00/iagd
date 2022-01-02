@@ -91,7 +91,7 @@ namespace IAGrim.Utilities {
             }
 
             ItemTypeDto type;
-            string extras = string.Empty;
+            string extras = item.Stash;
 
             if (item.IsRecipe) {
                 type = ItemTypeDto.Recipe;
