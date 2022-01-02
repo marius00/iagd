@@ -71,16 +71,17 @@ class ItemContainer extends PureComponent<Props, object> {
     setTimeout(() => ReactTooltip.rebuild(), 1250); // TODO: This seems like a stupid way to solve tooltip issues.
   }
 
-  /*
+
   getClipboardContent() {
     const colors: {[index: string]:string} = { Epic: 'DarkOrchid', Blue: 'RoyalBlue', Green: 'SeaGreen', Unknown: '', Yellow: 'Yellow' };
+
     const entries = this.props.items.map(item => {
-      const name = item.name.replace('"', '');
-      return `[URL="http://www.grimtools.com/db/search?query=${name}"][COLOR="${colors[item.quality]}"]${item.name}[/COLOR][/URL]`;
+      const name = item[0].name.replace('"', '');
+      return `[URL="http://www.grimtools.com/db/search?query=${name}"][COLOR="${colors[item[0].quality]}"]${item[0].name}[/COLOR][/URL]`;
     });
 
     return entries.join('\n');
-  }*/
+  }
 
   // TODO: A O(1) lookup would be preferable
   findByRecord(baseRecord: string): ICollectionItem {
@@ -119,9 +120,9 @@ class ItemContainer extends PureComponent<Props, object> {
       return (
         <div class="items">
           <div class="clipboard-container">
-            {/*<div class="clipboard-link" onClick={() => setClipboard(this.getClipboardContent())}>
+            {<div class="clipboard-link" onClick={() => setClipboard(this.getClipboardContent())}>
               {translate('app.copyToClipboard')}
-            </div>*/}
+            </div>}
             <div>{translate('items.displaying', items.length + '/' + this.props.numItems)}</div>
           </div>
 
