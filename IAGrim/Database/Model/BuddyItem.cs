@@ -51,7 +51,6 @@ namespace IAGrim.Database {
 
         public virtual bool IsRecipe => false;
         public virtual bool HasRecipe { get; set; }
-        public virtual List<string> Buddies { get; set; } = new List<string>();
 
         // Online UUID
         public virtual string RemoteItemId { get; set; }

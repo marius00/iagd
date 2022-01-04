@@ -1,9 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using IAGrim.Services.ItemReplica;
 
 namespace IAGrim.UI.Controller.dto {
 
-    public class JsonItem {
+    public class JsonItem : IComparable<JsonItem> {
         public string UniqueIdentifier { get; set; }
+        /// <summary>
+        /// Used to identify "identical" items which can be merged in the UI
+        /// </summary>
+        public string MergeIdentifier { get; set; }
         public string BaseRecord { get; set; }
         public string Icon { get; set; }
         public string Quality { get; set; }
@@ -13,11 +19,7 @@ namespace IAGrim.UI.Controller.dto {
         public string Slot { get; set; }
         public float Level { get; set; }
         public object[] URL { get; set; }
-        public uint NumItems { get; set; }
-        public uint InitialNumItems { get; set; }
-
         public ItemTypeDto Type { get; set; }
-        public string[] Buddies { get; set; }
         public bool HasRecipe { get; set; }
 
         public IList<JsonStat> HeaderStats { get; set; }
@@ -31,5 +33,15 @@ namespace IAGrim.UI.Controller.dto {
         public string Extras { get; set; } // TODO: This should be a custom object
 
         public bool IsHardcore { get; set; }
+
+        public IList<ItemStatInfo> ReplicaStats { get; set; }
+
+        public int CompareTo(JsonItem other) {
+            if (other.Type != this.Type) {
+                return other.Type - this.Type;
+            }
+
+            return this.UniqueIdentifier.CompareTo(other.UniqueIdentifier);
+        }
     }
 }

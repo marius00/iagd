@@ -29,7 +29,6 @@ namespace IAGrim.Database.Model {
         public virtual string Stash => string.Empty;
         public virtual bool IsRecipe => false;
         public virtual bool HasRecipe { get; set; } = false;
-        public virtual List<string> Buddies { get; set; } = new List<string>();
         public virtual ulong Count { get; set; } = 0;
         public virtual long PrefixRarity => 0;
 

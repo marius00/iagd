@@ -60,7 +60,6 @@ namespace IAGrim.Database {
             set { }
         }
 
-        public virtual List<string> Buddies { get; set; } = new List<string>();
 
         public virtual ulong Count {
             get { return 1; }

@@ -50,12 +50,6 @@ namespace IAGrim.Database.Synchronizer {
             );
         }
 
-        public Dictionary<string, ISet<DBStatRow>> GetExpacSkillModifierSkills() {
-            return ThreadExecuter.Execute(
-                () => repo.GetExpacSkillModifierSkills()
-            );
-        }
-
         public string GetSkillName(string skillRecord) {
             return ThreadExecuter.Execute(
                 () => repo.GetSkillName(skillRecord)

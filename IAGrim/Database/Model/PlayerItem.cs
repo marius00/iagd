@@ -115,7 +115,6 @@ namespace IAGrim.Database {
 
         public virtual bool HasRecipe { get; set; }
 
-        public virtual List<string> Buddies { get; set; } = new List<string>();
 
         public virtual object Clone() {
             return this.MemberwiseClone();
@@ -123,5 +122,6 @@ namespace IAGrim.Database {
 
         public virtual long? CreationDate { get; set; }
         public virtual string SearchableText { get; set; }
+        public virtual string ReplicaInfo { get; set; }
     }
 }

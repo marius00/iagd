@@ -34,6 +34,7 @@ using CefSharp.WinForms;
 using DllInjector;
 using IAGrim.Backup.Cloud.Service;
 using IAGrim.Backup.Cloud.Util;
+using IAGrim.Database;
 using IAGrim.Parsers.TransferStash;
 using IAGrim.Settings;
 using IAGrim.Utilities.Detection;
@@ -56,6 +57,7 @@ namespace IAGrim.UI {
         private TransferStashWorker _transferStashWorker;
 
         private StashFileMonitor _stashFileMonitor = new StashFileMonitor();
+        private ItemReplicaService _itemReplicaService;
 
         private Action<RegisterWindow.DataAndType> _registerWindowDelegate;
         private RegisterWindow _window;
@@ -75,6 +77,9 @@ namespace IAGrim.UI {
 
         #region Stash Status
 
+        // TODO: TEMPORARY FIX!
+        private bool _hasShownStashErrorPage = false;
+
         /// <summary>
         /// Toolstrip callback for GDInjector
         /// </summary>
@@ -86,12 +91,17 @@ namespace IAGrim.UI {
             }
             else {
                 if (e.ProgressPercentage == InjectionHelper.INJECTION_ERROR) {
+                    _itemReplicaService.SetIsGrimDawnRunning(false);
                     RuntimeSettings.StashStatus = StashAvailability.ERROR;
                     statusLabel.Text = e.UserState as string;
-                    _cefBrowserHandler.ShowHelp(HelpService.HelpType.StashError);
+                    if (!_hasShownStashErrorPage) {
+                        _cefBrowserHandler.ShowHelp(HelpService.HelpType.StashError);
+                        _hasShownStashErrorPage = true;
+                    }
                 }
                 // No grim dawn client, so stash is closed!
                 else if (e.ProgressPercentage == InjectionHelper.NO_PROCESS_FOUND_ON_STARTUP) {
+                    _itemReplicaService.SetIsGrimDawnRunning(false);
                     if (RuntimeSettings.StashStatus == StashAvailability.UNKNOWN) {
                         RuntimeSettings.StashStatus = StashAvailability.CLOSED;
                     }
@@ -99,11 +109,20 @@ namespace IAGrim.UI {
                 // No grim dawn client, so stash is closed!
                 else if (e.ProgressPercentage == InjectionHelper.NO_PROCESS_FOUND) {
                     RuntimeSettings.StashStatus = StashAvailability.CLOSED;
+                    _itemReplicaService.SetIsGrimDawnRunning(false);
                 }
                 // Injection error
                 else if (e.ProgressPercentage == InjectionHelper.INJECTION_ERROR_POSSIBLE_ACCESS_DENIED) {
+                    _itemReplicaService.SetIsGrimDawnRunning(false);
                     RuntimeSettings.StashStatus = StashAvailability.ERROR;
-                    _cefBrowserHandler.ShowHelp(HelpService.HelpType.StashError);
+                    if (!_hasShownStashErrorPage) {
+                        _cefBrowserHandler.ShowHelp(HelpService.HelpType.StashError);
+                        _hasShownStashErrorPage = true;
+                    }
+                }
+
+                else if (e.ProgressPercentage == InjectionHelper.STILL_RUNNING) {
+                    _itemReplicaService.SetIsGrimDawnRunning(true);
                 }
 
                 _charBackupService.SetIsActive(RuntimeSettings.StashStatus == StashAvailability.CLOSED);
@@ -204,6 +223,8 @@ namespace IAGrim.UI {
             _buddyItemsService?.Dispose();
             _buddyItemsService = null;
 
+            _itemReplicaService.Dispose();
+
             _injector?.Dispose();
             _injector = null;
 
@@ -231,10 +252,11 @@ namespace IAGrim.UI {
 
             MessageType type = (MessageType) bt.Type;
             foreach (IMessageProcessor t in _messageProcessors) {
-                t.Process(type, bt.Data);
+                t.Process(type, bt.Data, bt.StringData);
             }
 
             switch (type) {
+
                 case MessageType.TYPE_REPORT_WORKER_THREAD_LAUNCHED:
                     Logger.Info("Grim Dawn hook reports successful launch.");
                     break;
@@ -362,21 +384,16 @@ namespace IAGrim.UI {
             _cefBrowserHandler.InitializeChromium(searchController.JsIntegration, Browser_IsBrowserInitializedChanged, tabControl1);
             searchController.Browser = _cefBrowserHandler;
             searchController.JsIntegration.OnClipboard += SetItemsClipboard;
-            searchController.JsIntegration.OnRequestFeatureRecommendation += (o, args) => {
-                var features = settingsService.GetPersistent().FeaturesNotShown;
-                (args as FeatureSuggestionArgs).Feature = features.FirstOrDefault();
-                (args as FeatureSuggestionArgs).HasFeature = features.Count > 0;
-            };
-            searchController.JsIntegration.OnSeenFeatureRecommendation += (o, args) => settingsService.GetPersistent().AddShownFeature((args as FeatureSuggestionArgs).Feature);
 
             var playerItemDao = _serviceProvider.Get<IPlayerItemDao>();
             var cacher = _serviceProvider.Get<TransferStashServiceCache>();
             _parsingService.OnParseComplete += (o, args) => cacher.Refresh();
 
-            
+
+            var replicaItemDao = _serviceProvider.Get<IReplicaItemDao>();
             var stashWriter = new SafeTransferStashWriter(settingsService, _cefBrowserHandler);
             var transferStashService = new TransferStashService(_serviceProvider.Get<IDatabaseItemStatDao>(), settingsService, stashWriter);
-            var transferStashService2 = new TransferStashService2(playerItemDao, cacher, transferStashService, stashWriter, settingsService, _cefBrowserHandler);
+            var transferStashService2 = new TransferStashService2(playerItemDao, cacher, transferStashService, stashWriter, settingsService, _cefBrowserHandler, replicaItemDao);
             _serviceProvider.Add(transferStashService2);
 
             _transferStashWorker = new TransferStashWorker(transferStashService2, _userFeedbackService);
@@ -490,6 +507,11 @@ namespace IAGrim.UI {
                 ),
                 settingsPanel);
 
+            
+            _itemReplicaService = _serviceProvider.Get<ItemReplicaService>();
+            _itemReplicaService.Start();
+            
+
 #if !DEBUG
             _automaticUpdateChecker.CheckForUpdates();
 #endif
@@ -536,11 +558,13 @@ namespace IAGrim.UI {
                 }
             }
 
+            var itemReplicaProcessor = _serviceProvider.Get<ItemReplicaProcessor>();
             _messageProcessors.Add(new ItemPositionFinder(_dynamicPacker));
             _messageProcessors.Add(new PlayerPositionTracker(Debugger.IsAttached && false));
             _messageProcessors.Add(new StashStatusHandler());
             _messageProcessors.Add(new CloudDetectorProcessor(SetFeedback));
             _messageProcessors.Add(new GenericErrorHandler());
+            _messageProcessors.Add(itemReplicaProcessor);
 
 
             RuntimeSettings.StashStatusChanged += GlobalSettings_StashStatusChanged;
@@ -708,5 +732,6 @@ namespace IAGrim.UI {
         private void openToolStripMenuItem_Click(object sender, EventArgs e) {
             _minimizeToTrayHandler.notifyIcon_MouseDoubleClick(sender, null);
         }
+
     } // CLASS
 }

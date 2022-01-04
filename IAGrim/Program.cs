@@ -192,12 +192,6 @@ namespace IAGrim {
                 var grimDawnDetector = serviceProvider.Get<GrimDawnDetector>();
                 StartupService.PerformIconCheck(databaseSettingDao, grimDawnDetector);
 
-                ItemStatCacheService itemStatCacheService = new ItemStatCacheService(
-                    serviceProvider.Get<IPlayerItemDao>(),
-                    serviceProvider.Get<ItemStatService>(),
-                    serviceProvider.Get<IDatabaseItemDao>()
-                );
-                itemStatCacheService.Start();
 
                 try {
                     var playerItemDao = serviceProvider.Get<IPlayerItemDao>();
@@ -215,8 +209,6 @@ namespace IAGrim {
 
                 StartupService.PerformGrimUpdateCheck(settingsService);
                 Application.Run(_mw);
-
-                itemStatCacheService.Dispose();
             }
 
             Logger.Info("Application ended.");

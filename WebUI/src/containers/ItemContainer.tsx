@@ -2,18 +2,20 @@ import {h} from "preact";
 import Item, { getUniqueId } from '../components/Item/Item';
 import IItem from '../interfaces/IItem';
 import './ItemContainer.css';
+import './ReplicaStat.css';
 import ReactTooltip from 'react-tooltip';
 import translate from '../translations/EmbeddedTranslator';
 import { setClipboard, transferItem } from '../integration/integration';
 import OnScrollLoader from '../components/OnScrollLoader';
 import ICollectionItem from '../interfaces/ICollectionItem';
 import {PureComponent} from "preact/compat";
+import ItemComparer from "../components/Item/ItemComparer";
 
 interface Props {
-  items: IItem[];
+  items: IItem[][];
   numItems?: number;
   isLoading: boolean;
-  onItemReduce(url: object[], numItems: number): void;
+  onItemReduce(item: IItem, transferAll: boolean): void;
   onRequestMoreItems(): void;
   collectionItems: ICollectionItem[];
   isDarkMode: boolean;
@@ -23,17 +25,45 @@ interface Props {
 
 
 class ItemContainer extends PureComponent<Props, object> {
-  transferSingle(url: object[]) {
-    const r = transferItem(url, 1);
-    if (r.success) {
-      this.props.onItemReduce(url, r.numTransferred);
+  state = {
+    isComparing: false,
+    compareItem: '',
+  }
+
+  // TODO: The state should maybe say if these are NEW or MODIFIED items, to support transferring multiple items?
+  componentWillReceiveProps(nextProps: any, nextState: any) {
+    if (this.state.isComparing) {
+      this.setState({isComparing: false});
     }
   }
 
-  transferAll(url: object[]) {
-    const r = transferItem(url, 99999);
+  transferSingleWrapper(item: IItem[]) {
+    // Switch to comparison dialogue
+    if (item.length > 1) {
+      this.setState({
+        isComparing: true,
+        compareItem: item[0].mergeIdentifier,
+      });
+    } else {
+      // Only one item
+      this.transferSingle(item[0]);
+    }
+  }
+
+  transferSingle(item: IItem) {
+    const id = item.uniqueIdentifier + '/-/-/-';
+    const url = (id.split('/') as any) as object[];
+    const r = transferItem(url, false);
     if (r.success) {
-      this.props.onItemReduce(url, r.numTransferred);
+      this.props.onItemReduce(item, false);
+    }
+  }
+
+  transferAll(item: IItem[]) {
+    const url = (item[0].url as any) as object[];
+    const r = transferItem(url, true);
+    if (r.success) {
+      this.props.onItemReduce(item[0], true); // Don't particulary matter which we reduce when doing transferAll
     }
   }
 
@@ -41,11 +71,13 @@ class ItemContainer extends PureComponent<Props, object> {
     setTimeout(() => ReactTooltip.rebuild(), 1250); // TODO: This seems like a stupid way to solve tooltip issues.
   }
 
+
   getClipboardContent() {
     const colors: {[index: string]:string} = { Epic: 'DarkOrchid', Blue: 'RoyalBlue', Green: 'SeaGreen', Unknown: '', Yellow: 'Yellow' };
+
     const entries = this.props.items.map(item => {
-      const name = item.name.replace('"', '');
-      return `[URL="http://www.grimtools.com/db/search?query=${name}"][COLOR="${colors[item.quality]}"]${item.name}[/COLOR][/URL]`;
+      const name = item[0].name.replace('"', '');
+      return `[URL="http://www.grimtools.com/db/search?query=${name}"][COLOR="${colors[item[0].quality]}"]${item[0].name}[/COLOR][/URL]`;
     });
 
     return entries.join('\n');
@@ -63,34 +95,58 @@ class ItemContainer extends PureComponent<Props, object> {
     return {baseRecord: "", name: "", icon: "", numOwnedSc: 0, numOwnedHc: 0};
   }
 
+  handleClick = () => {
+    this.setState({
+      isComparing: !this.state.isComparing
+    });
+  };
+
   render() {
     const items = this.props.items;
     const canLoadMoreItems = this.props.numItems !== undefined ? this.props.numItems > items.length : true;
+
+    let comparingItem = [] as IItem[];
+    if (this.state.isComparing) {
+      for (let idx = 0; idx < items.length; idx++) {
+        if (items[idx][0].mergeIdentifier === this.state.compareItem) {
+          comparingItem = items[idx];
+          break;
+        }
+      }
+    }
 
 
     if (items.length > 0) {
       return (
         <div class="items">
           <div class="clipboard-container">
-            <div class="clipboard-link" onClick={() => setClipboard(this.getClipboardContent())}>
+            {<div class="clipboard-link" onClick={() => setClipboard(this.getClipboardContent())}>
               {translate('app.copyToClipboard')}
-            </div>
+            </div>}
             <div>{translate('items.displaying', items.length + '/' + this.props.numItems)}</div>
           </div>
 
+          {this.state.isComparing && <ItemComparer
+              item={comparingItem}
+              onClose={this.handleClick}
+              getItemName={(baseRecord:string) => this.findByRecord(baseRecord)}
+              showBackupCloudIcon={this.props.showBackupCloudIcon}
+              transferSingle={(item: IItem) => this.transferSingle(item)}
+          />}
+
           {items.map((item) =>
             <Item
-              item={item}
-              key={'item-' + getUniqueId(item)}
-              transferAll={(url: object[]) => this.transferAll(url)}
-              transferSingle={(url: object[]) => this.transferSingle(url)}
+              items={item}
+              key={'item-' + getUniqueId(item[0])}
+              transferAll={(item: IItem[]) => this.transferAll(item)}
+              transferSingle={(item: IItem[]) => this.transferSingleWrapper(item)}
               getItemName={(baseRecord:string) => this.findByRecord(baseRecord)}
               requestUnknownItemHelp={this.props.requestUnknownItemHelp}
               showBackupCloudIcon={this.props.showBackupCloudIcon}
             />
           )}
 
-          {canLoadMoreItems && <button onClick={this.props.onRequestMoreItems}>Load more items</button>}
+          {canLoadMoreItems && <button onClick={this.props.onRequestMoreItems} className="load-more-items">Load more items</button>}
           {canLoadMoreItems && <OnScrollLoader onTrigger={this.props.onRequestMoreItems} />}
           <ReactTooltip html={true} type={this.props.isDarkMode ? 'light' : 'dark'} />
         </div>

@@ -1,0 +1,63 @@
+.itemComparer {
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    top: 60px;
+    width: 100%;
+    height: 75vh;
+    box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19);
+
+    margin: 25px;
+    width: calc(95% - 50px);
+    transform: translateX(-50%);
+
+    background: var(--background-color);
+    border: 1px solid var(--itemcompare-border);
+
+}
+
+.itemList {
+    display: flex;
+    flex-wrap: wrap;
+    color: #000;
+
+    /* Scrollable */
+    height: calc(100% - 52px);
+    overflow-y: auto;
+}
+.itemHeader {
+    background-color: var(--itemcompare-header-bg);
+    padding: 15px;
+}
+.itemHeader h2 {
+    margin: 0;
+    color: var(--itemcompare-header-h2)
+}
+.closeButton {
+    color: red; /* TODO: */
+    font-size: 20px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 10px 16px;
+    cursor: pointer;
+}
+.closeButton:hover {
+    background-color: var(--itemcompare-header-x-hover);
+}
+.itemComparer .replica-type-26 {
+    display: none;
+}
+
+.itemComparer .replica-type-22 {
+    display: none;
+}
+
+
+.itemComparer > .replica-type-22 {
+    display: none;
+}
+
+.itemComparer + .replica-type-22 {
+    display: none;
+}

@@ -12,10 +12,8 @@ public:
 
 private:
 	typedef void* (__thiscall *OriginalMethodPtr)(void* This);
-	static HANDLE m_hEvent;
-	static OriginalMethodPtr originalMethod;
+	OriginalMethodPtr originalMethod;
 
-	static DataQueue* m_dataQueue;
-
+	static CanUseDismantle* g_self;
 	static void* __fastcall HookedMethod(void* This);
 };

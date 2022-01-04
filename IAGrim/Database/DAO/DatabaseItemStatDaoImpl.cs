@@ -111,31 +111,6 @@ namespace IAGrim.Database {
             progressTracker.MaxProgress();
         }
 
-        public Dictionary<string, ISet<DBStatRow>> GetExpacSkillModifierSkills() {
-            string sql = $"SELECT {DatabaseItemTable.Record} AS Record, " +
-                         $"{DatabaseItemStatTable.Stat} AS Stat, " +
-                         $"{DatabaseItemStatTable.TextValue} AS TextValue, " +
-                         $"{DatabaseItemStatTable.Value} AS Value " +
-                         $"FROM {DatabaseItemTable.Table} item, {DatabaseItemStatTable.Table} stat " +
-                         $"WHERE ({DatabaseItemTable.Record} LIKE '%/itemskillsgdx%' OR {DatabaseItemTable.Record} LIKE 'records/skills/playerclass%/pets/%') " +
-                         $"AND stat.{DatabaseItemStatTable.Item} = item.{DatabaseItemTable.Id} ORDER BY item.{DatabaseItemTable.Id}";
-
-            Dictionary<string, ISet<DBStatRow>> stats = new Dictionary<string, ISet<DBStatRow>>();
-
-            using (var session = SessionCreator.OpenSession()) {
-                IQuery query = session.CreateSQLQuery(sql).SetResultTransformer(Transformers.AliasToBean<DBStatRow>());
-                foreach (DBStatRow row in query.List()) {
-                    if (!stats.ContainsKey(row.Record)) {
-                        stats[row.Record] = new HashSet<DBStatRow>();
-                    }
-
-                    stats[row.Record].Add(row);
-                }
-            }
-
-            return stats;
-        }
-
         
         public string GetSkillName(string skillRecord) {
 

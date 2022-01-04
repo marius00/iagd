@@ -22,13 +22,11 @@ namespace IAGrim.UI.Misc.CEF {
         public event EventHandler OnClipboard;
         public event EventHandler OnRequestItems;
         public event EventHandler OnRequestSetItemAssociations;
-        public event EventHandler OnRequestFeatureRecommendation;
-        public event EventHandler OnSeenFeatureRecommendation;
         public event EventHandler OnRequestBackedUpCharacterList;
         public event EventHandler OnRequestCharacterDownloadUrl;
 
-        public string TransferItem(object[] identifier, int numItems) {
-            var args = new StashTransferEventArgs(identifier, numItems);
+        public string TransferItem(object[] identifier, bool transferAll) {
+            var args = new StashTransferEventArgs(identifier, transferAll);
              
             ItemTransferEvent?.Invoke(this, args);
 
@@ -39,11 +37,6 @@ namespace IAGrim.UI.Misc.CEF {
             };
 
             return JsonConvert.SerializeObject(ret, _settings);
-        }
-
-        public string RequestStats() {
-            MessageBox.Show("Stuff");
-            return "stuff";
         }
 
         public string GetTranslationStrings() {
@@ -76,6 +69,8 @@ namespace IAGrim.UI.Misc.CEF {
                 {"item.label.levelRequirement", lang.GetTag("iatag_html_levlerequirement")},
                 {"item.label.levelRequirementAny", lang.GetTag("iatag_html_any")},
                 {"item.label.transferSingle", lang.GetTag("iatag_html_transfer")},
+                {"item.buddies.tooltip", lang.GetTag("iatag_html_buddies_tooltip")},
+                {"item.label.transferCompareSingle", lang.GetTag("iatag_html_transfer_cmp")},
                 {"item.label.transferAll", lang.GetTag("iatag_html_transferall")},
                 {"crafting.header.recipeName", lang.GetTag("iatag_html_badstate_title")},
                 {"crafting.header.currentlyLacking", lang.GetTag("iatag_html_crafting_lacking")},
@@ -94,6 +89,9 @@ namespace IAGrim.UI.Misc.CEF {
                 {"collections.ingress1", lang.GetTag("iatag_html_ingress1") },
                 {"collections.ingress2", lang.GetTag("iatag_html_ingress2") },
                 {"notification.clearall", lang.GetTag("iatag_html_clearall")},
+
+                {"item.genericstats.watermark", lang.GetTag("iatag_html_genericstats")},
+                {"item.buddies.watermark", lang.GetTag("iatag_html_buddies_watermark")},
             };
 
             // Attempting to return a Dictionary<..> object will only work if this object is bound with "async: true"
@@ -131,23 +129,6 @@ namespace IAGrim.UI.Misc.CEF {
             GetSetItemAssociationsEventArgs args = new GetSetItemAssociationsEventArgs();
             OnRequestSetItemAssociations?.Invoke(this, args);
             return JsonConvert.SerializeObject(args.Elements, _settings);
-        }
-
-        public string GetFeatureSuggestion() {
-            FeatureSuggestionArgs args = new FeatureSuggestionArgs();
-            OnRequestFeatureRecommendation?.Invoke(this, args);
-            if (args.HasFeature) {
-                return args.Feature.ToString();
-            }
-
-            return string.Empty;
-        }
-
-        public void MarkFeatureSuggestionSeen(string f) {
-            if (Enum.TryParse(f, true, out FeatureRecommendation obj)) {
-                FeatureSuggestionArgs args = new FeatureSuggestionArgs {Feature = obj};
-                OnSeenFeatureRecommendation?.Invoke(this, args);
-            }
         }
     }
 }

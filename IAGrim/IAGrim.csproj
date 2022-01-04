@@ -114,8 +114,8 @@
     <Reference Include="Ionic.Zip">
       <HintPath>Required_Bins\Ionic.Zip.dll</HintPath>
     </Reference>
-    <Reference Include="log4net, Version=2.0.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <HintPath>..\packages\log4net.2.0.13\lib\net45\log4net.dll</HintPath>
+    <Reference Include="log4net, Version=2.0.14.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.14\lib\net45\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.6.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
@@ -219,25 +219,31 @@
     <Compile Include="Backup\Cloud\Dto\LimitEntry.cs" />
     <Compile Include="Backup\Cloud\Dto\LimitsDto.cs" />
     <Compile Include="Backup\Cloud\Service\CharacterBackupService.cs" />
+    <Compile Include="Database\DAO\ReplicaItemDaoImpl.cs" />
     <Compile Include="Database\DAO\ItemCollectionDaoImpl.cs" />
     <Compile Include="Database\DAO\Table\BuddySubscriptionTable.cs" />
     <Compile Include="Database\DAO\Util\SqlDialect.cs" />
     <Compile Include="Database\DAO\Util\SqlUtils.cs" />
+    <Compile Include="Database\Interfaces\IReplicaItemDao.cs" />
     <Compile Include="Database\Interfaces\IItemCollectionDao.cs" />
     <Compile Include="Database\Model\BuddyItemRecord.cs" />
     <Compile Include="Database\Model\CollectionItem.cs" />
     <Compile Include="Database\Model\ItemSetAssociation.cs" />
     <Compile Include="Database\Model\ItemSkillMapping.cs" />
+    <Compile Include="Database\Model\ReplicaItem.cs" />
     <Compile Include="Database\Model\SkillTierMapping.cs" />
+    <Compile Include="Database\Synchronizer\ItemReplicaRepo.cs" />
     <Compile Include="Database\Synchronizer\ItemCollectionRepo.cs" />
     <Compile Include="Parsers\TransferStash\SafeTransferStashWriter.cs" />
     <Compile Include="Parsers\TransferStash\TransferStashService2.cs" />
     <Compile Include="Parsers\TransferStash\TransferStashServiceCache.cs" />
     <Compile Include="Parsers\TransferStash\TransferStashWorker.cs" />
     <Compile Include="Services\HelpService.cs" />
-    <Compile Include="Services\ItemStatCacheService.cs" />
+    <Compile Include="Services\ItemReplica\ItemStatInfo.cs" />
+    <Compile Include="Services\ItemReplicaService.cs" />
+    <Compile Include="Services\ItemReplica\ReplicaCache.cs" />
+    <Compile Include="Services\MessageProcessor\ItemReplicaProcessor.cs" />
     <Compile Include="Services\ServiceProvider.cs" />
-    <Compile Include="Settings\Dto\FeatureRecommendation.cs" />
     <Compile Include="Settings\Dto\LocalSettings.cs" />
     <Compile Include="Settings\Dto\PersistentSettings.cs" />
     <Compile Include="Settings\Dto\SettingsTemplate.cs" />
@@ -268,7 +274,6 @@
     <Compile Include="UI\Filters\Resistances.Designer.cs">
       <DependentUpon>Resistances.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Misc\CEF\FeatureSuggestionArgs.cs" />
     <Compile Include="UI\Misc\CEF\GetSetItemAssociationsEventArgs.cs" />
     <Compile Include="UI\Misc\CEF\IBrowserCallbacks.cs" />
     <Compile Include="UI\Misc\CEF\JavascriptIntegration.cs" />
@@ -643,6 +648,9 @@
     <EmbeddedResource Include="Database\Model\ItemSkillMapping.hbm.xml" />
     <EmbeddedResource Include="Database\Model\BuddyItem.hbm.xml" />
     <EmbeddedResource Include="Database\Model\BuddyItemRecord.hbm.xml" />
+    <EmbeddedResource Include="Database\Model\ReplicaItem.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <Content Include="hibernate.postgres.cfg.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

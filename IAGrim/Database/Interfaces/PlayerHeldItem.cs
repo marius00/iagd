@@ -14,7 +14,6 @@ namespace IAGrim.Database.Interfaces {
         bool HasRecipe { get; set;}
 
         // The names of buddies who has this item
-        List<string> Buddies { get; set; }
         ulong Count { get; set; }
         string Name { get; }
         string BaseRecord { get; }

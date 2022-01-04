@@ -1,9 +1,11 @@
 import { IStat } from './IStat';
 import { ISkill } from './ISkill';
 import IItemType from './IItemType';
+import {IReplicaRow} from "./IReplicaRow";
 
 export default interface IItem {
   uniqueIdentifier: string;
+  mergeIdentifier: string;
   baseRecord: string;
   icon: string;
   quality: string;
@@ -11,10 +13,7 @@ export default interface IItem {
   socket: string;
   level: number;
   url: Array<number | string>;
-  numItems: number;
-  initialNumItems: number;
   type: IItemType;
-  buddies: string[];
   hasRecipe: boolean;
   greenRarity: number;
   headerStats: IStat[];
@@ -26,5 +25,6 @@ export default interface IItem {
   extras?: string | undefined;
   isMonsterInfrequent?: boolean;
   isHardcore: boolean;
+  replicaStats: IReplicaRow[];
 }
 

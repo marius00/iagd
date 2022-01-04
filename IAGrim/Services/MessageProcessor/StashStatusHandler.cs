@@ -39,7 +39,7 @@ namespace IAGrim.Services.MessageProcessor {
             
         
 
-        public void Process(MessageType type, byte[] data) {
+        public void Process(MessageType type, byte[] data, string dataString) {
             if (Errors.Contains(type)) {
                 var error = Errors.FirstOrDefault(m => m == type);
                 
@@ -54,7 +54,7 @@ namespace IAGrim.Services.MessageProcessor {
                 switch (type) {
                     case MessageType.TYPE_OPEN_PRIVATE_STASH:
                         PrivateStashStatus = InternalStashStatus.Open;
-                        logger.Debug("Private Stash opened");
+                        //logger.Debug("Private Stash opened");
                         break;
 
                     case MessageType.TYPE_DISPLAY_CRAFTER:

@@ -19,6 +19,9 @@
     <Filter Include="CoreHooks\StashDetection">
       <UniqueIdentifier>{af07545a-97de-4a4c-9bc3-ffbfc51487a5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="CoreHooks\ItemSeed">
+      <UniqueIdentifier>{4d9ebb39-ad92-4146-8815-ba96a80c9eb2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -38,9 +41,6 @@
     </ClInclude>
     <ClInclude Include="MessageType.h">
       <Filter>CoreHooks</Filter>
-    </ClInclude>
-    <ClInclude Include="HookLog.h">
-      <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="InventorySack_AddItem.h">
       <Filter>CoreHooks\StashDetection</Filter>
@@ -72,6 +72,24 @@
     <ClInclude Include="CanUseDismantle.h">
       <Filter>CoreHooks\StashDetection</Filter>
     </ClInclude>
+    <ClInclude Include="GrimTypes.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="EquipmentSeedInfo.h">
+      <Filter>CoreHooks\ItemSeed</Filter>
+    </ClInclude>
+    <ClInclude Include="OnDemandSeedInfo.h">
+      <Filter>CoreHooks\ItemSeed</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEngineUpdate.h">
+      <Filter>CoreHooks\ItemSeed</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemRelicSeedInfo.h">
+      <Filter>CoreHooks\ItemSeed</Filter>
+    </ClInclude>
+    <ClInclude Include="HookLog.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -90,9 +108,6 @@
       <Filter>CoreHooks\CloudDetection</Filter>
     </ClCompile>
     <ClCompile Include="DataQueue.cpp">
-      <Filter>Shared</Filter>
-    </ClCompile>
-    <ClCompile Include="HookLog.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
     <ClCompile Include="InventorySack_AddItem.cpp">
@@ -118,6 +133,24 @@
     </ClCompile>
     <ClCompile Include="CanUseDismantle.cpp">
       <Filter>CoreHooks\StashDetection</Filter>
+    </ClCompile>
+    <ClCompile Include="GrimTypes.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="EquipmentSeedInfo.cpp">
+      <Filter>CoreHooks\ItemSeed</Filter>
+    </ClCompile>
+    <ClCompile Include="OnDemandSeedInfo.cpp">
+      <Filter>CoreHooks\ItemSeed</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngineUpdate.cpp">
+      <Filter>CoreHooks\ItemSeed</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemRelicSeedInfo.cpp">
+      <Filter>CoreHooks\ItemSeed</Filter>
+    </ClCompile>
+    <ClCompile Include="HookLog.cpp">
+      <Filter>Shared</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

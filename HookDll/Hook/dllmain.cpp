@@ -1,7 +1,7 @@
 #include "stdafx.h"
+#include <chrono>
 #include <windows.h>
 #include <stdlib.h>
-#include <boost/thread.hpp>
 #include "DataQueue.h"
 #include "MessageType.h"
 #include "StateRequestNpcAction.h"
@@ -14,16 +14,20 @@
 #include "SaveTransferStash.h"
 #include "Exports.h"
 #include "CanUseDismantle.h"
+#include "EquipmentSeedInfo.h"
+#include "OnDemandSeedInfo.h"
+#include "GameEngineUpdate.h"
+#include "ItemRelicSeedInfo.h"
+#include "HookLog.h"
+HookLog g_log;
 
 #pragma region Variables
 // Switches hook logging on/off
 #if 1
-#include "HookLog.h"
-HookLog g_log;
 #define LOG(streamdef) \
 { \
-    std::string msg = (((std::ostringstream&)(std::ostringstream().flush() << streamdef)).str()); \
-    g_log.out(msg); \
+    std::wstring msg = (((std::wostringstream&)(std::wostringstream().flush() << streamdef)).str()); \
+	g_log.out(msg); \
     msg += _T("\n"); \
     OutputDebugString(msg.c_str()); \
 }
@@ -31,6 +35,7 @@ HookLog g_log;
 #define LOG(streamdef) \
     __noop;
 #endif
+
 
 DWORD g_lastThreadTick = 0;
 HANDLE g_hEvent;
@@ -45,7 +50,7 @@ HWND g_targetWnd = NULL;
 #pragma region CORE
 
 
-/// Thread function that dispatches queued message blocks to the AOIA application.
+/// Thread function that dispatches queued message blocks to the IA application.
 void WorkerThreadMethod() {
     while ((g_hEvent != NULL) && (WaitForSingleObject(g_hEvent,INFINITE) == WAIT_OBJECT_0)) {
         if (g_hEvent == NULL) {
@@ -60,9 +65,9 @@ void WorkerThreadMethod() {
 
         if ((tick - g_lastThreadTick > 1000) || (g_targetWnd == NULL)) {
             // We either don't have a valid window target OR it has been more than 1 sec since we last update the target.
-            g_targetWnd = FindWindow( "GDIAWindowClass", NULL);
+            g_targetWnd = FindWindow( L"GDIAWindowClass", NULL);
             g_lastThreadTick = GetTickCount();
-            LOG("FindWindow returned: " << g_targetWnd);
+            LOG(L"FindWindow returned: " << g_targetWnd);
         }
 
         while (!g_dataQueue.empty()) {
@@ -80,17 +85,22 @@ void WorkerThreadMethod() {
 
             // To avoid blocking the main thread, we should not have a lock on the queue while we process the message.
 			SendMessage( g_targetWnd, WM_COPYDATA, 0, ( LPARAM ) &data );
-            LOG("After SendMessage error code is " << GetLastError());
+            LOG(L"After SendMessage error code is " << GetLastError());
         }
     }
 }
 
+OnDemandSeedInfo* listener = nullptr;
 unsigned __stdcall WorkerThreadMethodWrap(void* argss) {
+
+	listener->Start(); // TODO: Seems to mess up. Ia keeps spamming inject.
+
 	WorkerThreadMethod();
 	return 0;
 }
+
 void StartWorkerThread() {
-	LOG("Starting worker thread..");
+	LOG(L"Starting worker thread..");
 	unsigned int pid;
 	g_thread = (HANDLE)_beginthreadex(NULL, 0, &WorkerThreadMethodWrap, NULL, 0, &pid);
 	
@@ -98,12 +108,12 @@ void StartWorkerThread() {
 	DataItemPtr item(new DataItem(TYPE_REPORT_WORKER_THREAD_LAUNCHED, 0, NULL));
 	g_dataQueue.push(item);
 	SetEvent(g_hEvent);
-	LOG("Started worker thread..");
+	LOG(L"Started worker thread..");
 }
 
 
 void EndWorkerThread() {
-	LOG("Ending worker thread..");
+	LOG(L"Ending worker thread..");
 	if (g_hEvent != NULL) {
 		SetEvent(g_hEvent);
 		HANDLE h = g_hEvent;
@@ -157,29 +167,58 @@ static void ConfigureStashDetectionHooks(std::vector<BaseMethodHook*>& hooks) {
 	hooks.push_back(new InventorySack_AddItem(&g_dataQueue, g_hEvent)); // Includes GetPrivateStash internally
 }
 
+void DoLog(const wchar_t* staaaaa) {
+	LOG(staaaaa);
+}
+
+void logStartupTime(){
+	__time64_t rawtime;
+	struct tm timeinfo;
+	wchar_t buffer[80];
+
+	_time64(&rawtime);
+	localtime_s(&timeinfo, &rawtime);
+
+	wcsftime(buffer, sizeof(buffer), L"%Y-%m-%d %H:%M:%S", &timeinfo);
+	std::wstring str(buffer);
+
+	LOG(str);
+}
+
 std::vector<BaseMethodHook*> hooks;
 int ProcessAttach(HINSTANCE _hModule) {
-	LOG("Attatching to process..");
-	g_hEvent = CreateEvent(NULL,FALSE,FALSE,"IA_Worker");
+	LOG(L"Attatching to process..");
+	g_hEvent = CreateEvent(NULL,FALSE,FALSE, L"IA_Worker");
 
-	LOG("Preparing hooks..");
+	logStartupTime();
+
+	LOG(L"Preparing hooks..");
+	listener = new OnDemandSeedInfo(&g_dataQueue, g_hEvent);
+
 	// Player position hooks
 	ConfigurePlayerPositionHooks(hooks);
 	ConfigureCloudDetectionHooks(hooks);
 	ConfigureStashDetectionHooks(hooks);
 
+	LOG(L"Preparing replica hooks..");
+	hooks.push_back(new EquipmentSeedInfo(&g_dataQueue, g_hEvent));
+	hooks.push_back(listener);
+	// hooks.push_back(new GameEngineUpdate(&g_dataQueue, g_hEvent));	
+	hooks.push_back(new ItemRelicSeedInfo(&g_dataQueue, g_hEvent));
+	
+
 	std::stringstream msg;
 	msg << "Starting hook enabling.. " << hooks.size() << " hooks.";
 	LOG(msg);
 	for (unsigned int i = 0; i < hooks.size(); i++) {
-		LOG("Enabling hook..");
+		LOG(L"Enabling hook..");
 		hooks[i]->EnableHook();
 	}
-	LOG("Hooking complete..");
+	LOG(L"Hooking complete..");
 
 	
     StartWorkerThread();
-	LOG("Existing initialization..");
+	LOG("Initialization complete..");
     return TRUE;
 }
 
@@ -189,7 +228,8 @@ int ProcessDetach( HINSTANCE _hModule ) {
 	// Signal that we are shutting down
 	// This message is not at all guaranteed to get sent.
 
-	OutputDebugString("ProcessDetach");
+	LOG(L"Detatching DLL..");
+	OutputDebugString(L"ProcessDetach");
 
 
 	for (unsigned int i = 0; i < hooks.size(); i++) {
@@ -197,11 +237,17 @@ int ProcessDetach( HINSTANCE _hModule ) {
 		delete hooks[i];
 	}
 	hooks.clear();
+	listener->Stop();
+	delete listener;
+	listener = nullptr;
 
     EndWorkerThread();
+
+	LOG(L"DLL detatched..");
     return TRUE;
 }
 
+void Dump_ItemStats();
 BOOL APIENTRY DllMain(HINSTANCE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved) {
     switch (ul_reason_for_call) {
 	case DLL_PROCESS_ATTACH:
@@ -213,4 +259,5 @@ BOOL APIENTRY DllMain(HINSTANCE hModule, DWORD  ul_reason_for_call, LPVOID lpRes
     return TRUE;
 }
 #pragma endregion
+
 

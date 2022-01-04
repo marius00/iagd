@@ -13,6 +13,7 @@ using IAGrim.Utilities;
 using IAGrim.Utilities.HelperClasses;
 
 namespace IAGrim.UI.Controller {
+    [Obsolete]
     class SettingsController : INotifyPropertyChanged, ISettingsController, ISettingsReadController {
         private readonly SettingsService _settings;
 

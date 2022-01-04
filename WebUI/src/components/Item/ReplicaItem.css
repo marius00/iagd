@@ -1,0 +1,20 @@
+.watermarkContainer {
+    position: absolute;
+    z-index: 0;
+    min-height: 50%;
+    min-width: 50%;
+    color: yellow;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+}
+
+.watermark {
+    color: #ff767663;
+    font-size: 50px;
+    transform: rotate(300deg);
+    -webkit-transform: rotate(300deg);
+    -webkit-user-select: none;
+    pointer-events: none;
+}

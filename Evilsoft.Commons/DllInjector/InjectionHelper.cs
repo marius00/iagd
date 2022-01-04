@@ -22,8 +22,28 @@ namespace DllInjector {
         public const int NO_PROCESS_FOUND_ON_STARTUP = 1;
         public const int NO_PROCESS_FOUND = 2;
         public const int INJECTION_ERROR_POSSIBLE_ACCESS_DENIED = 3;
+        public const int STILL_RUNNING = 4;
+        private readonly InjectionMethods _injectionMethods = new InjectionMethods();
+
 
         private readonly ProgressChangedEventHandler _registeredProgressCallback;
+
+        class InjectionMethods {
+            private int _chosenInjectionMethodIdx = 0;
+            private readonly int[] _injectionMethods = new int[] { 1, 3, 5, 6 };
+
+            public int GetInjectionMethod() {
+                return _injectionMethods[_chosenInjectionMethodIdx];
+            }
+
+            public int GetNextInjectionMethod() {
+                return _injectionMethods[(_chosenInjectionMethodIdx + 1) % _injectionMethods.Length];
+            }
+
+            public void SwitchInjectionMethod() {
+                _chosenInjectionMethodIdx = (_chosenInjectionMethodIdx + 1) % _injectionMethods.Length;
+            }
+        }
 
         class RunArguments {
             public string WindowName;
@@ -130,15 +150,17 @@ namespace DllInjector {
             }
         }
 
-        private static IntPtr Inject64Bit(string exe, string dll) {
-            return InjectXBit("DllInjector64.exe", exe, dll);
+        private static IntPtr Inject64Bit(string exe, string dll, int method) {
+            return InjectXBit("DllInjector64.exe", exe, dll, method);
         }
 
-        private static IntPtr Inject32Bit(string exe, string dll) {
-            return InjectXBit("DllInjector32.exe", exe, dll);
-        }
 
-        private static IntPtr InjectXBit(string injector, string exe, string dll) {
+        private static IntPtr InjectXBit(string injector, string exe, string dll, int method) {
+            // 1, 3, 5 and 6 have been verified to work "at least on my PC"
+            // Think its 4 that expects an export the DLL don't have.. 
+            if (method != 1 && method != 3 && method != 5 && method != 6)
+                throw new ArgumentException("Illegal argument", "method");
+
             Logger.Info($"Running {injector}...");
             if (File.Exists(injector)) {
                 ProcessStartInfo startInfo = new ProcessStartInfo();
@@ -170,7 +192,7 @@ namespace DllInjector {
                             return IntPtr.Zero;
                         }
                         else {
-                            Logger.Info("Injection successful, storing mock point due to pointer space being outside of 32bit range.");
+                            Logger.Info("Injection reported as successful.. (may or may not have loaded)");
                             return new IntPtr(0xBADF00D);
                         }
                     }
@@ -198,11 +220,8 @@ namespace DllInjector {
 
 
 
-            string dll32Bit = Path.Combine(Directory.GetCurrentDirectory(), arguments.DllName.Replace(".dll", "_x86.dll"));
             string dll64Bit = Path.Combine(Directory.GetCurrentDirectory(), arguments.DllName.Replace(".dll", "_x64.dll"));
-            if (!File.Exists(dll32Bit)) {
-                Logger.FatalFormat("Could not find {1} at \"{0}\"", dll32Bit, arguments.DllName);
-            } else if (!File.Exists(dll64Bit)) {
+            if (!File.Exists(dll64Bit)) {
                 Logger.FatalFormat("Could not find {1} at \"{0}\"", dll64Bit, arguments.DllName);
             }
             else {
@@ -215,29 +234,24 @@ namespace DllInjector {
                                 _previouslyInjected.Add(pid);
                             }
                             else {
-                                Inject64Bit("Grim Dawn.exe", dll64Bit);
+                                Inject64Bit("Grim Dawn.exe", dll64Bit, _injectionMethods.GetInjectionMethod());
 
                                 if (!InjectionVerifier.VerifyInjection(pid, dll64Bit)) {
+                                    Logger.Error($"Error injecting DLL into Grim Dawn. Injection method {_injectionMethods.GetInjectionMethod()}, switching to injetion method {_injectionMethods.GetNextInjectionMethod()}");
+                                    _injectionMethods.SwitchInjectionMethod();
+                                    
+
                                     worker.ReportProgress(INJECTION_ERROR, null);
                                 }
                             }
                         }
                         else {
-                            if (InjectionVerifier.VerifyInjection(pid, dll32Bit)) {
-                                Logger.Info($"DLL already injected into target process, skipping injection into {pid}");
-                                _dontLog.Add(pid);
-                                _previouslyInjected.Add(pid);
-                            }
-                            else {
-                                //DllInjector.NewInject(pid, dll32Bit);
-                                Inject32Bit("Grim Dawn.exe", dll32Bit);
-
-
-                                if (!InjectionVerifier.VerifyInjection(pid, dll32Bit)) {
-                                    worker.ReportProgress(INJECTION_ERROR, null);
-                                }
-                            }
+                            Logger.Fatal("This version of Item Assistant does not support 32bit Grim Dawn");
                         }
+                    }
+                    else {
+                        worker.ReportProgress(STILL_RUNNING, null);
+
                     }
                 }
             }

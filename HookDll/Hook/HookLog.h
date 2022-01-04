@@ -10,11 +10,11 @@ public:
     HookLog();
     ~HookLog();
 
-    void out(std::string const& output);
+    void out(std::wstring const& output);
 
 private:
-    std::ofstream m_out;
-    std::string m_lastMessage;
+    std::wofstream m_out;
+    std::wstring m_lastMessage;
     unsigned int m_lastMessageCount;
 };
 

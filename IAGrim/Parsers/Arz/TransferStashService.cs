@@ -106,7 +106,7 @@ namespace IAGrim.Parsers.Arz {
             return stashItem;
         }
 
-        private List<Item> ConvertToStashItems(IList<PlayerItem> playerItems, int itemsRemaining, StashTab tab) {
+        private List<Item> ConvertToStashItems(IList<PlayerItem> playerItems, StashTab tab) {
             var result = new List<Item>();
             var packer = new Packer(tab.Height, tab.Width);
 
@@ -127,7 +127,7 @@ namespace IAGrim.Parsers.Arz {
                     playerItem.StackCount = 1;
                 }
 
-                while (playerItem.StackCount > 0 && itemsRemaining > 0) {
+                while (playerItem.StackCount > 0) {
                     var stashItem = GetItem(playerItem);
 
                     // Map item size and create a shape map
@@ -139,7 +139,6 @@ namespace IAGrim.Parsers.Arz {
                     }
 
                     result.Add(stashItem);
-                    itemsRemaining -= (int) stashItem.StackCount;
                 }
             }
 
@@ -196,7 +195,7 @@ namespace IAGrim.Parsers.Arz {
         ///     Deposit the provided items to bank page Y
         ///     The items deposited, caller responsibility to delete them from DB if stacksize is LE 0, and update if not
         /// </summary>
-        public void Deposit(string filename, IList<PlayerItem> playerItems, int maxItemsToTransfer, out string error) {
+        public void Deposit(string filename, IList<PlayerItem> playerItems, out string error) {
             error = string.Empty;
 
             const int maxItemsInTab = 18 * 10;
@@ -221,7 +220,7 @@ namespace IAGrim.Parsers.Arz {
 
                 else if (stash.Tabs[depositToIndex].Items.Count < maxItemsInTab && playerItems.Count > 0) {
                     var tab = stash.Tabs[depositToIndex];
-                    var stashItems = ConvertToStashItems(playerItems, maxItemsToTransfer, tab);
+                    var stashItems = ConvertToStashItems(playerItems, tab);
 
                     tab.Items.AddRange(stashItems);
 

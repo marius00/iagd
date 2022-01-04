@@ -13,14 +13,14 @@ namespace IAGrim.Utilities {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(DependencyChecker));
 
         // http://stackoverflow.com/questions/951856/is-there-an-easy-way-to-check-the-net-framework-version
-        public static bool CheckNet461Installed() {
-            Logger.Debug("Checking if .Net Framework v4.6.1 is installed");
+        public static bool CheckNet472Installed() {
+            Logger.Debug("Checking if .Net Framework v4.7.2 is installed");
             using (RegistryKey ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey("SOFTWARE\\Microsoft\\NET Framework Setup\\NDP\\v4\\Full\\")) {
                 if (ndpKey == null)
                     return false;
 
                 int releaseKey = Convert.ToInt32(ndpKey.GetValue("Release"));
-                return releaseKey >= 394254; // https://docs.microsoft.com/en-us/dotnet/framework/migration-guide/how-to-determine-which-versions-are-installed
+                return releaseKey >= 461808; // https://docs.microsoft.com/en-us/dotnet/framework/migration-guide/how-to-determine-which-versions-are-installed
             }
         }
 

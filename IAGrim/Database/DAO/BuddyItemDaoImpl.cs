@@ -730,7 +730,7 @@ public void SetItems(long userid, string description, List<JsonBuddyItem> items)
 
                     Logger.Debug(q.QueryString);
                     q.SetResultTransformer(Transformers.AliasToBean<BuddyItem>());
-                    var result = ItemOperationsUtility.MergeStackSize(q.List<BuddyItem>());
+                    var result = q.List<BuddyItem>();
 
                     // stacksize is correct.. record is not
                     Logger.Debug($"Search returned {result.Count} items");

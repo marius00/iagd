@@ -670,7 +670,7 @@ namespace IAGrim.Database {
             var queryParams = new Dictionary<string, object>();
 
             if (!string.IsNullOrEmpty(query.Wildcard)) {
-                queryFragments.Add("(PI.namelowercase LIKE :name OR searchabletext LIKE :wildcard)");
+                queryFragments.Add("(PI.namelowercase LIKE :name OR PI.searchabletext LIKE :wildcard OR R.text LIKE :wildcard)");
                 queryParams.Add("name", $"%{query.Wildcard.Replace(' ', '%').ToLower()}%");
                 queryParams.Add("wildcard", $"%{query.Wildcard.ToLower()}%");
             }
@@ -730,24 +730,27 @@ namespace IAGrim.Database {
             }
 
             var sql = new List<string> {
-                $@"select name as Name, 
-                StackCount, 
-                rarity as Rarity, 
-                levelrequirement as LevelRequirement, 
-                baserecord as BaseRecord, 
-                prefixrecord as PrefixRecord, 
-                suffixrecord as SuffixRecord, 
-                ModifierRecord as ModifierRecord, 
-                MateriaRecord as MateriaRecord,
-                {PlayerItemTable.PrefixRarity} as PrefixRarity,
-                {PlayerItemTable.AzureUuid} as AzureUuid,
-                {PlayerItemTable.CloudId} as CloudId,
-                {PlayerItemTable.IsCloudSynchronized} as IsCloudSynchronizedValue,
-                {PlayerItemTable.Id} as Id,
-                {PlayerItemTable.Mod} as Mod,
+                $@"select PI.name as Name, 
+                PI.StackCount, 
+                PI.rarity as Rarity, 
+                PI.levelrequirement as LevelRequirement, 
+                PI.baserecord as BaseRecord, 
+                PI.prefixrecord as PrefixRecord, 
+                PI.suffixrecord as SuffixRecord, 
+                PI.ModifierRecord as ModifierRecord, 
+                PI.MateriaRecord as MateriaRecord,
+                PI.{PlayerItemTable.PrefixRarity} as PrefixRarity,
+                PI.{PlayerItemTable.AzureUuid} as AzureUuid,
+                PI.{PlayerItemTable.CloudId} as CloudId,
+                PI.{PlayerItemTable.IsCloudSynchronized} as IsCloudSynchronizedValue,
+                PI.{PlayerItemTable.Id} as Id,
+                PI.{PlayerItemTable.Mod} as Mod,
                 CAST({PlayerItemTable.IsHardcore} as bit) as IsHardcore,
-                coalesce((SELECT group_concat(Record, '|') FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord)), '') AS PetRecord
-                FROM PlayerItem PI WHERE " + string.Join(" AND ", queryFragments)
+                coalesce((SELECT group_concat(Record, '|') FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord)), '') AS PetRecord,
+                R.text AS ReplicaInfo
+                FROM PlayerItem PI 
+                LEFT OUTER JOIN ReplicaItem R ON PI.ID = R.playeritemid
+                WHERE " + string.Join(" AND ", queryFragments)
             };
 
             var subQuery = CreateDatabaseStatQueryParams(query);
@@ -818,8 +821,6 @@ namespace IAGrim.Database {
                     }*/
 
                     var items = q.List<object>().Select(ToPlayerItem).ToList();
-                    items = ItemOperationsUtility.MergeStackSize(items);
-
                     Logger.Debug($"Search returned {items.Count} items");
 
                     return items;
@@ -884,6 +885,7 @@ namespace IAGrim.Database {
             string Mod = Convert<string>(arr[idx++]);
             bool IsHardcore = ConvertToBoolean(arr[idx++]);
             string PetRecord = Convert<string>(arr[idx++]);
+            string replicaInfo = Convert<string>(arr[idx++]);
 
 
             return new PlayerItem {
@@ -903,7 +905,8 @@ namespace IAGrim.Database {
                 PetRecord = PetRecord,
                 Id = Id,
                 Mod = Mod,
-                IsHardcore = IsHardcore
+                IsHardcore = IsHardcore,
+                ReplicaInfo = replicaInfo
             };
         }
 
@@ -1014,51 +1017,96 @@ DELETE FROM PlayerItem WHERE Id IN (
             }
         }
 
-        public IList<PlayerItem> ListWithMissingStatCache() {
+        public IList<PlayerItem> ListMissingReplica(int limit) {
+
+            //TODO: Relics are "ItemArtifact", those will crash the game.
+            var specificItemTypesOnlySql = $@"
+                SELECT Playeritemid FROM PlayerItemRecord WHERE record IN (
+                    select baserecord from databaseitem_V2 db where db.baserecord in (
+                        select baserecord from {PlayerItemTable.Table} union 
+                        select prefixrecord from {PlayerItemTable.Table} union 
+                        select suffixrecord from {PlayerItemTable.Table} union 
+                        select materiarecord from {PlayerItemTable.Table}
+                    )
+                    AND exists (
+                        select id_databaseitem from databaseitemstat_v2 dbs 
+                        WHERE stat = 'Class' 
+                        AND TextValue in ( 
+                            'ArmorProtective_Head', 
+                            'ArmorProtective_Hands', 
+                            'ArmorProtective_Feet', 
+                            'ArmorProtective_Legs', 
+                            'ArmorProtective_Chest', 
+                            'ArmorProtective_Waist', 
+                            'ArmorJewelry_Medal', 
+                            'ArmorJewelry_Ring', 
+                            'ArmorProtective_Shoulders', 
+                            'ArmorJewelry_Amulet',
+                            'WeaponMelee_Dagger', 
+                            'WeaponMelee_Mace', 
+                            'WeaponMelee_Axe',
+                            'WeaponMelee_Scepter',
+                            'WeaponMelee_Sword',
+                            'WeaponMelee_Sword2h',
+                            'WeaponMelee_Mace2h',
+                            'WeaponMelee_Axe2h',
+                            'WeaponHunting_Ranged1h',
+                            'WeaponHunting_Ranged2h',
+                            'WeaponArmor_Offhand',
+                            'WeaponArmor_Shield'
+                        ) 
+                        AND db.id_databaseitem = dbs.id_databaseitem
+                    )
+                )
+                ";
+
+            var excludeSetBOnusItems = @"
+				AND NOT PI.Id IN (
+				                        SELECT Playeritemid FROM PlayerItemRecord WHERE record IN (
+                            select baserecord from databaseitem_V2 db where db.baserecord in (
+                                select baserecord from playeritem union 
+                                select prefixrecord from playeritem union 
+                                select suffixrecord from playeritem union 
+                                select materiarecord from playeritem
+                            )
+                            AND exists (select id_databaseitem from databaseitemstat_v2 dbs where stat in ( 'setName', 'itemSetName' ) and db.id_databaseitem = dbs.id_databaseitem)
+                        )
+				)
+";
+
             var sql = $@"
-                select name as Name, 
+                SELECT
                 {PlayerItemTable.Id} as Id,
-                {PlayerItemTable.Stackcount}, 
-                rarity as Rarity, 
-                levelrequirement as LevelRequirement, 
+                {PlayerItemTable.Seed} as Seed,
+                PI.RelicSeed as RelicSeed,
+                PI.EnchantmentSeed as EnchantmentSeed,
                 {PlayerItemTable.Record} as BaseRecord, 
                 {PlayerItemTable.Prefix} as PrefixRecord, 
                 {PlayerItemTable.Suffix} as SuffixRecord, 
                 {PlayerItemTable.ModifierRecord} as ModifierRecord, 
-                MateriaRecord as MateriaRecord,
-                {PlayerItemTable.PrefixRarity} as PrefixRarity,
-                {PlayerItemTable.AzureUuid} as AzureUuid,
-                {PlayerItemTable.CloudId} as CloudId,
-                {PlayerItemTable.IsCloudSynchronized} as IsCloudSynchronizedValue,
-                coalesce((SELECT group_concat(Record, '|') FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord)),'') AS PetRecord
-                FROM PlayerItem PI WHERE SearchableText IS NULL OR SearchableText = '' LIMIT 50";
+                PI.MateriaRecord as MateriaRecord,
+                PI.EnchantmentRecord as EnchantmentRecord,
+                PI.TransmuteRecord as TransmuteRecord
+                FROM PlayerItem PI 
+                WHERE PI.Id NOT IN (SELECT R.PlayerItemId FROM ReplicaItem R WHERE R.PlayerItemId IS NOT NULL)
+                AND MOD = '' 
+
+                AND PI.Id IN ({specificItemTypesOnlySql})
+                
+                order by RANDOM ()
+                LIMIT :limit ";
+
+
 
             using (var session = SessionCreator.OpenSession()) {
                 using (session.BeginTransaction()) {
                     return session.CreateSQLQuery(sql)
                         .SetResultTransformer(new AliasToBeanResultTransformer(typeof(PlayerItem)))
+                        .SetParameter("limit", limit)
                         .List<PlayerItem>();
                 }
             }
         }
 
-        public void UpdateCachedStats(IList<PlayerItem> items) {
-            const string table = nameof(PlayerItem);
-            const string searchableText = nameof(PlayerItem.SearchableText);
-            const string id = nameof(PlayerItem.Id);
-
-            using (var session = SessionCreator.OpenSession()) {
-                using (var transaction = session.BeginTransaction()) {
-                    foreach (var item in items) {
-                        session.CreateQuery($@"UPDATE {table} SET {searchableText} = :searchableText WHERE {id} = :id")
-                            .SetParameter("searchableText", item.SearchableText.ToLowerInvariant())
-                            .SetParameter("id", item.Id)
-                            .ExecuteUpdate();
-                    }
-
-                    transaction.Commit();
-                }
-            }
-        }
     }
 }

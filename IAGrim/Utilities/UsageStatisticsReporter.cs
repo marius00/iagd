@@ -23,6 +23,7 @@ namespace IAGrim.Utilities {
             reportUsageStatistics.Start();
 
 
+
             int min = 1000 * 60;
             int hour = 60 * min;
             _timer = new Timer();
@@ -46,6 +47,9 @@ namespace IAGrim.Utilities {
             _timer.Interval = 12 * hour;
             _timer.AutoReset = true;
             _timer.Start();
+
+
+            ReportUsage();
         }
 
         public void ResetLastMinimized() {

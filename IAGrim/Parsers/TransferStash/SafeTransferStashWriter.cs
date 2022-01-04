@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using EvilsoftCommons;
@@ -23,6 +24,21 @@ namespace IAGrim.Parsers.TransferStash {
         public SafeTransferStashWriter(SettingsService settings, IHelpService helpService) {
             _settings = settings;
             _helpService = helpService;
+        }
+
+        private void CopyAndVerify(string sourceFileName, string destFileName, bool overwrite) {
+            File.Copy(sourceFileName, destFileName, overwrite);
+
+            byte[] srcHash = MD5.Create().ComputeHash(File.ReadAllBytes(sourceFileName));
+            byte[] dstHash = MD5.Create().ComputeHash(File.ReadAllBytes(destFileName));
+            if (srcHash.Length != dstHash.Length) {
+                throw new UnauthorizedAccessException($"Hash mismatch after replacing transfer file. Expected length {srcHash.Length}, got length {dstHash.Length}.");
+            }
+
+            for (int i = 0; i < srcHash.Length; i++) {
+                if (srcHash[i] != dstHash[i])
+                    throw new UnauthorizedAccessException($"Hash mismatch after replacing transfer file. Byte {i} does not match");
+            }
         }
 
         /// <summary>
@@ -50,7 +66,7 @@ namespace IAGrim.Parsers.TransferStash {
                 // Back up the existing stash and replace with new stash file
                 var backupLocation = Path.Combine(GlobalPaths.BackupLocation, $"transfer.{backupNumber:00}.gs_");
                 File.Copy(filename, backupLocation, true);
-                File.Copy(tempName, filename, true);
+                CopyAndVerify(tempName, filename, true);
                 Logger.Info($"The previous stash file has been backed up as {backupLocation}");
 
                 // Delete the temporary file

@@ -8,11 +8,10 @@ export const isEmbedded = typeof cefSharp === 'object';
 
 export interface TransferResult {
   success: boolean;
-  numTransferred: number;
 }
 
 interface IntegrationInterface {
-  transferItem(id: object[], numItems: number): string;
+  transferItem(id: object[], transferAll: boolean): string;
 
   setClipboard(text: string): void;
 
@@ -26,14 +25,14 @@ interface IntegrationInterface {
 
 declare let core: IntegrationInterface;
 
-export function transferItem(url: object[], numItems: number): TransferResult {
+export function transferItem(url: object[], transferAll: boolean): TransferResult {
   const id = url.join(';');
   if (isEmbedded) {
-    const response = JSON.parse(core.transferItem(url, numItems));
-    return {success: response.success, numTransferred: response.numTransferred};
+    const response = JSON.parse(core.transferItem(url, transferAll));
+    return {success: response.success};
   } else {
     console.debug('Transfer Single', id);
-    return {success: true, numTransferred: numItems};
+    return {success: true};
   }
 }
 

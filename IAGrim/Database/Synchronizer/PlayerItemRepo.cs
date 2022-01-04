@@ -84,15 +84,9 @@ namespace IAGrim.Database.Synchronizer {
             );
         }
 
-        public IList<PlayerItem> ListWithMissingStatCache() {
+        public IList<PlayerItem> ListMissingReplica(int limit) {
             return ThreadExecuter.Execute(
-                () => _repo.ListWithMissingStatCache()
-            );
-        }
-
-        public void UpdateCachedStats(IList<PlayerItem> items) {
-            ThreadExecuter.Execute(
-                () => _repo.UpdateCachedStats(items)
+                () => _repo.ListMissingReplica(limit)
             );
         }
 

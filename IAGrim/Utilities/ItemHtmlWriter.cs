@@ -7,6 +7,7 @@ using System.Linq;
 using EvilsoftCommons.Exceptions;
 using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Model;
+using IAGrim.Services.ItemReplica;
 using IAGrim.UI.Controller.dto;
 using log4net;
 using Newtonsoft.Json;
@@ -49,36 +50,48 @@ namespace IAGrim.Utilities {
         }
 
 
-        public static JsonItem GetJsonItem(PlayerHeldItem item) {
+        private static string GetUniqueIdentifier(PlayerHeldItem item) {
+            switch (item) {
+                case PlayerItem pi:
+                    return $"PI/{pi.Id}/{pi.CloudId}";
+                case BuddyItem bi:
+                    // TODO: Remove this, buddy items are never transferable. Gotta provide a better unique id.
+                    return $"BI/{bi.BuddyId}/{bi.RemoteItemId}";
+                case RecipeItem _:
+                    return $"RI/{item.BaseRecord}";
+                case AugmentationItem _:
+                    return $"AI/{item.BaseRecord}";
+                default:
+                    return $"UK/{item.BaseRecord}";
+            }
+        }
+
+        private static JsonItem GetJsonItem(PlayerHeldItem item) {
             // TODO: Modifiers
 
             bool isHardcore = false;
             bool isCloudSynced = false;
             object[] transferUrl = {"", "", "", ""};
-            string uniqueIdentifier;
+            string uniqueIdentifier = GetUniqueIdentifier(item);
+            List<ItemStatInfo> replicaStats = null;
+            var mergeIdentifier = item.BaseRecord ?? string.Empty;
             if (item is PlayerItem pi) {
                 transferUrl = new object[] {pi.BaseRecord, pi.PrefixRecord, pi.SuffixRecord, pi.MateriaRecord, pi.Mod, pi.IsHardcore};
                 isCloudSynced = pi.IsCloudSynchronized;
-                uniqueIdentifier = $"PI/{pi.Id}/{pi.CloudId}";
                 isHardcore = pi.IsHardcore;
-            }
-            else if (item is BuddyItem bi) {
-                // TODO: Remove this, buddy items are never transferable. Gotta provide a better unique id.
-                uniqueIdentifier = $"BI/{bi.BuddyId}/{bi.RemoteItemId}";
-            }
-            else if (item is RecipeItem) {
-                uniqueIdentifier = $"RI/{item.BaseRecord}";
-            }
-            else if (item is AugmentationItem) {
-                uniqueIdentifier = $"AI/{item.BaseRecord}";
-            }
-            else {
-                uniqueIdentifier = $"UK/{item.BaseRecord}";
-            }
 
+                if (!string.IsNullOrEmpty(pi.ReplicaInfo)) {
+                    replicaStats = JsonConvert.DeserializeObject<List<ItemStatInfo>>(pi.ReplicaInfo);
+                }
+
+
+                mergeIdentifier += (pi.PrefixRecord ?? string.Empty) + (pi.SuffixRecord ?? string.Empty);
+            } else if (item is BuddyItem bi) {
+                mergeIdentifier += (bi.PrefixRecord ?? string.Empty) + (bi.SuffixRecord ?? string.Empty);
+            }
 
             ItemTypeDto type;
-            string extras = string.Empty;
+            string extras = item.Stash;
 
             if (item.IsRecipe) {
                 type = ItemTypeDto.Recipe;
@@ -100,9 +113,20 @@ namespace IAGrim.Utilities {
                 type = ItemTypeDto.Unknown;
             }
 
+            bool skipStats = replicaStats != null;
+            var replicaBodyStats = new List<JsonStat>(0);
+            if (skipStats) {
+                // Add skillz
+                replicaBodyStats = item.BodyStats
+                    .Where(m => m.Extra != null)
+                    .Select(ToJsonStat)
+                    .ToHashSet()
+                    .ToList();
+            }
 
             var json = new JsonItem {
                 UniqueIdentifier = uniqueIdentifier,
+                MergeIdentifier = mergeIdentifier,
                 BaseRecord = item.BaseRecord ?? string.Empty,
                 URL = transferUrl,
                 Icon = item.Bitmap ?? string.Empty,
@@ -110,35 +134,28 @@ namespace IAGrim.Utilities {
                 Quality = item.Rarity ?? string.Empty,
                 Level = item.MinimumLevel,
                 Socket = GetSocketFromItem(item?.Name) ?? string.Empty,
-                NumItems = (uint) item.Count,
-                InitialNumItems = (uint) item.Count,
-                PetStats = item.PetStats.Select(ToJsonStat).ToHashSet().ToList(),
-                BodyStats = item.BodyStats.Select(ToJsonStat).ToHashSet().ToList(),
-                HeaderStats = item.HeaderStats.Select(ToJsonStat).ToHashSet().ToList(),
+                PetStats = skipStats ? new List<JsonStat>() : item.PetStats.Select(ToJsonStat).ToHashSet().ToList(),
+                BodyStats = skipStats ? replicaBodyStats : item.BodyStats.Select(ToJsonStat).ToHashSet().ToList(),
+                HeaderStats = skipStats ? new List<JsonStat>() : item.HeaderStats.Select(ToJsonStat).ToHashSet().ToList(),
                 Type = type,
                 HasRecipe = item.HasRecipe,
-                Buddies = item.Buddies.ToArray(),
-                Skill = item.Skill != null ? GetJsonSkill(item.Skill) : null,
+                Skill = (item.Skill != null && !skipStats) ? GetJsonSkill(item.Skill) : null,
                 GreenRarity = (int) item.PrefixRarity,
                 HasCloudBackup = isCloudSynced,
                 Slot = SlotTranslator.Translate(RuntimeSettings.Language, item.Slot ?? ""),
                 Extras = extras,
                 IsMonsterInfrequent = item.ModifiedSkills.Any(s => s.IsMonsterInfrequent),
-                IsHardcore = isHardcore
+                IsHardcore = isHardcore,
+                ReplicaStats = replicaStats,
             };
 
-            var modifiedSkills = item.ModifiedSkills;
-            foreach (var modifiedSkill in modifiedSkills) {
-                var translated = modifiedSkill.Translated;
-                foreach (var stat in translated.Select(ToJsonStat)) {
-                    json.BodyStats.Add(stat);
-                }
-
-                if (translated.Count == 0 && !(modifiedSkill.Class == null || modifiedSkill.Tier == null)) {
-                    string[] uri = json.URL.Select(o => (o ?? string.Empty).ToString()).ToArray();
-
-                    var error = $@"Could not translate skill-modifier on: '{item.Name}', {json.BaseRecord} - {string.Join(";", uri)}";
-                    Logger.Debug($"Could not translate skill-modifier stats for \"{item.Name}\"");
+            if (!skipStats) {
+                var modifiedSkills = item.ModifiedSkills;
+                foreach (var modifiedSkill in modifiedSkills) {
+                    var translated = modifiedSkill.Translated;
+                    foreach (var stat in translated.Select(ToJsonStat)) {
+                        json.BodyStats.Add(stat);
+                    }
                 }
             }
 
@@ -165,8 +182,15 @@ namespace IAGrim.Utilities {
             Logger.Debug("Copy complete");
         }
 
-        public static List<JsonItem> ToJsonSerializable(List<PlayerHeldItem> items) {
-            return items.Select(GetJsonItem).ToList();
+        public static List<List<JsonItem>> ToJsonSerializable(List<PlayerHeldItem> items) {
+            var jsonItems = items.Select(GetJsonItem).ToList();
+
+            var merged = ItemOperationsUtility.MergeStackSize(jsonItems);
+            foreach (var itemList in merged) {
+                itemList.Sort();
+            }
+
+            return merged;
         }
 
 

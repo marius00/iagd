@@ -1,0 +1,118 @@
+.replica p {
+  margin: 2px;
+}
+
+/* Item description, bla bla text */
+.replica-type-16, .replica-type-20, .replica-type-21 {
+  color: var(--item-misc-info);
+}
+
+/* 4: Item name: Armor, 5: Weapon, 6: Gazer man (head?) */
+.replica-type-4, .replica-type-5, .replica-type-6 {
+  display: none;
+}
+
+/* Slot & Quality, ex: Epic Ring */
+.replica-type-64 {
+  display: none;
+}
+
+
+.replica-type-0 {
+  white-space: pre-wrap;
+  display: block;
+}
+
+/* Weapon damage and total armor */
+.replica-type-17 {
+  color: var(--item-stat-modifier);
+}
+
+
+/* +x to SomeSkill */
+.replica-type-79 {
+  color: var(--item-stat-modifier);
+  text-decoration: underline;
+  cursor: pointer; /* TODO: Add the tooltip */
+}
+
+/* Regular item stats */
+ .replica-type-18, .replica-type-25, .replica-type-26 {
+   color: var(--item-stat-modifier);
+ }
+
+p .replica-type-26 {
+  margin-left: 15px;
+
+}
+.replica-letter-E {
+  color: var(--item-stat-label);
+}
+
+/* "(2) Set", "(3) Set" etc */
+.replica-type-22 {
+  color: var(--item-golden-header);
+}
+
+/* Item stat, number at the end: Increases Armor by ^H-30%*/
+.replica-letter-H {
+  color: var(--item-stat-modifier);
+}
+
+/* Granted skills */
+.replica-type-34 {
+  padding-top: 15px !important;
+  font-weight: bold;
+  color: var(--item-grantskill-label);
+}
+/* Skill name */
+.replica-type-35, .replica-type-36 {
+  font-weight: bold;
+  color: var(--item-grantskill-content);
+}
+
+/* Skill description */
+.replica-type-37, .replica-type-38 {
+  color: var(--item-misc-info);
+}
+
+/* Level requirement, spirit requirement, etc.. show or noshow? */
+.replica-type-19 {
+  color: var(--item-disabled);
+}
+
+/* Component name */
+.replica-type-27 {
+  color: var(--item-color-yellow);
+  display: inline;
+}
+
+/* Just says "Component" */
+.replica-type-29 {
+  display: inline;
+  font-size: 10px;
+  color: var(--item-color-yellow);
+}
+.replica-type-29::before {
+  content: '(';
+}
+.replica-type-29::after {
+  content: ')';
+}
+
+/* Component modifiers */
+.replica-type-31 {
+  margin-left: 14px !important;
+  color: var(--item-stat-modifier);
+}
+
+/* 68: "Bonus to all pets", 23: Grants skill */
+.replica-type-68, .replica-type-23 {
+  font-weight: bold;
+  color: var(--item-grantskill-label);
+}
+/* "Bonus to all pets" modifiers */
+.replica-type-69 {
+  margin-left: 14px !important;
+  color: var(--item-stat-modifier);
+}

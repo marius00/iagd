@@ -54,12 +54,19 @@ namespace IAGrim.UI.Controller {
 
             // Detect the record type (long or string) and add the item(s)
             if (args.HasValidId) {
-                IList<PlayerItem> tmp = _dao.GetByRecord(args.Prefix, args.BaseRecord, args.Suffix, args.Materia, args.Mod, args.IsHardcore);
-                if (tmp.Count > 0) {
-                    if (args.Count == 1)
-                        items.Add(tmp[0]);
-                    else {
-                        items.AddRange(tmp);
+                var pid = args.PlayerItemId;
+                if (pid.HasValue) {
+                    var item = _dao.GetById(pid.Value);
+                    items.Add(item);
+                }
+                else {
+                    IList<PlayerItem> tmp = _dao.GetByRecord(args.Prefix, args.BaseRecord, args.Suffix, args.Materia, args.Mod, args.IsHardcore);
+                    if (tmp.Count > 0) {
+                        if (!args.TransferAll)
+                            Logger.Warn("Error transferring item, transfer all was false, but no player item id was located.");
+                        else {
+                            items.AddRange(tmp);
+                        }
                     }
                 }
             }
@@ -78,21 +85,19 @@ namespace IAGrim.UI.Controller {
         }
 
         struct TransferStatus {
-            public int NumItemsRequested;
             public int NumItemsTransferred;
         }
 
-        private TransferStatus TransferItems(string transferFile, List<PlayerItem> items, int maxItemsToTransfer) {
+        private TransferStatus TransferItems(string transferFile, List<PlayerItem> items) {
             var numReceived = items.Sum(item => Math.Max(1, item.StackCount));
 
             // Remove all items deposited (may or may not be less than the requested amount, if no inventory space is available)
             string error;
             int numItemsReceived = (int) items.Sum(item => Math.Max(1, item.StackCount));
-            int numItemsRequested = Math.Min(maxItemsToTransfer, numItemsReceived);
 
             _itemStatService.ApplyStatsToPlayerItems(items); // For item class? 'IsStackable' maybe?
             try {
-                _transferStashService.Deposit(transferFile, items, maxItemsToTransfer, out error);
+                _transferStashService.Deposit(transferFile, items, out error);
                 _dao.Update(items, true);
 
                 var numItemsAfterTransfer = items.Sum(item => item.StackCount);
@@ -105,14 +110,12 @@ namespace IAGrim.UI.Controller {
 
                 return new TransferStatus {
                     NumItemsTransferred = (int)numItemsTransferred,
-                    NumItemsRequested = numItemsRequested
                 };
             }
             catch (TransferStashService.DepositException) {
                 _browser.ShowMessage(RuntimeSettings.Language.GetTag("iatag_feedback_unable_to_deposit"), UserFeedbackLevel.Danger);
                 return new TransferStatus {
                     NumItemsTransferred = 0,
-                    NumItemsRequested = numItemsRequested
                 };
             }
         }
@@ -173,14 +176,14 @@ namespace IAGrim.UI.Controller {
                     }
 
                     Logger.Debug($"Found {items.Count} items to transfer");
-                    var result = TransferItems(file, items, (int) args.Count);
+                    var result = TransferItems(file, items);
 
-                    Logger.InfoFormat("Successfully deposited {0} out of {1} items", result.NumItemsTransferred, result.NumItemsRequested);
+                    Logger.InfoFormat("Successfully deposited {0} items", result.NumItemsTransferred);
                     args.NumTransferred = result.NumItemsTransferred;
                     args.IsSuccessful = true;
                     
                     if (result.NumItemsTransferred > 0) {
-                        var message = RuntimeSettings.Language.GetTag("iatag_stash3_success", result.NumItemsTransferred, result.NumItemsRequested);
+                        var message = RuntimeSettings.Language.GetTag("iatag_stash3_success", result.NumItemsTransferred);
                         _browser.ShowMessage(message, UserFeedbackLevel.Success);
                     } else if (result.NumItemsTransferred == 0) {
                         _setTooltip(RuntimeSettings.Language.GetTag("iatag_stash3_failure"));

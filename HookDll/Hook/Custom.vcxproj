@@ -32,12 +32,17 @@
     <ClInclude Include="CloudGetNumFiles.h" />
     <ClInclude Include="CloudRead.h" />
     <ClInclude Include="CloudWrite.h" />
+    <ClInclude Include="EquipmentSeedInfo.h" />
+    <ClInclude Include="GameEngineUpdate.h" />
+    <ClInclude Include="GrimTypes.h" />
+    <ClInclude Include="HookLog.h" />
+    <ClInclude Include="ItemRelicSeedInfo.h" />
+    <ClInclude Include="OnDemandSeedInfo.h" />
     <ClInclude Include="StateRequestNpcAction.h" />
     <ClInclude Include="StateRequestMoveAction.h" />
     <ClInclude Include="DataQueue.h" />
     <ClInclude Include="Exports.h" />
     <ClInclude Include="GetPrivateStash.h" />
-    <ClInclude Include="HookLog.h" />
     <ClInclude Include="InventorySack_AddItem.h" />
     <ClInclude Include="MessageType.h" />
     <ClInclude Include="NpcDetectionHook.h" />
@@ -51,12 +56,17 @@
     <ClCompile Include="CloudGetNumFiles.cpp" />
     <ClCompile Include="CloudRead.cpp" />
     <ClCompile Include="CloudWrite.cpp" />
+    <ClCompile Include="EquipmentSeedInfo.cpp" />
+    <ClCompile Include="GameEngineUpdate.cpp" />
+    <ClCompile Include="GrimTypes.cpp" />
+    <ClCompile Include="HookLog.cpp" />
+    <ClCompile Include="ItemRelicSeedInfo.cpp" />
+    <ClCompile Include="OnDemandSeedInfo.cpp" />
     <ClCompile Include="StateRequestNpcAction.cpp" />
     <ClCompile Include="StateRequestMoveAction.cpp" />
     <ClCompile Include="DataQueue.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="GetPrivateStash.cpp" />
-    <ClCompile Include="HookLog.cpp" />
     <ClCompile Include="InventorySack_AddItem.cpp" />
     <ClCompile Include="NpcDetectionHook.cpp" />
     <ClCompile Include="SaveTransferStash.cpp" />
@@ -66,7 +76,7 @@
     <ProjectGuid>{C4C69969-235A-4049-87F2-3E82D67A1812}</ProjectGuid>
     <RootNamespace>GDIAHook</RootNamespace>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
     <ProjectName>GDIAHook</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -78,8 +88,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v140_xp</PlatformToolset>
-    <CharacterSet>NotSet</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-Instaloot|Win32'" Label="Configuration">
@@ -102,7 +112,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <PlatformToolset>v140</PlatformToolset>
-    <CharacterSet>NotSet</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -138,8 +149,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>n:\boost_1_61_0;C:\Users\STAT\Documents\Visual Studio 2012\Projects\IAGrim\IA;$(IncludePath)</IncludePath>
-    <LibraryPath>n:\boost_1_61_0\lib32-msvc-14.0;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Program Files (x86)\Windows Kits\10\Include\10.0.20348.0\um;D:\local\boost_1_61_0;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.30.30705\atlmfc\include;C:\Program Files (x86)\Windows Kits\10\Include\10.0.20348.0\ucrt;$(IncludePath)</IncludePath>
+    <LibraryPath>n:\boost_1_61_0\lib32-msvc-14.0;D:\local\boost_1_61_0\lib64-msvc-14.0;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.30.30705\atlmfc\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
@@ -150,9 +161,10 @@
     <TargetName>ItemAssistantHook_x86</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LinkIncremental>false</LinkIncremental>
-    <IncludePath>n:\boost_1_61_0-x64;..\Detours-master\src;..\;$(IncludePath)</IncludePath>
-    <LibraryPath>n:\boost_1_61_0-x64\lib64-msvc-14.0;..\Detours-master\x64;$(LibraryPath)</LibraryPath>
+    <LinkIncremental>
+    </LinkIncremental>
+    <IncludePath>C:\Program Files (x86)\Windows Kits\10\Include\10.0.20348.0\um;..\Detours-master\src;..\;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.30.30705\atlmfc\include;C:\Program Files (x86)\Windows Kits\10\Include\10.0.20348.0\ucrt;D:\local\boost_1_61_0;$(IncludePath)</IncludePath>
+    <LibraryPath>n:\boost_1_61_0-x64\lib64-msvc-14.0;..\Detours-master\x64;D:\local\boost_1_61_0\lib64-msvc-14.0;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.30.30705\atlmfc\lib\x64;$(LibraryPath)</LibraryPath>
     <TargetName>ItemAssistantHook_x64</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-Instaloot|Win32'">
@@ -240,15 +252,16 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;CUSTOM_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
       <AdditionalDependencies>detours.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>No</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

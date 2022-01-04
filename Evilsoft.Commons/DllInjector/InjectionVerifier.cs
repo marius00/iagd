@@ -46,14 +46,14 @@ namespace EvilsoftCommons.DllInjector {
 
             Logger.Info("Running Listdlls...");
             if (File.Exists("Listdlls.exe")) {
-                ProcessStartInfo startInfo = new ProcessStartInfo();
-                startInfo.FileName = "Listdlls.exe";
-                startInfo.Arguments = $"{pid}";
-                startInfo.RedirectStandardOutput = true;
-                startInfo.RedirectStandardError = true;
-                startInfo.UseShellExecute = false;
-
-                startInfo.CreateNoWindow = true;
+                ProcessStartInfo startInfo = new ProcessStartInfo {
+                    FileName = "Listdlls.exe",
+                    Arguments = $"{pid}",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
 
                 Process processTemp = new Process();
                 processTemp.StartInfo = startInfo;

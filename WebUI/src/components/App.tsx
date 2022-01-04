@@ -13,10 +13,9 @@ import CharacterListContainer from "../containers/CharacterListContainer";
 import ItemContainer from "../containers/ItemContainer";
 import CollectionItemContainer from "../containers/CollectionItemContainer";
 import NotificationContainer, {NotificationMessage} from "./NotificationComponent";
-import ReactTooltip from "react-tooltip";
 
 interface ApplicationState {
-  items: IItem[];
+  items: IItem[][];
   isLoading: boolean;
   activeTab: number;
   collectionItems: ICollectionItem[];
@@ -167,15 +166,57 @@ class App extends PureComponent<object, object> {
     this.setState({isDarkMode: !this.state.isDarkMode});
   }
 
-  // reduceItemCount will reduce the number of items displayed, generally after an item has been transferred out.
-  reduceItemCount(url: object[], numItems: number) {
-    let items = [...this.state.items];
-    const item = items.filter(e => e.url.join(':') === url.join(':'))[0];
-    if (item !== undefined) {
-      item.numItems -= numItems;
-      this.setState({items: items});
+
+  itemSort(a: IItem, b: IItem) {
+    if (a.type !== b.type) {
+      // Highest number wins (PlayerItem is id 2, BudddyItem is id 1, so playeritems gets first)
+      return b.type - a.type;
+    }
+
+    // Don't care, as long as its consistent.
+    return a.uniqueIdentifier < b.uniqueIdentifier;
+  }
+
+  /**
+   * Find the index of a given item
+   */
+  findIndex(item: IItem) {
+    const items = this.state.items;
+    for (let idx = 0; idx < items.length; idx++) {
+      // Assumes there are no empty arrays
+      if (items[idx][0].mergeIdentifier === item.mergeIdentifier) {
+        return idx;
+      }
+    }
+
+    return -1;
+  }
+
+  reduceItemCount(item: IItem, transferAll: boolean) {
+    const itemIdx = this.findIndex(item);
+    if (itemIdx === -1) {
+      console.log("Something went terribly horribly wrong locating item idx for", item);
+      return;
+    }
+
+    let itemArray;
+    if (transferAll) {
+      // Filter out all playeritems
+      itemArray = [...this.state.items[itemIdx]].filter(m => m.type !== 2);
     } else {
-      console.warn('Attempted to reduce item count, but item could not be found', url);
+      // Filter out specific item
+      itemArray = [...this.state.items[itemIdx]].filter(m => m.uniqueIdentifier !== item.uniqueIdentifier);
+    }
+
+
+    if (itemArray.length === 0) {
+      const stateItems = [...this.state.items];
+      stateItems.splice(itemIdx, 1);
+      this.setState({items: stateItems});
+    } else {
+      const stateItems = [...this.state.items];
+      stateItems[itemIdx] = itemArray;
+      this.setState({items: stateItems});
     }
   }
 
@@ -221,7 +262,7 @@ class App extends PureComponent<object, object> {
             items={this.state.items}
             numItems={this.state.numItems}
             isLoading={this.state.isLoading}
-            onItemReduce={(url, numItems) => this.reduceItemCount(url, numItems)}
+            onItemReduce={(url, transferAll) => this.reduceItemCount(url, transferAll)}
             onRequestMoreItems={() => this.requestMoreItems()}
             collectionItems={this.state.collectionItems}
             isDarkMode={this.state.isDarkMode}

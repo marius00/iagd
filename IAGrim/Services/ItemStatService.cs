@@ -18,7 +18,6 @@ namespace IAGrim.Services {
         private readonly IItemSkillDao _itemSkillDao;
         private bool HideSkills => _settings.GetPersistent().HideSkills;
 
-        private Dictionary<string, ISet<DBStatRow>> _xpacSkills;
         private readonly SettingsService _settings;
 
 
@@ -29,13 +28,6 @@ namespace IAGrim.Services {
             this._databaseItemStatDao = databaseItemStatDao;
             this._itemSkillDao = itemSkillDao;
             _settings = settings;
-
-            Thread thread = new Thread(() => {
-                ExceptionReporter.EnableLogUnhandledOnThread();
-                Thread.Sleep(15 * 1000);
-                _xpacSkills = _databaseItemStatDao.GetExpacSkillModifierSkills();
-            });
-            thread.Start();
         }
 
 
@@ -126,64 +118,6 @@ namespace IAGrim.Services {
             Logger.Debug($"Applied stats to {items.Count} items");
         }
 
-        private void ApplyMythicalBonuses(List<PlayerHeldItem> items) {
-            if (_xpacSkills == null) {
-                Logger.Warn("Not applying mythical bonuses, still loading stats.");
-                return;
-            }
-
-            var skillTiers = _databaseItemStatDao.GetSkillTiers();
-            var itemsWithXpacStat = items.Where(m => m.Tags != null && m.Tags.Any(s => s.Stat == "modifiedSkillName1"));
-            foreach (var item in itemsWithXpacStat) {
-                for (int i = 0; i < 5; i++) {
-                    var affectedSkill = item.Tags.FirstOrDefault(m => m.Stat == $"modifiedSkillName{i}");
-                    var recordForStats = item.Tags.FirstOrDefault(m => m.Stat == $"modifierSkillName{i}")?.TextValue;
-
-                    if (recordForStats == null || !_xpacSkills.ContainsKey(recordForStats)) {
-                        continue;
-                    }
-
-                    var name = affectedSkill?.TextValue;
-                    if (!string.IsNullOrEmpty(name)) {
-                        name = _databaseItemStatDao.GetSkillName(name);
-                    }
-
-                    // For pet skills we got _xpacSkills layer to hop trough
-                    var petSkillRecord = _xpacSkills[recordForStats].Where(s => s.Stat == "petSkillName")
-                        .Select(s => s.TextValue).FirstOrDefault();
-
-                    float? tier = null;
-                    if (skillTiers.ContainsKey(affectedSkill?.TextValue)) {
-                        tier = skillTiers[affectedSkill?.TextValue];
-                    }
-
-                    // TODO: Mark monster infrequents
-                    /*
-                    if (recordForStats.IndexOf("/mi/") != -1) {
-
-                    }*/
-
-                    if (petSkillRecord != null) {
-                        if (_xpacSkills.ContainsKey(petSkillRecord)) {
-                            item.ModifiedSkills.Add(new SkillModifierStat {
-                                Class = ArzParser.ExtractClassFromRecord(petSkillRecord),
-                                Tags = _xpacSkills[petSkillRecord],
-                                Name = name,
-                                Tier = tier,
-                                IsMonsterInfrequent = recordForStats?.IndexOf("/mi/") != -1
-                            });
-                        }
-                    }
-
-                    // TODO: What's this? May be the cause of all the "no stats found" shit.. does it ever DO anything?
-                    item.ModifiedSkills.Add(new SkillModifierStat {
-                        Tags = _xpacSkills[recordForStats],
-                        Name = name
-                    });
-                }
-            }
-        }
-
         public void ApplyStats(IEnumerable<PlayerHeldItem> itemSource) {
             var items = itemSource.ToList();
             if (items.Count > 0) {
@@ -210,8 +144,6 @@ namespace IAGrim.Services {
                 if (remaining.Count > 0) {
                     ApplyStatsToRecipeItems(remaining);
                 }
-
-                ApplyMythicalBonuses(items);
             }
         }
 
