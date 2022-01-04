@@ -50,7 +50,7 @@ HWND g_targetWnd = NULL;
 #pragma region CORE
 
 
-/// Thread function that dispatches queued message blocks to the AOIA application.
+/// Thread function that dispatches queued message blocks to the IA application.
 void WorkerThreadMethod() {
     while ((g_hEvent != NULL) && (WaitForSingleObject(g_hEvent,INFINITE) == WAIT_OBJECT_0)) {
         if (g_hEvent == NULL) {
