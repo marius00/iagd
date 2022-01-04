@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <chrono>
 #include <windows.h>
 #include <stdlib.h>
 #include "DataQueue.h"
@@ -17,6 +18,8 @@
 #include "OnDemandSeedInfo.h"
 #include "GameEngineUpdate.h"
 #include "ItemRelicSeedInfo.h"
+#include "HookLog.h"
+HookLog g_log;
 
 #pragma region Variables
 // Switches hook logging on/off
@@ -24,6 +27,7 @@
 #define LOG(streamdef) \
 { \
     std::wstring msg = (((std::wostringstream&)(std::wostringstream().flush() << streamdef)).str()); \
+	g_log.out(msg); \
     msg += _T("\n"); \
     OutputDebugString(msg.c_str()); \
 }
@@ -167,10 +171,26 @@ void DoLog(const wchar_t* staaaaa) {
 	LOG(staaaaa);
 }
 
+void logStartupTime(){
+	__time64_t rawtime;
+	struct tm timeinfo;
+	wchar_t buffer[80];
+
+	_time64(&rawtime);
+	localtime_s(&timeinfo, &rawtime);
+
+	wcsftime(buffer, sizeof(buffer), L"%Y-%m-%d %H:%M:%S", &timeinfo);
+	std::wstring str(buffer);
+
+	LOG(str);
+}
+
 std::vector<BaseMethodHook*> hooks;
 int ProcessAttach(HINSTANCE _hModule) {
 	LOG(L"Attatching to process..");
 	g_hEvent = CreateEvent(NULL,FALSE,FALSE, L"IA_Worker");
+
+	logStartupTime();
 
 	LOG(L"Preparing hooks..");
 	listener = new OnDemandSeedInfo(&g_dataQueue, g_hEvent);

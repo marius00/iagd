@@ -35,6 +35,7 @@
     <ClInclude Include="EquipmentSeedInfo.h" />
     <ClInclude Include="GameEngineUpdate.h" />
     <ClInclude Include="GrimTypes.h" />
+    <ClInclude Include="HookLog.h" />
     <ClInclude Include="ItemRelicSeedInfo.h" />
     <ClInclude Include="OnDemandSeedInfo.h" />
     <ClInclude Include="StateRequestNpcAction.h" />
@@ -58,6 +59,7 @@
     <ClCompile Include="EquipmentSeedInfo.cpp" />
     <ClCompile Include="GameEngineUpdate.cpp" />
     <ClCompile Include="GrimTypes.cpp" />
+    <ClCompile Include="HookLog.cpp" />
     <ClCompile Include="ItemRelicSeedInfo.cpp" />
     <ClCompile Include="OnDemandSeedInfo.cpp" />
     <ClCompile Include="StateRequestNpcAction.cpp" />

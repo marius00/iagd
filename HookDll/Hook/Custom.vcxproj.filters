@@ -87,6 +87,9 @@
     <ClInclude Include="ItemRelicSeedInfo.h">
       <Filter>CoreHooks\ItemSeed</Filter>
     </ClInclude>
+    <ClInclude Include="HookLog.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -145,6 +148,9 @@
     </ClCompile>
     <ClCompile Include="ItemRelicSeedInfo.cpp">
       <Filter>CoreHooks\ItemSeed</Filter>
+    </ClCompile>
+    <ClCompile Include="HookLog.cpp">
+      <Filter>Shared</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
