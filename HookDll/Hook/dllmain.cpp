@@ -200,10 +200,10 @@ int ProcessAttach(HINSTANCE _hModule) {
 	ConfigureCloudDetectionHooks(hooks);
 	ConfigureStashDetectionHooks(hooks);
 
+	LOG(L"Preparing replica hooks..");
 	hooks.push_back(new EquipmentSeedInfo(&g_dataQueue, g_hEvent));
 	hooks.push_back(listener);
-	// hooks.push_back(new GameEngineUpdate(&g_dataQueue, g_hEvent));
-	
+	// hooks.push_back(new GameEngineUpdate(&g_dataQueue, g_hEvent));	
 	hooks.push_back(new ItemRelicSeedInfo(&g_dataQueue, g_hEvent));
 	
 
@@ -218,7 +218,7 @@ int ProcessAttach(HINSTANCE _hModule) {
 
 	
     StartWorkerThread();
-	LOG("Existing initialization..");
+	LOG("Initialization complete..");
     return TRUE;
 }
 
@@ -228,6 +228,7 @@ int ProcessDetach( HINSTANCE _hModule ) {
 	// Signal that we are shutting down
 	// This message is not at all guaranteed to get sent.
 
+	LOG(L"Detatching DLL..");
 	OutputDebugString(L"ProcessDetach");
 
 
@@ -241,6 +242,8 @@ int ProcessDetach( HINSTANCE _hModule ) {
 	listener = nullptr;
 
     EndWorkerThread();
+
+	LOG(L"DLL detatched..");
     return TRUE;
 }
 

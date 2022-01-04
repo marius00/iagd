@@ -61,9 +61,6 @@ namespace IAGrim.Parser.Arc {
                     dc.decompress();
 
                     foreach (var icon in dc.strings) {
-                        if (icon != null && icon.Contains("sign_h01a_dif")) {
-                            int x = 9;
-                        }
                         var b = dc.GetTexture(icon);
                         if (b == null)
                             continue;

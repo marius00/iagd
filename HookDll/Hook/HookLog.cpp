@@ -1,17 +1,35 @@
 #include "StdAfx.h"
 #include "HookLog.h"
+#include <filesystem>
+#include <iostream>
+#include <windows.h>
+#include <shlobj.h>
 
+std::wstring GetIagdFolder() {
+    PWSTR path_tmp;
+    auto get_folder_path_ret = SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, nullptr, &path_tmp);
 
-HookLog::HookLog()
-    : m_lastMessageCount(0)
-{
-    wchar_t tmpfolder[MAX_PATH];
+    if (get_folder_path_ret != S_OK) {
+        CoTaskMemFree(path_tmp);
+        return std::wstring();
+    }
+
+    std::wstring path = path_tmp;
+    CoTaskMemFree(path_tmp);
+
+    return path + L"\\..\\local\\evilsoft\\iagd\\";
+}
+
+HookLog::HookLog() : m_lastMessageCount(0) {
+    std::wstring iagdFolder = GetIagdFolder(); // %appdata%\..\local\evilsoft\iagd
+
+    wchar_t tmpfolder[MAX_PATH]; // %appdata%\..\local\temp\
     GetTempPath(MAX_PATH, tmpfolder);
 
-    std::wstring tmpfile(tmpfolder);
-	tmpfile += L"iagd_hook.log"; // %appdata%\..\local\temp\iagd_hook.log
+    std::wstring logFile(!iagdFolder.empty() ? iagdFolder : tmpfolder);
+    logFile += L"iagd_hook.log"; 
 
-    m_out.open(tmpfile);
+    m_out.open(logFile);
 
     if (m_out.is_open())
     {
