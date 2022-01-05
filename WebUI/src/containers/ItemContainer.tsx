@@ -10,6 +10,7 @@ import OnScrollLoader from '../components/OnScrollLoader';
 import ICollectionItem from '../interfaces/ICollectionItem';
 import {PureComponent} from "preact/compat";
 import ItemComparer from "../components/Item/ItemComparer";
+import IItemType from "../interfaces/IItemType";
 
 interface Props {
   items: IItem[][];
@@ -117,13 +118,18 @@ class ItemContainer extends PureComponent<Props, object> {
 
 
     if (items.length > 0) {
+      const numItemsDisplayed = items
+        .map(m => m.filter(o => o.type === IItemType.Player).length)
+        .reduce((a,b) => a + b, 0);
+
+      console.log(items, numItemsDisplayed);
       return (
         <div class="items">
           <div class="clipboard-container">
             {<div class="clipboard-link" onClick={() => setClipboard(this.getClipboardContent())}>
               {translate('app.copyToClipboard')}
             </div>}
-            <div>{translate('items.displaying', items.length + '/' + this.props.numItems)}</div>
+            <div>{translate('items.displaying', numItemsDisplayed + '/' + this.props.numItems)}</div>
           </div>
 
           {this.state.isComparing && <ItemComparer

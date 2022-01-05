@@ -65,6 +65,16 @@ const helpEntries = [
         type: IHelpEntryType.Help
     },
     {
+        title: `IA says "Generic stat"`,
+        tag: 'GenericStatNoReplica',
+        body: () => <div>
+            As of version 1.3 of Item Assistant, the program has support for displaying the real stats of items.<br/>
+            If an item says "Generic stats", it's a warning that Item Assistant does not yet know the true stats of this item <br/><br/>
+            IA will automatically start fetching the real stats of items while you are playing Grim Dawn.
+        </div>,
+        type: IHelpEntryType.Help
+    },
+    {
         title: `IA shows me "Unknown Item"!??`,
         tag: 'UnknownItem',
         body: () => typicalParseDbMessage,

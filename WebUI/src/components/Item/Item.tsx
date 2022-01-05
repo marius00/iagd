@@ -43,8 +43,8 @@ class Item extends PureComponent<Props, object> {
   }
 
   renderBuddyItemText(items: IItem[]) {
-    const buddyItems = items.filter(m => m.type === 1);
-    const hasRegularItems = items.filter(m => m.type === 2).length > 0;
+    const buddyItems = items.filter(m => m.type === IItemType.Buddy);
+    const hasRegularItems = items.filter(m => m.type === IItemType.Player).length > 0;
 
     // If we only have buddy items.
     // If we also have player items, we don't really care. The corner icon is responsible for that.
@@ -135,7 +135,7 @@ class Item extends PureComponent<Props, object> {
     const setName = GetSetName(item.baseRecord);
     let setItemsList = this.getSetItemTooltip(setName, item.isHardcore);
 
-    const numItems = this.props.items.filter(m => m.type === 2).length;
+    const numItems = this.props.items.filter(m => m.type === IItemType.Player).length;
 
     const miText = item.isMonsterInfrequent ? ' / MI' : '';
     return (
@@ -222,7 +222,7 @@ class Item extends PureComponent<Props, object> {
           : ''
         }
 
-        {item.type === 2 && !item.replicaStats && <div className={styles.watermarkContainer}>
+        {item.type === IItemType.Player && !item.replicaStats && <div className={styles.watermarkContainer}>
             <p className={styles.watermark}>{translate('item.genericstats.watermark')}</p>
         </div>}
       </div>

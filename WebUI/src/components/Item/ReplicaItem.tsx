@@ -171,10 +171,10 @@ class ReplicaItem extends PureComponent<Props, object> {
           : ''
         }
 
-        {type === 1 && <div className={styles.watermarkContainer}>
+        {type === IItemType.Buddy && <div className={styles.watermarkContainer}>
           <p className={styles.watermark}>{translate('item.buddies.watermark')}</p>
         </div>}
-        {type === 2 && !item.replicaStats && <div className={styles.watermarkContainer}>
+        {type === IItemType.Player && !item.replicaStats && <div className={styles.watermarkContainer}>
             <p className={styles.watermark}>{translate('item.genericstats.watermark')}</p>
         </div>}
       </div>

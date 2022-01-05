@@ -357,7 +357,7 @@ namespace StatTranslator {
             {"iatag_html_cloud_err_easter", "The easter bunny has not yet found this egg"},
             {"iatag_html_items_buddy_alsohasthisitem1", "«{0}» also has this item"},
             {"iatag_html_items_buddy_alsohasthisitem2", "These buddies also have this item: {0}"},
-            {"iatag_html_items_buddy_alsohasthisitem3", "of your Buddies have this item"},
+            {"iatag_html_items_buddy_alsohasthisitem3", "Several of your Buddies have this item"},
             {"iatag_html_items_buddy_alsohasthisitem4", "«{0}» has this item."},
             {"iatag_html_levlerequirement", "Level Requirement: {0}"},
             {"iatag_html_any", "Any"},

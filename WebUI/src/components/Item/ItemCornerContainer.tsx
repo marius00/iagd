@@ -65,7 +65,7 @@ function getCloudLabel(isOk: boolean) {
 
 class ItemCornerContainer extends PureComponent<Props, object> {
   render() {
-    const buddyItems = this.props.items.filter(m => m.type === 1);
+    const buddyItems = this.props.items.filter(m => m.type === IItemType.Buddy);
 
     // Amazingly all of the old logic works pretty well, since buddy items are always LAST in the list, if items[0] is type buddy, then we only have buddy items.
     const item = this.props.items[0];
@@ -132,7 +132,7 @@ class ItemCornerContainer extends PureComponent<Props, object> {
             <img
               className="cursor-help"
               src="static/buddy.png"
-              data-tip={translate('item.buddies.plural', buddyItems.map(m => m.extras).join('\n'))}
+              data-tip={translate('item.buddies.plural')}
               alt={"Several of your buddies has this item"}
             />
 

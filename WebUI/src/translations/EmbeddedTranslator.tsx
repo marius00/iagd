@@ -27,7 +27,7 @@ class EmbeddedTranslator {
     'items.label.cloudError.easter': 'The easter bunny has not yet found this egg',
     'item.buddies.singular': '«{0}» also has this item.',
     'item.buddies.singularOnly': '«{0}» has this item.',
-    'item.buddies.plural': 'These buddies also have this item: {0}',
+    'item.buddies.plural': 'Several of your Buddies have this item',
     'item.buddies.watermark': 'Buddyitem',
     'item.buddies.tooltip': 'One of your buddies has this item',
     'item.genericstats.watermark': 'Generic Stats',
