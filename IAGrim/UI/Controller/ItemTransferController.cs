@@ -149,7 +149,7 @@ namespace IAGrim.UI.Controller {
 
             return RuntimeSettings.StashStatus == StashAvailability.CLOSED
                    || !secureTransfers
-                   || (RuntimeSettings.StashStatus == StashAvailability.ERROR
+                   || ((RuntimeSettings.StashStatus == StashAvailability.ERROR)
                        && MessageBox.Show(
                            RuntimeSettings.Language.GetTag("iatag_stash_status_error"),
                            "Warning",

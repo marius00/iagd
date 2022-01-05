@@ -23,6 +23,7 @@ namespace DllInjector {
         public const int NO_PROCESS_FOUND = 2;
         public const int INJECTION_ERROR_POSSIBLE_ACCESS_DENIED = 3;
         public const int STILL_RUNNING = 4;
+        public const int INJECTION_ERROR_32BIT = 5;
         private readonly InjectionMethods _injectionMethods = new InjectionMethods();
 
 
@@ -247,6 +248,7 @@ namespace DllInjector {
                         }
                         else {
                             Logger.Fatal("This version of Item Assistant does not support 32bit Grim Dawn");
+                            worker.ReportProgress(INJECTION_ERROR_32BIT, null);
                         }
                     }
                     else {

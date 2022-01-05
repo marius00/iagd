@@ -54,6 +54,17 @@ const helpEntries = [
         type: IHelpEntryType.Help
     },
     {
+        title: `IA says "Stash: NOT64BIT"`,
+        tag: 'No32Bit',
+        body: () => <div>
+            As of version 1.3 of Item Assistant, only 64 bit Grim Dawn is supported. <br/>
+            If you do not wish to run 64 bit version of Grim Dawn, you'll need to downgrade to version 1.2 of Item Assistant <br/>
+            The version is available on the website as the "32-bit version" <br/> <br/>
+            To ensure that you always run the 64-bit version, you can add "/x64" as a launch option in steam.
+        </div>,
+        type: IHelpEntryType.Help
+    },
+    {
         title: `IA shows me "Unknown Item"!??`,
         tag: 'UnknownItem',
         body: () => typicalParseDbMessage,

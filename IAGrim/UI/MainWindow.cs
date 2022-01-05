@@ -90,39 +90,57 @@ namespace IAGrim.UI {
                 Invoke((MethodInvoker) delegate { InjectorCallback(sender, e); });
             }
             else {
-                if (e.ProgressPercentage == InjectionHelper.INJECTION_ERROR) {
-                    _itemReplicaService.SetIsGrimDawnRunning(false);
-                    RuntimeSettings.StashStatus = StashAvailability.ERROR;
-                    statusLabel.Text = e.UserState as string;
-                    if (!_hasShownStashErrorPage) {
-                        _cefBrowserHandler.ShowHelp(HelpService.HelpType.StashError);
-                        _hasShownStashErrorPage = true;
-                    }
-                }
-                // No grim dawn client, so stash is closed!
-                else if (e.ProgressPercentage == InjectionHelper.NO_PROCESS_FOUND_ON_STARTUP) {
-                    _itemReplicaService.SetIsGrimDawnRunning(false);
-                    if (RuntimeSettings.StashStatus == StashAvailability.UNKNOWN) {
-                        RuntimeSettings.StashStatus = StashAvailability.CLOSED;
-                    }
-                }
-                // No grim dawn client, so stash is closed!
-                else if (e.ProgressPercentage == InjectionHelper.NO_PROCESS_FOUND) {
-                    RuntimeSettings.StashStatus = StashAvailability.CLOSED;
-                    _itemReplicaService.SetIsGrimDawnRunning(false);
-                }
-                // Injection error
-                else if (e.ProgressPercentage == InjectionHelper.INJECTION_ERROR_POSSIBLE_ACCESS_DENIED) {
-                    _itemReplicaService.SetIsGrimDawnRunning(false);
-                    RuntimeSettings.StashStatus = StashAvailability.ERROR;
-                    if (!_hasShownStashErrorPage) {
-                        _cefBrowserHandler.ShowHelp(HelpService.HelpType.StashError);
-                        _hasShownStashErrorPage = true;
-                    }
-                }
+                switch (e.ProgressPercentage) {
+                    case InjectionHelper.INJECTION_ERROR: {
+                        _itemReplicaService.SetIsGrimDawnRunning(false);
+                        RuntimeSettings.StashStatus = StashAvailability.ERROR;
+                        statusLabel.Text = e.UserState as string;
+                        if (!_hasShownStashErrorPage) {
+                            _cefBrowserHandler.ShowHelp(HelpService.HelpType.StashError);
+                            _hasShownStashErrorPage = true;
+                        }
 
-                else if (e.ProgressPercentage == InjectionHelper.STILL_RUNNING) {
-                    _itemReplicaService.SetIsGrimDawnRunning(true);
+                        break;
+                    }
+                    case InjectionHelper.INJECTION_ERROR_32BIT: {
+                        _itemReplicaService.SetIsGrimDawnRunning(false);
+                        RuntimeSettings.StashStatus = StashAvailability.NOT64BIT;
+                        statusLabel.Text = e.UserState as string;
+                        if (!_hasShownStashErrorPage) {
+                            _cefBrowserHandler.ShowHelp(HelpService.HelpType.No32Bit);
+                            _hasShownStashErrorPage = true;
+                        }
+
+                        break;
+                    }
+                    // No grim dawn client, so stash is closed!
+                    case InjectionHelper.NO_PROCESS_FOUND_ON_STARTUP: {
+                        _itemReplicaService.SetIsGrimDawnRunning(false);
+                        if (RuntimeSettings.StashStatus == StashAvailability.UNKNOWN) {
+                            RuntimeSettings.StashStatus = StashAvailability.CLOSED;
+                        }
+
+                        break;
+                    }
+                    // No grim dawn client, so stash is closed!
+                    case InjectionHelper.NO_PROCESS_FOUND:
+                        RuntimeSettings.StashStatus = StashAvailability.CLOSED;
+                        _itemReplicaService.SetIsGrimDawnRunning(false);
+                        break;
+                    // Injection error
+                    case InjectionHelper.INJECTION_ERROR_POSSIBLE_ACCESS_DENIED: {
+                        _itemReplicaService.SetIsGrimDawnRunning(false);
+                        RuntimeSettings.StashStatus = StashAvailability.ERROR;
+                        if (!_hasShownStashErrorPage) {
+                            _cefBrowserHandler.ShowHelp(HelpService.HelpType.StashError);
+                            _hasShownStashErrorPage = true;
+                        }
+
+                        break;
+                    }
+                    case InjectionHelper.STILL_RUNNING:
+                        _itemReplicaService.SetIsGrimDawnRunning(true);
+                        break;
                 }
 
                 _charBackupService.SetIsActive(RuntimeSettings.StashStatus == StashAvailability.CLOSED);

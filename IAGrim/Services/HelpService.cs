@@ -32,6 +32,7 @@ namespace IAGrim.Services {
             OnlineBackups,
             NotEnoughStashTabs,
             StashError,
+            No32Bit,
             WindowsAntiRansomwareIssue,
         }
 
