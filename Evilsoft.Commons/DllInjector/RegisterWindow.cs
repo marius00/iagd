@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using log4net;
 using System.Security.Principal;
@@ -93,10 +94,25 @@ namespace EvilsoftCommons.DllInjector {
             public DataAndType(COPYDATASTRUCT cps) {
                 Type = (int)cps.cbData;
                 Data = new byte[(int)cps.dwData];
-                StringData = Marshal.PtrToStringUni(cps.lpData);
 
+                StringData = GetDataString(cps.lpData, Type);
 
                 System.Runtime.InteropServices.Marshal.Copy(cps.lpData, Data, 0, (int)cps.dwData);
+            }
+
+            [HandleProcessCorruptedStateExceptions]
+            private string GetDataString(IntPtr ptr, int type) {
+                try {
+                    if (ptr != IntPtr.Zero) {
+                        return Marshal.PtrToStringUni(ptr);
+                    }
+                }
+                catch (AccessViolationException ex) {
+                    logger.Error("Error reading string from GD", ex);
+                    logger.Error($"This is possibly fatal, type: {type}");
+                }
+
+                return string.Empty;
             }
 
             public byte[] Data { get; }
@@ -122,24 +138,17 @@ namespace EvilsoftCommons.DllInjector {
 
         private void Dispose(bool disposing) {
             CustomWndProc = null;
-            if (!false) {
-                if (disposing) {
-                    // Dispose managed resources
-                }
-
-                // Dispose unmanaged resources
-                if (m_hwnd != IntPtr.Zero) {
-                    DestroyWindow(m_hwnd);
-                    m_hwnd = IntPtr.Zero;
-                }
-
+            // Dispose unmanaged resources
+            if (m_hwnd != IntPtr.Zero) {
+                DestroyWindow(m_hwnd);
+                m_hwnd = IntPtr.Zero;
             }
         }
 
         public RegisterWindow(string className, Action<DataAndType> callback) {
 
             if (className == null) throw new System.Exception("class_name is null");
-            if (className == String.Empty) throw new System.Exception("class_name is empty");
+            if (className == string.Empty) throw new System.Exception("class_name is empty");
 
 
             CustomWndProc = callback;

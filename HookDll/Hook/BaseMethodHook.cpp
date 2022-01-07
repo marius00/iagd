@@ -20,7 +20,7 @@ void BaseMethodHook::ReportHookSuccess(DataQueue* m_dataQueue, HANDLE m_hEvent, 
 	SetEvent(m_hEvent);
 }
 
-void BaseMethodHook::TransferData(unsigned int size, char* data) {
+void BaseMethodHook::TransferData(unsigned int size, const char* data) {
 	DataItemPtr item(new DataItem(m_messageId, size, data));
 	m_dataQueue->push(item);
 	SetEvent(m_hEvent);

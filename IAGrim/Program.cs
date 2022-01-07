@@ -51,7 +51,6 @@ namespace IAGrim {
 
             RuntimeSettings.Uuid = uuid;
             ExceptionReporter.Uuid = uuid;
-            Logger.InfoFormat("Your user id is {0}, use this for any bug reports", RuntimeSettings.Uuid);
         }
 
         public static MainWindow MainWindow => _mw;

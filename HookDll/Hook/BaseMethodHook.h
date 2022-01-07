@@ -16,7 +16,7 @@ protected:
 	void* HookEngine(char* procAddress, void* HookedMethod, DataQueue* m_dataQueue, HANDLE m_hEvent, int id);
 	void* HookDll(const wchar_t* dll, char* procAddress, void* HookedMethod, DataQueue* m_dataQueue, HANDLE m_hEvent, int id);
 	void Unhook(void* originalMethod, void* Method);
-	void TransferData(unsigned int size, char* data);
+	void TransferData(unsigned int size, const char* data);
 
 	int m_messageId;
 	DataQueue* m_dataQueue;
