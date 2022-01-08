@@ -39,7 +39,7 @@ class Item extends PureComponent<Props, object> {
   }
 
   openItemSite() {
-    openUrl(`https://www.grimtools.com/db/search?src=itemassistant&query=${this.stripColorCodes(this.props.items[0].name)}`);
+    openUrl(`https://grimdawn.evilsoft.net/search/?query=${this.stripColorCodes(this.props.items[0].name)}`);
   }
 
   renderBuddyItemText(items: IItem[]) {

@@ -26,7 +26,7 @@ class CollectionItemContainer extends PureComponent<Props, object> {
   }
 
   openItemSite(item: ICollectionItem) {
-    let url = `http://www.grimtools.com/db/search?src=itemassistant&query=${this.stripColorCodes(item.name)}`;
+    let url = `https://grimdawn.evilsoft.net/search/?query=${this.stripColorCodes(item.name)}`;
     openUrl(url);
   }
 

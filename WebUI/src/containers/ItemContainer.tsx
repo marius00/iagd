@@ -64,7 +64,7 @@ class ItemContainer extends PureComponent<Props, object> {
     const url = (item[0].url as any) as object[];
     const r = transferItem(url, true);
     if (r.success) {
-      this.props.onItemReduce(item[0], true); // Don't particulary matter which we reduce when doing transferAll
+      this.props.onItemReduce(item[0], true); // Don't particularly matter which we reduce when doing transferAll
     }
   }
 
@@ -78,7 +78,7 @@ class ItemContainer extends PureComponent<Props, object> {
 
     const entries = this.props.items.map(item => {
       const name = item[0].name.replace('"', '');
-      return `[URL="http://www.grimtools.com/db/search?query=${name}"][COLOR="${colors[item[0].quality]}"]${item[0].name}[/COLOR][/URL]`;
+      return `[URL="https://grimdawn.evilsoft.net/search/?query=${name}"][COLOR="${colors[item[0].quality]}"]${item[0].name}[/COLOR][/URL]`;
     });
 
     return entries.join('\n');
