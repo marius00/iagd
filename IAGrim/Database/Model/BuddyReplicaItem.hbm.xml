@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="IAGrim" namespace="IAGrim.Database">
+	<class name="BuddyReplicaItem" table="BuddyReplicaItem">
+		<id name="BuddyItemId">
+			<column name="buddyitemid" unique="true" index="idx_buddyreplicaitem_buddyitemid" />
+		</id>
+
+		<property name="Text" />
+	</class>
+</hibernate-mapping>

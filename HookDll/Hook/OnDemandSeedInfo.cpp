@@ -87,10 +87,31 @@ void OnDemandSeedInfo::Start() {
 ParsedSeedRequest* OnDemandSeedInfo::Parse(char* databuffer, size_t length) {
 	int pos = 0;
 	__int32 recordLength;
-
 	__int64 playerItemId;
-	memcpy(&playerItemId, databuffer + pos, sizeof(__int64));
-	pos += sizeof(__int64);
+	char buddyItemId[64] = { 0 }; // Think maxlen is 36
+	const int TYPE_PLAYERITEM = 1;
+	const int TYPE_BUDDYITEM = 2;
+
+
+	__int32 requestType;
+	memcpy(&requestType, databuffer + pos, sizeof(__int32));
+	pos += sizeof(__int32);
+
+	if (requestType == TYPE_PLAYERITEM) {
+		memcpy(&playerItemId, databuffer + pos, sizeof(__int64));
+		pos += sizeof(__int64);
+	}
+	else if (requestType == TYPE_BUDDYITEM) {
+		recordLength = 0;
+		memcpy(&recordLength, databuffer + pos, sizeof(__int32));
+		pos += sizeof(__int32);
+
+		memcpy(buddyItemId, databuffer + pos, recordLength);
+		pos += recordLength;
+	}
+	else {
+		return nullptr;
+	}
 
 	__int32 seed;
 	memcpy(&seed, databuffer + pos, sizeof(__int32));
@@ -185,6 +206,7 @@ ParsedSeedRequest* OnDemandSeedInfo::Parse(char* databuffer, size_t length) {
 	ParsedSeedRequest* result = new ParsedSeedRequest();
 	result->itemReplicaInfo = replica;
 	result->playerItemId = playerItemId;
+	result->buddyItemId = std::string(buddyItemId);
 	return result;
 }
 
@@ -261,6 +283,7 @@ void OnDemandSeedInfo::GetItemInfo(ParsedSeedRequest obj) {
 
 			GAME::ItemReplicaInfo replica;
 			stream << obj.playerItemId << "\n"; // Differs from TYPE_ITEMSEEDDATA
+			stream << obj.buddyItemId.c_str() << "\n";
 			stream << GAME::itemReplicaToString(obj.itemReplicaInfo) << "\n";
 			stream << GAME::gameTextLineToString(gameTextLines);
 

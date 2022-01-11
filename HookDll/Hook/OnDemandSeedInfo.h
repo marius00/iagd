@@ -11,6 +11,7 @@
 struct ParsedSeedRequest {
 	__int64 playerItemId;
 	GAME::ItemReplicaInfo itemReplicaInfo;
+	std::string buddyItemId;
 };
 typedef boost::shared_ptr<ParsedSeedRequest> ParsedSeedRequestPtr;
 

@@ -71,6 +71,7 @@ namespace IAGrim.Services {
             IAugmentationItemDao augmentationItemRepo;
             IItemCollectionDao itemCollectionRepo;
             IReplicaItemDao replicaItemDao;
+            IBuddyReplicaItemDao buddyReplicaItemDao;
 
             if (dialect == SqlDialect.Sqlite) {
                 playerItemDao = new PlayerItemRepo(threadExecuter, factory, dialect);
@@ -85,6 +86,7 @@ namespace IAGrim.Services {
                 augmentationItemRepo = new AugmentationItemRepo(threadExecuter, factory, new DatabaseItemStatDaoImpl(factory, dialect), dialect);
                 itemCollectionRepo = new ItemCollectionRepo(threadExecuter, factory, dialect);
                 replicaItemDao = new ItemReplicaRepo(threadExecuter, factory, dialect);
+                buddyReplicaItemDao = new BuddyItemReplicaRepo(threadExecuter, factory, dialect);
             }
             else {
                 databaseItemStatDao = new DatabaseItemStatDaoImpl(factory, dialect);
@@ -99,7 +101,9 @@ namespace IAGrim.Services {
                 augmentationItemRepo = new AugmentationItemDaoImpl(factory, databaseItemStatDao, dialect);
                 itemCollectionRepo = new ItemCollectionDaoImpl(factory, dialect);
                 replicaItemDao = new ReplicaItemDaoImpl(factory, dialect);
+                buddyReplicaItemDao = new BuddyReplicaItemDaoImpl(factory, dialect);
             }
+            
 
             // Chicken and the egg..
             var itemStatService = new ItemStatService(databaseItemStatDao, itemSkillDao, settingsService);
@@ -123,16 +127,17 @@ namespace IAGrim.Services {
             services.Add(buddySubscriptionDao);
             services.Add(itemSkillDao);
             services.Add(augmentationItemRepo);
-            //services.Add(userFeedbackService);
+            
             services.Add(settingsService);
             services.Add(grimDawnDetector);
             services.Add(recipeItemDao);
             services.Add(itemCollectionRepo);
             services.Add(searchController);
-            services.Add(new ItemReplicaService(playerItemDao));
+            services.Add(new ItemReplicaService(playerItemDao, buddyItemDao));
             services.Add(replicaItemDao);
+            services.Add(buddyReplicaItemDao);
 
-            services.Add(new ItemReplicaProcessor(replicaItemDao));
+            services.Add(new ItemReplicaProcessor(replicaItemDao, buddyReplicaItemDao));
 
             services.Add(itemStatService);
 

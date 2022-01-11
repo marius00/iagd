@@ -30,6 +30,9 @@ namespace IAGrim.Database {
         public virtual long StackCount { get; set; }
         public virtual long CreationDate { get; set; }
 
+        public virtual long Seed { get; set; }
+        public virtual long RelicSeed { get; set; }
+        public virtual long EnchantmentSeed { get; set; }
 
         public virtual ulong Count {
             get { return (ulong)StackCount; }
@@ -61,6 +64,7 @@ namespace IAGrim.Database {
         public virtual long BuddyId { get; set; }
         public virtual bool IsHardcore { get; set; }
         public virtual string Mod { get; set; }
+        public virtual string ReplicaInfo { get; set; }
 
 
 

@@ -26,5 +26,8 @@
     <property name="CreationDate" column="created_at" />
     <property name="Rarity" column="rarity" />
     <property name="PrefixRarity" column="prefixrarity" />
+    <property name="Seed" column="seed" />
+    <property name="RelicSeed" column="relicseed" />
+    <property name="EnchantmentSeed" column="enchantmentseed" />
   </class>
 </hibernate-mapping>

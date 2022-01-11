@@ -80,6 +80,12 @@ namespace IAGrim.Database.Synchronizer {
             );
         }
 
+        public IList<BuddyItem> ListMissingReplica(int limit) {
+            return ThreadExecuter.Execute(
+                () => _repo.ListMissingReplica(limit)
+            );
+        }
+
         public void RemoveBuddy(long buddyId) {
             ThreadExecuter.Execute(
                 () => _repo.RemoveBuddy(buddyId)

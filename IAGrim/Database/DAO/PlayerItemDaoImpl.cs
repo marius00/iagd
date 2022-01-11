@@ -1019,14 +1019,13 @@ DELETE FROM PlayerItem WHERE Id IN (
 
         public IList<PlayerItem> ListMissingReplica(int limit) {
 
+
             //TODO: Relics are "ItemArtifact", those will crash the game.
+            // TODO: Seems super redundant to check prefix, suffix and materia for Class? BaseRecord determines slot no? Same thing is done in regular searches..
             var specificItemTypesOnlySql = $@"
                 SELECT Playeritemid FROM PlayerItemRecord WHERE record IN (
                     select baserecord from databaseitem_V2 db where db.baserecord in (
-                        select baserecord from {PlayerItemTable.Table} union 
-                        select prefixrecord from {PlayerItemTable.Table} union 
-                        select suffixrecord from {PlayerItemTable.Table} union 
-                        select materiarecord from {PlayerItemTable.Table}
+                        select baserecord from {PlayerItemTable.Table}
                     )
                     AND exists (
                         select id_databaseitem from databaseitemstat_v2 dbs 
@@ -1059,20 +1058,6 @@ DELETE FROM PlayerItem WHERE Id IN (
                     )
                 )
                 ";
-
-            var excludeSetBOnusItems = @"
-				AND NOT PI.Id IN (
-				                        SELECT Playeritemid FROM PlayerItemRecord WHERE record IN (
-                            select baserecord from databaseitem_V2 db where db.baserecord in (
-                                select baserecord from playeritem union 
-                                select prefixrecord from playeritem union 
-                                select suffixrecord from playeritem union 
-                                select materiarecord from playeritem
-                            )
-                            AND exists (select id_databaseitem from databaseitemstat_v2 dbs where stat in ( 'setName', 'itemSetName' ) and db.id_databaseitem = dbs.id_databaseitem)
-                        )
-				)
-";
 
             var sql = $@"
                 SELECT
