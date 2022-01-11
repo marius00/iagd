@@ -175,6 +175,9 @@ namespace IAGrim.BuddyShare {
                 Rarity = itemDto.Rarity,
                 BuddyId = subscription.Id,
                 PrefixRarity = itemDto.PrefixRarity,
+                Seed = itemDto.Seed,
+                RelicSeed = itemDto.RelicSeed,
+                EnchantmentSeed = itemDto.EnchantmentSeed
             };
         }
 

@@ -71,12 +71,12 @@ namespace IAGrim.Utilities {
 
             bool isHardcore = false;
             bool isCloudSynced = false;
-            object[] transferUrl = {"", "", "", ""};
+            object[] transferUrl = { "", "", "", "" };
             string uniqueIdentifier = GetUniqueIdentifier(item);
             List<ItemStatInfo> replicaStats = null;
             var mergeIdentifier = item.BaseRecord ?? string.Empty;
             if (item is PlayerItem pi) {
-                transferUrl = new object[] {pi.BaseRecord, pi.PrefixRecord, pi.SuffixRecord, pi.MateriaRecord, pi.Mod, pi.IsHardcore};
+                transferUrl = new object[] { pi.BaseRecord, pi.PrefixRecord, pi.SuffixRecord, pi.MateriaRecord, pi.Mod, pi.IsHardcore };
                 isCloudSynced = pi.IsCloudSynchronized;
                 isHardcore = pi.IsHardcore;
 
@@ -86,8 +86,12 @@ namespace IAGrim.Utilities {
 
 
                 mergeIdentifier += (pi.PrefixRecord ?? string.Empty) + (pi.SuffixRecord ?? string.Empty);
-            } else if (item is BuddyItem bi) {
+            }
+            else if (item is BuddyItem bi) {
                 mergeIdentifier += (bi.PrefixRecord ?? string.Empty) + (bi.SuffixRecord ?? string.Empty);
+                if (!string.IsNullOrEmpty(bi.ReplicaInfo)) {
+                    replicaStats = JsonConvert.DeserializeObject<List<ItemStatInfo>>(bi.ReplicaInfo);
+                }
             }
 
             ItemTypeDto type;
@@ -140,7 +144,7 @@ namespace IAGrim.Utilities {
                 Type = type,
                 HasRecipe = item.HasRecipe,
                 Skill = (item.Skill != null && !skipStats) ? GetJsonSkill(item.Skill) : null,
-                GreenRarity = (int) item.PrefixRarity,
+                GreenRarity = (int)item.PrefixRarity,
                 HasCloudBackup = isCloudSynced,
                 Slot = SlotTranslator.Translate(RuntimeSettings.Language, item.Slot ?? ""),
                 Extras = extras,

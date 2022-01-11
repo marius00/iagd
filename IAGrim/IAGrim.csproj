@@ -219,19 +219,23 @@
     <Compile Include="Backup\Cloud\Dto\LimitEntry.cs" />
     <Compile Include="Backup\Cloud\Dto\LimitsDto.cs" />
     <Compile Include="Backup\Cloud\Service\CharacterBackupService.cs" />
+    <Compile Include="Database\DAO\BuddyReplicaItemDaoImpl.cs" />
     <Compile Include="Database\DAO\ReplicaItemDaoImpl.cs" />
     <Compile Include="Database\DAO\ItemCollectionDaoImpl.cs" />
     <Compile Include="Database\DAO\Table\BuddySubscriptionTable.cs" />
     <Compile Include="Database\DAO\Util\SqlDialect.cs" />
     <Compile Include="Database\DAO\Util\SqlUtils.cs" />
+    <Compile Include="Database\Interfaces\IBuddyReplicaItemDao.cs" />
     <Compile Include="Database\Interfaces\IReplicaItemDao.cs" />
     <Compile Include="Database\Interfaces\IItemCollectionDao.cs" />
     <Compile Include="Database\Model\BuddyItemRecord.cs" />
     <Compile Include="Database\Model\CollectionItem.cs" />
     <Compile Include="Database\Model\ItemSetAssociation.cs" />
     <Compile Include="Database\Model\ItemSkillMapping.cs" />
+    <Compile Include="Database\Model\BuddyReplicaItem.cs" />
     <Compile Include="Database\Model\ReplicaItem.cs" />
     <Compile Include="Database\Model\SkillTierMapping.cs" />
+    <Compile Include="Database\Synchronizer\BuddyItemReplicaRepo.cs" />
     <Compile Include="Database\Synchronizer\ItemReplicaRepo.cs" />
     <Compile Include="Database\Synchronizer\ItemCollectionRepo.cs" />
     <Compile Include="Parsers\TransferStash\SafeTransferStashWriter.cs" />
@@ -239,6 +243,7 @@
     <Compile Include="Parsers\TransferStash\TransferStashServiceCache.cs" />
     <Compile Include="Parsers\TransferStash\TransferStashWorker.cs" />
     <Compile Include="Services\HelpService.cs" />
+    <Compile Include="Services\ItemReplicaDispatchService.cs" />
     <Compile Include="Services\ItemReplica\ItemStatInfo.cs" />
     <Compile Include="Services\ItemReplicaService.cs" />
     <Compile Include="Services\ItemReplica\ReplicaCache.cs" />
@@ -249,28 +254,44 @@
     <Compile Include="Settings\Dto\SettingsTemplate.cs" />
     <Compile Include="Settings\SettingsService.cs" />
     <Compile Include="StartupService.cs" />
-    <Compile Include="Theme\AutoSizeForm.cs" />
-    <Compile Include="Theme\CollapseablePanelBox.cs" />
-    <Compile Include="Theme\FirefoxButton.cs" />
+    <Compile Include="Theme\AutoSizeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Theme\CollapseablePanelBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Theme\FirefoxButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\Controller\dto\ItemTypeDto.cs" />
     <Compile Include="UI\FilterEventArgs.cs" />
-    <Compile Include="UI\Filters\Classes.cs" />
+    <Compile Include="UI\Filters\Classes.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="UI\Filters\Classes.Designer.cs">
       <DependentUpon>Classes.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Filters\Damage.cs" />
+    <Compile Include="UI\Filters\Damage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="UI\Filters\Damage.Designer.cs">
       <DependentUpon>Damage.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Filters\DamageOverTime.cs" />
+    <Compile Include="UI\Filters\DamageOverTime.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="UI\Filters\DamageOverTime.Designer.cs">
       <DependentUpon>DamageOverTime.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Filters\Misc.cs" />
+    <Compile Include="UI\Filters\Misc.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="UI\Filters\Misc.Designer.cs">
       <DependentUpon>Misc.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Filters\Resistances.cs" />
+    <Compile Include="UI\Filters\Resistances.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="UI\Filters\Resistances.Designer.cs">
       <DependentUpon>Resistances.cs</DependentUpon>
     </Compile>
@@ -284,11 +305,15 @@
     <Compile Include="UI\Misc\MinimizeToTrayHandler.cs" />
     <Compile Include="UI\Misc\RequestCharacterDownloadUrlEventArgs.cs" />
     <Compile Include="UI\Misc\RequestCharacterListEventArg.cs" />
-    <Compile Include="UI\Popups\AddEditBuddy.cs" />
+    <Compile Include="UI\Popups\AddEditBuddy.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\Popups\AddEditBuddy.Designer.cs">
       <DependentUpon>AddEditBuddy.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Tabs\OnlineSettings.cs" />
+    <Compile Include="UI\Tabs\OnlineSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\Tabs\OnlineSettings.Designer.cs">
       <DependentUpon>OnlineSettings.cs</DependentUpon>
     </Compile>
@@ -403,7 +428,9 @@
     <Compile Include="Parsers\GameDataParsing\Service\ArzParsingWrapper.cs" />
     <Compile Include="Parsers\GameDataParsing\Service\GrimFolderUtility.cs" />
     <Compile Include="Parsers\GameDataParsing\Service\ParsingService.cs" />
-    <Compile Include="Parsers\GameDataParsing\UI\ParsingDatabaseProgressView.cs" />
+    <Compile Include="Parsers\GameDataParsing\UI\ParsingDatabaseProgressView.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Parsers\GameDataParsing\UI\ParsingDatabaseProgressView.Designer.cs">
       <DependentUpon>ParsingDatabaseProgressView.cs</DependentUpon>
     </Compile>
@@ -426,9 +453,15 @@
     <Compile Include="Services\MessageProcessor\StashStatusHandler.cs" />
     <Compile Include="Theme\ComboBoxItem.cs" />
     <Compile Include="Theme\ComboBoxItemQuality.cs" />
-    <Compile Include="Theme\Firefox\FirefoxCheckBox.cs" />
-    <Compile Include="Theme\Firefox\FirefoxNumericUpDown.cs" />
-    <Compile Include="Theme\PanelBox.cs" />
+    <Compile Include="Theme\Firefox\FirefoxCheckBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Theme\Firefox\FirefoxNumericUpDown.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Theme\PanelBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Theme\ScrollPanelMessageFilter.cs" />
     <Compile Include="Theme\Theme.cs" />
     <Compile Include="UI\Misc\CEF\CefBackupAuthentication.cs" />
@@ -437,28 +470,40 @@
     <Compile Include="UI\Misc\TextboxHoverFocusHighlight.cs" />
     <Compile Include="UI\Misc\WindowSizeManager.cs" />
     <Compile Include="UI\Model\ListViewEntry.cs" />
-    <Compile Include="UI\Popups\ImportExport\ImportExportContainer.cs" />
+    <Compile Include="UI\Popups\ImportExport\ImportExportContainer.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\Popups\ImportExport\ImportExportContainer.Designer.cs">
       <DependentUpon>ImportExportContainer.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Popups\ImportExport\Panels\ExportMode.cs" />
+    <Compile Include="UI\Popups\ImportExport\Panels\ExportMode.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\Popups\ImportExport\Panels\ExportMode.Designer.cs">
       <DependentUpon>ExportMode.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Popups\ImportExport\Panels\ImportExportModePicker.cs" />
+    <Compile Include="UI\Popups\ImportExport\Panels\ImportExportModePicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\Popups\ImportExport\Panels\ImportExportModePicker.Designer.cs">
       <DependentUpon>ImportExportModePicker.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Popups\ImportExport\Panels\ImportMode.cs" />
+    <Compile Include="UI\Popups\ImportExport\Panels\ImportMode.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\Popups\ImportExport\Panels\ImportMode.Designer.cs">
       <DependentUpon>ImportMode.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Popups\StashTabPicker.cs" />
+    <Compile Include="UI\Popups\StashTabPicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\Popups\StashTabPicker.Designer.cs">
       <DependentUpon>StashTabPicker.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Service\DatabaseModSelectionService.cs" />
-    <Compile Include="UI\Tabs\BackupSettings.cs" />
+    <Compile Include="UI\Tabs\BackupSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\Tabs\BackupSettings.Designer.cs">
       <DependentUpon>BackupSettings.cs</DependentUpon>
     </Compile>
@@ -471,15 +516,21 @@
     <Compile Include="UI\Controller\SearchController.cs" />
     <Compile Include="UI\Controller\SettingsController.cs" />
     <Compile Include="UI\Controller\dto\JsonItem.cs" />
-    <Compile Include="UI\DesiredSkills.cs" />
+    <Compile Include="UI\DesiredSkills.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\DesiredSkills.Designer.cs">
       <DependentUpon>DesiredSkills.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Popups\DonateNagScreen.cs" />
+    <Compile Include="UI\Popups\DonateNagScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\Popups\DonateNagScreen.Designer.cs">
       <DependentUpon>DonateNagScreen.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Popups\LanguagePackPicker.cs" />
+    <Compile Include="UI\Popups\LanguagePackPicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\Popups\LanguagePackPicker.Designer.cs">
       <DependentUpon>LanguagePackPicker.cs</DependentUpon>
     </Compile>
@@ -488,26 +539,38 @@
     <Compile Include="UI\Misc\MessageType.cs" />
     <Compile Include="UI\Misc\MousewheelMessageFilter.cs" />
     <Compile Include="UI\Misc\StashTransferEventArgs.cs" />
-    <Compile Include="UI\Tabs\LoggingWindow.cs" />
+    <Compile Include="UI\Tabs\LoggingWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\Tabs\LoggingWindow.Designer.cs">
       <DependentUpon>LoggingWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Tabs\ModsDatabaseConfig.cs" />
+    <Compile Include="UI\Tabs\ModsDatabaseConfig.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\Tabs\ModsDatabaseConfig.Designer.cs">
       <DependentUpon>ModsDatabaseConfig.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Tabs\SettingsWindow.cs" />
+    <Compile Include="UI\Tabs\SettingsWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\Tabs\SettingsWindow.Designer.cs">
       <DependentUpon>SettingsWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Popups\StashPicker.cs" />
+    <Compile Include="UI\Popups\StashPicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\Popups\StashPicker.Designer.cs">
       <DependentUpon>StashPicker.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Tabs\SplitSearchWindow.cs" />
+    <Compile Include="UI\Tabs\SplitSearchWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\Tabs\Util\ModSelectionHandler.cs" />
     <Compile Include="UI\UIHelper.cs" />
-    <Compile Include="UI\Popups\UpdatingPlayerItemsScreen.cs" />
+    <Compile Include="UI\Popups\UpdatingPlayerItemsScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\Popups\UpdatingPlayerItemsScreen.Designer.cs">
       <DependentUpon>UpdatingPlayerItemsScreen.cs</DependentUpon>
     </Compile>
@@ -521,7 +584,9 @@
     <Compile Include="Utilities\Detection\GrimDawnDetector.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UI\MainWindow.cs" />
+    <Compile Include="UI\MainWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
@@ -649,6 +714,9 @@
     <EmbeddedResource Include="Database\Model\BuddyItem.hbm.xml" />
     <EmbeddedResource Include="Database\Model\BuddyItemRecord.hbm.xml" />
     <EmbeddedResource Include="Database\Model\ReplicaItem.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Database\Model\BuddyReplicaItem.hbm.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Content Include="hibernate.postgres.cfg.xml">

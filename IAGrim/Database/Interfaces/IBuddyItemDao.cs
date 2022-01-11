@@ -18,5 +18,7 @@ namespace IAGrim.Database.Interfaces {
         IList<string> GetOnlineIds(BuddySubscription subscription);
         void Save(BuddySubscription subscription, List<BuddyItem> items);
         void Delete(BuddySubscription subscription, List<DeleteItemDto> items);
+
+        IList<BuddyItem> ListMissingReplica(int limit);
     }
 }

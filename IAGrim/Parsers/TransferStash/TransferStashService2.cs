@@ -264,7 +264,7 @@ namespace IAGrim.Parsers.TransferStash {
                 _playerItemDao.Save(playerItems);
 
                 foreach (var item in playerItems) {
-                    var hash = ItemReplicaProcessor.GetHash(item);
+                    var hash = ItemReplicaService.GetHash(item);
                     _replicaItemDao.UpdatePlayerItemId(hash, item.Id);
                 }
             }

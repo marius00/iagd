@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ServiceModel.Channels;
 using System.Text;
 using IAGrim.Database;
 using IAGrim.Database.Interfaces;
@@ -12,52 +13,28 @@ namespace IAGrim.Services.MessageProcessor {
         private readonly ILog _logger = LogManager.GetLogger(typeof(ItemReplicaProcessor));
         private const char Separator = ';';
         private readonly IReplicaItemDao _replicaItemDao;
+        private readonly IBuddyReplicaItemDao _buddyReplicaItemDao;
 
-        public ItemReplicaProcessor(IReplicaItemDao replicaItemDao) {
+        public ItemReplicaProcessor(IReplicaItemDao replicaItemDao, IBuddyReplicaItemDao buddyReplicaItemDao) {
             this._replicaItemDao = replicaItemDao;
+            _buddyReplicaItemDao = buddyReplicaItemDao;
         }
 
-
-        public void Process(MessageType type, byte[] data, string dataString) {
+        private bool IsResponsible(MessageType type) {
             switch (type) {
                 case MessageType.TYPE_ITEMSEEDDATA_EQ:
                 case MessageType.TYPE_ITEMSEEDDATA_REL:
                 case MessageType.TYPE_ITEMSEEDDATA_BASE:
-                    break;
-
                 case MessageType.TYPE_ITEMSEEDDATA_PLAYERID:
-                    break;
+                    return true;
 
                 default:
-                    return;
+                    return false;
             }
+        }
 
-#if DEBUG
-            _logger.Info($"Experimental hook success: {type} {dataString.Replace('\n','N')}");
-#endif
 
-            var lines = dataString.Split('\n');
-            if (lines.Length < 2) {
-                _logger.Debug("Discarding replica, text too short");
-                return;
-            }
-
-            int s = 0;
-            long? playerItemId = null;
-            if (type == MessageType.TYPE_ITEMSEEDDATA_PLAYERID) {
-                if (long.TryParse(lines[0].Trim(), out var itemId))
-                    playerItemId = itemId;
-
-                s++;
-            }
-
-            var item = ToGameItem(lines[s], playerItemId);
-            s++;
-            if (item == null) {
-                _logger.Warn("Unable to create ItemReplica");
-                return;
-            }
-
+        private List<ItemStatInfo> ParseStats(string[] lines, int s) {
             var text = new List<ItemStatInfo>();
             for (int i = s; i < lines.Length; i++) {
                 var line = lines[i];
@@ -66,48 +43,78 @@ namespace IAGrim.Services.MessageProcessor {
                     text.Add(row);
             }
 
-            if (text.Count <= 1) {
-                _logger.Debug("Only got a single text row, discarding replica");
+            return text;
+        }
+
+        public void Process(MessageType type, byte[] data, string dataString) {
+            if (!IsResponsible(type))
+                return;
+
+#if DEBUG
+            _logger.Info($"Experimental hook success: {type} {dataString.Replace('\n','N')}");
+#endif
+
+            var lines = dataString.Split('\n');
+            if (lines.Length < 3) {
+                _logger.Debug("Discarding replica, text too short");
                 return;
             }
 
-            item.Text = JsonConvert.SerializeObject(text);
-            item.UqHash = GetHash(item);
+            int s = 0;
+            long? playerItemId = null;
+            string buddyItemId = string.Empty;
+            if (type == MessageType.TYPE_ITEMSEEDDATA_PLAYERID) {
+                // Player item Id
+                if (long.TryParse(lines[s].Trim(), out var itemId))
+                    playerItemId = itemId;
 
-#if DEBUG
-            if (!dataString.Contains("^")) {
-                _logger.Warn("This might be the drones you are looking for...");
+                s++;
+
+                // Buddy item id
+                buddyItemId = lines[s++];
             }
-#endif
 
-            _replicaItemDao.Save(item);
+            // TODO: Cleanup and dedup this
+            if (string.IsNullOrEmpty(buddyItemId)) {
+                var item = ToGameItem(lines[s], playerItemId);
+                s++;
+                if (item == null) {
+                    _logger.Warn("Unable to create ItemReplica");
+                    return;
+                }
+
+                var text = ParseStats(lines, s);
+                if (text.Count <= 1) {
+                    _logger.Debug("Only got a single text row, discarding replica");
+                    return;
+                }
+
+                item.Text = JsonConvert.SerializeObject(text);
+                item.UqHash = GetHash(item);
+
+                _replicaItemDao.Save(item);
+            }
+            else {
+                // Buddy item
+                var item = new BuddyReplicaItem {
+                    BuddyItemId = buddyItemId
+                };
+                
+                s++;
+
+                var text = ParseStats(lines, s);
+                if (text.Count <= 1) {
+                    _logger.Debug("Only got a single text row, discarding replica");
+                    return;
+                }
+
+                item.Text = JsonConvert.SerializeObject(text);
+                _buddyReplicaItemDao.Save(item);
+            }
         }
 
-        /// <summary>
-        /// Create a ReplicaItem hash from a PlayerItem instance
-        /// TODO: Move somewhere more fitting?
-        /// </summary>
-        /// <param name="pi"></param>
-        /// <returns></returns>
-        public static int GetHash(PlayerItem pi) {
-            ReplicaItem replica =  new ReplicaItem {
-                BaseRecord = pi.BaseRecord,
-                EnchantmentRecord = pi.EnchantmentRecord,
-                EnchantmentSeed = (uint)pi.EnchantmentSeed,
-                MateriaRecord = pi.MateriaRecord,
-                ModifierRecord = pi.ModifierRecord,
-                PrefixRecord = pi.PrefixRecord,
-                RelicCompletionBonusRecord = pi.RelicCompletionBonusRecord,
-                RelicSeed = (uint)pi.RelicSeed,
-                Seed = pi.USeed,
-                SuffixRecord = pi.SuffixRecord,
-                TransmuteRecord = pi.TransmuteRecord,
-            };
 
-            return GetHash(replica);
-        }
-
-        private static int GetHash(ReplicaItem item) {
+        public static int GetHash(ReplicaItem item) {
             StringBuilder sb = new StringBuilder();
             sb.Append(item.BaseRecord);
             sb.Append(item.PrefixRecord);
@@ -123,7 +130,7 @@ namespace IAGrim.Services.MessageProcessor {
 
             return sb.ToString().GetHashCode(); // WARN: This will fail with .Net 5, as it becomes unique-per-run
         }
-        
+
         private ReplicaItem ToGameItem(string line, long? playerItemId) {
             var pieces = line.Split(Separator);
 
@@ -169,7 +176,5 @@ namespace IAGrim.Services.MessageProcessor {
                 Text = text,
             };
         }
-
-
     }
 }

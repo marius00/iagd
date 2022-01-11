@@ -147,6 +147,114 @@ namespace IAGrim.Database {
             }
         }
 
+        public IList<BuddyItem> ListMissingReplica(int limit) {
+            // TODO: Relics are "ItemArtifact", those will crash the game.
+            var specificItemTypesOnlySql = $@"
+                
+                    select baserecord from databaseitem_V2 db where db.baserecord in (
+						select baserecord from buddyitems_v6
+					)
+                    AND exists (
+                        select id_databaseitem from databaseitemstat_v2 dbs 
+                        WHERE stat = 'Class' 
+                        AND TextValue in ( 
+                            'ArmorProtective_Head', 
+                            'ArmorProtective_Hands', 
+                            'ArmorProtective_Feet', 
+                            'ArmorProtective_Legs', 
+                            'ArmorProtective_Chest', 
+                            'ArmorProtective_Waist', 
+                            'ArmorJewelry_Medal', 
+                            'ArmorJewelry_Ring', 
+                            'ArmorProtective_Shoulders', 
+                            'ArmorJewelry_Amulet',
+                            'WeaponMelee_Dagger', 
+                            'WeaponMelee_Mace', 
+                            'WeaponMelee_Axe',
+                            'WeaponMelee_Scepter',
+                            'WeaponMelee_Sword',
+                            'WeaponMelee_Sword2h',
+                            'WeaponMelee_Mace2h',
+                            'WeaponMelee_Axe2h',
+                            'WeaponHunting_Ranged1h',
+                            'WeaponHunting_Ranged2h',
+                            'WeaponArmor_Offhand',
+                            'WeaponArmor_Shield'
+                        ) 
+                        AND db.id_databaseitem = dbs.id_databaseitem
+                    )
+                ";
+
+
+            var sql = $@"SELECT
+
+                                {BuddyItemsTable.BaseRecord} as BaseRecord,
+                                {BuddyItemsTable.PrefixRecord} as PrefixRecord,
+                                {BuddyItemsTable.SuffixRecord} as SuffixRecord,
+                                {BuddyItemsTable.ModifierRecord} as ModifierRecord,
+                                {BuddyItemsTable.TransmuteRecord} as TransmuteRecord,
+                                {BuddyItemsTable.MateriaRecord} as MateriaRecord,
+                                {BuddyItemsTable.Rarity} as Rarity,
+                                {BuddyItemsTable.PrefixRarity} as PrefixRarity,
+                                {BuddyItemsTable.Name} as Name,
+                                {BuddyItemsTable.Seed} as Seed,
+                                {BuddyItemsTable.RelicSeed} as RelicSeed,
+                                {BuddyItemsTable.EnchantmentSeed} as EnchantmentSeed,
+ 
+                                {BuddyItemsTable.LevelRequirement} as MinimumLevel,
+                                {BuddyItemsTable.RemoteItemId} as RemoteItemId,
+                                {BuddyItemsTable.StackCount} as Count,
+                                {BuddyItemsTable.SubscriptionId} as BuddyId,
+                                S.{BuddySubscriptionTable.Nickname} as Stash
+
+
+                FROM {BuddyItemsTable.Table} PI, {BuddySubscriptionTable.Table} S
+                WHERE PI.{BuddyItemsTable.RemoteItemId} NOT IN (SELECT R.BuddyItemId FROM BuddyReplicaItem R)
+                AND MOD = '' 
+
+                AND PI.{BuddyItemsTable.BaseRecord} IN ({specificItemTypesOnlySql})
+                AND {BuddyItemsTable.SubscriptionId} = {BuddySubscriptionTable.Id}
+
+                order by RANDOM ()
+                LIMIT :limit ";
+
+            using (ISession session = SessionCreator.OpenSession()) {
+                using (session.BeginTransaction()) {
+                    Logger.Debug(string.Join(" ", sql));
+                    var q = session.CreateSQLQuery(string.Join(" ", sql));
+                    q.AddScalar("BaseRecord", NHibernateUtil.String);
+                    q.AddScalar("PrefixRecord", NHibernateUtil.String);
+                    q.AddScalar("SuffixRecord", NHibernateUtil.String);
+                    q.AddScalar("ModifierRecord", NHibernateUtil.String);
+                    q.AddScalar("PrefixRarity", NHibernateUtil.Int64);
+                    q.AddScalar("TransmuteRecord", NHibernateUtil.String);
+                    q.AddScalar("MateriaRecord", NHibernateUtil.String);
+                    q.AddScalar("Rarity", NHibernateUtil.String);
+                    q.AddScalar("Name", NHibernateUtil.String);
+                    q.AddScalar("MinimumLevel", NHibernateUtil.UInt32);
+                    q.AddScalar("Id", NHibernateUtil.Int64);
+                    q.AddScalar("Count", NHibernateUtil.UInt32);
+                    q.AddScalar("Stash", NHibernateUtil.String);
+                    q.AddScalar("BuddyId", NHibernateUtil.Int64);
+                    q.AddScalar("RemoteItemId", NHibernateUtil.String);
+                    q.AddScalar("PetRecord", NHibernateUtil.String);
+
+                    q.AddScalar("Seed", NHibernateUtil.Int64);
+                    q.AddScalar("RelicSeed", NHibernateUtil.Int64);
+                    q.AddScalar("EnchantmentSeed", NHibernateUtil.Int64);
+
+
+                    Logger.Debug(q.QueryString);
+                    q.SetResultTransformer(Transformers.AliasToBean<BuddyItem>());
+                    q.SetParameter("limit", limit);
+                    var result = q.List<BuddyItem>();
+
+                    return result;
+                }
+            }
+
+        }
+
 
         private class NameRow {
             public string Record { get; set; }
@@ -439,100 +547,6 @@ namespace IAGrim.Database {
         public override IList<BuddyItem> ListAll() {
             return ListAll(string.Empty);
         }
-/*
-public void SetItems(long userid, string description, List<JsonBuddyItem> items) {
-    string sql = $@"INSERT INTO {BuddyItemsTable.Table} (
-            {BuddyItemsTable.BuddyId},
-            {BuddyItemsTable.RemoteItemId}, 
-            {BuddyItemsTable.BaseRecord}, 
-            {BuddyItemsTable.PrefixRecord},
-            {BuddyItemsTable.SuffixRecord},
-            {BuddyItemsTable.ModifierRecord},
-            {BuddyItemsTable.TransmuteRecord},
-            {BuddyItemsTable.MateriaRecord},
-            {BuddyItemsTable.StackCount},
-            {BuddyItemsTable.IsHardcore},
-            {BuddyItemsTable.Mod},
-            {BuddyItemsTable.CreatedAt}) 
-    VALUES (:buddy, :remoteId, :base, :pre, :suff, :modif, :transmute, :materia, :stacksize, :isHardcore, :mod, :createdAt);";
-
-    using (ISession session = SessionCreator.OpenSession()) {
-        using (ITransaction transaction = session.BeginTransaction()) {
-
-            IList<long> existingItemsForBuddy = session.CreateSQLQuery($"SELECT {BuddyItemsTable.RemoteItemId} FROM {BuddyItemsTable.Table} WHERE {BuddyItemsTable.BuddyId} = :buddy")
-                .SetParameter("buddy", userid)
-                .List<long>();
-
-            var newItems = items.Where(m => !existingItemsForBuddy.Contains(m.Id));
-            var deletedItems = existingItemsForBuddy.Where(m => items.All(item => item.Id != m)).ToList();
-
-            Logger.Debug($"Deleting existing buddy items for {userid}");
-            const int deleteBatchSize = 800;
-            for (int i = 0; i < 1 + deletedItems.Count / deleteBatchSize; i++) {
-                var batch = deletedItems.Skip(i * deleteBatchSize).Take(deleteBatchSize).ToList();
-                if (batch.Count > 0) {
-                    session.CreateSQLQuery($"DELETE FROM {BuddyItemsTable.Table} WHERE {BuddyItemsTable.RemoteItemId} IN ( :items )")
-                        .SetParameterList("items", batch)
-                        .ExecuteUpdate();
-                }
-            }
-
-            
-            session.CreateSQLQuery($"DELETE FROM {BuddyItemRecordTable.Table} WHERE NOT {BuddyItemRecordTable.Item} IN (SELECT {BuddyItemsTable.Id} FROM {BuddyItemsTable.Table})")
-                .ExecuteUpdate();
-
-
-
-            Logger.Debug($"Adding {items.Count} items for buddy {userid}");
-            foreach (var item in newItems) {
-                session.CreateSQLQuery(sql)
-                    .SetParameter("buddy", userid)
-                    .SetParameter("remoteId", item.Id)
-                    .SetParameter("base", item.BaseRecord)
-                    .SetParameter("pre", item.PrefixRecord)
-                    .SetParameter("suff", item.SuffixRecord)
-                    .SetParameter("modif", item.ModifierRecord)
-                    .SetParameter("transmute", item.TransmuteRecord)
-                    .SetParameter("materia", item.MateriaRecord)
-                    .SetParameter("stacksize", item.StackCount)
-                    .SetParameter("isHardcore", item.IsHardcore)
-                    .SetParameter("mod", item.Mod)
-                    .SetParameter("createdAt", item.CreationDate)
-                    .ExecuteUpdate();
-            }
-
-            session.SaveOrUpdate(new BuddyStash {
-                UserId = userid,
-                Description = description
-            });
-
-            transaction.Commit();
-        }
-    }
-
-
-    var allItems = ListAll($"WHERE NOT {BuddyItemsTable.Id} IN (SELECT {BuddyItemRecordTable.Item} FROM {BuddyItemRecordTable.Table})");
-    using (ISession session = SessionCreator.OpenSession()) {
-        using (ITransaction transaction = session.BeginTransaction()) {
-            foreach (var item in allItems) {
-                foreach (var record in new[] {item.BaseRecord, item.PrefixRecord, item.SuffixRecord, item.MateriaRecord}) {
-                    if (!string.IsNullOrEmpty(record)) {
-                        session.CreateSQLQuery(
-                                $@"INSERT OR IGNORE INTO {BuddyItemRecordTable.Table} ({BuddyItemRecordTable.Item}, {BuddyItemRecordTable.Record}, {BuddyItemRecordTable.BuddyId}) 
-                                        VALUES (:id, :record, :buddy)")
-                            .SetParameter("id", item.Id)
-                            .SetParameter("record", record)
-                            .SetParameter("buddy", userid)
-                            .ExecuteUpdate();
-                    }
-                }
-            }
-
-            transaction.Commit();
-        }
-    }
-}*/
-
 
         class DatabaseItemStatQuery {
             public string SQL;
@@ -679,11 +693,11 @@ public void SetItems(long userid, string description, List<JsonBuddyItem> items)
                                 {BuddyItemsTable.StackCount} as Count,
                                 {BuddyItemsTable.SubscriptionId} as BuddyId,
                                 S.{BuddySubscriptionTable.Nickname} as Stash,
-                                coalesce((SELECT group_concat(Record, '|') FROM {BuddyItemRecordTable.Table} pir
-                WHERE pir.{BuddyItemRecordTable.Item} = PI.{BuddyItemsTable.RemoteItemId} AND NOT {BuddyItemRecordTable.Record} IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord)), '') AS PetRecord
-
-
-                FROM {BuddyItemsTable.Table} PI, {BuddySubscriptionTable.Table} S WHERE "
+                                coalesce((SELECT group_concat(Record, '|') FROM {BuddyItemRecordTable.Table} pir WHERE pir.{BuddyItemRecordTable.Item} = PI.{BuddyItemsTable.RemoteItemId} AND NOT {BuddyItemRecordTable.Record} IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord)), '') AS PetRecord,
+                                R.text AS ReplicaInfo
+                FROM {BuddyItemsTable.Table} PI, {BuddySubscriptionTable.Table} S 
+                LEFT OUTER JOIN BuddyReplicaItem R ON PI.{BuddyItemsTable.RemoteItemId} = R.buddyitemid
+                WHERE "
                     + string.Join(" AND ", queryFragments)
                     + $" AND {BuddyItemsTable.SubscriptionId} = {BuddySubscriptionTable.Id} "
             );
@@ -715,6 +729,7 @@ public void SetItems(long userid, string description, List<JsonBuddyItem> items)
                     q.AddScalar("BuddyId", NHibernateUtil.Int64);
                     q.AddScalar("RemoteItemId", NHibernateUtil.String);
                     q.AddScalar("PetRecord", NHibernateUtil.String);
+                    q.AddScalar("ReplicaInfo", NHibernateUtil.String);
 
                     foreach (var key in queryParams.Keys) {
                         q.SetParameter(key, queryParams[key]);
