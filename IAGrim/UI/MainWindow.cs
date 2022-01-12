@@ -702,6 +702,11 @@ namespace IAGrim.UI {
                     tsStashStatus.Tag = "iatag_stash_sorted";
                     tsStashStatus.Text = RuntimeSettings.Language.GetTag(tsStashStatus.Tag.ToString());
                     break;
+                case StashAvailability.NOT64BIT:
+                    tsStashStatus.ForeColor = Color.FromArgb(255, 192, 0, 0);
+                    tsStashStatus.Tag = "iatag_stash_not64bit";
+                    tsStashStatus.Text = RuntimeSettings.Language.GetTag(tsStashStatus.Tag.ToString());
+                    break;
                 default:
                     tsStashStatus.ForeColor = Color.FromArgb(255, 192, 0, 0);
                     tsStashStatus.Tag = null;

@@ -38,6 +38,14 @@ namespace IAGrim.Database {
                         .SetParameter("id", buddyId)
                         .ExecuteUpdate();
 
+                    // Remove record from records table (lookup table)
+                    session.CreateSQLQuery($"DELETE FROM {BuddyItemRecordTable.Table} WHERE NOT {BuddyItemRecordTable.Item} IN (SELECT {BuddyItemsTable.RemoteItemId} FROM {BuddyItemsTable.Table})")
+                        .ExecuteUpdate();
+
+                    // Replica stats
+                    session.CreateSQLQuery($"DELETE FROM BuddyReplicaItem WHERE NOT buddyitemid IN (SELECT {BuddyItemsTable.RemoteItemId} FROM {BuddyItemsTable.Table})")
+                        .ExecuteUpdate();
+
                     transaction.Commit();
                 }
             }
@@ -747,7 +755,7 @@ namespace IAGrim.Database {
                     q.SetResultTransformer(Transformers.AliasToBean<BuddyItem>());
                     var result = q.List<BuddyItem>();
 
-                    // stacksize is correct.. record is not
+                    
                     Logger.Debug($"Search returned {result.Count} items");
                     return result;
                 }
