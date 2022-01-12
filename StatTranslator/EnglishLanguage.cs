@@ -661,6 +661,7 @@ namespace StatTranslator {
             {"iatag_stash_crafting", "Stash: Crafting"},
             {"iatag_stash_closed", "Stash: Closed"},
             {"iatag_stash_error", "Stash: ERROR"},
+            {"iatag_stash_not64bit", "GD 32bit not supported"},
             {"iatag_stash_unknown", "Stash: Unknown"},
             {"iatag_stash_sorted", "Stash: Open/Restricted"},
             {"iatag_stash_", "Stash: "},

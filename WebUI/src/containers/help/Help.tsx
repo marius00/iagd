@@ -61,6 +61,8 @@ const helpEntries = [
             If you do not wish to run 64 bit version of Grim Dawn, you'll need to downgrade to version 1.2 of Item Assistant <br/>
             The version is available on the website as the "32-bit version" <br/> <br/>
             To ensure that you always run the 64-bit version, you can add "/x64" as a launch option in steam.
+            <img src="./x64steam.png"/> <br/>
+            You do not need to do any conversions on your stash. Just run 64 bit grim dawn.
         </div>,
         type: IHelpEntryType.Help
     },
