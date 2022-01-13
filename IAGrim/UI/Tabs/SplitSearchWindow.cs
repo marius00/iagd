@@ -136,6 +136,7 @@ namespace IAGrim.UI.Tabs {
                 Slot = slot?.Filter,
                 PetBonuses = filters.PetBonuses,
                 IsRetaliation = filters.IsRetaliation,
+                DuplicatesOnly = filters.DuplicatesOnly,
                 Mod = transferFile.Mod,
                 IsHardcore = transferFile.IsHardcore,
                 Classes = filters.DesiredClass,
@@ -146,7 +147,7 @@ namespace IAGrim.UI.Tabs {
             };
 
 
-            const bool includeBuddyItems = true;
+            bool includeBuddyItems = !filters.DuplicatesOnly; // If we're looking for duplicates, we're probably doing a cleanup, not caring about buddyitems
             var message = _searchController.Search(query, filters.DuplicatesOnly, includeBuddyItems, _orderByLevel.Checked);
 
             Logger.Info("Updating UI...");

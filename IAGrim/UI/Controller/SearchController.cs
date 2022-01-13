@@ -114,12 +114,6 @@ namespace IAGrim.UI.Controller {
 
             items.AddRange(_playerItemDao.SearchForItems(query));
 
-            // This specific filter was easiest to add after the actual search
-            // Obs: the "duplicates only" search only works when merging duplicates
-            if (duplicatesOnly) {
-                items = items.Where(m => m.Count > 1).ToList();
-            }
-
             var personalCount = items.Sum(i => (long) i.Count);
 
             if (includeBuddyItems && !query.SocketedOnly) {
@@ -131,11 +125,11 @@ namespace IAGrim.UI.Controller {
                     : string.Empty;
             }
 
-            if (_settings.GetPersistent().ShowRecipesAsItems && !query.SocketedOnly) {
+            if (!duplicatesOnly && _settings.GetPersistent().ShowRecipesAsItems && !query.SocketedOnly) {
                 AddRecipeItems(items, query);
             }
 
-            if (_settings.GetPersistent().ShowAugmentsAsItems && !query.SocketedOnly) {
+            if (!duplicatesOnly && _settings.GetPersistent().ShowAugmentsAsItems && !query.SocketedOnly) {
                 AddAugmentItems(items, query);
             }
 

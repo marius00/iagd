@@ -695,6 +695,17 @@ namespace IAGrim.Database {
                 queryFragments.Add("PI.MateriaRecord is not null and PI.MateriaRecord != ''");
             }
 
+            // Not 100% correct, we may have the same baserecord but different prefix/suffix, gets use pretty close though..
+            if (query.DuplicatesOnly) {
+                queryFragments.Add(@"PI.BaseRecord IN (SELECT BaseRecord FROM (
+                    select baserecord || prefixrecord || suffixrecord as Records, count(*) as N, BaseRecord from PlayerItem
+
+                    group by Records
+                    HAVING N > 1
+                    order by N desc
+                    ))");
+            }
+
             // Add the MINIMUM level requirement (if any)
             if (query.MinimumLevel > 0) {
                 queryFragments.Add("PI.LevelRequirement >= :minlevel");
@@ -791,9 +802,6 @@ namespace IAGrim.Database {
             using (var session = SessionCreator.OpenSession()) {
                 using (session.BeginTransaction()) {
                     ISQLQuery q = session.CreateSQLQuery(string.Join(" ", sql));
-
-                    
-                    
 
                     foreach (var key in queryParams.Keys) {
                         q.SetParameter(key, queryParams[key]);

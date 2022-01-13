@@ -15,6 +15,7 @@ namespace IAGrim.Database.Dto {
         public string[] Slot { get; set; }
         public bool PetBonuses { get; set; }
         public bool IsRetaliation { get; set; }
+        public bool DuplicatesOnly { get; set; }
         public string Mod { get; set; }
         public bool IsHardcore { get; set; }
         public int PrefixRarity { get; set; }

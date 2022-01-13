@@ -388,6 +388,7 @@ iatag_stash_crafting=Stash: Crafting
 iatag_stash_error=Stash: ERROR
 iatag_stash_might_be_full=Some items not deposited, stash {0} might be full.
 iatag_stash_not_found=Could not locate and stash files.
+iatag_stash_not64bit=GD 32bit not supported
 iatag_stash_open=Stash: Open
 iatag_stash_sorted=Stash: Open/Restricted
 iatag_stash_status_error=Could not inject into Grim Dawn, are you sure the bank is CLOSED?
