@@ -22,29 +22,26 @@ namespace IAGrim.UI {
         private readonly ParsingService _parsingService;
         private readonly DatabaseModSelectionService _databaseModSelectionService;
 
-        [Obsolete]
-        private readonly IDatabaseSettingDao _databaseSettingRepo;
-
         private readonly GrimDawnDetector _grimDawnDetector;
         private readonly SettingsService _settingsService;
         private readonly IHelpService _helpService;
+        private readonly IDatabaseItemDao _databaseItemDao;
 
         public ModsDatabaseConfig(
             Action itemViewUpdateTrigger,
             IPlayerItemDao playerItemDao,
             ParsingService parsingService,
-            IDatabaseSettingDao databaseSettingRepo,
             GrimDawnDetector grimDawnDetector,
             SettingsService settingsService,
-            IHelpService helpService) {
+            IHelpService helpService, IDatabaseItemDao databaseItemDao) {
             InitializeComponent();
             _itemViewUpdateTrigger = itemViewUpdateTrigger;
             _playerItemDao = playerItemDao;
             _parsingService = parsingService;
-            _databaseSettingRepo = databaseSettingRepo;
             _grimDawnDetector = grimDawnDetector;
             _settingsService = settingsService;
             _helpService = helpService;
+            _databaseItemDao = databaseItemDao;
             _databaseModSelectionService = new DatabaseModSelectionService();
         }
 
@@ -131,7 +128,7 @@ namespace IAGrim.UI {
         }
 
         private void buttonForceUpdate_Click(object sender, EventArgs e) {
-            _databaseSettingRepo.Clean();
+            _databaseItemDao.Clean();
 
             var mod = GetFirst(listViewMods);
             var entry = GetFirst(listViewInstalls);
@@ -142,7 +139,7 @@ namespace IAGrim.UI {
             }
 
             ForceDatabaseUpdate(entry.Path, mod?.Path);
-            _databaseSettingRepo.UpdateCurrentDatabase(entry.Path);
+            _settingsService.GetLocal().CurrentGrimdawnLocation = entry.Path;
 
             // Store the loaded GD path, so we can poll it for updates later.
             //_settingsService.GetLocal().GrimDawnLocation = new List<string> { entry.Path }; // TODO: Wtf is this? Why overwrite any existing?
@@ -166,7 +163,7 @@ namespace IAGrim.UI {
         }
 
         private void buttonClean_Click(object sender, EventArgs e) {
-            _databaseSettingRepo.Clean();
+            _databaseItemDao.Clean();
             buttonUpdateItemStats_Click(sender, e);
             MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_clean_body"),
                 RuntimeSettings.Language.GetTag("iatag_ui_clean_caption"), MessageBoxButtons.OK, MessageBoxIcon.Warning);

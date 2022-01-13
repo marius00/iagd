@@ -342,9 +342,9 @@ namespace IAGrim.UI {
             }
 
             var grimDawnDetector = _serviceProvider.Get<GrimDawnDetector>();
-            string gdPath = grimDawnDetector.GetGrimLocation();
-            if (!string.IsNullOrEmpty(gdPath) && Directory.Exists(gdPath)) {
+            if (grimDawnDetector.GetGrimLocations().Count > 0) {
                 timer?.Stop();
+                var gdPath = grimDawnDetector.GetGrimLocations().First();
 
                 // Attempt to force a database update
                 foreach (Control c in modsPanel.Controls) {
@@ -438,10 +438,7 @@ namespace IAGrim.UI {
 
             // Load the grim database
             var grimDawnDetector = _serviceProvider.Get<GrimDawnDetector>();
-            string gdPath = grimDawnDetector.GetGrimLocation();
-            if (!string.IsNullOrEmpty(gdPath)) {
-            }
-            else {
+            if (grimDawnDetector.GetGrimLocations().Count == 0) {
                 Logger.Warn("Could not find the Grim Dawn install location");
                 statusLabel.Text = "Could not find the Grim Dawn install location";
 
@@ -466,7 +463,6 @@ namespace IAGrim.UI {
 
 
 
-            var databaseSettingDao = _serviceProvider.Get<IDatabaseSettingDao>();
             _authService = new AuthService(_cefBrowserHandler, new AuthenticationProvider(settingsService), playerItemDao);
             var backupSettings = new BackupSettings(playerItemDao, settingsService, _cefBrowserHandler);
             UIHelper.AddAndShow(backupSettings, backupPanel);
@@ -476,7 +472,7 @@ namespace IAGrim.UI {
             _cefBrowserHandler.OnAuthSuccess += (_, __) => onlineSettings.UpdateUi();
 
 
-            UIHelper.AddAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, playerItemDao, _parsingService, databaseSettingDao, grimDawnDetector, settingsService, _cefBrowserHandler), modsPanel);
+            UIHelper.AddAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, playerItemDao, _parsingService, grimDawnDetector, settingsService, _cefBrowserHandler, databaseItemDao), modsPanel);
 
             UIHelper.AddAndShow(new LoggingWindow(), panelLogging);
 

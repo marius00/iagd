@@ -61,7 +61,6 @@ namespace IAGrim.Services {
 
             IPlayerItemDao playerItemDao;
             IDatabaseItemDao databaseItemDao;
-            IDatabaseSettingDao databaseSettingDao;
             IDatabaseItemStatDao databaseItemStatDao;
             IItemTagDao itemTagDao;
             IBuddyItemDao buddyItemDao;
@@ -76,7 +75,6 @@ namespace IAGrim.Services {
             if (dialect == SqlDialect.Sqlite) {
                 playerItemDao = new PlayerItemRepo(threadExecuter, factory, dialect);
                 databaseItemDao = new DatabaseItemRepo(threadExecuter, factory, dialect);
-                databaseSettingDao = new DatabaseSettingRepo(threadExecuter, factory, dialect);
                 databaseItemStatDao = new DatabaseItemStatRepo(threadExecuter, factory, dialect);
                 itemTagDao = new ItemTagRepo(threadExecuter, factory, dialect);
                 buddyItemDao = new BuddyItemRepo(threadExecuter, factory, dialect);
@@ -92,7 +90,6 @@ namespace IAGrim.Services {
                 databaseItemStatDao = new DatabaseItemStatDaoImpl(factory, dialect);
                 playerItemDao = new PlayerItemDaoImpl(factory, databaseItemStatDao, dialect);
                 databaseItemDao = new DatabaseItemDaoImpl(factory, dialect);
-                databaseSettingDao = new DatabaseSettingDaoImpl(factory, dialect);
                 itemTagDao = new ItemTagDaoImpl(factory, dialect);
                 buddyItemDao = new BuddyItemDaoImpl(factory, databaseItemStatDao, dialect);
                 buddySubscriptionDao = new BuddySubscriptionDaoImpl(factory, dialect);
@@ -122,7 +119,6 @@ namespace IAGrim.Services {
             services.Add(databaseItemDao);
             services.Add(databaseItemStatDao);
             services.Add(playerItemDao);
-            services.Add(databaseSettingDao);
             services.Add(buddyItemDao);
             services.Add(buddySubscriptionDao);
             services.Add(itemSkillDao);

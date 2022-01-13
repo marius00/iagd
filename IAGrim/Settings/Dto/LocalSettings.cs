@@ -9,6 +9,7 @@ namespace IAGrim.Settings.Dto {
         public event EventHandler OnMutate;
 
         private List<string> _grimDawnLocation;
+        private string _currentGrimdawnLocation;
         private int _backupNumber;
         private long _lastNagTimestamp;
         private bool _easterPrank;
@@ -133,6 +134,14 @@ namespace IAGrim.Settings.Dto {
             }
         }
 
+        public string CurrentGrimdawnLocation {
+            get => _currentGrimdawnLocation;
+            set {
+                _currentGrimdawnLocation = value;
+                OnMutate?.Invoke(null, null);
+            }
+        }
+        
 
         public WindowSizeManager.WindowSizeProps WindowPositionSettings {
             get => _windowPositionSettings;

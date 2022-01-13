@@ -37,12 +37,8 @@ namespace IAGrim {
         }
 #endif
 
-        private static void LoadUuid(IDatabaseSettingDao dao, SettingsService settings) {
+        private static void LoadUuid(SettingsService settings) {
             var uuid = settings.GetPersistent().UUID;
-            if (string.IsNullOrEmpty(uuid)) {
-                uuid = dao.GetUuid();
-                settings.GetPersistent().UUID = uuid;
-            }
 
             if (string.IsNullOrEmpty(uuid)) {
                 uuid = Guid.NewGuid().ToString().Replace("-", "");
@@ -151,7 +147,6 @@ namespace IAGrim {
 
             var settingsService = serviceProvider.Get<SettingsService>();
             var databaseItemDao = serviceProvider.Get<IDatabaseItemDao>();
-            var databaseSettingDao = serviceProvider.Get<IDatabaseSettingDao>();
             var augmentationItemRepo = serviceProvider.Get<IAugmentationItemDao>();
             RuntimeSettings.InitializeLanguage(settingsService.GetLocal().LocalizationFile, databaseItemDao.GetTagDictionary());
             DumpTranslationTemplate();
@@ -160,7 +155,7 @@ namespace IAGrim {
             threadExecuter.Execute(() => new MigrationHandler(factory).Migrate());
 
             Logger.Debug("Loading UUID");
-            LoadUuid(databaseSettingDao, settingsService);
+            LoadUuid(settingsService);
 
             Logger.Debug("Updating augment state..");
             augmentationItemRepo.UpdateState();
@@ -189,7 +184,7 @@ namespace IAGrim {
                 Logger.Info("Checking for database updates..");
 
                 var grimDawnDetector = serviceProvider.Get<GrimDawnDetector>();
-                StartupService.PerformIconCheck(databaseSettingDao, grimDawnDetector);
+                StartupService.PerformIconCheck(grimDawnDetector, settingsService);
 
 
                 try {

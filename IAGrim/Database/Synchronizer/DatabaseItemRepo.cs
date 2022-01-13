@@ -110,5 +110,12 @@ namespace IAGrim.Database.Synchronizer {
                 () => _repo.SearchForRecipeItems(query)
             );
         }
+
+
+        public void Clean() {
+            ThreadExecuter.Execute(
+                () => _repo.Clean()
+            );
+        }
     }
 }

@@ -19,5 +19,7 @@ namespace IAGrim.Database.Interfaces {
         IList<ItemSetAssociation> GetItemSetAssociations();
         IList<string> GetSpecialStackableRecords();
         IList<string> GetStackableComponentsPotionsMisc();
+
+        void Clean();
     }
 }
