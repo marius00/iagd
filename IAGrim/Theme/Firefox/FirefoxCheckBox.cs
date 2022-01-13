@@ -20,7 +20,7 @@ class FirefoxCheckBox : CheckBox {
     #region " Private "
     private Helpers.MouseState State;
     private Color ETC = Color.Blue;
-    public Color TextColor;
+    // public Color TextColor;
     public bool IsDarkMode { get; set; }
     private byte[] checkMarkBytes => Convert.FromBase64String(IsDarkMode ? Theme.GetCheckMark() :  Theme.GetLightCheckMark());
 

@@ -638,5 +638,43 @@ namespace IAGrim.Database {
 #endif
             criterias.CreateAlias("Internal", "db");
         }
+
+        public void Clean() {
+            if (Dialect == SqlDialect.Sqlite) {
+                // CREATE TABLE DatabaseItemStat_v2 (id_databaseitemstat  integer primary key autoincrement, id_databaseitem BIGINT, Stat TEXT, TextValue TEXT, val1 DOUBLE, constraint FK9663A5FC6B4AFA92 foreign key (id_databaseitem) references DatabaseItem_v2)
+                string[] tables = new[] { "DatabaseItemStat_v2", "DatabaseItem_v2", "ItemTag" };
+                string fetchCreateTableQuery = "SELECT sql FROM sqlite_master WHERE type='table' AND name = :table";
+
+
+                using (ISession session = SessionCreator.OpenSession()) {
+                    using (ITransaction transaction = session.BeginTransaction()) {
+                        foreach (var table in tables) {
+                            string recreateQuery = session.CreateSQLQuery(fetchCreateTableQuery).SetParameter("table", table).UniqueResult<string>();
+                            session.CreateSQLQuery("DROP TABLE IF EXISTS " + table).ExecuteUpdate();
+                            session.CreateSQLQuery(recreateQuery).ExecuteUpdate();
+                        }
+
+                        transaction.Commit();
+                    }
+
+                }
+            }
+            else {
+
+                using (ISession session = SessionCreator.OpenSession()) {
+                    using (ITransaction transaction = session.BeginTransaction()) {
+                        session.CreateSQLQuery("DELETE FROM DatabaseItemStat_v2 cascade").ExecuteUpdate();
+                        session.CreateSQLQuery("DELETE FROM DatabaseItem_v2 cascade").ExecuteUpdate();
+                        session.CreateSQLQuery("DELETE FROM ItemTag cascade").ExecuteUpdate();
+                        transaction.Commit();
+                    }
+
+                }
+
+            }
+
+        }
     }
+
+
 }

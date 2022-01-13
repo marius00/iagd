@@ -15,11 +15,6 @@ using log4net;
 namespace IAGrim.Parsers.Arz {
     public class ArzParser {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ArzParser));
-        private readonly IDatabaseSettingDao _databaseSettingDao;
-
-        public ArzParser(IDatabaseSettingDao databaseSettingDao) {
-            _databaseSettingDao = databaseSettingDao;
-        }
 
         public static void LoadIconsOnly(string grimDawnLocation) {
             void LoadIconsOrWarn(string arcfile) {

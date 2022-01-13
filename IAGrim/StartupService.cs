@@ -103,7 +103,8 @@ namespace IAGrim {
                 Logger.Info($"Mod: \"{entry.Mod}\", HC: {entry.IsHardcore}");
             }
 
-            string gdPath = new DatabaseSettingDaoImpl(factory, dialect).GetCurrentDatabasePath();
+            
+            string gdPath = settings.GetLocal().CurrentGrimdawnLocation;
             Logger.Info(string.IsNullOrEmpty(gdPath)
                 ? "The path to Grim Dawn is unknown (not great)"
                 : $"The path to Grim Dawn is \"{gdPath}\"");
@@ -151,10 +152,10 @@ namespace IAGrim {
             }
         }
 
-        public void PerformIconCheck(IDatabaseSettingDao databaseSettingDao, GrimDawnDetector grimDawnDetector) {
+        public void PerformIconCheck(GrimDawnDetector grimDawnDetector, SettingsService settings) {
             try {
                 // Load the GD database (or mod, if any)
-                string gdPath = databaseSettingDao.GetCurrentDatabasePath();
+                string gdPath = settings.GetLocal().CurrentGrimdawnLocation;
 
                 if (string.IsNullOrEmpty(gdPath) || !Directory.Exists(gdPath)) {
                     gdPath = grimDawnDetector.GetGrimLocations().FirstOrDefault();
