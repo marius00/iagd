@@ -40,6 +40,7 @@
             // 
             this.classesPanelBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.classesPanelBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
             this.classesPanelBox.Controls.Add(this.cbSoldier);
             this.classesPanelBox.Controls.Add(this.cbDemolitionist);
             this.classesPanelBox.Controls.Add(this.cbOccultist);
@@ -50,6 +51,8 @@
             this.classesPanelBox.Controls.Add(this.cbInquisitor);
             this.classesPanelBox.Controls.Add(this.cbNecromancer);
             this.classesPanelBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.classesPanelBox.ForeColor = System.Drawing.Color.Black;
+            this.classesPanelBox.HeaderColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(231)))), ((int)(((byte)(231)))));
             this.classesPanelBox.HeaderHeight = 29;
             this.classesPanelBox.Location = new System.Drawing.Point(3, 3);
             this.classesPanelBox.Name = "classesPanelBox";
@@ -68,11 +71,12 @@
             this.cbSoldier.EnabledCalc = true;
             this.cbSoldier.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbSoldier.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbSoldier.IsDarkMode = false;
             this.cbSoldier.Location = new System.Drawing.Point(3, 35);
             this.cbSoldier.Name = "cbSoldier";
             this.cbSoldier.Size = new System.Drawing.Size(275, 27);
             this.cbSoldier.TabIndex = 21;
-            this.cbSoldier.Tag = "iatag_ui_soldier";
+            this.cbSoldier.Tag = "class01";
             this.cbSoldier.Text = "Soldier";
             // 
             // cbDemolitionist
@@ -83,11 +87,12 @@
             this.cbDemolitionist.EnabledCalc = true;
             this.cbDemolitionist.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbDemolitionist.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbDemolitionist.IsDarkMode = false;
             this.cbDemolitionist.Location = new System.Drawing.Point(3, 68);
             this.cbDemolitionist.Name = "cbDemolitionist";
             this.cbDemolitionist.Size = new System.Drawing.Size(275, 27);
             this.cbDemolitionist.TabIndex = 22;
-            this.cbDemolitionist.Tag = "iatag_ui_demolitionist";
+            this.cbDemolitionist.Tag = "class02";
             this.cbDemolitionist.Text = "Demolitionist";
             // 
             // cbOccultist
@@ -98,11 +103,12 @@
             this.cbOccultist.EnabledCalc = true;
             this.cbOccultist.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbOccultist.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbOccultist.IsDarkMode = false;
             this.cbOccultist.Location = new System.Drawing.Point(3, 101);
             this.cbOccultist.Name = "cbOccultist";
             this.cbOccultist.Size = new System.Drawing.Size(275, 27);
             this.cbOccultist.TabIndex = 23;
-            this.cbOccultist.Tag = "iatag_ui_occultist";
+            this.cbOccultist.Tag = "class03";
             this.cbOccultist.Text = "Occultist";
             // 
             // cbShaman
@@ -113,11 +119,12 @@
             this.cbShaman.EnabledCalc = true;
             this.cbShaman.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbShaman.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbShaman.IsDarkMode = false;
             this.cbShaman.Location = new System.Drawing.Point(3, 200);
             this.cbShaman.Name = "cbShaman";
             this.cbShaman.Size = new System.Drawing.Size(275, 27);
             this.cbShaman.TabIndex = 26;
-            this.cbShaman.Tag = "iatag_ui_shaman";
+            this.cbShaman.Tag = "class06";
             this.cbShaman.Text = "Shaman";
             // 
             // cbNightblade
@@ -128,11 +135,12 @@
             this.cbNightblade.EnabledCalc = true;
             this.cbNightblade.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbNightblade.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbNightblade.IsDarkMode = false;
             this.cbNightblade.Location = new System.Drawing.Point(3, 134);
             this.cbNightblade.Name = "cbNightblade";
             this.cbNightblade.Size = new System.Drawing.Size(275, 27);
             this.cbNightblade.TabIndex = 24;
-            this.cbNightblade.Tag = "iatag_ui_nightblade";
+            this.cbNightblade.Tag = "class04";
             this.cbNightblade.Text = "Nightblade";
             // 
             // cbOathkeeper
@@ -143,11 +151,12 @@
             this.cbOathkeeper.EnabledCalc = true;
             this.cbOathkeeper.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbOathkeeper.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbOathkeeper.IsDarkMode = false;
             this.cbOathkeeper.Location = new System.Drawing.Point(3, 299);
             this.cbOathkeeper.Name = "cbOathkeeper";
             this.cbOathkeeper.Size = new System.Drawing.Size(275, 27);
             this.cbOathkeeper.TabIndex = 29;
-            this.cbOathkeeper.Tag = "iatag_ui_oathkeeper";
+            this.cbOathkeeper.Tag = "class09";
             this.cbOathkeeper.Text = "Oathkeeper";
             // 
             // cbArcanist
@@ -158,11 +167,12 @@
             this.cbArcanist.EnabledCalc = true;
             this.cbArcanist.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbArcanist.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbArcanist.IsDarkMode = false;
             this.cbArcanist.Location = new System.Drawing.Point(3, 167);
             this.cbArcanist.Name = "cbArcanist";
             this.cbArcanist.Size = new System.Drawing.Size(275, 27);
             this.cbArcanist.TabIndex = 25;
-            this.cbArcanist.Tag = "iatag_ui_arcanist";
+            this.cbArcanist.Tag = "class05";
             this.cbArcanist.Text = "Arcanist";
             // 
             // cbInquisitor
@@ -173,11 +183,12 @@
             this.cbInquisitor.EnabledCalc = true;
             this.cbInquisitor.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbInquisitor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbInquisitor.IsDarkMode = false;
             this.cbInquisitor.Location = new System.Drawing.Point(3, 233);
             this.cbInquisitor.Name = "cbInquisitor";
             this.cbInquisitor.Size = new System.Drawing.Size(275, 27);
             this.cbInquisitor.TabIndex = 27;
-            this.cbInquisitor.Tag = "iatag_ui_inquisitor";
+            this.cbInquisitor.Tag = "class07";
             this.cbInquisitor.Text = "Inquisitor";
             // 
             // cbNecromancer
@@ -188,11 +199,12 @@
             this.cbNecromancer.EnabledCalc = true;
             this.cbNecromancer.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbNecromancer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbNecromancer.IsDarkMode = false;
             this.cbNecromancer.Location = new System.Drawing.Point(3, 266);
             this.cbNecromancer.Name = "cbNecromancer";
             this.cbNecromancer.Size = new System.Drawing.Size(275, 27);
             this.cbNecromancer.TabIndex = 28;
-            this.cbNecromancer.Tag = "iatag_ui_necromancer";
+            this.cbNecromancer.Tag = "class08";
             this.cbNecromancer.Text = "Necromancer";
             // 
             // Classes

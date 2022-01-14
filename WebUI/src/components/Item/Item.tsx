@@ -23,6 +23,7 @@ interface Props {
   getItemName: (baseRecord: string) => ICollectionItem;
   requestUnknownItemHelp: () => void;
   showBackupCloudIcon: boolean;
+  hideItemSkills: boolean;
 }
 
 export function getUniqueId(item: IItem): string {
@@ -91,7 +92,6 @@ class Item extends PureComponent<Props, object> {
     return "";
   }
 
-  // TODO:
   statToString(stat: IStat) {
     return stat.text
       .replace("{0}", stat.param0)
@@ -119,6 +119,7 @@ class Item extends PureComponent<Props, object> {
     const item = this.props.items[0];
     const name = item.name.length > 0 ? this.stripColorCodes(item.name) : 'Unknown';
     const socket = item.socket.replace(" ", "");
+    const { hideItemSkills } = this.props;
 
     const headerStats = item.headerStats.map((stat) =>
       <ItemStat {...stat} key={`stat-head-${getUniqueId(item)}-${socket}-${statToString(stat)}`.replace(' ', '_')} />
@@ -153,7 +154,7 @@ class Item extends PureComponent<Props, object> {
           <span className="item-socket-label">{item.socket}</span>
           }
 
-          {item.replicaStats && <ReplicaStatContainer rows={item.replicaStats} id={getUniqueId(item)} skills={item.bodyStats} hideGrantedSkill={false} hideSetBonus={false} /> }
+          {item.replicaStats && <ReplicaStatContainer rows={item.replicaStats} id={getUniqueId(item)} skills={item.bodyStats} hideGrantedSkill={hideItemSkills} hideSetBonus={false} /> }
           <ul className="headerStats">
             {headerStats}
           </ul>

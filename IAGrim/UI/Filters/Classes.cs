@@ -36,6 +36,7 @@ namespace IAGrim.UI.Filters {
                 }
             }
 
+            // TODO: Localize hardcoded classes and skip adding them if they exist
             _classes["class01"] = cbSoldier;
             _classes["class02"] = cbDemolitionist;
             _classes["class03"] = cbOccultist;
@@ -48,14 +49,14 @@ namespace IAGrim.UI.Filters {
 
             // Hardcoded classes from the base game -- Helps a bit with 4k scaling to not create these dynamically.
             var prefilled = new[] {
-                "iatag_ui_soldier", "iatag_ui_demolitionist", "iatag_ui_occultist", "iatag_ui_nightblade", "iatag_ui_arcanist",
-                "iatag_ui_shaman", "iatag_ui_inquisitor", "iatag_ui_necromancer", "iatag_ui_oathkeeper"
+                "class01", "class02", "class03", "class04", "class05",
+                "class06", "class07", "class08", "class09"
             };
             int yOffsetHeight = cbDemolitionist.Location.Y - cbSoldier.Location.Y;
             int cbHeight = cbDemolitionist.Height;
 
             foreach (var tag in _classTags) {
-                var translationTag = $"iatag_ui_{tag.Name.ToLowerInvariant()}";
+                var translationTag = $"{tag.Tag.ToLowerInvariant()}";
 
                 if (!prefilled.Contains(translationTag)) {
                     var cb = new FirefoxCheckBox {
@@ -68,6 +69,9 @@ namespace IAGrim.UI.Filters {
                     _classes[tag.Tag] = cb;
                     classesPanelBox.Controls.Add(cb);
                     cbNum++;
+                }
+                else if (_classes.ContainsKey(tag.Tag)) {
+                    _classes[tag.Tag].Text = tag.Name;
                 }
             }
 

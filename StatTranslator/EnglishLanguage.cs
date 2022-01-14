@@ -608,17 +608,6 @@ namespace StatTranslator {
             {"iatag_ui_javascript_not_ready_title", "Loading.."},
             {"iatag_ui_javascript_not_ready_body", "IA is still loading resources, please try again in a few moments.."},
 
-            //Classes
-            {"iatag_ui_soldier", "Soldier"},
-            {"iatag_ui_demolitionist", "Demolitionist"},
-            {"iatag_ui_occultist", "Occultist"},
-            {"iatag_ui_nightblade", "Nightblade"},
-            {"iatag_ui_arcanist", "Arcanist"},
-            {"iatag_ui_shaman", "Shaman"},
-            {"iatag_ui_inquisitor", "Inquisitor"},
-            {"iatag_ui_necromancer", "Necromancer"},
-            {"iatag_ui_oathkeeper", "Oathkeeper"},
-
             {"class00", "abcccc"},
             {"class01", "Soldier"},
             {"class02", "Demolitionist"},

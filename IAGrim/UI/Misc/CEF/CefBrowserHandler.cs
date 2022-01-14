@@ -143,6 +143,17 @@ namespace IAGrim.UI.Misc.CEF {
             }
         }
 
+        public bool SetHideItemSkills(bool enabled) {
+            if (BrowserControl.CanExecuteJavascriptInMainFrame) {
+                BrowserControl.ExecuteScriptAsync("window.setHideItemSkills", enabled);
+                return true;
+            }
+            else {
+                Logger.Warn("Attempted to set dark/light mode but CEF not yet initialized.");
+                return false;
+            }
+        }
+
         public bool SetOnlineBackupsEnabled(bool enabled) {
             if (BrowserControl.CanExecuteJavascriptInMainFrame) {
                 BrowserControl.ExecuteScriptAsync("window.setOnlineBackupsEnabled", enabled);

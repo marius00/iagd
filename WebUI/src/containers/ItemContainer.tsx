@@ -22,6 +22,7 @@ interface Props {
   isDarkMode: boolean;
   requestUnknownItemHelp: () => void;
   showBackupCloudIcon: boolean;
+  hideItemSkills: boolean;
 }
 
 
@@ -149,6 +150,7 @@ class ItemContainer extends PureComponent<Props, object> {
               getItemName={(baseRecord:string) => this.findByRecord(baseRecord)}
               requestUnknownItemHelp={this.props.requestUnknownItemHelp}
               showBackupCloudIcon={this.props.showBackupCloudIcon}
+              hideItemSkills={this.props.hideItemSkills}
             />
           )}
 

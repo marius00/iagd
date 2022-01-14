@@ -24,6 +24,7 @@ interface ApplicationState {
   numItems: number;
   showBackupCloudIcon: boolean;
   notifications: NotificationMessage[];
+  hideItemSkills: boolean;
 }
 
 class App extends PureComponent<object, object> {
@@ -36,7 +37,8 @@ class App extends PureComponent<object, object> {
     helpSearchFilter: '',
     numItems: 0,
     showBackupCloudIcon: true,
-    notifications: []
+    notifications: [],
+    hideItemSkills: false
   } as ApplicationState;
 
   componentDidMount() {
@@ -94,6 +96,14 @@ class App extends PureComponent<object, object> {
     window.setIsDarkmode = (isDarkMode: boolean) => {
       this.setState({
         isDarkMode: isDarkMode
+      });
+    };
+
+    // Toggle "hide skills" from C# container
+    // @ts-ignore
+    window.setHideItemSkills = (hideItemSkills: boolean) => {
+      this.setState({
+        hideItemSkills: hideItemSkills
       });
     };
 
@@ -160,12 +170,6 @@ class App extends PureComponent<object, object> {
   setItems(items: IItem[]) {
     this.setState({items: items, isLoading: false});
   }
-
-  // Will eventually be moved into C# once the form supports darkmode
-  toggleDarkmode() {
-    this.setState({isDarkMode: !this.state.isDarkMode});
-  }
-
 
   itemSort(a: IItem, b: IItem) {
     if (a.type !== b.type) {
@@ -266,6 +270,7 @@ class App extends PureComponent<object, object> {
             onRequestMoreItems={() => this.requestMoreItems()}
             collectionItems={this.state.collectionItems}
             isDarkMode={this.state.isDarkMode}
+            hideItemSkills={this.state.hideItemSkills}
             requestUnknownItemHelp={() => this.setState({helpSearchFilter: 'UnknownItem', activeTab: 2})}
         />}
         {this.state.activeTab === 1 && <CollectionItemContainer items={this.state.collectionItems}/>}

@@ -169,6 +169,7 @@ namespace IAGrim.UI {
 
                         var settingsService = _serviceProvider.Get<SettingsService>();
                         _cefBrowserHandler.SetDarkMode(settingsService.GetPersistent().DarkMode);
+                        _cefBrowserHandler.SetHideItemSkills(settingsService.GetPersistent().HideSkills);
                         _cefBrowserHandler.SetOnlineBackupsEnabled(!settingsService.GetLocal().OptOutOfBackups);
                     }
                 }
