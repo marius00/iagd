@@ -38,7 +38,25 @@ namespace GAME {
 
 
 }
-GAME::GameEngine* fnGetgGameEngine()
-{
+
+GAME::GameEngine* fnGetgGameEngine() {
 	return (GAME::GameEngine*)*(DWORD_PTR*)GetProcAddress(GetModuleHandle(L"game.dll"), "?gGameEngine@GAME@@3PEAVGameEngine@1@EA");
 }
+
+std::wstring fnGetModName(GAME::GameInfo* gameInfo) {
+	pGetModName f = pGetModName(GetProcAddress(GetModuleHandle(L"engine.dll"), "?GetModName@GameInfo@GAME@@QEBAAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ"));
+	return std::wstring(f(gameInfo)->c_str());
+}
+
+GAME::GameInfo* fnGetGameInfo(GAME::GameEngine* engine) {
+	pGetGameInfo f = pGetGameInfo(GetProcAddress(GetModuleHandle(L"engine.dll"), "?GetGameInfo@Engine@GAME@@QEAAPEAVGameInfo@2@XZ"));
+	return f(engine);
+}
+
+bool fnGetHardcore(GAME::GameInfo* gameInfo) {
+	pGetHardcore f = pGetHardcore(GetProcAddress(GetModuleHandle(L"engine.dll"), "?GetHardcore@GameInfo@GAME@@QEBA_NXZ"));
+	return f(gameInfo);
+
+}
+
+typedef std::basic_string<char, std::char_traits<char>, std::allocator<char> > const& Fancystring;

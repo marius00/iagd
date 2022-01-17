@@ -19,6 +19,8 @@
 #include "GameEngineUpdate.h"
 #include "ItemRelicSeedInfo.h"
 #include "HookLog.h"
+#include "SetTransferOpen.h"
+#include "SetHardcore.h"
 HookLog g_log;
 
 #pragma region Variables
@@ -27,7 +29,7 @@ HookLog g_log;
 #define LOG(streamdef) \
 { \
     std::wstring msg = (((std::wostringstream&)(std::wostringstream().flush() << streamdef)).str()); \
-	g_log.out(msg); \
+	g_log.out(logStartupTime() + msg); \
     msg += _T("\n"); \
     OutputDebugString(msg.c_str()); \
 }
@@ -35,6 +37,7 @@ HookLog g_log;
 #define LOG(streamdef) \
     __noop;
 #endif
+
 
 
 DWORD g_lastThreadTick = 0;
@@ -48,6 +51,21 @@ HWND g_targetWnd = NULL;
 #pragma endregion
 
 #pragma region CORE
+
+
+std::wstring logStartupTime() {
+	__time64_t rawtime;
+	struct tm timeinfo;
+	wchar_t buffer[80];
+
+	_time64(&rawtime);
+	localtime_s(&timeinfo, &rawtime);
+
+	wcsftime(buffer, sizeof(buffer), L"%Y-%m-%d %H:%M:%S ", &timeinfo);
+	std::wstring str(buffer);
+
+	return str;
+}
 
 
 /// Thread function that dispatches queued message blocks to the IA application.
@@ -165,32 +183,24 @@ static void ConfigureStashDetectionHooks(std::vector<BaseMethodHook*>& hooks) {
 	hooks.push_back(new CanUseDismantle(&g_dataQueue, g_hEvent));	
 	hooks.push_back(new SaveTransferStash(&g_dataQueue, g_hEvent));
 	hooks.push_back(new InventorySack_AddItem(&g_dataQueue, g_hEvent)); // Includes GetPrivateStash internally
+	hooks.push_back(new SetTransferOpen(&g_dataQueue, g_hEvent));
+	hooks.push_back(new SetHardcore(&g_dataQueue, g_hEvent));
+	
 }
 
-void DoLog(const wchar_t* staaaaa) {
-	LOG(staaaaa);
+void DoLog(const wchar_t* message) {
+	LOG(message);
+}
+void DoLog(std::wstring message) {
+	DoLog(message.c_str());
 }
 
-void logStartupTime(){
-	__time64_t rawtime;
-	struct tm timeinfo;
-	wchar_t buffer[80];
-
-	_time64(&rawtime);
-	localtime_s(&timeinfo, &rawtime);
-
-	wcsftime(buffer, sizeof(buffer), L"%Y-%m-%d %H:%M:%S", &timeinfo);
-	std::wstring str(buffer);
-
-	LOG(str);
-}
 
 std::vector<BaseMethodHook*> hooks;
 int ProcessAttach(HINSTANCE _hModule) {
 	LOG(L"Attatching to process..");
 	g_hEvent = CreateEvent(NULL,FALSE,FALSE, L"IA_Worker");
 
-	logStartupTime();
 
 	LOG(L"Preparing hooks..");
 	listener = new OnDemandSeedInfo(&g_dataQueue, g_hEvent);
