@@ -42,6 +42,7 @@ private:
 	static GameInfo_GameInfo dll_GameInfo_GameInfo;
 	static InventorySack_AddItem_Drop dll_InventorySack_AddItem_Drop;
 	static InventorySack_AddItem_Vec2 dll_InventorySack_AddItem_Vec2;
+	static std::wstring m_storageFolder;
 
 
 	// Game info is used to monitor IsHardcore and ModLabel
@@ -51,4 +52,5 @@ private:
 	static void* __fastcall Hooked_InventorySack_AddItem_Vec2(void* This, void*, GAME::Item* item, bool SkipPlaySound);
 
 	static bool HandleItem(void* stash, GAME::Item* item);
+	static bool Persist(GAME::ItemReplicaInfo replicaInfo, bool isHardcore, std::wstring mod);
 };

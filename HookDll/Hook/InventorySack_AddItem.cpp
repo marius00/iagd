@@ -6,6 +6,7 @@
 #include <detours.h>
 #include "InventorySack_AddItem.h"
 #include "Exports.h"
+#include <random>
 
 #define STASH_1 0
 #define STASH_2 1
@@ -23,6 +24,7 @@ InventorySack_AddItem::GameInfo_GetHardcore InventorySack_AddItem::dll_GameInfo_
 GetPrivateStash InventorySack_AddItem::privateStashHook;
 InventorySack_AddItem::InventorySack_AddItem_Drop InventorySack_AddItem::dll_InventorySack_AddItem_Drop;
 InventorySack_AddItem::InventorySack_AddItem_Vec2 InventorySack_AddItem::dll_InventorySack_AddItem_Vec2;
+std::wstring InventorySack_AddItem::m_storageFolder;
 
 void InventorySack_AddItem::EnableHook() {
 	// GameInfo::
@@ -54,10 +56,15 @@ void InventorySack_AddItem::EnableHook() {
 
 }
 
+std::wstring GetIagdFolder();
+
 InventorySack_AddItem::InventorySack_AddItem(DataQueue* dataQueue, HANDLE hEvent) {
 	InventorySack_AddItem::m_dataQueue = dataQueue;
 	InventorySack_AddItem::m_hEvent = hEvent;
 	privateStashHook = GetPrivateStash(dataQueue, hEvent);
+	m_storageFolder = GetIagdFolder() + L"itemqueue\\";
+
+	CreateDirectoryW(m_storageFolder.c_str(), nullptr);
 }
 
 InventorySack_AddItem::InventorySack_AddItem() {
@@ -167,8 +174,50 @@ bool IsRelevant(GAME::ItemReplicaInfo& item) {
 	return true;
 }
 
+
+
+std::wstring randomFilename() {
+	std::wstring str(L"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
+
+	std::random_device rd;
+	std::mt19937 generator(rd());
+
+	std::shuffle(str.begin(), str.end(), generator);
+
+	return str.substr(0, 32) + L".csv";    // assumes 32 < number of characters in str         
+}
+
+bool InventorySack_AddItem::Persist(GAME::ItemReplicaInfo replicaInfo, bool isHardcore, std::wstring mod) {
+	std::wstring fullPath = m_storageFolder + randomFilename();
+	std::wofstream stream;
+	stream.open(fullPath);
+	stream << mod.c_str() << ";" << (isHardcore ? 1 : 0)  << "\n";
+	stream << GAME::itemReplicaToString(replicaInfo) << "\n";
+	stream.flush();
+	stream.close();
+
+	DoLog(L"Storing to " + fullPath);
+
+	std::ifstream verification;
+	verification.open(fullPath);
+	if (verification) {
+		return true;
+	}
+
+	DoLog(L"Error: written CSV file does not exist");
+
+
+	return false;
+}
+
+/// <summary>
+/// Attempt to classify the item as relevant <-> not relevant for looting, and pass it on for persisting.
+/// </summary>
+/// <param name="stash"></param>
+/// <param name="item"></param>
+/// <returns></returns>
 bool InventorySack_AddItem::HandleItem(void* stash, GAME::Item* item) {
-	GAME::GameEngine* gameEngine = fnGetgGameEngine();
+	GAME::GameEngine* gameEngine = fnGetGameEngine();
 	GAME::ItemReplicaInfo replica;
 	fnItemGetItemReplicaInfo(item, replica);
 	if (!IsRelevant(replica)) {
@@ -185,36 +234,36 @@ bool InventorySack_AddItem::HandleItem(void* stash, GAME::Item* item) {
 	std::vector<GAME::InventorySack*>* sacks = (std::vector<GAME::InventorySack*>*)realPtr;
 	//DoLog(L"There are: " + std::to_wstring(sacks->size()) + L"Inventory sacks");
 
-	if (sacks->size() == 0) {
+	if (sacks->size() < 2) {
 		// DoLog(L"Not looting: No transfer stash tabs");
 		return false;
 	}
 
+	// TODO: Read settings.json to find the configured stash tab to loot from
 	auto lastSackPtr = sacks->at(sacks->size() - 1);
 	if ((void*)lastSackPtr != stash) {
 		// DoLog(L"Not looting: Item is not in transfer stash");
 		return false;
 	}
 
-	std::wstringstream stream;
-	stream << "Item: ";
-
-	GAME::GameInfo* gameInfo = fnGetGameInfo(gameEngine);
-	if (gameInfo != NULL) {
-		stream << "ModName: " << fnGetModName(gameInfo) << "\n";
-		stream << "Hardcore: " << fnGetHardcore(gameInfo) << "\n";
-		stream << "GameInfo is not null\n";
+	GAME::Engine* engine = fnGetEngine();
+	if (engine == nullptr) {
+		DoLog(L"Engine is null, aborting..");
+		return false;
 	}
-	else {
-		stream << "GameInfo is null!!!\n";
+	GAME::GameInfo* gameInfo = fnGetGameInfo(fnGetEngine());
+	if (gameInfo == nullptr) {
+		DoLog(L"GameInfo is null, aborting..");
+		return false;
 	}
 
-	stream << "\n";
+	std::wstring modName;
+	if (fnGetGameInfoMode(gameInfo) != 1) { // != Crucible
+		fnGetModNameArg(gameInfo, &modName);
+	}
+	
+	//DoLog(L"' Mod: " + modName);
+	//DoLog(L"', GameMode: " + std::to_wstring(fnGetGameInfoMode(gameInfo)));
 
-
-	stream << GAME::itemReplicaToString(replica) << "\n";
-
-	DoLog(stream.str().c_str());
-
-	return false; // Not handled
+	return Persist(replica, fnGetHardcore(gameInfo), modName);
 }

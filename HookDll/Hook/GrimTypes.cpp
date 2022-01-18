@@ -39,18 +39,20 @@ namespace GAME {
 
 }
 
-GAME::GameEngine* fnGetgGameEngine() {
+/// <summary>
+/// Fetches the static pointer to GAME::GameEngine (not a method call)
+/// </summary>
+/// <returns></returns>
+GAME::GameEngine* fnGetGameEngine() {
 	return (GAME::GameEngine*)*(DWORD_PTR*)GetProcAddress(GetModuleHandle(L"game.dll"), "?gGameEngine@GAME@@3PEAVGameEngine@1@EA");
 }
 
-std::wstring fnGetModName(GAME::GameInfo* gameInfo) {
-	pGetModName f = pGetModName(GetProcAddress(GetModuleHandle(L"engine.dll"), "?GetModName@GameInfo@GAME@@QEBAAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ"));
-	return std::wstring(f(gameInfo)->c_str());
-}
-
-GAME::GameInfo* fnGetGameInfo(GAME::GameEngine* engine) {
-	pGetGameInfo f = pGetGameInfo(GetProcAddress(GetModuleHandle(L"engine.dll"), "?GetGameInfo@Engine@GAME@@QEAAPEAVGameInfo@2@XZ"));
-	return f(engine);
+/// <summary>
+/// Fetches the static pointer to GAME::Engine (not a method call)
+/// </summary>
+/// <returns></returns>
+GAME::Engine* fnGetEngine() {
+	return (GAME::Engine*)*(DWORD_PTR*)GetProcAddress(GetModuleHandle(L"engine.dll"), "?gEngine@GAME@@3PEAVEngine@1@EA");
 }
 
 bool fnGetHardcore(GAME::GameInfo* gameInfo) {
