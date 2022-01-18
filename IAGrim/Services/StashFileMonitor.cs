@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.Permissions;
-using System.Timers;
 using IAGrim.Parsers.Arz.dto;
 using log4net;
 
-namespace IAGrim.Parsers.Arz {
+namespace IAGrim.Services {
     // Monitors a folder (typically My Documents) for modified files named "transfer.???"
     class StashFileMonitor : IDisposable {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(StashFileMonitor));
@@ -19,7 +16,7 @@ namespace IAGrim.Parsers.Arz {
         }
 
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
-        public bool StartMonitorStashfile(string path) {
+        public bool StartMonitoring(string path) {
             Logger.Debug($"Activating monitor for save path \"{path}\"");
             if (!string.IsNullOrEmpty(path) && Directory.Exists(path)) {
 

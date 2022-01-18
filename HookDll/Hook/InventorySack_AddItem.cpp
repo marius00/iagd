@@ -191,8 +191,7 @@ bool InventorySack_AddItem::Persist(GAME::ItemReplicaInfo replicaInfo, bool isHa
 	std::wstring fullPath = m_storageFolder + randomFilename();
 	std::wofstream stream;
 	stream.open(fullPath);
-	stream << mod.c_str() << ";" << (isHardcore ? 1 : 0)  << "\n";
-	stream << GAME::itemReplicaToString(replicaInfo) << "\n";
+	stream << mod.c_str() << ";" << (isHardcore ? 1 : 0)  << ";" << GAME::itemReplicaToString(replicaInfo) << "\n";
 	stream.flush();
 	stream.close();
 
@@ -260,7 +259,10 @@ bool InventorySack_AddItem::HandleItem(void* stash, GAME::Item* item) {
 	std::wstring modName;
 	if (fnGetGameInfoMode(gameInfo) != 1) { // != Crucible
 		fnGetModNameArg(gameInfo, &modName);
+		modName.erase(std::remove(modName.begin(), modName.end(), '\r'), modName.end());
+		modName.erase(std::remove(modName.begin(), modName.end(), '\n'), modName.end());
 	}
+
 	
 	//DoLog(L"' Mod: " + modName);
 	//DoLog(L"', GameMode: " + std::to_wstring(fnGetGameInfoMode(gameInfo)));

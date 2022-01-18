@@ -108,6 +108,8 @@ namespace IAGrim {
                     else {
                         singleInstance.PassArgumentsToFirstInstance(new string[] {"--ignore"});
                     }
+
+                    Logger.Info("Already has an instance of IA Running, exiting..");
                 }
             }
 
