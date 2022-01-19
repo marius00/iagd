@@ -263,6 +263,12 @@ namespace IAGrim.Utilities.Cloud {
                     return;
             }
 
+            var items = _playerItemDao.ListAll();
+            if (items.Count == 0) {
+                Logger.Warn("No items found, skipping backup to avoid overwriting existing good backups.");
+                return;
+            }
+
             using (var file = new TempFile()) {
                 using (ZipFile zip = new ZipFile { UseZip64WhenSaving = Zip64Option.AsNecessary }) {
                     Logger.Info("Backing up characters..");
@@ -289,7 +295,7 @@ namespace IAGrim.Utilities.Cloud {
 
 
                     var exporter = new IAFileExporter(file.filename);
-                    exporter.Write(_playerItemDao.ListAll());
+                    exporter.Write(items);
 
                     zip.AddFile(file.filename).FileName = "export.ias";
 
