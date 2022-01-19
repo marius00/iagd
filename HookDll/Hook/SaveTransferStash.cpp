@@ -10,7 +10,7 @@
 HANDLE SaveTransferStash::m_hEvent;
 DataQueue* SaveTransferStash::m_dataQueue;
 SaveTransferStash::OriginalMethodPtr SaveTransferStash::originalMethod;
-void* SaveTransferStash::privateStashSack;
+void* SaveTransferStash::m_transferStashSack;
 
 void SaveTransferStash::EnableHook() {
 
@@ -30,12 +30,12 @@ void SaveTransferStash::EnableHook() {
 SaveTransferStash::SaveTransferStash(DataQueue* dataQueue, HANDLE hEvent) {
 	SaveTransferStash::m_dataQueue = dataQueue;
 	SaveTransferStash::m_hEvent = hEvent;
-	SaveTransferStash::privateStashSack = NULL;
+	SaveTransferStash::m_transferStashSack = NULL;
 }
 
 SaveTransferStash::SaveTransferStash() {
 	SaveTransferStash::m_hEvent = NULL;
-	SaveTransferStash::privateStashSack = NULL;
+	SaveTransferStash::m_transferStashSack = NULL;
 }
 
 void SaveTransferStash::DisableHook() {
@@ -45,11 +45,15 @@ void SaveTransferStash::DisableHook() {
 	DetourTransactionCommit();
 }
 
+void* SaveTransferStash::GetTransferStashInventorySack() {
+	return m_transferStashSack;
+}
+
 // This is spammed non stop when the private stash is open(not transfer)
 void* __fastcall SaveTransferStash::HookedMethod(void* This) {
 
 	void* v = originalMethod(This);
-	privateStashSack = v;
+	m_transferStashSack = v;
 
 	// Neat to get this after the save is done -- not before.
 	DataItemPtr item(new DataItem(TYPE_SAVE_TRANSFER_STASH, 0, 0));

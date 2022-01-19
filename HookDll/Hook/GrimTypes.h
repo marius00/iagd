@@ -45,8 +45,10 @@ namespace GAME
 	struct GraphicsTexture { void* dummy; };
 	struct Player { void* dummy; };
 	struct GameEngine { void* dummy; };
+	struct GameInfo { void* dummy; };
+	struct Engine { void* dummy; };
 	struct ObjectManager { void* dummy; };
-
+	struct InventorySack { void* dummy; };
 	struct Character { void* dummy; };
 
 	enum GameTextClass
@@ -167,4 +169,36 @@ static auto fnItemGetItemReplicaInfo = ItemGetItemReplicaInfo(GetProcAddress(Get
 typedef GAME::Player* (__fastcall* pGetMainPlayer)(GAME::GameEngine*);
 static auto fnGetMainPlayer = pGetMainPlayer(GetProcAddress(GetModuleHandle(L"game.dll"), "?GetMainPlayer@GameEngine@GAME@@QEBAPEAVPlayer@2@XZ"));
 
-GAME::GameEngine* fnGetgGameEngine();
+
+typedef void(__fastcall* pGetModNameArg)(GAME::GameInfo* gi, std::wstring* str);
+static auto fnGetModNameArg = pGetModNameArg(GetProcAddress(GetModuleHandle(L"engine.dll"), "?GetModName@GameInfo@GAME@@QEAAXAEAV?$basic_string@GU?$char_traits@G@std@@V?$allocator@G@2@@std@@@Z"));
+
+
+typedef int(__fastcall* pGetGameInfoMode)(GAME::GameInfo* gi);
+static auto fnGetGameInfoMode = pGetGameInfoMode(GetProcAddress(GetModuleHandle(L"engine.dll"), "?GetMode@GameInfo@GAME@@QEBAIXZ"));
+
+typedef std::wstring const& (__fastcall* pGetModName)(GAME::GameInfo* gi);
+static auto fnGetModName = pGetModName(GetProcAddress(GetModuleHandle(L"engine.dll"), "?GetModName@GameInfo@GAME@@QEBAAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ"));
+
+
+typedef GAME::GameInfo* (__fastcall* pGetGameInfo)(GAME::Engine* ge);
+static auto fnGetGameInfo = pGetGameInfo(GetProcAddress(GetModuleHandle(L"engine.dll"), "?GetGameInfo@Engine@GAME@@QEAAPEAVGameInfo@2@XZ"));
+
+
+// 
+// 
+//typedef unsigned __int64(__fastcall* pGetSelectedTransferSackNumber)(GAME::GameEngine*);
+//static auto fnGetSelectedTransferSackNumber = pGetSelectedTransferSackNumber(GetProcAddress(GetModuleHandle(L"game.dll"), "?GetSelectedTransferSackNumber@GameEngine@GAME@@QEBAIXZ"));
+
+
+typedef void* (__fastcall* pGetPlayerTransfer)(GAME::GameEngine*);
+static auto fnGetPlayerTransfer = pGetPlayerTransfer(GetProcAddress(GetModuleHandle(L"game.dll"), "?GetPlayerTransfer@GameEngine@GAME@@QEAAAEAV?$vector@PEAVInventorySack@GAME@@@mem@@XZ"));
+
+
+
+typedef bool(__fastcall* pGetHardcore)(GAME::GameInfo*);
+
+GAME::GameEngine* fnGetGameEngine();
+GAME::Engine* fnGetEngine();
+
+bool fnGetHardcore(GAME::GameInfo* gameInfo);

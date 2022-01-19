@@ -57,12 +57,14 @@ namespace IAGrim.UI {
         private TransferStashWorker _transferStashWorker;
 
         private StashFileMonitor _stashFileMonitor = new StashFileMonitor();
+        private CsvFileMonitor _csvFileMonitor = new CsvFileMonitor();
         private ItemReplicaService _itemReplicaService;
 
         private Action<RegisterWindow.DataAndType> _registerWindowDelegate;
         private RegisterWindow _window;
         private InjectionHelper _injector;
         private ProgressChangedEventHandler _injectorCallbackDelegate;
+        private CsvParsingService _csvParsingService;
 
         private BuddyItemsService _buddyItemsService;
         private BackgroundTask _backupBackgroundTask;
@@ -229,6 +231,12 @@ namespace IAGrim.UI {
 
             _stashFileMonitor?.Dispose();
             _stashFileMonitor = null;
+
+            _csvFileMonitor?.Dispose();
+            _csvFileMonitor = null;
+
+            _csvParsingService?.Dispose();
+            _csvParsingService = null;
 
             _minimizeToTrayHandler?.Dispose();
             _minimizeToTrayHandler = null;
@@ -426,7 +434,7 @@ namespace IAGrim.UI {
                 _automaticUpdateChecker.ResetLastMinimized();
             };
 
-            if (!_stashFileMonitor.StartMonitorStashfile(GlobalPaths.SavePath)) {
+            if (!_stashFileMonitor.StartMonitoring(GlobalPaths.SavePath)) {
                 
                 MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_cloudsync_mb"));
                 _cefBrowserHandler.ShowHelp(HelpService.HelpType.CloudSavesEnabled);
@@ -436,6 +444,15 @@ namespace IAGrim.UI {
                 if (!Debugger.IsAttached)
                     Close();
             }
+
+            _csvParsingService = new CsvParsingService(playerItemDao, replicaItemDao);
+            _csvFileMonitor.OnModified += (_, arg) => {
+                var csvEvent = arg as CsvFileMonitor.CsvEvent;
+                _csvParsingService.Queue(csvEvent.Filename, csvEvent.Cooldown);
+            };
+            _csvFileMonitor.StartMonitoring();
+            _csvParsingService.Start();
+                
 
             // Load the grim database
             var grimDawnDetector = _serviceProvider.Get<GrimDawnDetector>();

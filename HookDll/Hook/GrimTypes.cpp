@@ -38,7 +38,27 @@ namespace GAME {
 
 
 }
-GAME::GameEngine* fnGetgGameEngine()
-{
+
+/// <summary>
+/// Fetches the static pointer to GAME::GameEngine (not a method call)
+/// </summary>
+/// <returns></returns>
+GAME::GameEngine* fnGetGameEngine() {
 	return (GAME::GameEngine*)*(DWORD_PTR*)GetProcAddress(GetModuleHandle(L"game.dll"), "?gGameEngine@GAME@@3PEAVGameEngine@1@EA");
 }
+
+/// <summary>
+/// Fetches the static pointer to GAME::Engine (not a method call)
+/// </summary>
+/// <returns></returns>
+GAME::Engine* fnGetEngine() {
+	return (GAME::Engine*)*(DWORD_PTR*)GetProcAddress(GetModuleHandle(L"engine.dll"), "?gEngine@GAME@@3PEAVEngine@1@EA");
+}
+
+bool fnGetHardcore(GAME::GameInfo* gameInfo) {
+	pGetHardcore f = pGetHardcore(GetProcAddress(GetModuleHandle(L"engine.dll"), "?GetHardcore@GameInfo@GAME@@QEBA_NXZ"));
+	return f(gameInfo);
+
+}
+
+typedef std::basic_string<char, std::char_traits<char>, std::allocator<char> > const& Fancystring;

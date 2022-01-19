@@ -238,10 +238,12 @@
     <Compile Include="Database\Synchronizer\BuddyItemReplicaRepo.cs" />
     <Compile Include="Database\Synchronizer\ItemReplicaRepo.cs" />
     <Compile Include="Database\Synchronizer\ItemCollectionRepo.cs" />
+    <Compile Include="Services\CsvFileMonitor.cs" />
     <Compile Include="Parsers\TransferStash\SafeTransferStashWriter.cs" />
     <Compile Include="Parsers\TransferStash\TransferStashService2.cs" />
     <Compile Include="Parsers\TransferStash\TransferStashServiceCache.cs" />
     <Compile Include="Parsers\TransferStash\TransferStashWorker.cs" />
+    <Compile Include="Services\CsvParsingService.cs" />
     <Compile Include="Services\HelpService.cs" />
     <Compile Include="Services\ItemReplicaDispatchService.cs" />
     <Compile Include="Services\ItemReplica\ItemStatInfo.cs" />
@@ -401,7 +403,7 @@
     <Compile Include="Parsers\Arz\dto\ItemGrantedSkill.cs" />
     <Compile Include="Parsers\Arz\dto\StashEventArg.cs" />
     <Compile Include="Parsers\Arz\LocalizationLoader.cs" />
-    <Compile Include="Parsers\Arz\StashFileMonitor.cs" />
+    <Compile Include="Services\StashFileMonitor.cs" />
     <Compile Include="Parsers\Arz\TransferStashService.cs" />
     <Compile Include="Parsers\Arz\StatUpdateUIBackgroundWorker.cs" />
     <Compile Include="BuddyShare\BuddyItemsService.cs" />

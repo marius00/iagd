@@ -90,6 +90,12 @@
     <ClInclude Include="HookLog.h">
       <Filter>Shared</Filter>
     </ClInclude>
+    <ClInclude Include="SetTransferOpen.h">
+      <Filter>CoreHooks\StashDetection</Filter>
+    </ClInclude>
+    <ClInclude Include="SetHardcore.h">
+      <Filter>CoreHooks\StashDetection</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -151,6 +157,12 @@
     </ClCompile>
     <ClCompile Include="HookLog.cpp">
       <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="SetTransferOpen.cpp">
+      <Filter>CoreHooks\StashDetection</Filter>
+    </ClCompile>
+    <ClCompile Include="SetHardcore.cpp">
+      <Filter>CoreHooks\StashDetection</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

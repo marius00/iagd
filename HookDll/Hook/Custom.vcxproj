@@ -38,6 +38,8 @@
     <ClInclude Include="HookLog.h" />
     <ClInclude Include="ItemRelicSeedInfo.h" />
     <ClInclude Include="OnDemandSeedInfo.h" />
+    <ClInclude Include="SetHardcore.h" />
+    <ClInclude Include="SetTransferOpen.h" />
     <ClInclude Include="StateRequestNpcAction.h" />
     <ClInclude Include="StateRequestMoveAction.h" />
     <ClInclude Include="DataQueue.h" />
@@ -62,6 +64,8 @@
     <ClCompile Include="HookLog.cpp" />
     <ClCompile Include="ItemRelicSeedInfo.cpp" />
     <ClCompile Include="OnDemandSeedInfo.cpp" />
+    <ClCompile Include="SetHardcore.cpp" />
+    <ClCompile Include="SetTransferOpen.cpp" />
     <ClCompile Include="StateRequestNpcAction.cpp" />
     <ClCompile Include="StateRequestMoveAction.cpp" />
     <ClCompile Include="DataQueue.cpp" />

@@ -10,7 +10,7 @@
 ItemRelicSeedInfo* ItemRelicSeedInfo::g_self;
 void ItemRelicSeedInfo::EnableHook() {
 	originalMethod = (OriginalMethodPtr)HookGame(
-		"?GetUIDisplayText@ItemArtifact@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@@Z",
+		GET_ITEMARTIFACT_GETUIDISPLAYTEXT,
 		HookedMethod,
 		m_dataQueue,
 		m_hEvent,

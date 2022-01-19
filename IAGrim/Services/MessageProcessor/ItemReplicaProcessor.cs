@@ -155,7 +155,7 @@ namespace IAGrim.Services.MessageProcessor {
             };
         }
 
-        private uint ToInt(string s) {
+        private static uint ToInt(string s) {
             uint.TryParse(s, out var i);
             return i;
         }

@@ -276,7 +276,7 @@ void OnDemandSeedInfo::GetItemInfo(ParsedSeedRequest obj) {
 			// TODO: We should fetch this earlier, ensure we don't get the hooked method. -- We seem to be getting 4 replies. 4th one is the message below. 
 			// First is probably in Item:: then ItemEquipment:: (both have hooks), 
 			// Sender is responsible for ensuring that this is NOT as set item, not a potion/scroll/other and not a relic. Eg must be equipment which is not part of a set.
-			fnItemEquipmentGetUIDisplayText((GAME::ItemEquipment*)newItem, (GAME::Character*)fnGetMainPlayer(fnGetgGameEngine()), &gameTextLines);
+			fnItemEquipmentGetUIDisplayText((GAME::ItemEquipment*)newItem, (GAME::Character*)fnGetMainPlayer(fnGetGameEngine()), &gameTextLines);
 			fnDestroyObjectEx(fnGetObjectManager(), (GAME::Object*)newItem, nullptr, 0);
 
 			std::wstringstream stream;
