@@ -137,7 +137,7 @@ class App extends PureComponent<object, object> {
       let s = JSON.parse(input);
 
       let notifications = [...this.state.notifications]
-      while (notifications.length >= 15) {
+      while (notifications.length >= 8) {
         notifications.shift();
       }
 
