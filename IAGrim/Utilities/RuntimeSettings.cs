@@ -30,21 +30,20 @@ namespace IAGrim.Utilities {
 
 
         public static event EventHandler StashStatusChanged;
-        private static StashAvailability _stashStatus = StashAvailability.UNKNOWN;
+        private static volatile StashAvailability _stashStatus = StashAvailability.UNKNOWN;
 
         public static StashAvailability PreviousStashStatus { get; private set; } = StashAvailability.UNKNOWN;
 
         public static StashAvailability StashStatus {
-            get {
-                return _stashStatus;
-            }
+            get => _stashStatus;
             set {
-                if (_stashStatus != value) {
-                    PreviousStashStatus = _stashStatus;
-                    _stashStatus = value;
+                if (_stashStatus == value) return;
 
-                    StashStatusChanged?.Invoke(null, null);
-                }
+
+                PreviousStashStatus = _stashStatus;
+                _stashStatus = value;
+
+                StashStatusChanged?.Invoke(null, null);
             }
         }
 

@@ -244,6 +244,7 @@ namespace IAGrim.UI {
             _backupBackgroundTask?.Dispose();
             _usageStatisticsReporter.Dispose();
             _automaticUpdateChecker.Dispose();
+            _transferController.Dispose();
 
             _tooltipHelper?.Dispose();
 
@@ -611,6 +612,7 @@ namespace IAGrim.UI {
                 _serviceProvider.Get<ItemStatService>(),
                 settingsService
             );
+            _transferController.Start();
             Application.AddMessageFilter(new MousewheelMessageFilter());
 
 

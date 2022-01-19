@@ -11,14 +11,16 @@ using IAGrim.Utilities.HelperClasses;
 using IAGrim.Utilities.RectanglePacker;
 using log4net;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 using IAGrim.Settings;
 
 namespace IAGrim.UI.Controller {
-    internal class ItemTransferController {
+    internal class ItemTransferController : IDisposable {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ItemTransferController));
         private readonly IPlayerItemDao _dao;
         private readonly Action<string> _setFeedback;
@@ -28,6 +30,8 @@ namespace IAGrim.UI.Controller {
         private readonly CefBrowserHandler _browser;
         private readonly TransferStashService _transferStashService;
         private readonly ItemStatService _itemStatService;
+        private readonly ConcurrentQueue<StashTransferEventArgs> _depositQueue = new ConcurrentQueue<StashTransferEventArgs>();
+        volatile bool _disposed;
 
         public ItemTransferController(
             CefBrowserHandler browser,
@@ -47,6 +51,22 @@ namespace IAGrim.UI.Controller {
             _transferStashService = transferStashService;
             _itemStatService = itemStatService;
             _settingsService = settingsService;
+        }
+
+        public void Start() {
+            var t = new Thread(() => {
+                while (!_disposed) {
+                    Thread.Sleep(10);
+
+                    if (RuntimeSettings.StashStatus == StashAvailability.CLOSED) {
+                        if (_depositQueue.TryDequeue(out var item)) {
+                            TransferItem(item);
+                        }
+                    }
+                }
+            });
+
+            t.Start();
         }
 
         List<PlayerItem> GetItemsForTransfer(StashTransferEventArgs args) {
@@ -202,17 +222,24 @@ namespace IAGrim.UI.Controller {
                 _setFeedback(message);
                 _setTooltip(message);
                 _browser.ShowMessage(message, UserFeedbackLevel.Warning);
+                _depositQueue.Enqueue(args);
             }
             else if (RuntimeSettings.StashStatus == StashAvailability.SORTED) {
                 _setFeedback(RuntimeSettings.Language.GetTag("iatag_deposit_stash_sorted"));
                 _browser.ShowMessage(RuntimeSettings.Language.GetTag("iatag_deposit_stash_sorted"), UserFeedbackLevel.Warning);
+                _depositQueue.Enqueue(args);
             }
 
             else if (RuntimeSettings.StashStatus == StashAvailability.UNKNOWN) {
                 _setFeedback(RuntimeSettings.Language.GetTag("iatag_deposit_stash_unknown_feedback"));
                 _setTooltip(RuntimeSettings.Language.GetTag("iatag_deposit_stash_unknown_tooltip"));
                 _browser.ShowMessage(RuntimeSettings.Language.GetTag("iatag_deposit_stash_unknown_feedback"), UserFeedbackLevel.Warning);
+                _depositQueue.Enqueue(args);
             }
+        }
+
+        public void Dispose() {
+            _disposed = true;
         }
     }
 }
