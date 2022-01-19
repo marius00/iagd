@@ -113,9 +113,15 @@ namespace IAGrim.Utilities.Cloud {
                 if (!File.Exists(f))
                     continue;
 
-                if (File.GetLastWriteTimeUtc(f) > dt) {
-                    result.Add(Path.GetFileName(character));
-                }
+                if (File.GetLastWriteTimeUtc(f) <= dt)
+                    continue;
+
+                // Less than 4KB? Probably corrupted
+                if (new FileInfo(f).Length < 4 * 1024)
+                    continue;
+
+                result.Add(Path.GetFileName(character));
+                
             }
 
             return result;

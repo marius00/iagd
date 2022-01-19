@@ -59,18 +59,18 @@ namespace IAGrim.Backup.Cloud.Service {
             var characters = FileBackup.ListCharactersNewerThan(lastSync);
 
             bool everythingSucceeded = true;
-            foreach (var c in characters) {
-                Logger.Info($"Backup up character {c} to the cloud");
-                var filename = Path.Combine(GlobalPaths.CharacterBackupLocation, $"{DateTime.Now.DayOfWeek}-{c}.zip");
-                FileBackup.BackupCharacter(filename, c); // TODO: IOException
+            foreach (var gameCharacter in characters) {
+                Logger.Info($"Backup up character {gameCharacter} to the cloud");
+                var filename = Path.Combine(GlobalPaths.CharacterBackupLocation, $"{DateTime.Now.DayOfWeek}-{gameCharacter}.zip");
+                FileBackup.BackupCharacter(filename, gameCharacter); // TODO: IOException
                 
-                var url = $"{Uris.UploadCharacterUrl}?name={WebUtility.UrlEncode(c)}";
+                var url = $"{Uris.UploadCharacterUrl}?name={WebUtility.UrlEncode(gameCharacter)}";
                 var success = Post(url, filename);
                 if (success) {
-                    Logger.Info($"Character {c} successfully backed up to the cloud");
+                    Logger.Info($"Character {gameCharacter} successfully backed up to the cloud");
                 }
                 else {
-                    Logger.Info($"An error occurred backing up character {c} to the cloud");
+                    Logger.Info($"An error occurred backing up character {gameCharacter} to the cloud");
                     everythingSucceeded = false;
                 }
             }
