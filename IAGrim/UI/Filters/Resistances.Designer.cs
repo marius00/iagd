@@ -24,6 +24,7 @@
         /// </summary>
         private void InitializeComponent() {
             this.resistancePanel = new IAGrim.Theme.CollapseablePanelBox();
+            this.resistStun = new FirefoxCheckBox();
             this.resistBleeding = new FirefoxCheckBox();
             this.resistElemental = new FirefoxCheckBox();
             this.resistFire = new FirefoxCheckBox();
@@ -35,7 +36,7 @@
             this.resistLightning = new FirefoxCheckBox();
             this.resistVitality = new FirefoxCheckBox();
             this.resistAether = new FirefoxCheckBox();
-            this.resistStun = new FirefoxCheckBox();
+            this.resistSlow = new FirefoxCheckBox();
             this.resistancePanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -43,6 +44,8 @@
             // 
             this.resistancePanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.resistancePanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.resistancePanel.Controls.Add(this.resistSlow);
             this.resistancePanel.Controls.Add(this.resistStun);
             this.resistancePanel.Controls.Add(this.resistBleeding);
             this.resistancePanel.Controls.Add(this.resistElemental);
@@ -56,15 +59,33 @@
             this.resistancePanel.Controls.Add(this.resistVitality);
             this.resistancePanel.Controls.Add(this.resistAether);
             this.resistancePanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.resistancePanel.ForeColor = System.Drawing.Color.Black;
+            this.resistancePanel.HeaderColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(231)))), ((int)(((byte)(231)))));
             this.resistancePanel.HeaderHeight = 29;
             this.resistancePanel.Location = new System.Drawing.Point(3, 3);
             this.resistancePanel.Name = "resistancePanel";
             this.resistancePanel.NoRounding = false;
-            this.resistancePanel.Size = new System.Drawing.Size(310, 437);
+            this.resistancePanel.Size = new System.Drawing.Size(310, 474);
             this.resistancePanel.TabIndex = 41;
             this.resistancePanel.Tag = "iatag_ui_resistances";
             this.resistancePanel.Text = "Resistances";
             this.resistancePanel.TextLocation = "8; 5";
+            // 
+            // resistStun
+            // 
+            this.resistStun.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.resistStun.Bold = false;
+            this.resistStun.EnabledCalc = true;
+            this.resistStun.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.resistStun.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.resistStun.IsDarkMode = false;
+            this.resistStun.Location = new System.Drawing.Point(3, 400);
+            this.resistStun.Name = "resistStun";
+            this.resistStun.Size = new System.Drawing.Size(291, 27);
+            this.resistStun.TabIndex = 11;
+            this.resistStun.Tag = "iatag_ui_resistance_stun";
+            this.resistStun.Text = "Stun";
             // 
             // resistBleeding
             // 
@@ -74,6 +95,7 @@
             this.resistBleeding.EnabledCalc = true;
             this.resistBleeding.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.resistBleeding.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.resistBleeding.IsDarkMode = false;
             this.resistBleeding.Location = new System.Drawing.Point(3, 367);
             this.resistBleeding.Name = "resistBleeding";
             this.resistBleeding.Size = new System.Drawing.Size(291, 27);
@@ -89,6 +111,7 @@
             this.resistElemental.EnabledCalc = true;
             this.resistElemental.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.resistElemental.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.resistElemental.IsDarkMode = false;
             this.resistElemental.Location = new System.Drawing.Point(3, 334);
             this.resistElemental.Name = "resistElemental";
             this.resistElemental.Size = new System.Drawing.Size(291, 27);
@@ -104,6 +127,7 @@
             this.resistFire.EnabledCalc = true;
             this.resistFire.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.resistFire.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.resistFire.IsDarkMode = false;
             this.resistFire.Location = new System.Drawing.Point(3, 103);
             this.resistFire.Name = "resistFire";
             this.resistFire.Size = new System.Drawing.Size(291, 27);
@@ -119,6 +143,7 @@
             this.resistPiercing.EnabledCalc = true;
             this.resistPiercing.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.resistPiercing.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.resistPiercing.IsDarkMode = false;
             this.resistPiercing.Location = new System.Drawing.Point(3, 70);
             this.resistPiercing.Name = "resistPiercing";
             this.resistPiercing.Size = new System.Drawing.Size(291, 27);
@@ -134,6 +159,7 @@
             this.resistPhysical.EnabledCalc = true;
             this.resistPhysical.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.resistPhysical.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.resistPhysical.IsDarkMode = false;
             this.resistPhysical.Location = new System.Drawing.Point(3, 37);
             this.resistPhysical.Name = "resistPhysical";
             this.resistPhysical.Size = new System.Drawing.Size(291, 27);
@@ -149,6 +175,7 @@
             this.resistPoison.EnabledCalc = true;
             this.resistPoison.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.resistPoison.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.resistPoison.IsDarkMode = false;
             this.resistPoison.Location = new System.Drawing.Point(3, 301);
             this.resistPoison.Name = "resistPoison";
             this.resistPoison.Size = new System.Drawing.Size(291, 27);
@@ -164,6 +191,7 @@
             this.resistCold.EnabledCalc = true;
             this.resistCold.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.resistCold.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.resistCold.IsDarkMode = false;
             this.resistCold.Location = new System.Drawing.Point(3, 136);
             this.resistCold.Name = "resistCold";
             this.resistCold.Size = new System.Drawing.Size(291, 27);
@@ -179,6 +207,7 @@
             this.resistChaos.EnabledCalc = true;
             this.resistChaos.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.resistChaos.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.resistChaos.IsDarkMode = false;
             this.resistChaos.Location = new System.Drawing.Point(3, 268);
             this.resistChaos.Name = "resistChaos";
             this.resistChaos.Size = new System.Drawing.Size(291, 27);
@@ -194,6 +223,7 @@
             this.resistLightning.EnabledCalc = true;
             this.resistLightning.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.resistLightning.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.resistLightning.IsDarkMode = false;
             this.resistLightning.Location = new System.Drawing.Point(3, 169);
             this.resistLightning.Name = "resistLightning";
             this.resistLightning.Size = new System.Drawing.Size(291, 27);
@@ -209,6 +239,7 @@
             this.resistVitality.EnabledCalc = true;
             this.resistVitality.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.resistVitality.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.resistVitality.IsDarkMode = false;
             this.resistVitality.Location = new System.Drawing.Point(3, 235);
             this.resistVitality.Name = "resistVitality";
             this.resistVitality.Size = new System.Drawing.Size(291, 27);
@@ -224,6 +255,7 @@
             this.resistAether.EnabledCalc = true;
             this.resistAether.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.resistAether.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.resistAether.IsDarkMode = false;
             this.resistAether.Location = new System.Drawing.Point(3, 202);
             this.resistAether.Name = "resistAether";
             this.resistAether.Size = new System.Drawing.Size(291, 27);
@@ -231,20 +263,21 @@
             this.resistAether.Tag = "iatag_ui_resistance_aether";
             this.resistAether.Text = "Aether";
             // 
-            // resistStun
+            // resistSlow
             // 
-            this.resistStun.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.resistSlow.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.resistStun.Bold = false;
-            this.resistStun.EnabledCalc = true;
-            this.resistStun.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.resistStun.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.resistStun.Location = new System.Drawing.Point(3, 400);
-            this.resistStun.Name = "resistStun";
-            this.resistStun.Size = new System.Drawing.Size(291, 27);
-            this.resistStun.TabIndex = 11;
-            this.resistStun.Tag = "iatag_ui_resistance_stun";
-            this.resistStun.Text = "Stun";
+            this.resistSlow.Bold = false;
+            this.resistSlow.EnabledCalc = true;
+            this.resistSlow.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.resistSlow.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.resistSlow.IsDarkMode = false;
+            this.resistSlow.Location = new System.Drawing.Point(3, 433);
+            this.resistSlow.Name = "resistSlow";
+            this.resistSlow.Size = new System.Drawing.Size(291, 27);
+            this.resistSlow.TabIndex = 12;
+            this.resistSlow.Tag = "iatag_ui_resistance_slow";
+            this.resistSlow.Text = "Slow";
             // 
             // Resistances
             // 
@@ -252,7 +285,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.resistancePanel);
             this.Name = "Resistances";
-            this.Size = new System.Drawing.Size(316, 446);
+            this.Size = new System.Drawing.Size(316, 480);
             this.resistancePanel.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -273,5 +306,6 @@
         private FirefoxCheckBox resistVitality;
         private FirefoxCheckBox resistAether;
         private FirefoxCheckBox resistStun;
+        private FirefoxCheckBox resistSlow;
     }
 }

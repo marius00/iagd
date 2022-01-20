@@ -72,7 +72,6 @@
     <Compile Include="Randomizer.cs" />
     <Compile Include="SlotTranslator.cs" />
     <Compile Include="StatManager.cs" />
-    <Compile Include="StatScaler.cs" />
     <Compile Include="ThirdPartyLanguage.cs" />
     <Compile Include="TranslatedStat.cs" />
   </ItemGroup>

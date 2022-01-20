@@ -78,6 +78,10 @@ namespace IAGrim.UI.Filters {
                     });
                 }
 
+
+                if (resistSlow.Checked) {
+                    filters.Add(new []{"defensiveTotalSpeedResistance"});
+                }
                 return filters;
             }
         }

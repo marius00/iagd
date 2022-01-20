@@ -517,6 +517,7 @@ namespace StatTranslator {
             {"iatag_ui_resistance_vitality", "Vitality"},
             {"iatag_ui_resistance_aether", "Aether"},
             {"iatag_ui_resistance_stun", "Stun"},
+            {"iatag_ui_resistance_slow", "Slow"},
 
             {"iatag_ui_dot", "Damage over Time"},
             {"iatag_ui_lifeleech", "Life Leech"},
