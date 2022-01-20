@@ -103,6 +103,18 @@ namespace IAGrim.UI.Filters {
                     filters.Add(new[] { "skillCooldownReduction" });
                 }
 
+                if (cbPhysique.Checked) {
+                    filters.Add(new[] { "characterStrength", "characterStrengthModifier" });
+                }
+
+                if (cbSpirit.Checked) {
+                    filters.Add(new[] { "characterIntelligence", "characterIntelligenceModifier" });
+                }
+
+                if (cbCunning.Checked) {
+                    filters.Add(new[] { "characterDexterity", "characterDexterityModifier" });
+                }
+
                 return filters;
             }
         }
