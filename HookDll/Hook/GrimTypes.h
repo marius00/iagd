@@ -184,6 +184,9 @@ static auto fnGetModName = pGetModName(GetProcAddress(GetModuleHandle(L"engine.d
 typedef GAME::GameInfo* (__fastcall* pGetGameInfo)(GAME::Engine* ge);
 static auto fnGetGameInfo = pGetGameInfo(GetProcAddress(GetModuleHandle(L"engine.dll"), "?GetGameInfo@Engine@GAME@@QEAAPEAVGameInfo@2@XZ"));
 
+typedef GAME::GameInfo* (__fastcall* pPlayDropSound)(GAME::Item* ge);
+static auto fnPlayDropSound = pPlayDropSound(GetProcAddress(GetModuleHandle(L"game.dll"), "?PlayDropSound@Item@GAME@@UEAAXXZ"));
+
 
 // 
 // 

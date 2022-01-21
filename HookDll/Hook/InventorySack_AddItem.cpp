@@ -111,6 +111,7 @@ void DoLog(std::wstring message);
 /// <returns></returns>
 void* __fastcall InventorySack_AddItem::Hooked_InventorySack_AddItem_Drop(void* This, GAME::Item *item, bool findPosition, bool SkipPlaySound) {
 	if (HandleItem(This, item)) {
+		fnPlayDropSound(item);
 		return (void*)1;
 	}
 
@@ -128,6 +129,7 @@ void* __fastcall InventorySack_AddItem::Hooked_InventorySack_AddItem_Drop(void* 
 /// <returns></returns>
 void* __fastcall InventorySack_AddItem::Hooked_InventorySack_AddItem_Vec2(void* This, void* position, GAME::Item* item, bool SkipPlaySound) {
 	if (HandleItem(This, item)) {
+		fnPlayDropSound(item);
 		return (void*)1;
 	}
 
