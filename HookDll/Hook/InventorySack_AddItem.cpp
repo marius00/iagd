@@ -5,8 +5,14 @@
 #include "MessageType.h"
 #include <detours.h>
 #include "InventorySack_AddItem.h"
+
+#include <codecvt>
+
 #include "Exports.h"
 #include <random>
+#include <boost/property_tree/ptree.hpp>                                        
+#include <boost/property_tree/json_parser.hpp>       
+#include <tuple>
 
 #define STASH_1 0
 #define STASH_2 1
@@ -15,6 +21,10 @@
 #define STASH_5 4
 #define STASH_6 5
 #define STASH_PRIVATE 1000
+
+std::wstring GetIagdFolder();
+void LogToFile(const wchar_t* message);
+void LogToFile(std::wstring message);
 
 HANDLE InventorySack_AddItem::m_hEvent;
 DataQueue* InventorySack_AddItem::m_dataQueue;
@@ -25,6 +35,28 @@ GetPrivateStash InventorySack_AddItem::privateStashHook;
 InventorySack_AddItem::InventorySack_AddItem_Drop InventorySack_AddItem::dll_InventorySack_AddItem_Drop;
 InventorySack_AddItem::InventorySack_AddItem_Vec2 InventorySack_AddItem::dll_InventorySack_AddItem_Vec2;
 std::wstring InventorySack_AddItem::m_storageFolder;
+int InventorySack_AddItem::m_stashTabLootFrom;
+
+int ReadPreferredStashLootTab() {
+	boost::property_tree::ptree loadPtreeRoot;
+
+
+	const auto settingsJson = GetIagdFolder() + L"settings.json";
+	const std::string settingsJsonAnsi = std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes(settingsJson);
+
+
+	boost::property_tree::read_json(settingsJsonAnsi, loadPtreeRoot);
+	const int stashToLootFrom = loadPtreeRoot.get<int>("local.stashToLootFrom");
+
+	if (stashToLootFrom == 0) {
+		LogToFile(L"Configured to loot from last stash tab");
+		
+	} else {
+		LogToFile(L"Configured to loot from tab: " + std::to_wstring(stashToLootFrom));
+	}
+
+	return stashToLootFrom;
+}
 
 void InventorySack_AddItem::EnableHook() {
 	// GameInfo::
@@ -56,7 +88,6 @@ void InventorySack_AddItem::EnableHook() {
 
 }
 
-std::wstring GetIagdFolder();
 
 InventorySack_AddItem::InventorySack_AddItem(DataQueue* dataQueue, HANDLE hEvent) {
 	InventorySack_AddItem::m_dataQueue = dataQueue;
@@ -65,6 +96,7 @@ InventorySack_AddItem::InventorySack_AddItem(DataQueue* dataQueue, HANDLE hEvent
 	m_storageFolder = GetIagdFolder() + L"itemqueue\\";
 
 	CreateDirectoryW(m_storageFolder.c_str(), nullptr);
+	m_stashTabLootFrom = ReadPreferredStashLootTab();
 }
 
 InventorySack_AddItem::InventorySack_AddItem() {
@@ -97,8 +129,6 @@ void* __fastcall InventorySack_AddItem::Hooked_GameInfo_GameInfo_Param(void* Thi
 	return result;
 }
 
-void LogToFile(const wchar_t* message);
-void LogToFile(std::wstring message);
 
 
 /// <summary>
@@ -210,6 +240,7 @@ bool InventorySack_AddItem::Persist(GAME::ItemReplicaInfo replicaInfo, bool isHa
 		color.b = 1;
 		color.a = 1;
 
+		// TODO: How can translation support be added?
 		auto header = std::wstring(L"Item looted");
 		auto body = std::wstring(L"By Item Assistant");
 
@@ -253,8 +284,19 @@ bool InventorySack_AddItem::HandleItem(void* stash, GAME::Item* item) {
 		return false;
 	}
 
-	// TODO: Read settings.json to find the configured stash tab to loot from
-	auto lastSackPtr = sacks->at(sacks->size() - 1);
+
+	// Determine the correct stash sack..
+	int toLootFrom;
+	if (m_stashTabLootFrom == 0) {
+		toLootFrom = sacks->size() - 1;
+	} else {
+		// m_stashTabLootFrom is index from 1, we never want to go <0 nor >= size.
+		toLootFrom = max(0, 
+			min(sacks->size() - 1, m_stashTabLootFrom - 1)
+		);
+	}
+
+	auto lastSackPtr = sacks->at(toLootFrom);
 	if ((void*)lastSackPtr != stash) {
 		// LogToFile(L"Not looting: Item is not in transfer stash");
 		return false;
@@ -277,10 +319,6 @@ bool InventorySack_AddItem::HandleItem(void* stash, GAME::Item* item) {
 		modName.erase(std::remove(modName.begin(), modName.end(), '\r'), modName.end());
 		modName.erase(std::remove(modName.begin(), modName.end(), '\n'), modName.end());
 	}
-
 	
-	//LogToFile(L"' Mod: " + modName);
-	//LogToFile(L"', GameMode: " + std::to_wstring(fnGetGameInfoMode(gameInfo)));
-
 	return Persist(replica, fnGetHardcore(gameInfo), modName);
 }

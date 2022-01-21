@@ -20,6 +20,7 @@ private:
 	static DataQueue* m_dataQueue;
 	static HANDLE m_hEvent;
 	static GetPrivateStash privateStashHook;
+	static int m_stashTabLootFrom;
 
 
 	typedef int* (__thiscall *GameEngine_GetTransferSack)(void* This, int idx);

@@ -99,9 +99,6 @@
     <ClInclude Include="SetHardcore.h">
       <Filter>CoreHooks\Stash</Filter>
     </ClInclude>
-    <ClInclude Include="ShowCinematicText.h">
-      <Filter>CoreHooks\Misc</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -169,9 +166,6 @@
     </ClCompile>
     <ClCompile Include="SetHardcore.cpp">
       <Filter>CoreHooks\Stash</Filter>
-    </ClCompile>
-    <ClCompile Include="ShowCinematicText.cpp">
-      <Filter>CoreHooks\Misc</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

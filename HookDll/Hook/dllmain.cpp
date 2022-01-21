@@ -188,11 +188,11 @@ static void ConfigureStashDetectionHooks(std::vector<BaseMethodHook*>& hooks) {
 	
 }
 
-void DoLog(const wchar_t* message) {
-	LOG(message);
+void LogToFile(const wchar_t* message) {
+	LOG(message)
 }
-void DoLog(std::wstring message) {
-	DoLog(message.c_str());
+void LogToFile(std::wstring message) {
+	LogToFile(message.c_str());
 }
 
 
@@ -213,8 +213,8 @@ int ProcessAttach(HINSTANCE _hModule) {
 	LOG(L"Preparing replica hooks..");
 	hooks.push_back(new EquipmentSeedInfo(&g_dataQueue, g_hEvent));
 	hooks.push_back(listener);
-	// hooks.push_back(new GameEngineUpdate(&g_dataQueue, g_hEvent));	
 	hooks.push_back(new ItemRelicSeedInfo(&g_dataQueue, g_hEvent));
+	// hooks.push_back(new GameEngineUpdate(&g_dataQueue, g_hEvent));	 // Debug/test only
 	
 
 	std::stringstream msg;
