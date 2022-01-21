@@ -97,8 +97,8 @@ void* __fastcall InventorySack_AddItem::Hooked_GameInfo_GameInfo_Param(void* Thi
 	return result;
 }
 
-void DoLog(const wchar_t* message);
-void DoLog(std::wstring message);
+void LogToFile(const wchar_t* message);
+void LogToFile(std::wstring message);
 
 
 /// <summary>
@@ -189,6 +189,8 @@ std::wstring randomFilename() {
 	return str.substr(0, 32) + L".csv";    // assumes 32 < number of characters in str         
 }
 
+
+
 bool InventorySack_AddItem::Persist(GAME::ItemReplicaInfo replicaInfo, bool isHardcore, std::wstring mod) {
 	std::wstring fullPath = m_storageFolder + randomFilename();
 	std::wofstream stream;
@@ -197,15 +199,26 @@ bool InventorySack_AddItem::Persist(GAME::ItemReplicaInfo replicaInfo, bool isHa
 	stream.flush();
 	stream.close();
 
-	DoLog(L"Storing to " + fullPath);
+	LogToFile(L"Storing to " + fullPath);
 
 	std::ifstream verification;
 	verification.open(fullPath);
 	if (verification) {
+		GAME::Color color;
+		color.r = 1;
+		color.g = 1;
+		color.b = 1;
+		color.a = 1;
+
+		auto header = std::wstring(L"Item looted");
+		auto body = std::wstring(L"By Item Assistant");
+
+		GAME::Engine* engine = fnGetEngine();
+		fnShowCinematicText(engine, &header, &body, 5, &color);
 		return true;
 	}
 
-	DoLog(L"Error: written CSV file does not exist");
+	LogToFile(L"Error: written CSV file does not exist");
 
 
 	return false;
@@ -222,39 +235,39 @@ bool InventorySack_AddItem::HandleItem(void* stash, GAME::Item* item) {
 	GAME::ItemReplicaInfo replica;
 	fnItemGetItemReplicaInfo(item, replica);
 	if (!IsRelevant(replica)) {
-		// DoLog(L"Not looting: Item is not relevant");
+		// LogToFile(L"Not looting: Item is not relevant");
 		return false;
 	}
 
 	void* realPtr = fnGetPlayerTransfer(gameEngine);
 	if (realPtr == nullptr) {
-		// DoLog(L"Not looting: Unable to locate transfer stash");
+		// LogToFile(L"Not looting: Unable to locate transfer stash");
 		return false;
 	}
 
 	std::vector<GAME::InventorySack*>* sacks = (std::vector<GAME::InventorySack*>*)realPtr;
-	//DoLog(L"There are: " + std::to_wstring(sacks->size()) + L"Inventory sacks");
+	//LogToFile(L"There are: " + std::to_wstring(sacks->size()) + L"Inventory sacks");
 
 	if (sacks->size() < 2) {
-		// DoLog(L"Not looting: No transfer stash tabs");
+		// LogToFile(L"Not looting: No transfer stash tabs");
 		return false;
 	}
 
 	// TODO: Read settings.json to find the configured stash tab to loot from
 	auto lastSackPtr = sacks->at(sacks->size() - 1);
 	if ((void*)lastSackPtr != stash) {
-		// DoLog(L"Not looting: Item is not in transfer stash");
+		// LogToFile(L"Not looting: Item is not in transfer stash");
 		return false;
 	}
 
 	GAME::Engine* engine = fnGetEngine();
 	if (engine == nullptr) {
-		DoLog(L"Engine is null, aborting..");
+		LogToFile(L"Engine is null, aborting..");
 		return false;
 	}
 	GAME::GameInfo* gameInfo = fnGetGameInfo(fnGetEngine());
 	if (gameInfo == nullptr) {
-		DoLog(L"GameInfo is null, aborting..");
+		LogToFile(L"GameInfo is null, aborting..");
 		return false;
 	}
 
@@ -266,8 +279,8 @@ bool InventorySack_AddItem::HandleItem(void* stash, GAME::Item* item) {
 	}
 
 	
-	//DoLog(L"' Mod: " + modName);
-	//DoLog(L"', GameMode: " + std::to_wstring(fnGetGameInfoMode(gameInfo)));
+	//LogToFile(L"' Mod: " + modName);
+	//LogToFile(L"', GameMode: " + std::to_wstring(fnGetGameInfoMode(gameInfo)));
 
 	return Persist(replica, fnGetHardcore(gameInfo), modName);
 }

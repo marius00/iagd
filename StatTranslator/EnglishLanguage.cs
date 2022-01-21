@@ -688,7 +688,6 @@ namespace StatTranslator {
             {"iatag_feedback_too_close_to_stash", "Delaying stash loot - Standing too close to stash!"},
             {"iatag_feedback_stash_position_unknown", "Cannot loot, stash position still unknown.."},
             {"iatag_feedback_delaying_stash_loot_status", "Waiting for stash to close.."},
-            {"iatag_feedback_no_items_to_loot", "No items to loot in SHARED stash tab"},
             {"iatag_feedback_unable_to_loot_stash", "Unable to loot SHARED stash page."},
             {"iatag_feedback_item_does_not_exist", "Cannot deposit item, item does not appear to exist.. (ghost item)"},
             {"iatag_feedback_cloud_save_enabled_ingame", "WARNING - Grim Dawn Cloud saving is active."},

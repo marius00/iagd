@@ -16,11 +16,14 @@
     <Filter Include="Shared">
       <UniqueIdentifier>{777d6945-1330-4415-86b9-6cf0b9958333}</UniqueIdentifier>
     </Filter>
-    <Filter Include="CoreHooks\StashDetection">
-      <UniqueIdentifier>{af07545a-97de-4a4c-9bc3-ffbfc51487a5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="CoreHooks\ItemSeed">
       <UniqueIdentifier>{4d9ebb39-ad92-4146-8815-ba96a80c9eb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CoreHooks\Misc">
+      <UniqueIdentifier>{e28bbdb4-ac23-43b0-bcc1-46f9b75886ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CoreHooks\Stash">
+      <UniqueIdentifier>{af07545a-97de-4a4c-9bc3-ffbfc51487a5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -43,13 +46,13 @@
       <Filter>CoreHooks</Filter>
     </ClInclude>
     <ClInclude Include="InventorySack_AddItem.h">
-      <Filter>CoreHooks\StashDetection</Filter>
+      <Filter>CoreHooks\Stash</Filter>
     </ClInclude>
     <ClInclude Include="NpcDetectionHook.h">
-      <Filter>CoreHooks\StashDetection</Filter>
+      <Filter>CoreHooks\Stash</Filter>
     </ClInclude>
     <ClInclude Include="SaveTransferStash.h">
-      <Filter>CoreHooks\StashDetection</Filter>
+      <Filter>CoreHooks\Stash</Filter>
     </ClInclude>
     <ClInclude Include="BaseMethodHook.h">
       <Filter>CoreHooks</Filter>
@@ -61,7 +64,7 @@
       <Filter>CoreHooks</Filter>
     </ClInclude>
     <ClInclude Include="GetPrivateStash.h">
-      <Filter>CoreHooks\StashDetection</Filter>
+      <Filter>CoreHooks\Stash</Filter>
     </ClInclude>
     <ClInclude Include="StateRequestNpcAction.h">
       <Filter>CoreHooks\PlayerPosition</Filter>
@@ -70,7 +73,7 @@
       <Filter>CoreHooks\PlayerPosition</Filter>
     </ClInclude>
     <ClInclude Include="CanUseDismantle.h">
-      <Filter>CoreHooks\StashDetection</Filter>
+      <Filter>CoreHooks\Stash</Filter>
     </ClInclude>
     <ClInclude Include="GrimTypes.h">
       <Filter>Shared</Filter>
@@ -91,10 +94,13 @@
       <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="SetTransferOpen.h">
-      <Filter>CoreHooks\StashDetection</Filter>
+      <Filter>CoreHooks\Stash</Filter>
     </ClInclude>
     <ClInclude Include="SetHardcore.h">
-      <Filter>CoreHooks\StashDetection</Filter>
+      <Filter>CoreHooks\Stash</Filter>
+    </ClInclude>
+    <ClInclude Include="ShowCinematicText.h">
+      <Filter>CoreHooks\Misc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -117,19 +123,19 @@
       <Filter>Shared</Filter>
     </ClCompile>
     <ClCompile Include="InventorySack_AddItem.cpp">
-      <Filter>CoreHooks\StashDetection</Filter>
+      <Filter>CoreHooks\Stash</Filter>
     </ClCompile>
     <ClCompile Include="NpcDetectionHook.cpp">
-      <Filter>CoreHooks\StashDetection</Filter>
+      <Filter>CoreHooks\Stash</Filter>
     </ClCompile>
     <ClCompile Include="SaveTransferStash.cpp">
-      <Filter>CoreHooks\StashDetection</Filter>
+      <Filter>CoreHooks\Stash</Filter>
     </ClCompile>
     <ClCompile Include="BaseMethodHook.cpp">
       <Filter>CoreHooks</Filter>
     </ClCompile>
     <ClCompile Include="GetPrivateStash.cpp">
-      <Filter>CoreHooks\StashDetection</Filter>
+      <Filter>CoreHooks\Stash</Filter>
     </ClCompile>
     <ClCompile Include="StateRequestNpcAction.cpp">
       <Filter>CoreHooks\PlayerPosition</Filter>
@@ -138,7 +144,7 @@
       <Filter>CoreHooks\PlayerPosition</Filter>
     </ClCompile>
     <ClCompile Include="CanUseDismantle.cpp">
-      <Filter>CoreHooks\StashDetection</Filter>
+      <Filter>CoreHooks\Stash</Filter>
     </ClCompile>
     <ClCompile Include="GrimTypes.cpp">
       <Filter>Shared</Filter>
@@ -159,10 +165,13 @@
       <Filter>Shared</Filter>
     </ClCompile>
     <ClCompile Include="SetTransferOpen.cpp">
-      <Filter>CoreHooks\StashDetection</Filter>
+      <Filter>CoreHooks\Stash</Filter>
     </ClCompile>
     <ClCompile Include="SetHardcore.cpp">
-      <Filter>CoreHooks\StashDetection</Filter>
+      <Filter>CoreHooks\Stash</Filter>
+    </ClCompile>
+    <ClCompile Include="ShowCinematicText.cpp">
+      <Filter>CoreHooks\Misc</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
