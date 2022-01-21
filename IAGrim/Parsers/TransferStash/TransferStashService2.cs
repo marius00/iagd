@@ -180,7 +180,6 @@ namespace IAGrim.Parsers.TransferStash {
                 }
                 else {
                     Logger.Info($"No items found in transfer stash {lootFromStashIdx + 1}.");
-                    feedbacks.Add(UserFeedback.FromTag("iatag_feedback_no_items_to_loot"));
                 }
 
                 return feedbacks;
