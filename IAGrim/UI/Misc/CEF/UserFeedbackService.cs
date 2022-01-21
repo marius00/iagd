@@ -18,7 +18,7 @@ namespace IAGrim.UI.Misc.CEF {
             _cefBrowserHandler = cefBrowserHandler;
         }
 
-        public void Print(List<UserFeedback> feedbacks) {
+        public void SetFeedback(List<UserFeedback> feedbacks) {
             foreach (var entry in feedbacks) {
 
                 if (!IsRecent(entry)) {

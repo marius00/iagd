@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using EvilsoftCommons.Exceptions;
 using IAGrim.Database;
 using IAGrim.Database.Interfaces;
+using IAGrim.UI.Misc.CEF;
 using IAGrim.Utilities;
 using log4net;
 
@@ -19,10 +20,12 @@ namespace IAGrim.Services {
         private volatile bool _isCancelled;
         private readonly IPlayerItemDao _playerItemDao;
         private readonly IReplicaItemDao _replicaItemDao;
+        private readonly UserFeedbackService _userFeedbackService;
 
-        public CsvParsingService(IPlayerItemDao playerItemDao, IReplicaItemDao replicaItemDao) {
+        public CsvParsingService(IPlayerItemDao playerItemDao, IReplicaItemDao replicaItemDao, UserFeedbackService userFeedbackService) {
             _playerItemDao = playerItemDao;
             _replicaItemDao = replicaItemDao;
+            _userFeedbackService = userFeedbackService;
         }
 
         private class QueuedCsv {
@@ -78,6 +81,7 @@ namespace IAGrim.Services {
                 Filename = filename,
                 Cooldown = cooldown
             });
+            _userFeedbackService.SetFeedback(UserFeedback.FromTagSingleton("iatag_feedback_instalooted"));
         }
 
         public void Dispose() {

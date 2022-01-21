@@ -603,6 +603,7 @@ iatag_ui_resistance_lightning=Lightning
 iatag_ui_resistance_physical=Physical
 iatag_ui_resistance_piercing=Piercing
 iatag_ui_resistance_poison=Poison
+iatag_ui_resistance_slow=Slow
 iatag_ui_resistance_stun=Stun
 iatag_ui_resistance_vitality=Vitality
 iatag_ui_resistances=Resistances

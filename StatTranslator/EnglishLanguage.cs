@@ -696,6 +696,7 @@ namespace StatTranslator {
             {"iatag_feedback_unknown_not_looted", "{0} items were not looted due to being unidentified"},
             {"iatag_feedback_duplicates_not_looted", "{0} items were not looted due to being possible duplicates (bugged items)"},
             {"iatag_feedback_unable_to_deposit", "An error occurred depositing items, check the logs."},
+            {"iatag_feedback_instalooted", "Item teleported from GD"},
 
             {"iatag_slot_any", "Any"},
             {"iatag_slot_armor", "Armor"},

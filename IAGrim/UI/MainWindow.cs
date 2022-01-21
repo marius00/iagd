@@ -446,7 +446,7 @@ namespace IAGrim.UI {
                     Close();
             }
 
-            _csvParsingService = new CsvParsingService(playerItemDao, replicaItemDao);
+            _csvParsingService = new CsvParsingService(playerItemDao, replicaItemDao, _userFeedbackService);
             _csvFileMonitor.OnModified += (_, arg) => {
                 var csvEvent = arg as CsvFileMonitor.CsvEvent;
                 _csvParsingService.Queue(csvEvent.Filename, csvEvent.Cooldown);

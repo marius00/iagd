@@ -59,6 +59,8 @@ namespace IAGrim.UI.Filters {
                     resistTypes.Add("Bleeding");
                 }
 
+                // TODO: Add freeze
+
                 if (resistStun.Checked) {
                     resistTypes.Add("Stun");
                 }

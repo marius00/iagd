@@ -80,7 +80,7 @@ namespace IAGrim.Parsers.TransferStash {
                     feedback = UserFeedback.FromTagSingleton("iatag_feedback_unable_to_loot_stash");
                 }
 
-                _feedbackService.Print(feedback);
+                _feedbackService.SetFeedback(feedback);
             }
         }
 
