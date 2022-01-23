@@ -7,10 +7,12 @@
   color: var(--item-misc-info);
 }
 
-/* 4: Item name: Armor, 5: Weapon, 6: Gazer man (head?) */
-.replica-type-4, .replica-type-5, .replica-type-6 {
+/* 4: Item name: Armor, 5: Weapon, 6: Gazer man (head?), 77: GI */
+.replica-type-4, .replica-type-5, .replica-type-6, .replica-type-77 {
   display: none;
 }
+
+
 
 /* 64: Slot & Quality, ex: Epic Ring, 3: No idea.. buddyitems? */
 .replica-type-64, replica-type-3 {
