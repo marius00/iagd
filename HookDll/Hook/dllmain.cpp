@@ -40,6 +40,7 @@ HookLog g_log;
 
 
 
+
 DWORD g_lastThreadTick = 0;
 HANDLE g_hEvent;
 HANDLE g_thread;
@@ -65,6 +66,16 @@ std::wstring logStartupTime() {
 	std::wstring str(buffer);
 
 	return str;
+}
+
+void LogToFile(const wchar_t* message) {
+	g_log.out(logStartupTime() + message);
+}
+void LogToFile(std::wstring message) {
+	g_log.out(logStartupTime() + message);
+}
+void LogToFile(std::wstringstream message) {
+	g_log.out(logStartupTime() + message.str());
 }
 
 
@@ -111,7 +122,10 @@ void WorkerThreadMethod() {
 OnDemandSeedInfo* listener = nullptr;
 unsigned __stdcall WorkerThreadMethodWrap(void* argss) {
 
-	listener->Start(); // TODO: Seems to mess up. Ia keeps spamming inject.
+
+	LogToFile(L"Starting seed info thread..");
+	
+	listener->Start();
 
 	WorkerThreadMethod();
 	return 0;
@@ -188,47 +202,43 @@ static void ConfigureStashDetectionHooks(std::vector<BaseMethodHook*>& hooks) {
 	
 }
 
-void LogToFile(const wchar_t* message) {
-	LOG(message)
-}
-void LogToFile(std::wstring message) {
-	LogToFile(message.c_str());
-}
-
 
 std::vector<BaseMethodHook*> hooks;
 int ProcessAttach(HINSTANCE _hModule) {
-	LOG(L"Attatching to process..");
+	LogToFile(L"Attatching to process..");
 	g_hEvent = CreateEvent(NULL,FALSE,FALSE, L"IA_Worker");
 
 
-	LOG(L"Preparing hooks..");
+	LogToFile(L"Creating seed info container class..");
 	listener = new OnDemandSeedInfo(&g_dataQueue, g_hEvent);
 
+	LogToFile(L"Preparing hooks..");
 	// Player position hooks
 	ConfigurePlayerPositionHooks(hooks);
 	ConfigureCloudDetectionHooks(hooks);
 	ConfigureStashDetectionHooks(hooks);
 
-	LOG(L"Preparing replica hooks..");
+	LogToFile(L"Preparing replica hooks..");
 	hooks.push_back(new EquipmentSeedInfo(&g_dataQueue, g_hEvent));
 	hooks.push_back(listener);
 	hooks.push_back(new ItemRelicSeedInfo(&g_dataQueue, g_hEvent));
 	// hooks.push_back(new GameEngineUpdate(&g_dataQueue, g_hEvent));	 // Debug/test only
 	
 
-	std::stringstream msg;
-	msg << "Starting hook enabling.. " << hooks.size() << " hooks.";
-	LOG(msg);
+	std::wstringstream msg;
+	msg << L"Starting hook enabling.. " << hooks.size() << L" hooks.";
+	LogToFile(msg.str());
 	for (unsigned int i = 0; i < hooks.size(); i++) {
 		LOG(L"Enabling hook..");
 		hooks[i]->EnableHook();
 	}
-	LOG(L"Hooking complete..");
+	LogToFile(L"Hooking complete..");
 
 	
     StartWorkerThread();
-	LOG("Initialization complete..");
+	LogToFile(L"Initialization complete..");
+
+	g_log.setInitialized(true);
     return TRUE;
 }
 

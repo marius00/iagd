@@ -20,7 +20,7 @@ std::wstring GetIagdFolder() {
     return path + L"\\..\\local\\evilsoft\\iagd\\";
 }
 
-HookLog::HookLog() : m_lastMessageCount(0) {
+HookLog::HookLog() : m_lastMessageCount(0), m_initialized(false) {
     std::wstring iagdFolder = GetIagdFolder(); // %appdata%\..\local\evilsoft\iagd
 
     wchar_t tmpfolder[MAX_PATH]; // %appdata%\..\local\temp\
@@ -31,8 +31,7 @@ HookLog::HookLog() : m_lastMessageCount(0) {
 
     m_out.open(logFile);
 
-    if (m_out.is_open())
-    {
+    if (m_out.is_open()) {
         m_out
             << L"****************************"  << std::endl
             << L"    Hook Logging Started"      << std::endl
@@ -47,10 +46,8 @@ HookLog::HookLog() : m_lastMessageCount(0) {
 }
 
 
-HookLog::~HookLog()
-{
-    if (m_out.is_open())
-    {
+HookLog::~HookLog() {
+    if (m_out.is_open()) {
         m_out
             << L"****************************" << std::endl
             << L"   Hook Logging Terminated  " << std::endl
@@ -61,18 +58,13 @@ HookLog::~HookLog()
 }
 
 
-void HookLog::out( std::wstring const& output )
-{
-    if (m_out.is_open())
-    {
-        if (!m_lastMessage.empty())
-        {
-            if (m_lastMessage.compare(output) == 0)
-            {
+void HookLog::out( std::wstring const& output ) {
+    if (m_out.is_open()) {
+        if (!m_lastMessage.empty()) {
+            if (m_lastMessage.compare(output) == 0) {
                 ++m_lastMessageCount;
             }
-            else
-            {
+            else {
 				if (m_lastMessageCount > 1) {
 					//m_out << L"Last message was repeated " << m_lastMessageCount << L" times." << std::endl;
 				}
@@ -81,11 +73,18 @@ void HookLog::out( std::wstring const& output )
                 m_out << output.c_str() << std::endl;
             }
         }
-        else
-        {
+        else {
             m_lastMessage = output;
             m_lastMessageCount = 1;
             m_out << output.c_str() << std::endl;
         }
+
+		if (!m_initialized) {
+			m_out.flush();
+		}
     }
+}
+
+void HookLog::setInitialized(bool b) {
+	m_initialized = b;
 }
