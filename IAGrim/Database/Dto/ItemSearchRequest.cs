@@ -18,6 +18,7 @@ namespace IAGrim.Database.Dto {
         public bool DuplicatesOnly { get; set; }
         public string Mod { get; set; }
         public bool IsHardcore { get; set; }
+        public bool RecipeItemsOnly { get; set; }
         public int PrefixRarity { get; set; }
 
         public List<string> Classes { get; set; }

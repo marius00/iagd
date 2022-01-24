@@ -608,6 +608,7 @@ namespace StatTranslator {
             {"iatag_ui_physique", "Physique"},
             {"iatag_ui_spirit", "Spirit"},
             {"iatag_ui_cunning", "Cunning"},
+            {"iatag_ui_onlycraftable", "Craftable only"},
             
 
             {"iatag_ui_javascript_not_ready_title", "Loading.."},

@@ -25,6 +25,8 @@ namespace IAGrim.UI.Filters {
         public bool GrantsSkill => cbGrantsSkill.Checked;
         public bool WithSummonerSkillOnly => cbSummonerSkill.Checked;
 
+        public bool CraftableOnly => cbCraftable.Checked;
+
         public List<string[]> Filters {
             get {
                 var filters = new List<string[]>();
@@ -34,8 +36,7 @@ namespace IAGrim.UI.Filters {
                 }
 
                 if (shieldStuff.Checked) {
-                    filters.Add(new[]
-                    {
+                    filters.Add(new[] {
                         "blockAbsorption", "defensiveBlock", "defensiveBlockChance", "defensiveBlockModifier",
                         "defensiveBlockAmountModifier"
                     });
@@ -86,8 +87,7 @@ namespace IAGrim.UI.Filters {
                     filters.Add(new[] {"petBonusName"});
                 }
 
-                if (cbEnergyRegen.Checked)
-                {
+                if (cbEnergyRegen.Checked) {
                     filters.Add(new[] {"characterManaRegen", "characterManaRegenModifier"});
                 }
 

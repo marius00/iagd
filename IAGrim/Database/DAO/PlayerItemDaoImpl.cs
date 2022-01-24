@@ -675,6 +675,10 @@ namespace IAGrim.Database {
                 queryParams.Add("wildcard", $"%{query.Wildcard.ToLower()}%");
             }
 
+            if (query.RecipeItemsOnly) {
+                queryFragments.Add("PI.BaseRecord IN (SELECT baserecord FROM RecipeItem_V2)");
+            }
+
             // Filter by mod/hc
             queryFragments.Add("(LOWER(PI.Mod) = LOWER( :mod ) OR PI.Mod IS NULL)");
             queryParams.Add("mod", query.Mod);

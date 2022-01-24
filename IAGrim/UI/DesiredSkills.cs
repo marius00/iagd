@@ -58,7 +58,8 @@ namespace IAGrim.UI
                 RecentOnly = _miscFilter.RecentOnly,
                 DesiredClass = _classesFilters.DesiredClasses,
                 GrantsSkill = _miscFilter.GrantsSkill,
-                WithSummonerSkillOnly = _miscFilter.WithSummonerSkillOnly
+                WithSummonerSkillOnly = _miscFilter.WithSummonerSkillOnly,
+                RecipeItemsOnly = _miscFilter.CraftableOnly,
             };
 
         public event EventHandler<FilterEventArgs> OnChanged;

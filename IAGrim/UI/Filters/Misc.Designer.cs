@@ -26,6 +26,9 @@ namespace IAGrim.UI.Filters {
         /// </summary>
         private void InitializeComponent() {
             this.miscPanel = new IAGrim.Theme.CollapseablePanelBox();
+            this.cbCunning = new FirefoxCheckBox();
+            this.cbSpirit = new FirefoxCheckBox();
+            this.cbPhysique = new FirefoxCheckBox();
             this.cbIncreaseArmor = new FirefoxCheckBox();
             this.cbCooldownReduction = new FirefoxCheckBox();
             this.cbDamageConversion = new FirefoxCheckBox();
@@ -48,9 +51,7 @@ namespace IAGrim.UI.Filters {
             this.cbRunspeed = new FirefoxCheckBox();
             this.cbDefense = new FirefoxCheckBox();
             this.exp = new FirefoxCheckBox();
-            this.cbCunning = new FirefoxCheckBox();
-            this.cbSpirit = new FirefoxCheckBox();
-            this.cbPhysique = new FirefoxCheckBox();
+            this.cbCraftable = new FirefoxCheckBox();
             this.miscPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -59,6 +60,7 @@ namespace IAGrim.UI.Filters {
             this.miscPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.miscPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.miscPanel.Controls.Add(this.cbCraftable);
             this.miscPanel.Controls.Add(this.cbCunning);
             this.miscPanel.Controls.Add(this.cbSpirit);
             this.miscPanel.Controls.Add(this.cbPhysique);
@@ -91,11 +93,62 @@ namespace IAGrim.UI.Filters {
             this.miscPanel.Location = new System.Drawing.Point(3, 3);
             this.miscPanel.Name = "miscPanel";
             this.miscPanel.NoRounding = false;
-            this.miscPanel.Size = new System.Drawing.Size(293, 868);
+            this.miscPanel.Size = new System.Drawing.Size(293, 900);
             this.miscPanel.TabIndex = 40;
             this.miscPanel.Tag = "iatag_ui_misc";
             this.miscPanel.Text = "Misc";
             this.miscPanel.TextLocation = "8; 5";
+            // 
+            // cbCunning
+            // 
+            this.cbCunning.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbCunning.Bold = false;
+            this.cbCunning.EnabledCalc = true;
+            this.cbCunning.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbCunning.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbCunning.IsDarkMode = false;
+            this.cbCunning.Location = new System.Drawing.Point(4, 833);
+            this.cbCunning.Name = "cbCunning";
+            this.cbCunning.Size = new System.Drawing.Size(272, 27);
+            this.cbCunning.TabIndex = 24;
+            this.cbCunning.Tag = "iatag_ui_cunning";
+            this.cbCunning.Text = "Adds Cunning";
+            this.cbCunning.UseVisualStyleBackColor = true;
+            // 
+            // cbSpirit
+            // 
+            this.cbSpirit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbSpirit.Bold = false;
+            this.cbSpirit.EnabledCalc = true;
+            this.cbSpirit.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbSpirit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbSpirit.IsDarkMode = false;
+            this.cbSpirit.Location = new System.Drawing.Point(4, 800);
+            this.cbSpirit.Name = "cbSpirit";
+            this.cbSpirit.Size = new System.Drawing.Size(272, 27);
+            this.cbSpirit.TabIndex = 23;
+            this.cbSpirit.Tag = "iatag_ui_spirit";
+            this.cbSpirit.Text = "Adds Spirit";
+            this.cbSpirit.UseVisualStyleBackColor = true;
+            // 
+            // cbPhysique
+            // 
+            this.cbPhysique.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbPhysique.Bold = false;
+            this.cbPhysique.EnabledCalc = true;
+            this.cbPhysique.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbPhysique.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbPhysique.IsDarkMode = false;
+            this.cbPhysique.Location = new System.Drawing.Point(4, 767);
+            this.cbPhysique.Name = "cbPhysique";
+            this.cbPhysique.Size = new System.Drawing.Size(272, 27);
+            this.cbPhysique.TabIndex = 22;
+            this.cbPhysique.Tag = "iatag_ui_physique";
+            this.cbPhysique.Text = "Adds Physique";
+            this.cbPhysique.UseVisualStyleBackColor = true;
             // 
             // cbIncreaseArmor
             // 
@@ -459,56 +512,22 @@ namespace IAGrim.UI.Filters {
             this.exp.Tag = "iatag_ui_experience";
             this.exp.Text = "Experience";
             // 
-            // cbCunning
+            // cbCraftable
             // 
-            this.cbCunning.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.cbCraftable.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbCunning.Bold = false;
-            this.cbCunning.EnabledCalc = true;
-            this.cbCunning.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cbCunning.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbCunning.IsDarkMode = false;
-            this.cbCunning.Location = new System.Drawing.Point(4, 833);
-            this.cbCunning.Name = "cbCunning";
-            this.cbCunning.Size = new System.Drawing.Size(272, 27);
-            this.cbCunning.TabIndex = 24;
-            this.cbCunning.Tag = "iatag_ui_cunning";
-            this.cbCunning.Text = "Adds Cunning";
-            this.cbCunning.UseVisualStyleBackColor = true;
-            // 
-            // cbSpirit
-            // 
-            this.cbSpirit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbSpirit.Bold = false;
-            this.cbSpirit.EnabledCalc = true;
-            this.cbSpirit.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cbSpirit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbSpirit.IsDarkMode = false;
-            this.cbSpirit.Location = new System.Drawing.Point(4, 800);
-            this.cbSpirit.Name = "cbSpirit";
-            this.cbSpirit.Size = new System.Drawing.Size(272, 27);
-            this.cbSpirit.TabIndex = 23;
-            this.cbSpirit.Tag = "iatag_ui_spirit";
-            this.cbSpirit.Text = "Adds Spirit";
-            this.cbSpirit.UseVisualStyleBackColor = true;
-            // 
-            // cbPhysique
-            // 
-            this.cbPhysique.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbPhysique.Bold = false;
-            this.cbPhysique.EnabledCalc = true;
-            this.cbPhysique.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cbPhysique.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbPhysique.IsDarkMode = false;
-            this.cbPhysique.Location = new System.Drawing.Point(4, 767);
-            this.cbPhysique.Name = "cbPhysique";
-            this.cbPhysique.Size = new System.Drawing.Size(272, 27);
-            this.cbPhysique.TabIndex = 22;
-            this.cbPhysique.Tag = "iatag_ui_physique";
-            this.cbPhysique.Text = "Adds Physique";
-            this.cbPhysique.UseVisualStyleBackColor = true;
+            this.cbCraftable.Bold = false;
+            this.cbCraftable.EnabledCalc = true;
+            this.cbCraftable.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbCraftable.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbCraftable.IsDarkMode = false;
+            this.cbCraftable.Location = new System.Drawing.Point(4, 866);
+            this.cbCraftable.Name = "cbCraftable";
+            this.cbCraftable.Size = new System.Drawing.Size(272, 27);
+            this.cbCraftable.TabIndex = 25;
+            this.cbCraftable.Tag = "iatag_ui_onlycraftable";
+            this.cbCraftable.Text = "Craftable only";
+            this.cbCraftable.UseVisualStyleBackColor = true;
             // 
             // Misc
             // 
@@ -516,7 +535,7 @@ namespace IAGrim.UI.Filters {
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.miscPanel);
             this.Name = "Misc";
-            this.Size = new System.Drawing.Size(299, 898);
+            this.Size = new System.Drawing.Size(299, 917);
             this.Load += new System.EventHandler(this.Misc_Load);
             this.miscPanel.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -551,5 +570,6 @@ namespace IAGrim.UI.Filters {
         private FirefoxCheckBox cbCunning;
         private FirefoxCheckBox cbSpirit;
         private FirefoxCheckBox cbPhysique;
+        private FirefoxCheckBox cbCraftable;
     }
 }
