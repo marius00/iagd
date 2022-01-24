@@ -44,6 +44,7 @@ private:
 	static InventorySack_AddItem_Drop dll_InventorySack_AddItem_Drop;
 	static InventorySack_AddItem_Vec2 dll_InventorySack_AddItem_Vec2;
 	static std::wstring m_storageFolder;
+	static ULONGLONG m_lastNotificationTickTime;
 
 
 	// Game info is used to monitor IsHardcore and ModLabel
@@ -54,4 +55,5 @@ private:
 
 	static bool HandleItem(void* stash, GAME::Item* item);
 	static bool Persist(GAME::ItemReplicaInfo replicaInfo, bool isHardcore, std::wstring mod);
+	static void NotifyLooted();
 };

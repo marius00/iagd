@@ -36,6 +36,7 @@ InventorySack_AddItem::InventorySack_AddItem_Drop InventorySack_AddItem::dll_Inv
 InventorySack_AddItem::InventorySack_AddItem_Vec2 InventorySack_AddItem::dll_InventorySack_AddItem_Vec2;
 std::wstring InventorySack_AddItem::m_storageFolder;
 int InventorySack_AddItem::m_stashTabLootFrom;
+ULONGLONG InventorySack_AddItem::m_lastNotificationTickTime;
 
 int ReadPreferredStashLootTab() {
 	boost::property_tree::ptree loadPtreeRoot;
@@ -97,6 +98,7 @@ InventorySack_AddItem::InventorySack_AddItem(DataQueue* dataQueue, HANDLE hEvent
 
 	CreateDirectoryW(m_storageFolder.c_str(), nullptr);
 	m_stashTabLootFrom = ReadPreferredStashLootTab();
+	m_lastNotificationTickTime = 0;
 }
 
 InventorySack_AddItem::InventorySack_AddItem() {
@@ -141,7 +143,6 @@ void* __fastcall InventorySack_AddItem::Hooked_GameInfo_GameInfo_Param(void* Thi
 /// <returns></returns>
 void* __fastcall InventorySack_AddItem::Hooked_InventorySack_AddItem_Drop(void* This, GAME::Item *item, bool findPosition, bool SkipPlaySound) {
 	if (HandleItem(This, item)) {
-		fnPlayDropSound(item);
 		return (void*)1;
 	}
 
@@ -159,7 +160,6 @@ void* __fastcall InventorySack_AddItem::Hooked_InventorySack_AddItem_Drop(void* 
 /// <returns></returns>
 void* __fastcall InventorySack_AddItem::Hooked_InventorySack_AddItem_Vec2(void* This, void* position, GAME::Item* item, bool SkipPlaySound) {
 	if (HandleItem(This, item)) {
-		fnPlayDropSound(item);
 		return (void*)1;
 	}
 
@@ -234,6 +234,20 @@ bool InventorySack_AddItem::Persist(GAME::ItemReplicaInfo replicaInfo, bool isHa
 	std::ifstream verification;
 	verification.open(fullPath);
 	if (verification) {
+		return true;
+	}
+
+	LogToFile(L"Error: written CSV file does not exist");
+
+
+	return false;
+}
+
+void InventorySack_AddItem::NotifyLooted() {
+	const ULONGLONG now = GetTickCount64();
+
+	// Limit notifications to 1 per 3s, roughly the fade time.
+	if (now - m_lastNotificationTickTime > 3000) {
 		GAME::Color color;
 		color.r = 1;
 		color.g = 1;
@@ -246,13 +260,8 @@ bool InventorySack_AddItem::Persist(GAME::ItemReplicaInfo replicaInfo, bool isHa
 
 		GAME::Engine* engine = fnGetEngine();
 		fnShowCinematicText(engine, &header, &body, 5, &color);
-		return true;
+		m_lastNotificationTickTime = now;
 	}
-
-	LogToFile(L"Error: written CSV file does not exist");
-
-
-	return false;
 }
 
 /// <summary>
@@ -266,21 +275,17 @@ bool InventorySack_AddItem::HandleItem(void* stash, GAME::Item* item) {
 	GAME::ItemReplicaInfo replica;
 	fnItemGetItemReplicaInfo(item, replica);
 	if (!IsRelevant(replica)) {
-		// LogToFile(L"Not looting: Item is not relevant");
 		return false;
 	}
 
 	void* realPtr = fnGetPlayerTransfer(gameEngine);
 	if (realPtr == nullptr) {
-		// LogToFile(L"Not looting: Unable to locate transfer stash");
 		return false;
 	}
 
-	std::vector<GAME::InventorySack*>* sacks = (std::vector<GAME::InventorySack*>*)realPtr;
-	//LogToFile(L"There are: " + std::to_wstring(sacks->size()) + L"Inventory sacks");
+	auto sacks = static_cast<std::vector<GAME::InventorySack*>*>(realPtr);
 
 	if (sacks->size() < 2) {
-		// LogToFile(L"Not looting: No transfer stash tabs");
 		return false;
 	}
 
@@ -296,9 +301,8 @@ bool InventorySack_AddItem::HandleItem(void* stash, GAME::Item* item) {
 		);
 	}
 
-	auto lastSackPtr = sacks->at(toLootFrom);
-	if ((void*)lastSackPtr != stash) {
-		// LogToFile(L"Not looting: Item is not in transfer stash");
+	const auto lastSackPtr = sacks->at(toLootFrom);
+	if (static_cast<void*>(lastSackPtr) != stash) {
 		return false;
 	}
 
@@ -320,5 +324,12 @@ bool InventorySack_AddItem::HandleItem(void* stash, GAME::Item* item) {
 		modName.erase(std::remove(modName.begin(), modName.end(), '\n'), modName.end());
 	}
 	
-	return Persist(replica, fnGetHardcore(gameInfo), modName);
+	if (Persist(replica, fnGetHardcore(gameInfo), modName)) {
+		NotifyLooted();
+		fnPlayDropSound(item);
+		return true;
+	}
+
+	return false;
+
 }
