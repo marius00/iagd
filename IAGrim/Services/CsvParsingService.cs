@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using EvilsoftCommons;
 using EvilsoftCommons.Exceptions;
 using IAGrim.Database;
 using IAGrim.Database.Interfaces;
@@ -59,6 +60,7 @@ namespace IAGrim.Services {
 
                         // CSV probably wont have stackcount
                         item.StackCount = Math.Max(item.StackCount, 1);
+                        item.CreationDate = DateTime.UtcNow.ToTimestamp();
                         _playerItemDao.Save(item);
                         File.Delete(entry.Filename);
 

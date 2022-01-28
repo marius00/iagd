@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+using EvilsoftCommons;
 using IAGrim.Backup.Cloud.Dto;
 using IAGrim.Database;
 
@@ -22,7 +24,7 @@ namespace IAGrim.Backup.Cloud.Util {
                 SuffixRecord = pi.SuffixRecord,
                 TransmuteRecord = pi.TransmuteRecord,
                 Id = pi.CloudId,
-                CreatedAt = pi.CreationDate ?? 0,
+                CreatedAt = pi.CreationDate ?? DateTime.UtcNow.ToTimestamp(),
                 LevelRequirement = (int)pi.MinimumLevel,
                 Name = pi.Name,
                 NameLowercase = pi.NameLowercase,
@@ -55,6 +57,7 @@ namespace IAGrim.Backup.Cloud.Util {
                 Name = itemDto.Name,
                 NameLowercase = itemDto.NameLowercase,
                 Rarity = itemDto.Rarity
+                
             };
         }
     }
