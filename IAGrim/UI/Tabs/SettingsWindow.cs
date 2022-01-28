@@ -68,6 +68,8 @@ namespace IAGrim.UI.Tabs {
             _controller.BindCheckbox(cbHideSkills);
             _controller.LoadDefaults();
 
+            // TODO: Write out the settingscontroller and add logic for updating showskills config
+
             linkCheckForUpdates.Visible = Environment.Is64BitOperatingSystem;
             pbAutomaticUpdates.Visible = Environment.Is64BitOperatingSystem;
         }

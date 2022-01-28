@@ -160,6 +160,7 @@ void EndWorkerThread() {
 #pragma endregion
 
 static void ConfigurePlayerPositionHooks(std::vector<BaseMethodHook*>& hooks) {
+	LogToFile(L"Configuring player position hooks..");
 	hooks.push_back(new StateRequestMoveAction(&g_dataQueue, g_hEvent, REQUEST_MOVE_ACTION_MOVETO));
 	hooks.push_back(new StateRequestMoveAction(&g_dataQueue, g_hEvent, REQUEST_MOVE_ACTION_IDLE));
 	hooks.push_back(new StateRequestMoveAction(&g_dataQueue, g_hEvent, REQUEST_MOVE_ACTION_LONG_IDLE));
@@ -172,6 +173,7 @@ static void ConfigurePlayerPositionHooks(std::vector<BaseMethodHook*>& hooks) {
 	hooks.push_back(new StateRequestMoveAction(&g_dataQueue, g_hEvent, REQUEST_MOVE_ACTION_SKILL));
 
 	// For these, the target position could actually be the smuggler.
+	LogToFile(L"Configuring player position hooks for move-to-npc..");
 	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_IDLE));
 	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_MOVETO));
 	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_JUMP_TO_SKILL));
@@ -186,6 +188,7 @@ static void ConfigurePlayerPositionHooks(std::vector<BaseMethodHook*>& hooks) {
 
 // Cloud detection (is cloud enabled?) hooks
 static void ConfigureCloudDetectionHooks(std::vector<BaseMethodHook*>& hooks) {
+	LogToFile(L"Configuring cloud detection hooks..");
 	hooks.push_back(new CloudGetNumFiles(&g_dataQueue, g_hEvent));
 	hooks.push_back(new CloudRead(&g_dataQueue, g_hEvent));
 	hooks.push_back(new CloudWrite(&g_dataQueue, g_hEvent));
@@ -193,13 +196,23 @@ static void ConfigureCloudDetectionHooks(std::vector<BaseMethodHook*>& hooks) {
 
 static void ConfigureStashDetectionHooks(std::vector<BaseMethodHook*>& hooks) {
 	// Stash detection hooks
+	LogToFile(L"Configuring stash detection hooks..");
 	hooks.push_back(new NpcDetectionHook(&g_dataQueue, g_hEvent));
 	hooks.push_back(new CanUseDismantle(&g_dataQueue, g_hEvent));	
 	hooks.push_back(new SaveTransferStash(&g_dataQueue, g_hEvent));
-	hooks.push_back(new InventorySack_AddItem(&g_dataQueue, g_hEvent)); // Includes GetPrivateStash internally
 	hooks.push_back(new SetTransferOpen(&g_dataQueue, g_hEvent));
+
+
+	try {
+		LogToFile(L"Configuring instaloot hook..");
+		hooks.push_back(new InventorySack_AddItem(&g_dataQueue, g_hEvent)); // Includes GetPrivateStash internally
+	} catch (...) {
+		// For now just let it be. Known issue inside InventorySack_AddItem
+		LogToFile(L"ERROR Configuring instaloot hook..");
+	}
+
+	LogToFile(L"Configuring hc detection hook..");
 	hooks.push_back(new SetHardcore(&g_dataQueue, g_hEvent));
-	
 }
 
 
@@ -224,10 +237,7 @@ int ProcessAttach(HINSTANCE _hModule) {
 	hooks.push_back(new ItemRelicSeedInfo(&g_dataQueue, g_hEvent));
 	// hooks.push_back(new GameEngineUpdate(&g_dataQueue, g_hEvent));	 // Debug/test only
 	
-
-	std::wstringstream msg;
-	msg << L"Starting hook enabling.. " << hooks.size() << L" hooks.";
-	LogToFile(msg.str());
+	LogToFile(L"Starting hook enabling.. " + std::to_wstring(hooks.size()) + L" hooks.");
 	for (unsigned int i = 0; i < hooks.size(); i++) {
 		LOG(L"Enabling hook..");
 		hooks[i]->EnableHook();

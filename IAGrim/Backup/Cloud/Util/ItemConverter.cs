@@ -1,4 +1,5 @@
-﻿using IAGrim.Backup.Cloud.Dto;
+﻿using System;
+using IAGrim.Backup.Cloud.Dto;
 using IAGrim.Database;
 
 namespace IAGrim.Backup.Cloud.Util {
@@ -17,7 +18,7 @@ namespace IAGrim.Backup.Cloud.Util {
                 RelicCompletionBonusRecord = pi.RelicCompletionBonusRecord,
                 RelicSeed = pi.RelicSeed,
                 Seed = pi.Seed,
-                StackCount = pi.StackCount,
+                StackCount = Math.Max(pi.StackCount, 1),
                 SuffixRecord = pi.SuffixRecord,
                 TransmuteRecord = pi.TransmuteRecord,
                 Id = pi.CloudId,

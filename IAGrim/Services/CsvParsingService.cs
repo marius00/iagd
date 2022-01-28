@@ -57,6 +57,8 @@ namespace IAGrim.Services {
                         if (item == null)
                             continue;
 
+                        // CSV probably wont have stackcount
+                        item.StackCount = Math.Max(item.StackCount, 1);
                         _playerItemDao.Save(item);
                         File.Delete(entry.Filename);
 
