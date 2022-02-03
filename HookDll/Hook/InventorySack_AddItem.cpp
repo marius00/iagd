@@ -180,7 +180,14 @@ bool IsRelevant(GAME::ItemReplicaInfo& item) {
 	}
 
 	if (item.baseRecord.find("/storyelements/") != std::string::npos) {
-		return false;
+		// We'll allow lokarr, but only lokarr out of storyelements items.
+		if (item.baseRecord.find("records/storyelements/signs/signh.dbr") != std::string::npos) {} // Lokarr's Gaze
+		else if (item.baseRecord.find("records/storyelements/signs/signf.dbr") != std::string::npos) {} // Lokarr's Boots
+		else if (item.baseRecord.find("records/storyelements/signs/signs.dbr") != std::string::npos) {} // Lokarr's Mantle
+		else if (item.baseRecord.find("records/storyelements/signs/signt.dbr") != std::string::npos) {} // Lokarr's Coat
+		else {
+			return false;
+		}
 	}
 
 	if (item.baseRecord.find("/materia/") != std::string::npos) {
