@@ -33,8 +33,11 @@ function Header({activeTab, setActiveTab, showVideoGuide}: Props) {
         <Link activeClassName={style.active} href="#" onClick={() => setActiveTab(2)}>
           <Help/> {translate('app.tab.help')}
         </Link>
+        <Link activeClassName={style.active} href="#" onClick={() => openUrl("https://grimdawn.evilsoft.net/crafting/")}>
+          <OpenInNew/> {translate('app.tab.crafting')}
+        </Link>
         <Link activeClassName={style.active} href="#" onClick={() => openUrl("https://grimdawn.evilsoft.net/enchantments/")}>
-          <OpenInNew/> {translate('app.tab.components')}
+          <OpenInNew/> {translate('app.tab.recipes')}
         </Link>
         {videoGuideVisible && <Link activeClassName={style.active} href="#" onClick={() => openUrl(translate('app.tab.videoGuideUrl'))}>
             <VideoLibrary/> {translate('app.tab.videoGuide')}
