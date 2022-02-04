@@ -207,11 +207,6 @@ bool IsRelevant(GAME::ItemReplicaInfo& item) {
 		return false;
 	}
 
-	// The item has a materia, it's probably fine to loot, but lets err on the safe side and assume its not.
-	if (!item.materiaRecord.empty()) {
-		return false;
-	}
-
 	return true;
 }
 
