@@ -53,9 +53,10 @@ class EmbeddedTranslator {
     'items.displaying': 'Displaying {0}',
     'collections.filter.owned': 'Owned only',
     'collections.filter.missing': 'Missing only',
+    'collections.filter.purple': 'Purple only',
     'collections.h2': 'Experimental feature',
-    'collections.ingress1': 'This feature was added as Proof-of-concept at request from a user.',
-    'collections.ingress2': 'It may get improved or removed in the future, depending on usage.',
+    'collections.ingress1': 'If you like or dislike this feature, complain on discord or the forum.',
+    'collections.ingress2': 'This feature will get deprecated or improved pending user feedback.',
     'notification.clearall': 'Clear all'
   };
 

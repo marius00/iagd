@@ -73,6 +73,7 @@ class App extends PureComponent<object, object> {
     // @ts-ignore: setCollectionItems doesn't exist on window
     window.setCollectionItems = (data: any) => {
       const collectionItems = typeof data === 'string' ? JSON.parse(data) : data;
+      console.log('CollectionItems:', collectionItems);
       this.setState({
         collectionItems: collectionItems
       });

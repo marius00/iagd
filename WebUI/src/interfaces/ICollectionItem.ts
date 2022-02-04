@@ -4,5 +4,6 @@ export default interface ICollectionItem {
   icon: string;
   numOwnedSc: number;
   numOwnedHc: number;
+  quality: string;
 }
 

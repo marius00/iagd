@@ -2,7 +2,6 @@
 #define DATAQUEUE_H
 
 #include <queue>
-#include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
 #include <boost/thread.hpp>
 

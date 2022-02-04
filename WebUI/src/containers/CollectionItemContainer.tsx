@@ -1,4 +1,4 @@
-import {h} from "preact";
+import {Fragment, h} from "preact";
 import './ItemContainer.css';
 import ReactTooltip from 'react-tooltip';
 import ICollectionItem from '../interfaces/ICollectionItem';
@@ -14,7 +14,8 @@ interface Props {
 class CollectionItemContainer extends PureComponent<Props, object> {
   state = {
     onlyGreen: false,
-    onlyRed: false
+    onlyRed: true,
+    onlyPurple: true
   };
 
   constructor(props: Props) {
@@ -22,7 +23,7 @@ class CollectionItemContainer extends PureComponent<Props, object> {
   }
 
   stripColorCodes(initialString: any|string): string {
-    return initialString.replaceAll(/{?\^.}?/g, '');
+    return initialString?.replaceAll(/{?\^.}?/g, '') || '';
   }
 
   openItemSite(item: ICollectionItem) {
@@ -30,20 +31,7 @@ class CollectionItemContainer extends PureComponent<Props, object> {
     openUrl(url);
   }
 
-  render() {
-    const items = this.props.items;
-
-    // TODO: Use both numOwnedSc and numOwnedHc (if support is ever added)
-    const filterItems = (item: ICollectionItem) => {
-      if (this.state.onlyGreen && item.numOwnedSc < 1) {
-        return false;
-      } else if (this.state.onlyRed && item.numOwnedSc > 0) {
-        return false;
-      }
-
-      return true;
-    };
-
+  renderFilters() {
     const swapGreen = () => {
       this.setState({onlyGreen: !this.state.onlyGreen});
       setTimeout(() => ReactTooltip.rebuild(), 250);
@@ -54,8 +42,16 @@ class CollectionItemContainer extends PureComponent<Props, object> {
       setTimeout(() => ReactTooltip.rebuild(), 250);
     };
 
+    const swapPurple = () => {
+      this.setState({onlyPurple: !this.state.onlyPurple});
+      setTimeout(() => ReactTooltip.rebuild(), 250);
+    };
+
+
+
     return (
-      <div className="collectionItems">
+      <Fragment>
+
         <h2>{translate('collections.h2')}</h2>
         <p>
           {translate('collections.ingress1')}<br/>
@@ -74,23 +70,73 @@ class CollectionItemContainer extends PureComponent<Props, object> {
 
           <div className={'sliderContainer'}>
             <label className="switch">
-              <input type="checkbox" id={'cbOnlyRed'} onChange={swapRed} />
+              <input type="checkbox" id={'cbOnlyRed'} onChange={swapRed} checked={this.state.onlyRed} />
               <span className="slider round"/>
             </label>
             <label htmlFor={'cbOnlyRed'} className={'sliderLabel'}>{translate('collections.filter.missing')}</label>
           </div>
-        </div>
 
-        {items.filter(filterItems).map((item) =>
-          <a className={'collectionItem'} onClick={() => this.openItemSite(item)} key={'collected-' + item.baseRecord} data-tip={(item.numOwnedSc > 0 ? `${this.stripColorCodes(item.name)} (x${item.numOwnedSc})` : this.stripColorCodes(item.name))}>
-            <div className={(item.numOwnedSc > 0 ? 'collected' : 'uncollected') + ' imageContainer'}>
-              <img src={item.icon} />
-            </div>
-            <div className={'textContainer'}>
-              {this.stripColorCodes(item.name)}
-            </div>
-          </a>
-        )}
+          <div className={'sliderContainer'}>
+            <label className="switch">
+              <input type="checkbox" id={'cbPurpleOnly'} onChange={swapPurple} checked={this.state.onlyPurple} />
+              <span className="slider round"/>
+            </label>
+            <label htmlFor={'cbPurpleOnly'} className={'sliderLabel'}>{translate('collections.filter.purple')}</label>
+          </div>
+
+        </div>
+      </Fragment>
+
+    );
+  }
+
+  render() {
+    //const items = [this.props.items[0], this.props.items[1]];
+    const items = this.props.items;
+    const isMock = this.props.items && this.props.items.length > 0 && this.props.items[0].baseRecord === "mock item";
+
+    // TODO: Use both numOwnedSc and numOwnedHc (if support is ever added)
+    const filterItems = (item: ICollectionItem) => {
+      if (this.state.onlyGreen && item.numOwnedSc < 1) {
+        return false;
+      } else if (this.state.onlyRed && item.numOwnedSc > 0) {
+        return false;
+      } else if (this.state.onlyPurple && item.quality !== 'Legendary') {
+        return false;
+      }
+
+      return true;
+    };
+
+    const toQuality = (item: ICollectionItem) => {
+      if (item.quality === 'Legendary')
+        return 'epic';
+      else if (item.quality === 'Epic')
+        return 'blue';
+      else if (item.quality === 'Rare')
+        return 'green';
+      else
+        return 'white';
+    };
+
+// item-icon-'+ item.quality.toLowerCase()
+    return (
+      <div className="collectionItems">
+        {this.renderFilters()}
+        <div className="collectionContainer">
+          {items.filter(filterItems).map((item) =>
+            <a className={'collectionItem'} onClick={() => this.openItemSite(item)} key={'collected-' + item.baseRecord} data-tip={(item.numOwnedSc > 0 ? `${this.stripColorCodes(item.name)} (x${item.numOwnedSc})` : this.stripColorCodes(item.name))}>
+
+              {/* TODO: Icon background color */}
+              <div className={(item.numOwnedSc > 0 ? 'collected' : 'uncollected') + ' imageContainer' + (' item-icon-' + toQuality(item))}>
+                <span className="helper"></span>
+                <img src={(isMock ? "assets/":"") + item.icon} className={"item-icon" }/>
+              </div>
+
+              <p className={`item-quality-${toQuality(item)}`}>{this.stripColorCodes(item.name)}</p>
+            </a>
+          )}
+        </div>
       </div>
     );
   }

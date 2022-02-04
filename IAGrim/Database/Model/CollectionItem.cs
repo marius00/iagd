@@ -10,6 +10,7 @@ namespace IAGrim.Database.Model {
         public string Name { get; set; }
         public long NumOwnedSc { get; set; }
         public long NumOwnedHc { get; set; }
+        public string Quality { get; set; }
 
         private string _icon;
         public string Icon {

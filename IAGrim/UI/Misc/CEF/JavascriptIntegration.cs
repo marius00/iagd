@@ -85,6 +85,7 @@ namespace IAGrim.UI.Misc.CEF {
                 {"items.displaying", lang.GetTag("iatag_html_displaying") },
                 {"collections.filter.owned", lang.GetTag("iatag_html_filter_owned") },
                 {"collections.filter.missing", lang.GetTag("iatag_html_filter_missing") },
+                {"collections.filter.purple", lang.GetTag("iatag_html_filter_purple")},
                 {"collections.h2", lang.GetTag("iatag_html_h2") },
                 {"collections.ingress1", lang.GetTag("iatag_html_ingress1") },
                 {"collections.ingress2", lang.GetTag("iatag_html_ingress2") },

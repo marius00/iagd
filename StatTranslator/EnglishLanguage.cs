@@ -389,6 +389,7 @@ namespace StatTranslator {
             {"iatag_html_displaying", "Displaying {0}"},
             {"iatag_html_filter_owned", "Owned only"},
             {"iatag_html_filter_missing", "Missing only"},
+            {"iatag_html_filter_purple", "Purples only"},
             {"iatag_html_h2", "Experimental feature"},
             {"iatag_html_ingress1", "This feature was added as Proof-of-concept at request from a user."},
             {"iatag_html_ingress2", "It may get improved or removed in the future, depending on usage."},

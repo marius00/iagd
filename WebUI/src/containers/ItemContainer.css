@@ -5,6 +5,9 @@
 .item-disabled {
   text-decoration: line-through !important;
 }
+.uncollected {
+  background-color: #f01c1c82;
+}
 
 .item-icon-blue {
   background-image: url(../components/Item/rarity-Blue.png);
@@ -16,7 +19,7 @@
 .item-icon-green {
   background-image: url(../components/Item/rarity-Green.png);
 }
-.item-icon-white {
+.item-icon-white, .item-icon-unknown {
   background-image: url(../components/Item/rarity-White.png);
 }
 .item-icon-yellow {
@@ -226,7 +229,7 @@ a { cursor: pointer; }
 .item-quality-unknown {
   color: var(--item-color-unknown) !important;
 }
-.item-quality-epic {
+.item-quality-epic, .item-quality-legendary {
   color: var(--item-color-epic) !important;
 }
 .item-quality-blue {

@@ -1,7 +1,14 @@
 .collectionItems {
   margin: 15px;
 }
-
+.App-dark .collectionItems {
+  color: #ffffff;
+}
+.collectionItem {
+  text-align: center;
+  margin: 1px;
+  padding: 5px;
+}
 .collectionItem .collected {
   border: 2px solid green;
 }
@@ -9,28 +16,33 @@
 .collectionItem .uncollected {
   border: 2px solid red;
 }
+.collectionContainer .item-icon-container {
+  height: 68px;
+  width: 68px;
+}
+
+.collectionContainer .imageContainer {
+  width: 175px;
+  height: 100px;
+}
+
+.item-icon-blue, .item-icon-epic, .item-icon-yellow, .item-icon-white, .item-icon-unknown, .item-icon-green {
+  background-size: 175px 100px;
+}
+
+.helper {
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+}
 
 .collectionItem {
-  display: grid;
-  grid-template-columns: 68px auto;
-  grid-template-areas: "image text";
-  position: relative;
   background: #e8d5b6;
   border-bottom: 1px dashed gray;
   border-top: 1px dashed gray;
-}
-
-.collectionItem .imageContainer {
-  grid-area: image;
-  text-align: center;
-}
-
-.collectionItem .textContainer {
-  grid-area: text;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  margin-left: 8px;
+  display: inline-block;
+  min-height: 68px;
+  min-width: 68px;
 }
 
 .toggleContainer {

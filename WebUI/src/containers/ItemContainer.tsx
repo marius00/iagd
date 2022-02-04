@@ -94,7 +94,7 @@ class ItemContainer extends PureComponent<Props, object> {
       }
     }
 
-    return {baseRecord: "", name: "", icon: "", numOwnedSc: 0, numOwnedHc: 0};
+    return {baseRecord: "", name: "", icon: "", numOwnedSc: 0, numOwnedHc: 0, quality: ''};
   }
 
   handleClick = () => {

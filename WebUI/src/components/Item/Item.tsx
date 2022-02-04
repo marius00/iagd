@@ -36,7 +36,7 @@ export function getUniqueId(item: IItem): string {
 
 class Item extends PureComponent<Props, object> {
   stripColorCodes(initialString: any | string): string {
-    return initialString.replaceAll(/{?\^.}?/g, '');
+    return initialString?.replaceAll(/{?\^.}?/g, '');
   }
 
   openItemSite() {
