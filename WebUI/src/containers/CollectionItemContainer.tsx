@@ -33,12 +33,14 @@ class CollectionItemContainer extends PureComponent<Props, object> {
 
   renderFilters() {
     const swapGreen = () => {
-      this.setState({onlyGreen: !this.state.onlyGreen});
+      const redState = !this.state.onlyGreen ? false : this.state.onlyRed;
+      this.setState({onlyGreen: !this.state.onlyGreen, onlyRed: redState});
       setTimeout(() => ReactTooltip.rebuild(), 250);
     };
 
     const swapRed = () => {
-      this.setState({onlyRed: !this.state.onlyRed});
+      const greenState = !this.state.onlyRed ? false : this.state.onlyGreen;
+      this.setState({onlyRed: !this.state.onlyRed, onlyGreen: greenState});
       setTimeout(() => ReactTooltip.rebuild(), 250);
     };
 
@@ -61,7 +63,7 @@ class CollectionItemContainer extends PureComponent<Props, object> {
 
           <div className={'sliderContainer'}>
             <label className="switch">
-              <input type="checkbox" id={'cbOnlyGreen'} onChange={swapGreen} />
+              <input type="checkbox" id={'cbOnlyGreen'} onChange={swapGreen} checked={this.state.onlyGreen} />
               <span className="slider round"/>
             </label>
 
