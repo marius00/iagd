@@ -30,6 +30,7 @@ namespace IAGrim.Settings.Dto {
         private long? _grimDawnLocationLastModified;
         private bool _startMinimized;
         private DateTime _lastCharSyncUtc;
+        private bool _disableInstaloot;
 
         public string MachineName { get; set; }
 
@@ -224,6 +225,14 @@ namespace IAGrim.Settings.Dto {
             }
         }
 
-        
+
+        public bool DisableInstaloot {
+            get => _disableInstaloot;
+            set {
+                _disableInstaloot = value;
+                OnMutate?.Invoke(null, null);
+            }
+        }
+
     }
 }

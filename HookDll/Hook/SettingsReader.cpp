@@ -18,6 +18,7 @@ int SettingsReader::getStashTabToLootFrom() {
 	auto child = loadPtreeRoot.get_child_optional(L"local.stashToLootFrom");
 	if (!child)
 	{
+		LogToFile(L"No \"loot from\" configuration found, defaulting to last stash tab");
 		return 0;
 	}
 
@@ -42,14 +43,14 @@ bool SettingsReader::getInstalootActive() {
 
 
 	boost::property_tree::read_json(json, loadPtreeRoot);
-	auto child = loadPtreeRoot.get_child_optional(L"local.instalootDisabled");
+	auto child = loadPtreeRoot.get_child_optional(L"local.disableInstaloot");
 	if (!child)
 	{
 		LogToFile(L"InstalootDisabled: No configuration found, defaulting to enabled");
 		return false;
 	}
 	
-	const bool instalootDisabled = loadPtreeRoot.get<int>(L"local.instalootDisabled") == 1;
+	const bool instalootDisabled = loadPtreeRoot.get<bool>(L"local.disableInstaloot");
 	LogToFile(std::wstring(L"InstalootDisabled: ") + (instalootDisabled ? L"True" : L"False"));
 
 	return instalootDisabled != 1;

@@ -44,7 +44,6 @@
             this.cbDualComputer = new FirefoxCheckBox();
             this.linkSourceCode = new System.Windows.Forms.LinkLabel();
             this.cbHideSkills = new FirefoxCheckBox();
-            this.cbAutoUpdateModSettings = new FirefoxCheckBox();
             this.cbTransferAnyMod = new FirefoxCheckBox();
             this.cbShowRecipesAsItems = new FirefoxCheckBox();
             this.cbSecureTransfers = new FirefoxCheckBox();
@@ -66,6 +65,7 @@
             this.buttonLanguageSelect = new FirefoxButton();
             this.buttonViewBackups = new FirefoxButton();
             this.buttonViewLogs = new FirefoxButton();
+            this.cbDisableInstaloot = new FirefoxCheckBox();
             this.contextMenuStrip1.SuspendLayout();
             this.panelBox4.SuspendLayout();
             this.pbAutomaticUpdates.SuspendLayout();
@@ -106,6 +106,7 @@
             // panelBox4
             // 
             this.panelBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.panelBox4.Controls.Add(this.cbDisableInstaloot);
             this.panelBox4.Controls.Add(this.cbAutoDismiss);
             this.panelBox4.Controls.Add(this.cbDarkMode);
             this.panelBox4.Controls.Add(this.cbStartMinimized);
@@ -121,7 +122,6 @@
             this.panelBox4.Controls.Add(this.cbDualComputer);
             this.panelBox4.Controls.Add(this.linkSourceCode);
             this.panelBox4.Controls.Add(this.cbHideSkills);
-            this.panelBox4.Controls.Add(this.cbAutoUpdateModSettings);
             this.panelBox4.Controls.Add(this.cbTransferAnyMod);
             this.panelBox4.Controls.Add(this.cbShowRecipesAsItems);
             this.panelBox4.Controls.Add(this.cbSecureTransfers);
@@ -360,23 +360,6 @@
             this.cbHideSkills.Tag = "iatag_ui_hideskills";
             this.cbHideSkills.Text = "Hide Skills";
             this.cbHideSkills.CheckedChanged += new System.EventHandler(this.cbDisplaySkills_CheckedChanged);
-            // 
-            // cbAutoUpdateModSettings
-            // 
-            this.cbAutoUpdateModSettings.Bold = false;
-            this.cbAutoUpdateModSettings.Enabled = false;
-            this.cbAutoUpdateModSettings.EnabledCalc = true;
-            this.cbAutoUpdateModSettings.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Strikeout, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cbAutoUpdateModSettings.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbAutoUpdateModSettings.IsDarkMode = false;
-            this.cbAutoUpdateModSettings.Location = new System.Drawing.Point(3, 436);
-            this.cbAutoUpdateModSettings.Name = "cbAutoUpdateModSettings";
-            this.cbAutoUpdateModSettings.Size = new System.Drawing.Size(268, 27);
-            this.cbAutoUpdateModSettings.TabIndex = 15;
-            this.cbAutoUpdateModSettings.Tag = "iatag_ui_autoselectmod";
-            this.cbAutoUpdateModSettings.Text = "Auto Select Mod";
-            this.cbAutoUpdateModSettings.UseVisualStyleBackColor = true;
-            this.cbAutoUpdateModSettings.Visible = false;
             // 
             // cbTransferAnyMod
             // 
@@ -730,6 +713,21 @@
             this.buttonViewLogs.Text = "View Logs";
             this.buttonViewLogs.Click += new System.EventHandler(this.buttonViewLogs_Click);
             // 
+            // cbDisableInstaloot
+            // 
+            this.cbDisableInstaloot.Bold = false;
+            this.cbDisableInstaloot.EnabledCalc = true;
+            this.cbDisableInstaloot.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbDisableInstaloot.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbDisableInstaloot.IsDarkMode = false;
+            this.cbDisableInstaloot.Location = new System.Drawing.Point(3, 417);
+            this.cbDisableInstaloot.Name = "cbDisableInstaloot";
+            this.cbDisableInstaloot.Size = new System.Drawing.Size(268, 27);
+            this.cbDisableInstaloot.TabIndex = 33;
+            this.cbDisableInstaloot.Tag = "iatag_ui_disableinstaloot";
+            this.cbDisableInstaloot.Text = "Disable instaloot";
+            this.cbDisableInstaloot.CheckedChanged += new System.EventHandler(this.cbDisableInstaloot_CheckedChanged);
+            // 
             // SettingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -775,7 +773,6 @@
         private FirefoxCheckBox cbSecureTransfers;
         private FirefoxCheckBox cbShowRecipesAsItems;
         private FirefoxCheckBox cbTransferAnyMod;
-        private FirefoxCheckBox cbAutoUpdateModSettings;
         private PanelBox panelBox4;
         private FirefoxButton buttonLanguageSelect;
         private FirefoxButton buttonMigratePostgres;
@@ -802,5 +799,6 @@
         private FirefoxCheckBox cbDarkMode;
         private System.Windows.Forms.LinkLabel linkCheckForUpdates;
         private FirefoxCheckBox cbAutoDismiss;
+        private FirefoxCheckBox cbDisableInstaloot;
     }
 }

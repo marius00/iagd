@@ -64,7 +64,6 @@ namespace IAGrim.UI.Tabs {
             _controller.BindCheckbox(cbTransferAnyMod);
             _controller.BindCheckbox(cbSecureTransfers);
             _controller.BindCheckbox(cbShowRecipesAsItems);
-            _controller.BindCheckbox(cbAutoUpdateModSettings);
             _controller.BindCheckbox(cbHideSkills);
             _controller.LoadDefaults();
 
@@ -85,6 +84,8 @@ namespace IAGrim.UI.Tabs {
             cbStartMinimized.Checked = _settings.GetLocal().StartMinimized;
             cbDarkMode.Checked = _settings.GetPersistent().DarkMode;
             cbAutoDismiss.Checked = _settings.GetPersistent().AutoDismissNotifications;
+
+            cbDisableInstaloot.Checked = _settings.GetLocal().DisableInstaloot;
         }
 
         private void buttonViewBackups_Click(object sender, EventArgs e) {
@@ -235,6 +236,10 @@ namespace IAGrim.UI.Tabs {
 
         private void cbAutoDismiss_CheckedChanged(object sender, EventArgs e) {
             _settings.GetPersistent().AutoDismissNotifications = ((FirefoxCheckBox) sender).Checked;
+        }
+
+        private void cbDisableInstaloot_CheckedChanged(object sender, EventArgs e) {
+            _settings.GetLocal().DisableInstaloot = ((FirefoxCheckBox)sender).Checked;
         }
     }
 }

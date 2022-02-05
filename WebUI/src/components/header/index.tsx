@@ -33,7 +33,7 @@ function Header({activeTab, setActiveTab, showVideoGuide}: Props) {
         <Link activeClassName={style.active} href="#" onClick={() => setActiveTab(2)}>
           <Help/> {translate('app.tab.help')}
         </Link>
-        <Link activeClassName={style.active} href="#" onClick={() => openUrl("https://grimdawn.evilsoft.net/crafting/")}>
+        <Link activeClassName={style.active} href="#" onClick={() => openUrl("https://grimdawn.evilsoft.net/crafting/?q=records/items/gearrelic/b005_relic.dbr")}>
           <OpenInNew/> {translate('app.tab.crafting')}
         </Link>
         <Link activeClassName={style.active} href="#" onClick={() => openUrl("https://grimdawn.evilsoft.net/enchantments/")}>
