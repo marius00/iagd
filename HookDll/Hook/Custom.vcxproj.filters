@@ -99,6 +99,7 @@
     <ClInclude Include="SetHardcore.h">
       <Filter>CoreHooks\Stash</Filter>
     </ClInclude>
+    <ClInclude Include="SettingsReader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -167,5 +168,6 @@
     <ClCompile Include="SetHardcore.cpp">
       <Filter>CoreHooks\Stash</Filter>
     </ClCompile>
+    <ClCompile Include="SettingsReader.cpp" />
   </ItemGroup>
 </Project>

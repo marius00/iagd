@@ -4,6 +4,7 @@
 #include "GetPrivateStash.h"
 #include "GrimTypes.h"
 #include "SaveTransferStash.h"
+#include "SettingsReader.h"
 
 class InventorySack_AddItem : public BaseMethodHook {
 public:
@@ -21,6 +22,8 @@ private:
 	static HANDLE m_hEvent;
 	static GetPrivateStash privateStashHook;
 	static int m_stashTabLootFrom;
+	static bool m_instalootEnabled;
+	SettingsReader m_settingsReader;
 
 
 	typedef int* (__thiscall *GameEngine_GetTransferSack)(void* This, int idx);

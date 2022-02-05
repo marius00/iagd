@@ -1,6 +1,4 @@
 #include "stdafx.h"
-#include <set>
-#include <stdio.h>
 #include <stdlib.h>
 #include "MessageType.h"
 #include <detours.h>
@@ -12,7 +10,6 @@
 #include <random>
 #include <boost/property_tree/ptree.hpp>                                        
 #include <boost/property_tree/json_parser.hpp>       
-#include <tuple>
 
 
 
@@ -39,27 +36,8 @@ InventorySack_AddItem::InventorySack_AddItem_Vec2 InventorySack_AddItem::dll_Inv
 std::wstring InventorySack_AddItem::m_storageFolder;
 int InventorySack_AddItem::m_stashTabLootFrom;
 ULONGLONG InventorySack_AddItem::m_lastNotificationTickTime;
+bool InventorySack_AddItem::m_instalootEnabled;
 
-int ReadPreferredStashLootTab() {
-	boost::property_tree::ptree loadPtreeRoot;
-
-
-	const auto settingsJson = GetIagdFolder() + L"settings.json";
-	const std::string settingsJsonAnsi = std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes(settingsJson);
-
-
-	boost::property_tree::read_json(settingsJsonAnsi, loadPtreeRoot);
-	const int stashToLootFrom = loadPtreeRoot.get<int>("local.stashToLootFrom");
-
-	if (stashToLootFrom == 0) {
-		LogToFile(L"Configured to loot from last stash tab");
-		
-	} else {
-		LogToFile(L"Configured to loot from tab: " + std::to_wstring(stashToLootFrom));
-	}
-
-	return stashToLootFrom;
-}
 
 void InventorySack_AddItem::EnableHook() {
 	// GameInfo::
@@ -99,7 +77,8 @@ InventorySack_AddItem::InventorySack_AddItem(DataQueue* dataQueue, HANDLE hEvent
 	m_storageFolder = GetIagdFolder() + L"itemqueue\\";
 
 	CreateDirectoryW(m_storageFolder.c_str(), nullptr);
-	m_stashTabLootFrom = ReadPreferredStashLootTab();
+	m_stashTabLootFrom = m_settingsReader.getStashTabToLootFrom();
+	m_instalootEnabled = m_settingsReader.getInstalootActive();
 	m_lastNotificationTickTime = 0;
 }
 
@@ -275,6 +254,9 @@ void InventorySack_AddItem::NotifyLooted() {
 /// <param name="item"></param>
 /// <returns></returns>
 bool InventorySack_AddItem::HandleItem(void* stash, GAME::Item* item) {
+	if (!m_instalootEnabled)
+		return false;
+
 	GAME::GameEngine* gameEngine = fnGetGameEngine();
 	GAME::ItemReplicaInfo replica;
 	fnItemGetItemReplicaInfo(item, replica);
