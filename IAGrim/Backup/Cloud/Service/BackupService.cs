@@ -174,7 +174,6 @@ namespace IAGrim.Backup.Cloud.Service {
             }
 
             Logger.Info($"Upload complete ({items.Count} items)");
-            OnUploadComplete?.Invoke(this, null);
         }
 
         /// <summary>

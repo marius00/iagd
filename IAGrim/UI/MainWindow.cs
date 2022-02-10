@@ -508,7 +508,6 @@ namespace IAGrim.UI {
                 a.Url = _charBackupService.GetDownloadUrl(a.Character);
             };
 
-            backupService.OnUploadComplete += (o, args) => _searchWindow.UpdateListView();
             searchController.OnSearch += (o, args) => backupService.OnSearch();
 
             _searchWindow = new SplitSearchWindow(_cefBrowserHandler.BrowserControl, SetFeedback, playerItemDao, searchController, itemTagDao, settingsService);
