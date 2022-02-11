@@ -40,6 +40,9 @@ class ReplicaStatContainer extends PureComponent<Props, object> {
       <ItemStat {...stat} key={`stat-body-${id}-${statToString(stat)}`.replace(' ', '_')}/>
     );
 
+    console.log('skillz', skills);
+    console.log('rows', rows);
+
     // "Hack" to skip all the rows for a skill
     let numWhitespaces = 0;
     let isSkipping = false;
@@ -75,7 +78,12 @@ class ReplicaStatContainer extends PureComponent<Props, object> {
           if (!this.isSkillBooster(row)) {
             return <ReplicaStat {...row} key={id + idx}/>
           }
-          // We have our own skill descriptions, superior to that of the replica rows.
+          // "+1 to all skills in Oathkeeper" will not be included in the "skills" array, so just render it normally.
+          // Setting render type to 18 to skip underline and cursor
+          else if (!skills.some(skill => row.text.includes(skill.param3))) {
+            return <ReplicaStat text={row.text} type={18} key={id + idx}/>
+          }
+          // Render "+N to SomeSkill", We have our own skill descriptions, superior to that of the replica rows.
           else if (!hasShownSkills) {
             hasShownSkills = true;
             return bodyStats;

@@ -26,7 +26,7 @@
   height: 100px;
 }
 
-.item-icon-blue, .item-icon-epic, .item-icon-yellow, .item-icon-white, .item-icon-unknown, .item-icon-green {
+.collectionContainer .item-icon-blue, .item-icon-epic, .item-icon-yellow, .item-icon-white, .item-icon-unknown, .item-icon-green {
   background-size: 175px 100px;
 }
 
