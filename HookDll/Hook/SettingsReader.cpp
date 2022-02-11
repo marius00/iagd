@@ -47,7 +47,7 @@ bool SettingsReader::getInstalootActive() {
 	if (!child)
 	{
 		LogToFile(L"InstalootDisabled: No configuration found, defaulting to enabled");
-		return false;
+		return true;
 	}
 	
 	const bool instalootDisabled = loadPtreeRoot.get<bool>(L"local.disableInstaloot");
