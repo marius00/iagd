@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IAGrim.Database;
 
 namespace IAGrim.Services {
     class ItemPaginationService {
@@ -13,7 +14,23 @@ namespace IAGrim.Services {
         private int _skip;
         private List<PlayerHeldItem> _items = new List<PlayerHeldItem>();
 
-        public int NumItems => _items?.Count ?? 0;
+        public int NumItems {
+            get {
+                var uniques = _items?.Select(item => {
+                    if (item is PlayerItem pi) {
+                        return (pi.BaseRecord ?? string.Empty) + (pi.PrefixRecord ?? string.Empty) + (pi.SuffixRecord ?? string.Empty);
+                    }
+                    else if (item is BuddyItem bi) {
+                        return (bi.BaseRecord ?? string.Empty) + (bi.PrefixRecord ?? string.Empty) + (bi.SuffixRecord ?? string.Empty);
+                    }
+
+                    return string.Empty;
+                }).ToHashSet();
+
+                return uniques.Count;
+            }
+        }
+
         private int Remaining => Math.Min(_limit, NumItems - _skip);
 
 

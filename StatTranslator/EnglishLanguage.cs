@@ -385,6 +385,7 @@ namespace StatTranslator {
             {"iatag_html_augmentation_item", "You may be able to purchase this augment from {0}"},
             {"iatag_html_setbonus", "Set:"},
             {"iatag_html_nomoreitems", "No more items"},
+            {"iatag_html_loadmoreitems", "Load more items"},
             {"iatag_html_setconsistsof", "This set consists of the following items: "},
             {"iatag_html_displaying", "Displaying {0}"},
             {"iatag_html_filter_owned", "Owned only"},

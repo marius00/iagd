@@ -79,8 +79,7 @@ namespace IAGrim.UI.Misc.CEF {
                 {"item.label.setbonus", lang.GetTag("iatag_html_setbonus")},
                 {"item.label.noMoreItems", lang.GetTag("iatag_html_nomoreitems")},
                 {"item.label.setConsistsOf", lang.GetTag("iatag_html_setconsistsof") },
-                {"app.tab.darkMode", lang.GetTag("iatag_html_darkmode") },
-                {"app.tab.lightMode", lang.GetTag("iatag_html_lightmode") },
+                {"button.loadmoreitems", lang.GetTag("iatag_html_loadmoreitems") },
 
                 {"items.displaying", lang.GetTag("iatag_html_displaying") },
                 {"collections.filter.owned", lang.GetTag("iatag_html_filter_owned") },
