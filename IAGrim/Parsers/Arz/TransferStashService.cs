@@ -267,7 +267,7 @@ namespace IAGrim.Parsers.Arz {
             };
         }
 
-        private Item Map(PlayerItem item) {
+        public static Item Map(PlayerItem item) {
             return new Item {
                 BaseRecord = item.BaseRecord,
                 EnchantmentRecord = item.EnchantmentRecord,

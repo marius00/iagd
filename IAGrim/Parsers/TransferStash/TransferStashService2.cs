@@ -147,6 +147,11 @@ namespace IAGrim.Parsers.TransferStash {
                         feedbacks.Add(new UserFeedback(RuntimeSettings.Language.GetTag("iatag_feedback_stacked_not_looted", classifiedItems.Stacked.Count)));
                     }
 
+                    if (classifiedItems.Quest.Count > 0) {
+                        classifiedItems.Quest.ForEach(item => Logger.Debug($"NotLootedQuest: {item}"));
+                        feedbacks.Add(new UserFeedback(RuntimeSettings.Language.GetTag("iatag_feedback_quest_not_looted", classifiedItems.Quest.Count)));
+                    }
+
                     // Unknown items, database not parsed for these items, IA can't deal with them.
                     if (classifiedItems.Unknown.Count > 0) {
                         classifiedItems.Unknown.ForEach(item => Logger.Debug($"NotLootedUnknown: {item}"));
@@ -217,43 +222,12 @@ namespace IAGrim.Parsers.TransferStash {
             return new List<PlayerItem>();
         }
 
-        private ClassifiedItems Classify(StashTab tab) {
-            var stacked = tab.Items.Where(item =>
-                    item.StackCount > 1
-                    || _cache.StackableRecords.Contains(item.BaseRecord)
-                    || _cache.SpecialRecords.Contains(item.BaseRecord) // Special "single seed" items.
-            ).ToList();
-
-            var unknownItems = tab.Items.Where(item => !_cache.AllRecords.Contains(item.BaseRecord)).ToList();
-
-            var duplicates = tab.Items
-                .Where(item => stacked.All(st => st.BaseRecord != item.BaseRecord))
-                .Where(item => unknownItems.All(uk => uk.BaseRecord != item.BaseRecord))
-                .Where(item => _playerItemDao.Exists(TransferStashService.Map(item, null, false))) // We don't care about mod/hardcore for dupe checking.
-                .ToList();
-
-            var remaining = tab.Items
-                .Where(item => duplicates.All(dup => dup.BaseRecord != item.BaseRecord))
-                .Where(item => stacked.All(st => st.BaseRecord != item.BaseRecord))
-                .Where(item => unknownItems.All(uk => uk.BaseRecord != item.BaseRecord))
-                .ToList();
-
-            return new ClassifiedItems {
-                Stacked = stacked,
-                Duplicates = duplicates,
-                Unknown = unknownItems,
-                Remaining = remaining
-            };
+        private ItemClassificationService Classify(StashTab tab) {
+            ItemClassificationService classifier = new ItemClassificationService(_cache, _playerItemDao);
+            classifier.Add(tab.Items);
+            return classifier;
         }
-
-        class ClassifiedItems {
-            public List<Item> Stacked { get; set; }
-            public List<Item> Duplicates { get; set; }
-            public List<Item> Unknown { get; set; }
-            public List<Item> Remaining { get; set; }
-        }
-
-        
+       
 
         private bool StoreItemsToDatabase(ICollection<Item> items, string mod, bool isHardcore) {
             // Convert the items

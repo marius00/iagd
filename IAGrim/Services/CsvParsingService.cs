@@ -10,23 +10,32 @@ using EvilsoftCommons;
 using EvilsoftCommons.Exceptions;
 using IAGrim.Database;
 using IAGrim.Database.Interfaces;
+using IAGrim.Parsers.Arz;
+using IAGrim.Parsers.TransferStash;
+using IAGrim.UI.Controller;
 using IAGrim.UI.Misc.CEF;
 using IAGrim.Utilities;
 using log4net;
 
 namespace IAGrim.Services {
     class CsvParsingService : IDisposable {
-        private readonly ILog _logger = LogManager.GetLogger(typeof(CsvParsingService));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(CsvParsingService));
         private readonly ConcurrentQueue<QueuedCsv> _queue = new ConcurrentQueue<QueuedCsv>();
         private volatile bool _isCancelled;
         private readonly IPlayerItemDao _playerItemDao;
         private readonly IReplicaItemDao _replicaItemDao;
         private readonly UserFeedbackService _userFeedbackService;
+        private readonly TransferStashServiceCache _cache;
+        private readonly TransferStashService _transferStashService;
+        private readonly ItemTransferController _itemTransferController;
 
-        public CsvParsingService(IPlayerItemDao playerItemDao, IReplicaItemDao replicaItemDao, UserFeedbackService userFeedbackService) {
+        public CsvParsingService(IPlayerItemDao playerItemDao, IReplicaItemDao replicaItemDao, UserFeedbackService userFeedbackService, TransferStashServiceCache cache, ItemTransferController itemTransferController, TransferStashService transferStashService) {
             _playerItemDao = playerItemDao;
             _replicaItemDao = replicaItemDao;
             _userFeedbackService = userFeedbackService;
+            _cache = cache;
+            _itemTransferController = itemTransferController;
+            _transferStashService = transferStashService;
         }
 
         private class QueuedCsv {
@@ -54,19 +63,36 @@ namespace IAGrim.Services {
                     if (!_queue.TryDequeue(out var entry)) continue;
 
                     if (entry.Cooldown.IsReady) {
-                        var item = Parse(File.ReadAllText(entry.Filename));
+                        PlayerItem item = Parse(File.ReadAllText(entry.Filename));
                         if (item == null)
                             continue;
 
                         // CSV probably wont have stackcount
                         item.StackCount = Math.Max(item.StackCount, 1);
                         item.CreationDate = DateTime.UtcNow.ToTimestamp();
-                        _playerItemDao.Save(item);
-                        File.Delete(entry.Filename);
 
-                        // Update replica reference
-                        var hash = ItemReplicaService.GetHash(item);
-                        _replicaItemDao.UpdatePlayerItemId(hash, item.Id);
+                        var classificationService = new ItemClassificationService(_cache, _playerItemDao);
+                        classificationService.Add(item);
+                        if (classificationService.Remaining.Count > 0) {
+                            _playerItemDao.Save(item);
+                            File.Delete(entry.Filename);
+
+                            // Update replica reference
+                            var hash = ItemReplicaService.GetHash(item);
+                            _replicaItemDao.UpdatePlayerItemId(hash, item.Id);
+                        }
+                        else {
+                            // TODO: Transfer back in-game, should never have been looted.
+                            // TODO: Separate transfer logic.. no delete-from-db etc..
+                            ;
+                            string stashfile = _itemTransferController.GetTransferFile();
+                            _transferStashService.Deposit(stashfile, new List<PlayerItem> { item }, out string error);
+                            if (string.IsNullOrEmpty(error)) {
+                                Logger.Info("Deposited item back in-game, did not pass item classification.");
+                                File.Delete(entry.Filename);
+                            }
+                            
+                        }
                     }
                     else {
                         _queue.Enqueue(entry);
@@ -102,7 +128,7 @@ namespace IAGrim.Services {
             var pieces = csv.Split(';');
 
             if (pieces.Length != 13) {
-                _logger.Warn($"Expected 13 columns in row, got {pieces.Length}");
+                Logger.Warn($"Expected 13 columns in row, got {pieces.Length}");
                 return null;
             }
 

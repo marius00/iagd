@@ -238,6 +238,7 @@
     <Compile Include="Database\Synchronizer\BuddyItemReplicaRepo.cs" />
     <Compile Include="Database\Synchronizer\ItemReplicaRepo.cs" />
     <Compile Include="Database\Synchronizer\ItemCollectionRepo.cs" />
+    <Compile Include="Parsers\TransferStash\ItemClassificationService.cs" />
     <Compile Include="Services\CsvFileMonitor.cs" />
     <Compile Include="Parsers\TransferStash\SafeTransferStashWriter.cs" />
     <Compile Include="Parsers\TransferStash\TransferStashService2.cs" />

@@ -446,13 +446,6 @@ namespace IAGrim.UI {
                     Close();
             }
 
-            _csvParsingService = new CsvParsingService(playerItemDao, replicaItemDao, _userFeedbackService);
-            _csvFileMonitor.OnModified += (_, arg) => {
-                var csvEvent = arg as CsvFileMonitor.CsvEvent;
-                _csvParsingService.Queue(csvEvent.Filename, csvEvent.Cooldown);
-            };
-            _csvFileMonitor.StartMonitoring();
-            _csvParsingService.Start();
                 
 
             // Load the grim database
@@ -655,8 +648,15 @@ namespace IAGrim.UI {
             }
 
             settingsService.GetLocal().OnMutate += delegate(object o, EventArgs args) { _cefBrowserHandler.SetOnlineBackupsEnabled(!settingsService.GetLocal().OptOutOfBackups); };
-            
-            
+
+
+            _csvParsingService = new CsvParsingService(playerItemDao, replicaItemDao, _userFeedbackService, cacher, _transferController, transferStashService);
+            _csvFileMonitor.OnModified += (_, arg) => {
+                var csvEvent = arg as CsvFileMonitor.CsvEvent;
+                _csvParsingService.Queue(csvEvent.Filename, csvEvent.Cooldown);
+            };
+            _csvFileMonitor.StartMonitoring();
+            _csvParsingService.Start();
 
             Logger.Debug("UI initialization complete");
         }

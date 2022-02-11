@@ -695,6 +695,7 @@ namespace StatTranslator {
             {"iatag_feedback_item_does_not_exist", "Cannot deposit item, item does not appear to exist.. (ghost item)"},
             {"iatag_feedback_cloud_save_enabled_ingame", "WARNING - Grim Dawn Cloud saving is active."},
             {"iatag_feedback_stacked_not_looted", "{0} items were not looted due to being stackable"},
+            {"iatag_feedback_quest_not_looted", "{0} quest reward items were not looted"},
             {"iatag_feedback_unknown_not_looted", "{0} items were not looted due to being unidentified"},
             {"iatag_feedback_duplicates_not_looted", "{0} items were not looted due to being possible duplicates (bugged items)"},
             {"iatag_feedback_unable_to_deposit", "An error occurred depositing items, check the logs."},

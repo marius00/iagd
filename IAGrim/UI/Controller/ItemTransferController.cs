@@ -140,7 +140,7 @@ namespace IAGrim.UI.Controller {
             }
         }
 
-        private string GetTransferFile() {
+        public string GetTransferFile() {
             GDTransferFile mfi = _searchWindow.ModSelectionHandler.SelectedMod;
             bool fileExists = !string.IsNullOrEmpty(mfi.Filename) && File.Exists(mfi.Filename);
             if (!fileExists) {
