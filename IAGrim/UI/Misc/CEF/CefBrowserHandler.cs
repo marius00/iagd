@@ -91,9 +91,9 @@ namespace IAGrim.UI.Misc.CEF {
             BrowserControl.ShowDevTools();
         }
 
-        public void ShowLoadingAnimation() {
+        public void ShowLoadingAnimation(bool visible) {
             if (BrowserControl != null && BrowserControl.CanExecuteJavascriptInMainFrame) {
-                BrowserControl.ExecuteScriptAsync("window.setIsLoading", true);
+                BrowserControl.ExecuteScriptAsync("window.setIsLoading", visible);
             }
             else {
                 Logger.Warn("Attempted to update items but CEF not yet initialized.");

@@ -58,10 +58,51 @@ namespace IAGrim.Services {
             return 0;
         }
 
-        public void Update(List<PlayerHeldItem> items, bool orderByLevel) {
-            this._skip = 0;
-            this._items = items;
-            _items.Sort(orderByLevel ? CompareToMinimumLevel : _comparer);
+        private bool Compare(PlayerHeldItem a, PlayerHeldItem b) {
+            if (a is PlayerItem pi1) {
+                if (b is PlayerItem pi2) {
+                    return pi1.BaseRecord == pi2.BaseRecord
+                           && pi1.PrefixRecord == pi2.PrefixRecord
+                           && pi1.Seed == pi2.Seed
+                           && pi1.SuffixRecord == pi2.SuffixRecord;
+                }
+            } else if (a is BuddyItem bi1) {
+                if (b is BuddyItem bi2) {
+                    return bi1.BaseRecord == bi2.BaseRecord
+                           && bi1.PrefixRecord == bi2.PrefixRecord
+                           && bi1.Seed == bi2.Seed
+                           && bi1.SuffixRecord == bi2.SuffixRecord;
+
+                }
+            } else if (a is RecipeItem ri1) {
+                if (b is RecipeItem ri2) {
+                    return ri1.BaseRecord == ri2.BaseRecord;
+                }
+            }
+
+            return false;
+        }
+
+        private bool IsIdenticalToExistingList(List<PlayerHeldItem> newList) {
+            // O(n^2)
+            foreach (var item in newList) {
+                if (!_items.Any(existing => Compare(existing, item))) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public bool Update(List<PlayerHeldItem> items, bool orderByLevel) {
+            if (!IsIdenticalToExistingList(items)) {
+                this._skip = 0;
+                this._items = items;
+                _items.Sort(orderByLevel ? CompareToMinimumLevel : _comparer);
+                return true;
+            }
+
+            return false;
         }
 
         public List<PlayerHeldItem> Fetch() {

@@ -62,14 +62,10 @@ namespace IAGrim.UI.Controller {
 
         public string Search(ItemSearchRequest query, bool duplicatesOnly, bool includeBuddyItems, bool orderByLevel) {
             // Signal that we are loading items
-            Browser.ShowLoadingAnimation();
+            Browser.ShowLoadingAnimation(true);
 
             var message = Search_(query, duplicatesOnly, includeBuddyItems, orderByLevel);
 
-            if (!ApplyItems(false)) {
-                Browser.SetItems(new List<List<JsonItem>>(0), 0);
-                UpdateCollectionItems();
-            }
 
             return message;
         }
@@ -133,7 +129,16 @@ namespace IAGrim.UI.Controller {
                 AddAugmentItems(items, query);
             }
 
-            _itemPaginationService.Update(items, orderByLevel);
+            if (_itemPaginationService.Update(items, orderByLevel)) {
+                if (!ApplyItems(false)) {
+                    Browser.SetItems(new List<List<JsonItem>>(0), 0);
+                    UpdateCollectionItems();
+                }
+            }
+            else {
+
+                Browser.ShowLoadingAnimation(false);
+            }
 
             return message;
         }

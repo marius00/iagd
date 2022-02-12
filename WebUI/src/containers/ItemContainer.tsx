@@ -105,7 +105,6 @@ class ItemContainer extends PureComponent<Props, object> {
 
   render() {
     const items = this.props.items;
-    // TODO: wtf is this? Related to 'show more' button being visibel
     const canLoadMoreItems = this.props.numItems !== undefined ? this.props.numItems > items.length : true;
 
     let comparingItem = [] as IItem[];
