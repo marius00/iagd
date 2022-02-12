@@ -39,7 +39,7 @@
 }
 
 /* Regular item stats */
- .replica-type-18, .replica-type-25, .replica-type-26 {
+ .replica-type-18, .replica-type-25, .replica-type-26, .replica-type-40 {
    color: var(--item-stat-modifier);
  }
 

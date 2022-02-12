@@ -105,6 +105,7 @@ class ItemContainer extends PureComponent<Props, object> {
 
   render() {
     const items = this.props.items;
+    // TODO: wtf is this? Related to 'show more' button being visibel
     const canLoadMoreItems = this.props.numItems !== undefined ? this.props.numItems > items.length : true;
 
     let comparingItem = [] as IItem[];
@@ -154,7 +155,7 @@ class ItemContainer extends PureComponent<Props, object> {
             />
           )}
 
-          {canLoadMoreItems && <button onClick={this.props.onRequestMoreItems} className="load-more-items">Load more items</button>}
+          {canLoadMoreItems && <button onClick={this.props.onRequestMoreItems} className="load-more-items">{translate('button.loadmoreitems')}</button>}
           {canLoadMoreItems && <OnScrollLoader onTrigger={this.props.onRequestMoreItems} />}
           <ReactTooltip html={true} type={this.props.isDarkMode ? 'light' : 'dark'} />
         </div>
