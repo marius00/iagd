@@ -16,7 +16,7 @@ namespace IAGrim.Services {
 
         public int NumItems {
             get {
-                var uniques = _items?.Select(item => {
+                var uniques = _items.Select(item => {
                     if (item is PlayerItem pi) {
                         return (pi.BaseRecord ?? string.Empty) + (pi.PrefixRecord ?? string.Empty) + (pi.SuffixRecord ?? string.Empty);
                     }
@@ -24,7 +24,7 @@ namespace IAGrim.Services {
                         return (bi.BaseRecord ?? string.Empty) + (bi.PrefixRecord ?? string.Empty) + (bi.SuffixRecord ?? string.Empty);
                     }
 
-                    return string.Empty;
+                    return item.BaseRecord;
                 }).ToHashSet();
 
                 return uniques.Count;
@@ -84,6 +84,9 @@ namespace IAGrim.Services {
         }
 
         private bool IsIdenticalToExistingList(List<PlayerHeldItem> newList) {
+            if (newList.Count != _items.Count)
+                return false;
+
             // O(n^2)
             foreach (var item in newList) {
                 if (!_items.Any(existing => Compare(existing, item))) {
@@ -95,14 +98,15 @@ namespace IAGrim.Services {
         }
 
         public bool Update(List<PlayerHeldItem> items, bool orderByLevel) {
-            if (!IsIdenticalToExistingList(items)) {
+            // TODO: Figure out why this is causing issues for some users, suspect it may be that the setItems is done before the view is rendered, thus ending up without any view at all.
+            //if (!IsIdenticalToExistingList(items)) {
                 this._skip = 0;
                 this._items = items;
                 _items.Sort(orderByLevel ? CompareToMinimumLevel : _comparer);
                 return true;
-            }
+            //}
 
-            return false;
+            //return false;
         }
 
         public List<PlayerHeldItem> Fetch() {

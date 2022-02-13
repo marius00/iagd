@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,6 +13,8 @@ using IAGrim.Database;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.Arz;
 using IAGrim.Parsers.TransferStash;
+using IAGrim.Services.Dto;
+using IAGrim.Settings;
 using IAGrim.UI.Controller;
 using IAGrim.UI.Misc.CEF;
 using IAGrim.Utilities;
@@ -28,14 +31,16 @@ namespace IAGrim.Services {
         private readonly TransferStashServiceCache _cache;
         private readonly TransferStashService _transferStashService;
         private readonly ItemTransferController _itemTransferController;
+        private readonly SettingsService _settings;
 
-        public CsvParsingService(IPlayerItemDao playerItemDao, IReplicaItemDao replicaItemDao, UserFeedbackService userFeedbackService, TransferStashServiceCache cache, ItemTransferController itemTransferController, TransferStashService transferStashService) {
+        public CsvParsingService(IPlayerItemDao playerItemDao, IReplicaItemDao replicaItemDao, UserFeedbackService userFeedbackService, TransferStashServiceCache cache, ItemTransferController itemTransferController, TransferStashService transferStashService, SettingsService settings) {
             _playerItemDao = playerItemDao;
             _replicaItemDao = replicaItemDao;
             _userFeedbackService = userFeedbackService;
             _cache = cache;
             _itemTransferController = itemTransferController;
             _transferStashService = transferStashService;
+            _settings = settings;
         }
 
         private class QueuedCsv {
@@ -61,43 +66,53 @@ namespace IAGrim.Services {
                 while (!_isCancelled) {
                     Thread.Sleep(500);
                     if (!_queue.TryDequeue(out var entry)) continue;
+                    try {
+                        if (entry.Cooldown.IsReady) {
+                            PlayerItem item = Parse(File.ReadAllText(entry.Filename));
+                            if (item == null)
+                                continue;
 
-                    if (entry.Cooldown.IsReady) {
-                        PlayerItem item = Parse(File.ReadAllText(entry.Filename));
-                        if (item == null)
-                            continue;
+                            // CSV probably wont have stackcount
+                            item.StackCount = Math.Max(item.StackCount, 1);
+                            item.CreationDate = DateTime.UtcNow.ToTimestamp();
 
-                        // CSV probably wont have stackcount
-                        item.StackCount = Math.Max(item.StackCount, 1);
-                        item.CreationDate = DateTime.UtcNow.ToTimestamp();
+                            var classificationService = new ItemClassificationService(_cache, _playerItemDao);
+                            classificationService.Add(item);
 
-                        var classificationService = new ItemClassificationService(_cache, _playerItemDao);
-                        classificationService.Add(item);
-                        if (classificationService.Remaining.Count > 0) {
-                            _playerItemDao.Save(item);
-                            File.Delete(entry.Filename);
+                            // Items to loot
+                            if (classificationService.Remaining.Count > 0) {
+                                _playerItemDao.Save(item);
+                                File.Delete(entry.Filename);
 
-                            // Update replica reference
-                            var hash = ItemReplicaService.GetHash(item);
-                            _replicaItemDao.UpdatePlayerItemId(hash, item.Id);
-                        }
-                        else {
-                            // TODO: Transfer back in-game, should never have been looted.
-                            // TODO: Separate transfer logic.. no delete-from-db etc..
-                            ;
-                            string stashfile = _itemTransferController.GetTransferFile();
-                            _transferStashService.Deposit(stashfile, new List<PlayerItem> { item }, out string error);
-                            if (string.IsNullOrEmpty(error)) {
-                                Logger.Info("Deposited item back in-game, did not pass item classification.");
+                                // Update replica reference
+                                var hash = ItemReplicaService.GetHash(item);
+                                _replicaItemDao.UpdatePlayerItemId(hash, item.Id);
+                            }
+                            else if (classificationService.Duplicates.Count > 0 && _settings.GetPersistent().DeleteDuplicates) {
+                                Logger.Info("Deleting duplicate item file");
                                 File.Delete(entry.Filename);
                             }
-                            
+                            else {
+                                // TODO: Transfer back in-game, should never have been looted.
+                                // TODO: Separate transfer logic.. no delete-from-db etc..
+                                ;
+                                string stashfile = _itemTransferController.GetTransferFile();
+                                _transferStashService.Deposit(stashfile, new List<PlayerItem> { item }, out string error);
+                                if (string.IsNullOrEmpty(error)) {
+                                    Logger.Info("Deposited item back in-game, did not pass item classification.");
+                                    File.Delete(entry.Filename);
+                                }
+
+                            }
+                        }
+                        else {
+                            _queue.Enqueue(entry);
                         }
                     }
-                    else {
-                        _queue.Enqueue(entry);
+                    catch (Exception ex) {
+                        Logger.Warn("Error handling CSV item file", ex);
                     }
-                }
+                } 
             });
 
             t.Start();
@@ -146,6 +161,7 @@ namespace IAGrim.Services {
                 EnchantmentRecord = pieces[10],
                 EnchantmentSeed = ToInt(pieces[11]),
                 TransmuteRecord = pieces[12],
+                Tags = new HashSet<DBStatRow>(0)
             };
         }
     }

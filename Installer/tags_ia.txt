@@ -315,6 +315,7 @@ iatag_html_items_no_items=No items found!
 iatag_html_items_unknown=Unknown Item
 iatag_html_items_youcancraftthisitem=You can craft this item.
 iatag_html_levlerequirement=Level Requirement: {0}
+iatag_html_loadmoreitems=Load more items
 iatag_html_nomoreitems=No more items
 iatag_html_onlinesync_err=This item has not been backed up to the cloud
 iatag_html_onlinesync_ok=This item has been backed up to the cloud
