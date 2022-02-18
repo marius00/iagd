@@ -762,7 +762,8 @@ namespace IAGrim.Database {
                 PI.{PlayerItemTable.Mod} as Mod,
                 CAST({PlayerItemTable.IsHardcore} as bit) as IsHardcore,
                 coalesce((SELECT group_concat(Record, '|') FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord)), '') AS PetRecord,
-                R.text AS ReplicaInfo
+                R.text AS ReplicaInfo,
+                PI.{PlayerItemTable.Seed} as Seed
                 FROM PlayerItem PI 
                 LEFT OUTER JOIN ReplicaItem R ON PI.ID = R.playeritemid
                 WHERE " + string.Join(" AND ", queryFragments)
@@ -898,6 +899,7 @@ namespace IAGrim.Database {
             bool IsHardcore = ConvertToBoolean(arr[idx++]);
             string PetRecord = Convert<string>(arr[idx++]);
             string replicaInfo = Convert<string>(arr[idx++]);
+            long seed = Convert<long>(arr[idx++]);
 
 
             return new PlayerItem {
@@ -918,7 +920,8 @@ namespace IAGrim.Database {
                 Id = Id,
                 Mod = Mod,
                 IsHardcore = IsHardcore,
-                ReplicaInfo = replicaInfo
+                ReplicaInfo = replicaInfo,
+                Seed = seed
             };
         }
 

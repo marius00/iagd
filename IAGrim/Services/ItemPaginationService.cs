@@ -18,10 +18,10 @@ namespace IAGrim.Services {
             get {
                 var uniques = _items.Select(item => {
                     if (item is PlayerItem pi) {
-                        return (pi.BaseRecord ?? string.Empty) + (pi.PrefixRecord ?? string.Empty) + (pi.SuffixRecord ?? string.Empty);
+                        return (pi.BaseRecord ?? string.Empty) + (pi.PrefixRecord ?? string.Empty) + (pi.SuffixRecord ?? string.Empty) + pi.Seed;
                     }
                     else if (item is BuddyItem bi) {
-                        return (bi.BaseRecord ?? string.Empty) + (bi.PrefixRecord ?? string.Empty) + (bi.SuffixRecord ?? string.Empty);
+                        return (bi.BaseRecord ?? string.Empty) + (bi.PrefixRecord ?? string.Empty) + (bi.SuffixRecord ?? string.Empty) + bi.Seed;
                     }
 
                     return item.BaseRecord;
