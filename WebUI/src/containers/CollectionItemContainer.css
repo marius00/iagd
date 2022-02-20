@@ -26,9 +26,15 @@
   height: 100px;
 }
 
-.collectionContainer .item-icon-blue, .item-icon-epic, .item-icon-yellow, .item-icon-white, .item-icon-unknown, .item-icon-green {
+
+.collectionContainer .item-icon-blue,
+.collectionContainer .item-icon-epic,
+.collectionContainer .item-icon-yellow,
+.collectionContainer .item-icon-white,
+.collectionContainer .item-icon-unknown,
+.collectionContainer .item-icon-green {
   background-size: 175px 100px;
-}
+ }
 
 .helper {
   display: inline-block;

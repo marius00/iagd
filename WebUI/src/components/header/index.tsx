@@ -24,13 +24,13 @@ function Header({activeTab, setActiveTab, showVideoGuide}: Props) {
   return (
     <header class={style.header}>
       <nav>
-        <Link activeClassName={style.active} href="#" onClick={() => setActiveTab(0)}>
+        <Link activeClassName={style.active} className={activeTab===0 ? style.active : ''} href="#" onClick={() => setActiveTab(0)}>
           <Home/> {translate('app.tab.items')}
         </Link>
-        <Link activeClassName={style.active} href="#" onClick={() => setActiveTab(1)}>
+        <Link activeClassName={style.active} className={activeTab===1 ? style.active : ''} href="#" onClick={() => setActiveTab(1)}>
           <Web/> {translate('app.tab.collections')}
         </Link>
-        <Link activeClassName={style.active} href="#" onClick={() => setActiveTab(2)}>
+        <Link activeClassName={style.active} className={activeTab===2 ? style.active : ''} href="#" onClick={() => setActiveTab(2)}>
           <Help/> {translate('app.tab.help')}
         </Link>
         <Link activeClassName={style.active} href="#" onClick={() => openUrl("https://grimdawn.evilsoft.net/crafting/?q=records/items/gearrelic/b005_relic.dbr")}>
