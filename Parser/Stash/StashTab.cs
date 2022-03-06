@@ -53,7 +53,8 @@ namespace IAGrim.Parser.Stash {
             "records/items/crafting/blueprints/other/craft_potionb103.dbr",
             "records/items/crafting/consumables/potion_bleedresist01.dbr",
             "records/storyelements/questassets/q000_torso.dbr",
-            "records/storyelements/rewards/q003_ring_slithring.dbr"
+            "records/storyelements/rewards/q003_ring_slithring.dbr",
+            //"records/storyelementsgdx2/questassets/areag_n.dbr"
         };
 
         private Block _block = new Block();

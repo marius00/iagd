@@ -102,6 +102,9 @@ namespace IAGrim.Services {
                                     Logger.Info("Deposited item back in-game, did not pass item classification.");
                                     File.Delete(entry.Filename);
                                 }
+                                else {
+                                    Logger.Warn("Failed re-depositing back into GD");
+                                }
 
                             }
                         }
