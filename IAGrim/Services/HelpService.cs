@@ -44,6 +44,10 @@ namespace IAGrim.Services {
             MessageBox.Show("Error - Not implemented!");
         }
 
+        public void SetIsGrimParsed(bool enabled) {
+            // shrug..
+        }
+
         public static string GetUrl(HelpType type) {
             return $"https://grimdawn.evilsoft.net/help/?q={type.ToString()}&r={DateTime.UtcNow.Ticks}";
         }
@@ -52,5 +56,6 @@ namespace IAGrim.Services {
     public interface IHelpService {
         void ShowHelp(HelpService.HelpType type);
         void ShowCharacterBackups(); // TODO: Not strictly the right place for it..
+        void SetIsGrimParsed(bool enabled); // TODO: Not strictly the right place for it..
     }
 }

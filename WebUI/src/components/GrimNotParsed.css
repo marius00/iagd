@@ -1,0 +1,12 @@
+.center {
+    margin-top: 30px;
+    font-size: 38px;
+    white-space: pre;
+    padding: 20px;
+    background-color: #ffbc00;
+
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+}

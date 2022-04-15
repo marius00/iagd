@@ -13,6 +13,7 @@ import CharacterListContainer from "../containers/CharacterListContainer";
 import ItemContainer from "../containers/ItemContainer";
 import CollectionItemContainer from "../containers/CollectionItemContainer";
 import NotificationContainer, {NotificationMessage} from "./NotificationComponent";
+import GrimNotParsed from "./GrimNotParsed";
 
 interface ApplicationState {
   items: IItem[][];
@@ -25,6 +26,7 @@ interface ApplicationState {
   showBackupCloudIcon: boolean;
   notifications: NotificationMessage[];
   hideItemSkills: boolean;
+  isGrimParsed: boolean;
 }
 
 class App extends PureComponent<object, object> {
@@ -38,7 +40,8 @@ class App extends PureComponent<object, object> {
     numItems: 0,
     showBackupCloudIcon: true,
     notifications: [],
-    hideItemSkills: false
+    hideItemSkills: false,
+    isGrimParsed: true,
   } as ApplicationState;
 
   componentDidMount() {
@@ -105,6 +108,14 @@ class App extends PureComponent<object, object> {
     window.setHideItemSkills = (hideItemSkills: boolean) => {
       this.setState({
         hideItemSkills: hideItemSkills
+      });
+    };
+
+    // Toggle "Grim Dawn not parsed" error message
+    // @ts-ignore
+    window.setIsGrimParsed = (isGrimParsed: boolean) => {
+      this.setState({
+        isGrimParsed: isGrimParsed
       });
     };
 
@@ -256,6 +267,8 @@ class App extends PureComponent<object, object> {
           setActiveTab={(idx: number) => this.setState({activeTab: idx})}
           showVideoGuide={this.state.items.length <= 100}
         />
+
+        {!this.state.isGrimParsed && <GrimNotParsed />}
         {this.state.isLoading && isEmbedded && <Spinner/>}
 
 

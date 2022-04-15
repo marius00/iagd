@@ -89,6 +89,7 @@ namespace IAGrim.UI.Misc.CEF {
                 {"collections.ingress1", lang.GetTag("iatag_html_ingress1") },
                 {"collections.ingress2", lang.GetTag("iatag_html_ingress2") },
                 {"notification.clearall", lang.GetTag("iatag_html_clearall")},
+                {"app.error.grimnotparsed", lang.GetTag("iatag_html_grimnotparsed")},
 
                 {"item.genericstats.watermark", lang.GetTag("iatag_html_genericstats")},
                 {"item.buddies.watermark", lang.GetTag("iatag_html_buddies_watermark")},

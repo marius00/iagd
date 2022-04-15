@@ -169,9 +169,13 @@ namespace IAGrim.UI {
                     else {
                         _searchWindow?.UpdateListViewDelayed();
 
+                        var isGdParsed = _serviceProvider.Get<IDatabaseItemDao>().GetRowCount() > 0;
                         var settingsService = _serviceProvider.Get<SettingsService>();
                         _cefBrowserHandler.SetDarkMode(settingsService.GetPersistent().DarkMode);
                         _cefBrowserHandler.SetHideItemSkills(settingsService.GetPersistent().HideSkills);
+                        _cefBrowserHandler.SetIsGrimParsed(isGdParsed);
+                        
+
                         _cefBrowserHandler.SetOnlineBackupsEnabled(!settingsService.GetLocal().OptOutOfBackups);
                     }
                 }
