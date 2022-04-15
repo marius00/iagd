@@ -23,7 +23,7 @@ std::wstring GetIagdFolder() {
 HookLog::HookLog() : m_lastMessageCount(0), m_initialized(false) {
     std::wstring iagdFolder = GetIagdFolder(); // %appdata%\..\local\evilsoft\iagd
 
-    wchar_t tmpfolder[MAX_PATH]; // %appdata%\..\local\temp\
+    wchar_t tmpfolder[MAX_PATH]; // "%appdata%\..\local\temp\"
     GetTempPath(MAX_PATH, tmpfolder);
 
     std::wstring logFile(!iagdFolder.empty() ? iagdFolder : tmpfolder);
