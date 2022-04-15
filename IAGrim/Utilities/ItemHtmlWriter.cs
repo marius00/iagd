@@ -17,12 +17,6 @@ namespace IAGrim.Utilities {
     internal static class ItemHtmlWriter {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ItemHtmlWriter));
 
-
-        static ItemHtmlWriter() {
-            CopyMissingFiles();
-        }
-
-
         private static JsonStat ToJsonStat(TranslatedStat stat) {
             return new JsonStat {
                 Text = stat.Text,

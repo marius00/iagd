@@ -145,7 +145,10 @@ namespace IAGrim.UI {
             //_settingsService.GetLocal().GrimDawnLocation = new List<string> { entry.Path }; // TODO: Wtf is this? Why overwrite any existing?
             _settingsService.GetLocal().GrimDawnLocationLastModified = ParsingService.GetHighestTimestamp(entry.Path);
             _settingsService.GetLocal().HasWarnedGrimDawnUpdate = false;
-            _helpService.SetIsGrimParsed(_databaseItemDao.GetRowCount() > 0);
+
+            var isGdParsed = _databaseItemDao.GetRowCount() > 0;
+            _settingsService.GetLocal().IsGrimDawnParsed = isGdParsed;
+            _helpService.SetIsGrimParsed(isGdParsed);
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e) {
@@ -169,7 +172,9 @@ namespace IAGrim.UI {
             MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_clean_body"),
                 RuntimeSettings.Language.GetTag("iatag_ui_clean_caption"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-            _helpService.SetIsGrimParsed(_databaseItemDao.GetRowCount() > 0);
+            var isGdParsed = _databaseItemDao.GetRowCount() > 0;
+            _settingsService.GetLocal().IsGrimDawnParsed = isGdParsed;
+            _helpService.SetIsGrimParsed(isGdParsed);
         }
 
         private void buttonConfigure_Click(object sender, EventArgs e) {

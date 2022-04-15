@@ -27,6 +27,7 @@ namespace IAGrim.Settings.Dto {
         private bool _optOutOfBackups;
         private string _backupCustomLocation;
         private bool _hasWarnedGrimDawnUpdate;
+        private bool _isGrimDawnParsed;
         private long? _grimDawnLocationLastModified;
         private bool _startMinimized;
         private DateTime _lastCharSyncUtc;
@@ -213,6 +214,14 @@ namespace IAGrim.Settings.Dto {
             get => _hasWarnedGrimDawnUpdate;
             set {
                 _hasWarnedGrimDawnUpdate = value;
+                OnMutate?.Invoke(null, null);
+            }
+        }
+
+        public bool IsGrimDawnParsed {
+            get => _isGrimDawnParsed;
+            set {
+                _isGrimDawnParsed = value;
                 OnMutate?.Invoke(null, null);
             }
         }

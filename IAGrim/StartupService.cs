@@ -117,6 +117,24 @@ namespace IAGrim {
             Logger.Info($"Logged into online backups: {!string.IsNullOrEmpty(settings.GetPersistent().CloudUser)}");
             Logger.Info($"Opted out of online backups: {settings.GetLocal().OptOutOfBackups}");
 
+
+
+            using (ISession session = factory.OpenSession()) {
+                long num = session.CreateCriteria<DatabaseItem>()
+                    .SetProjection(NHibernate.Criterion.Projections.RowCountInt64())
+                    .UniqueResult<long>();
+
+                var isGdParsed = num > 0;
+                settings.GetLocal().IsGrimDawnParsed = isGdParsed;
+
+                if (isGdParsed) {
+                    Logger.Info("The Grim Dawn database has been parsed");
+                }
+                else {
+                    Logger.Warn("The Grim Dawn database has not been parsed");
+                }
+            }
+
             Logger.Info("Startup data dump complete");
         }
 
