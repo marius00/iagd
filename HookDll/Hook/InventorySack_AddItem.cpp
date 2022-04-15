@@ -153,8 +153,9 @@ void* __fastcall InventorySack_AddItem::Hooked_InventorySack_AddItem_Vec2(void* 
 /// </summary>
 /// <param name="item"></param>
 /// <returns></returns>
-bool IsRelevant(GAME::ItemReplicaInfo& item) {
+bool InventorySack_AddItem::IsRelevant(const GAME::ItemReplicaInfo& item) {
 	if (item.stackSize > 1) {
+		NotifyLooted(L"Stackable item: not looted");
 		return false;
 	}
 
@@ -165,24 +166,29 @@ bool IsRelevant(GAME::ItemReplicaInfo& item) {
 		else if (item.baseRecord.find("records/storyelements/signs/signs.dbr") != std::string::npos) {} // Lokarr's Mantle
 		else if (item.baseRecord.find("records/storyelements/signs/signt.dbr") != std::string::npos) {} // Lokarr's Coat
 		else {
+			NotifyLooted(L"Quest item: not looted");
 			return false;
 		}
 	}
 
 	if (item.baseRecord.find("/materia/") != std::string::npos) {
+		NotifyLooted(L"Component: Not looted");
 		return false;
 	}
 
 	if (item.baseRecord.find("/questitems/") != std::string::npos) {
+		NotifyLooted(L"Quest item: not looted");
 		return false;
 	}
 
 	if (item.baseRecord.find("/crafting/") != std::string::npos) {
+		NotifyLooted(L"Component: Not looted");
 		return false;
 	}
 
 	// Transmute
 	if (!item.enchantmentRecord.empty()) {
+		NotifyLooted(L"Has transmute: Not looted");
 		return false;
 	}
 
@@ -226,7 +232,7 @@ bool InventorySack_AddItem::Persist(GAME::ItemReplicaInfo replicaInfo, bool isHa
 	return false;
 }
 
-void InventorySack_AddItem::NotifyLooted() {
+void InventorySack_AddItem::NotifyLooted(const std::wstring& text) {
 	const ULONGLONG now = GetTickCount64();
 
 	// Limit notifications to 1 per 3s, roughly the fade time.
@@ -238,11 +244,11 @@ void InventorySack_AddItem::NotifyLooted() {
 		color.a = 1;
 
 		// TODO: How can translation support be added?
-		auto header = std::wstring(L"Item looted");
+		
 		auto body = std::wstring(L"By Item Assistant");
 
 		GAME::Engine* engine = fnGetEngine();
-		fnShowCinematicText(engine, &header, &body, 5, &color);
+		fnShowCinematicText(engine, &text, &body, 5, &color);
 		m_lastNotificationTickTime = now;
 	}
 }
@@ -311,7 +317,7 @@ bool InventorySack_AddItem::HandleItem(void* stash, GAME::Item* item) {
 	}
 	
 	if (Persist(replica, fnGetHardcore(gameInfo), modName)) {
-		NotifyLooted();
+		NotifyLooted(L"Item looted");
 		fnPlayDropSound(item);
 		return true;
 	}

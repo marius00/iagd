@@ -58,5 +58,6 @@ private:
 
 	static bool HandleItem(void* stash, GAME::Item* item);
 	static bool Persist(GAME::ItemReplicaInfo replicaInfo, bool isHardcore, std::wstring mod);
-	static void NotifyLooted();
+	static void NotifyLooted(const std::wstring &);
+	static bool IsRelevant(const GAME::ItemReplicaInfo& item);
 };

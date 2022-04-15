@@ -195,7 +195,7 @@ static auto fnGetGameInfo = pGetGameInfo(GetProcAddress(GetModuleHandle(L"engine
 typedef GAME::GameInfo* (__fastcall* pPlayDropSound)(GAME::Item* ge);
 static auto fnPlayDropSound = pPlayDropSound(GetProcAddress(GetModuleHandle(L"game.dll"), "?PlayDropSound@Item@GAME@@UEAAXXZ"));
 
-typedef GAME::GameInfo* (__fastcall* pShowCinematicText)(GAME::Engine* engine, std::wstring* header, std::wstring* content, int CinematicTextType, GAME::Color* color);
+typedef GAME::GameInfo* (__fastcall* pShowCinematicText)(GAME::Engine* engine, const std::wstring* header, const std::wstring* content, int CinematicTextType, GAME::Color* color);
 static auto fnShowCinematicText = pShowCinematicText(GetProcAddress(GetModuleHandle(L"engine.dll"), "?ShowCinematicText@Engine@GAME@@QEAAXAEBV?$basic_string@GU?$char_traits@G@std@@V?$allocator@G@2@@std@@0W4CinematicTextType@2@AEBVColor@2@@Z"));
 
 
