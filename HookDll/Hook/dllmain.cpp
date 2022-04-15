@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include <chrono>
+#include <codecvt>
 #include <windows.h>
 #include <stdlib.h>
 #include "DataQueue.h"
@@ -206,9 +207,17 @@ static void ConfigureStashDetectionHooks(std::vector<BaseMethodHook*>& hooks) {
 	try {
 		LogToFile(L"Configuring instaloot hook..");
 		hooks.push_back(new InventorySack_AddItem(&g_dataQueue, g_hEvent)); // Includes GetPrivateStash internally
+	} catch (std::exception& ex) {
+		// For now just let it be. Known issue inside InventorySack_AddItem
+
+		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+		std::wstring wide = converter.from_bytes(ex.what());
+
+		LogToFile(L"ERROR Configuring instaloot hook.." + wide);
+		
 	} catch (...) {
 		// For now just let it be. Known issue inside InventorySack_AddItem
-		LogToFile(L"ERROR Configuring instaloot hook..");
+		LogToFile(L"ERROR Configuring instaloot hook.. (triple-dot)");
 	}
 
 	LogToFile(L"Configuring hc detection hook..");

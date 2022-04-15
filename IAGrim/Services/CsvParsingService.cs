@@ -18,6 +18,7 @@ using IAGrim.Settings;
 using IAGrim.UI.Controller;
 using IAGrim.UI.Misc.CEF;
 using IAGrim.Utilities;
+using IAGrim.Utilities.HelperClasses;
 using log4net;
 
 namespace IAGrim.Services {
@@ -93,17 +94,23 @@ namespace IAGrim.Services {
                                 File.Delete(entry.Filename);
                             }
                             else {
-                                // TODO: Transfer back in-game, should never have been looted.
+                                // Transfer back in-game, should never have been looted.
                                 // TODO: Separate transfer logic.. no delete-from-db etc..
-                                ;
-                                string stashfile = _itemTransferController.GetTransferFile();
-                                _transferStashService.Deposit(stashfile, new List<PlayerItem> { item }, out string error);
-                                if (string.IsNullOrEmpty(error)) {
-                                    Logger.Info("Deposited item back in-game, did not pass item classification.");
-                                    File.Delete(entry.Filename);
+                                if (RuntimeSettings.StashStatus == StashAvailability.CLOSED) {
+                                    string stashfile = _itemTransferController.GetTransferFile();
+                                    _transferStashService.Deposit(stashfile, new List<PlayerItem> { item }, out string error);
+                                    if (string.IsNullOrEmpty(error)) {
+                                        Logger.Info("Deposited item back in-game, did not pass item classification.");
+                                        File.Delete(entry.Filename);
+                                    }
+                                    else {
+                                        Logger.Warn("Failed re-depositing back into GD");
+                                        _queue.Enqueue(entry);
+                                    }
+                                    
                                 }
                                 else {
-                                    Logger.Warn("Failed re-depositing back into GD");
+                                    _queue.Enqueue(entry);
                                 }
 
                             }

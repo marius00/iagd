@@ -23,7 +23,8 @@ private:
 	static GetPrivateStash privateStashHook;
 	static int m_stashTabLootFrom;
 	static bool m_instalootEnabled;
-	SettingsReader m_settingsReader;
+	static bool m_isGrimDawnParsed;
+	static SettingsReader m_settingsReader;
 
 
 	typedef int* (__thiscall *GameEngine_GetTransferSack)(void* This, int idx);
@@ -58,6 +59,6 @@ private:
 
 	static bool HandleItem(void* stash, GAME::Item* item);
 	static bool Persist(GAME::ItemReplicaInfo replicaInfo, bool isHardcore, std::wstring mod);
-	static void NotifyLooted(const std::wstring &);
+	static void DisplayMessage(std::wstring, std::wstring);
 	static bool IsRelevant(const GAME::ItemReplicaInfo& item);
 };

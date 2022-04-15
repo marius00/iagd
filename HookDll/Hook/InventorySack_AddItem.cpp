@@ -37,6 +37,8 @@ std::wstring InventorySack_AddItem::m_storageFolder;
 int InventorySack_AddItem::m_stashTabLootFrom;
 ULONGLONG InventorySack_AddItem::m_lastNotificationTickTime;
 bool InventorySack_AddItem::m_instalootEnabled;
+bool InventorySack_AddItem::m_isGrimDawnParsed;
+SettingsReader InventorySack_AddItem::m_settingsReader;
 
 
 void InventorySack_AddItem::EnableHook() {
@@ -66,7 +68,9 @@ void InventorySack_AddItem::EnableHook() {
 	// bool GAME::GameInfo::GetHardcore(void)
 	dll_GameInfo_GetHardcore = (GameInfo_GetHardcore)GetProcAddress(::GetModuleHandle(L"Engine.dll"), GET_HARDCORE);
 
-
+	
+	if (m_isGrimDawnParsed)
+		DisplayMessage(L"Item Assistant", L"Item monitoring enabled");
 }
 
 
@@ -77,8 +81,10 @@ InventorySack_AddItem::InventorySack_AddItem(DataQueue* dataQueue, HANDLE hEvent
 	m_storageFolder = GetIagdFolder() + L"itemqueue\\";
 
 	CreateDirectoryW(m_storageFolder.c_str(), nullptr);
+	m_settingsReader = SettingsReader();
 	m_stashTabLootFrom = m_settingsReader.getStashTabToLootFrom();
 	m_instalootEnabled = m_settingsReader.getInstalootActive();
+	m_isGrimDawnParsed = m_settingsReader.getIsGrimDawnParsed();
 	m_lastNotificationTickTime = 0;
 }
 
@@ -154,8 +160,19 @@ void* __fastcall InventorySack_AddItem::Hooked_InventorySack_AddItem_Vec2(void* 
 /// <param name="item"></param>
 /// <returns></returns>
 bool InventorySack_AddItem::IsRelevant(const GAME::ItemReplicaInfo& item) {
+	if (!m_isGrimDawnParsed) {
+		m_isGrimDawnParsed = m_settingsReader.getIsGrimDawnParsed();
+		if (!m_isGrimDawnParsed) {
+			DisplayMessage(L"Item not looted", L"Grim Dawn not parsed");
+			return false;
+		} else {
+			DisplayMessage(L"Item Assistant", L"Item monitoring enabled");
+		}
+	}
+	
+
 	if (item.stackSize > 1) {
-		NotifyLooted(L"Stackable item: not looted");
+		DisplayMessage(L"Stackable item: Not looted", L"Item Assistant");
 		return false;
 	}
 
@@ -166,29 +183,29 @@ bool InventorySack_AddItem::IsRelevant(const GAME::ItemReplicaInfo& item) {
 		else if (item.baseRecord.find("records/storyelements/signs/signs.dbr") != std::string::npos) {} // Lokarr's Mantle
 		else if (item.baseRecord.find("records/storyelements/signs/signt.dbr") != std::string::npos) {} // Lokarr's Coat
 		else {
-			NotifyLooted(L"Quest item: not looted");
+			DisplayMessage(L"Quest item: Not looted", L"Item Assistant");
 			return false;
 		}
 	}
 
 	if (item.baseRecord.find("/materia/") != std::string::npos) {
-		NotifyLooted(L"Component: Not looted");
+		DisplayMessage(L"Component: Not looted", L"Item Assistant");
 		return false;
 	}
 
 	if (item.baseRecord.find("/questitems/") != std::string::npos) {
-		NotifyLooted(L"Quest item: not looted");
+		DisplayMessage(L"Quest item: Not looted", L"Item Assistant");
 		return false;
 	}
 
 	if (item.baseRecord.find("/crafting/") != std::string::npos) {
-		NotifyLooted(L"Component: Not looted");
+		DisplayMessage(L"Component: Not looted", L"Item Assistant");
 		return false;
 	}
 
 	// Transmute
 	if (!item.enchantmentRecord.empty()) {
-		NotifyLooted(L"Has transmute: Not looted");
+		DisplayMessage(L"Has transmute: Not looted", L"Item Assistant");
 		return false;
 	}
 
@@ -232,7 +249,8 @@ bool InventorySack_AddItem::Persist(GAME::ItemReplicaInfo replicaInfo, bool isHa
 	return false;
 }
 
-void InventorySack_AddItem::NotifyLooted(const std::wstring& text) {
+
+void InventorySack_AddItem::DisplayMessage(std::wstring text, std::wstring body) {
 	const ULONGLONG now = GetTickCount64();
 
 	// Limit notifications to 1 per 3s, roughly the fade time.
@@ -244,12 +262,14 @@ void InventorySack_AddItem::NotifyLooted(const std::wstring& text) {
 		color.a = 1;
 
 		// TODO: How can translation support be added?
-		
-		auto body = std::wstring(L"By Item Assistant");
 
 		GAME::Engine* engine = fnGetEngine();
 		fnShowCinematicText(engine, &text, &body, 5, &color);
 		m_lastNotificationTickTime = now;
+
+		LogToFile(L"Display: " + text);
+	} else {
+		LogToFile(L"Muted: " + text);
 	}
 }
 
@@ -317,7 +337,7 @@ bool InventorySack_AddItem::HandleItem(void* stash, GAME::Item* item) {
 	}
 	
 	if (Persist(replica, fnGetHardcore(gameInfo), modName)) {
-		NotifyLooted(L"Item looted");
+		DisplayMessage(L"Item looted", L"By Item Assistant");
 		fnPlayDropSound(item);
 		return true;
 	}
