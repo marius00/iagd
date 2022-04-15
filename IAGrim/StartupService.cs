@@ -71,7 +71,10 @@ namespace IAGrim {
                     .SetProjection(NHibernate.Criterion.Projections.RowCountInt64())
                     .UniqueResult<long>();
 
-                Logger.Info($"There are {numItemsStored} items stored in the database.");
+                if (numItemsStored == 0)
+                    Logger.Warn($"There are {numItemsStored} items stored in the database. <---- Unless you just installed IA, this is bad. No items.");
+                else 
+                    Logger.Info($"There are {numItemsStored} items stored in the database.");
             }
 
             Logger.Info(settings.GetPersistent().ShowRecipesAsItems
@@ -110,6 +113,9 @@ namespace IAGrim {
                 : $"The path to Grim Dawn is \"{gdPath}\"");
 
             Logger.Info($"Using IA on multiple PCs: {settings.GetPersistent().UsingDualComputer}");
+
+            Logger.Info($"Logged into online backups: {!string.IsNullOrEmpty(settings.GetPersistent().CloudUser)}");
+            Logger.Info($"Opted out of online backups: {settings.GetLocal().OptOutOfBackups}");
 
             Logger.Info("Startup data dump complete");
         }

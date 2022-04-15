@@ -149,8 +149,17 @@ namespace IAGrim.UI.Misc.CEF {
                 return true;
             }
             else {
-                Logger.Warn("Attempted to set dark/light mode but CEF not yet initialized.");
+                Logger.Warn("Attempted to set hide item skilsl but CEF not yet initialized.");
                 return false;
+            }
+        }
+
+        public void SetIsGrimParsed(bool enabled) {
+            if (BrowserControl.CanExecuteJavascriptInMainFrame) {
+                BrowserControl.ExecuteScriptAsync("window.setIsGrimParsed", enabled);
+            }
+            else {
+                Logger.Warn("Attempted to set GD parsed but CEF not yet initialized.");
             }
         }
 
@@ -159,7 +168,7 @@ namespace IAGrim.UI.Misc.CEF {
                 BrowserControl.ExecuteScriptAsync("window.setOnlineBackupsEnabled", enabled);
                 return true;
             } else {
-                Logger.Warn("Attempted to set dark/light mode but CEF not yet initialized.");
+                Logger.Warn("Attempted to toggle hide online backup icon but CEF not yet initialized.");
                 return false;
             }
         }

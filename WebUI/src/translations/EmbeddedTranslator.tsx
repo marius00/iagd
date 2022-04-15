@@ -57,7 +57,8 @@ class EmbeddedTranslator {
     'collections.h2': 'Experimental feature',
     'collections.ingress1': 'If you like or dislike this feature, complain on discord or the forum.',
     'collections.ingress2': 'This feature will get deprecated or improved pending user feedback.',
-    'notification.clearall': 'Clear all'
+    'notification.clearall': 'Clear all',
+    'app.error.grimnotparsed': 'Grim Dawn database not parsed.\n\nPlease access the Grim Dawn tab to parse the game before proceeding.',
   };
 
 

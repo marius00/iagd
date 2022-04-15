@@ -395,6 +395,7 @@ namespace StatTranslator {
             {"iatag_html_ingress1", "This feature was added as Proof-of-concept at request from a user."},
             {"iatag_html_ingress2", "It may get improved or removed in the future, depending on usage."},
             {"iatag_html_clearall", "Clear all"},
+            {"iatag_html_grimnotparsed", "Grim Dawn database not parsed.\r\n\r\nPlease access the Grim Dawn tab to parse the game before proceeding."},
             {"iatag_html_genericstats", "Generic Stats"},
             {"iatag_html_buddies_watermark", "Buddyitem"},
 
