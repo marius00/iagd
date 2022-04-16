@@ -284,11 +284,6 @@ bool InventorySack_AddItem::HandleItem(void* stash, GAME::Item* item) {
 		return false;
 
 	GAME::GameEngine* gameEngine = fnGetGameEngine();
-	GAME::ItemReplicaInfo replica;
-	fnItemGetItemReplicaInfo(item, replica);
-	if (!IsRelevant(replica)) {
-		return false;
-	}
 
 	void* realPtr = fnGetPlayerTransfer(gameEngine);
 	if (realPtr == nullptr) {
@@ -315,6 +310,12 @@ bool InventorySack_AddItem::HandleItem(void* stash, GAME::Item* item) {
 
 	const auto lastSackPtr = sacks->at(toLootFrom);
 	if (static_cast<void*>(lastSackPtr) != stash) {
+		return false;
+	}
+
+	GAME::ItemReplicaInfo replica;
+	fnItemGetItemReplicaInfo(item, replica);
+	if (!IsRelevant(replica)) {
 		return false;
 	}
 
