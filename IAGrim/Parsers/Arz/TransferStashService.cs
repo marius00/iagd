@@ -132,7 +132,7 @@ namespace IAGrim.Parsers.Arz {
 
                     // Map item size and create a shape map
                     if (!PositionItem(packer, stashItem)) {
-                        Logger.Info("Could not fit all items in stash, stopping early");
+                        Logger.Info($"Could not fit all items in stash, stopping early. There are {tab.Items.Count} items in the tab.");
                         playerItem.StackCount += stashItem.StackCount;
 
                         return result;

@@ -95,7 +95,14 @@ namespace IAGrim {
                 Logger.Info("The following transfer files has been found:");
 
                 foreach (GDTransferFile mod in mods) {
-                    Logger.Info($"\"{mod.Filename}\": Mod: \"{mod.Mod}\", HC: {mod.IsHardcore}, Downgrade: {mod.Downgrade}");
+                    var stash = TransferStashService.GetStash(mod.Filename);
+                    if (stash?.Tabs.Count < 2) {
+                        Logger.Warn($"\"{mod.Filename}\": Mod: \"{mod.Mod}\", HC: {mod.IsHardcore}, Downgrade: {mod.Downgrade}, Tabs: {stash?.Tabs.Count} <=======");
+                        Logger.Warn("Stash file does not have enough tabs");
+                    }
+                    else {
+                        Logger.Info($"\"{mod.Filename}\": Mod: \"{mod.Mod}\", HC: {mod.IsHardcore}, Downgrade: {mod.Downgrade}, Tabs: {stash?.Tabs.Count}");
+                    }
                 }
             }
 
