@@ -358,6 +358,7 @@ namespace IAGrim.UI {
             var grimDawnDetector = _serviceProvider.Get<GrimDawnDetector>();
             if (grimDawnDetector.GetGrimLocations().Count > 0) {
                 timer?.Stop();
+                var xyx = grimDawnDetector.GetGrimLocations();
                 var gdPath = grimDawnDetector.GetGrimLocations().First();
 
                 // Attempt to force a database update

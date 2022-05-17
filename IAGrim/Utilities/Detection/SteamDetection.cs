@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Gameloop.Vdf;
 using log4net;
+using Microsoft.CSharp.RuntimeBinder;
 using Microsoft.Win32;
 
 namespace IAGrim.Utilities.Detection {
@@ -82,13 +83,17 @@ namespace IAGrim.Utilities.Detection {
                 dynamic config = VdfConvert.Deserialize(File.ReadAllText(vdf));
                 var root = config.Value;
 
-                for (int i = 1; i < 8; i++) {
+                for (int i = 0; i < 8; i++) {
 
                     try {
                         paths.Add(root[$"{i}"].path.ToString());
                     }
                     catch (KeyNotFoundException) {
-                        Logger.Debug("Key #1 not found, stopping parse of steam config");
+                        Logger.Debug($"Key #{i} not found, stopping parse of steam config");
+                        return paths;
+                    }
+                    catch (RuntimeBinderException) {
+                        Logger.Debug($"Key #{i} not found, stopping parse of steam config");
                         return paths;
                     }
                 }
