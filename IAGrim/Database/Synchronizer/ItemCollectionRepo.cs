@@ -1,6 +1,7 @@
 ﻿using IAGrim.Database.Interfaces;
 using System.Collections.Generic;
 using IAGrim.Database.DAO.Util;
+using IAGrim.Database.Dto;
 using IAGrim.Database.Model;
 using IAGrim.Database.Synchronizer.Core;
 
@@ -12,9 +13,15 @@ namespace IAGrim.Database.Synchronizer {
             this.BaseRepo = null;
         }
 
-        public IList<CollectionItem> GetItemCollection() {
+        public IList<CollectionItem> GetItemCollection(ItemSearchRequest query) {
             return ThreadExecuter.Execute(
-                () => _repo.GetItemCollection()
+                () => _repo.GetItemCollection(query)
+            );
+        }
+
+        public IList<CollectionItemAggregateRow> GetItemAggregateStats() {
+            return ThreadExecuter.Execute(
+                () => _repo.GetItemAggregateStats()
             );
         }
     }

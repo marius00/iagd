@@ -91,6 +91,15 @@ namespace IAGrim.UI.Misc.CEF {
             BrowserControl.ShowDevTools();
         }
 
+        public void SetCollectionAggregateData(IList<CollectionItemAggregateRow> rows) {
+            if (BrowserControl.CanExecuteJavascriptInMainFrame) {
+                BrowserControl.ExecuteScriptAsync("window.setAggregateItemData", JsonConvert.SerializeObject(rows, _serializerSettings));
+            }
+            else {
+                Logger.Warn("Attempted to update item aggregate but CEF not yet initialized.");
+            }
+        }
+
         public void ShowLoadingAnimation(bool visible) {
             if (BrowserControl != null && BrowserControl.CanExecuteJavascriptInMainFrame) {
                 BrowserControl.ExecuteScriptAsync("window.setIsLoading", visible);

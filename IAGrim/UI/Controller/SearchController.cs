@@ -70,14 +70,17 @@ namespace IAGrim.UI.Controller {
             return message;
         }
 
-        private void UpdateCollectionItems() {
+        private void UpdateCollectionItems(ItemSearchRequest query) {
             Thread thread = new Thread(() => {
                 ExceptionReporter.EnableLogUnhandledOnThread();
-                Browser.SetCollectionItems(_itemCollectionRepo.GetItemCollection());
+                Browser.SetCollectionItems(_itemCollectionRepo.GetItemCollection(query));
             });
             thread.Start();
-        }
 
+
+            Browser.SetCollectionAggregateData(_itemCollectionRepo.GetItemAggregateStats());
+        }
+        
         private bool ApplyItems(bool append) {
             var items = _itemPaginationService.Fetch();
             if (items.Count == 0) {
@@ -95,7 +98,7 @@ namespace IAGrim.UI.Controller {
                 Browser.SetItems(convertedItems, _itemPaginationService.NumItems);
             }
 
-            UpdateCollectionItems();
+            // UpdateCollectionItems();
             return true;
         }
 
@@ -132,8 +135,8 @@ namespace IAGrim.UI.Controller {
             if (_itemPaginationService.Update(items, orderByLevel)) {
                 if (!ApplyItems(false)) {
                     Browser.SetItems(new List<List<JsonItem>>(0), 0);
-                    UpdateCollectionItems();
                 }
+                UpdateCollectionItems(query);
             }
             else {
 

@@ -6,4 +6,3 @@ export default interface ICollectionItem {
   numOwnedHc: number;
   quality: string;
 }
-

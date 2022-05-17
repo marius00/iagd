@@ -14,12 +14,14 @@ import ItemContainer from "../containers/ItemContainer";
 import CollectionItemContainer from "../containers/CollectionItemContainer";
 import NotificationContainer, {NotificationMessage} from "./NotificationComponent";
 import GrimNotParsed from "./GrimNotParsed";
+import IItemAggregateRow from "../interfaces/IItemAggregateRow";
 
 interface ApplicationState {
   items: IItem[][];
   isLoading: boolean;
   activeTab: number;
   collectionItems: ICollectionItem[];
+  itemAggregate: IItemAggregateRow[];
   isDarkMode: boolean;
   helpSearchFilter: string;
   numItems: number;
@@ -35,6 +37,7 @@ class App extends PureComponent<object, object> {
     isLoading: true,
     activeTab: 0,
     collectionItems: [],
+    itemAggregate: [],
     isDarkMode: false,
     helpSearchFilter: '',
     numItems: 0,
@@ -79,6 +82,15 @@ class App extends PureComponent<object, object> {
       console.log('CollectionItems:', collectionItems);
       this.setState({
         collectionItems: collectionItems
+      });
+    };
+
+    // @ts-ignore: Does not exist on window
+    window.setAggregateItemData = (data: any) => {
+      const itemAggregate = typeof data === 'string' ? JSON.parse(data) : data;
+      console.log('Item Aggregate:', itemAggregate);
+      this.setState({
+        itemAggregate: itemAggregate
       });
     };
 
@@ -287,7 +299,7 @@ class App extends PureComponent<object, object> {
             hideItemSkills={this.state.hideItemSkills}
             requestUnknownItemHelp={() => this.setState({helpSearchFilter: 'UnknownItem', activeTab: 2})}
         />}
-        {this.state.activeTab === 1 && <CollectionItemContainer items={this.state.collectionItems}/>}
+        {this.state.activeTab === 1 && <CollectionItemContainer items={this.state.collectionItems} aggregate={this.state.itemAggregate} />}
         {this.state.activeTab === 2 && <Help searchString={this.state.helpSearchFilter}
                                              onSearch={(v: string) => this.setState({helpSearchFilter: v})}/>}
 

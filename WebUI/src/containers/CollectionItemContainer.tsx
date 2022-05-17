@@ -6,9 +6,11 @@ import './CollectionItemContainer.css';
 import { openUrl } from '../integration/integration';
 import {PureComponent} from "preact/compat";
 import translate from "../translations/EmbeddedTranslator";
+import IItemAggregateRow from "../interfaces/IItemAggregateRow";
 
 interface Props {
   items: ICollectionItem[];
+  aggregate: IItemAggregateRow[];
 }
 
 class CollectionItemContainer extends PureComponent<Props, object> {
@@ -29,6 +31,61 @@ class CollectionItemContainer extends PureComponent<Props, object> {
   openItemSite(item: ICollectionItem) {
     let url = `https://grimdawn.evilsoft.net/search/?query=${this.stripColorCodes(item.name)}`;
     openUrl(url);
+  }
+
+  renderItemAggregate() {
+
+    let sum = {
+      blue: 0,
+        green: 0,
+        green2: 0,
+        green3: 0,
+        epic: 0,
+    }
+    const table = {} as any;
+    for (let i = 0; i < this.props.aggregate.length; i++) {
+      const obj = this.props.aggregate[i];
+      let key = obj.translatedSlot;
+      if (!table.hasOwnProperty(key)) {
+        table[key] = {
+          blue: 0,
+          green: 0,
+          green2: 0,
+          green3: 0,
+          epic: 0,
+        }
+      }
+      // @ts-ignore
+      table[key][obj.quality.toLowerCase()] = obj.num;
+      sum[obj.quality.toLowerCase()] += obj.num;
+    }
+
+    table['Sum'] = sum; // TODO: Translate support
+    console.log('prelim', table);
+
+    // TODO: Translate support
+    return <table className={'aggregate-table'}>
+      <tr>
+        <th>Slot</th>
+        <th>Epic</th>
+        <th>Blue</th>
+        <th>Green</th>
+        <th>Green (DoubleRare)</th>
+        <th>Green (TripleRare)</th>
+      </tr>
+      {
+        Object.keys(table).map((a, b, c) => {
+          return <tr>
+            <th>{a}</th>
+            <td>{table[a].epic}</td>
+            <td>{table[a].blue}</td>
+            <td>{table[a].green}</td>
+            <td>{table[a].green2}</td>
+            <td>{table[a].green3}</td>
+          </tr>
+        })
+      }
+    </table>;
   }
 
   renderFilters() {
@@ -121,10 +178,11 @@ class CollectionItemContainer extends PureComponent<Props, object> {
         return 'white';
     };
 
-// item-icon-'+ item.quality.toLowerCase()
+
     return (
       <div className="collectionItems">
         {this.renderFilters()}
+        {this.renderItemAggregate()}
         <div className="collectionContainer">
           {items.filter(filterItems).map((item) =>
             <a className={'collectionItem'} onClick={() => this.openItemSite(item)} key={'collected-' + item.baseRecord} data-tip={(item.numOwnedSc > 0 ? `${this.stripColorCodes(item.name)} (x${item.numOwnedSc})` : this.stripColorCodes(item.name))}>

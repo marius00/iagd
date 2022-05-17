@@ -11,6 +11,7 @@ namespace IAGrim.UI.Misc.CEF {
         void AddItems(List<List<JsonItem>> items);
         void SetItems(List<List<JsonItem>> items, int numItemsFound);
         void SetCollectionItems(IList<CollectionItem> items);
+        void SetCollectionAggregateData(IList<CollectionItemAggregateRow> rows);
         void ShowLoadingAnimation(bool visible);
     }
 }

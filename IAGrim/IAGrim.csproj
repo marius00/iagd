@@ -229,6 +229,7 @@
     <Compile Include="Database\Interfaces\IReplicaItemDao.cs" />
     <Compile Include="Database\Interfaces\IItemCollectionDao.cs" />
     <Compile Include="Database\Model\BuddyItemRecord.cs" />
+    <Compile Include="Database\Model\CollectionItemAggregateRow.cs" />
     <Compile Include="Database\Model\CollectionItem.cs" />
     <Compile Include="Database\Model\ItemSetAssociation.cs" />
     <Compile Include="Database\Model\ItemSkillMapping.cs" />
