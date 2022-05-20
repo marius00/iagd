@@ -57,6 +57,7 @@ class CollectionItemContainer extends PureComponent<Props, object> {
       }
       // @ts-ignore
       table[key][obj.quality.toLowerCase()] = obj.num;
+      // @ts-ignore
       sum[obj.quality.toLowerCase()] += obj.num;
     }
 

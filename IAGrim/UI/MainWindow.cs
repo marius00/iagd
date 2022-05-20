@@ -565,7 +565,7 @@ namespace IAGrim.UI {
             {
                 _dynamicPacker.Initialize(8, 16);
 
-                var transferFiles = GlobalPaths.TransferFiles;
+                var transferFiles = GlobalPaths.GetTransferFiles(settingsService.GetPersistent().EnableDowngrades);
                 if (transferFiles.Count > 0) {
                     var maxLastAccess = transferFiles.Max(m => m.LastAccess);
                     var file = transferFiles.First(x => x.LastAccess == maxLastAccess);

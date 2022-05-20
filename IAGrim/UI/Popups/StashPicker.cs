@@ -21,7 +21,7 @@ namespace IAGrim.UI {
 
         private void StashPicker_Load(object sender, EventArgs e) {
             int n = 0;
-            foreach (var mod in GlobalPaths.TransferFiles) {
+            foreach (var mod in GlobalPaths.GetTransferFiles(true)) {
                 Control cb = new FirefoxRadioButton {
                     Location = new Point(10, 25 + n*33),
                     Text = mod.ToString(),

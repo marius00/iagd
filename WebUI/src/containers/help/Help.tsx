@@ -195,6 +195,17 @@ const helpEntries = [
         type: IHelpEntryType.Help
     },
     {
+        title: `What is enable downgrades?`,
+        tag: 'EnableDowngrades',
+        body: () => <div>
+            By enabling downgrades in Item Assistant, you enable the ability to transfer to GD when playing with friends who lack expansions. <br/>
+            For example, if you own Forgotten Gods, but have disabled the expansion to play with friends. You need to enable support for this in IA. <br/><br/>
+            When this option is enabled, in the upper right corner of the item view, you can select "FG disabled" or "AoM disabled", in addition to the regular "No mod"/mod options.
+        </div>,
+
+        type: IHelpEntryType.Informational
+    },
+    {
         title: `IA is not looting my items!`,
         tag: 'CantFindItemsMod2', // TODO: Why is this duplicated?
         body: () => <div>

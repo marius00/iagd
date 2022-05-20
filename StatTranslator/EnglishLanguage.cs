@@ -449,6 +449,7 @@ namespace StatTranslator {
             {"iatag_ui_backup_delete", "Delete backup"},
             {"iatag_ui_hc", " (HC)"},
             {"iatag_ui_disableinstaloot", "Disable instaloot"},
+            {"iatag_ui_enabledowngrades", "Enable downgrades"},
             {"iatag_ui_vanilla", "No mod"},
             {"iatag_ui_no_fg", "FG Disabled"},
             {"iatag_ui_no_expansion", "AOM/FG disabled"},

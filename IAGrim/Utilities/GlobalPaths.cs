@@ -13,7 +13,7 @@ namespace IAGrim.Utilities {
     internal static class GlobalPaths {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(GlobalPaths));
         private static readonly HashSet<string> ParsedFiles = new HashSet<string>();
-        private static readonly List<GDTransferFile> TransferFilesCache = new List<GDTransferFile>();
+        
 
 
         private static string LocalAppdata {
@@ -108,10 +108,16 @@ namespace IAGrim.Utilities {
         /// <summary>
         /// Map of [mod][transfer file]
         /// </summary>
-        public static List<GDTransferFile> TransferFiles {
-            get {
-                string documents = SavePath;
-                var transferFilenames = new string[] {
+        public static List<GDTransferFile> GetTransferFiles(bool includeDowngradeFiles) {
+            var transferFilesCache = new List<GDTransferFile>();
+            string documents = SavePath;
+            var transferFilenames = new string[] {
+                "transfer.gst", // Softcore
+                "transfer.gsh", // Hardcore
+            };
+
+            if (includeDowngradeFiles) {
+                transferFilenames = new string[] {
                     "transfer.gst", // Softcore
                     "transfer.gsh", // Hardcore
                     "transfer.bst", // Softcore Vanilla FG/AOM disabled (Vanilla only, owns expansions)
@@ -119,53 +125,53 @@ namespace IAGrim.Utilities {
                     "transfer.csh", // Hardcore FG disabled (Vanilla+AOM) 
                     "transfer.bsh" // Hardcore FG/AOM disabled (Vanilla only, owns expansions)
                 };
-
-                if (!Directory.Exists(documents)) {
-                    Logger.Warn($"Could not locate the folder \"{documents}\"");
-                    return new List<GDTransferFile>(TransferFilesCache);
-                }
-
-
-                // Generate a list of the interesting files
-                List<string> files = new List<string>();
-                // transfer.bst / transfer.cst / transfer.csh
-                foreach (string filename in transferFilenames) {
-                    string vanilla = Path.Combine(documents, filename);
-                    if (File.Exists(vanilla) && !ParsedFiles.Contains(vanilla)) {
-                        files.Add(vanilla);
-                    }
-
-
-                    foreach (var possibleMod in Directory.GetDirectories(documents)) {
-                        string mod = Path.Combine(possibleMod, filename);
-                        if (File.Exists(mod) && !ParsedFiles.Contains(mod)) {
-                            files.Add(mod);
-                        }
-                    }
-                }
-
-
-                foreach (string potential in files) {
-                    if (TransferStashService.TryGetModLabel(potential, out var mod)) {
-                        ParsedFiles.Add(potential);
-                        var lastAccess = File.GetLastWriteTime(potential);
-                        TransferFilesCache.Add(new GDTransferFile {
-                            Filename = potential,
-                            Mod = mod,
-                            IsHardcore = IsHardcore(potential),
-                            LastAccess = lastAccess,
-                            Downgrade = GetDowngradeType(potential)
-                        });
-                    }
-                }
-
-                if (TransferFilesCache.Count == 0) {
-                    Logger.Warn($"No stash files detected in {documents}");
-                }
-
-
-                return new List<GDTransferFile>(TransferFilesCache);
             }
+
+            if (!Directory.Exists(documents)) {
+                Logger.Warn($"Could not locate the folder \"{documents}\"");
+                return transferFilesCache;
+            }
+
+
+            // Generate a list of the interesting files
+            List<string> files = new List<string>();
+            // transfer.bst / transfer.cst / transfer.csh
+            foreach (string filename in transferFilenames) {
+                string vanilla = Path.Combine(documents, filename);
+                if (File.Exists(vanilla) && !ParsedFiles.Contains(vanilla)) {
+                    files.Add(vanilla);
+                }
+
+
+                foreach (var possibleMod in Directory.GetDirectories(documents)) {
+                    string mod = Path.Combine(possibleMod, filename);
+                    if (File.Exists(mod) && !ParsedFiles.Contains(mod)) {
+                        files.Add(mod);
+                    }
+                }
+            }
+
+
+            foreach (string potential in files) {
+                if (TransferStashService.TryGetModLabel(potential, out var mod)) {
+                    ParsedFiles.Add(potential);
+                    var lastAccess = File.GetLastWriteTime(potential);
+                    transferFilesCache.Add(new GDTransferFile {
+                        Filename = potential,
+                        Mod = mod,
+                        IsHardcore = IsHardcore(potential),
+                        LastAccess = lastAccess,
+                        Downgrade = GetDowngradeType(potential)
+                    });
+                }
+            }
+
+            if (transferFilesCache.Count == 0) {
+                Logger.Warn($"No stash files detected in {documents}");
+            }
+
+
+            return transferFilesCache;
         }
 
 

@@ -95,7 +95,7 @@ namespace IAGrim.UI.Tabs.Util {
         public bool HasMods => GetAvailableModSelection().Any(m => !string.IsNullOrEmpty(m.Mod));
 
         public GDTransferFile[] GetAvailableModSelection() {
-            var mods = GlobalPaths.TransferFiles;
+            var mods = GlobalPaths.GetTransferFiles(_settings.GetPersistent().EnableDowngrades);
 
             foreach (var entry in _playerItemDao.GetModSelection()) {
                 if (!mods.Any(m =>

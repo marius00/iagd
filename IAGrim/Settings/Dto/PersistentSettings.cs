@@ -23,6 +23,7 @@ namespace IAGrim.Settings.Dto {
         private bool _hideSkills;
         private bool _deleteDuplicates;
         private bool _autoDismissNotifications;
+        private bool _enableDowngrades;
 
         private long _cloudUploadTimestamp;
 
@@ -168,7 +169,15 @@ namespace IAGrim.Settings.Dto {
             }
         }
 
-        
+        public bool EnableDowngrades {
+            get => _enableDowngrades;
+            set {
+                _enableDowngrades = value;
+                OnMutate?.Invoke(null, null);
+            }
+        }
+
+
 
         public long CloudUploadTimestamp {
             get => _cloudUploadTimestamp;

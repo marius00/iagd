@@ -29,6 +29,9 @@
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelBox4 = new PanelBox();
+            this.helpWhatIsEnableDowngrades = new System.Windows.Forms.LinkLabel();
+            this.cbEnableDowngrades = new FirefoxCheckBox();
+            this.cbDisableInstaloot = new FirefoxCheckBox();
             this.cbAutoDismiss = new FirefoxCheckBox();
             this.cbDarkMode = new FirefoxCheckBox();
             this.cbStartMinimized = new FirefoxCheckBox();
@@ -65,7 +68,6 @@
             this.buttonLanguageSelect = new FirefoxButton();
             this.buttonViewBackups = new FirefoxButton();
             this.buttonViewLogs = new FirefoxButton();
-            this.cbDisableInstaloot = new FirefoxCheckBox();
             this.contextMenuStrip1.SuspendLayout();
             this.panelBox4.SuspendLayout();
             this.pbAutomaticUpdates.SuspendLayout();
@@ -78,7 +80,7 @@
             this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.linkLabel1.ContextMenuStrip = this.contextMenuStrip1;
             this.linkLabel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.linkLabel1.Location = new System.Drawing.Point(595, 469);
+            this.linkLabel1.Location = new System.Drawing.Point(595, 535);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(269, 33);
             this.linkLabel1.TabIndex = 20;
@@ -106,6 +108,8 @@
             // panelBox4
             // 
             this.panelBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.panelBox4.Controls.Add(this.helpWhatIsEnableDowngrades);
+            this.panelBox4.Controls.Add(this.cbEnableDowngrades);
             this.panelBox4.Controls.Add(this.cbDisableInstaloot);
             this.panelBox4.Controls.Add(this.cbAutoDismiss);
             this.panelBox4.Controls.Add(this.cbDarkMode);
@@ -132,11 +136,56 @@
             this.panelBox4.Location = new System.Drawing.Point(496, 12);
             this.panelBox4.Name = "panelBox4";
             this.panelBox4.NoRounding = false;
-            this.panelBox4.Size = new System.Drawing.Size(287, 490);
+            this.panelBox4.Size = new System.Drawing.Size(287, 520);
             this.panelBox4.TabIndex = 8;
             this.panelBox4.Tag = "iatag_ui_settings_title";
             this.panelBox4.Text = "Settings";
             this.panelBox4.TextLocation = "8; 5";
+            // 
+            // helpWhatIsEnableDowngrades
+            // 
+            this.helpWhatIsEnableDowngrades.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.helpWhatIsEnableDowngrades.AutoSize = true;
+            this.helpWhatIsEnableDowngrades.BackColor = System.Drawing.Color.Transparent;
+            this.helpWhatIsEnableDowngrades.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.helpWhatIsEnableDowngrades.Location = new System.Drawing.Point(259, 457);
+            this.helpWhatIsEnableDowngrades.Name = "helpWhatIsEnableDowngrades";
+            this.helpWhatIsEnableDowngrades.Size = new System.Drawing.Size(18, 13);
+            this.helpWhatIsEnableDowngrades.TabIndex = 35;
+            this.helpWhatIsEnableDowngrades.TabStop = true;
+            this.helpWhatIsEnableDowngrades.Tag = "iatag_ui_questionmark";
+            this.helpWhatIsEnableDowngrades.Text = " ? ";
+            this.helpWhatIsEnableDowngrades.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpWhatIsEnableDowngrades_LinkClicked);
+            // 
+            // cbEnableDowngrades
+            // 
+            this.cbEnableDowngrades.Bold = false;
+            this.cbEnableDowngrades.EnabledCalc = true;
+            this.cbEnableDowngrades.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbEnableDowngrades.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbEnableDowngrades.IsDarkMode = false;
+            this.cbEnableDowngrades.Location = new System.Drawing.Point(3, 450);
+            this.cbEnableDowngrades.Name = "cbEnableDowngrades";
+            this.cbEnableDowngrades.Size = new System.Drawing.Size(268, 27);
+            this.cbEnableDowngrades.TabIndex = 34;
+            this.cbEnableDowngrades.Tag = "iatag_ui_enabledowngrades";
+            this.cbEnableDowngrades.Text = "Enable downgrades";
+            this.cbEnableDowngrades.CheckedChanged += new System.EventHandler(this.cbEnableDowngrades_CheckedChanged);
+            // 
+            // cbDisableInstaloot
+            // 
+            this.cbDisableInstaloot.Bold = false;
+            this.cbDisableInstaloot.EnabledCalc = true;
+            this.cbDisableInstaloot.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbDisableInstaloot.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbDisableInstaloot.IsDarkMode = false;
+            this.cbDisableInstaloot.Location = new System.Drawing.Point(3, 417);
+            this.cbDisableInstaloot.Name = "cbDisableInstaloot";
+            this.cbDisableInstaloot.Size = new System.Drawing.Size(268, 27);
+            this.cbDisableInstaloot.TabIndex = 33;
+            this.cbDisableInstaloot.Tag = "iatag_ui_disableinstaloot";
+            this.cbDisableInstaloot.Text = "Disable instaloot";
+            this.cbDisableInstaloot.CheckedChanged += new System.EventHandler(this.cbDisableInstaloot_CheckedChanged);
             // 
             // cbAutoDismiss
             // 
@@ -337,7 +386,7 @@
             this.linkSourceCode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.linkSourceCode.AutoSize = true;
             this.linkSourceCode.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.linkSourceCode.Location = new System.Drawing.Point(5, 468);
+            this.linkSourceCode.Location = new System.Drawing.Point(5, 498);
             this.linkSourceCode.Name = "linkSourceCode";
             this.linkSourceCode.Size = new System.Drawing.Size(68, 13);
             this.linkSourceCode.TabIndex = 21;
@@ -713,26 +762,11 @@
             this.buttonViewLogs.Text = "View Logs";
             this.buttonViewLogs.Click += new System.EventHandler(this.buttonViewLogs_Click);
             // 
-            // cbDisableInstaloot
-            // 
-            this.cbDisableInstaloot.Bold = false;
-            this.cbDisableInstaloot.EnabledCalc = true;
-            this.cbDisableInstaloot.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cbDisableInstaloot.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbDisableInstaloot.IsDarkMode = false;
-            this.cbDisableInstaloot.Location = new System.Drawing.Point(3, 417);
-            this.cbDisableInstaloot.Name = "cbDisableInstaloot";
-            this.cbDisableInstaloot.Size = new System.Drawing.Size(268, 27);
-            this.cbDisableInstaloot.TabIndex = 33;
-            this.cbDisableInstaloot.Tag = "iatag_ui_disableinstaloot";
-            this.cbDisableInstaloot.Text = "Disable instaloot";
-            this.cbDisableInstaloot.CheckedChanged += new System.EventHandler(this.cbDisableInstaloot_CheckedChanged);
-            // 
             // SettingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(876, 511);
+            this.ClientSize = new System.Drawing.Size(876, 577);
             this.Controls.Add(this.panelBox4);
             this.Controls.Add(this.pbAutomaticUpdates);
             this.Controls.Add(this.panelBox2);
@@ -800,5 +834,7 @@
         private System.Windows.Forms.LinkLabel linkCheckForUpdates;
         private FirefoxCheckBox cbAutoDismiss;
         private FirefoxCheckBox cbDisableInstaloot;
+        private FirefoxCheckBox cbEnableDowngrades;
+        private System.Windows.Forms.LinkLabel helpWhatIsEnableDowngrades;
     }
 }

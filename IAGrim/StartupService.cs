@@ -86,7 +86,7 @@ namespace IAGrim {
             Logger.Info("Delete duplicates is " + (settings.GetPersistent().DeleteDuplicates ? "enabled" : "disabled"));
             Logger.Info((new WindowsPrincipal(WindowsIdentity.GetCurrent())).IsInRole(WindowsBuiltInRole.Administrator) ? "Running as administrator" : "Not running with low privileges");
 
-            List<GDTransferFile> mods = GlobalPaths.TransferFiles;
+            List<GDTransferFile> mods = GlobalPaths.GetTransferFiles(true);
 
             if (mods.Count == 0) {
                 Logger.Warn("No transfer files has been found");
