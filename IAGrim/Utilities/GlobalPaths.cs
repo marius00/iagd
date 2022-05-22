@@ -12,7 +12,6 @@ using static IAGrim.Utilities.HelperClasses.GDTransferFile;
 namespace IAGrim.Utilities {
     internal static class GlobalPaths {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(GlobalPaths));
-        private static readonly HashSet<string> ParsedFiles = new HashSet<string>();
         
 
 
@@ -110,7 +109,9 @@ namespace IAGrim.Utilities {
         /// </summary>
         public static List<GDTransferFile> GetTransferFiles(bool includeDowngradeFiles) {
             var transferFilesCache = new List<GDTransferFile>();
+            HashSet<string> parsedFiles = new HashSet<string>();
             string documents = SavePath;
+
             var transferFilenames = new string[] {
                 "transfer.gst", // Softcore
                 "transfer.gsh", // Hardcore
@@ -138,14 +139,14 @@ namespace IAGrim.Utilities {
             // transfer.bst / transfer.cst / transfer.csh
             foreach (string filename in transferFilenames) {
                 string vanilla = Path.Combine(documents, filename);
-                if (File.Exists(vanilla) && !ParsedFiles.Contains(vanilla)) {
+                if (File.Exists(vanilla) && !parsedFiles.Contains(vanilla)) {
                     files.Add(vanilla);
                 }
 
 
                 foreach (var possibleMod in Directory.GetDirectories(documents)) {
                     string mod = Path.Combine(possibleMod, filename);
-                    if (File.Exists(mod) && !ParsedFiles.Contains(mod)) {
+                    if (File.Exists(mod) && !parsedFiles.Contains(mod)) {
                         files.Add(mod);
                     }
                 }
@@ -154,7 +155,7 @@ namespace IAGrim.Utilities {
 
             foreach (string potential in files) {
                 if (TransferStashService.TryGetModLabel(potential, out var mod)) {
-                    ParsedFiles.Add(potential);
+                    parsedFiles.Add(potential);
                     var lastAccess = File.GetLastWriteTime(potential);
                     transferFilesCache.Add(new GDTransferFile {
                         Filename = potential,

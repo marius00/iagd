@@ -501,6 +501,7 @@ iatag_ui_duplicatesonly=Duplicates Only
 iatag_ui_electrocute=Electrocute
 iatag_ui_elemental=Elemental
 iatag_ui_enabled=Enabled
+iatag_ui_enabledowngrades=Enable downgrades
 iatag_ui_energy_regen=Energy Regeneration
 iatag_ui_experience=Experience
 iatag_ui_experimentalupdates=Frequent Features
