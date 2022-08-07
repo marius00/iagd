@@ -17,16 +17,18 @@ namespace IAGrim.Utilities {
         [DllImport("kernel32")]
         private static extern UInt64 GetTickCount64();
 
+        public const string Url = "https://grimdawn.evilsoft.net/version.php";
+
         private string GetUpdateXml(bool requestLatest) {
             var v = Assembly.GetExecutingAssembly().GetName().Version;
             string version = $"{v.Major}.{v.Minor}.{v.Build}.{v.Revision}";
 
             var is64Bit = Environment.Is64BitOperatingSystem;
             if (requestLatest) {
-                return $"https://grimdawn.evilsoft.net/version.php?beta&version={version}&is64bit={is64Bit}";
+                return $"{Url}?beta&version={version}&is64bit={is64Bit}";
             }
 
-            return $"https://grimdawn.evilsoft.net/version.php?version={version}&is64bit={is64Bit}";
+            return $"{Url}?version={version}&is64bit={is64Bit}";
         }
 
         public AutomaticUpdateChecker(SettingsService settings) {

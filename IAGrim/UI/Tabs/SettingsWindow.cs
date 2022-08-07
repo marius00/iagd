@@ -251,5 +251,12 @@ namespace IAGrim.UI.Tabs {
         private void cbEnableDowngrades_CheckedChanged(object sender, EventArgs e) {
             _settings.GetPersistent().EnableDowngrades = ((FirefoxCheckBox)sender).Checked;
         }
+
+        private void linkDowngrade_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            AutoUpdater.LetUserSelectRemindLater = false;
+            AutoUpdater.RemindLaterTimeSpan = RemindLaterFormat.Days;
+            AutoUpdater.RemindLaterAt = 7;
+            AutoUpdater.Start($"{AutomaticUpdateChecker.Url}?downgrade");
+        }
     }
 }

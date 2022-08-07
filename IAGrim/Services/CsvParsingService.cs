@@ -101,6 +101,7 @@ namespace IAGrim.Services {
                                     _transferStashService.Deposit(stashfile, new List<PlayerItem> { item }, out string error);
                                     if (string.IsNullOrEmpty(error)) {
                                         Logger.Info("Deposited item back in-game, did not pass item classification.");
+                                        Logger.Info("New GD patch? Go to the Grim Dawn tab and parse the game files again.");
                                         File.Delete(entry.Filename);
                                     }
                                     else {

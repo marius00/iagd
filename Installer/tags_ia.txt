@@ -496,6 +496,7 @@ iatag_ui_disableinstaloot=Disable instaloot
 iatag_ui_donatenow=Donate Now!
 iatag_ui_dontwantbackups=I don't want online features, stop asking me!
 iatag_ui_dot=Damage over Time
+iatag_ui_downgrade_ia=Downgrade
 iatag_ui_dualcomputer=Using IA on multiple PCs
 iatag_ui_duplicatesonly=Duplicates Only
 iatag_ui_electrocute=Electrocute

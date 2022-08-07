@@ -68,6 +68,7 @@
             this.buttonLanguageSelect = new FirefoxButton();
             this.buttonViewBackups = new FirefoxButton();
             this.buttonViewLogs = new FirefoxButton();
+            this.linkDowngrade = new System.Windows.Forms.LinkLabel();
             this.contextMenuStrip1.SuspendLayout();
             this.panelBox4.SuspendLayout();
             this.pbAutomaticUpdates.SuspendLayout();
@@ -456,6 +457,7 @@
             // pbAutomaticUpdates
             // 
             this.pbAutomaticUpdates.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.pbAutomaticUpdates.Controls.Add(this.linkDowngrade);
             this.pbAutomaticUpdates.Controls.Add(this.linkCheckForUpdates);
             this.pbAutomaticUpdates.Controls.Add(this.helpWhatIsExperimentalUpdates);
             this.pbAutomaticUpdates.Controls.Add(this.helpWhatIsRegularUpdates);
@@ -762,6 +764,19 @@
             this.buttonViewLogs.Text = "View Logs";
             this.buttonViewLogs.Click += new System.EventHandler(this.buttonViewLogs_Click);
             // 
+            // linkDowngrade
+            // 
+            this.linkDowngrade.AutoSize = true;
+            this.linkDowngrade.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.linkDowngrade.Location = new System.Drawing.Point(374, 66);
+            this.linkDowngrade.Name = "linkDowngrade";
+            this.linkDowngrade.Size = new System.Drawing.Size(68, 13);
+            this.linkDowngrade.TabIndex = 32;
+            this.linkDowngrade.TabStop = true;
+            this.linkDowngrade.Tag = "iatag_ui_downgrade_ia";
+            this.linkDowngrade.Text = "Downgrade";
+            this.linkDowngrade.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkDowngrade_LinkClicked);
+            // 
             // SettingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -836,5 +851,6 @@
         private FirefoxCheckBox cbDisableInstaloot;
         private FirefoxCheckBox cbEnableDowngrades;
         private System.Windows.Forms.LinkLabel helpWhatIsEnableDowngrades;
+        private System.Windows.Forms.LinkLabel linkDowngrade;
     }
 }
