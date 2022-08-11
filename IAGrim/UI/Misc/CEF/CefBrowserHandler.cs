@@ -41,7 +41,7 @@ namespace IAGrim.UI.Misc.CEF {
 
         public void ShowCharacterBackups() {
             if (BrowserControl != null && BrowserControl.CanExecuteJavascriptInMainFrame) {
-                BrowserControl.ExecuteScriptAsync("window.showCharacterBackups");
+                BrowserControl.ExecuteScriptAsync("window.showCharacterBackups", "");
                 if (_tabControl.InvokeRequired) {
                     _tabControl.Invoke((MethodInvoker) delegate { _tabControl.SelectedIndex = 0; });
                 }
