@@ -50,6 +50,28 @@ namespace IAGrim.Database {
                 sql.Add("AND name LIKE :name");
             }
 
+            // Add the MINIMUM level requirement (if any)
+            if (query.MinimumLevel > 0) {
+                sql.Add(@"			
+                    AND EXISTS (
+                        select id_databaseitem from databaseitemstat_v2 dbs 
+                        WHERE stat = 'itemLevel' 
+                        AND val1 >= :minlevel
+                        AND item.id_databaseitem = dbs.id_databaseitem
+                    )");
+            }
+
+            // Add the MAXIMUM level requirement (if any)
+            if (query.MaximumLevel < 120 && query.MaximumLevel > 0) {
+                sql.Add(@"			
+                    AND NOT EXISTS (
+                        select id_databaseitem from databaseitemstat_v2 dbs 
+                        WHERE stat = 'itemLevel' 
+                        AND val1 > :maxlevel
+                        AND item.id_databaseitem = dbs.id_databaseitem
+                    )");
+            }
+
 
             sql.Add(@"order by name asc");
 
@@ -64,6 +86,12 @@ namespace IAGrim.Database {
                     }
                     if (!string.IsNullOrEmpty(query.Wildcard)) {
                         q.SetParameter("name", $"%{query.Wildcard.ToLower()}%");
+                    }
+                    if (query.MaximumLevel < 120 && query.MaximumLevel > 0) {
+                        q.SetParameter("maxlevel", query.MaximumLevel);
+                    }
+                    if (query.MinimumLevel > 0) {
+                        q.SetParameter("minlevel", query.MinimumLevel);
                     }
 
 

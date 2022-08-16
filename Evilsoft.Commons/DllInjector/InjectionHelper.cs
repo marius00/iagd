@@ -238,7 +238,7 @@ namespace DllInjector {
                                 Inject64Bit("Grim Dawn.exe", dll64Bit, _injectionMethods.GetInjectionMethod());
 
                                 if (!InjectionVerifier.VerifyInjection(pid, dll64Bit)) {
-                                    Logger.Error($"Error injecting DLL into Grim Dawn. Injection method {_injectionMethods.GetInjectionMethod()}, switching to injetion method {_injectionMethods.GetNextInjectionMethod()}");
+                                    Logger.Error($"Error injecting DLL into Grim Dawn. Injection method {_injectionMethods.GetInjectionMethod()}, switching to injection method {_injectionMethods.GetNextInjectionMethod()}");
                                     _injectionMethods.SwitchInjectionMethod();
                                     
 

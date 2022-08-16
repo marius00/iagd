@@ -517,7 +517,7 @@ const helpEntries = [
         body: () => <div>
             When logging into online backups, a random number is assigned to your account.<br/>
             This number can then be sent to your buddies, to let them search your items without needing to know your
-            email.
+            e-mail.
         </div>,
         type: IHelpEntryType.Informational
     },
@@ -650,6 +650,15 @@ const helpEntries = [
             Item Assistant may not function correctly with 4K monitors and UI scaling. <br/>
             Right click Item Assistant, got to properties and then Compatability mode. <br/>
             <img src="./4k.png"/>
+        </div>
+    },
+    {
+        title: `Why does IA ask for my e-mail?`,
+        tag: 'email-whiners',
+        body: () => <div>
+            IA requires your e-mail for identifying you for online backups. You can opt-out by clicking the "Opt out of online features" on the online tab. <br/>
+            I absolutely could not care less about your e-mail, and the backend code is open source just like IA. Don't like it? Simply opt-out of online backups. <br/>
+            <span style="display: none;">email, e-mail, privacy, need, login.</span>
         </div>
     },
     /*
