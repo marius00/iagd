@@ -184,10 +184,10 @@ namespace IAGrim.UI.Tabs {
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             Logger.Info("Logging out of online backups.");
+            _settings.GetPersistent().BuddySyncUserIdV3 = null;
             _authAuthService.Logout();
             _settings.GetPersistent().CloudUploadTimestamp = 0;
             _playerItemDao.ResetOnlineSyncState();
-            _settings.GetPersistent().BuddySyncUserIdV3 = null;
             MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_backup_logout_successful_body"), RuntimeSettings.Language.GetTag("iatag_ui_backup_logout_successful_header"));
             UpdateUi();
         }
