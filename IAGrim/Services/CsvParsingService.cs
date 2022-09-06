@@ -87,7 +87,7 @@ namespace IAGrim.Services {
                             }
                             else if (classificationService.Duplicates.Count > 0 && _settings.GetPersistent().DeleteDuplicates) {
                                 Logger.Info("Deleting duplicate item file");
-                                File.Delete(entry.Filename);
+                                File.Move(entry.Filename, Path.Combine(GlobalPaths.CsvLocationDeleted, Path.GetFileName(entry.Filename)));
                             }
                             else {
                                 // Transfer back in-game, should never have been looted.

@@ -44,6 +44,14 @@ namespace IAGrim.Utilities {
             }
         }
 
+        public static string CsvLocationDeleted {
+            get {
+                string path = Path.Combine(CoreFolder, "itemqueue_deleted");
+                Directory.CreateDirectory(path);
+                return path;
+            }
+        }
+
         public static string CharacterBackupLocation {
             get {
                 string path = Path.Combine(BackupLocation, "characters");

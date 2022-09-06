@@ -55,7 +55,7 @@ namespace IAGrim.Database {
                 sql.Add(@"			
                     AND EXISTS (
                         select id_databaseitem from databaseitemstat_v2 dbs 
-                        WHERE stat = 'itemLevel' 
+                        WHERE stat = 'itemLevel'  
                         AND val1 >= :minlevel
                         AND item.id_databaseitem = dbs.id_databaseitem
                     )");

@@ -26,7 +26,6 @@ const typicalParseDbMessage = <Fragment>{toNumberedList(`
     Click the "Grim Dawn" tab inside IA
     Select "Vanilla" (or Forgotten Gods/AoM)
     Click "Load Database"
-    Click "Update Item Stats"
     `)}
     <i>If this did not resolve your issue, try restarting IA.</i>
 </Fragment>;
@@ -73,6 +72,16 @@ const helpEntries = [
             As of version 1.3 of Item Assistant, the program has support for displaying the real stats of items.<br/>
             If an item says "Generic stats", it's a warning that Item Assistant does not yet know the true stats of this item <br/><br/>
             IA will automatically start fetching the real stats of items while you are playing Grim Dawn.
+        </div>,
+        type: IHelpEntryType.Help
+    },
+    {
+        title: `IA returns items immediately`,
+        tag: 'ItemClassificationReturn',
+        body: () => <div>
+            If you're encountering the error "Deposited item back in-game, did not pass item classification.", it most likely means you need to parse the database. <br/>
+            IA will return any items it cannot identify, since you'd be unable to search for them based on stats. <br/> <br/>
+            {typicalParseDbMessage}
         </div>,
         type: IHelpEntryType.Help
     },
@@ -336,6 +345,18 @@ const helpEntries = [
             href="https://forums.crateentertainment.com/t/how-to-move-your-saves-from-steam-cloud-to-grim-dawns-default-location/28921">copy
             them to a new folder</a>,
             and everything will be right in the world.
+        </div>,
+        type: IHelpEntryType.Help
+    },
+    {
+        title: `Could not create SSL/TLS secure channel`,
+        tag: 'SSLAntiVirusIssues',
+        body: () => <div>
+            "The request was aborted: Could not create SSL/TLS secure channel." <br/>
+            If you're running into this error message in the logs, your anti virus is most likely blocking online backups and automatic backups. <br/><br/>
+            <a href={"https://social.msdn.microsoft.com/Forums/vstudio/en-US/9e0bbf83-78ae-4f5c-9ebb-dbb75c928929/problems-could-not-create-ssl-tls-secure-channel?forum=csharpgeneral"}>Kaspersky anti-virus in particular</a> does a man-in-the-middle attack on network traffic, causing the encryption (SSL) verification to fail.
+            <br/><br/>
+            Another cause can be outdated TLS on Windows 7. If you are running windows 7, <a href={"https://stackoverflow.com/questions/70674832/windows-7-could-not-create-ssl-tls-secure-channel-system-net-webexception"}>see this link</a>
         </div>,
         type: IHelpEntryType.Help
     },
