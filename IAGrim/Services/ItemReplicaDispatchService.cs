@@ -51,7 +51,7 @@ namespace IAGrim.Services {
 
                 pipeStream.Write(buffer.ToArray(), 0, buffer.Count);
 #if DEBUG
-                Logger.Debug("Wrote item to pipe");
+                // Logger.Debug("Wrote item to pipe");
 #endif
             }
 

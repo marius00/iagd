@@ -58,91 +58,97 @@ namespace IAGrim {
 
         // TODO: This creates another session instance, should be executed inside the ThreadExecuter
         public static void PrintStartupInfo(SessionFactory factory, SettingsService settings, SqlDialect dialect) {
-            Logger.Info(settings.GetLocal().StashToLootFrom == 0
-                ? "IA is configured to loot from the last stash page"
-                : $"IA is configured to loot from stash page #{settings.GetLocal().StashToLootFrom}");
+            try {
+                Logger.Info(settings.GetLocal().StashToLootFrom == 0
+                    ? "IA is configured to loot from the last stash page"
+                    : $"IA is configured to loot from stash page #{settings.GetLocal().StashToLootFrom}");
 
-            Logger.Info(settings.GetLocal().StashToDepositTo == 0
-                ? "IA is configured to deposit to the second-to-last stash page"
-                : $"IA is configured to deposit to stash page #{settings.GetLocal().StashToDepositTo}");
+                Logger.Info(settings.GetLocal().StashToDepositTo == 0
+                    ? "IA is configured to deposit to the second-to-last stash page"
+                    : $"IA is configured to deposit to stash page #{settings.GetLocal().StashToDepositTo}");
 
-            using (ISession session = factory.OpenSession()) {
-                long numItemsStored = session.CreateCriteria<PlayerItem>()
-                    .SetProjection(NHibernate.Criterion.Projections.RowCountInt64())
-                    .UniqueResult<long>();
+                using (ISession session = factory.OpenSession()) {
+                    long numItemsStored = session.CreateCriteria<PlayerItem>()
+                        .SetProjection(NHibernate.Criterion.Projections.RowCountInt64())
+                        .UniqueResult<long>();
 
-                if (numItemsStored == 0)
-                    Logger.Warn($"There are {numItemsStored} items stored in the database. <---- Unless you just installed IA, this is bad. No items.");
-                else 
-                    Logger.Info($"There are {numItemsStored} items stored in the database.");
-            }
-
-            Logger.Info(settings.GetPersistent().ShowRecipesAsItems
-                ? "Show recipes as items is enabled"
-                : "Show recipes as items is disabled");
-
-            Logger.Info("Transfer to any mod is " + (settings.GetPersistent().TransferAnyMod ? "enabled" : "disabled"));
-            Logger.Info("Experimental updates is " + (settings.GetPersistent().SubscribeExperimentalUpdates ? "enabled" : "disabled"));
-            Logger.Info("Delete duplicates is " + (settings.GetPersistent().DeleteDuplicates ? "enabled" : "disabled"));
-            Logger.Info((new WindowsPrincipal(WindowsIdentity.GetCurrent())).IsInRole(WindowsBuiltInRole.Administrator) ? "Running as administrator" : "Not running with low privileges");
-
-            List<GDTransferFile> mods = GlobalPaths.GetTransferFiles(true);
-
-            if (mods.Count == 0) {
-                Logger.Warn("No transfer files has been found");
-            }
-            else {
-                Logger.Info("The following transfer files has been found:");
-
-                foreach (GDTransferFile mod in mods) {
-                    var stash = TransferStashService.GetStash(mod.Filename);
-                    if (stash?.Tabs.Count < 2) {
-                        Logger.Warn($"\"{mod.Filename}\": Mod: \"{mod.Mod}\", HC: {mod.IsHardcore}, Downgrade: {mod.Downgrade}, Tabs: {stash?.Tabs.Count} <=======");
-                        Logger.Warn("Stash file does not have enough tabs");
-                    }
-                    else {
-                        Logger.Info($"\"{mod.Filename}\": Mod: \"{mod.Mod}\", HC: {mod.IsHardcore}, Downgrade: {mod.Downgrade}, Tabs: {stash?.Tabs.Count}");
-                    }
+                    if (numItemsStored == 0)
+                        Logger.Warn($"There are {numItemsStored} items stored in the database. <---- Unless you just installed IA, this is bad. No items.");
+                    else
+                        Logger.Info($"There are {numItemsStored} items stored in the database.");
                 }
-            }
 
-            Logger.Info("There are items stored for the following mods:");
+                Logger.Info(settings.GetPersistent().ShowRecipesAsItems
+                    ? "Show recipes as items is enabled"
+                    : "Show recipes as items is disabled");
 
-            foreach (ModSelection entry in new PlayerItemDaoImpl(factory, new DatabaseItemStatDaoImpl(factory, dialect), dialect)
-                .GetModSelection()) {
-                Logger.Info($"Mod: \"{entry.Mod}\", HC: {entry.IsHardcore}");
-            }
+                Logger.Info("Transfer to any mod is " + (settings.GetPersistent().TransferAnyMod ? "enabled" : "disabled"));
+                Logger.Info("Experimental updates is " + (settings.GetPersistent().SubscribeExperimentalUpdates ? "enabled" : "disabled"));
+                Logger.Info("Delete duplicates is " + (settings.GetPersistent().DeleteDuplicates ? "enabled" : "disabled"));
+                Logger.Info((new WindowsPrincipal(WindowsIdentity.GetCurrent())).IsInRole(WindowsBuiltInRole.Administrator) ? "Running as administrator" : "Not running with low privileges");
 
-            
-            string gdPath = settings.GetLocal().CurrentGrimdawnLocation;
-            Logger.Info(string.IsNullOrEmpty(gdPath)
-                ? "The path to Grim Dawn is unknown (not great)"
-                : $"The path to Grim Dawn is \"{gdPath}\"");
+                List<GDTransferFile> mods = GlobalPaths.GetTransferFiles(true);
 
-            Logger.Info($"Using IA on multiple PCs: {settings.GetPersistent().UsingDualComputer}");
-
-            Logger.Info($"Logged into online backups: {!string.IsNullOrEmpty(settings.GetPersistent().CloudUser)}");
-            Logger.Info($"Opted out of online backups: {settings.GetLocal().OptOutOfBackups}");
-
-
-
-            using (ISession session = factory.OpenSession()) {
-                long num = session.CreateCriteria<DatabaseItem>()
-                    .SetProjection(NHibernate.Criterion.Projections.RowCountInt64())
-                    .UniqueResult<long>();
-
-                var isGdParsed = num > 0;
-                settings.GetLocal().IsGrimDawnParsed = isGdParsed;
-
-                if (isGdParsed) {
-                    Logger.Info("The Grim Dawn database has been parsed");
+                if (mods.Count == 0) {
+                    Logger.Warn("No transfer files has been found");
                 }
                 else {
-                    Logger.Warn("The Grim Dawn database has not been parsed");
-                }
-            }
+                    Logger.Info("The following transfer files has been found:");
 
-            Logger.Info("Startup data dump complete");
+                    foreach (GDTransferFile mod in mods) {
+                        var stash = TransferStashService.GetStash(mod.Filename);
+                        if (stash?.Tabs.Count < 2) {
+                            Logger.Warn($"\"{mod.Filename}\": Mod: \"{mod.Mod}\", HC: {mod.IsHardcore}, Downgrade: {mod.Downgrade}, Tabs: {stash?.Tabs.Count} <=======");
+                            Logger.Warn("Stash file does not have enough tabs");
+                        }
+                        else {
+                            Logger.Info($"\"{mod.Filename}\": Mod: \"{mod.Mod}\", HC: {mod.IsHardcore}, Downgrade: {mod.Downgrade}, Tabs: {stash?.Tabs.Count}");
+                        }
+                    }
+                }
+
+                Logger.Info("There are items stored for the following mods:");
+
+                foreach (ModSelection entry in new PlayerItemDaoImpl(factory, new DatabaseItemStatDaoImpl(factory, dialect), dialect)
+                             .GetModSelection()) {
+                    Logger.Info($"Mod: \"{entry.Mod}\", HC: {entry.IsHardcore}");
+                }
+
+
+                string gdPath = settings.GetLocal().CurrentGrimdawnLocation;
+                Logger.Info(string.IsNullOrEmpty(gdPath)
+                    ? "The path to Grim Dawn is unknown (not great)"
+                    : $"The path to Grim Dawn is \"{gdPath}\"");
+
+                Logger.Info($"Using IA on multiple PCs: {settings.GetPersistent().UsingDualComputer}");
+
+                Logger.Info($"Logged into online backups: {!string.IsNullOrEmpty(settings.GetPersistent().CloudUser)}");
+                Logger.Info($"Opted out of online backups: {settings.GetLocal().OptOutOfBackups}");
+
+
+
+                using (ISession session = factory.OpenSession()) {
+                    long num = session.CreateCriteria<DatabaseItem>()
+                        .SetProjection(NHibernate.Criterion.Projections.RowCountInt64())
+                        .UniqueResult<long>();
+
+                    var isGdParsed = num > 0;
+                    settings.GetLocal().IsGrimDawnParsed = isGdParsed;
+
+                    if (isGdParsed) {
+                        Logger.Info("The Grim Dawn database has been parsed");
+                    }
+                    else {
+                        Logger.Warn("The Grim Dawn database has not been parsed");
+                    }
+                }
+
+                Logger.Info("Startup data dump complete");
+            }
+            catch (Exception ex) {
+                Logger.Error(ex.Message, ex);
+                Logger.Error("IA may not function correctly");
+            }
         }
 
         public static SettingsService LoadSettingsService() {
