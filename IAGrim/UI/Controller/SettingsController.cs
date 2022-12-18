@@ -162,20 +162,12 @@ namespace IAGrim.UI.Controller {
         }
 
         public void OpenDataFolder() {
-            String appdata = Environment.GetEnvironmentVariable("LocalAppData");
-            string dir = Path.Combine(appdata, "EvilSoft", "IAGD", "backup");
-            if (!Directory.Exists(dir))
-                Directory.CreateDirectory(dir);
-            Process.Start("file://" + dir);
+            Process.Start("file://" + GlobalPaths.BackupLocation);
         }
 
 
         public void OpenLogFolder() {
-            String appdata = Environment.GetEnvironmentVariable("LocalAppData");
-            string dir = Path.Combine(appdata, "EvilSoft", "IAGD");
-            if (!Directory.Exists(dir))
-                Directory.CreateDirectory(dir);
-            Process.Start("file://" + dir);
+            Process.Start("file://" + GlobalPaths.CoreFolder);
         }
     }
 }

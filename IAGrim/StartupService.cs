@@ -11,6 +11,7 @@ using log4net;
 using NHibernate;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -87,24 +88,33 @@ namespace IAGrim {
                 Logger.Info("Delete duplicates is " + (settings.GetPersistent().DeleteDuplicates ? "enabled" : "disabled"));
                 Logger.Info((new WindowsPrincipal(WindowsIdentity.GetCurrent())).IsInRole(WindowsBuiltInRole.Administrator) ? "Running as administrator" : "Not running with low privileges");
 
-                List<GDTransferFile> mods = GlobalPaths.GetTransferFiles(true);
+                try {
+                    List<GDTransferFile> mods = GlobalPaths.GetTransferFiles(true);
 
-                if (mods.Count == 0) {
-                    Logger.Warn("No transfer files has been found");
-                }
-                else {
-                    Logger.Info("The following transfer files has been found:");
+                    if (mods.Count == 0) {
+                        Logger.Warn("No transfer files has been found");
+                    }
+                    else {
+                        Logger.Info("The following transfer files has been found:");
 
-                    foreach (GDTransferFile mod in mods) {
-                        var stash = TransferStashService.GetStash(mod.Filename);
-                        if (stash?.Tabs.Count < 2) {
-                            Logger.Warn($"\"{mod.Filename}\": Mod: \"{mod.Mod}\", HC: {mod.IsHardcore}, Downgrade: {mod.Downgrade}, Tabs: {stash?.Tabs.Count} <=======");
-                            Logger.Warn("Stash file does not have enough tabs");
-                        }
-                        else {
-                            Logger.Info($"\"{mod.Filename}\": Mod: \"{mod.Mod}\", HC: {mod.IsHardcore}, Downgrade: {mod.Downgrade}, Tabs: {stash?.Tabs.Count}");
+                        foreach (GDTransferFile mod in mods) {
+                            var stash = TransferStashService.GetStash(mod.Filename);
+                            if (stash?.Tabs.Count < 2) {
+                                Logger.Warn($"\"{mod.Filename}\": Mod: \"{mod.Mod}\", HC: {mod.IsHardcore}, Downgrade: {mod.Downgrade}, Tabs: {stash?.Tabs.Count} <=======");
+                                Logger.Warn("Stash file does not have enough tabs");
+                            }
+                            else {
+                                Logger.Info($"\"{mod.Filename}\": Mod: \"{mod.Mod}\", HC: {mod.IsHardcore}, Downgrade: {mod.Downgrade}, Tabs: {stash?.Tabs.Count}");
+                            }
                         }
                     }
+                }
+                catch (IOException ex) {
+                    Logger.Fatal(ex.Message, ex);
+                    Logger.Fatal("Error parsing transfer files. This is typically because the file is synced to OneDrive, but not available locally on the PC.");
+                    MessageBox.Show("Error parsing transfer files.\nPossibly due to being located in OneDrive, but not synced to this PC.", "Fatal error", MessageBoxButtons.OK);
+                    Process.Start("file://" + GlobalPaths.CoreFolder);
+                    throw;
                 }
 
                 Logger.Info("There are items stored for the following mods:");

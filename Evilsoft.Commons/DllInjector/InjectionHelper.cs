@@ -146,7 +146,8 @@ namespace DllInjector {
 
                 return false;
             }
-            catch (ArgumentException) {
+            catch (ArgumentException ex) {
+                Logger.Warn("Error checking 32/64 bit status", ex);
                 return false;
             }
         }
