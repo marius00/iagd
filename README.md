@@ -24,10 +24,8 @@ Place this file under IAGrim\bin\Release
 
 ## ItemAssistantHook.dll
 IAGrim also depends on ItemAssistantHook.dll for detecting the status of various things ingame.
-The easiest way to obtain this DLL is by simply copying it from a recent installation of IAGrim.
-If you do decide to compile it yourself, or need to make changes to the DLL, check the IA\ folder.
-The DLL uses C++ and Assembly, and requires C++ Boost to run.
-No package managers are in use for this project and expect it to be non-trivial to get up and running.
+
+[More information in the DLL readme](HookDll/README.md)
 
 ## The web interface
 HowTo:

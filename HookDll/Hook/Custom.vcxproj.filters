@@ -170,4 +170,7 @@
     </ClCompile>
     <ClCompile Include="SettingsReader.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
+  </ItemGroup>
 </Project>

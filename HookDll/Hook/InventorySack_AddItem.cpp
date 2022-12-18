@@ -172,10 +172,10 @@ bool InventorySack_AddItem::IsRelevant(const GAME::ItemReplicaInfo& item) {
 	
 
 	if (item.stackSize > 1) {
-		DisplayMessage(L"Stackable item: Not looted", L"Item Assistant");
+		DisplayMessage(L"Stackable item - IA does not loot stackable items", L"Item Assistant");
 		return false;
 	}
-
+	
 	if (item.baseRecord.find("/storyelements/") != std::string::npos) {
 		// We'll allow lokarr, but only lokarr out of storyelements items.
 		if (item.baseRecord.find("records/storyelements/signs/signh.dbr") != std::string::npos) {} // Lokarr's Gaze
@@ -183,29 +183,37 @@ bool InventorySack_AddItem::IsRelevant(const GAME::ItemReplicaInfo& item) {
 		else if (item.baseRecord.find("records/storyelements/signs/signs.dbr") != std::string::npos) {} // Lokarr's Mantle
 		else if (item.baseRecord.find("records/storyelements/signs/signt.dbr") != std::string::npos) {} // Lokarr's Coat
 		else {
-			DisplayMessage(L"Quest item: Not looted", L"Item Assistant");
+			DisplayMessage(L"Quest item - IA does not support this specific item", L"Item Assistant");
 			return false;
 		}
 	}
 
 	if (item.baseRecord.find("/materia/") != std::string::npos) {
-		DisplayMessage(L"Component: Not looted", L"Item Assistant");
+		DisplayMessage(L"Component ignored - IA does not loot components", L"Item Assistant");
 		return false;
 	}
 
 	if (item.baseRecord.find("/questitems/") != std::string::npos) {
-		DisplayMessage(L"Quest item: Not looted", L"Item Assistant");
+		DisplayMessage(L"Quest item ignored - IA does not loot quest items", L"Item Assistant");
 		return false;
 	}
 
 	if (item.baseRecord.find("/crafting/") != std::string::npos) {
-		DisplayMessage(L"Component: Not looted", L"Item Assistant");
+		DisplayMessage(L"Component ignored - IA does not loot components", L"Item Assistant");
 		return false;
 	}
 
-	// Transmute
+	// Salt bag and lifegivers amulet - Frequently get questions about these
+	if (item.baseRecord.find("gearaccessories/necklaces/a00_necklace.dbr") != std::string::npos 
+		|| item.baseRecord.find("gearaccessories/rings/d003_ring.dbr") != std::string::npos
+		|| item.baseRecord.find("questassets/q000_torso.dbr") != std::string::npos) {
+		DisplayMessage(L"Special item - This item is not supported by IA", L"Item Assistant");
+		return false;
+	}
+
+	// Transmute - Should be impossible, but never know..
 	if (!item.enchantmentRecord.empty()) {
-		DisplayMessage(L"Has transmute: Not looted", L"Item Assistant");
+		DisplayMessage(L"Item has a transmute - Souldbound item", L"Item Assistant");
 		return false;
 	}
 
@@ -331,7 +339,7 @@ bool InventorySack_AddItem::HandleItem(void* stash, GAME::Item* item) {
 	}
 
 	std::wstring modName;
-	if (fnGetGameInfoMode(gameInfo) != 1) { // != Crucible
+	if (fnGetGameInfoMode(gameInfo) != 1) { // Skip mod name if we're in Crucible, we don't treat that as a mod.
 		fnGetModNameArg(gameInfo, &modName);
 		modName.erase(std::remove(modName.begin(), modName.end(), '\r'), modName.end());
 		modName.erase(std::remove(modName.begin(), modName.end(), '\n'), modName.end());
