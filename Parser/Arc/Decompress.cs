@@ -412,46 +412,61 @@ namespace IAGrim.Parser.Arc {
 
 
         private string GetTagBlob(string filename) {
-            string result = string.Empty;
-    
             for (int i = 0; i < strings.Length; i++) {
                 if (!strings[i].Equals(filename)) continue;
-                string text;
 
                 if (tocs[i].text == null) {
-                    text = "";
-                    string line = "";
-          
                     int j = 0;
                     var data = extractFiles(fs, parts, tocs[i]);
-                    while (j < data.Length) {
 
-                        bool nextIs0A = j < data.Length - 1 && data[j + 1] == 0x0A;
-                        if ((data[j]     == 0x0D) && nextIs0A) {
-                            // Line break;
-                            text = text + line + LINE_SEPARATOR;
-                            line = "";
-              
-                            j = j + 2;
-                        } 
-                        else {
-                            line = line + (char) data[j];
-                    
-                            j = j + 1;
+                    // Most of the tag section's content will not be removed as control chars, so its final length won't be too far away from its original length.
+                    // This means that initializing the whole-section StringBuilder with the tag section's original length eliminates all future resizes while not wasting much memory.
+                    // The per-line StringBuilder's initial length is semi-arbitrary, but there is no urgent reason to make it shorter and it should almost never need to be resized as-is.
+                    var sb = new StringBuilder(data.Length);
+                    var sbLine = new StringBuilder(data.Length >> 3);
+                    while (j < data.Length) {
+                        var nextIsEOF = j >= data.Length - 1;
+                        var currentChar = (char)data[j];
+                        var nextChar = nextIsEOF ? '\0' : (char)data[j + 1];
+                        switch (currentChar) {
+                            case '\r':
+                            case '\n':
+                                if (sbLine.Length > 0) {
+                                    sb.Append(sbLine.ToString());
+                                    sbLine.Clear();
+                                }
+
+                                sbLine.Append('\n');
+
+                                if (currentChar == '\r' && nextChar == '\n') {
+                                    j += 1;
+                                }
+                                break;
+
+                            case '^':
+                                j += 1;
+                                break;
+
+                            default:
+                                sbLine.Append(currentChar);
+                                break;
                         }
+
+                        j += 1;
                     }
-          
-                    tocs[i].text = text;
-                } else {
-                    text = tocs[i].text;
+
+                    if (sbLine.Length > 0) {
+                        sb.Append(sbLine.ToString());
+                        sbLine.Clear();
+                    }
+
+                    tocs[i].text = sb.ToString();
                 }
 
-                return RemoveControlChars(text);
+                return tocs[i].text;
             }
     
-            result = RemoveControlChars(result);
-    
-            return result;
+            return string.Empty;
         }
 
         ~Decompress() {
