@@ -18,6 +18,7 @@ namespace IAGrim.Parsers.GameDataParsing.UI {
         public ProgressBar MappingItemNames => progressMappingItemNames;
         public ProgressBar MappingPetStats => progressMappingPetStats;
         public ProgressBar SavingItems => progressSaveItems;
+        public ProgressBar IndexingItems => progressIndexItems;
         public ProgressBar GeneratingSpecialStats => progressGeneratingSpecialStats;
         public ProgressBar SavingSpecialStats => progressSavingSpecialStats;
         

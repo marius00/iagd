@@ -7,6 +7,7 @@ namespace IAGrim.Database.Interfaces {
     public interface IDatabaseItemDao : IBaseDao<DatabaseItem> {
         Dictionary<string, string> GetTagDictionary();
         void Save(List<DatabaseItem> items, ProgressTracker progressTracker);
+        void CreateItemIndexes(ProgressTracker progressTracker);
         DatabaseItem FindByRecord(string record);
         IList<string> ListAllRecords();
 

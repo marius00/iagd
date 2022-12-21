@@ -111,6 +111,14 @@ namespace IAGrim.Database.Synchronizer {
             );
         }
 
+        public void CreateItemIndexes(ProgressTracker progressTracker) {
+            ThreadExecuter.Execute(
+                () => _repo.CreateItemIndexes(progressTracker),
+                ThreadExecuter.ThreadTimeout * 2,
+                true
+            );
+        }
+
 
         public void Clean() {
             ThreadExecuter.Execute(
