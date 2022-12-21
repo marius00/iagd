@@ -18,6 +18,9 @@ using IAGrim.Database.Model;
 using IAGrim.Parsers.GameDataParsing.Model;
 using IAGrim.Services.Dto;
 using log4net.Repository.Hierarchy;
+using System.Data.Common;
+using System.Data.Odbc;
+using static System.Data.Entity.Infrastructure.Design.Executor;
 
 namespace IAGrim.Database {
     /// <summary>
@@ -76,16 +79,43 @@ namespace IAGrim.Database {
             }
         }
 
-        private void ExecuteTransactionSql(SQLiteConnection dbConnection, string[] commands) {
-            using (var transaction = dbConnection.BeginTransaction()) {
-                using (SQLiteCommand command = new SQLiteCommand(dbConnection)) {
-                    foreach (var sql in commands) {
-                        command.CommandText = sql;
-                        command.ExecuteNonQuery();
-                    }
-                }
+        private void ExecuteTransactionSql(string[] commands, ProgressTracker progressTracker) {
+            if (Dialect == SqlDialect.Sqlite) {
+                ExecuteTransactionSqlSqlite(commands, progressTracker);
+            }
+            else {
+                ExecuteTransactionSqlPostgres(commands, progressTracker);
+            }
+        }
 
-                transaction.Commit();
+        private void ExecuteTransactionSqlPostgres(string[] commands, ProgressTracker progressTracker) {
+            using (var session = SessionCreator.OpenStatelessSession()) {
+                using (ITransaction transaction = session.BeginTransaction()) {
+                    foreach (var command in commands) {
+                        session.CreateSQLQuery(command);
+                        progressTracker?.Increment();
+                    }
+
+                    transaction.Commit();
+                }
+            }
+        }
+
+        private void ExecuteTransactionSqlSqlite(string[] commands, ProgressTracker progressTracker) {
+            using (SQLiteConnection dbConnection = new SQLiteConnection(SessionFactoryLoader.SessionFactory.ConnectionString)) {
+                dbConnection.Open();
+
+                using (var transaction = dbConnection.BeginTransaction()) {
+                    using (SQLiteCommand command = new SQLiteCommand(dbConnection)) {
+                        foreach (var sql in commands) {
+                            command.CommandText = sql;
+                            command.ExecuteNonQuery();
+                            progressTracker?.Increment();
+                        }
+                    }
+
+                    transaction.Commit();
+                }
             }
         }
 
@@ -104,6 +134,8 @@ namespace IAGrim.Database {
                 updated = items.Where(m => !hashes.Contains(m.Record + m.Hash)).ToList();
             }
 
+            DropItemIndexes();
+
             progressTracker.MaxValue = updated.Count;
             while (idx < updated.Count) {
                 var numItems = Math.Min(updated.Count - idx, range);
@@ -112,6 +144,34 @@ namespace IAGrim.Database {
 
                 idx += range;
             }
+        }
+
+        private void DropItemIndexes() {
+            var dropCommands = new[] {
+                "drop index if exists idx_databaseitemstatv2_parent",
+                "drop index if exists idx_databaseitemstatv2_stat",
+                "drop index if exists idx_databaseitemstatv2_tv"
+            };
+
+            ExecuteTransactionSql(dropCommands, null);
+        }
+
+        public void CreateItemIndexes(ProgressTracker progressTracker) {
+            var createCommands = new[] {
+                "create index idx_databaseitemstatv2_parent on DatabaseItemStat_v2 (id_databaseitem)",
+                "create index idx_databaseitemstatv2_stat on DatabaseItemStat_v2 (Stat)",
+                "create index idx_databaseitemstatv2_tv on DatabaseItemStat_v2 (TextValue)"
+            };
+
+            var sq = new System.Diagnostics.Stopwatch();
+            sq.Start();
+
+            progressTracker.MaxValue = createCommands.Length;
+            ExecuteTransactionSql(createCommands, progressTracker);
+
+            sq.Stop();
+            Logger.Info("Item indexes created");
+            Console.WriteLine($"Creating the item indexes took {sq.ElapsedMilliseconds} milliseconds");
         }
 
         private void Save(List<DatabaseItem> items, ProgressTracker progressTracker, bool reset) {
@@ -147,30 +207,16 @@ namespace IAGrim.Database {
             }
 
 
-            var createCommands = new[] {
-                "create index idx_databaseitemstatv2_parent on DatabaseItemStat_v2 (id_databaseitem)",
-                "create index idx_databaseitemstatv2_stat on DatabaseItemStat_v2 (Stat)",
-                "create index idx_databaseitemstatv2_tv on DatabaseItemStat_v2 (TextValue)"
-            };
-
-            var dropCommands = new[] {
-                "drop index if exists idx_databaseitemstatv2_parent",
-                "drop index if exists idx_databaseitemstatv2_stat",
-                "drop index if exists idx_databaseitemstatv2_tv"
-            };
-
-
-            // Drop index, insert stats, recreate index
             var sq = new System.Diagnostics.Stopwatch();
             sq.Start();
             const string sql = "insert into databaseitemstat_v2 (id_databaseitem, stat, textvalue, val1) values (@id, @stat, @tv, @val)";
 
             int numStats;
             if (Dialect == SqlDialect.Sqlite) {
-                numStats = InsertStatsSqlite(dropCommands, createCommands, sql, items);
+                numStats = InsertStatsSqlite(sql, items);
             }
             else {
-                numStats = InsertStatsPostgres(dropCommands, createCommands, items);
+                numStats = InsertStatsPostgres(items);
             }
 
             sq.Stop();
@@ -180,19 +226,8 @@ namespace IAGrim.Database {
             Logger.InfoFormat("Stored {0} items and {1} stats to internal db.", items.Count, numStats);
         }
 
-        private int InsertStatsPostgres(string[] dropCommands, string[] createCommands, List<DatabaseItem> items) {
+        private int InsertStatsPostgres(List<DatabaseItem> items) {
             int numStats = 0;
-            void Execute(string[] commands) {
-                using (var session = SessionCreator.OpenStatelessSession()) {
-                    using (ITransaction transaction = session.BeginTransaction()) {
-                        foreach (var command in commands) {
-                            session.CreateSQLQuery(command);
-                        }
-
-                        transaction.Commit();
-                    }
-                }
-            }
 
             string GetQueryString(int numRows) {
                 if (numRows > 8190)
@@ -209,10 +244,6 @@ namespace IAGrim.Database {
                 
                 return query + string.Join(", ", entries);
             }
-
-            // Drop index
-            Execute(dropCommands);
-
 
             // Insert stats
             using (var session = SessionCreator.OpenStatelessSession()) {
@@ -256,17 +287,13 @@ namespace IAGrim.Database {
                 }
             }
 
-            // Recreate index
-            Execute(createCommands); // TODO: Since we're being batched higher up at 950 items, this might be... unfortunate
             return numStats;
         }
 
-        private int InsertStatsSqlite(string[] dropCommands, string[] createCommands, string sql, List<DatabaseItem> items) {
+        private int InsertStatsSqlite(string sql, List<DatabaseItem> items) {
             int numStats = 0;
             using (SQLiteConnection dbConnection = new SQLiteConnection(SessionFactoryLoader.SessionFactory.ConnectionString)) {
                 dbConnection.Open();
-
-                ExecuteTransactionSql(dbConnection, dropCommands);
 
                 using (var transaction = dbConnection.BeginTransaction()) {
                     using (SQLiteCommand command = new SQLiteCommand(dbConnection)) {
@@ -285,8 +312,6 @@ namespace IAGrim.Database {
 
                     transaction.Commit();
                 }
-
-                ExecuteTransactionSql(dbConnection, createCommands);
             }
 
             return numStats;

@@ -119,6 +119,7 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
             actions.Add(() => parser.MapItemNames(new WinformsProgressBar(form.MappingItemNames).Tracker));
             actions.Add(() => parser.RenamePetStats(new WinformsProgressBar(form.MappingPetStats).Tracker));
             actions.Add(() => _databaseItemDao.Save(parser.Items, new WinformsProgressBar(form.SavingItems).Tracker));
+            actions.Add(() => _databaseItemDao.CreateItemIndexes(new WinformsProgressBar(form.IndexingItems).Tracker));
 
             // TODO: This depends on the DB item name.. which is in english, not localized
             actions.Add(() => {

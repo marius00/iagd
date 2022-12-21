@@ -604,6 +604,7 @@ namespace StatTranslator {
             {"iatag_ui_mapping_item_names", "Mapping item names"},
             {"iatag_ui_generating_skills", "Generating skills"},
             {"iatag_ui_saving_items", "Saving items"},
+            {"iatag_ui_indexing_items", "Indexing items"},
             {"iatag_ui_preparing_pet_stats", "Preparing pet stats"},
             {"iatag_ui_loading_tags", "Loading tags"},
             {"iatag_ui_saving_tags", "Saving tags"},
