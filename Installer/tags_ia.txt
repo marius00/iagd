@@ -538,6 +538,7 @@ iatag_ui_importexport_import_success_body=Items imported\nIf you already had ite
 iatag_ui_importexport_nothinginzip_body=This zip file does not contain any .ias backup files
 iatag_ui_importexport_nothinginzip_title=Error
 iatag_ui_importexport_selectfile=Select the file to import
+iatag_ui_indexing_items=Indexing items
 iatag_ui_itemassistant=Item Assistant
 iatag_ui_itemquality_tooltip=The minimum item quality
 iatag_ui_javascript_not_ready_body=IA is still loading resources, please try again in a few moments..
