@@ -231,9 +231,6 @@ namespace IAGrim.UI.Misc.CEF {
                 Logger.Info("Creating Chromium instance..");
                 _tabControl = tabControl;
 
-                // Useful: https://github.com/cefsharp/CefSharp/blob/cefsharp/79/CefSharp.Example/CefExample.cs#L208
-                Cef.EnableHighDPISupport();
-
 
                 // TODO: Read and analyze https://github.com/cefsharp/CefSharp/issues/2246 -- Is this the correct way to do things in the future?
                 CefSharpSettings.WcfEnabled = true;

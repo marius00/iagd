@@ -58,7 +58,7 @@ namespace IAGrim.BuddyShare {
             try {
                 Logger.Info("Fetching own buddy ID from cloud..");
                 var id = _authService.GetRestService()?.Get<BuddyIdResult>(Uris.GetBuddyIdUrl);
-                _settings.GetPersistent().BuddySyncUserIdV3 = id.Id;
+                _settings.GetPersistent().BuddySyncUserIdV3 = id?.Id;
             }
             catch (Exception ex) {
                 Logger.Error(ex.Message);
