@@ -12,6 +12,7 @@ public:
 	InventorySack_AddItem(DataQueue* dataQueue, HANDLE hEvent);
 	void EnableHook() override;
 	void DisableHook() override;
+	void SetActive(bool isActive);
 
 private:
 	struct Vec2f {
@@ -25,6 +26,7 @@ private:
 	static bool m_instalootEnabled;
 	static bool m_isGrimDawnParsed;
 	static SettingsReader m_settingsReader;
+	static bool m_isActive;
 
 
 	typedef int* (__thiscall *GameEngine_GetTransferSack)(void* This, int idx);

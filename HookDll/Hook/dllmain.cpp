@@ -47,6 +47,7 @@ HANDLE g_hEvent;
 HANDLE g_thread;
 
 DataQueue g_dataQueue;
+InventorySack_AddItem* g_InventorySack_AddItemInstance = NULL;
 
 HWND g_targetWnd = NULL;
 
@@ -98,6 +99,10 @@ void WorkerThreadMethod() {
             g_targetWnd = FindWindow( L"GDIAWindowClass", NULL);
             g_lastThreadTick = GetTickCount();
             LOG(L"FindWindow returned: " << g_targetWnd);
+
+			if (g_InventorySack_AddItemInstance != NULL) {
+				g_InventorySack_AddItemInstance->SetActive(g_targetWnd != NULL);
+			}
         }
 
         while (!g_dataQueue.empty()) {
@@ -117,6 +122,7 @@ void WorkerThreadMethod() {
 			SendMessage( g_targetWnd, WM_COPYDATA, 0, ( LPARAM ) &data );
             LOG(L"After SendMessage error code is " << GetLastError());
         }
+
     }
 }
 
@@ -206,7 +212,8 @@ static void ConfigureStashDetectionHooks(std::vector<BaseMethodHook*>& hooks) {
 
 	try {
 		LogToFile(L"Configuring instaloot hook..");
-		hooks.push_back(new InventorySack_AddItem(&g_dataQueue, g_hEvent)); // Includes GetPrivateStash internally
+		g_InventorySack_AddItemInstance = new InventorySack_AddItem(&g_dataQueue, g_hEvent);
+		hooks.push_back(g_InventorySack_AddItemInstance); // Includes GetPrivateStash internally
 	} catch (std::exception& ex) {
 		// For now just let it be. Known issue inside InventorySack_AddItem
 

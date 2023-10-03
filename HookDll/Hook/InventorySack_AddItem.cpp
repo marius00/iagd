@@ -39,7 +39,7 @@ ULONGLONG InventorySack_AddItem::m_lastNotificationTickTime;
 bool InventorySack_AddItem::m_instalootEnabled;
 bool InventorySack_AddItem::m_isGrimDawnParsed;
 SettingsReader InventorySack_AddItem::m_settingsReader;
-
+bool InventorySack_AddItem::m_isActive;
 
 void InventorySack_AddItem::EnableHook() {
 	// GameInfo::
@@ -63,6 +63,7 @@ void InventorySack_AddItem::EnableHook() {
 	DetourTransactionCommit();
 
 	
+	m_isActive = false;
 	privateStashHook.EnableHook();
 
 	// bool GAME::GameInfo::GetHardcore(void)
@@ -86,6 +87,7 @@ InventorySack_AddItem::InventorySack_AddItem(DataQueue* dataQueue, HANDLE hEvent
 	m_instalootEnabled = m_settingsReader.getInstalootActive();
 	m_isGrimDawnParsed = m_settingsReader.getIsGrimDawnParsed();
 	m_lastNotificationTickTime = 0;
+	m_isActive = false;
 }
 
 InventorySack_AddItem::InventorySack_AddItem() {
@@ -102,6 +104,16 @@ void InventorySack_AddItem::DisableHook() {
 	DetourTransactionCommit();
 
 	privateStashHook.DisableHook();
+}
+
+/// <summary>
+/// Allows for the activation / deactivation of instaloot when Item Assistant is not running.
+/// This prevents GD from instalooting items when the IA client is closed
+/// </summary>
+/// <param name="isActive"></param>
+void InventorySack_AddItem::SetActive(bool isActive)
+{
+	m_isActive = isActive;
 }
 
 
@@ -290,6 +302,9 @@ bool InventorySack_AddItem::HandleItem(void* stash, GAME::Item* item) {
 	if (!m_instalootEnabled)
 		return false;
 
+	if (!m_isActive)
+		return false;
+
 	GAME::GameEngine* gameEngine = fnGetGameEngine();
 
 	void* realPtr = fnGetPlayerTransfer(gameEngine);
@@ -305,7 +320,7 @@ bool InventorySack_AddItem::HandleItem(void* stash, GAME::Item* item) {
 
 
 	// Determine the correct stash sack..
-	int toLootFrom;
+	size_t toLootFrom;
 	if (m_stashTabLootFrom == 0) {
 		toLootFrom = sacks->size() - 1;
 	} else {
