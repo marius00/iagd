@@ -39,15 +39,6 @@ void GameEngineUpdate::DisableHook() {
 //IsGameWaitingPtr IsGameWaiting = IsGameWaitingPtr(GetProcAddressOrLogToFile(L"game.dll", "?IsGameWaiting@GameEngine@GAME@@QEAA_N_N@Z"));
 
 
-void Dump_ItemStats()
-{
-	std::wofstream itemStatsfile;
-	itemStatsfile.open("ItemStats.txt");
-	itemStatsfile << "Dump_ItemStats()\n";
-	itemStatsfile.flush();
-
-	itemStatsfile.close();
-}
 void* __fastcall GameEngineUpdate::HookedMethod(void* This, int v) {
 	void* r = g_self->originalMethod(This, v);
 	

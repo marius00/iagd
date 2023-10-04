@@ -39,6 +39,7 @@
     <ClInclude Include="ItemRelicSeedInfo.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="OnDemandSeedInfo.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="SetHardcore.h" />
     <ClInclude Include="SettingsReader.h" />
     <ClInclude Include="SetTransferOpen.h" />
@@ -81,6 +82,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="GDIAHook.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{C4C69969-235A-4049-87F2-3E82D67A1812}</ProjectGuid>

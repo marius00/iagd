@@ -101,6 +101,7 @@
     </ClInclude>
     <ClInclude Include="SettingsReader.h" />
     <ClInclude Include="Logger.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -173,5 +174,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="GDIAHook.rc" />
   </ItemGroup>
 </Project>

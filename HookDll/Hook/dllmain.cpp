@@ -252,27 +252,78 @@ static void ConfigureStashDetectionHooks(std::vector<BaseMethodHook*>& hooks) {
 	LogToFile(L"Configuring hc detection hook..");
 	hooks.push_back(new SetHardcore(&g_dataQueue, g_hEvent));
 }
+/*
+bool GetProductAndVersion()
+{
+	// get the filename of the executable containing the version resource
+	TCHAR szFilename[MAX_PATH + 1] = { 0 };
+	if (GetModuleFileName(NULL, szFilename, MAX_PATH) == 0)
+	{
+		LogToFile("GetModuleFileName failed with error");
+		return false;
+	}
 
+	// allocate a block of memory for the version info
+	DWORD dummy;
+	DWORD dwSize = GetFileVersionInfoSize(szFilename, &dummy);
+	if (dwSize == 0)
+	{
+		LogToFile(L"GetFileVersionInfoSize failed with error");
+		return false;
+	}
+	std::vector<BYTE> data(dwSize);
+
+	// load the version info
+	if (!GetFileVersionInfo(szFilename, NULL, dwSize, &data[0]))
+	{
+		LogToFile("GetFileVersionInfo failed with error");
+		return false;
+	}
+
+	// get the name and version strings
+	LPVOID pvProductName = NULL;
+	unsigned int iProductNameLen = 0;
+	LPVOID pvProductVersion = NULL;
+	unsigned int iProductVersionLen = 0;
+
+	// replace "040904e4" with the language ID of your resources
+	if (!VerQueryValue(&data[0], _T("\\StringFileInfo\\040904e4\\ProductName"), &pvProductName, &iProductNameLen) ||
+		!VerQueryValue(&data[0], _T("\\StringFileInfo\\040904e4\\ProductVersion"), &pvProductVersion, &iProductVersionLen))
+	{
+		LogToFile("Can't obtain ProductName and ProductVersion from resources");
+		return false;
+	}
+
+	LogToFile((wchar_t*)pvProductVersion);
+
+	//strProductName.SetString((LPCSTR)pvProductName, iProductNameLen);
+	//strProductVersion.SetString((LPCSTR)pvProductVersion, iProductVersionLen);
+
+	return true;
+}
+*/
 
 std::vector<BaseMethodHook*> hooks;
 int ProcessAttach(HINSTANCE _hModule) {
+	//GetProductAndVersion();
+	LogToFile(std::string("DLL Compiled: ") + std::string(__DATE__) + std::string(" ") + std::string(__TIME__));
 	LogToFile(L"Attatching to process..");
 	g_hEvent = CreateEvent(NULL,FALSE,FALSE, L"IA_Worker");
 
 
 	LogToFile(L"Creating seed info container class..");
-	//listener = new OnDemandSeedInfo(&g_dataQueue, g_hEvent);
+	listener = new OnDemandSeedInfo(&g_dataQueue, g_hEvent);
 
 	LogToFile(L"Preparing hooks..");
 	// Player position hooks
-	//ConfigurePlayerPositionHooks(hooks);
-	//ConfigureCloudDetectionHooks(hooks);
-	//ConfigureStashDetectionHooks(hooks);
+	ConfigurePlayerPositionHooks(hooks);
+	ConfigureCloudDetectionHooks(hooks);
+	ConfigureStashDetectionHooks(hooks);
 
 	LogToFile(L"Preparing replica hooks..");
-	//hooks.push_back(new EquipmentSeedInfo(&g_dataQueue, g_hEvent));
-	//hooks.push_back(listener);
-	//hooks.push_back(new ItemRelicSeedInfo(&g_dataQueue, g_hEvent));
+	hooks.push_back(new EquipmentSeedInfo(&g_dataQueue, g_hEvent));
+	hooks.push_back(listener);
+	hooks.push_back(new ItemRelicSeedInfo(&g_dataQueue, g_hEvent));
 	// hooks.push_back(new GameEngineUpdate(&g_dataQueue, g_hEvent));	 // Debug/test only
 	
 	LogToFile(L"Starting hook enabling.. " + std::to_wstring(hooks.size()) + L" hooks.");
