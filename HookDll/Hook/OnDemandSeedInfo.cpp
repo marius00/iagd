@@ -6,6 +6,7 @@
 #include "OnDemandSeedInfo.h"
 #include "Exports.h"
 
+#include "Logger.h"
 
 OnDemandSeedInfo::pItemEquipmentGetUIDisplayText OnDemandSeedInfo::fnItemEquipmentGetUIDisplayText;
 OnDemandSeedInfo* OnDemandSeedInfo::g_self;
@@ -15,10 +16,26 @@ OnDemandSeedInfo::OnDemandSeedInfo(DataQueue* dataQueue, HANDLE hEvent) {
 	m_hEvent = hEvent;
 	hPipe = NULL;
 	m_thread = NULL;
-	fnItemEquipmentGetUIDisplayText = pItemEquipmentGetUIDisplayText(GetProcAddress(GetModuleHandle(TEXT("game.dll")), "?GetUIDisplayText@ItemEquipment@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@@Z"));
+
+	auto handle = GetProcAddressOrLogToFile(L"game.dll", "?GetUIDisplayText@ItemEquipment@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@@Z");
+	if (handle == NULL) LogToFile(L"Error hooking IsGameLoading@GameEngine");
+	fnItemEquipmentGetUIDisplayText = pItemEquipmentGetUIDisplayText(handle);
 }
 
+
+typedef bool(__thiscall* IsGameLoadingPtr)(void* This);
+typedef bool(__thiscall* IsGameWaitingPtr)(void* This, bool);
+IsGameLoadingPtr IsGameLoading = NULL;
+IsGameLoadingPtr IsGameEngineOnline = NULL;
+IsGameWaitingPtr IsGameWaiting = NULL;
+
+
 void OnDemandSeedInfo::EnableHook() {
+
+	IsGameLoading = IsGameLoadingPtr(GetProcAddressOrLogToFile(L"game.dll", "?IsGameLoading@GameEngine@GAME@@QEBA_NXZ"));
+	IsGameEngineOnline = IsGameLoadingPtr(GetProcAddressOrLogToFile(L"game.dll", "?IsGameEngineOnline@GameEngine@GAME@@QEBA_NXZ"));
+	IsGameWaiting = IsGameWaitingPtr(GetProcAddressOrLogToFile(L"game.dll", "?IsGameWaiting@GameEngine@GAME@@QEAA_N_N@Z"));
+
 	originalMethod = (OriginalMethodPtr)HookGame(
 		"?Update@GameEngine@GAME@@QEAAXH@Z",
 		HookedMethod,
@@ -305,12 +322,6 @@ void OnDemandSeedInfo::GetItemInfo(ParsedSeedRequest obj) {
 		SetEvent(m_hEvent);
 	}
 }
-
-typedef bool(__thiscall* IsGameLoadingPtr)(void* This);
-typedef bool(__thiscall* IsGameWaitingPtr)(void* This, bool);
-IsGameLoadingPtr IsGameLoading = IsGameLoadingPtr(GetProcAddress(GetModuleHandle(L"game.dll"), "?IsGameLoading@GameEngine@GAME@@QEBA_NXZ"));
-IsGameLoadingPtr IsGameEngineOnline = IsGameLoadingPtr(GetProcAddress(GetModuleHandle(L"game.dll"), "?IsGameEngineOnline@GameEngine@GAME@@QEBA_NXZ"));
-IsGameWaitingPtr IsGameWaiting = IsGameWaitingPtr(GetProcAddress(GetModuleHandle(L"game.dll"), "?IsGameWaiting@GameEngine@GAME@@QEAA_N_N@Z"));
 
 
 void* __fastcall OnDemandSeedInfo::HookedMethod(void* This, int v) {

@@ -6,6 +6,7 @@
 #include <detours.h>
 #include "SaveTransferStash.h"
 #include "Exports.h"
+#include "GrimTypes.h"
 
 HANDLE SaveTransferStash::m_hEvent;
 DataQueue* SaveTransferStash::m_dataQueue;
@@ -14,7 +15,7 @@ void* SaveTransferStash::m_transferStashSack;
 
 void SaveTransferStash::EnableHook() {
 
-	originalMethod = (OriginalMethodPtr)GetProcAddress(::GetModuleHandle(L"Game.dll"), SAVE_TRANSFER_STASH);
+	originalMethod = (OriginalMethodPtr)GetProcAddressOrLogToFile(L"Game.dll", SAVE_TRANSFER_STASH);
 	if (originalMethod == NULL) {
 		DataItemPtr item(new DataItem(TYPE_ERROR_HOOKING_SAVETRANSFER_STASH, 0, 0));
 		m_dataQueue->push(item);

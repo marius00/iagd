@@ -1,3 +1,3 @@
-cp Hook\x64\Release\ItemAssistantHook.dll ..\IAGrim\bin\Debug\ItemAssistantHook_x64.dll
+xcopy /Y Hook\x64\Release\ItemAssistantHook.dll ..\IAGrim\bin\Debug\ItemAssistantHook_x64.dll
 
 pause

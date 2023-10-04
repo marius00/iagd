@@ -5,6 +5,7 @@
 #include <detours.h>
 #include "GetPrivateStash.h"
 #include "Exports.h"
+#include "GrimTypes.h"
 
 HANDLE GetPrivateStash::m_hEvent;
 DataQueue* GetPrivateStash::m_dataQueue;
@@ -12,7 +13,7 @@ GetPrivateStash::OriginalMethodPtr GetPrivateStash::originalMethod;
 void* GetPrivateStash::privateStashSack;
 
 void GetPrivateStash::EnableHook() {
-	originalMethod = (OriginalMethodPtr)GetProcAddress(::GetModuleHandle(L"Game.dll"), GET_PRIVATE_STASH);
+	originalMethod = (OriginalMethodPtr)GetProcAddressOrLogToFile(L"Game.dll", GET_PRIVATE_STASH);
 	if (originalMethod == NULL) {
 		DataItemPtr item(new DataItem(TYPE_ERROR_HOOKING_PRIVATE_STASH, 0, 0));
 		m_dataQueue->push(item);

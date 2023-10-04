@@ -70,8 +70,29 @@ std::wstring logStartupTime() {
 	return str;
 }
 
+std::string logStartupTimeChar() {
+	__time64_t rawtime;
+	struct tm timeinfo;
+	char buffer[80];
+
+	_time64(&rawtime);
+	localtime_s(&timeinfo, &rawtime);
+
+	strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S ", &timeinfo);
+	std::string str(buffer);
+
+	return str;
+}
+
+
 void LogToFile(const wchar_t* message) {
 	g_log.out(logStartupTime() + message);
+}
+void LogToFile(const char* message) {
+	g_log.out((logStartupTimeChar() + std::string(message)).c_str());
+}
+void LogToFile(const std::string message) {
+	g_log.out((logStartupTimeChar() + message).c_str());
 }
 void LogToFile(std::wstring message) {
 	g_log.out(logStartupTime() + message);
@@ -132,8 +153,9 @@ unsigned __stdcall WorkerThreadMethodWrap(void* argss) {
 
 	LogToFile(L"Starting seed info thread..");
 	
-	listener->Start();
-
+	if (listener != nullptr) {
+		listener->Start();
+	}
 	WorkerThreadMethod();
 	return 0;
 }
@@ -239,24 +261,24 @@ int ProcessAttach(HINSTANCE _hModule) {
 
 
 	LogToFile(L"Creating seed info container class..");
-	listener = new OnDemandSeedInfo(&g_dataQueue, g_hEvent);
+	//listener = new OnDemandSeedInfo(&g_dataQueue, g_hEvent);
 
 	LogToFile(L"Preparing hooks..");
 	// Player position hooks
-	ConfigurePlayerPositionHooks(hooks);
-	ConfigureCloudDetectionHooks(hooks);
-	ConfigureStashDetectionHooks(hooks);
+	//ConfigurePlayerPositionHooks(hooks);
+	//ConfigureCloudDetectionHooks(hooks);
+	//ConfigureStashDetectionHooks(hooks);
 
 	LogToFile(L"Preparing replica hooks..");
-	hooks.push_back(new EquipmentSeedInfo(&g_dataQueue, g_hEvent));
-	hooks.push_back(listener);
-	hooks.push_back(new ItemRelicSeedInfo(&g_dataQueue, g_hEvent));
+	//hooks.push_back(new EquipmentSeedInfo(&g_dataQueue, g_hEvent));
+	//hooks.push_back(listener);
+	//hooks.push_back(new ItemRelicSeedInfo(&g_dataQueue, g_hEvent));
 	// hooks.push_back(new GameEngineUpdate(&g_dataQueue, g_hEvent));	 // Debug/test only
 	
 	LogToFile(L"Starting hook enabling.. " + std::to_wstring(hooks.size()) + L" hooks.");
 	for (unsigned int i = 0; i < hooks.size(); i++) {
 		LOG(L"Enabling hook..");
-		hooks[i]->EnableHook();
+		//hooks[i]->EnableHook();
 	}
 	LogToFile(L"Hooking complete..");
 
@@ -283,9 +305,12 @@ int ProcessDetach( HINSTANCE _hModule ) {
 		delete hooks[i];
 	}
 	hooks.clear();
-	listener->Stop();
-	delete listener;
-	listener = nullptr;
+
+	if (listener != nullptr) {
+		listener->Stop();
+		delete listener;
+		listener = nullptr;
+	}
 
     EndWorkerThread();
 

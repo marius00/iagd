@@ -37,6 +37,7 @@
     <ClInclude Include="GrimTypes.h" />
     <ClInclude Include="HookLog.h" />
     <ClInclude Include="ItemRelicSeedInfo.h" />
+    <ClInclude Include="Logger.h" />
     <ClInclude Include="OnDemandSeedInfo.h" />
     <ClInclude Include="SetHardcore.h" />
     <ClInclude Include="SettingsReader.h" />

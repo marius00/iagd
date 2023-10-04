@@ -27,6 +27,7 @@ private:
 	static bool m_isGrimDawnParsed;
 	static SettingsReader m_settingsReader;
 	static bool m_isActive;
+	static int m_gameUpdateIterationsRun;
 
 
 	typedef int* (__thiscall *GameEngine_GetTransferSack)(void* This, int idx);
@@ -43,6 +44,10 @@ private:
 	typedef bool(__thiscall *GameInfo_GetHardcore)(void*);
 	static GameInfo_GetHardcore dll_GameInfo_GetHardcore;
 
+
+	typedef int* (__thiscall* GameEngine_Update)(void*, void* sphere, void* frustum, bool b, void* frustum2);
+	static GameEngine_Update dll_GameEngine_Update;
+
 	typedef char* (__thiscall *GameEngine_GetGameInfo)(void* This);
 	
 	static GameInfo_GameInfo_Param dll_GameInfo_GameInfo_Param;
@@ -58,6 +63,10 @@ private:
 
 	static void* __fastcall Hooked_InventorySack_AddItem_Drop(void* This, GAME::Item* item, bool findPosition, bool SkipPlaySound);
 	static void* __fastcall Hooked_InventorySack_AddItem_Vec2(void* This, void*, GAME::Item* item, bool SkipPlaySound);
+
+
+	// void GAME::Engine::Update(class GAME::Sphere const *,class GAME::WorldFrustum const *,bool,class GAME::WorldFrustum const *)
+	static void* __fastcall Hooked_GameEngine_Update(void* This, void* notUsed, void* s, void* f, bool b, void* f2);
 
 	static bool HandleItem(void* stash, GAME::Item* item);
 	static bool Persist(GAME::ItemReplicaInfo replicaInfo, bool isHardcore, std::wstring mod);

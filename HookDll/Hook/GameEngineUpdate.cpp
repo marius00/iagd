@@ -34,9 +34,9 @@ void GameEngineUpdate::DisableHook() {
 
 //typedef bool(__thiscall* IsGameLoadingPtr)(void* This);
 //typedef bool(__thiscall* IsGameWaitingPtr)(void* This, bool);
-//IsGameLoadingPtr IsGameLoading = IsGameLoadingPtr(GetProcAddress(GetModuleHandle(L"game.dll"), "?IsGameLoading@GameEngine@GAME@@QEBA_NXZ"));
-//IsGameLoadingPtr IsGameEngineOnline = IsGameLoadingPtr(GetProcAddress(GetModuleHandle(L"game.dll"), "?IsGameEngineOnline@GameEngine@GAME@@QEBA_NXZ"));
-//IsGameWaitingPtr IsGameWaiting = IsGameWaitingPtr(GetProcAddress(GetModuleHandle(L"game.dll"), "?IsGameWaiting@GameEngine@GAME@@QEAA_N_N@Z"));
+//IsGameLoadingPtr IsGameLoading = IsGameLoadingPtr(GetProcAddressOrLogToFile(L"game.dll", "?IsGameLoading@GameEngine@GAME@@QEBA_NXZ"));
+//IsGameLoadingPtr IsGameEngineOnline = IsGameLoadingPtr(GetProcAddressOrLogToFile(L"game.dll", "?IsGameEngineOnline@GameEngine@GAME@@QEBA_NXZ"));
+//IsGameWaitingPtr IsGameWaiting = IsGameWaitingPtr(GetProcAddressOrLogToFile(L"game.dll", "?IsGameWaiting@GameEngine@GAME@@QEAA_N_N@Z"));
 
 
 void Dump_ItemStats()

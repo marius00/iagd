@@ -40,34 +40,54 @@ bool InventorySack_AddItem::m_instalootEnabled;
 bool InventorySack_AddItem::m_isGrimDawnParsed;
 SettingsReader InventorySack_AddItem::m_settingsReader;
 bool InventorySack_AddItem::m_isActive;
+int InventorySack_AddItem::m_gameUpdateIterationsRun;
+InventorySack_AddItem::GameEngine_Update InventorySack_AddItem::dll_GameEngine_Update;
+
 
 void InventorySack_AddItem::EnableHook() {
 	// GameInfo::
-	dll_GameInfo_GameInfo_Param = (GameInfo_GameInfo_Param)GetProcAddress(::GetModuleHandle(L"Engine.dll"), GAMEINFO_CONSTRUCTOR_ARGS);
+	dll_GameInfo_GameInfo_Param = (GameInfo_GameInfo_Param)GetProcAddressOrLogToFile(L"Engine.dll", GAMEINFO_CONSTRUCTOR_ARGS);
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
 	DetourAttach((PVOID*)&dll_GameInfo_GameInfo_Param, Hooked_GameInfo_GameInfo_Param);
 	DetourTransactionCommit();
 
-	dll_InventorySack_AddItem_Drop = (InventorySack_AddItem_Drop)GetProcAddress(::GetModuleHandle(L"Game.dll"), "?AddItem@InventorySack@GAME@@QEAA_NPEAVItem@2@_N1@Z");
+	dll_InventorySack_AddItem_Drop = (InventorySack_AddItem_Drop)GetProcAddressOrLogToFile(L"Game.dll", "?AddItem@InventorySack@GAME@@QEAA_NPEAVItem@2@_N1@Z");
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
 	DetourAttach((PVOID*)&dll_InventorySack_AddItem_Drop, Hooked_InventorySack_AddItem_Drop);
 	DetourTransactionCommit();
 
 
-	dll_InventorySack_AddItem_Vec2 = (InventorySack_AddItem_Vec2)GetProcAddress(::GetModuleHandle(L"Game.dll"), "?AddItem@InventorySack@GAME@@QEAA_NAEBVVec2@2@PEAVItem@2@_N@Z");
+	dll_InventorySack_AddItem_Vec2 = (InventorySack_AddItem_Vec2)GetProcAddressOrLogToFile(L"Game.dll", "?AddItem@InventorySack@GAME@@QEAA_NAEBVVec2@2@PEAVItem@2@_N@Z");
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
 	DetourAttach((PVOID*)&dll_InventorySack_AddItem_Vec2, Hooked_InventorySack_AddItem_Vec2);
 	DetourTransactionCommit();
 
+	/*
+	dll_GameEngine_Update = (GameEngine_Update)HookEngine(
+		"?Update@Engine@GAME@@QAEXPBVSphere@2@PBVWorldFrustum@2@_N1@Z", // TODO: Find correct export
+		Hooked_GameEngine_Update,
+		m_dataQueue,
+		m_hEvent,
+		TYPE_GameEngineUpdate
+	);
+	
+	(GameEngine_Update)GetProcAddressOrLogToFile(L"Engine.dll", "?Update@Engine@GAME@@QAEXPBVSphere@2@PBVWorldFrustum@2@_N1@Z");
+	DetourTransactionBegin();
+	DetourUpdateThread(GetCurrentThread());
+	DetourAttach((PVOID*)&dll_GameEngine_Update, Hooked_InventorySack_AddItem_Vec2);
+	DetourTransactionCommit();
+	*/
+
 	
 	m_isActive = false;
+	m_gameUpdateIterationsRun = 0;
 	privateStashHook.EnableHook();
 
 	// bool GAME::GameInfo::GetHardcore(void)
-	dll_GameInfo_GetHardcore = (GameInfo_GetHardcore)GetProcAddress(::GetModuleHandle(L"Engine.dll"), GET_HARDCORE);
+	dll_GameInfo_GetHardcore = (GameInfo_GetHardcore)GetProcAddressOrLogToFile(L"Engine.dll", GET_HARDCORE);
 
 	
 	if (m_isGrimDawnParsed)
@@ -88,6 +108,7 @@ InventorySack_AddItem::InventorySack_AddItem(DataQueue* dataQueue, HANDLE hEvent
 	m_isGrimDawnParsed = m_settingsReader.getIsGrimDawnParsed();
 	m_lastNotificationTickTime = 0;
 	m_isActive = false;
+	m_gameUpdateIterationsRun = 0;
 }
 
 InventorySack_AddItem::InventorySack_AddItem() {
@@ -367,4 +388,37 @@ bool InventorySack_AddItem::HandleItem(void* stash, GAME::Item* item) {
 
 	return false;
 
+}
+
+void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, void* notUsed, void* s, void* f, bool b, void* f2) {
+
+
+	if (!m_isActive) {
+		return dll_GameEngine_Update(This, s, f, b, f2);
+	}
+	/*
+		GAME::Engine* engine = fnGetEngine();
+	if (engine == nullptr) {
+		return dll_GameEngine_Update(This, s, f, b, f2);
+	}
+	if (++m_gameUpdateIterationsRun LT 100) {
+		return dll_GameEngine_Update(This, s, f, b, f2);
+	}
+	/*
+	// TODO: Only run this every... 100 iterations or so.. 
+
+	// If we don't yet know the transfer sack, attempt to locate it.
+	// TODO: Cache the function at least
+	if (_inventorySack3 == NULL && engine != NULL) {
+		typedef int* (__thiscall* GetTransferSack)(void* ge, int index);
+		GetTransferSack func = (GetTransferSack)GetProcAddressOrLogToFile(L"Game.dll", "?GetTransferSack@GameEngine@GAME@@QAEPAVInventorySack@2@H@Z");
+		for (void* it : *inventorySackSet) {
+			if (func(engine, 2) == it) {
+				_inventorySack3 = it;
+				SetEvent(m_itemQueueEvent);
+			}
+		}
+	}*/
+
+	return dll_GameEngine_Update(This, s, f, b, f2);
 }

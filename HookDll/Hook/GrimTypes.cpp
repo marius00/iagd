@@ -1,4 +1,5 @@
 #include "GrimTypes.h"
+#include "Logger.h"
 
 namespace GAME {
 	std::wstring itemReplicaToString(GAME::ItemReplicaInfo replica) {
@@ -44,7 +45,7 @@ namespace GAME {
 /// </summary>
 /// <returns></returns>
 GAME::GameEngine* fnGetGameEngine() {
-	return (GAME::GameEngine*)*(DWORD_PTR*)GetProcAddress(GetModuleHandle(L"game.dll"), "?gGameEngine@GAME@@3PEAVGameEngine@1@EA");
+	return (GAME::GameEngine*)*(DWORD_PTR*)GetProcAddressOrLogToFile(L"game.dll", "?gGameEngine@GAME@@3PEAVGameEngine@1@EA");
 }
 
 /// <summary>
@@ -52,13 +53,26 @@ GAME::GameEngine* fnGetGameEngine() {
 /// </summary>
 /// <returns></returns>
 GAME::Engine* fnGetEngine() {
-	return (GAME::Engine*)*(DWORD_PTR*)GetProcAddress(GetModuleHandle(L"engine.dll"), "?gEngine@GAME@@3PEAVEngine@1@EA");
+	return (GAME::Engine*)*(DWORD_PTR*)GetProcAddressOrLogToFile(L"engine.dll", "?gEngine@GAME@@3PEAVEngine@1@EA");
 }
 
 bool fnGetHardcore(GAME::GameInfo* gameInfo) {
-	pGetHardcore f = pGetHardcore(GetProcAddress(GetModuleHandle(L"engine.dll"), "?GetHardcore@GameInfo@GAME@@QEBA_NXZ"));
+	pGetHardcore f = pGetHardcore(GetProcAddressOrLogToFile(L"engine.dll", "?GetHardcore@GameInfo@GAME@@QEBA_NXZ"));
 	return f(gameInfo);
 
 }
 
 typedef std::basic_string<char, std::char_traits<char>, std::allocator<char> > const& Fancystring;
+
+void* GetProcAddressOrLogToFile(const wchar_t* dll, char* procAddress) {
+	void* originalMethod = GetProcAddress(::GetModuleHandle(dll), procAddress);
+	if (originalMethod == NULL) {
+		LogToFile(std::string("Error finding export from DLL: ") + std::string(procAddress));
+	}
+	else {
+
+		LogToFile(std::string("Successfully found DLL export: ") + std::string(procAddress));
+	}
+
+	return originalMethod;
+}
