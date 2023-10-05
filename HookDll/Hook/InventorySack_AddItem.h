@@ -1,4 +1,5 @@
 #pragma once
+#include <boost/lockfree/queue.hpp>
 #include "DataQueue.h"
 #include "BaseMethodHook.h"
 #include "GetPrivateStash.h"
@@ -12,6 +13,11 @@ public:
 	InventorySack_AddItem(DataQueue* dataQueue, HANDLE hEvent);
 	void EnableHook() override;
 	void DisableHook() override;
+
+	/// <summary>
+	/// If the IA client is actively running (if not: Just disable all extra functionality)
+	/// </summary>
+	/// <param name="isActive"></param>
 	void SetActive(bool isActive);
 
 private:
@@ -28,6 +34,7 @@ private:
 	static SettingsReader m_settingsReader;
 	static bool m_isActive;
 	static int m_gameUpdateIterationsRun;
+	static boost::lockfree::queue <wchar_t*> m_depositQueue;
 
 
 	typedef int* (__thiscall *GameEngine_GetTransferSack)(void* This, int idx);
@@ -45,7 +52,7 @@ private:
 	static GameInfo_GetHardcore dll_GameInfo_GetHardcore;
 
 
-	typedef int* (__thiscall* GameEngine_Update)(void*, void* sphere, void* frustum, bool b, void* frustum2);
+	typedef int* (__thiscall* GameEngine_Update)(void* This, int v);
 	static GameEngine_Update dll_GameEngine_Update;
 
 	typedef char* (__thiscall *GameEngine_GetGameInfo)(void* This);
@@ -65,9 +72,9 @@ private:
 	static void* __fastcall Hooked_InventorySack_AddItem_Vec2(void* This, void*, GAME::Item* item, bool SkipPlaySound);
 
 
-	// void GAME::Engine::Update(class GAME::Sphere const *,class GAME::WorldFrustum const *,bool,class GAME::WorldFrustum const *)
-	static void* __fastcall Hooked_GameEngine_Update(void* This, void* notUsed, void* s, void* f, bool b, void* f2);
+	static void* __fastcall Hooked_GameEngine_Update(void* This, int v);
 
+	static std::wstring InventorySack_AddItem::GetModName(GAME::GameInfo* gameInfo);
 	static bool HandleItem(void* stash, GAME::Item* item);
 	static bool Persist(GAME::ItemReplicaInfo replicaInfo, bool isHardcore, std::wstring mod);
 	static void DisplayMessage(std::wstring, std::wstring);

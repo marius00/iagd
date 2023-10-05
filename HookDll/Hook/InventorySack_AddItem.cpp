@@ -10,7 +10,10 @@
 #include <random>
 #include <boost/property_tree/ptree.hpp>                                        
 #include <boost/property_tree/json_parser.hpp>       
-
+#include <boost/filesystem.hpp>
+#include <boost/range/iterator_range.hpp>
+#include <iostream>
+#include "Logger.h"
 
 
 #define STASH_1 0
@@ -43,6 +46,7 @@ bool InventorySack_AddItem::m_isActive;
 int InventorySack_AddItem::m_gameUpdateIterationsRun;
 InventorySack_AddItem::GameEngine_Update InventorySack_AddItem::dll_GameEngine_Update;
 
+boost::lockfree::queue<wchar_t*> InventorySack_AddItem::m_depositQueue;
 
 void InventorySack_AddItem::EnableHook() {
 	// GameInfo::
@@ -65,21 +69,15 @@ void InventorySack_AddItem::EnableHook() {
 	DetourAttach((PVOID*)&dll_InventorySack_AddItem_Vec2, Hooked_InventorySack_AddItem_Vec2);
 	DetourTransactionCommit();
 
-	/*
-	dll_GameEngine_Update = (GameEngine_Update)HookEngine(
-		"?Update@Engine@GAME@@QAEXPBVSphere@2@PBVWorldFrustum@2@_N1@Z", // TODO: Find correct export
+#ifdef v1_4
+	dll_GameEngine_Update = (GameEngine_Update)HookGame(
+		"?Update@GameEngine@GAME@@QEAAXH@Z",
 		Hooked_GameEngine_Update,
 		m_dataQueue,
 		m_hEvent,
-		TYPE_GameEngineUpdate
+		TYPE_GAMEENGINE_UPDATE
 	);
-	
-	(GameEngine_Update)GetProcAddressOrLogToFile(L"Engine.dll", "?Update@Engine@GAME@@QAEXPBVSphere@2@PBVWorldFrustum@2@_N1@Z");
-	DetourTransactionBegin();
-	DetourUpdateThread(GetCurrentThread());
-	DetourAttach((PVOID*)&dll_GameEngine_Update, Hooked_InventorySack_AddItem_Vec2);
-	DetourTransactionCommit();
-	*/
+#endif
 
 	
 	m_isActive = false;
@@ -99,7 +97,7 @@ InventorySack_AddItem::InventorySack_AddItem(DataQueue* dataQueue, HANDLE hEvent
 	InventorySack_AddItem::m_dataQueue = dataQueue;
 	InventorySack_AddItem::m_hEvent = hEvent;
 	privateStashHook = GetPrivateStash(dataQueue, hEvent);
-	m_storageFolder = GetIagdFolder() + L"itemqueue\\";
+	m_storageFolder = GetIagdFolder() + L"itemqueue\\ingoing\\";
 
 	CreateDirectoryW(m_storageFolder.c_str(), nullptr);
 	m_settingsReader = SettingsReader();
@@ -313,6 +311,17 @@ void InventorySack_AddItem::DisplayMessage(std::wstring text, std::wstring body)
 	}
 }
 
+std::wstring InventorySack_AddItem::GetModName(GAME::GameInfo* gameInfo) {
+	std::wstring modName;
+	if (fnGetGameInfoMode(gameInfo) != 1) { // Skip mod name if we're in Crucible, we don't treat that as a mod.
+		fnGetModNameArg(gameInfo, &modName);
+		modName.erase(std::remove(modName.begin(), modName.end(), '\r'), modName.end());
+		modName.erase(std::remove(modName.begin(), modName.end(), '\n'), modName.end());
+	}
+
+	return modName;
+}
+
 /// <summary>
 /// Attempt to classify the item as relevant <-> not relevant for looting, and pass it on for persisting.
 /// </summary>
@@ -320,10 +329,7 @@ void InventorySack_AddItem::DisplayMessage(std::wstring text, std::wstring body)
 /// <param name="item"></param>
 /// <returns></returns>
 bool InventorySack_AddItem::HandleItem(void* stash, GAME::Item* item) {
-	if (!m_instalootEnabled)
-		return false;
-
-	if (!m_isActive)
+	if (!m_instalootEnabled || !m_isActive)
 		return false;
 
 	GAME::GameEngine* gameEngine = fnGetGameEngine();
@@ -367,18 +373,13 @@ bool InventorySack_AddItem::HandleItem(void* stash, GAME::Item* item) {
 		LogToFile(L"Engine is null, aborting..");
 		return false;
 	}
-	GAME::GameInfo* gameInfo = fnGetGameInfo(fnGetEngine());
+	GAME::GameInfo* gameInfo = fnGetGameInfo(engine);
 	if (gameInfo == nullptr) {
 		LogToFile(L"GameInfo is null, aborting..");
 		return false;
 	}
 
-	std::wstring modName;
-	if (fnGetGameInfoMode(gameInfo) != 1) { // Skip mod name if we're in Crucible, we don't treat that as a mod.
-		fnGetModNameArg(gameInfo, &modName);
-		modName.erase(std::remove(modName.begin(), modName.end(), '\r'), modName.end());
-		modName.erase(std::remove(modName.begin(), modName.end(), '\n'), modName.end());
-	}
+	std::wstring modName = GetModName(gameInfo);
 	
 	if (Persist(replica, fnGetHardcore(gameInfo), modName)) {
 		DisplayMessage(L"Item looted", L"By Item Assistant");
@@ -390,19 +391,117 @@ bool InventorySack_AddItem::HandleItem(void* stash, GAME::Item* item) {
 
 }
 
-void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, void* notUsed, void* s, void* f, bool b, void* f2) {
+/// <summary>
+/// We look for CSV files that the IA client has written to a specific folder, when wanting to move items back into the game.
+/// </summary>
+/// <param name="modName"></param>
+/// <param name="isHardcore"></param>
+/// <returns></returns>
+std::wstring GetFolderToLootFrom(std::wstring modName, bool isHardcore) {
+	boost::property_tree::wptree loadPtreeRoot;
+
+	std::wstring folder;
+	if (modName.empty()) {
+		folder = GetIagdFolder() + L"itemqueue\\outgoing\\" + (isHardcore ? L"hc" : L"sc");
+	}
+	else {
+		folder = GetIagdFolder() + L"itemqueue\\outgoing\\" + (isHardcore ? L"hc" : L"sc") + L"\\" + modName;
+	}
+
+	if (boost::filesystem::is_directory(folder)) {
+		return folder;
+	}
+
+	return std::wstring();
+}
+
+/// <summary>
+/// When depositing items in-game, instead of deleting the CSV, we just move them into a "deleted" folder. (soft-delete)
+/// It is up to the IA client to delete these CSV files in a timely manner.
+/// </summary>
+/// <param name="modName"></param>
+/// <param name="isHardcore"></param>
+/// <returns></returns>
+std::wstring GetFolderToMoveTo(std::wstring modName, bool isHardcore) {
+	boost::property_tree::wptree loadPtreeRoot;
+
+	std::wstring folder;
+	if (modName.empty()) {
+		folder = GetIagdFolder() + L"itemqueue\\deleted\\" + (isHardcore ? L"hc" : L"sc");
+	}
+	else {
+		folder = GetIagdFolder() + L"itemqueue\\deleted\\" + (isHardcore ? L"hc" : L"sc") + L"\\" + modName;
+	}
+
+	if (!boost::filesystem::is_directory(folder)) {
+		CreateDirectory(folder.c_str(), NULL);
+	}
+
+	return folder;
+}
 
 
+/// <summary>
+/// GameEngine::Update() hook
+/// Responsible for moving items from .csv and back into the game.
+/// </summary>
+/// <param name="This"></param>
+/// <param name="notUsed"></param>
+/// <param name="s"></param>
+/// <param name="f"></param>
+/// <param name="b"></param>
+/// <param name="f2"></param>
+/// <returns></returns>
+void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int v) {
+	// IA not running? Continue
 	if (!m_isActive) {
-		return dll_GameEngine_Update(This, s, f, b, f2);
+		LogToFile(L"Debug: NotActive");
+		return dll_GameEngine_Update(This, v);
+	}
+
+	// If the game is not in a a "ready state", just continue.
+	if (IsGameLoading(This) || IsGameWaiting(This, true) || !IsGameEngineOnline(This)) {
+		LogToFile(L"Debug: NotReady");
+		return dll_GameEngine_Update(This, v);
+	}
+
+	// No need to check *constantly* (at least not until we get a thread here)
+	if (++m_gameUpdateIterationsRun < 100) {
+		LogToFile(L"Debug: NotIteration");
+		return dll_GameEngine_Update(This, v);
+	}
+
+	m_gameUpdateIterationsRun = 0;
+
+	auto engine = fnGetEngine();
+	if (engine == nullptr) {
+		LogToFile(L"Debug: NoEngine");
+		return dll_GameEngine_Update(This, v);
+	}
+
+	// TODO: Move this into a thread, and have the thread populate a queue.. then we can just read from the queue instead of doing I/O inside the GameEngine::Update() function, potentially slowing it down.
+	GAME::GameInfo* gameInfo = fnGetGameInfo(engine);
+	if (gameInfo == nullptr) {
+		LogToFile(L"GameInfo is null, aborting..");
+		return false;
+	}
+	
+	std::wstring folder = GetFolderToLootFrom(GetModName(gameInfo), fnGetHardcore(gameInfo));
+	if (!folder.empty()) {
+		LogToFile(std::wstring(L"Looking for files in dir: ") + folder);
+
+		for (auto& entry : boost::make_iterator_range(boost::filesystem::directory_iterator(folder), {})) {
+			LogToFile(std::wstring(L"Found file: ") + std::wstring(entry.path().c_str()));
+		}
+	}
+	else {
+
+		LogToFile(L"Debug: NoFolder");
 	}
 	/*
 		GAME::Engine* engine = fnGetEngine();
 	if (engine == nullptr) {
-		return dll_GameEngine_Update(This, s, f, b, f2);
-	}
-	if (++m_gameUpdateIterationsRun LT 100) {
-		return dll_GameEngine_Update(This, s, f, b, f2);
+		return dll_GameEngine_Update(This, v);
 	}
 	/*
 	// TODO: Only run this every... 100 iterations or so.. 
@@ -420,5 +519,5 @@ void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, voi
 		}
 	}*/
 
-	return dll_GameEngine_Update(This, s, f, b, f2);
+	return dll_GameEngine_Update(This, v);
 }
