@@ -680,7 +680,7 @@ namespace IAGrim.UI {
             // Same happens when shutting down, fix unknown
             _injectorCallbackDelegate = InjectorCallback;
 
-            string dllname = "ItemAssistantHook.dll";
+            string dllname = "ItemAssistantHook_x64.dll";
             _injector = new InjectionHelper(new BackgroundWorker(), _injectorCallbackDelegate, false, "Grim Dawn", string.Empty, dllname);
         }
 
