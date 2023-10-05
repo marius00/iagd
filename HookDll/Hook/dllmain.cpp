@@ -322,14 +322,17 @@ int ProcessAttach(HINSTANCE _hModule) {
 
 	LogToFile(L"Preparing replica hooks..");
 	hooks.push_back(new EquipmentSeedInfo(&g_dataQueue, g_hEvent));
-	hooks.push_back(listener);
+
+	if (listener != nullptr) {
+		hooks.push_back(listener);
+	}
 	hooks.push_back(new ItemRelicSeedInfo(&g_dataQueue, g_hEvent));
 	// hooks.push_back(new GameEngineUpdate(&g_dataQueue, g_hEvent));	 // Debug/test only
 	
 	LogToFile(L"Starting hook enabling.. " + std::to_wstring(hooks.size()) + L" hooks.");
 	for (unsigned int i = 0; i < hooks.size(); i++) {
 		LOG(L"Enabling hook..");
-		//hooks[i]->EnableHook();
+		hooks[i]->EnableHook();
 	}
 	LogToFile(L"Hooking complete..");
 
