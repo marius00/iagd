@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using DllInjector.UI;
 using EvilsoftCommons.DllInjector;
@@ -222,20 +224,28 @@ namespace DllInjector {
 
 
 
-            string dll64Bit = Path.Combine(Directory.GetCurrentDirectory(), arguments.DllName.Replace(".dll", "_x64.dll"));
+            string dll64Bit = Path.Combine(Directory.GetCurrentDirectory(), arguments.DllName);
             if (!File.Exists(dll64Bit)) {
                 Logger.FatalFormat("Could not find {1} at \"{0}\"", dll64Bit, arguments.DllName);
             }
             else {
                 foreach (uint pid in pids) {
                     if (!_previouslyInjected.Contains(pid)) {
+                        var gdFilename = Path.Combine(Path.GetDirectoryName(GetWindowModuleFileName(pid)), "Game.dll");
+                        var isPlaytest = InjectionVerifier.IsPlaytest(gdFilename); 
+                        if (isPlaytest) {
+                            dll64Bit = Path.Combine(Directory.GetCurrentDirectory(), arguments.DllName.Replace("_x64", "playtest_x64"));
+                        } else {
+                            dll64Bit = Path.Combine(Directory.GetCurrentDirectory(), arguments.DllName);
+                        }
+
                         if (Is64Bit((int)pid, worker)) {
                             if (InjectionVerifier.VerifyInjection(pid, dll64Bit)) {
                                 Logger.Info($"DLL already injected into target process, skipping injection into {pid}");
                                 _dontLog.Add(pid);
                                 _previouslyInjected.Add(pid);
                             }
-                            else {
+                            else  {
                                 Inject64Bit("Grim Dawn.exe", dll64Bit, _injectionMethods.GetInjectionMethod());
 
                                 if (!InjectionVerifier.VerifyInjection(pid, dll64Bit)) {
@@ -258,6 +268,27 @@ namespace DllInjector {
                     }
                 }
             }
+        }
+
+
+        // Copy-pasta from GrimDawnDetector: Remove once latest PlayTest is public
+
+        [DllImport("kernel32.dll")]
+        static extern IntPtr OpenProcess(UInt32 dwDesiredAccess, Int32 bInheritHandle, UInt32 dwProcessId);
+
+        [DllImport("psapi.dll")]
+        static extern uint GetModuleFileNameEx(IntPtr hProcess, IntPtr hModule, [Out] StringBuilder lpBaseName, [In][MarshalAs(UnmanagedType.U4)] int nSize);
+
+        [DllImport("kernel32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool CloseHandle(IntPtr hObject);
+        private static string GetWindowModuleFileName(uint pid) {
+            const int nChars = 1024;
+            StringBuilder filename = new StringBuilder(nChars);
+            IntPtr hProcess = OpenProcess(1040, 0, pid);
+            GetModuleFileNameEx(hProcess, IntPtr.Zero, filename, nChars);
+            CloseHandle(hProcess);
+            return (filename.ToString());
         }
     }
 }
