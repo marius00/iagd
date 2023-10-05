@@ -34,3 +34,11 @@ IAGD uses the same method of transferring items for the DLL to read.
 
 # Instaloot / real stats
 The most relevant class for looking into both instaloot and real stats from items is InventorySack_AddItem
+
+
+# The DLLs
+* InventorySack_AddItem: Instaloot and real stats
+* OnDemandSeedInfo: Runs a named pipe and listens for requests from IA to generate real stats for items
+* ItemRelicSeedInfo: Passively listens for seed info for relics
+* EquipmentSeedInfo: Passively listens for seed info for equipment
+The remaining hooks are mostly simple proxies used to glean information, such as opening the stash or walking away from the stash.

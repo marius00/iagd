@@ -70,9 +70,14 @@ void* GetProcAddressOrLogToFile(const wchar_t* dll, char* procAddress) {
 		LogToFile(std::string("Error finding export from DLL: ") + std::string(procAddress));
 	}
 	else {
-
 		LogToFile(std::string("Successfully found DLL export: ") + std::string(procAddress));
 	}
 
 	return originalMethod;
 }
+
+
+
+IsGameLoadingPtr IsGameLoading = IsGameLoadingPtr(GetProcAddressOrLogToFile(L"game.dll", "?IsGameLoading@GameEngine@GAME@@QEBA_NXZ"));
+IsGameLoadingPtr IsGameEngineOnline = IsGameLoadingPtr(GetProcAddressOrLogToFile(L"game.dll", "?IsGameEngineOnline@GameEngine@GAME@@QEBA_NXZ"));
+IsGameWaitingPtr IsGameWaiting = IsGameWaitingPtr(GetProcAddressOrLogToFile(L"game.dll", "?IsGameWaiting@GameEngine@GAME@@QEAA_N_N@Z"));

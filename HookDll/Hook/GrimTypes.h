@@ -146,12 +146,17 @@ namespace GAME
 		GameTextClass_GrayStats2 = 0x4F,
 		GameTextClass_GrayStats3 = 0x50,
 	};
+
+	// If this changes, just look up the "GAME::GameTextLine::GameTextLine" export
 	struct GameTextLine
 	{
 		GameTextClass textClass;
 		std::wstring text;
 		bool needsProcessing;
 		GraphicsTexture* leadingIcon;
+#ifdef PLAYTEST
+		float _iconScale;
+#endif
 	};
 
 	std::wstring itemReplicaToString(GAME::ItemReplicaInfo replica);
@@ -200,6 +205,13 @@ static auto fnPlayDropSound = pPlayDropSound(GetProcAddressOrLogToFile(L"game.dl
 
 typedef GAME::GameInfo* (__fastcall* pShowCinematicText)(GAME::Engine* engine, const std::wstring* header, const std::wstring* content, int CinematicTextType, GAME::Color* color);
 static auto fnShowCinematicText = pShowCinematicText(GetProcAddressOrLogToFile(L"engine.dll", "?ShowCinematicText@Engine@GAME@@QEAAXAEBV?$basic_string@GU?$char_traits@G@std@@V?$allocator@G@2@@std@@0W4CinematicTextType@2@AEBVColor@2@@Z"));
+
+
+typedef bool(__thiscall* IsGameLoadingPtr)(void* This);
+typedef bool(__thiscall* IsGameWaitingPtr)(void* This, bool);
+extern IsGameLoadingPtr IsGameLoading;
+extern IsGameLoadingPtr IsGameEngineOnline;
+extern IsGameWaitingPtr IsGameWaiting;
 
 
 // 

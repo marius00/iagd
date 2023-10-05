@@ -23,19 +23,8 @@ OnDemandSeedInfo::OnDemandSeedInfo(DataQueue* dataQueue, HANDLE hEvent) {
 }
 
 
-typedef bool(__thiscall* IsGameLoadingPtr)(void* This);
-typedef bool(__thiscall* IsGameWaitingPtr)(void* This, bool);
-IsGameLoadingPtr IsGameLoading = NULL;
-IsGameLoadingPtr IsGameEngineOnline = NULL;
-IsGameWaitingPtr IsGameWaiting = NULL;
-
 
 void OnDemandSeedInfo::EnableHook() {
-
-	IsGameLoading = IsGameLoadingPtr(GetProcAddressOrLogToFile(L"game.dll", "?IsGameLoading@GameEngine@GAME@@QEBA_NXZ"));
-	IsGameEngineOnline = IsGameLoadingPtr(GetProcAddressOrLogToFile(L"game.dll", "?IsGameEngineOnline@GameEngine@GAME@@QEBA_NXZ"));
-	IsGameWaiting = IsGameWaitingPtr(GetProcAddressOrLogToFile(L"game.dll", "?IsGameWaiting@GameEngine@GAME@@QEAA_N_N@Z"));
-
 	originalMethod = (OriginalMethodPtr)HookGame(
 		"?Update@GameEngine@GAME@@QEAAXH@Z",
 		HookedMethod,
@@ -68,9 +57,6 @@ void OnDemandSeedInfo::Stop() {
 	}
 }
 
-void testytest() {
-
-}
 
 /*
 * Create the named pipe and start a thread to listen for events
