@@ -38,7 +38,7 @@ namespace IAGrim.Utilities {
 
         public static string CsvLocation {
             get {
-                string path = Path.Combine(CoreFolder, "itemqueue");
+                string path = Path.Combine(CoreFolder, "itemqueue", "ingoing");
                 Directory.CreateDirectory(path);
                 return path;
             }
@@ -46,7 +46,7 @@ namespace IAGrim.Utilities {
 
         public static string CsvLocationDeleted {
             get {
-                string path = Path.Combine(CoreFolder, "itemqueue_deleted");
+                string path = Path.Combine(CoreFolder, "itemqueue", "ingoing", "deleted");
                 Directory.CreateDirectory(path);
                 return path;
             }

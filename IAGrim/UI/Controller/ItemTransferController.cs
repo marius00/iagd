@@ -224,12 +224,6 @@ namespace IAGrim.UI.Controller {
                 _browser.ShowMessage(message, UserFeedbackLevel.Warning);
                 _depositQueue.Enqueue(args);
             }
-            else if (RuntimeSettings.StashStatus == StashAvailability.SORTED) {
-                _setFeedback(RuntimeSettings.Language.GetTag("iatag_deposit_stash_sorted"));
-                _browser.ShowMessage(RuntimeSettings.Language.GetTag("iatag_deposit_stash_sorted"), UserFeedbackLevel.Warning);
-                _depositQueue.Enqueue(args);
-            }
-
             else if (RuntimeSettings.StashStatus == StashAvailability.UNKNOWN) {
                 _setFeedback(RuntimeSettings.Language.GetTag("iatag_deposit_stash_unknown_feedback"));
                 _setTooltip(RuntimeSettings.Language.GetTag("iatag_deposit_stash_unknown_tooltip"));
