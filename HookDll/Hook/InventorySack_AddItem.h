@@ -84,8 +84,6 @@ private:
 	// Helper/internal methods
 	static std::wstring GetModName(GAME::GameInfo* gameInfo);
 
-
-	static std::wstring InventorySack_AddItem::GetModName(GAME::GameInfo* gameInfo);
 	static bool HandleItem(void* stash, GAME::Item* item);
 	static bool Persist(GAME::ItemReplicaInfo replicaInfo, bool isHardcore, std::wstring mod);
 	static void DisplayMessage(std::wstring, std::wstring);
