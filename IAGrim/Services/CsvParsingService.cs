@@ -48,7 +48,7 @@ namespace IAGrim.Services {
 
         public void Start() {
             // Queue any existing files
-            foreach (var file in Directory.EnumerateFiles(GlobalPaths.CsvLocation)) {
+            foreach (var file in Directory.EnumerateFiles(GlobalPaths.CsvLocationIngoing)) {
                 _queue.Enqueue(new QueuedCsv {
                     Filename = file,
                     Cooldown = new ActionCooldown(0)
@@ -65,7 +65,7 @@ namespace IAGrim.Services {
                     if (!_queue.TryDequeue(out var entry)) continue;
                     try {
                         if (entry.Cooldown.IsReady) {
-                            PlayerItem item = Parse(File.ReadAllText(entry.Filename));
+                            PlayerItem item = Deserialize(File.ReadAllText(entry.Filename));
                             if (item == null)
                                 continue;
 
@@ -85,7 +85,7 @@ namespace IAGrim.Services {
                                 var hash = ItemReplicaService.GetHash(item);
                                 _replicaItemDao.UpdatePlayerItemId(hash, item.Id);
                             }
-                            else if (classificationService.Duplicates.Count > 0 && _settings.GetPersistent().DeleteDuplicates) {
+                            else if (classificationService.Duplicates.Count > 0) {
                                 Logger.Info("Deleting duplicate item file");
                                 File.Move(entry.Filename, Path.Combine(GlobalPaths.CsvLocationDeleted, Path.GetFileName(entry.Filename)));
                             }
@@ -93,18 +93,11 @@ namespace IAGrim.Services {
                                 // Transfer back in-game, should never have been looted.
                                 // TODO: Separate transfer logic.. no delete-from-db etc..
                                 if (RuntimeSettings.StashStatus == StashAvailability.CLOSED) {
-                                    string stashfile = _itemTransferController.GetTransferFile();
-                                    _transferStashService.Deposit(stashfile, new List<PlayerItem> { item }, out string error);
-                                    if (string.IsNullOrEmpty(error)) {
-                                        Logger.Info("Deposited item back in-game, did not pass item classification.");
-                                        Logger.Info("New GD patch? Go to the Grim Dawn tab and parse the game files again.");
-                                        File.Delete(entry.Filename);
-                                    }
-                                    else {
-                                        Logger.Warn("Failed re-depositing back into GD");
-                                        _queue.Enqueue(entry);
-                                    }
-                                    
+                                    // TODO: Could just MOVE it.. same CSV format..
+                                    _transferStashService.Deposit(new List<PlayerItem> { item });
+                                    Logger.Info("Deposited item back in-game, did not pass item classification.");
+                                    Logger.Info("New GD patch? Go to the Grim Dawn tab and parse the game files again.");
+                                    File.Delete(entry.Filename);
                                 }
                                 else {
                                     _queue.Enqueue(entry);
@@ -146,7 +139,7 @@ namespace IAGrim.Services {
             return i;
         }
 
-        private PlayerItem Parse(string csv) {
+        private PlayerItem Deserialize(string csv) {
             var pieces = csv.Split(';');
 
             if (pieces.Length != 13) {
@@ -170,6 +163,24 @@ namespace IAGrim.Services {
                 TransmuteRecord = pieces[12],
                 Tags = new HashSet<DBStatRow>(0)
             };
+        }
+
+        public static string Serialize(PlayerItem item) {
+            var sep = ";";
+            return ""
+                + item.Mod + sep
+                + (item.IsHardcore ? 1 : 0) + sep
+                + item.BaseRecord + sep
+                + item.PrefixRecord + sep
+                + item.SuffixRecord + sep
+                + item.Seed + sep
+                + item.ModifierRecord + sep
+                + item.MateriaRecord + sep
+                + item.RelicCompletionBonusRecord + sep
+                + item.RelicSeed + sep
+                + item.EnchantmentRecord + sep
+                + item.EnchantmentSeed + sep
+                + item.TransmuteRecord;
         }
     }
 }

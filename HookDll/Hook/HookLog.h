@@ -9,7 +9,8 @@ public:
     HookLog();
     ~HookLog();
 
-    void out(std::wstring const& output);
+	void out(std::wstring const& output);
+	void out(const char* output);
 	void setInitialized(bool b);
 
 private:

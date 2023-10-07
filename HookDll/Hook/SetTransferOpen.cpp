@@ -5,6 +5,7 @@
 #include "MessageType.h"
 #include "SetTransferOpen.h"
 #include "Exports.h"
+#include "Logger.h"
 
 SetTransferOpen* SetTransferOpen::g_self;
 
@@ -36,6 +37,7 @@ void* __fastcall SetTransferOpen::HookedMethod(void* This, bool isOpen) {
 	char b[1];
 	b[0] = (isOpen ? 1 : 0);
 	g_self->TransferData(1, (char*)b);
+	LogToFile(L"Shared stash is " + std::wstring(isOpen ? L"opened" : L"closed"));
 
 	void* v = g_self->originalMethod(This, isOpen);
 	return v;

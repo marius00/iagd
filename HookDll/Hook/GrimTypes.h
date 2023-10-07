@@ -8,6 +8,9 @@
 
 #include "Exports.h"
 
+
+void* GetProcAddressOrLogToFile(const wchar_t* dll, char* procAddress, bool skipLog = false);
+
 namespace GAME
 {
 	struct Vec3
@@ -143,16 +146,23 @@ namespace GAME
 		GameTextClass_GrayStats2 = 0x4F,
 		GameTextClass_GrayStats3 = 0x50,
 	};
+
+	// If this changes, just look up the "GAME::GameTextLine::GameTextLine" export
 	struct GameTextLine
 	{
 		GameTextClass textClass;
 		std::wstring text;
 		bool needsProcessing;
 		GraphicsTexture* leadingIcon;
+#ifdef PLAYTEST
+		float _iconScale;
+#endif
 	};
 
-	std::wstring itemReplicaToString(GAME::ItemReplicaInfo replica);
-	std::wstring gameTextLineToString(std::vector<GameTextLine>& gameTextLines);
+	std::wstring Serialize(GAME::ItemReplicaInfo replica);
+	std::vector<std::string> GetNextLineAndSplitIntoTokens(std::istream& str);
+	GAME::ItemReplicaInfo* Deserialize(std::vector<std::string> tokens);
+	std::wstring GameTextLineToString(std::vector<GameTextLine>& gameTextLines);
 }
 
 // ?GetItemReplicaInfo@Item@GAME@@UEBAXAEAUItemReplicaInfo@2@@Z
@@ -162,57 +172,66 @@ typedef void (__thiscall* ItemGetItemReplicaInfo)(void* This, GAME::ItemReplicaI
 
 
 typedef GAME::Item* (__fastcall* pCreateItem)(GAME::ItemReplicaInfo* info);
-static auto fnCreateItem = pCreateItem(GetProcAddress(GetModuleHandle(L"game.dll"), "?CreateItem@Item@GAME@@SAPEAV12@AEBUItemReplicaInfo@2@@Z"));
+static auto fnCreateItem = pCreateItem(GetProcAddressOrLogToFile(L"game.dll", "?CreateItem@Item@GAME@@SAPEAV12@AEBUItemReplicaInfo@2@@Z"));
 
 typedef GAME::ObjectManager* (__fastcall* pGetObjectManager)();
-static auto fnGetObjectManager = pGetObjectManager(GetProcAddress(GetModuleHandle(L"engine.dll"), "?Get@?$Singleton@VObjectManager@GAME@@@GAME@@SAPEAVObjectManager@2@XZ"));
+static auto fnGetObjectManager = pGetObjectManager(GetProcAddressOrLogToFile(L"engine.dll", "?Get@?$Singleton@VObjectManager@GAME@@@GAME@@SAPEAVObjectManager@2@XZ"));
 
 typedef void(__fastcall* pDestroyObjectEx)(GAME::ObjectManager*, GAME::Object* object, const char* file, int line);
-static auto fnDestroyObjectEx = pDestroyObjectEx(GetProcAddress(GetModuleHandle(L"engine.dll"), "?DestroyObjectEx@ObjectManager@GAME@@QEAAXPEAVObject@2@PEBDH@Z"));
+static auto fnDestroyObjectEx = pDestroyObjectEx(GetProcAddressOrLogToFile(L"engine.dll","?DestroyObjectEx@ObjectManager@GAME@@QEAAXPEAVObject@2@PEBDH@Z"));
 
 typedef void(__fastcall* pItemEquipmentGetUIDisplayText)(GAME::ItemEquipment*, GAME::Character* myCharacter, std::vector<GAME::GameTextLine>* text);
-static auto fnItemEquipmentGetUIDisplayText = pItemEquipmentGetUIDisplayText(GetProcAddress(GetModuleHandle(L"game.dll"), "?GetUIDisplayText@ItemEquipment@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@@Z"));
-static auto fnItemGetItemReplicaInfo = ItemGetItemReplicaInfo(GetProcAddress(GetModuleHandle(TEXT("game.dll")), GET_ITEM_REPLICAINFO));
+static auto fnItemEquipmentGetUIDisplayText = pItemEquipmentGetUIDisplayText(GetProcAddressOrLogToFile(L"game.dll", "?GetUIDisplayText@ItemEquipment@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@@Z"));
+static auto fnItemGetItemReplicaInfo = ItemGetItemReplicaInfo(GetProcAddressOrLogToFile(L"game.dll", GET_ITEM_REPLICAINFO));
 
 typedef GAME::Player* (__fastcall* pGetMainPlayer)(GAME::GameEngine*);
-static auto fnGetMainPlayer = pGetMainPlayer(GetProcAddress(GetModuleHandle(L"game.dll"), "?GetMainPlayer@GameEngine@GAME@@QEBAPEAVPlayer@2@XZ"));
+static auto fnGetMainPlayer = pGetMainPlayer(GetProcAddressOrLogToFile(L"game.dll", "?GetMainPlayer@GameEngine@GAME@@QEBAPEAVPlayer@2@XZ"));
 
 
 typedef void(__fastcall* pGetModNameArg)(GAME::GameInfo* gi, std::wstring* str);
-static auto fnGetModNameArg = pGetModNameArg(GetProcAddress(GetModuleHandle(L"engine.dll"), "?GetModName@GameInfo@GAME@@QEAAXAEAV?$basic_string@GU?$char_traits@G@std@@V?$allocator@G@2@@std@@@Z"));
+static auto fnGetModNameArg = pGetModNameArg(GetProcAddressOrLogToFile(L"engine.dll", "?GetModName@GameInfo@GAME@@QEAAXAEAV?$basic_string@GU?$char_traits@G@std@@V?$allocator@G@2@@std@@@Z"));
 
 
 typedef int(__fastcall* pGetGameInfoMode)(GAME::GameInfo* gi);
-static auto fnGetGameInfoMode = pGetGameInfoMode(GetProcAddress(GetModuleHandle(L"engine.dll"), "?GetMode@GameInfo@GAME@@QEBAIXZ"));
+static auto fnGetGameInfoMode = pGetGameInfoMode(GetProcAddressOrLogToFile(L"engine.dll", "?GetMode@GameInfo@GAME@@QEBAIXZ"));
 
 typedef std::wstring const& (__fastcall* pGetModName)(GAME::GameInfo* gi);
-static auto fnGetModName = pGetModName(GetProcAddress(GetModuleHandle(L"engine.dll"), "?GetModName@GameInfo@GAME@@QEBAAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ"));
+static auto fnGetModName = pGetModName(GetProcAddressOrLogToFile(L"engine.dll", "?GetModName@GameInfo@GAME@@QEBAAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ"));
 
 
 typedef GAME::GameInfo* (__fastcall* pGetGameInfo)(GAME::Engine* ge);
-static auto fnGetGameInfo = pGetGameInfo(GetProcAddress(GetModuleHandle(L"engine.dll"), "?GetGameInfo@Engine@GAME@@QEAAPEAVGameInfo@2@XZ"));
+static auto fnGetGameInfo = pGetGameInfo(GetProcAddressOrLogToFile(L"engine.dll", "?GetGameInfo@Engine@GAME@@QEAAPEAVGameInfo@2@XZ"));
 
 typedef GAME::GameInfo* (__fastcall* pPlayDropSound)(GAME::Item* ge);
-static auto fnPlayDropSound = pPlayDropSound(GetProcAddress(GetModuleHandle(L"game.dll"), "?PlayDropSound@Item@GAME@@UEAAXXZ"));
+static auto fnPlayDropSound = pPlayDropSound(GetProcAddressOrLogToFile(L"game.dll", "?PlayDropSound@Item@GAME@@UEAAXXZ"));
 
 typedef GAME::GameInfo* (__fastcall* pShowCinematicText)(GAME::Engine* engine, const std::wstring* header, const std::wstring* content, int CinematicTextType, GAME::Color* color);
-static auto fnShowCinematicText = pShowCinematicText(GetProcAddress(GetModuleHandle(L"engine.dll"), "?ShowCinematicText@Engine@GAME@@QEAAXAEBV?$basic_string@GU?$char_traits@G@std@@V?$allocator@G@2@@std@@0W4CinematicTextType@2@AEBVColor@2@@Z"));
+static auto fnShowCinematicText = pShowCinematicText(GetProcAddressOrLogToFile(L"engine.dll", "?ShowCinematicText@Engine@GAME@@QEAAXAEBV?$basic_string@GU?$char_traits@G@std@@V?$allocator@G@2@@std@@0W4CinematicTextType@2@AEBVColor@2@@Z"));
+
+
+typedef bool(__thiscall* IsGameLoadingPtr)(void* This);
+typedef bool(__thiscall* IsGameWaitingPtr)(void* This, bool);
+typedef bool(__thiscall* SortInventorySackPtr)(void* This, int);
+extern IsGameLoadingPtr IsGameLoading;
+extern IsGameLoadingPtr IsGameEngineOnline;
+extern IsGameWaitingPtr IsGameWaiting;
+extern SortInventorySackPtr SortInventorySack;
 
 
 // 
 // 
 //typedef unsigned __int64(__fastcall* pGetSelectedTransferSackNumber)(GAME::GameEngine*);
-//static auto fnGetSelectedTransferSackNumber = pGetSelectedTransferSackNumber(GetProcAddress(GetModuleHandle(L"game.dll"), "?GetSelectedTransferSackNumber@GameEngine@GAME@@QEBAIXZ"));
+//static auto fnGetSelectedTransferSackNumber = pGetSelectedTransferSackNumber(GetProcAddressOrLogToFile((L"game.dll", "?GetSelectedTransferSackNumber@GameEngine@GAME@@QEBAIXZ"));
 
 
 typedef void* (__fastcall* pGetPlayerTransfer)(GAME::GameEngine*);
-static auto fnGetPlayerTransfer = pGetPlayerTransfer(GetProcAddress(GetModuleHandle(L"game.dll"), "?GetPlayerTransfer@GameEngine@GAME@@QEAAAEAV?$vector@PEAVInventorySack@GAME@@@mem@@XZ"));
+static auto fnGetPlayerTransfer = pGetPlayerTransfer(GetProcAddressOrLogToFile(L"game.dll", "?GetPlayerTransfer@GameEngine@GAME@@QEAAAEAV?$vector@PEAVInventorySack@GAME@@@mem@@XZ"));
 
 
 
 typedef bool(__fastcall* pGetHardcore)(GAME::GameInfo*);
 
 GAME::GameEngine* fnGetGameEngine();
-GAME::Engine* fnGetEngine();
+GAME::Engine* fnGetEngine(bool skipLog = false);
 
-bool fnGetHardcore(GAME::GameInfo* gameInfo);
+bool fnGetHardcore(GAME::GameInfo* gameInfo, bool skipLog = false);

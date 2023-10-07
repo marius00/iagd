@@ -18,14 +18,12 @@ using IAGrim.UI.Tabs;
 using IAGrim.Utilities;
 using IAGrim.Utilities.Cloud;
 using IAGrim.Utilities.HelperClasses;
-using IAGrim.Utilities.RectanglePacker;
 using log4net;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -34,10 +32,8 @@ using CefSharp.WinForms;
 using DllInjector;
 using IAGrim.Backup.Cloud.Service;
 using IAGrim.Backup.Cloud.Util;
-using IAGrim.Database;
 using IAGrim.Parsers.TransferStash;
 using IAGrim.Settings;
-using IAGrim.Utilities.Detection;
 
 namespace IAGrim.UI {
     public partial class MainWindow : Form {
@@ -46,7 +42,6 @@ namespace IAGrim.UI {
         private readonly ISettingsReadController _settingsController;
         private readonly ServiceProvider _serviceProvider;
         private readonly TooltipHelper _tooltipHelper = new TooltipHelper();
-        private readonly DynamicPacker _dynamicPacker;
         private readonly UsageStatisticsReporter _usageStatisticsReporter = new UsageStatisticsReporter();
         private readonly AutomaticUpdateChecker _automaticUpdateChecker;
         private CharacterBackupService _charBackupService;
@@ -198,7 +193,6 @@ namespace IAGrim.UI {
             var settingsService = _serviceProvider.Get<SettingsService>();
             _automaticUpdateChecker = new AutomaticUpdateChecker(settingsService);
             _settingsController = new SettingsController(settingsService);
-            _dynamicPacker = new DynamicPacker(serviceProvider.Get<IDatabaseItemStatDao>());
             _recipeParser = new RecipeParser(serviceProvider.Get<IRecipeItemDao>());
             _parsingService = parsingService;
             _userFeedbackService = new UserFeedbackService(_cefBrowserHandler);
@@ -248,7 +242,6 @@ namespace IAGrim.UI {
             _backupBackgroundTask?.Dispose();
             _usageStatisticsReporter.Dispose();
             _automaticUpdateChecker.Dispose();
-            _transferController.Dispose();
 
             _tooltipHelper?.Dispose();
 
@@ -425,30 +418,32 @@ namespace IAGrim.UI {
 
             var replicaItemDao = _serviceProvider.Get<IReplicaItemDao>();
             var stashWriter = new SafeTransferStashWriter(settingsService, _cefBrowserHandler);
-            var transferStashService = new TransferStashService(_serviceProvider.Get<IDatabaseItemStatDao>(), settingsService, stashWriter);
+            var transferStashService = new TransferStashService(settingsService);
             var transferStashService2 = new TransferStashService2(playerItemDao, cacher, transferStashService, stashWriter, settingsService, _cefBrowserHandler, replicaItemDao);
             _serviceProvider.Add(transferStashService2);
 
             _transferStashWorker = new TransferStashWorker(transferStashService2, _userFeedbackService);
 
-            _stashFileMonitor.OnStashModified += (_, __) => {
-                StashEventArg args = __ as StashEventArg;
-                _transferStashWorker.Queue(args?.Filename);
+            if (settingsService.GetLocal().PreferLegacyMode) {
+                _stashFileMonitor.OnStashModified += (_, __) => {
+                    StashEventArg args = __ as StashEventArg;
+                    _transferStashWorker.Queue(args?.Filename);
 
-                // May not minimize, but 
-                _usageStatisticsReporter.ResetLastMinimized();
-                _automaticUpdateChecker.ResetLastMinimized();
-            };
+                    // May not minimize, but 
+                    _usageStatisticsReporter.ResetLastMinimized();
+                    _automaticUpdateChecker.ResetLastMinimized();
+                };
 
-            if (!_stashFileMonitor.StartMonitoring(GlobalPaths.SavePath)) {
-                
-                MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_cloudsync_mb"));
-                _cefBrowserHandler.ShowHelp(HelpService.HelpType.CloudSavesEnabled);
+                if (!_stashFileMonitor.StartMonitoring(GlobalPaths.SavePath)) {
 
-                Logger.Warn("Shutting down IA, unable to monitor stash files.");
+                    MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_cloudsync_mb"));
+                    _cefBrowserHandler.ShowHelp(HelpService.HelpType.CloudSavesEnabled);
 
-                if (!Debugger.IsAttached)
-                    Close();
+                    Logger.Warn("Shutting down IA, unable to monitor stash files.");
+
+                    if (!Debugger.IsAttached)
+                        Close();
+                }
             }
 
                 
@@ -561,38 +556,13 @@ namespace IAGrim.UI {
             LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
             new EasterEgg(settingsService).Activate(this);
 
-            // Initialize the "stash packer" used to find item positions for transferring items ingame while the stash is open
-            {
-                _dynamicPacker.Initialize(8, 16);
-
-                var transferFiles = GlobalPaths.GetTransferFiles(settingsService.GetPersistent().EnableDowngrades);
-                if (transferFiles.Count > 0) {
-                    var maxLastAccess = transferFiles.Max(m => m.LastAccess);
-                    var file = transferFiles.First(x => x.LastAccess == maxLastAccess);
-
-                    var stash = TransferStashService.GetStash(file.Filename);
-                    if (stash != null) {
-                        _dynamicPacker.Initialize(stash.Width, stash.Height);
-                        if (stash.Tabs.Count >= 3) {
-                            foreach (var item in stash.Tabs[2].Items) {
-                                byte[] bx = BitConverter.GetBytes(item.XOffset);
-                                uint x = (uint) BitConverter.ToSingle(bx, 0);
-
-                                byte[] by = BitConverter.GetBytes(item.YOffset);
-                                uint y = (uint) BitConverter.ToSingle(by, 0);
-
-                                _dynamicPacker.Insert(item.BaseRecord, item.Seed, x, y);
-                            }
-                        }
-                    }
-                }
-            }
 
             var itemReplicaProcessor = _serviceProvider.Get<ItemReplicaProcessor>();
-            _messageProcessors.Add(new ItemPositionFinder(_dynamicPacker));
-            _messageProcessors.Add(new PlayerPositionTracker(Debugger.IsAttached && false));
-            _messageProcessors.Add(new StashStatusHandler());
-            _messageProcessors.Add(new CloudDetectorProcessor(SetFeedback));
+            if (settingsService.GetLocal().PreferLegacyMode) {
+                _messageProcessors.Add(new PlayerPositionTracker(Debugger.IsAttached && false));
+                _messageProcessors.Add(new StashStatusHandler());
+                _messageProcessors.Add(new CloudDetectorProcessor(SetFeedback, _serviceProvider.Get<SettingsService>()));
+            }
             _messageProcessors.Add(new GenericErrorHandler());
             _messageProcessors.Add(itemReplicaProcessor);
 
@@ -602,14 +572,9 @@ namespace IAGrim.UI {
             _transferController = new ItemTransferController(
                 _cefBrowserHandler,
                 SetFeedback,
-                SetTooltipAtmouse,
-                _searchWindow,
                 playerItemDao,
-                transferStashService,
-                _serviceProvider.Get<ItemStatService>(),
-                settingsService
+                transferStashService
             );
-            _transferController.Start();
             Application.AddMessageFilter(new MousewheelMessageFilter());
 
 
@@ -663,6 +628,8 @@ namespace IAGrim.UI {
             _csvFileMonitor.StartMonitoring();
             _csvParsingService.Start();
 
+            tsStashStatus.Visible = settingsService.GetLocal().PreferLegacyMode;
+
             Logger.Debug("UI initialization complete");
         }
 
@@ -680,7 +647,7 @@ namespace IAGrim.UI {
             // Same happens when shutting down, fix unknown
             _injectorCallbackDelegate = InjectorCallback;
 
-            string dllname = "ItemAssistantHook.dll";
+            string dllname = "ItemAssistantHook_x64.dll";
             _injector = new InjectionHelper(new BackgroundWorker(), _injectorCallbackDelegate, false, "Grim Dawn", string.Empty, dllname);
         }
 
@@ -690,6 +657,9 @@ namespace IAGrim.UI {
                 Invoke((MethodInvoker) delegate { GlobalSettings_StashStatusChanged(sender, e); });
                 return;
             }
+
+            var settingsService = _serviceProvider.Get<SettingsService>();
+            tsStashStatus.Visible = settingsService.GetLocal().PreferLegacyMode;
 
             switch (RuntimeSettings.StashStatus) {
                 case StashAvailability.OPEN:
@@ -715,11 +685,6 @@ namespace IAGrim.UI {
                 case StashAvailability.UNKNOWN:
                     tsStashStatus.ForeColor = Color.FromArgb(255, 192, 0, 0);
                     tsStashStatus.Tag = "iatag_stash_unknown";
-                    tsStashStatus.Text = RuntimeSettings.Language.GetTag(tsStashStatus.Tag.ToString());
-                    break;
-                case StashAvailability.SORTED:
-                    tsStashStatus.ForeColor = Color.FromArgb(255, 192, 0, 0);
-                    tsStashStatus.Tag = "iatag_stash_sorted";
                     tsStashStatus.Text = RuntimeSettings.Language.GetTag(tsStashStatus.Tag.ToString());
                     break;
                 case StashAvailability.NOT64BIT:

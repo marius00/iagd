@@ -21,8 +21,8 @@
     ]
   },
   "dependencies": {
-    "@material-ui/core": "^4.12.3",
-    "@material-ui/icons": "^4.11.2",
+    "@material-ui/core": "^4.12.4",
+    "@material-ui/icons": "^4.11.3",
     "@types/react-tooltip": "^4.2.4",
     "@types/uuid": "^8.3.1",
     "cross-env": "^7.0.3",
@@ -30,6 +30,7 @@
     "preact": "^10.3.1",
     "preact-render-to-string": "^5.1.4",
     "preact-router": "^3.2.1",
+    "react": "^17.0.2",
     "react-tooltip": "^4.2.21",
     "uuid": "^8.3.2"
   },
