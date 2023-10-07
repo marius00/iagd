@@ -240,10 +240,11 @@ namespace DllInjector {
                             if (!File.Exists(dll64Bit)) {
                                 Logger.Error("Could not find DLL");
                             }
+
+                            dll64Bit = Path.Combine(Directory.GetCurrentDirectory(), arguments.DllName.Replace("_x64", "playtest_x64"));
                         } else {
                             dll64Bit = Path.Combine(Directory.GetCurrentDirectory(), arguments.DllName);
                         }
-
 
                         if (Is64Bit((int)pid, worker)) {
                             if (InjectionVerifier.VerifyInjection(pid, dll64Bit)) {

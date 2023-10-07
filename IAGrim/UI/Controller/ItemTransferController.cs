@@ -100,6 +100,7 @@ namespace IAGrim.UI.Controller {
             else {
                 Logger.Warn("Could not find any items for the requested transfer");
                 _browser.ShowMessage(RuntimeSettings.Language.GetTag("iatag_feedback_unable_to_deposit"), UserFeedbackLevel.Warning);
+
             }
         }
     }

@@ -1,5 +1,6 @@
 #pragma once
 #include <set>
+
 #include "DataQueue.h"
 #include "BaseMethodHook.h"
 #include "GetPrivateStash.h"
@@ -35,6 +36,7 @@ private:
 	static SettingsReader m_settingsReader;
 	static bool m_isActive;
 	static int m_gameUpdateIterationsRun;
+
 	static bool m_isTransferStashOpen;
 	static std::set<std::wstring> m_depositQueue;
 	static boost::mutex m_mutex;
@@ -57,8 +59,10 @@ private:
 	typedef int* (__thiscall* GameEngine_Update)(void* This, int v);
 	typedef char* (__thiscall* GameEngine_GetGameInfo)(void* This);
 
+
 	// Hook variable defs
 	static GameInfo_GetHardcore dll_GameInfo_GetHardcore;
+
 	static GameEngine_Update dll_GameEngine_Update;
 	static GameInfo_GameInfo_Param dll_GameInfo_GameInfo_Param;
 	static GameInfo_GameInfo dll_GameInfo_GameInfo;
@@ -76,9 +80,12 @@ private:
 	static void* __fastcall Hooked_InventorySack_SetTransferOpen(void* This, bool isOpen);
 	static void* __fastcall Hooked_GameEngine_Update(void* This, int v);
 
+
 	// Helper/internal methods
 	static std::wstring GetModName(GAME::GameInfo* gameInfo);
 
+
+	static std::wstring InventorySack_AddItem::GetModName(GAME::GameInfo* gameInfo);
 	static bool HandleItem(void* stash, GAME::Item* item);
 	static bool Persist(GAME::ItemReplicaInfo replicaInfo, bool isHardcore, std::wstring mod);
 	static void DisplayMessage(std::wstring, std::wstring);
