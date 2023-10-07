@@ -8,7 +8,7 @@ void LogToFile(const wchar_t* message);
 void LogToFile(std::wstring message);
 
 
-int SettingsReader::getStashTabToLootFrom() {
+int SettingsReader::GetStashTabToLootFrom() {
 	boost::property_tree::wptree loadPtreeRoot;
 
 	const auto settingsJson = GetIagdFolder() + L"settings.json";
@@ -28,14 +28,43 @@ int SettingsReader::getStashTabToLootFrom() {
 	if (stashToLootFrom == 0) {
 		LogToFile(L"Configured to loot from last stash tab");
 
-	} else {
+	}
+	else {
 		LogToFile(L"Configured to loot from tab: " + std::to_wstring(stashToLootFrom));
 	}
 
 	return stashToLootFrom;
 }
 
-bool SettingsReader::getInstalootActive() {
+int SettingsReader::GetStashTabToDepositTo() {
+	boost::property_tree::wptree loadPtreeRoot;
+
+	const auto settingsJson = GetIagdFolder() + L"settings.json";
+	std::wifstream json(settingsJson);
+
+	boost::property_tree::read_json(json, loadPtreeRoot);
+	auto child = loadPtreeRoot.get_child_optional(L"local.stashToDepositTo");
+	if (!child)
+	{
+		LogToFile(L"No \"deposit to\" configuration found, defaulting to second-to-last stash tab");
+		return 0;
+	}
+
+	const int stashToDepositTo= loadPtreeRoot.get<int>(L"local.stashToDepositTo");
+
+
+	if (stashToDepositTo == 0) {
+		LogToFile(L"Configured to deposit to last stash tab");
+
+	}
+	else {
+		LogToFile(L"Configured to deposit to tab: " + std::to_wstring(stashToDepositTo));
+	}
+
+	return stashToDepositTo;
+}
+
+bool SettingsReader::GetInstalootActive() {
 	boost::property_tree::wptree loadPtreeRoot;
 
 	const auto settingsJson = GetIagdFolder() + L"settings.json";
@@ -57,7 +86,7 @@ bool SettingsReader::getInstalootActive() {
 }
 
 
-bool SettingsReader::getIsGrimDawnParsed() {
+bool SettingsReader::GetIsGrimDawnParsed() {
 	boost::property_tree::wptree loadPtreeRoot;
 
 	const auto settingsJson = GetIagdFolder() + L"settings.json";

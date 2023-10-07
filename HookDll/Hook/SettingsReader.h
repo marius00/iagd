@@ -2,8 +2,9 @@
 class SettingsReader
 {
 public:
-	int getStashTabToLootFrom();
-	bool getInstalootActive();
-	bool getIsGrimDawnParsed();
+	int GetStashTabToLootFrom();
+	bool GetInstalootActive();
+	bool GetIsGrimDawnParsed();
+	int GetStashTabToDepositTo();
 };
 

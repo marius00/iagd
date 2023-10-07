@@ -141,7 +141,9 @@ void WorkerThreadMethod() {
 
             // To avoid blocking the main thread, we should not have a lock on the queue while we process the message.
 			SendMessage( g_targetWnd, WM_COPYDATA, 0, ( LPARAM ) &data );
-            LOG(L"After SendMessage error code is " << GetLastError());
+			auto lastErrorCode = GetLastError();
+			if (lastErrorCode != 0)
+				LOG(L"After SendMessage error code is " << lastErrorCode);
         }
 
     }

@@ -41,7 +41,7 @@ void* __fastcall ItemRelicSeedInfo::HookedMethod(void* This, void* character, st
 	// We don't care about items with transmutes, can't loot those.
 	if (replica.enchantmentRecord.empty()) {
 		std::wstringstream stream;
-		stream << GAME::itemReplicaToString(replica) << "\n";
+		stream << GAME::Serialize(replica) << "\n";
 
 		// iterate through all text lines
 		for (auto& it : gameTextLines) {

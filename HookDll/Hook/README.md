@@ -42,3 +42,14 @@ The most relevant class for looking into both instaloot and real stats from item
 * ItemRelicSeedInfo: Passively listens for seed info for relics
 * EquipmentSeedInfo: Passively listens for seed info for equipment
 The remaining hooks are mostly simple proxies used to glean information, such as opening the stash or walking away from the stash.
+
+
+# Messages
+| Message								| Purpose/meaning		| Payload			|
+| --------------------------------------|:---------------------:|------------------:|
+| TYPE_OPEN_PRIVATE_STASH				| Stash open			| 1 byte			|
+| TYPE_OPEN_CLOSE_TRANSFER_STASH		| Stash open/closed		| 1 byte			|
+| TYPE_SAVE_TRANSFER_STASH				| Stash closed			| None				|
+| TYPE_DISPLAY_CRAFTER					| Crafting/unsafe IO	| None				|
+| TYPE_CAN_USE_DISMANTLE				| Crafting/unsafe IO	| None				|
+| TYPE_Display_Transmute				| Crafting/unsafe IO	| None				|
