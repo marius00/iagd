@@ -123,22 +123,13 @@ namespace IAGrim.Parsers.TransferStash {
 
                     // Warn or auto delete bugged duplicates
                     if (classifiedItems.Duplicates.Count > 0) {
-                        if (_settings.GetPersistent().DeleteDuplicates) {
-                            stash.Tabs[lootFromStashIdx].Items.RemoveAll(e => classifiedItems.Duplicates.Any(m => m.Equals(e)));
+                        stash.Tabs[lootFromStashIdx].Items.RemoveAll(e => classifiedItems.Duplicates.Any(m => m.Equals(e)));
 
-                            // No items to loot, so just delete the duplicates.
-                            if (classifiedItems.Remaining.Count == 0) {
-                                if (!_stashWriter.SafelyWriteStash(transferFile, stash)) {
-                                    Logger.Error("Fatal error deleting items from Grim Dawn, items has been duplicated.");
-                                }
+                        // No items to loot, so just delete the duplicates.
+                        if (classifiedItems.Remaining.Count == 0) {
+                            if (!_stashWriter.SafelyWriteStash(transferFile, stash)) {
+                                Logger.Error("Fatal error deleting items from Grim Dawn, items has been duplicated.");
                             }
-                        }
-                        else {
-                            classifiedItems.Duplicates.ForEach(item => Logger.Debug($"NotLootedDuplicate: {item}"));
-                            feedbacks.Add(new UserFeedback(UserFeedbackLevel.Warning,
-                                RuntimeSettings.Language.GetTag("iatag_feedback_duplicates_not_looted", classifiedItems.Duplicates.Count),
-                                HelpService.GetUrl(HelpService.HelpType.DuplicateItem)
-                            ));
                         }
                     }
 

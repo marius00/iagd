@@ -85,7 +85,7 @@ namespace IAGrim.Services {
                                 var hash = ItemReplicaService.GetHash(item);
                                 _replicaItemDao.UpdatePlayerItemId(hash, item.Id);
                             }
-                            else if (classificationService.Duplicates.Count > 0 && _settings.GetPersistent().DeleteDuplicates) {
+                            else if (classificationService.Duplicates.Count > 0) {
                                 Logger.Info("Deleting duplicate item file");
                                 File.Move(entry.Filename, Path.Combine(GlobalPaths.CsvLocationDeleted, Path.GetFileName(entry.Filename)));
                             }

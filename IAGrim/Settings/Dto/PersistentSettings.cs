@@ -153,14 +153,6 @@ namespace IAGrim.Settings.Dto {
             }
         }
 
-        public bool DeleteDuplicates {
-            get => _deleteDuplicates;
-            set {
-                _deleteDuplicates = value;
-                OnMutate?.Invoke(null, null);
-            }
-        }
-
         public bool AutoDismissNotifications {
             get => _autoDismissNotifications;
             set {

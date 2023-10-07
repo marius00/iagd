@@ -28,7 +28,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.tsStashStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPageItems = new System.Windows.Forms.TabPage();
             this.searchPanel = new System.Windows.Forms.Panel();
@@ -46,6 +45,7 @@
             this.trayContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsStashStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.statusStrip.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPageItems.SuspendLayout();
@@ -71,19 +71,10 @@
             // statusLabel
             // 
             this.statusLabel.Name = "statusLabel";
-            this.statusLabel.Size = new System.Drawing.Size(930, 17);
+            this.statusLabel.Size = new System.Drawing.Size(991, 17);
             this.statusLabel.Spring = true;
             this.statusLabel.Text = "GD Item Assistant";
             this.statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // tsStashStatus
-            // 
-            this.tsStashStatus.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.tsStashStatus.Name = "tsStashStatus";
-            this.tsStashStatus.Size = new System.Drawing.Size(92, 17);
-            this.tsStashStatus.Tag = "iatag_stash_unknown";
-            this.tsStashStatus.Text = "Stash: Unknown";
-            this.tsStashStatus.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // tabControl1
             // 
@@ -269,6 +260,15 @@
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
+            // tsStashStatus
+            // 
+            this.tsStashStatus.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.tsStashStatus.Name = "tsStashStatus";
+            this.tsStashStatus.Size = new System.Drawing.Size(92, 17);
+            this.tsStashStatus.Tag = "iatag_stash_unknown";
+            this.tsStashStatus.Text = "Stash: Unknown";
+            this.tsStashStatus.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -301,7 +301,6 @@
         #endregion
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
-        private System.Windows.Forms.ToolStripStatusLabel tsStashStatus;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPageItems;
         private System.Windows.Forms.TabPage tabPageSettings;
@@ -319,5 +318,6 @@
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.TabPage tabPageOnline;
         private System.Windows.Forms.Panel onlinePanel;
+        private System.Windows.Forms.ToolStripStatusLabel tsStashStatus;
     }
 }

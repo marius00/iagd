@@ -23,7 +23,6 @@ namespace IAGrim.Services {
             NoStacks,
             BackupAutodetectDisabled,
             NotLootingUnidentified,
-            DeleteDuplicates,
             MultiplePcs,
             RegularUpdates,
             ExperimentalUpdates,

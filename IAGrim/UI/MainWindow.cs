@@ -34,10 +34,8 @@ using CefSharp.WinForms;
 using DllInjector;
 using IAGrim.Backup.Cloud.Service;
 using IAGrim.Backup.Cloud.Util;
-using IAGrim.Database;
 using IAGrim.Parsers.TransferStash;
 using IAGrim.Settings;
-using IAGrim.Utilities.Detection;
 
 namespace IAGrim.UI {
     public partial class MainWindow : Form {
@@ -592,7 +590,7 @@ namespace IAGrim.UI {
             _messageProcessors.Add(new ItemPositionFinder(_dynamicPacker));
             _messageProcessors.Add(new PlayerPositionTracker(Debugger.IsAttached && false));
             _messageProcessors.Add(new StashStatusHandler());
-            _messageProcessors.Add(new CloudDetectorProcessor(SetFeedback));
+            _messageProcessors.Add(new CloudDetectorProcessor(SetFeedback, _serviceProvider.Get<SettingsService>()));
             _messageProcessors.Add(new GenericErrorHandler());
             _messageProcessors.Add(itemReplicaProcessor);
 
@@ -690,6 +688,9 @@ namespace IAGrim.UI {
                 Invoke((MethodInvoker) delegate { GlobalSettings_StashStatusChanged(sender, e); });
                 return;
             }
+
+            var settingsService = _serviceProvider.Get<SettingsService>();
+            tsStashStatus.Visible = settingsService.GetLocal().DisableInstaloot;
 
             switch (RuntimeSettings.StashStatus) {
                 case StashAvailability.OPEN:

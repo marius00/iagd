@@ -80,7 +80,6 @@ namespace IAGrim.UI.Tabs {
             radioRelease.Checked = !_settings.GetPersistent().SubscribeExperimentalUpdates;
             cbDualComputer.Checked = _settings.GetPersistent().UsingDualComputer;
             cbShowAugments.Checked = _settings.GetPersistent().ShowAugmentsAsItems;
-            cbDeleteDuplicates.Checked = _settings.GetPersistent().DeleteDuplicates;
             cbStartMinimized.Checked = _settings.GetLocal().StartMinimized;
             cbDarkMode.Checked = _settings.GetPersistent().DarkMode;
             cbAutoDismiss.Checked = _settings.GetPersistent().AutoDismissNotifications;
@@ -188,13 +187,6 @@ namespace IAGrim.UI.Tabs {
             _cefBrowserHandler.ShowHelp(HelpService.HelpType.MultiplePcs);
         }
 
-        private void helpWhatIsDeleteDuplicates_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            _cefBrowserHandler.ShowHelp(HelpService.HelpType.DeleteDuplicates);
-        }
-
-        private void cbDeleteDuplicates_CheckedChanged(object sender, EventArgs e) {
-            _settings.GetPersistent().DeleteDuplicates = (sender as FirefoxCheckBox).Checked;
-        }
 
         private void button1_Click(object sender, EventArgs e) {
             _controller.DonateNow();

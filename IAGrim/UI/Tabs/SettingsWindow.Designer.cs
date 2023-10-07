@@ -35,9 +35,7 @@
             this.cbAutoDismiss = new FirefoxCheckBox();
             this.cbDarkMode = new FirefoxCheckBox();
             this.cbStartMinimized = new FirefoxCheckBox();
-            this.helpWhatIsDeleteDuplicates = new System.Windows.Forms.LinkLabel();
             this.helpWhatIsUsingMultiplePc = new System.Windows.Forms.LinkLabel();
-            this.cbDeleteDuplicates = new FirefoxCheckBox();
             this.helpWhatIsTransferToAnyMod = new System.Windows.Forms.LinkLabel();
             this.helpWhatIsSecureTransfers = new System.Windows.Forms.LinkLabel();
             this.cbMinimizeToTray = new FirefoxCheckBox();
@@ -51,6 +49,7 @@
             this.cbShowRecipesAsItems = new FirefoxCheckBox();
             this.cbSecureTransfers = new FirefoxCheckBox();
             this.pbAutomaticUpdates = new PanelBox();
+            this.linkDowngrade = new System.Windows.Forms.LinkLabel();
             this.linkCheckForUpdates = new System.Windows.Forms.LinkLabel();
             this.helpWhatIsExperimentalUpdates = new System.Windows.Forms.LinkLabel();
             this.helpWhatIsRegularUpdates = new System.Windows.Forms.LinkLabel();
@@ -68,7 +67,6 @@
             this.buttonLanguageSelect = new FirefoxButton();
             this.buttonViewBackups = new FirefoxButton();
             this.buttonViewLogs = new FirefoxButton();
-            this.linkDowngrade = new System.Windows.Forms.LinkLabel();
             this.contextMenuStrip1.SuspendLayout();
             this.panelBox4.SuspendLayout();
             this.pbAutomaticUpdates.SuspendLayout();
@@ -115,9 +113,7 @@
             this.panelBox4.Controls.Add(this.cbAutoDismiss);
             this.panelBox4.Controls.Add(this.cbDarkMode);
             this.panelBox4.Controls.Add(this.cbStartMinimized);
-            this.panelBox4.Controls.Add(this.helpWhatIsDeleteDuplicates);
             this.panelBox4.Controls.Add(this.helpWhatIsUsingMultiplePc);
-            this.panelBox4.Controls.Add(this.cbDeleteDuplicates);
             this.panelBox4.Controls.Add(this.helpWhatIsTransferToAnyMod);
             this.panelBox4.Controls.Add(this.helpWhatIsSecureTransfers);
             this.panelBox4.Controls.Add(this.cbMinimizeToTray);
@@ -233,21 +229,6 @@
             this.cbStartMinimized.Text = "Start minimized";
             this.cbStartMinimized.CheckedChanged += new System.EventHandler(this.cbStartMinimized_CheckedChanged);
             // 
-            // helpWhatIsDeleteDuplicates
-            // 
-            this.helpWhatIsDeleteDuplicates.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.helpWhatIsDeleteDuplicates.AutoSize = true;
-            this.helpWhatIsDeleteDuplicates.BackColor = System.Drawing.Color.Transparent;
-            this.helpWhatIsDeleteDuplicates.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.helpWhatIsDeleteDuplicates.Location = new System.Drawing.Point(259, 259);
-            this.helpWhatIsDeleteDuplicates.Name = "helpWhatIsDeleteDuplicates";
-            this.helpWhatIsDeleteDuplicates.Size = new System.Drawing.Size(18, 13);
-            this.helpWhatIsDeleteDuplicates.TabIndex = 29;
-            this.helpWhatIsDeleteDuplicates.TabStop = true;
-            this.helpWhatIsDeleteDuplicates.Tag = "iatag_ui_questionmark";
-            this.helpWhatIsDeleteDuplicates.Text = " ? ";
-            this.helpWhatIsDeleteDuplicates.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpWhatIsDeleteDuplicates_LinkClicked);
-            // 
             // helpWhatIsUsingMultiplePc
             // 
             this.helpWhatIsUsingMultiplePc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -262,21 +243,6 @@
             this.helpWhatIsUsingMultiplePc.Tag = "iatag_ui_questionmark";
             this.helpWhatIsUsingMultiplePc.Text = " ? ";
             this.helpWhatIsUsingMultiplePc.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpWhatIsUsingMultiplePc_LinkClicked);
-            // 
-            // cbDeleteDuplicates
-            // 
-            this.cbDeleteDuplicates.Bold = false;
-            this.cbDeleteDuplicates.EnabledCalc = true;
-            this.cbDeleteDuplicates.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cbDeleteDuplicates.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbDeleteDuplicates.IsDarkMode = false;
-            this.cbDeleteDuplicates.Location = new System.Drawing.Point(3, 252);
-            this.cbDeleteDuplicates.Name = "cbDeleteDuplicates";
-            this.cbDeleteDuplicates.Size = new System.Drawing.Size(268, 27);
-            this.cbDeleteDuplicates.TabIndex = 27;
-            this.cbDeleteDuplicates.Tag = "iatag_ui_deleteduplicates";
-            this.cbDeleteDuplicates.Text = "Delete bugged duplicates";
-            this.cbDeleteDuplicates.CheckedChanged += new System.EventHandler(this.cbDeleteDuplicates_CheckedChanged);
             // 
             // helpWhatIsTransferToAnyMod
             // 
@@ -475,6 +441,19 @@
             this.pbAutomaticUpdates.Tag = "iatag_ui_update_title";
             this.pbAutomaticUpdates.Text = "Automatic Updates";
             this.pbAutomaticUpdates.TextLocation = "8; 5";
+            // 
+            // linkDowngrade
+            // 
+            this.linkDowngrade.AutoSize = true;
+            this.linkDowngrade.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.linkDowngrade.Location = new System.Drawing.Point(374, 66);
+            this.linkDowngrade.Name = "linkDowngrade";
+            this.linkDowngrade.Size = new System.Drawing.Size(68, 13);
+            this.linkDowngrade.TabIndex = 32;
+            this.linkDowngrade.TabStop = true;
+            this.linkDowngrade.Tag = "iatag_ui_downgrade_ia";
+            this.linkDowngrade.Text = "Downgrade";
+            this.linkDowngrade.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkDowngrade_LinkClicked);
             // 
             // linkCheckForUpdates
             // 
@@ -764,19 +743,6 @@
             this.buttonViewLogs.Text = "View Logs";
             this.buttonViewLogs.Click += new System.EventHandler(this.buttonViewLogs_Click);
             // 
-            // linkDowngrade
-            // 
-            this.linkDowngrade.AutoSize = true;
-            this.linkDowngrade.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.linkDowngrade.Location = new System.Drawing.Point(374, 66);
-            this.linkDowngrade.Name = "linkDowngrade";
-            this.linkDowngrade.Size = new System.Drawing.Size(68, 13);
-            this.linkDowngrade.TabIndex = 32;
-            this.linkDowngrade.TabStop = true;
-            this.linkDowngrade.Tag = "iatag_ui_downgrade_ia";
-            this.linkDowngrade.Text = "Downgrade";
-            this.linkDowngrade.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkDowngrade_LinkClicked);
-            // 
             // SettingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -836,8 +802,6 @@
         private System.Windows.Forms.LinkLabel helpWhatIsAugmentAsItem;
         private System.Windows.Forms.LinkLabel helpWhatIsSecureTransfers;
         private System.Windows.Forms.LinkLabel helpWhatIsTransferToAnyMod;
-        private FirefoxCheckBox cbDeleteDuplicates;
-        private System.Windows.Forms.LinkLabel helpWhatIsDeleteDuplicates;
         private System.Windows.Forms.LinkLabel helpWhatIsUsingMultiplePc;
         private System.Windows.Forms.Button buttonPaypal;
         private System.Windows.Forms.Button buttonPatreon;

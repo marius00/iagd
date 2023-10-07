@@ -234,7 +234,9 @@ namespace IAGrim.Settings.Dto {
             }
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         public bool DisableInstaloot {
             get => _disableInstaloot;
             set {
