@@ -7,6 +7,7 @@
 #include "SaveTransferStash.h"
 #include "Exports.h"
 #include "GrimTypes.h"
+#include "Logger.h"
 
 HANDLE SaveTransferStash::m_hEvent;
 DataQueue* SaveTransferStash::m_dataQueue;
@@ -60,6 +61,8 @@ void* __fastcall SaveTransferStash::HookedMethod(void* This) {
 	DataItemPtr item(new DataItem(TYPE_SAVE_TRANSFER_STASH, 0, 0));
 	m_dataQueue->push(item);
 	SetEvent(m_hEvent);
+
+	LogToFile(L"Shared stash is closed (saved)");
 
 	return v;
 }

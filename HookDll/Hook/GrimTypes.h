@@ -9,7 +9,7 @@
 #include "Exports.h"
 
 
-void* GetProcAddressOrLogToFile(const wchar_t* dll, char* procAddress);
+void* GetProcAddressOrLogToFile(const wchar_t* dll, char* procAddress, bool skipLog = false);
 
 namespace GAME
 {
@@ -159,8 +159,10 @@ namespace GAME
 #endif
 	};
 
-	std::wstring itemReplicaToString(GAME::ItemReplicaInfo replica);
-	std::wstring gameTextLineToString(std::vector<GameTextLine>& gameTextLines);
+	std::wstring Serialize(GAME::ItemReplicaInfo replica);
+	std::vector<std::string> GetNextLineAndSplitIntoTokens(std::istream& str);
+	GAME::ItemReplicaInfo* Deserialize(std::vector<std::string> tokens);
+	std::wstring GameTextLineToString(std::vector<GameTextLine>& gameTextLines);
 }
 
 // ?GetItemReplicaInfo@Item@GAME@@UEBAXAEAUItemReplicaInfo@2@@Z
@@ -209,9 +211,11 @@ static auto fnShowCinematicText = pShowCinematicText(GetProcAddressOrLogToFile(L
 
 typedef bool(__thiscall* IsGameLoadingPtr)(void* This);
 typedef bool(__thiscall* IsGameWaitingPtr)(void* This, bool);
+typedef bool(__thiscall* SortInventorySackPtr)(void* This, int);
 extern IsGameLoadingPtr IsGameLoading;
 extern IsGameLoadingPtr IsGameEngineOnline;
 extern IsGameWaitingPtr IsGameWaiting;
+extern SortInventorySackPtr SortInventorySack;
 
 
 // 
@@ -228,6 +232,6 @@ static auto fnGetPlayerTransfer = pGetPlayerTransfer(GetProcAddressOrLogToFile(L
 typedef bool(__fastcall* pGetHardcore)(GAME::GameInfo*);
 
 GAME::GameEngine* fnGetGameEngine();
-GAME::Engine* fnGetEngine();
+GAME::Engine* fnGetEngine(bool skipLog = false);
 
-bool fnGetHardcore(GAME::GameInfo* gameInfo);
+bool fnGetHardcore(GAME::GameInfo* gameInfo, bool skipLog = false);

@@ -234,6 +234,13 @@ namespace DllInjector {
                         var gdFilename = Path.Combine(Path.GetDirectoryName(GetWindowModuleFileName(pid)), "Game.dll");
                         var isPlaytest = InjectionVerifier.IsPlaytest(gdFilename); 
                         if (isPlaytest) {
+                            dll64Bit = Path.Combine(Directory.GetCurrentDirectory(), arguments.DllName.Replace("_x64", "_playtest_x64"));
+                            Logger.Info("Playtest detected, using DLL " + dll64Bit);
+
+                            if (!File.Exists(dll64Bit)) {
+                                Logger.Error("Could not find DLL");
+                            }
+
                             dll64Bit = Path.Combine(Directory.GetCurrentDirectory(), arguments.DllName.Replace("_x64", "playtest_x64"));
                         } else {
                             dll64Bit = Path.Combine(Directory.GetCurrentDirectory(), arguments.DllName);

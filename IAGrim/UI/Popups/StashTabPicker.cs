@@ -11,12 +11,11 @@ using log4net;
 namespace IAGrim.UI.Popups {
     public partial class StashTabPicker : Form {
         private readonly SettingsService _settings;
-        private readonly int _numStashTabs;
+        private readonly int _numStashTabs = 6;
         private readonly IHelpService _helpService;
 
-        public StashTabPicker(int numStashTabs, SettingsService settings, IHelpService helpService) {
+        public StashTabPicker(SettingsService settings, IHelpService helpService) {
             InitializeComponent();
-            _numStashTabs = numStashTabs;
             _settings = settings;
             _helpService = helpService;
         }

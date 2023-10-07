@@ -2,7 +2,7 @@
 #include "Logger.h"
 
 namespace GAME {
-	std::wstring itemReplicaToString(GAME::ItemReplicaInfo replica) {
+	std::wstring Serialize(GAME::ItemReplicaInfo replica) {
 		std::wstringstream stream;
 		stream << replica.baseRecord.c_str() << ";";
 		stream << replica.prefixRecord.c_str() << ";";
@@ -19,12 +19,56 @@ namespace GAME {
 		return stream.str();
 	}
 
+	// https://stackoverflow.com/questions/1120140/how-can-i-read-and-parse-csv-files-in-c
+	std::vector<std::string> GetNextLineAndSplitIntoTokens(std::istream& str) {
+		std::vector<std::string>   result;
+		std::string                line;
+		std::getline(str, line);
+
+		std::stringstream          lineStream(line);
+		std::string                cell;
+
+		while (std::getline(lineStream, cell, ';')) {
+			result.push_back(cell);
+		}
+
+		// This checks for a trailing semicolon with no data after it.
+		if (!lineStream && cell.empty()) {
+			// If there was a trailing semicolon then add an empty element.
+			result.push_back("");
+		}
+		return result;
+	}
+
+	GAME::ItemReplicaInfo* Deserialize(std::vector<std::string> tokens) {
+		if (tokens.size() != 13) {
+			LogToFile(L"Error parsing CSV file, expected 13 tokens, got " + std::to_wstring(tokens.size()));
+			return nullptr;
+		}
+
+		GAME::ItemReplicaInfo* item = new GAME::ItemReplicaInfo();
+		int idx = 2; // 0: is the mod name, 1: is "isHardcore"
+		item->baseRecord = tokens.at(idx++);
+		item->prefixRecord = tokens.at(idx++);
+		item->suffixRecord = tokens.at(idx++);
+		item->seed = stoi(tokens.at(idx++));
+		item->modifierRecord = tokens.at(idx++);
+		item->materiaRecord = tokens.at(idx++);
+		item->relicBonus = tokens.at(idx++);
+		item->relicSeed = stoi(tokens.at(idx++));
+		item->enchantmentRecord = tokens.at(idx++);
+		item->enchantmentSeed = stoi(tokens.at(idx++));
+		item->transmuteRecord = tokens.at(idx++);
+
+		return item;
+	}
+
 	/// <summary>
 	/// Helper method for converting gameTextLine to a CSV string.
 	/// </summary>
 	/// <param name="gameTextLines"></param>
 	/// <returns></returns>
-	std::wstring gameTextLineToString(std::vector<GameTextLine>& gameTextLines) {
+	std::wstring GameTextLineToString(std::vector<GameTextLine>& gameTextLines) {
 		std::wstringstream stream;
 		GAME::ItemReplicaInfo replica;
 
@@ -52,24 +96,24 @@ GAME::GameEngine* fnGetGameEngine() {
 /// Fetches the static pointer to GAME::Engine (not a method call)
 /// </summary>
 /// <returns></returns>
-GAME::Engine* fnGetEngine() {
-	return (GAME::Engine*)*(DWORD_PTR*)GetProcAddressOrLogToFile(L"engine.dll", "?gEngine@GAME@@3PEAVEngine@1@EA");
+GAME::Engine* fnGetEngine(bool skipLog) {
+	return (GAME::Engine*)*(DWORD_PTR*)GetProcAddressOrLogToFile(L"engine.dll", "?gEngine@GAME@@3PEAVEngine@1@EA", skipLog);
 }
 
-bool fnGetHardcore(GAME::GameInfo* gameInfo) {
-	pGetHardcore f = pGetHardcore(GetProcAddressOrLogToFile(L"engine.dll", "?GetHardcore@GameInfo@GAME@@QEBA_NXZ"));
+bool fnGetHardcore(GAME::GameInfo* gameInfo, bool skipLog) {
+	pGetHardcore f = pGetHardcore(GetProcAddressOrLogToFile(L"engine.dll", "?GetHardcore@GameInfo@GAME@@QEBA_NXZ", skipLog));
 	return f(gameInfo);
 
 }
 
 typedef std::basic_string<char, std::char_traits<char>, std::allocator<char> > const& Fancystring;
 
-void* GetProcAddressOrLogToFile(const wchar_t* dll, char* procAddress) {
+void* GetProcAddressOrLogToFile(const wchar_t* dll, char* procAddress, bool skipLog) {
 	void* originalMethod = GetProcAddress(::GetModuleHandle(dll), procAddress);
 	if (originalMethod == NULL) {
 		LogToFile(std::string("Error finding export from DLL: ") + std::string(procAddress));
 	}
-	else {
+	else if (!skipLog) {
 		LogToFile(std::string("Successfully found DLL export: ") + std::string(procAddress));
 	}
 
@@ -81,3 +125,4 @@ void* GetProcAddressOrLogToFile(const wchar_t* dll, char* procAddress) {
 IsGameLoadingPtr IsGameLoading = IsGameLoadingPtr(GetProcAddressOrLogToFile(L"game.dll", "?IsGameLoading@GameEngine@GAME@@QEBA_NXZ"));
 IsGameLoadingPtr IsGameEngineOnline = IsGameLoadingPtr(GetProcAddressOrLogToFile(L"game.dll", "?IsGameEngineOnline@GameEngine@GAME@@QEBA_NXZ"));
 IsGameWaitingPtr IsGameWaiting = IsGameWaitingPtr(GetProcAddressOrLogToFile(L"game.dll", "?IsGameWaiting@GameEngine@GAME@@QEAA_N_N@Z"));
+SortInventorySackPtr SortInventorySack = SortInventorySackPtr(GetProcAddressOrLogToFile(L"game.dll", "?Sort@InventorySack@GAME@@QEAA_NI@Z"));

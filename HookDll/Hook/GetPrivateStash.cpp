@@ -5,6 +5,7 @@
 #include <detours.h>
 #include "GetPrivateStash.h"
 #include "Exports.h"
+#include "Logger.h"
 #include "GrimTypes.h"
 
 HANDLE GetPrivateStash::m_hEvent;
@@ -56,6 +57,9 @@ void* __stdcall GetPrivateStash::HookedMethod64(void* This) {
 	DataItemPtr item(new DataItem(TYPE_OPEN_PRIVATE_STASH, 1, (char*)b));
 	m_dataQueue->push(item);
 	SetEvent(m_hEvent);
+
+
+	LogToFile(L"Player stash is opened");
 
 	privateStashSack = v;
 	return v;

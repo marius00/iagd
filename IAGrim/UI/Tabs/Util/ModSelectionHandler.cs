@@ -2,14 +2,12 @@
 using IAGrim.Utilities;
 using IAGrim.Utilities.HelperClasses;
 using log4net;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 using IAGrim.Settings;
-using IAGrim.Settings.Dto;
 
 namespace IAGrim.UI.Tabs.Util {
     class ModSelectionHandler : IDisposable {
@@ -95,7 +93,7 @@ namespace IAGrim.UI.Tabs.Util {
         public bool HasMods => GetAvailableModSelection().Any(m => !string.IsNullOrEmpty(m.Mod));
 
         public GDTransferFile[] GetAvailableModSelection() {
-            var mods = GlobalPaths.GetTransferFiles(_settings.GetPersistent().EnableDowngrades);
+            var mods = new List<GDTransferFile>();
 
             foreach (var entry in _playerItemDao.GetModSelection()) {
                 if (!mods.Any(m =>

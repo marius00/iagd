@@ -287,8 +287,8 @@ void OnDemandSeedInfo::GetItemInfo(ParsedSeedRequest obj) {
 			GAME::ItemReplicaInfo replica;
 			stream << obj.playerItemId << "\n"; // Differs from TYPE_ITEMSEEDDATA
 			stream << obj.buddyItemId.c_str() << "\n";
-			stream << GAME::itemReplicaToString(obj.itemReplicaInfo) << "\n";
-			stream << GAME::gameTextLineToString(gameTextLines);
+			stream << GAME::Serialize(obj.itemReplicaInfo) << "\n";
+			stream << GAME::GameTextLineToString(gameTextLines);
 
 			std::wstring str = stream.str();
 			DataItemPtr item(new DataItem(TYPE_ITEMSEEDDATA_PLAYERID, str.size() * sizeof(wchar_t), (char*)str.c_str()));
