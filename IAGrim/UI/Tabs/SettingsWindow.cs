@@ -9,7 +9,6 @@ using IAGrim.Parsers.Arz;
 using IAGrim.Parsers.TransferStash;
 using IAGrim.Services;
 using IAGrim.Settings;
-using IAGrim.Settings.Dto;
 using IAGrim.UI.Controller;
 using IAGrim.UI.Misc.CEF;
 using IAGrim.UI.Popups;
@@ -61,8 +60,6 @@ namespace IAGrim.UI.Tabs {
 
             _controller.BindCheckbox(cbMinimizeToTray);
 
-            _controller.BindCheckbox(cbTransferAnyMod);
-            _controller.BindCheckbox(cbSecureTransfers);
             _controller.BindCheckbox(cbShowRecipesAsItems);
             _controller.BindCheckbox(cbHideSkills);
             _controller.LoadDefaults();
@@ -84,7 +81,6 @@ namespace IAGrim.UI.Tabs {
             cbDarkMode.Checked = _settings.GetPersistent().DarkMode;
             cbAutoDismiss.Checked = _settings.GetPersistent().AutoDismissNotifications;
 
-            cbDisableInstaloot.Checked = _settings.GetLocal().DisableInstaloot;
             cbEnableDowngrades.Checked = _settings.GetPersistent().EnableDowngrades;
         }
 
@@ -146,7 +142,7 @@ namespace IAGrim.UI.Tabs {
         }
 
         private void buttonAdvancedSettings_Click(object sender, EventArgs e) {
-            new StashTabPicker(_transferStashService.NumStashTabs, _settings, _cefBrowserHandler).ShowDialog();
+            new StashTabPicker(_settings, _cefBrowserHandler).ShowDialog();
         }
 
         private void linkSourceCode_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
@@ -175,17 +171,10 @@ namespace IAGrim.UI.Tabs {
 
         }
 
-        private void helpWhatIsSecureTransfers_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            _cefBrowserHandler.ShowHelp(HelpService.HelpType.SecureTransfers);
-        }
-
-        private void helpWhatIsTransferToAnyMod_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            _cefBrowserHandler.ShowHelp(HelpService.HelpType.TransferToAnyMod);
-        }
-
         private void helpWhatIsUsingMultiplePc_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             _cefBrowserHandler.ShowHelp(HelpService.HelpType.MultiplePcs);
         }
+
 
 
         private void button1_Click(object sender, EventArgs e) {
@@ -234,10 +223,6 @@ namespace IAGrim.UI.Tabs {
 
         private void cbAutoDismiss_CheckedChanged(object sender, EventArgs e) {
             _settings.GetPersistent().AutoDismissNotifications = ((FirefoxCheckBox) sender).Checked;
-        }
-
-        private void cbDisableInstaloot_CheckedChanged(object sender, EventArgs e) {
-            _settings.GetLocal().DisableInstaloot = ((FirefoxCheckBox)sender).Checked;
         }
 
         private void cbEnableDowngrades_CheckedChanged(object sender, EventArgs e) {

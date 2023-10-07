@@ -42,7 +42,7 @@ namespace GAME {
 
 	GAME::ItemReplicaInfo* Deserialize(std::vector<std::string> tokens) {
 		if (tokens.size() != 13) {
-			LogToFile(L"Error parsing CSV file, expected 13 tokens, got " + tokens.size());
+			LogToFile(L"Error parsing CSV file, expected 13 tokens, got " + std::to_wstring(tokens.size()));
 			return nullptr;
 		}
 

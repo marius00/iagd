@@ -16,8 +16,6 @@ namespace IAGrim.Services {
             CannotFindGrimdawn,
             ShowRecipesAsItems,
             ShowAugmentsAsItems,
-            SecureTransfers,
-            TransferToAnyMod,
             RestoreBackup,
             DuplicateItem,
             NoStacks,

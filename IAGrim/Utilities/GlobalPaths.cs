@@ -38,7 +38,23 @@ namespace IAGrim.Utilities {
 
         public static string CsvLocation {
             get {
-                string path = Path.Combine(CoreFolder, "itemqueue", "ingoing");
+                string path = Path.Combine(CoreFolder, "itemqueue");
+                Directory.CreateDirectory(path);
+                return path;
+            }
+        }
+
+        public static string CsvLocationIngoing {
+            get {
+                string path = Path.Combine(CsvLocation, "ingoing");
+                Directory.CreateDirectory(path);
+                return path;
+            }
+        }
+
+        public static string CsvLocationOutgoing {
+            get {
+                string path = Path.Combine(CsvLocation, "outgoing");
                 Directory.CreateDirectory(path);
                 return path;
             }
@@ -102,6 +118,7 @@ namespace IAGrim.Utilities {
             else
                 return DowngradeType.None;
         }
+
 
         public static string SavePath {
             get {
@@ -176,7 +193,7 @@ namespace IAGrim.Utilities {
             }
 
             if (transferFilesCache.Count == 0) {
-                Logger.Warn($"No stash files detected in {documents}");
+                Logger.Debug($"No stash files detected in {documents}");
             }
 
 

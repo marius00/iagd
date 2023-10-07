@@ -31,13 +31,10 @@
             this.panelBox4 = new PanelBox();
             this.helpWhatIsEnableDowngrades = new System.Windows.Forms.LinkLabel();
             this.cbEnableDowngrades = new FirefoxCheckBox();
-            this.cbDisableInstaloot = new FirefoxCheckBox();
             this.cbAutoDismiss = new FirefoxCheckBox();
             this.cbDarkMode = new FirefoxCheckBox();
             this.cbStartMinimized = new FirefoxCheckBox();
             this.helpWhatIsUsingMultiplePc = new System.Windows.Forms.LinkLabel();
-            this.helpWhatIsTransferToAnyMod = new System.Windows.Forms.LinkLabel();
-            this.helpWhatIsSecureTransfers = new System.Windows.Forms.LinkLabel();
             this.cbMinimizeToTray = new FirefoxCheckBox();
             this.helpWhatIsAugmentAsItem = new System.Windows.Forms.LinkLabel();
             this.helpWhatIsRecipeAsItems = new System.Windows.Forms.LinkLabel();
@@ -45,9 +42,7 @@
             this.cbDualComputer = new FirefoxCheckBox();
             this.linkSourceCode = new System.Windows.Forms.LinkLabel();
             this.cbHideSkills = new FirefoxCheckBox();
-            this.cbTransferAnyMod = new FirefoxCheckBox();
             this.cbShowRecipesAsItems = new FirefoxCheckBox();
-            this.cbSecureTransfers = new FirefoxCheckBox();
             this.pbAutomaticUpdates = new PanelBox();
             this.linkDowngrade = new System.Windows.Forms.LinkLabel();
             this.linkCheckForUpdates = new System.Windows.Forms.LinkLabel();
@@ -56,11 +51,11 @@
             this.radioBeta = new FirefoxRadioButton();
             this.radioRelease = new FirefoxRadioButton();
             this.panelBox2 = new PanelBox();
-            this.buttonLootManually = new FirefoxButton();
             this.buttonPatreon = new System.Windows.Forms.Button();
             this.buttonPaypal = new System.Windows.Forms.Button();
             this.buttonDevTools = new FirefoxButton();
             this.panelBox1 = new PanelBox();
+            this.firefoxButton1 = new FirefoxButton();
             this.buttonAdvancedSettings = new FirefoxButton();
             this.buttonImportExport = new FirefoxButton();
             this.buttonMigratePostgres = new FirefoxButton();
@@ -79,7 +74,7 @@
             this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.linkLabel1.ContextMenuStrip = this.contextMenuStrip1;
             this.linkLabel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.linkLabel1.Location = new System.Drawing.Point(595, 535);
+            this.linkLabel1.Location = new System.Drawing.Point(595, 458);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(269, 33);
             this.linkLabel1.TabIndex = 20;
@@ -109,13 +104,10 @@
             this.panelBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
             this.panelBox4.Controls.Add(this.helpWhatIsEnableDowngrades);
             this.panelBox4.Controls.Add(this.cbEnableDowngrades);
-            this.panelBox4.Controls.Add(this.cbDisableInstaloot);
             this.panelBox4.Controls.Add(this.cbAutoDismiss);
             this.panelBox4.Controls.Add(this.cbDarkMode);
             this.panelBox4.Controls.Add(this.cbStartMinimized);
             this.panelBox4.Controls.Add(this.helpWhatIsUsingMultiplePc);
-            this.panelBox4.Controls.Add(this.helpWhatIsTransferToAnyMod);
-            this.panelBox4.Controls.Add(this.helpWhatIsSecureTransfers);
             this.panelBox4.Controls.Add(this.cbMinimizeToTray);
             this.panelBox4.Controls.Add(this.helpWhatIsAugmentAsItem);
             this.panelBox4.Controls.Add(this.helpWhatIsRecipeAsItems);
@@ -123,9 +115,7 @@
             this.panelBox4.Controls.Add(this.cbDualComputer);
             this.panelBox4.Controls.Add(this.linkSourceCode);
             this.panelBox4.Controls.Add(this.cbHideSkills);
-            this.panelBox4.Controls.Add(this.cbTransferAnyMod);
             this.panelBox4.Controls.Add(this.cbShowRecipesAsItems);
-            this.panelBox4.Controls.Add(this.cbSecureTransfers);
             this.panelBox4.Font = new System.Drawing.Font("Segoe UI Semibold", 20F);
             this.panelBox4.ForeColor = System.Drawing.Color.Black;
             this.panelBox4.HeaderColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(231)))), ((int)(((byte)(231)))));
@@ -133,7 +123,7 @@
             this.panelBox4.Location = new System.Drawing.Point(496, 12);
             this.panelBox4.Name = "panelBox4";
             this.panelBox4.NoRounding = false;
-            this.panelBox4.Size = new System.Drawing.Size(287, 520);
+            this.panelBox4.Size = new System.Drawing.Size(287, 439);
             this.panelBox4.TabIndex = 8;
             this.panelBox4.Tag = "iatag_ui_settings_title";
             this.panelBox4.Text = "Settings";
@@ -145,7 +135,7 @@
             this.helpWhatIsEnableDowngrades.AutoSize = true;
             this.helpWhatIsEnableDowngrades.BackColor = System.Drawing.Color.Transparent;
             this.helpWhatIsEnableDowngrades.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.helpWhatIsEnableDowngrades.Location = new System.Drawing.Point(259, 457);
+            this.helpWhatIsEnableDowngrades.Location = new System.Drawing.Point(259, 325);
             this.helpWhatIsEnableDowngrades.Name = "helpWhatIsEnableDowngrades";
             this.helpWhatIsEnableDowngrades.Size = new System.Drawing.Size(18, 13);
             this.helpWhatIsEnableDowngrades.TabIndex = 35;
@@ -161,28 +151,13 @@
             this.cbEnableDowngrades.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbEnableDowngrades.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.cbEnableDowngrades.IsDarkMode = false;
-            this.cbEnableDowngrades.Location = new System.Drawing.Point(3, 450);
+            this.cbEnableDowngrades.Location = new System.Drawing.Point(3, 318);
             this.cbEnableDowngrades.Name = "cbEnableDowngrades";
             this.cbEnableDowngrades.Size = new System.Drawing.Size(268, 27);
             this.cbEnableDowngrades.TabIndex = 34;
             this.cbEnableDowngrades.Tag = "iatag_ui_enabledowngrades";
             this.cbEnableDowngrades.Text = "Enable downgrades";
             this.cbEnableDowngrades.CheckedChanged += new System.EventHandler(this.cbEnableDowngrades_CheckedChanged);
-            // 
-            // cbDisableInstaloot
-            // 
-            this.cbDisableInstaloot.Bold = false;
-            this.cbDisableInstaloot.EnabledCalc = true;
-            this.cbDisableInstaloot.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cbDisableInstaloot.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbDisableInstaloot.IsDarkMode = false;
-            this.cbDisableInstaloot.Location = new System.Drawing.Point(3, 417);
-            this.cbDisableInstaloot.Name = "cbDisableInstaloot";
-            this.cbDisableInstaloot.Size = new System.Drawing.Size(268, 27);
-            this.cbDisableInstaloot.TabIndex = 33;
-            this.cbDisableInstaloot.Tag = "iatag_ui_disableinstaloot";
-            this.cbDisableInstaloot.Text = "Disable instaloot";
-            this.cbDisableInstaloot.CheckedChanged += new System.EventHandler(this.cbDisableInstaloot_CheckedChanged);
             // 
             // cbAutoDismiss
             // 
@@ -191,7 +166,7 @@
             this.cbAutoDismiss.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbAutoDismiss.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.cbAutoDismiss.IsDarkMode = false;
-            this.cbAutoDismiss.Location = new System.Drawing.Point(3, 384);
+            this.cbAutoDismiss.Location = new System.Drawing.Point(3, 285);
             this.cbAutoDismiss.Name = "cbAutoDismiss";
             this.cbAutoDismiss.Size = new System.Drawing.Size(268, 27);
             this.cbAutoDismiss.TabIndex = 32;
@@ -206,7 +181,7 @@
             this.cbDarkMode.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbDarkMode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.cbDarkMode.IsDarkMode = false;
-            this.cbDarkMode.Location = new System.Drawing.Point(3, 351);
+            this.cbDarkMode.Location = new System.Drawing.Point(3, 252);
             this.cbDarkMode.Name = "cbDarkMode";
             this.cbDarkMode.Size = new System.Drawing.Size(268, 27);
             this.cbDarkMode.TabIndex = 31;
@@ -221,7 +196,7 @@
             this.cbStartMinimized.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbStartMinimized.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.cbStartMinimized.IsDarkMode = false;
-            this.cbStartMinimized.Location = new System.Drawing.Point(3, 318);
+            this.cbStartMinimized.Location = new System.Drawing.Point(3, 219);
             this.cbStartMinimized.Name = "cbStartMinimized";
             this.cbStartMinimized.Size = new System.Drawing.Size(268, 27);
             this.cbStartMinimized.TabIndex = 30;
@@ -235,7 +210,7 @@
             this.helpWhatIsUsingMultiplePc.AutoSize = true;
             this.helpWhatIsUsingMultiplePc.BackColor = System.Drawing.Color.Transparent;
             this.helpWhatIsUsingMultiplePc.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.helpWhatIsUsingMultiplePc.Location = new System.Drawing.Point(259, 226);
+            this.helpWhatIsUsingMultiplePc.Location = new System.Drawing.Point(259, 160);
             this.helpWhatIsUsingMultiplePc.Name = "helpWhatIsUsingMultiplePc";
             this.helpWhatIsUsingMultiplePc.Size = new System.Drawing.Size(18, 13);
             this.helpWhatIsUsingMultiplePc.TabIndex = 28;
@@ -244,36 +219,6 @@
             this.helpWhatIsUsingMultiplePc.Text = " ? ";
             this.helpWhatIsUsingMultiplePc.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpWhatIsUsingMultiplePc_LinkClicked);
             // 
-            // helpWhatIsTransferToAnyMod
-            // 
-            this.helpWhatIsTransferToAnyMod.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.helpWhatIsTransferToAnyMod.AutoSize = true;
-            this.helpWhatIsTransferToAnyMod.BackColor = System.Drawing.Color.Transparent;
-            this.helpWhatIsTransferToAnyMod.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.helpWhatIsTransferToAnyMod.Location = new System.Drawing.Point(259, 94);
-            this.helpWhatIsTransferToAnyMod.Name = "helpWhatIsTransferToAnyMod";
-            this.helpWhatIsTransferToAnyMod.Size = new System.Drawing.Size(18, 13);
-            this.helpWhatIsTransferToAnyMod.TabIndex = 26;
-            this.helpWhatIsTransferToAnyMod.TabStop = true;
-            this.helpWhatIsTransferToAnyMod.Tag = "iatag_ui_questionmark";
-            this.helpWhatIsTransferToAnyMod.Text = " ? ";
-            this.helpWhatIsTransferToAnyMod.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpWhatIsTransferToAnyMod_LinkClicked);
-            // 
-            // helpWhatIsSecureTransfers
-            // 
-            this.helpWhatIsSecureTransfers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.helpWhatIsSecureTransfers.AutoSize = true;
-            this.helpWhatIsSecureTransfers.BackColor = System.Drawing.Color.Transparent;
-            this.helpWhatIsSecureTransfers.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.helpWhatIsSecureTransfers.Location = new System.Drawing.Point(259, 127);
-            this.helpWhatIsSecureTransfers.Name = "helpWhatIsSecureTransfers";
-            this.helpWhatIsSecureTransfers.Size = new System.Drawing.Size(18, 13);
-            this.helpWhatIsSecureTransfers.TabIndex = 25;
-            this.helpWhatIsSecureTransfers.TabStop = true;
-            this.helpWhatIsSecureTransfers.Tag = "iatag_ui_questionmark";
-            this.helpWhatIsSecureTransfers.Text = " ? ";
-            this.helpWhatIsSecureTransfers.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpWhatIsSecureTransfers_LinkClicked);
-            // 
             // cbMinimizeToTray
             // 
             this.cbMinimizeToTray.Bold = false;
@@ -281,7 +226,7 @@
             this.cbMinimizeToTray.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbMinimizeToTray.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.cbMinimizeToTray.IsDarkMode = false;
-            this.cbMinimizeToTray.Location = new System.Drawing.Point(3, 285);
+            this.cbMinimizeToTray.Location = new System.Drawing.Point(3, 186);
             this.cbMinimizeToTray.Name = "cbMinimizeToTray";
             this.cbMinimizeToTray.Size = new System.Drawing.Size(268, 27);
             this.cbMinimizeToTray.TabIndex = 8;
@@ -294,7 +239,7 @@
             this.helpWhatIsAugmentAsItem.AutoSize = true;
             this.helpWhatIsAugmentAsItem.BackColor = System.Drawing.Color.Transparent;
             this.helpWhatIsAugmentAsItem.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.helpWhatIsAugmentAsItem.Location = new System.Drawing.Point(259, 193);
+            this.helpWhatIsAugmentAsItem.Location = new System.Drawing.Point(259, 127);
             this.helpWhatIsAugmentAsItem.Name = "helpWhatIsAugmentAsItem";
             this.helpWhatIsAugmentAsItem.Size = new System.Drawing.Size(18, 13);
             this.helpWhatIsAugmentAsItem.TabIndex = 24;
@@ -325,7 +270,7 @@
             this.cbShowAugments.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbShowAugments.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.cbShowAugments.IsDarkMode = false;
-            this.cbShowAugments.Location = new System.Drawing.Point(3, 186);
+            this.cbShowAugments.Location = new System.Drawing.Point(3, 120);
             this.cbShowAugments.Name = "cbShowAugments";
             this.cbShowAugments.Size = new System.Drawing.Size(268, 27);
             this.cbShowAugments.TabIndex = 23;
@@ -340,7 +285,7 @@
             this.cbDualComputer.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbDualComputer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.cbDualComputer.IsDarkMode = false;
-            this.cbDualComputer.Location = new System.Drawing.Point(3, 219);
+            this.cbDualComputer.Location = new System.Drawing.Point(3, 153);
             this.cbDualComputer.Name = "cbDualComputer";
             this.cbDualComputer.Size = new System.Drawing.Size(268, 27);
             this.cbDualComputer.TabIndex = 22;
@@ -353,7 +298,7 @@
             this.linkSourceCode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.linkSourceCode.AutoSize = true;
             this.linkSourceCode.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.linkSourceCode.Location = new System.Drawing.Point(5, 498);
+            this.linkSourceCode.Location = new System.Drawing.Point(5, 417);
             this.linkSourceCode.Name = "linkSourceCode";
             this.linkSourceCode.Size = new System.Drawing.Size(68, 13);
             this.linkSourceCode.TabIndex = 21;
@@ -369,27 +314,13 @@
             this.cbHideSkills.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbHideSkills.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.cbHideSkills.IsDarkMode = false;
-            this.cbHideSkills.Location = new System.Drawing.Point(3, 153);
+            this.cbHideSkills.Location = new System.Drawing.Point(3, 87);
             this.cbHideSkills.Name = "cbHideSkills";
             this.cbHideSkills.Size = new System.Drawing.Size(268, 27);
             this.cbHideSkills.TabIndex = 17;
             this.cbHideSkills.Tag = "iatag_ui_hideskills";
             this.cbHideSkills.Text = "Hide Skills";
             this.cbHideSkills.CheckedChanged += new System.EventHandler(this.cbDisplaySkills_CheckedChanged);
-            // 
-            // cbTransferAnyMod
-            // 
-            this.cbTransferAnyMod.Bold = false;
-            this.cbTransferAnyMod.EnabledCalc = true;
-            this.cbTransferAnyMod.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cbTransferAnyMod.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbTransferAnyMod.IsDarkMode = false;
-            this.cbTransferAnyMod.Location = new System.Drawing.Point(3, 87);
-            this.cbTransferAnyMod.Name = "cbTransferAnyMod";
-            this.cbTransferAnyMod.Size = new System.Drawing.Size(268, 27);
-            this.cbTransferAnyMod.TabIndex = 14;
-            this.cbTransferAnyMod.Tag = "iatag_ui_transferanymod";
-            this.cbTransferAnyMod.Text = "Transfer to any mod";
             // 
             // cbShowRecipesAsItems
             // 
@@ -406,20 +337,6 @@
             this.cbShowRecipesAsItems.Text = "Show recipes as items";
             this.cbShowRecipesAsItems.CheckedChanged += new System.EventHandler(this.cbShowRecipesAsItems_CheckedChanged);
             // 
-            // cbSecureTransfers
-            // 
-            this.cbSecureTransfers.Bold = false;
-            this.cbSecureTransfers.EnabledCalc = true;
-            this.cbSecureTransfers.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cbSecureTransfers.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbSecureTransfers.IsDarkMode = false;
-            this.cbSecureTransfers.Location = new System.Drawing.Point(3, 120);
-            this.cbSecureTransfers.Name = "cbSecureTransfers";
-            this.cbSecureTransfers.Size = new System.Drawing.Size(268, 27);
-            this.cbSecureTransfers.TabIndex = 12;
-            this.cbSecureTransfers.Tag = "iatag_ui_securetransfers";
-            this.cbSecureTransfers.Text = "Secure Transfers";
-            // 
             // pbAutomaticUpdates
             // 
             this.pbAutomaticUpdates.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
@@ -433,7 +350,7 @@
             this.pbAutomaticUpdates.ForeColor = System.Drawing.Color.Black;
             this.pbAutomaticUpdates.HeaderColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(231)))), ((int)(((byte)(231)))));
             this.pbAutomaticUpdates.HeaderHeight = 40;
-            this.pbAutomaticUpdates.Location = new System.Drawing.Point(12, 264);
+            this.pbAutomaticUpdates.Location = new System.Drawing.Point(12, 318);
             this.pbAutomaticUpdates.Name = "pbAutomaticUpdates";
             this.pbAutomaticUpdates.NoRounding = false;
             this.pbAutomaticUpdates.Size = new System.Drawing.Size(478, 133);
@@ -531,7 +448,6 @@
             // panelBox2
             // 
             this.panelBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
-            this.panelBox2.Controls.Add(this.buttonLootManually);
             this.panelBox2.Controls.Add(this.buttonPatreon);
             this.panelBox2.Controls.Add(this.buttonPaypal);
             this.panelBox2.Controls.Add(this.buttonDevTools);
@@ -542,31 +458,11 @@
             this.panelBox2.Location = new System.Drawing.Point(260, 12);
             this.panelBox2.Name = "panelBox2";
             this.panelBox2.NoRounding = false;
-            this.panelBox2.Size = new System.Drawing.Size(230, 246);
+            this.panelBox2.Size = new System.Drawing.Size(230, 300);
             this.panelBox2.TabIndex = 2;
             this.panelBox2.Tag = "iatag_ui_misc_title";
             this.panelBox2.Text = "Misc";
             this.panelBox2.TextLocation = "8; 5";
-            // 
-            // buttonLootManually
-            // 
-            this.buttonLootManually.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
-            this.buttonLootManually.BackColorDefault = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
-            this.buttonLootManually.BackColorOverride = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(245)))), ((int)(((byte)(245)))));
-            this.buttonLootManually.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
-            this.buttonLootManually.EnabledCalc = true;
-            this.buttonLootManually.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.buttonLootManually.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
-            this.buttonLootManually.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(232)))), ((int)(((byte)(232)))), ((int)(((byte)(232)))));
-            this.buttonLootManually.HoverForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
-            this.buttonLootManually.Location = new System.Drawing.Point(14, 203);
-            this.buttonLootManually.Name = "buttonLootManually";
-            this.buttonLootManually.Size = new System.Drawing.Size(192, 32);
-            this.buttonLootManually.TabIndex = 9;
-            this.buttonLootManually.Tag = "iatag_ui_lootmanually";
-            this.buttonLootManually.Text = "Loot Manually";
-            this.buttonLootManually.Visible = false;
-            this.buttonLootManually.Click += new System.EventHandler(this.buttonLootManually_Click);
             // 
             // buttonPatreon
             // 
@@ -613,6 +509,7 @@
             // panelBox1
             // 
             this.panelBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.panelBox1.Controls.Add(this.firefoxButton1);
             this.panelBox1.Controls.Add(this.buttonAdvancedSettings);
             this.panelBox1.Controls.Add(this.buttonImportExport);
             this.panelBox1.Controls.Add(this.buttonMigratePostgres);
@@ -626,11 +523,29 @@
             this.panelBox1.Location = new System.Drawing.Point(12, 12);
             this.panelBox1.Name = "panelBox1";
             this.panelBox1.NoRounding = false;
-            this.panelBox1.Size = new System.Drawing.Size(230, 246);
+            this.panelBox1.Size = new System.Drawing.Size(230, 300);
             this.panelBox1.TabIndex = 1;
             this.panelBox1.Tag = "iatag_ui_actions_title";
             this.panelBox1.Text = "Actions";
             this.panelBox1.TextLocation = "8; 5";
+            // 
+            // firefoxButton1
+            // 
+            this.firefoxButton1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.firefoxButton1.BackColorDefault = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
+            this.firefoxButton1.BackColorOverride = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(245)))), ((int)(((byte)(245)))));
+            this.firefoxButton1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
+            this.firefoxButton1.EnabledCalc = true;
+            this.firefoxButton1.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.firefoxButton1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
+            this.firefoxButton1.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(232)))), ((int)(((byte)(232)))), ((int)(((byte)(232)))));
+            this.firefoxButton1.HoverForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
+            this.firefoxButton1.Location = new System.Drawing.Point(19, 241);
+            this.firefoxButton1.Name = "firefoxButton1";
+            this.firefoxButton1.Size = new System.Drawing.Size(192, 32);
+            this.firefoxButton1.TabIndex = 9;
+            this.firefoxButton1.Tag = "iatag_ui_configmode";
+            this.firefoxButton1.Text = "Switch to modes";
             // 
             // buttonAdvancedSettings
             // 
@@ -648,7 +563,7 @@
             this.buttonAdvancedSettings.Size = new System.Drawing.Size(192, 32);
             this.buttonAdvancedSettings.TabIndex = 8;
             this.buttonAdvancedSettings.Tag = "iatag_ui_advancedsettings";
-            this.buttonAdvancedSettings.Text = "Advanced";
+            this.buttonAdvancedSettings.Text = "Reconfigure tabs";
             this.buttonAdvancedSettings.Click += new System.EventHandler(this.buttonAdvancedSettings_Click);
             // 
             // buttonImportExport
@@ -747,7 +662,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(876, 577);
+            this.ClientSize = new System.Drawing.Size(876, 500);
             this.Controls.Add(this.panelBox4);
             this.Controls.Add(this.pbAutomaticUpdates);
             this.Controls.Add(this.panelBox2);
@@ -785,9 +700,7 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
         private FirefoxCheckBox cbMinimizeToTray;
-        private FirefoxCheckBox cbSecureTransfers;
         private FirefoxCheckBox cbShowRecipesAsItems;
-        private FirefoxCheckBox cbTransferAnyMod;
         private PanelBox panelBox4;
         private FirefoxButton buttonLanguageSelect;
         private FirefoxButton buttonMigratePostgres;
@@ -800,21 +713,18 @@
         private FirefoxButton buttonDevTools;
         private System.Windows.Forms.LinkLabel helpWhatIsRecipeAsItems;
         private System.Windows.Forms.LinkLabel helpWhatIsAugmentAsItem;
-        private System.Windows.Forms.LinkLabel helpWhatIsSecureTransfers;
-        private System.Windows.Forms.LinkLabel helpWhatIsTransferToAnyMod;
         private System.Windows.Forms.LinkLabel helpWhatIsUsingMultiplePc;
         private System.Windows.Forms.Button buttonPaypal;
         private System.Windows.Forms.Button buttonPatreon;
         private System.Windows.Forms.LinkLabel helpWhatIsExperimentalUpdates;
         private System.Windows.Forms.LinkLabel helpWhatIsRegularUpdates;
-        private FirefoxButton buttonLootManually;
         private FirefoxCheckBox cbStartMinimized;
         private FirefoxCheckBox cbDarkMode;
         private System.Windows.Forms.LinkLabel linkCheckForUpdates;
         private FirefoxCheckBox cbAutoDismiss;
-        private FirefoxCheckBox cbDisableInstaloot;
         private FirefoxCheckBox cbEnableDowngrades;
         private System.Windows.Forms.LinkLabel helpWhatIsEnableDowngrades;
         private System.Windows.Forms.LinkLabel linkDowngrade;
+        private FirefoxButton firefoxButton1;
     }
 }

@@ -17,7 +17,6 @@ namespace IAGrim.Settings.Dto {
         private bool _usingDualComputer;
         private bool _showAugmentsAsItems;
         private bool _mergeDuplicates;
-        private bool _transferAnyMod;
         private bool _darkMode;
         private bool _autoUpdateModSettings;
         private bool _hideSkills;
@@ -89,14 +88,6 @@ namespace IAGrim.Settings.Dto {
             get => _mergeDuplicates;
             set {
                 _mergeDuplicates = value;
-                OnMutate?.Invoke(null, null);
-            }
-        }
-
-        public bool TransferAnyMod {
-            get => _transferAnyMod;
-            set {
-                _transferAnyMod = value;
                 OnMutate?.Invoke(null, null);
             }
         }

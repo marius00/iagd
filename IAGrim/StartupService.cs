@@ -83,37 +83,41 @@ namespace IAGrim {
                     ? "Show recipes as items is enabled"
                     : "Show recipes as items is disabled");
 
-                Logger.Info("Transfer to any mod is " + (settings.GetPersistent().TransferAnyMod ? "enabled" : "disabled"));
                 Logger.Info("Experimental updates is " + (settings.GetPersistent().SubscribeExperimentalUpdates ? "enabled" : "disabled"));
                 Logger.Info((new WindowsPrincipal(WindowsIdentity.GetCurrent())).IsInRole(WindowsBuiltInRole.Administrator) ? "Running as administrator" : "Not running with low privileges");
 
-                try {
-                    List<GDTransferFile> mods = GlobalPaths.GetTransferFiles(true);
+                if (settings.GetLocal().PreferLegacyMode) {
+                    Logger.Info("Running in legacy mode");
+                    try {
+                        List<GDTransferFile> mods = GlobalPaths.GetTransferFiles(true);
 
-                    if (mods.Count == 0) {
-                        Logger.Warn("No transfer files has been found");
-                    }
-                    else {
-                        Logger.Info("The following transfer files has been found:");
+                        if (mods.Count == 0) {
+                            Logger.Warn("No transfer files has been found");
+                        }
+                        else {
+                            Logger.Info("The following transfer files has been found:");
 
-                        foreach (GDTransferFile mod in mods) {
-                            var stash = TransferStashService.GetStash(mod.Filename);
-                            if (stash?.Tabs.Count < 2) {
-                                Logger.Warn($"\"{mod.Filename}\": Mod: \"{mod.Mod}\", HC: {mod.IsHardcore}, Downgrade: {mod.Downgrade}, Tabs: {stash?.Tabs.Count} <=======");
-                                Logger.Warn("Stash file does not have enough tabs");
-                            }
-                            else {
-                                Logger.Info($"\"{mod.Filename}\": Mod: \"{mod.Mod}\", HC: {mod.IsHardcore}, Downgrade: {mod.Downgrade}, Tabs: {stash?.Tabs.Count}");
+                            foreach (GDTransferFile mod in mods) {
+                                var stash = TransferStashService.GetStash(mod.Filename);
+                                if (stash?.Tabs.Count < 2) {
+                                    Logger.Warn($"\"{mod.Filename}\": Mod: \"{mod.Mod}\", HC: {mod.IsHardcore}, Downgrade: {mod.Downgrade}, Tabs: {stash?.Tabs.Count} <=======");
+                                    Logger.Warn("Stash file does not have enough tabs");
+                                }
+                                else {
+                                    Logger.Info($"\"{mod.Filename}\": Mod: \"{mod.Mod}\", HC: {mod.IsHardcore}, Downgrade: {mod.Downgrade}, Tabs: {stash?.Tabs.Count}");
+                                }
                             }
                         }
                     }
-                }
-                catch (IOException ex) {
-                    Logger.Fatal(ex.Message, ex);
-                    Logger.Fatal("Error parsing transfer files. This is typically because the file is synced to OneDrive, but not available locally on the PC.");
-                    MessageBox.Show("Error parsing transfer files.\nPossibly due to being located in OneDrive, but not synced to this PC.", "Fatal error", MessageBoxButtons.OK);
-                    Process.Start("file://" + GlobalPaths.CoreFolder);
-                    throw;
+                    catch (IOException ex) {
+                        Logger.Fatal(ex.Message, ex);
+                        Logger.Fatal("Error parsing transfer files. This is typically because the file is synced to OneDrive, but not available locally on the PC.");
+                        MessageBox.Show("Error parsing transfer files.\nPossibly due to being located in OneDrive, but not synced to this PC.", "Fatal error", MessageBoxButtons.OK);
+                        Process.Start("file://" + GlobalPaths.CoreFolder);
+                        throw;
+                    }
+                } else {
+                    Logger.Info("Running in regular mode, stash files ignored");
                 }
 
                 Logger.Info("There are items stored for the following mods:");

@@ -80,11 +80,6 @@ namespace IAGrim.Parsers.TransferStash {
         }
 
         public (bool, List<UserFeedback>) IsTransferStashLootable() {
-            if (!(_settings.GetLocal().SecureTransfers ?? true)) {
-                Logger.Debug("Secure transfers are disabled, ignoring stash loot safety checks.");
-                return (true, new List<UserFeedback>());
-            }
-
             if (RuntimeSettings.StashStatus != StashAvailability.CLOSED) {
                 Logger.Info($"Delaying stash loot, stash status {RuntimeSettings.StashStatus} != CLOSED.");
                 return (false, UserFeedback.FromTagSingleton("iatag_feedback_delaying_stash_loot_status"));

@@ -64,7 +64,7 @@ int SettingsReader::GetStashTabToDepositTo() {
 	return stashToDepositTo;
 }
 
-bool SettingsReader::GetInstalootActive() {
+bool SettingsReader::GetPreferLegacyMode() {
 	boost::property_tree::wptree loadPtreeRoot;
 
 	const auto settingsJson = GetIagdFolder() + L"settings.json";
@@ -72,17 +72,17 @@ bool SettingsReader::GetInstalootActive() {
 
 
 	boost::property_tree::read_json(json, loadPtreeRoot);
-	auto child = loadPtreeRoot.get_child_optional(L"local.disableInstaloot");
+	auto child = loadPtreeRoot.get_child_optional(L"local.preferLegacyMode");
 	if (!child)
 	{
-		LogToFile(L"InstalootDisabled: No configuration found, defaulting to enabled");
+		LogToFile(L"Legacy mode: No configuration found, defaulting to standard mode");
 		return true;
 	}
 
-	const bool instalootDisabled = loadPtreeRoot.get<bool>(L"local.disableInstaloot");
-	LogToFile(std::wstring(L"InstalootDisabled: ") + (instalootDisabled ? L"True" : L"False"));
+	const bool isLegacyMode = loadPtreeRoot.get<bool>(L"local.preferLegacyMode");
+	LogToFile(std::wstring(L"Legacy mode: ") + (isLegacyMode ? L"True" : L"False"));
 
-	return instalootDisabled != 1;
+	return isLegacyMode != 1;
 }
 
 

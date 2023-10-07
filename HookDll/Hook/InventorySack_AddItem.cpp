@@ -85,8 +85,6 @@ void InventorySack_AddItem::EnableHook() {
 
 	m_isTransferStashOpen = false;
 
-#define v1_4
-#ifdef v1_4
 	dll_GameEngine_Update = (GameEngine_Update)HookGame(
 		"?Update@GameEngine@GAME@@QEAAXH@Z",
 		Hooked_GameEngine_Update,
@@ -94,7 +92,6 @@ void InventorySack_AddItem::EnableHook() {
 		m_hEvent,
 		TYPE_GAMEENGINE_UPDATE
 	);
-#endif
 
 	
 	m_isActive = false;
@@ -120,7 +117,7 @@ InventorySack_AddItem::InventorySack_AddItem(DataQueue* dataQueue, HANDLE hEvent
 	m_settingsReader = SettingsReader();
 	m_stashTabLootFrom = m_settingsReader.GetStashTabToLootFrom();
 	m_stashTabDepositTo = m_settingsReader.GetStashTabToDepositTo();
-	m_instalootEnabled = m_settingsReader.GetInstalootActive();
+	m_instalootEnabled = m_settingsReader.GetPreferLegacyMode();
 	m_isGrimDawnParsed = m_settingsReader.GetIsGrimDawnParsed();
 	m_lastNotificationTickTime = 0;
 	m_isActive = false;
@@ -578,20 +575,21 @@ void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int
 
 			std::wstring targetFolder = GetFolderToMoveTo(GetModName(gameInfo), fnGetHardcore(gameInfo));
 			for (auto it = m_depositQueue.begin(); it != m_depositQueue.end(); ++it) {
+				std::wstring targetFile = targetFolder + L"\\";
 				LogToFile(L"Handling file " + *it);
 
 				GAME::ItemReplicaInfo* replica = ReadReplicaInfo(*it);
 				if (replica != nullptr) {
-					LogToFile(L"Replica created..");
 					auto item = fnCreateItem(replica);
-					LogToFile(L"Item created..");
 					dll_InventorySack_AddItem_Vec2(sackPtr, itemPosition, item, false);
-					LogToFile(L"Item deposited..");
 					delete replica;
+
+					LogToFile(L"Item deposited, moving to " + targetFile);
+				}
+				else {
+					LogToFile(L"Invalid item, moving to " + targetFile);
 				}
 
-				std::wstring targetFile = targetFolder + L"\\" + randomFilename();
-				LogToFile(L"Item deposited, moving to " + targetFile);
 				if (!MoveFile(it->c_str(), targetFile.c_str())) {
 					LogToFile(L"Failed moving file: \"" + *it + L"\" to \"" + targetFile + L"\", error code: " + std::to_wstring(GetLastError()));
 				}

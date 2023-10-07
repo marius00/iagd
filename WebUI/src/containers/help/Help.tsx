@@ -454,31 +454,6 @@ const helpEntries = [
         type: IHelpEntryType.Informational
     },
     {
-        title: `Settings: What is secure transfers?`,
-        tag: 'SecureTransfers',
-        body: () => <div>
-            <b>Disabling the <i>Secure Transfers</i> option lets IA transfer items even when the stash status is open or
-                unknown</b><br/>
-            This is an override provided for extreme cases where IA cannot detect the Grim Dawn stash status.<br/><br/>
-            If secure transfers is disabled, <u>it is up to the user to make sure the stash is closed</u>, or risk
-            losing items during transfer.<br/><br/>
-            <span className="attention">This is an emergency option only.</span>
-        </div>,
-        type: IHelpEntryType.Informational
-    },
-    {
-        title: `Settings: What is transfer to any mod?`,
-        tag: 'TransferToAnyMod',
-        body: () => <div>
-            <b>Transfer to any mod lets you transfer items between the regular campaign and your mods.</b><br/>
-            By enabling this option, any time you wish to transfer an item, you must choose which stash to transfer
-            to. <br/>
-            This is not enabled by default, as it could be considered cheating. <br/><br/>
-            To disable the "StashPicker", disable "Transfer to any mod" under settings.
-        </div>,
-        type: IHelpEntryType.Informational
-    },
-    {
         title: `Settings: What is show recipes as items?`,
         tag: 'ShowRecipesAsItems',
         body: () => <div>

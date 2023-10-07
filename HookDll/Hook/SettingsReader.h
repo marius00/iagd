@@ -3,7 +3,7 @@ class SettingsReader
 {
 public:
 	int GetStashTabToLootFrom();
-	bool GetInstalootActive();
+	bool GetPreferLegacyMode();
 	bool GetIsGrimDawnParsed();
 	int GetStashTabToDepositTo();
 };
