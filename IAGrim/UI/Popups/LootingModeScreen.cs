@@ -1,24 +1,26 @@
 ﻿using IAGrim.Settings;
+using IAGrim.Utilities;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace IAGrim.UI.Popups {
     public partial class LootingModeScreen : Form {
         private readonly SettingsService _settings;
+        private readonly bool _initialValue;
+
         public LootingModeScreen(SettingsService settings) {
             InitializeComponent();
-            _settings= settings;
+            _settings = settings;
+            _initialValue = _settings.GetLocal().PreferLegacyMode;
         }
 
         private void button1_Click(object sender, EventArgs e) {
             _settings.GetLocal().PreferLegacyMode = rbClassic.Checked;
+
+            if (_settings.GetLocal().PreferLegacyMode != _initialValue) {
+                MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_explain_classiclooting_restartia"));
+            }
+
             this.Close();
         }
 

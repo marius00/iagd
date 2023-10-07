@@ -401,6 +401,7 @@ namespace StatTranslator {
 
             {"iatag_ui_orderbylevel_tooltip", "If items should be ordered by level, instead of alphabetically."},
             {"iatag_ui_level_requirement_tooltip", "Level requirements for the item"},
+            { "iatag_ui_explain_classiclooting_restartia", "Changing this setting requires you to restart Item Assistant" },
             {"iatag_ui_searchbox_tooltip", "The item name, partially works fine."},
             {"iatag_ui_itemquality_tooltip", "The minimum item quality"},
             {"iatag_ui_slotfilter_tooltip", "Slot/Type"},
