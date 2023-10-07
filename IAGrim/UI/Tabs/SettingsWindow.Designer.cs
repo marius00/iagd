@@ -546,6 +546,7 @@
             this.firefoxButton1.TabIndex = 9;
             this.firefoxButton1.Tag = "iatag_ui_configmode";
             this.firefoxButton1.Text = "Switch to modes";
+            this.firefoxButton1.Click += new System.EventHandler(this.firefoxButton1_Click);
             // 
             // buttonAdvancedSettings
             // 
