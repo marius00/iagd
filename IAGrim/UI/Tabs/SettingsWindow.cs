@@ -235,5 +235,9 @@ namespace IAGrim.UI.Tabs {
             AutoUpdater.RemindLaterAt = 7;
             AutoUpdater.Start($"{AutomaticUpdateChecker.Url}?downgrade");
         }
+
+        private void firefoxButton1_Click(object sender, EventArgs e) {
+            new LootingModeScreen(_settings).ShowDialog();
+        }
     }
 }

@@ -25,79 +25,40 @@
         private void InitializeComponent() {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LootingModeScreen));
             this.gpInstant = new System.Windows.Forms.GroupBox();
-            this.gpDelayed = new System.Windows.Forms.GroupBox();
-            this.rbInstant = new System.Windows.Forms.RadioButton();
-            this.rbClassic = new System.Windows.Forms.RadioButton();
             this.label1 = new System.Windows.Forms.Label();
+            this.rbInstant = new System.Windows.Forms.RadioButton();
             this.label2 = new System.Windows.Forms.Label();
+            this.rbClassic = new System.Windows.Forms.RadioButton();
             this.button1 = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             this.gpInstant.SuspendLayout();
-            this.gpDelayed.SuspendLayout();
             this.SuspendLayout();
             // 
             // gpInstant
             // 
-            this.gpInstant.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.gpInstant.Controls.Add(this.label1);
-            this.gpInstant.Controls.Add(this.rbInstant);
-            this.gpInstant.Location = new System.Drawing.Point(12, 12);
-            this.gpInstant.Name = "gpInstant";
-            this.gpInstant.Size = new System.Drawing.Size(380, 134);
-            this.gpInstant.TabIndex = 0;
-            this.gpInstant.TabStop = false;
-            this.gpInstant.Tag = "iatag_ui_instantlooting";
-            this.gpInstant.Text = "Loot items immediately (recommended)";
-            // 
-            // gpDelayed
-            // 
-            this.gpDelayed.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.gpInstant.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.gpDelayed.Controls.Add(this.label2);
-            this.gpDelayed.Controls.Add(this.rbClassic);
-            this.gpDelayed.Location = new System.Drawing.Point(398, 12);
-            this.gpDelayed.Name = "gpDelayed";
-            this.gpDelayed.Size = new System.Drawing.Size(393, 134);
-            this.gpDelayed.TabIndex = 1;
-            this.gpDelayed.TabStop = false;
-            this.gpDelayed.Tag = "iatag_ui_delayedlooting";
-            this.gpDelayed.Text = "Loot items when I\'ve left the smuggler (classic)";
-            // 
-            // rbInstant
-            // 
-            this.rbInstant.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.rbInstant.AutoSize = true;
-            this.rbInstant.Location = new System.Drawing.Point(6, 111);
-            this.rbInstant.Name = "rbInstant";
-            this.rbInstant.Size = new System.Drawing.Size(213, 17);
-            this.rbInstant.TabIndex = 0;
-            this.rbInstant.TabStop = true;
-            this.rbInstant.Tag = "itag_ui_lootinstant";
-            this.rbInstant.Text = "I want my items to be looted immediately";
-            this.rbInstant.UseVisualStyleBackColor = true;
-            // 
-            // rbClassic
-            // 
-            this.rbClassic.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.rbClassic.AutoSize = true;
-            this.rbClassic.Location = new System.Drawing.Point(6, 111);
-            this.rbClassic.Name = "rbClassic";
-            this.rbClassic.Size = new System.Drawing.Size(282, 17);
-            this.rbClassic.TabIndex = 1;
-            this.rbClassic.TabStop = true;
-            this.rbClassic.Tag = "itag_ui_lootclassic";
-            this.rbClassic.Text = "I want my items to be looted when i leave the smuggler";
-            this.rbClassic.UseVisualStyleBackColor = true;
+            this.gpInstant.Controls.Add(this.label4);
+            this.gpInstant.Controls.Add(this.label3);
+            this.gpInstant.Controls.Add(this.rbClassic);
+            this.gpInstant.Controls.Add(this.label2);
+            this.gpInstant.Controls.Add(this.label1);
+            this.gpInstant.Controls.Add(this.rbInstant);
+            this.gpInstant.Location = new System.Drawing.Point(12, 2);
+            this.gpInstant.Name = "gpInstant";
+            this.gpInstant.Size = new System.Drawing.Size(725, 158);
+            this.gpInstant.TabIndex = 0;
+            this.gpInstant.TabStop = false;
+            this.gpInstant.Tag = "";
             // 
             // label1
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 27);
+            this.label1.Location = new System.Drawing.Point(7, 55);
             this.label1.MaximumSize = new System.Drawing.Size(350, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(342, 39);
@@ -106,12 +67,25 @@
             this.label1.Text = "This is the default behavior, and supports Steam Cloud Sync. Items will be looted" +
     " as soon as they are placed in your shared transfer tab in the game.";
             // 
+            // rbInstant
+            // 
+            this.rbInstant.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.rbInstant.AutoSize = true;
+            this.rbInstant.Location = new System.Drawing.Point(6, 135);
+            this.rbInstant.Name = "rbInstant";
+            this.rbInstant.Size = new System.Drawing.Size(213, 17);
+            this.rbInstant.TabIndex = 0;
+            this.rbInstant.TabStop = true;
+            this.rbInstant.Tag = "itag_ui_lootinstant";
+            this.rbInstant.Text = "I want my items to be looted immediately";
+            this.rbInstant.UseVisualStyleBackColor = true;
+            // 
             // label2
             // 
-            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 27);
+            this.label2.Location = new System.Drawing.Point(371, 55);
             this.label2.MaximumSize = new System.Drawing.Size(350, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(348, 39);
@@ -121,26 +95,63 @@
     "c. Items will not be looted immediately, instead they will be removed when you w" +
     "alk away from the smuggler.";
             // 
+            // rbClassic
+            // 
+            this.rbClassic.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.rbClassic.AutoSize = true;
+            this.rbClassic.Location = new System.Drawing.Point(374, 135);
+            this.rbClassic.Name = "rbClassic";
+            this.rbClassic.Size = new System.Drawing.Size(282, 17);
+            this.rbClassic.TabIndex = 1;
+            this.rbClassic.TabStop = true;
+            this.rbClassic.Tag = "itag_ui_lootclassic";
+            this.rbClassic.Text = "I want my items to be looted when i leave the smuggler";
+            this.rbClassic.UseVisualStyleBackColor = true;
+            // 
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(12, 146);
+            this.button1.Location = new System.Drawing.Point(12, 166);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(779, 43);
+            this.button1.Size = new System.Drawing.Size(731, 43);
             this.button1.TabIndex = 2;
             this.button1.Tag = "iatag_ui_btn_save";
             this.button1.Text = "Save && Close";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // label3
+            // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(370, 21);
+            this.label3.MaximumSize = new System.Drawing.Size(350, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(336, 20);
+            this.label3.TabIndex = 3;
+            this.label3.Tag = "iatag_ui_delayedlooting";
+            this.label3.Text = "Loot items when I\'ve left the smuggler (classic)";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(6, 21);
+            this.label4.MaximumSize = new System.Drawing.Size(350, 0);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(286, 20);
+            this.label4.TabIndex = 4;
+            this.label4.Tag = "iatag_ui_instantlooting";
+            this.label4.Text = "Loot items immediately (recommended)";
+            // 
             // LootingModeScreen
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(797, 191);
+            this.ClientSize = new System.Drawing.Size(749, 211);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.gpDelayed);
             this.Controls.Add(this.gpInstant);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "LootingModeScreen";
@@ -149,8 +160,6 @@
             this.Load += new System.EventHandler(this.LootingModeScreen_Load);
             this.gpInstant.ResumeLayout(false);
             this.gpInstant.PerformLayout();
-            this.gpDelayed.ResumeLayout(false);
-            this.gpDelayed.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -158,11 +167,12 @@
         #endregion
 
         private System.Windows.Forms.GroupBox gpInstant;
-        private System.Windows.Forms.GroupBox gpDelayed;
         private System.Windows.Forms.RadioButton rbInstant;
         private System.Windows.Forms.RadioButton rbClassic;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
     }
 }

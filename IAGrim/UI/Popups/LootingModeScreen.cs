@@ -18,13 +18,13 @@ namespace IAGrim.UI.Popups {
         }
 
         private void button1_Click(object sender, EventArgs e) {
-            _settings.GetLocal().DisableInstaloot = rbClassic.Checked;
+            _settings.GetLocal().PreferLegacyMode = rbClassic.Checked;
             this.Close();
         }
 
         private void LootingModeScreen_Load(object sender, EventArgs e) {
-            rbInstant.Checked = !_settings.GetLocal().DisableInstaloot;
-            rbClassic.Checked = _settings.GetLocal().DisableInstaloot;
+            rbInstant.Checked = !_settings.GetLocal().PreferLegacyMode;
+            rbClassic.Checked = _settings.GetLocal().PreferLegacyMode;
         }
     }
 }
