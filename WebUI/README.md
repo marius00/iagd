@@ -1,7 +1,7 @@
 # WebUI
 
 ## Prerequisites
-* Nodejs
+* Nodejs 12 (will _not_ compile on nodejs 18+)
 
 
 ## The Web View
