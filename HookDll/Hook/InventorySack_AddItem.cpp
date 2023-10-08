@@ -575,7 +575,7 @@ void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int
 
 			std::wstring targetFolder = GetFolderToMoveTo(GetModName(gameInfo), fnGetHardcore(gameInfo));
 			for (auto it = m_depositQueue.begin(); it != m_depositQueue.end(); ++it) {
-				std::wstring targetFile = targetFolder + L"\\";
+				std::wstring targetFile = targetFolder + L"\\" + randomFilename();
 				LogToFile(L"Handling file " + *it);
 
 				GAME::ItemReplicaInfo* replica = ReadReplicaInfo(*it);
