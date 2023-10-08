@@ -47,6 +47,7 @@ HANDLE g_hEvent;
 HANDLE g_thread;
 
 DataQueue g_dataQueue;
+InventorySack_AddItem* g_InventorySack_AddItemInstance = NULL;
 
 HWND g_targetWnd = NULL;
 
@@ -69,8 +70,29 @@ std::wstring logStartupTime() {
 	return str;
 }
 
+std::string logStartupTimeChar() {
+	__time64_t rawtime;
+	struct tm timeinfo;
+	char buffer[80];
+
+	_time64(&rawtime);
+	localtime_s(&timeinfo, &rawtime);
+
+	strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S ", &timeinfo);
+	std::string str(buffer);
+
+	return str;
+}
+
+
 void LogToFile(const wchar_t* message) {
 	g_log.out(logStartupTime() + message);
+}
+void LogToFile(const char* message) {
+	g_log.out((logStartupTimeChar() + std::string(message)).c_str());
+}
+void LogToFile(const std::string message) {
+	g_log.out((logStartupTimeChar() + message).c_str());
 }
 void LogToFile(std::wstring message) {
 	g_log.out(logStartupTime() + message);
@@ -98,6 +120,10 @@ void WorkerThreadMethod() {
             g_targetWnd = FindWindow( L"GDIAWindowClass", NULL);
             g_lastThreadTick = GetTickCount();
             LOG(L"FindWindow returned: " << g_targetWnd);
+
+			if (g_InventorySack_AddItemInstance != NULL) {
+				g_InventorySack_AddItemInstance->SetActive(g_targetWnd != NULL);
+			}
         }
 
         while (!g_dataQueue.empty()) {
@@ -115,8 +141,11 @@ void WorkerThreadMethod() {
 
             // To avoid blocking the main thread, we should not have a lock on the queue while we process the message.
 			SendMessage( g_targetWnd, WM_COPYDATA, 0, ( LPARAM ) &data );
-            LOG(L"After SendMessage error code is " << GetLastError());
+			auto lastErrorCode = GetLastError();
+			if (lastErrorCode != 0)
+				LOG(L"After SendMessage error code is " << lastErrorCode);
         }
+
     }
 }
 
@@ -126,8 +155,9 @@ unsigned __stdcall WorkerThreadMethodWrap(void* argss) {
 
 	LogToFile(L"Starting seed info thread..");
 	
-	listener->Start();
-
+	if (listener != nullptr) {
+		listener->Start();
+	}
 	WorkerThreadMethod();
 	return 0;
 }
@@ -206,7 +236,8 @@ static void ConfigureStashDetectionHooks(std::vector<BaseMethodHook*>& hooks) {
 
 	try {
 		LogToFile(L"Configuring instaloot hook..");
-		hooks.push_back(new InventorySack_AddItem(&g_dataQueue, g_hEvent)); // Includes GetPrivateStash internally
+		g_InventorySack_AddItemInstance = new InventorySack_AddItem(&g_dataQueue, g_hEvent);
+		hooks.push_back(g_InventorySack_AddItemInstance); // Includes GetPrivateStash internally
 	} catch (std::exception& ex) {
 		// For now just let it be. Known issue inside InventorySack_AddItem
 
@@ -223,10 +254,61 @@ static void ConfigureStashDetectionHooks(std::vector<BaseMethodHook*>& hooks) {
 	LogToFile(L"Configuring hc detection hook..");
 	hooks.push_back(new SetHardcore(&g_dataQueue, g_hEvent));
 }
+/*
+bool GetProductAndVersion()
+{
+	// get the filename of the executable containing the version resource
+	TCHAR szFilename[MAX_PATH + 1] = { 0 };
+	if (GetModuleFileName(NULL, szFilename, MAX_PATH) == 0)
+	{
+		LogToFile("GetModuleFileName failed with error");
+		return false;
+	}
 
+	// allocate a block of memory for the version info
+	DWORD dummy;
+	DWORD dwSize = GetFileVersionInfoSize(szFilename, &dummy);
+	if (dwSize == 0)
+	{
+		LogToFile(L"GetFileVersionInfoSize failed with error");
+		return false;
+	}
+	std::vector<BYTE> data(dwSize);
+
+	// load the version info
+	if (!GetFileVersionInfo(szFilename, NULL, dwSize, &data[0]))
+	{
+		LogToFile("GetFileVersionInfo failed with error");
+		return false;
+	}
+
+	// get the name and version strings
+	LPVOID pvProductName = NULL;
+	unsigned int iProductNameLen = 0;
+	LPVOID pvProductVersion = NULL;
+	unsigned int iProductVersionLen = 0;
+
+	// replace "040904e4" with the language ID of your resources
+	if (!VerQueryValue(&data[0], _T("\\StringFileInfo\\040904e4\\ProductName"), &pvProductName, &iProductNameLen) ||
+		!VerQueryValue(&data[0], _T("\\StringFileInfo\\040904e4\\ProductVersion"), &pvProductVersion, &iProductVersionLen))
+	{
+		LogToFile("Can't obtain ProductName and ProductVersion from resources");
+		return false;
+	}
+
+	LogToFile((wchar_t*)pvProductVersion);
+
+	//strProductName.SetString((LPCSTR)pvProductName, iProductNameLen);
+	//strProductVersion.SetString((LPCSTR)pvProductVersion, iProductVersionLen);
+
+	return true;
+}
+*/
 
 std::vector<BaseMethodHook*> hooks;
 int ProcessAttach(HINSTANCE _hModule) {
+	//GetProductAndVersion();
+	LogToFile(std::string("DLL Compiled: ") + std::string(__DATE__) + std::string(" ") + std::string(__TIME__));
 	LogToFile(L"Attatching to process..");
 	g_hEvent = CreateEvent(NULL,FALSE,FALSE, L"IA_Worker");
 
@@ -242,7 +324,10 @@ int ProcessAttach(HINSTANCE _hModule) {
 
 	LogToFile(L"Preparing replica hooks..");
 	hooks.push_back(new EquipmentSeedInfo(&g_dataQueue, g_hEvent));
-	hooks.push_back(listener);
+
+	if (listener != nullptr) {
+		hooks.push_back(listener);
+	}
 	hooks.push_back(new ItemRelicSeedInfo(&g_dataQueue, g_hEvent));
 	// hooks.push_back(new GameEngineUpdate(&g_dataQueue, g_hEvent));	 // Debug/test only
 	
@@ -276,9 +361,12 @@ int ProcessDetach( HINSTANCE _hModule ) {
 		delete hooks[i];
 	}
 	hooks.clear();
-	listener->Stop();
-	delete listener;
-	listener = nullptr;
+
+	if (listener != nullptr) {
+		listener->Stop();
+		delete listener;
+		listener = nullptr;
+	}
 
     EndWorkerThread();
 

@@ -57,6 +57,9 @@ HookLog::~HookLog() {
     }
 }
 
+void HookLog::out(const char* src) {
+	return out(std::wstring(src, src + strlen(src)));
+}
 
 void HookLog::out( std::wstring const& output ) {
     if (m_out.is_open()) {

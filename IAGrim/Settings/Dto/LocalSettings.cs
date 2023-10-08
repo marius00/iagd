@@ -14,7 +14,6 @@ namespace IAGrim.Settings.Dto {
         private long _lastNagTimestamp;
         private bool _easterPrank;
         private bool _hasSuggestedLanguageChange;
-        private bool? _secureTransfers;
         private int _stashToDepositTo;
         private int _stashToLootFrom;
         private GDTransferFile _lastSelectedMod;
@@ -31,7 +30,7 @@ namespace IAGrim.Settings.Dto {
         private long? _grimDawnLocationLastModified;
         private bool _startMinimized;
         private DateTime _lastCharSyncUtc;
-        private bool _disableInstaloot;
+        private bool _preferLegacyMode;
 
         public string MachineName { get; set; }
 
@@ -96,13 +95,6 @@ namespace IAGrim.Settings.Dto {
             }
         }
 
-        public bool? SecureTransfers {
-            get => _secureTransfers;
-            set {
-                _secureTransfers = value;
-                OnMutate?.Invoke(null, null);
-            }
-        }
 
         public int StashToDepositTo {
             get => _stashToDepositTo;
@@ -234,11 +226,13 @@ namespace IAGrim.Settings.Dto {
             }
         }
 
-
-        public bool DisableInstaloot {
-            get => _disableInstaloot;
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool PreferLegacyMode {
+            get => _preferLegacyMode;
             set {
-                _disableInstaloot = value;
+                _preferLegacyMode = value;
                 OnMutate?.Invoke(null, null);
             }
         }

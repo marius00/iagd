@@ -166,31 +166,6 @@ const helpEntries = [
         type: IHelpEntryType.Informational
     },
     {
-        title: `What does it mean for IA to delete duplicates?`,
-        tag: 'DeleteDuplicates',
-        body: () => <div>
-            Sometimes bugs can happen which causes an <u>exact duplicate</u> of an item to be spawned. <br/>
-            This is an item with the exact same stats etc, it's not an item that was actually found, but was <u>spawned
-            due to a bug.</u><br/><br/>
-
-            <b>It goes as follows:</b> <br/>
-            <ol>
-                <li>IA loots the item</li>
-                <li>IA deletes the item from the game.</li>
-                <li>You open your stash, and Grim Dawn recreates the item (bug) instead of reading the changes made by
-                    IA.
-                </li>
-                <li>The item now exists both in the game and in IA. [bugged duplicate]</li>
-                <li>You close your stash again, and IA tells you the item is a duplicate.</li>
-            </ol>
-
-            Enabling the "delete bugged duplicates" option under settings will cause IA to simply delete these bugged
-            items, instead of just warning you.<br/>
-            IA will not loot items it detects to have been spawned due to a duplication bug.
-        </div>,
-        type: IHelpEntryType.Informational
-    },
-    {
         title: `I can't find my items!`,
         tag: 'CantFindItemsMod',
         body: () => <div>
@@ -200,33 +175,6 @@ const helpEntries = [
 
             Typically it's the mod selection that causes items to not be found, as IA supports separating items from
             both mods and softcore/hardcore.
-        </div>,
-        type: IHelpEntryType.Help
-    },
-    {
-        title: `What is enable downgrades?`,
-        tag: 'EnableDowngrades',
-        body: () => <div>
-            By enabling downgrades in Item Assistant, you enable the ability to transfer to GD when playing with friends who lack expansions. <br/>
-            For example, if you own Forgotten Gods, but have disabled the expansion to play with friends. You need to enable support for this in IA. <br/><br/>
-            When this option is enabled, in the upper right corner of the item view, you can select "FG disabled" or "AoM disabled", in addition to the regular "No mod"/mod options.
-        </div>,
-
-        type: IHelpEntryType.Informational
-    },
-    {
-        title: `IA is not looting my items!`,
-        tag: 'CantFindItemsMod2', // TODO: Why is this duplicated?
-        body: () => <div>
-            {toNumberedList(`
-      Place items in your stash
-      Walk away from your stash area
-      IA should now have looted these items
-      The status bar in IA should indicate it just looted some items`)}
-
-            <b className="attention">If this did not resolve your issue, please try running IA as administrator.</b>
-            <br/>
-            In some cases IA requires additional permissions in order to run properly.
         </div>,
         type: IHelpEntryType.Help
     },
@@ -285,51 +233,6 @@ const helpEntries = [
             installed, and you will have to enable it manually via custom backups.
         </div>,
         type: IHelpEntryType.Informational
-    },
-    {
-        title: `How do i restore a transfer stash? (lost items from tab1 / tab2 for example)`,
-        tag: 'RestoreTransferStash',
-        body: () => <div>
-            {toNumberedList(`
-      Close Grim Dawn (or at least go to the main menu)
-      In IA go to settings
-      Click "View Logs"
-      Enter the "backup" folder
-      You're looking for a file named transfer-something, look at the timestamps to find the correct one
-      Once you think you've found the correct transfer copy, go to "my documents"\\"my games"\\"grim dawn"\\"save"
-      Find transfer.gst and rename it to transfer-renamed.gst
-      Copy the transfer file from the backup folder into the save\\ folder
-      Rename the copied file to "transfer.gst"
-      Open Grim dawn and go pick up your items from the stash
-      Close grim dawn
-      Delete transfer.gst
-      Rename transfer-renamed.gst to transfer.gst
-      Voila!
-      `)}
-            <br/>
-            IA keeps the last 1000 copies of your transfer stash, so you may need to guess which file you need based on
-            the timestamp.<br/>
-            Remember: only you know when this happened.
-        </div>,
-        type: IHelpEntryType.Informational
-    },
-
-    {
-        title: `IA says cloud saving is enabled`,
-        tag: 'CloudSavesEnabled',
-        body: () => <div>
-            For Grim Dawn, cloud saving has to be disabled in <u>two</u> different locations.
-            {toNumberedList(`In steam
-        Inside Grim Dawn itself, under "Settings"`)}
-            Grim Dawn uses a different save directory with cloud saving disabled.<br/>
-            After disabling cloud saving you still need to <a
-            href="https://forums.crateentertainment.com/t/how-to-move-your-saves-from-steam-cloud-to-grim-dawns-default-location/28921">copy
-            your characters to the correct directory</a>.<br/>
-            <br/>
-            <b>Obs:</b> After disabling cloud saving, you need to add an item from your <u>shared stash</u> for IA to
-            detect it as the active one.
-        </div>,
-        type: IHelpEntryType.Help
     },
     {
         title: `I disabled cloud saving and all my characters are gone!`,
@@ -460,46 +363,11 @@ const helpEntries = [
         type: IHelpEntryType.Informational
     },
     {
-        title: `Can I move items from Hardcore to Softcore? (or vice versa)`,
-        tag: 'SoftcoreToHardcore',
-        body: () => <div>
-            By default this is not enabled. <br/>
-            However, if you enable the "<i>Transfer to any mod</i>" under settings, it is possible to transfer items
-            anywhere you'd like.
-        </div>,
-        type: IHelpEntryType.Informational
-    },
-    {
         title: `Does this tool support Hardcore? Can I play both Hardcore and softcore?`,
         tag: 'SupportsHardcore',
         body: () => <div>
             Yes! Your items are separated by mod and hardcore/softcore. <br/>
             In the upper right corner of IA you can select which items you which to display.
-        </div>,
-        type: IHelpEntryType.Informational
-    },
-    {
-        title: `Settings: What is secure transfers?`,
-        tag: 'SecureTransfers',
-        body: () => <div>
-            <b>Disabling the <i>Secure Transfers</i> option lets IA transfer items even when the stash status is open or
-                unknown</b><br/>
-            This is an override provided for extreme cases where IA cannot detect the Grim Dawn stash status.<br/><br/>
-            If secure transfers is disabled, <u>it is up to the user to make sure the stash is closed</u>, or risk
-            losing items during transfer.<br/><br/>
-            <span className="attention">This is an emergency option only.</span>
-        </div>,
-        type: IHelpEntryType.Informational
-    },
-    {
-        title: `Settings: What is transfer to any mod?`,
-        tag: 'TransferToAnyMod',
-        body: () => <div>
-            <b>Transfer to any mod lets you transfer items between the regular campaign and your mods.</b><br/>
-            By enabling this option, any time you wish to transfer an item, you must choose which stash to transfer
-            to. <br/>
-            This is not enabled by default, as it could be considered cheating. <br/><br/>
-            To disable the "StashPicker", disable "Transfer to any mod" under settings.
         </div>,
         type: IHelpEntryType.Informational
     },
@@ -651,17 +519,6 @@ const helpEntries = [
 
             If this help entry opened automatically for you in item assistant, something is preventing Item Assistant
             from writing it's changes.
-        </div>
-    },
-    {
-        title: `How can I use IA with expansions disabled?`,
-        tag: 'DisabledExpansions',
-        body: () => <div>
-            In order to use Item Assistant with expansions disabled, check the Mod filter in the upper right
-            corner. <br/>
-            Set this to "No expansions" or "FG Disabled" depending on which setup you're using.<br/><br/>
-            Item Assistant should automatically detect disabled expansions and provide these options. <br/>
-            Typically recognized by transferring items from IA not appearing in-game.
         </div>
     },
     {

@@ -17,13 +17,11 @@ namespace IAGrim.Settings.Dto {
         private bool _usingDualComputer;
         private bool _showAugmentsAsItems;
         private bool _mergeDuplicates;
-        private bool _transferAnyMod;
         private bool _darkMode;
         private bool _autoUpdateModSettings;
         private bool _hideSkills;
         private bool _deleteDuplicates;
         private bool _autoDismissNotifications;
-        private bool _enableDowngrades;
 
         private long _cloudUploadTimestamp;
 
@@ -93,14 +91,6 @@ namespace IAGrim.Settings.Dto {
             }
         }
 
-        public bool TransferAnyMod {
-            get => _transferAnyMod;
-            set {
-                _transferAnyMod = value;
-                OnMutate?.Invoke(null, null);
-            }
-        }
-
         public bool DarkMode {
             get => _darkMode;
             set {
@@ -153,14 +143,6 @@ namespace IAGrim.Settings.Dto {
             }
         }
 
-        public bool DeleteDuplicates {
-            get => _deleteDuplicates;
-            set {
-                _deleteDuplicates = value;
-                OnMutate?.Invoke(null, null);
-            }
-        }
-
         public bool AutoDismissNotifications {
             get => _autoDismissNotifications;
             set {
@@ -168,15 +150,6 @@ namespace IAGrim.Settings.Dto {
                 OnMutate?.Invoke(null, null);
             }
         }
-
-        public bool EnableDowngrades {
-            get => _enableDowngrades;
-            set {
-                _enableDowngrades = value;
-                OnMutate?.Invoke(null, null);
-            }
-        }
-
 
 
         public long CloudUploadTimestamp {

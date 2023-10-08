@@ -24,7 +24,6 @@ namespace IAGrim.UI.Misc {
         TYPE_GameInfo_IsHardcore = 20,
         TYPE_GameInfo_SetModName = 21,
         TYPE_Stash_Item_BasicInfo = 25,
-        TYPE_InventorySack_Sort = 26,
 
         TYPE_ERROR_HOOKING_PRIVATE_STASH = 37,
         TYPE_ERROR_HOOKING_TRANSFER_STASH = 38,

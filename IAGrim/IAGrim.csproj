@@ -305,6 +305,12 @@
     <Compile Include="UI\Popups\AddEditBuddy.Designer.cs">
       <DependentUpon>AddEditBuddy.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Popups\LootingModeScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Popups\LootingModeScreen.Designer.cs">
+      <DependentUpon>LootingModeScreen.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Tabs\OnlineSettings.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -425,7 +431,6 @@
     <Compile Include="Parsers\GameDataParsing\UI\ParsingDatabaseProgressView.Designer.cs">
       <DependentUpon>ParsingDatabaseProgressView.cs</DependentUpon>
     </Compile>
-    <Compile Include="Parsers\ItemSizeService.cs" />
     <Compile Include="Parsers\RecipeParser.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -439,7 +444,6 @@
     <Compile Include="Services\MessageProcessor\CloudDetectorProcessor.cs" />
     <Compile Include="Services\MessageProcessor\GenericErrorHandler.cs" />
     <Compile Include="Services\MessageProcessor\IMessageProcessor.cs" />
-    <Compile Include="Services\MessageProcessor\ItemPositionFinder.cs" />
     <Compile Include="Services\MessageProcessor\PlayerPositionTracker.cs" />
     <Compile Include="Services\MessageProcessor\StashStatusHandler.cs" />
     <Compile Include="Theme\ComboBoxItem.cs" />
@@ -548,12 +552,6 @@
     <Compile Include="UI\Tabs\SettingsWindow.Designer.cs">
       <DependentUpon>SettingsWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Popups\StashPicker.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Popups\StashPicker.Designer.cs">
-      <DependentUpon>StashPicker.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\Tabs\SplitSearchWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -587,10 +585,6 @@
     <Compile Include="Utilities\HelperClasses\StashAvailability.cs" />
     <Compile Include="Utilities\ItemHtmlWriter.cs" />
     <Compile Include="Utilities\Logging\TextBoxAppender.cs" />
-    <Compile Include="Utilities\RectanglePacker\DynamicPacker.cs" />
-    <Compile Include="Utilities\RectanglePacker\Packer.cs" />
-    <Compile Include="Utilities\RectanglePacker\PackerMode.cs" />
-    <Compile Include="Utilities\RectanglePacker\Shape.cs" />
     <Compile Include="Utilities\Registry\RegistryHelper.cs" />
     <Compile Include="Utilities\TempFile.cs" />
     <Compile Include="Utilities\TemporaryCopy.cs" />
@@ -645,6 +639,9 @@
     <EmbeddedResource Include="UI\Popups\ImportExport\Panels\ImportMode.resx">
       <DependentUpon>ImportMode.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Popups\LootingModeScreen.resx">
+      <DependentUpon>LootingModeScreen.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Popups\StashTabPicker.resx">
       <DependentUpon>StashTabPicker.cs</DependentUpon>
     </EmbeddedResource>
@@ -675,9 +672,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Tabs\SettingsWindow.resx">
       <DependentUpon>SettingsWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\Popups\StashPicker.resx">
-      <DependentUpon>StashPicker.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Popups\UpdatingPlayerItemsScreen.resx">
       <DependentUpon>UpdatingPlayerItemsScreen.cs</DependentUpon>

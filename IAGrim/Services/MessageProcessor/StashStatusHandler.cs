@@ -15,7 +15,6 @@ namespace IAGrim.Services.MessageProcessor {
         private readonly MessageType[] Relevants = new MessageType[] {
             MessageType.TYPE_OPEN_PRIVATE_STASH,
             MessageType.TYPE_OPEN_CLOSE_TRANSFER_STASH,
-            MessageType.TYPE_InventorySack_Sort,
             MessageType.TYPE_SAVE_TRANSFER_STASH,
             MessageType.TYPE_ERROR_HOOKING_SAVETRANSFER_STASH,
             MessageType.TYPE_DISPLAY_CRAFTER,
@@ -92,20 +91,16 @@ namespace IAGrim.Services.MessageProcessor {
                 }
 
                 switch (type) {
-                    case MessageType.TYPE_InventorySack_Sort:
-                        RuntimeSettings.StashStatus = StashAvailability.SORTED;
-                        break;
-
                     case MessageType.TYPE_OPEN_PRIVATE_STASH:
                     case MessageType.TYPE_OPEN_CLOSE_TRANSFER_STASH:
                     case MessageType.TYPE_SAVE_TRANSFER_STASH:
                         // Sorted can still be open, but lets treat it as sorted since we can't transfer items without knowing position
-                        if (RuntimeSettings.StashStatus != StashAvailability.SORTED && !IsClosed)
-                            RuntimeSettings.StashStatus = StashAvailability.OPEN;
-
-                        else if (IsClosed) {
+                        if (IsClosed) {
                             RuntimeSettings.StashStatus = StashAvailability.CLOSED;
                             logger.Debug("Closed stash");
+                        }
+                        else {
+                            RuntimeSettings.StashStatus = StashAvailability.OPEN;
                         }
 
                         break;

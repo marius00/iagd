@@ -1,6 +1,7 @@
 
 #include "BaseMethodHook.h"
 #include "MessageType.h"
+#include "GrimTypes.h"
 #include <detours.h>
 
 BaseMethodHook::BaseMethodHook() = default;
@@ -27,7 +28,7 @@ void BaseMethodHook::TransferData(unsigned int size, const char* data) {
 }
 
 void* BaseMethodHook::HookDll(const wchar_t* dll, char* procAddress, void* HookedMethod, DataQueue* m_dataQueue, HANDLE m_hEvent, int id) {
-	void* originalMethod = GetProcAddress(::GetModuleHandle(dll), procAddress);
+	void* originalMethod = GetProcAddressOrLogToFile(dll, procAddress);
 	m_messageId = id;
 	if (originalMethod == NULL) {
 		ReportHookError(m_dataQueue, m_hEvent, id);

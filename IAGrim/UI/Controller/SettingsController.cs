@@ -25,8 +25,6 @@ namespace IAGrim.UI.Controller {
         public void LoadDefaults() {
             MinimizeToTray = _settings.GetPersistent().MinimizeToTray;
             MergeDuplicates = _settings.GetPersistent().MergeDuplicates;
-            TransferAnyMod = _settings.GetPersistent().TransferAnyMod;
-            SecureTransfers = _settings.GetLocal().SecureTransfers ?? true;
             ShowRecipesAsItems = _settings.GetPersistent().ShowRecipesAsItems;
             AutoUpdateModSettings = _settings.GetPersistent().AutoUpdateModSettings;
             HideSkills = _settings.GetPersistent().HideSkills;
@@ -96,34 +94,6 @@ namespace IAGrim.UI.Controller {
         }
 
 
-        /// <summary>
-        /// Transfer to any mod without restrictions
-        /// </summary>
-        public bool TransferAnyMod {
-            get => _settings.GetPersistent().TransferAnyMod;
-            set {
-                _settings.GetPersistent().TransferAnyMod = value;
-                OnPropertyChanged();
-            }
-        }
-
-
-        /// <summary>
-        /// Enable DLL stash-closed safety checks
-        /// </summary>
-        public bool SecureTransfers {
-            get => _settings.GetLocal().SecureTransfers ?? true;
-            set {
-                if (value || MessageBox.Show(
-                        RuntimeSettings.Language.GetTag("iatag_ui_settings_securetransferdsable_body"),
-                        RuntimeSettings.Language.GetTag("iatag_ui_settings_securetransferdsable_title"),
-                        MessageBoxButtons.YesNo
-                    ) == DialogResult.Yes) {
-                    _settings.GetLocal().SecureTransfers = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
 
         #endregion
 

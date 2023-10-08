@@ -1,6 +1,6 @@
 # Grim Dawn Item Assistant
 
-For a binary download, see https://www.nexusmods.com/grimdawn/mods/43/
+For a binary download, see https://grimdawn.evilsoft.net
 
 
 
@@ -8,7 +8,7 @@ For a binary download, see https://www.nexusmods.com/grimdawn/mods/43/
 
 
 ## Dependencies missing
-This project uses Nuget for external dependencies. To reinstall these, simply run `Update-Package -reinstall` in the package manager console.
+This project uses Nuget for external dependencies. TO install these, rightclick on the solution and select "restore packages" (Or run `Update-Package -reinstall` in the package manager console)
 
 
 
@@ -16,7 +16,7 @@ Error    CS0246    The type or namespace name 'AutoUpdaterDotNET' could not be f
 
 This means you're missing the AutoUpdater.NET.dll file that IA uses for automatic updates.
 It can be obtained in two ways:
-* Simply copying it from an existing IA install
+* Copying it from an existing IA install
 * Compiling the "Auto updater" project, which is held separately from the IA solution. (SLN)
 Place this file under IAGrim\bin\Release
 
@@ -27,20 +27,11 @@ IAGrim also depends on ItemAssistantHook.dll for detecting the status of various
 
 [More information in the DLL readme](HookDll/README.md)
 
-## The web interface
-HowTo:
-* cd WebUI
-* npm install
-* npm run build
-* deploy.cmd
+## The web View
+[The item view is a (pr)react website, click here for more details](WebUI/README.md)
 
 
 # Trouble understanding the code?
-
-## The Web View
-The Web view is written in React and Typescript.
-It can run both Embedded inside IAGrim, and stand-alone in a normal browser for debugging purposes.
-After first cloning the project, the developer should run "npm install" to download node packages.
 
 ## IAGrim and the Web View (React)
 The user interface is made in native C# (left side bar, top tabs) with CefSharp (Chromium) to run an embedded web view.

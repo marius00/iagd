@@ -27,7 +27,7 @@ namespace IAGrim.Services {
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public bool StartMonitoring() {
             _watcher = new FileSystemWatcher();
-            _watcher.Path = GlobalPaths.CsvLocation;
+            _watcher.Path = GlobalPaths.CsvLocationIngoing;
             _watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName |
                                     NotifyFilters.DirectoryName;
             _watcher.Filter = "*.csv";

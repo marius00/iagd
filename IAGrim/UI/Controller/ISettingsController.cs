@@ -8,8 +8,6 @@ namespace IAGrim.UI.Controller {
     [Obsolete]
     interface ISettingsController {
         bool MinimizeToTray { get; set; }
-        bool TransferAnyMod { get; set; }
-        bool SecureTransfers { get; set; }
         bool ShowRecipesAsItems { get; set; }
 
         void LoadDefaults();

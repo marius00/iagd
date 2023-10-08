@@ -16,14 +16,11 @@ namespace IAGrim.Services {
             CannotFindGrimdawn,
             ShowRecipesAsItems,
             ShowAugmentsAsItems,
-            SecureTransfers,
-            TransferToAnyMod,
             RestoreBackup,
             DuplicateItem,
             NoStacks,
             BackupAutodetectDisabled,
             NotLootingUnidentified,
-            DeleteDuplicates,
             MultiplePcs,
             RegularUpdates,
             ExperimentalUpdates,
@@ -34,7 +31,6 @@ namespace IAGrim.Services {
             StashError,
             No32Bit,
             WindowsAntiRansomwareIssue,
-            EnableDowngrades,
         }
 
         public void ShowHelp(HelpType type) {

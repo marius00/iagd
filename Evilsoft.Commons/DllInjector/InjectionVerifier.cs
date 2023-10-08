@@ -62,7 +62,7 @@ namespace EvilsoftCommons.DllInjector {
                     string spid = pid.ToString();
                     processTemp.Start();
                     processTemp.WaitForExit(3000);
-  
+
 
                     List<string> output = new List<string>();
                     while (!processTemp.StandardOutput.EndOfStream) {
@@ -78,6 +78,49 @@ namespace EvilsoftCommons.DllInjector {
             }
             else {
                 Logger.Warn("Could not find Listdlls.exe, unable to verify successful injection.");
+            }
+            return false;
+        }
+
+        public static bool IsPlaytest(string dll) {
+            FixRegistryNagOnListDlls();
+
+            Logger.Info("Running dumpbin...");
+            string exportOnlyInPlaytest = "??0GameTextLine@GAME@@QEAA@W4GameTextClass@1@AEBV?$basic_string@GU?$char_traits@G@std@@V?$allocator@G@2@@std@@_NPEBVGraphicsTexture@1@M@Z";
+
+            List<string> output = new List<string>();
+            if (File.Exists("dumpbin.exe")) {
+                ProcessStartInfo startInfo = new ProcessStartInfo {
+                    FileName = "dumpbin.exe",
+                    Arguments = $"/exports \"{dll}\"",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+
+                Process processTemp = new Process();
+                processTemp.StartInfo = startInfo;
+                processTemp.EnableRaisingEvents = true;
+                try {
+                    processTemp.Start();
+                    processTemp.WaitForExit(3000);
+
+                    while (!processTemp.StandardOutput.EndOfStream) {
+                        string line = processTemp.StandardOutput.ReadLine();
+                        output.Add(line);
+
+                        
+                        if (line.Contains(exportOnlyInPlaytest)) // Export only exists in playtest
+                            return true;
+                    }
+                }
+                catch (Exception ex) {
+                    Logger.Warn("Exception while attempting to verify isPlaytest.. " + ex.Message + ex.StackTrace);
+                }
+            }
+            else {
+                Logger.Warn("Could not find Listdlls.exe, unable to verify isPlaytest.");
             }
             return false;
         }
