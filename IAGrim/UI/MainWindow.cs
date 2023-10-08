@@ -34,6 +34,7 @@ using IAGrim.Backup.Cloud.Service;
 using IAGrim.Backup.Cloud.Util;
 using IAGrim.Parsers.TransferStash;
 using IAGrim.Settings;
+using System.IO;
 
 namespace IAGrim.UI {
     public partial class MainWindow : Form {
@@ -647,6 +648,14 @@ namespace IAGrim.UI {
             // Same happens when shutting down, fix unknown
             _injectorCallbackDelegate = InjectorCallback;
 
+
+            try {
+                File.Delete(Path.Combine(GlobalPaths.CoreFolder, "iagd_hook.log"));
+            }
+            catch (IOException ex) {
+                Logger.Info("Failed to delete DLL log", ex);
+
+            }
             string dllname = "ItemAssistantHook_x64.dll";
             _injector = new InjectionHelper(new BackgroundWorker(), _injectorCallbackDelegate, false, "Grim Dawn", string.Empty, dllname);
         }

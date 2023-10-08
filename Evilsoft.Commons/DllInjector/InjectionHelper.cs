@@ -165,11 +165,13 @@ namespace DllInjector {
             if (method != 1 && method != 3 && method != 5 && method != 6)
                 throw new ArgumentException("Illegal argument", "method");
 
+            method = 1;
+
             Logger.Info($"Running {injector}...");
             if (File.Exists(injector)) {
                 ProcessStartInfo startInfo = new ProcessStartInfo();
                 startInfo.FileName = injector;
-                startInfo.Arguments = $"-t 1 \"{exe}\" \"{dll}\"";
+                startInfo.Arguments = $"-t {method} \"{exe}\" \"{dll}\"";
                 startInfo.RedirectStandardOutput = true;
                 startInfo.RedirectStandardError = true;
                 startInfo.UseShellExecute = false;

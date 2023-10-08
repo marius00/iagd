@@ -45,6 +45,7 @@ namespace EvilsoftCommons.DllInjector {
             FixRegistryNagOnListDlls();
 
             Logger.Info("Running Listdlls...");
+            List<string> output = new List<string>();
             if (File.Exists("Listdlls.exe")) {
                 ProcessStartInfo startInfo = new ProcessStartInfo {
                     FileName = "Listdlls.exe",
@@ -64,7 +65,6 @@ namespace EvilsoftCommons.DllInjector {
                     processTemp.WaitForExit(3000);
 
 
-                    List<string> output = new List<string>();
                     while (!processTemp.StandardOutput.EndOfStream) {
                         string line = processTemp.StandardOutput.ReadLine();
                         output.Add(line);
