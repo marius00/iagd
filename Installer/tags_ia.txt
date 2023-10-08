@@ -501,6 +501,7 @@ iatag_ui_enabledowngrades=Enable downgrades
 iatag_ui_energy_regen=Energy Regeneration
 iatag_ui_experience=Experience
 iatag_ui_experimentalupdates=Frequent Features
+iatag_ui_explain_classiclooting_restartia=Changing this setting requires you to restart Item Assistant
 iatag_ui_export=Export
 iatag_ui_export_export=Export
 iatag_ui_export_stashfile=Stash File

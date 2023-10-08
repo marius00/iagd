@@ -31,7 +31,6 @@ namespace IAGrim.Services {
             StashError,
             No32Bit,
             WindowsAntiRansomwareIssue,
-            EnableDowngrades,
         }
 
         public void ShowHelp(HelpType type) {

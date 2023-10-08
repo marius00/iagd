@@ -681,6 +681,7 @@ namespace IAGrim.UI {
                     tsStashStatus.ForeColor = Color.FromArgb(255, 192, 0, 0);
                     tsStashStatus.Tag = "iatag_stash_error";
                     tsStashStatus.Text = RuntimeSettings.Language.GetTag(tsStashStatus.Tag.ToString());
+                    tsStashStatus.Visible = true;
                     break;
                 case StashAvailability.UNKNOWN:
                     tsStashStatus.ForeColor = Color.FromArgb(255, 192, 0, 0);
@@ -691,6 +692,7 @@ namespace IAGrim.UI {
                     tsStashStatus.ForeColor = Color.FromArgb(255, 192, 0, 0);
                     tsStashStatus.Tag = "iatag_stash_not64bit";
                     tsStashStatus.Text = RuntimeSettings.Language.GetTag(tsStashStatus.Tag.ToString());
+                    tsStashStatus.Visible = true;
                     break;
                 default:
                     tsStashStatus.ForeColor = Color.FromArgb(255, 192, 0, 0);

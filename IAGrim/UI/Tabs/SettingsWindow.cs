@@ -80,8 +80,6 @@ namespace IAGrim.UI.Tabs {
             cbStartMinimized.Checked = _settings.GetLocal().StartMinimized;
             cbDarkMode.Checked = _settings.GetPersistent().DarkMode;
             cbAutoDismiss.Checked = _settings.GetPersistent().AutoDismissNotifications;
-
-            cbEnableDowngrades.Checked = _settings.GetPersistent().EnableDowngrades;
         }
 
         private void buttonViewBackups_Click(object sender, EventArgs e) {
@@ -193,10 +191,6 @@ namespace IAGrim.UI.Tabs {
             _cefBrowserHandler.ShowHelp(HelpService.HelpType.ExperimentalUpdates);
         }
 
-        private void helpWhatIsEnableDowngrades_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            _cefBrowserHandler.ShowHelp(HelpService.HelpType.EnableDowngrades);
-
-        }
 
         private void buttonLootManually_Click(object sender, EventArgs e) {
 
@@ -225,9 +219,6 @@ namespace IAGrim.UI.Tabs {
             _settings.GetPersistent().AutoDismissNotifications = ((FirefoxCheckBox) sender).Checked;
         }
 
-        private void cbEnableDowngrades_CheckedChanged(object sender, EventArgs e) {
-            _settings.GetPersistent().EnableDowngrades = ((FirefoxCheckBox)sender).Checked;
-        }
 
         private void linkDowngrade_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             AutoUpdater.LetUserSelectRemindLater = false;
