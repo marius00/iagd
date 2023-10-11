@@ -129,7 +129,7 @@ namespace IAGrim.Database.Synchronizer {
 
         public void UpdateAllItemStats(IList<PlayerItem> items, Action<int> progress) {
             ThreadExecuter.Execute(
-                () => _repo.UpdateAllItemStats(items, progress), expectLongOperation: true
+                () => _repo.UpdateAllItemStats(items, progress)
             );
         }
     }

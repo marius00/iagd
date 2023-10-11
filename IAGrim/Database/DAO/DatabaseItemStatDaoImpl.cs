@@ -288,7 +288,7 @@ namespace IAGrim.Database {
 #if DEBUG
             // If you have run into this exception, you've messed up.
             // This is a safety catch to detect issues with applying stats too broadly.
-            if (statMap?.Count > 20000) {
+            if (statMap.Count > 10000) {
                 throw new InvalidOperationException("Stat fetch has been done with too many items, severe performance penalties.");
             }
 #endif
