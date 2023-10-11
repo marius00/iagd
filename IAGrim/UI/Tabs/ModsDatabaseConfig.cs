@@ -113,9 +113,9 @@ namespace IAGrim.UI {
             }
 
             // Update item stats as well
-            var updatingPlayerItemsScreen = new UpdatingPlayerItemsScreen(_playerItemDao);
+            //var updatingPlayerItemsScreen = new UpdatingPlayerItemsScreen(_playerItemDao);
 
-            updatingPlayerItemsScreen.ShowDialog();
+            //updatingPlayerItemsScreen.ShowDialog();
             _itemViewUpdateTrigger?.Invoke();
         }
 

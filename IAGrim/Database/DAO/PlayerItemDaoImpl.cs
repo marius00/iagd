@@ -387,26 +387,43 @@ namespace IAGrim.Database {
                     // Get the base records stored
                     for (var i = 0; i < items.Count; i++) {
                         UpdateRecords(session, items.ElementAt(i));
+                        progress(1);
                     }
 
                     transaction.Commit();
                 }
 
+                var stats = _databaseItemStatDao.GetStats(session, StatFetch.PlayerItems);
                 using (var transaction = session.BeginTransaction()) {
                     // Now that we have base stats, we can calculate pet records as well
-                    var stats = _databaseItemStatDao.GetStats(session, StatFetch.PlayerItems);
-
                     for (var i = 0; i < items.Count; i++) {
                         UpdatePetRecords(session, items.ElementAt(i), stats);
-                    }
-
-                    foreach (var item in items) {
-                        UpdateItemDetails(session, item, stats);
-
                         progress(1);
                     }
 
+
                     transaction.Commit();
+                }
+
+                const int chunkSize = 10000;
+                int numParsed = 0;
+                int max = items.Count;
+                while (numParsed < max) {
+                    var chunk = items.Skip(numParsed).Take(chunkSize);
+
+                    using (var transaction = session.BeginTransaction()) {
+                        foreach (var item in chunk) {
+                            // Only proccess items without existing info
+                            if (string.IsNullOrEmpty(item.Name)) {
+                                UpdateItemDetails(session, item, stats);
+                            }
+                            progress(1);
+                        }
+
+                        transaction.Commit();
+                    }
+
+                    numParsed += chunkSize;
                 }
             }
         }

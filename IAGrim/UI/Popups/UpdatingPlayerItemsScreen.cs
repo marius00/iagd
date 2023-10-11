@@ -1,14 +1,10 @@
 ﻿using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.Arz;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using IAGrim.Utilities;
+using EvilsoftCommons.Exceptions;
 
 namespace IAGrim.UI {
     /// <summary>
@@ -32,6 +28,7 @@ namespace IAGrim.UI {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         void bw_ProgressChanged(object sender, ProgressChangedEventArgs e) {
+            ExceptionReporter.EnableLogUnhandledOnThread();
             if (this.InvokeRequired) {
                 this.Invoke((MethodInvoker)delegate {
                     bw_ProgressChanged(sender, e);
@@ -53,6 +50,7 @@ namespace IAGrim.UI {
 
 
         void bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
+            ExceptionReporter.EnableLogUnhandledOnThread();
             if (e.Error != null)
                 throw e.Error;
 
