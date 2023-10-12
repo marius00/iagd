@@ -680,8 +680,12 @@ namespace IAGrim.Database {
             }
 
             // Filter by mod/hc
-            queryFragments.Add("(LOWER(PI.Mod) = LOWER( :mod ) OR PI.Mod IS NULL)");
-            queryParams.Add("mod", query.Mod);
+            if (string.IsNullOrEmpty(query.Mod)) {
+                queryFragments.Add("PI.Mod IS NULL");
+            } else {
+                queryFragments.Add("LOWER(PI.Mod) = LOWER( :mod )");
+                queryParams.Add("mod", query.Mod);
+            }
 
             queryFragments.Add(query.IsHardcore ? "PI.IsHardcore" : "NOT PI.IsHardcore");
 

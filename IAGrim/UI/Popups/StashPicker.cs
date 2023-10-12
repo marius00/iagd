@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using IAGrim.Services;
 using IAGrim.Database.Interfaces;
+using IAGrim.Database.Dto;
 
 namespace IAGrim.UI {
     public partial class StashPicker : Form {
@@ -53,7 +54,7 @@ namespace IAGrim.UI {
             foreach (Control c in groupBox1.Controls) {
                 FirefoxRadioButton cb = c as FirefoxRadioButton;
                 if (cb != null && cb.Checked) {
-                    GDTransferFile mod = c.Tag as GDTransferFile;
+                    ModSelection mod = c.Tag as ModSelection;
                     if (mod != null) {
                         Result = new StashPickerResult {
                             Mod = mod.Mod,
