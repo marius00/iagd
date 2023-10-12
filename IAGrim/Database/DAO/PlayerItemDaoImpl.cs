@@ -681,7 +681,7 @@ namespace IAGrim.Database {
 
             // Filter by mod/hc
             if (string.IsNullOrEmpty(query.Mod)) {
-                queryFragments.Add("PI.Mod IS NULL");
+                queryFragments.Add("(PI.Mod IS NULL OR PI.Mod = '')");
             } else {
                 queryFragments.Add("LOWER(PI.Mod) = LOWER( :mod )");
                 queryParams.Add("mod", query.Mod);
