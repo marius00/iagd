@@ -6,26 +6,32 @@ using System.Windows.Forms;
 using IAGrim.Services;
 using IAGrim.Database.Interfaces;
 using IAGrim.Database.Dto;
+using IAGrim.Settings;
 
 namespace IAGrim.UI {
     public partial class StashPicker : Form {
         private readonly IHelpService _helpService;
         private readonly IPlayerItemDao _playerItemDao;
-
-        public StashPicker(IHelpService helpService, IPlayerItemDao playerItemDao) {
+        private readonly SettingsService _settings;
+        public StashPicker(IHelpService helpService, IPlayerItemDao playerItemDao, SettingsService settings) {
             _helpService = helpService;
             _playerItemDao = playerItemDao;
+            _settings = settings;
             InitializeComponent();
         }
 
 
         private void StashPicker_Load(object sender, EventArgs e) {
             int n = 0;
+
+            var target = _settings.GetLocal().LastSelectedTargetMod;
+            var isHardcore = _settings.GetLocal().LastSelectedTargetModIsHc;
             foreach (var mod in _playerItemDao.GetModSelection()) {
                 Control cb = new FirefoxRadioButton {
                     Location = new Point(10, 25 + n*33),
                     Text = mod.Mod + " (" + (mod.IsHardcore ? "hc" : "sc") + ")",
                     Tag = mod,
+                    Checked = mod.Mod == target && mod.IsHardcore == isHardcore,
                 };
 
                 cb.TabIndex = n;
@@ -60,6 +66,8 @@ namespace IAGrim.UI {
                             Mod = mod.Mod,
                             IsHardcore = mod.IsHardcore
                         };
+                        _settings.GetLocal().LastSelectedTargetMod = mod.Mod;
+                        _settings.GetLocal().LastSelectedTargetModIsHc = mod.IsHardcore;
                         this.DialogResult = DialogResult.OK;
                     }
                 }

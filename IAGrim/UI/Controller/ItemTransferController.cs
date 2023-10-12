@@ -99,7 +99,7 @@ namespace IAGrim.UI.Controller {
             StashPickerResult modOverride = null;
             if (items?.Count > 0) {
                 if (_settingsService.GetPersistent().TransferAnyMod) {
-                    StashPicker picker = new StashPicker(_browser, _dao);
+                    StashPicker picker = new StashPicker(_browser, _dao, _settingsService);
                     if (picker.ShowDialog() == DialogResult.OK) {
                         modOverride = picker.Result;
                     }

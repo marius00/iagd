@@ -17,6 +17,8 @@ namespace IAGrim.Settings.Dto {
         private int _stashToDepositTo;
         private int _stashToLootFrom;
         private GDTransferFile _lastSelectedMod;
+        private string _lastSelectedTargetMod;
+        private bool _lastSelectedTargetModIsHc;
         private string _localizationFile;
         private WindowSizeManager.WindowSizeProps _windowPositionSettings;
         private bool _backupDropbox;
@@ -116,6 +118,22 @@ namespace IAGrim.Settings.Dto {
             get => _lastSelectedMod;
             set {
                 _lastSelectedMod = value;
+                OnMutate?.Invoke(null, null);
+            }
+        }
+
+        public string LastSelectedTargetMod {
+            get => _lastSelectedTargetMod;
+            set {
+                _lastSelectedTargetMod = value;
+                OnMutate?.Invoke(null, null);
+            }
+        }
+
+        public bool LastSelectedTargetModIsHc{
+            get => _lastSelectedTargetModIsHc;
+            set {
+                _lastSelectedTargetModIsHc = value;
                 OnMutate?.Invoke(null, null);
             }
         }
