@@ -932,8 +932,19 @@ namespace IAGrim.Database {
             using (var session = SessionCreator.OpenSession()) {
                 using (session.BeginTransaction()) {
                     var selection = session.CreateSQLQuery(query)
+                        .AddScalar("ishardcore", NHibernateUtil.Boolean)
                         .SetResultTransformer(new AliasToBeanResultTransformer(typeof(ModSelection)))
                         .List<ModSelection>();
+
+
+                    // Even if we have no items, at least list vanilla/nomod
+                    if (!selection.Any(m => string.IsNullOrEmpty(m.Mod) && m.IsHardcore)) {
+                        selection.Add(new ModSelection { IsHardcore = true });
+                    }
+
+                    if (!selection.Any(m => string.IsNullOrEmpty(m.Mod) && !m.IsHardcore)) {
+                        selection.Add(new ModSelection { IsHardcore = false });
+                    }
 
                     return selection;
                 }

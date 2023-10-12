@@ -204,7 +204,6 @@ namespace IAGrim {
 
                 Logger.Info("Running the main application..");
 
-                settingsService.GetLocal().IsGrimDawnParsed = serviceProvider.Get<IDatabaseItemDao>().GetRowCount() > 0;
 
                 StartupService.PerformGrimUpdateCheck(settingsService);
                 Application.Run(_mw);
