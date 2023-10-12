@@ -927,12 +927,13 @@ namespace IAGrim.Database {
 
 
         public IList<ModSelection> GetModSelection() {
-            const string query = "select DISTINCT IFNULL(mod, '') as Mod, ishardcore from playeritem";
+            const string query = "select DISTINCT IFNULL(mod, '') as mod, ishardcore from playeritem";
 
             using (var session = SessionCreator.OpenSession()) {
                 using (session.BeginTransaction()) {
                     var selection = session.CreateSQLQuery(query)
                         .AddScalar("ishardcore", NHibernateUtil.Boolean)
+                        .AddScalar("mod", NHibernateUtil.String)
                         .SetResultTransformer(new AliasToBeanResultTransformer(typeof(ModSelection)))
                         .List<ModSelection>();
 
