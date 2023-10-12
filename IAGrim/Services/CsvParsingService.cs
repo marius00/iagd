@@ -94,7 +94,7 @@ namespace IAGrim.Services {
                                 // TODO: Separate transfer logic.. no delete-from-db etc..
                                 if (RuntimeSettings.StashStatus == StashAvailability.CLOSED) {
                                     // TODO: Could just MOVE it.. same CSV format..
-                                    _transferStashService.Deposit(new List<PlayerItem> { item });
+                                    _transferStashService.Deposit(new List<PlayerItem> { item }, null);
                                     Logger.Info("Deposited item back in-game, did not pass item classification.");
                                     Logger.Info("New GD patch? Go to the Grim Dawn tab and parse the game files again.");
                                     File.Delete(entry.Filename);

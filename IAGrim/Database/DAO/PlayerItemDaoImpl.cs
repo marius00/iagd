@@ -927,11 +927,11 @@ namespace IAGrim.Database {
 
 
         public IList<ModSelection> GetModSelection() {
-            const string query = "SELECT DISTINCT Mod as Mod, IsHardcore as IsHardcore FROM PlayerItem WHERE Mod IS NOT NULL";
+            const string query = "select DISTINCT IFNULL(mod, '') as Mod, ishardcore from playeritem";
 
             using (var session = SessionCreator.OpenSession()) {
                 using (session.BeginTransaction()) {
-                    var selection = session.CreateQuery(query)
+                    var selection = session.CreateSQLQuery(query)
                         .SetResultTransformer(new AliasToBeanResultTransformer(typeof(ModSelection)))
                         .List<ModSelection>();
 

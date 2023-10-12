@@ -574,7 +574,8 @@ namespace IAGrim.UI {
                 _cefBrowserHandler,
                 SetFeedback,
                 playerItemDao,
-                transferStashService
+                transferStashService,
+                settingsService
             );
             Application.AddMessageFilter(new MousewheelMessageFilter());
 

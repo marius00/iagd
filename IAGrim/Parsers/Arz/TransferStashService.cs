@@ -9,6 +9,7 @@ using System.IO;
 using IAGrim.Parser.Stash;
 using IAGrim.Settings;
 using IAGrim.Services;
+using static IAGrim.UI.StashPicker;
 
 namespace IAGrim.Parsers.Arz {
     internal class TransferStashService {
@@ -65,13 +66,15 @@ namespace IAGrim.Parsers.Arz {
         }
 
 
-        public void Deposit(IList<PlayerItem> playerItems) {
+        public void Deposit(IList<PlayerItem> playerItems, StashPickerResult modOverride) {
             foreach (var item in playerItems) {
                 var csv = CsvParsingService.Serialize(item);
                 try {
-                    var path = Path.Combine(GlobalPaths.CsvLocationOutgoing, item.IsHardcore ? "hc" : "sc");
-                    if (item.Mod != string.Empty) {
-                        path = Path.Combine(path, item.Mod);
+                    var isHardcore = modOverride?.IsHardcore ?? item.IsHardcore;
+                    var mod = modOverride?.Mod ?? item.Mod;
+                    var path = Path.Combine(GlobalPaths.CsvLocationOutgoing, isHardcore ? "hc" : "sc");
+                    if (!string.IsNullOrEmpty(mod)) {
+                        path = Path.Combine(path, mod);
                     }
                     Directory.CreateDirectory(path);
 

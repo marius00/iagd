@@ -80,6 +80,7 @@ namespace IAGrim.UI.Tabs {
             cbStartMinimized.Checked = _settings.GetLocal().StartMinimized;
             cbDarkMode.Checked = _settings.GetPersistent().DarkMode;
             cbAutoDismiss.Checked = _settings.GetPersistent().AutoDismissNotifications;
+            cbTransferAnyMod.Checked = _settings.GetPersistent().TransferAnyMod;
         }
 
         private void buttonViewBackups_Click(object sender, EventArgs e) {
@@ -229,6 +230,10 @@ namespace IAGrim.UI.Tabs {
 
         private void firefoxButton1_Click(object sender, EventArgs e) {
             new LootingModeScreen(_settings).ShowDialog();
+        }
+
+        private void firefoxCheckBox1_CheckedChanged(object sender, EventArgs e) {
+            _settings.GetPersistent().TransferAnyMod = ((FirefoxCheckBox)sender).Checked;
         }
     }
 }

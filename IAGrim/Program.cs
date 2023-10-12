@@ -24,6 +24,7 @@ using IAGrim.Services;
 using IAGrim.Settings;
 using IAGrim.Utilities.Cloud;
 using IAGrim.Utilities.Detection;
+using IAGrim.Database.Synchronizer;
 
 namespace IAGrim {
     internal class Program {
@@ -202,6 +203,8 @@ namespace IAGrim {
                     Application.Run(new DonateNagScreen(settingsService));
 
                 Logger.Info("Running the main application..");
+
+                settingsService.GetLocal().IsGrimDawnParsed = serviceProvider.Get<IDatabaseItemDao>().GetRowCount() > 0;
 
                 StartupService.PerformGrimUpdateCheck(settingsService);
                 Application.Run(_mw);

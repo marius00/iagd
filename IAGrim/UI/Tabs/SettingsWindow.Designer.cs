@@ -29,6 +29,7 @@
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelBox4 = new PanelBox();
+            this.cbTransferAnyMod = new FirefoxCheckBox();
             this.cbAutoDismiss = new FirefoxCheckBox();
             this.cbDarkMode = new FirefoxCheckBox();
             this.cbStartMinimized = new FirefoxCheckBox();
@@ -100,6 +101,7 @@
             // panelBox4
             // 
             this.panelBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.panelBox4.Controls.Add(this.cbTransferAnyMod);
             this.panelBox4.Controls.Add(this.cbAutoDismiss);
             this.panelBox4.Controls.Add(this.cbDarkMode);
             this.panelBox4.Controls.Add(this.cbStartMinimized);
@@ -124,6 +126,21 @@
             this.panelBox4.Tag = "iatag_ui_settings_title";
             this.panelBox4.Text = "Settings";
             this.panelBox4.TextLocation = "8; 5";
+            // 
+            // cbTransferAnyMod
+            // 
+            this.cbTransferAnyMod.Bold = false;
+            this.cbTransferAnyMod.EnabledCalc = true;
+            this.cbTransferAnyMod.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbTransferAnyMod.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbTransferAnyMod.IsDarkMode = false;
+            this.cbTransferAnyMod.Location = new System.Drawing.Point(3, 318);
+            this.cbTransferAnyMod.Name = "cbTransferAnyMod";
+            this.cbTransferAnyMod.Size = new System.Drawing.Size(268, 27);
+            this.cbTransferAnyMod.TabIndex = 33;
+            this.cbTransferAnyMod.Tag = "iatag_ui_transferanymod";
+            this.cbTransferAnyMod.Text = "Transfer to any mod";
+            this.cbTransferAnyMod.CheckedChanged += new System.EventHandler(this.firefoxCheckBox1_CheckedChanged);
             // 
             // cbAutoDismiss
             // 
@@ -691,5 +708,6 @@
         private FirefoxCheckBox cbAutoDismiss;
         private System.Windows.Forms.LinkLabel linkDowngrade;
         private FirefoxButton firefoxButton1;
+        private FirefoxCheckBox cbTransferAnyMod;
     }
 }

@@ -311,6 +311,12 @@
     <Compile Include="UI\Popups\LootingModeScreen.Designer.cs">
       <DependentUpon>LootingModeScreen.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Popups\StashPicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Popups\StashPicker.designer.cs">
+      <DependentUpon>StashPicker.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Tabs\OnlineSettings.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -641,6 +647,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Popups\LootingModeScreen.resx">
       <DependentUpon>LootingModeScreen.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Popups\StashPicker.resx">
+      <DependentUpon>StashPicker.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Popups\StashTabPicker.resx">
       <DependentUpon>StashTabPicker.cs</DependentUpon>

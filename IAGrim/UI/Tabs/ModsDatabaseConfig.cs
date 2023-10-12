@@ -130,6 +130,8 @@ namespace IAGrim.UI {
         private void buttonForceUpdate_Click(object sender, EventArgs e) {
             _databaseItemDao.Clean();
 
+            var isGdParsed2 = _databaseItemDao.GetRowCount() > 0;
+
             var mod = GetFirst(listViewMods);
             var entry = GetFirst(listViewInstalls);
 

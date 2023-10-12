@@ -519,9 +519,7 @@ namespace IAGrim.Database {
         public Int64 GetRowCount() {
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
-                    return session.CreateCriteria<DatabaseItem>()
-                        .SetProjection(Projections.RowCountInt64())
-                        .UniqueResult<Int64>();
+                    return session.CreateSQLQuery("SELECT COUNT(*) as N FROM DatabaseItem").UniqueResult<Int64>();
                 }
             }
         }

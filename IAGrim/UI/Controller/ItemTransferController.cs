@@ -8,6 +8,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using IAGrim.UI.Misc;
+using IAGrim.Settings;
+using System.Windows.Forms;
+using static IAGrim.UI.StashPicker;
 
 namespace IAGrim.UI.Controller {
     internal class ItemTransferController {
@@ -16,17 +19,20 @@ namespace IAGrim.UI.Controller {
         private readonly Action<string> _setFeedback;
         private readonly CefBrowserHandler _browser;
         private readonly TransferStashService _transferStashService;
+        private readonly SettingsService _settingsService;
 
         public ItemTransferController(
             CefBrowserHandler browser,
             Action<string> feedback,
             IPlayerItemDao playerItemDao,
-            TransferStashService transferStashService
+            TransferStashService transferStashService,
+            SettingsService settingsService
             ) {
             _browser = browser;
             _setFeedback = feedback;
             _dao = playerItemDao;
             _transferStashService = transferStashService;
+            _settingsService = settingsService;
         }
 
 
@@ -70,9 +76,9 @@ namespace IAGrim.UI.Controller {
         }
 
 
-        private TransferStatus TransferItems(List<PlayerItem> items) {
+        private TransferStatus TransferItems(List<PlayerItem> items, StashPickerResult modOverride) {
             int numItemsReceived = (int)items.Sum(item => Math.Max(1, item.StackCount));
-            _transferStashService.Deposit(items);
+            _transferStashService.Deposit(items, modOverride);
             _dao.Update(items, true);
 
             return new TransferStatus {
@@ -90,8 +96,16 @@ namespace IAGrim.UI.Controller {
 
             List<PlayerItem> items = GetItemsForTransfer(args);
 
+            StashPickerResult modOverride = null;
             if (items?.Count > 0) {
-                var result = TransferItems(items);
+                if (_settingsService.GetPersistent().TransferAnyMod) {
+                    StashPicker picker = new StashPicker(_browser, _dao);
+                    if (picker.ShowDialog() == DialogResult.OK) {
+                        modOverride = picker.Result;
+                    }
+                }
+
+                var result = TransferItems(items, modOverride);
                 args.NumTransferred = result.NumItemsTransferred;
                 args.IsSuccessful = true;
                 var message = RuntimeSettings.Language.GetTag("iatag_stash3_success", result.NumItemsTransferred);
