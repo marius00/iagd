@@ -1,5 +1,6 @@
 #include "GrimTypes.h"
 #include "Logger.h"
+#include <boost/lexical_cast.hpp>
 
 namespace GAME {
 	std::wstring Serialize(GAME::ItemReplicaInfo replica) {
@@ -51,13 +52,13 @@ namespace GAME {
 		item->baseRecord = tokens.at(idx++);
 		item->prefixRecord = tokens.at(idx++);
 		item->suffixRecord = tokens.at(idx++);
-		item->seed = stoi(tokens.at(idx++));
+		item->seed = (unsigned int)stoul(tokens.at(idx++));
 		item->modifierRecord = tokens.at(idx++);
 		item->materiaRecord = tokens.at(idx++);
 		item->relicBonus = tokens.at(idx++);
-		item->relicSeed = stoi(tokens.at(idx++));
+		item->relicSeed = (unsigned int)stoul(tokens.at(idx++));
 		item->enchantmentRecord = tokens.at(idx++);
-		item->enchantmentSeed = stoi(tokens.at(idx++));
+		item->enchantmentSeed = (unsigned int)stoul(tokens.at(idx++));
 		item->transmuteRecord = tokens.at(idx++);
 
 		return item;
