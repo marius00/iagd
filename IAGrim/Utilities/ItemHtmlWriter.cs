@@ -51,10 +51,6 @@ namespace IAGrim.Utilities {
                 case BuddyItem bi:
                     // TODO: Remove this, buddy items are never transferable. Gotta provide a better unique id.
                     return $"BI/{bi.BuddyId}/{bi.RemoteItemId}";
-                case RecipeItem _:
-                    return $"RI/{item.BaseRecord}";
-                case AugmentationItem _:
-                    return $"AI/{item.BaseRecord}";
                 default:
                     return $"UK/{item.BaseRecord}";
             }
@@ -99,13 +95,6 @@ namespace IAGrim.Utilities {
             }
             else if (item is PlayerItem) {
                 type = ItemTypeDto.Player;
-            }
-            else if (item is AugmentationItem augmentationItem) {
-                type = ItemTypeDto.Augmentation;
-                extras = ItemOperationsUtility.TranslateFaction(
-                    RuntimeSettings.Language,
-                    augmentationItem.Tags.FirstOrDefault(m => m.Stat == "factionSource")?.TextValue ?? string.Empty
-                );
             }
             else {
                 type = ItemTypeDto.Unknown;

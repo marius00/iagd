@@ -664,6 +664,7 @@ namespace IAGrim.Database {
         }
 
 
+
         public List<PlayerItem> SearchForItems(ItemSearchRequest query) {
             Logger.Debug($"Searching for items with query {query}");
             var queryFragments = new List<string>();

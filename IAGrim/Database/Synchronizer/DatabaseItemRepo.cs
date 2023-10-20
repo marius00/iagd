@@ -51,23 +51,6 @@ namespace IAGrim.Database.Synchronizer {
         }
 
 
-        public DatabaseItemDto FindDtoByRecord(string record) {
-            return ThreadExecuter.Execute(
-                () => _repo.FindDtoByRecord(record)
-            );
-        }
-
-        public List<DatabaseItemDto> GetCraftableItems() {
-            return ThreadExecuter.Execute(
-                () => _repo.GetCraftableItems()
-            );
-        }
-
-        public List<DatabaseItemDto> GetByClass(string itemClass) {
-            return ThreadExecuter.Execute(
-                () => _repo.GetByClass(itemClass)
-            );
-        }
 
         public Dictionary<string, string> GetTagDictionary() {
             return ThreadExecuter.Execute(
@@ -105,11 +88,6 @@ namespace IAGrim.Database.Synchronizer {
             );
         }
 
-        public IList<RecipeItem> SearchForRecipeItems(ItemSearchRequest query) {
-            return ThreadExecuter.Execute(
-                () => _repo.SearchForRecipeItems(query)
-            );
-        }
 
         public void CreateItemIndexes(ProgressTracker progressTracker) {
             ThreadExecuter.Execute(

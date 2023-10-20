@@ -133,13 +133,9 @@ namespace IAGrim.Services {
                     ApplyStatsToBuddyItems(buddyItems);
                 }
 
-                // Augments sold by vendors, which the player doesn't necessarily own
-                var augmentItems = items.Where(m => (m as AugmentationItem) != null).ToList();
-                if (augmentItems.Count > 0) {
-                    ApplyStatsToAugmentations(augmentItems);
-                }
 
-                var remaining = items.Where(m => !IsPlayerItem(m) && !IsBuddyItem(m) && !augmentItems.Contains(m))
+
+                var remaining = items.Where(m => !IsPlayerItem(m) && !IsBuddyItem(m))
                     .ToList();
                 if (remaining.Count > 0) {
                     ApplyStatsToRecipeItems(remaining);

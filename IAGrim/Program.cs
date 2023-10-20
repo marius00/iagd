@@ -150,7 +150,6 @@ namespace IAGrim {
 
             var settingsService = serviceProvider.Get<SettingsService>();
             var databaseItemDao = serviceProvider.Get<IDatabaseItemDao>();
-            var augmentationItemRepo = serviceProvider.Get<IAugmentationItemDao>();
             RuntimeSettings.InitializeLanguage(settingsService.GetLocal().LocalizationFile, databaseItemDao.GetTagDictionary());
             DumpTranslationTemplate();
 
@@ -159,9 +158,6 @@ namespace IAGrim {
 
             Logger.Debug("Loading UUID");
             LoadUuid(settingsService);
-
-            Logger.Debug("Updating augment state..");
-            augmentationItemRepo.UpdateState();
 
             var itemTagDao = serviceProvider.Get<IItemTagDao>();
             var databaseItemStatDao = serviceProvider.Get<IDatabaseItemStatDao>();

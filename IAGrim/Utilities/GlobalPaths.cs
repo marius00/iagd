@@ -77,27 +77,6 @@ namespace IAGrim.Utilities {
         }
 
 
-        /// <summary>
-        /// Return the formula files for GD
-        /// Does not account for mods
-        /// </summary>
-        public static string[] FormulasFiles {
-            get {
-                string documents = SavePath;
-                string formulasSoftcore = Path.Combine(documents, "formulas.gst");
-                string formulasHardcore = Path.Combine(documents, "formulas.gsh");
-
-                if (!File.Exists(formulasSoftcore))
-                    formulasSoftcore = string.Empty;
-
-                if (!File.Exists(formulasHardcore))
-                    formulasHardcore = string.Empty;
-
-                return new string[] {formulasSoftcore, formulasHardcore};
-            }
-        }
-
-
         public static bool IsHardcore(string filename) {
             return filename.EndsWith(".gsh") || filename.EndsWith(".csh") || filename.EndsWith(".bsh");
         }

@@ -35,13 +35,9 @@
             this.cbStartMinimized = new FirefoxCheckBox();
             this.helpWhatIsUsingMultiplePc = new System.Windows.Forms.LinkLabel();
             this.cbMinimizeToTray = new FirefoxCheckBox();
-            this.helpWhatIsAugmentAsItem = new System.Windows.Forms.LinkLabel();
-            this.helpWhatIsRecipeAsItems = new System.Windows.Forms.LinkLabel();
-            this.cbShowAugments = new FirefoxCheckBox();
             this.cbDualComputer = new FirefoxCheckBox();
             this.linkSourceCode = new System.Windows.Forms.LinkLabel();
             this.cbHideSkills = new FirefoxCheckBox();
-            this.cbShowRecipesAsItems = new FirefoxCheckBox();
             this.pbAutomaticUpdates = new PanelBox();
             this.linkDowngrade = new System.Windows.Forms.LinkLabel();
             this.linkCheckForUpdates = new System.Windows.Forms.LinkLabel();
@@ -107,13 +103,9 @@
             this.panelBox4.Controls.Add(this.cbStartMinimized);
             this.panelBox4.Controls.Add(this.helpWhatIsUsingMultiplePc);
             this.panelBox4.Controls.Add(this.cbMinimizeToTray);
-            this.panelBox4.Controls.Add(this.helpWhatIsAugmentAsItem);
-            this.panelBox4.Controls.Add(this.helpWhatIsRecipeAsItems);
-            this.panelBox4.Controls.Add(this.cbShowAugments);
             this.panelBox4.Controls.Add(this.cbDualComputer);
             this.panelBox4.Controls.Add(this.linkSourceCode);
             this.panelBox4.Controls.Add(this.cbHideSkills);
-            this.panelBox4.Controls.Add(this.cbShowRecipesAsItems);
             this.panelBox4.Font = new System.Drawing.Font("Segoe UI Semibold", 20F);
             this.panelBox4.ForeColor = System.Drawing.Color.Black;
             this.panelBox4.HeaderColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(231)))), ((int)(((byte)(231)))));
@@ -134,7 +126,7 @@
             this.cbTransferAnyMod.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbTransferAnyMod.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.cbTransferAnyMod.IsDarkMode = false;
-            this.cbTransferAnyMod.Location = new System.Drawing.Point(3, 318);
+            this.cbTransferAnyMod.Location = new System.Drawing.Point(3, 249);
             this.cbTransferAnyMod.Name = "cbTransferAnyMod";
             this.cbTransferAnyMod.Size = new System.Drawing.Size(268, 27);
             this.cbTransferAnyMod.TabIndex = 33;
@@ -149,7 +141,7 @@
             this.cbAutoDismiss.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbAutoDismiss.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.cbAutoDismiss.IsDarkMode = false;
-            this.cbAutoDismiss.Location = new System.Drawing.Point(3, 285);
+            this.cbAutoDismiss.Location = new System.Drawing.Point(3, 216);
             this.cbAutoDismiss.Name = "cbAutoDismiss";
             this.cbAutoDismiss.Size = new System.Drawing.Size(268, 27);
             this.cbAutoDismiss.TabIndex = 32;
@@ -164,7 +156,7 @@
             this.cbDarkMode.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbDarkMode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.cbDarkMode.IsDarkMode = false;
-            this.cbDarkMode.Location = new System.Drawing.Point(3, 252);
+            this.cbDarkMode.Location = new System.Drawing.Point(3, 183);
             this.cbDarkMode.Name = "cbDarkMode";
             this.cbDarkMode.Size = new System.Drawing.Size(268, 27);
             this.cbDarkMode.TabIndex = 31;
@@ -179,7 +171,7 @@
             this.cbStartMinimized.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbStartMinimized.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.cbStartMinimized.IsDarkMode = false;
-            this.cbStartMinimized.Location = new System.Drawing.Point(3, 219);
+            this.cbStartMinimized.Location = new System.Drawing.Point(3, 150);
             this.cbStartMinimized.Name = "cbStartMinimized";
             this.cbStartMinimized.Size = new System.Drawing.Size(268, 27);
             this.cbStartMinimized.TabIndex = 30;
@@ -193,7 +185,7 @@
             this.helpWhatIsUsingMultiplePc.AutoSize = true;
             this.helpWhatIsUsingMultiplePc.BackColor = System.Drawing.Color.Transparent;
             this.helpWhatIsUsingMultiplePc.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.helpWhatIsUsingMultiplePc.Location = new System.Drawing.Point(259, 160);
+            this.helpWhatIsUsingMultiplePc.Location = new System.Drawing.Point(259, 91);
             this.helpWhatIsUsingMultiplePc.Name = "helpWhatIsUsingMultiplePc";
             this.helpWhatIsUsingMultiplePc.Size = new System.Drawing.Size(18, 13);
             this.helpWhatIsUsingMultiplePc.TabIndex = 28;
@@ -209,57 +201,12 @@
             this.cbMinimizeToTray.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbMinimizeToTray.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.cbMinimizeToTray.IsDarkMode = false;
-            this.cbMinimizeToTray.Location = new System.Drawing.Point(3, 186);
+            this.cbMinimizeToTray.Location = new System.Drawing.Point(3, 117);
             this.cbMinimizeToTray.Name = "cbMinimizeToTray";
             this.cbMinimizeToTray.Size = new System.Drawing.Size(268, 27);
             this.cbMinimizeToTray.TabIndex = 8;
             this.cbMinimizeToTray.Tag = "iatag_ui_minimizetotray";
             this.cbMinimizeToTray.Text = "Minimize to Tray";
-            // 
-            // helpWhatIsAugmentAsItem
-            // 
-            this.helpWhatIsAugmentAsItem.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.helpWhatIsAugmentAsItem.AutoSize = true;
-            this.helpWhatIsAugmentAsItem.BackColor = System.Drawing.Color.Transparent;
-            this.helpWhatIsAugmentAsItem.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.helpWhatIsAugmentAsItem.Location = new System.Drawing.Point(259, 127);
-            this.helpWhatIsAugmentAsItem.Name = "helpWhatIsAugmentAsItem";
-            this.helpWhatIsAugmentAsItem.Size = new System.Drawing.Size(18, 13);
-            this.helpWhatIsAugmentAsItem.TabIndex = 24;
-            this.helpWhatIsAugmentAsItem.TabStop = true;
-            this.helpWhatIsAugmentAsItem.Tag = "iatag_ui_questionmark";
-            this.helpWhatIsAugmentAsItem.Text = " ? ";
-            this.helpWhatIsAugmentAsItem.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpWhatIsAugmentAsItem_LinkClicked);
-            // 
-            // helpWhatIsRecipeAsItems
-            // 
-            this.helpWhatIsRecipeAsItems.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.helpWhatIsRecipeAsItems.AutoSize = true;
-            this.helpWhatIsRecipeAsItems.BackColor = System.Drawing.Color.Transparent;
-            this.helpWhatIsRecipeAsItems.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.helpWhatIsRecipeAsItems.Location = new System.Drawing.Point(259, 61);
-            this.helpWhatIsRecipeAsItems.Name = "helpWhatIsRecipeAsItems";
-            this.helpWhatIsRecipeAsItems.Size = new System.Drawing.Size(18, 13);
-            this.helpWhatIsRecipeAsItems.TabIndex = 21;
-            this.helpWhatIsRecipeAsItems.TabStop = true;
-            this.helpWhatIsRecipeAsItems.Tag = "iatag_ui_questionmark";
-            this.helpWhatIsRecipeAsItems.Text = " ? ";
-            this.helpWhatIsRecipeAsItems.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpWhatIsRecipeAsItems_LinkClicked);
-            // 
-            // cbShowAugments
-            // 
-            this.cbShowAugments.Bold = false;
-            this.cbShowAugments.EnabledCalc = true;
-            this.cbShowAugments.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cbShowAugments.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbShowAugments.IsDarkMode = false;
-            this.cbShowAugments.Location = new System.Drawing.Point(3, 120);
-            this.cbShowAugments.Name = "cbShowAugments";
-            this.cbShowAugments.Size = new System.Drawing.Size(268, 27);
-            this.cbShowAugments.TabIndex = 23;
-            this.cbShowAugments.Tag = "iatag_ui_showaugments";
-            this.cbShowAugments.Text = "Show augments as Items";
-            this.cbShowAugments.CheckedChanged += new System.EventHandler(this.cbShowAugments_CheckedChanged);
             // 
             // cbDualComputer
             // 
@@ -268,7 +215,7 @@
             this.cbDualComputer.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbDualComputer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.cbDualComputer.IsDarkMode = false;
-            this.cbDualComputer.Location = new System.Drawing.Point(3, 153);
+            this.cbDualComputer.Location = new System.Drawing.Point(3, 84);
             this.cbDualComputer.Name = "cbDualComputer";
             this.cbDualComputer.Size = new System.Drawing.Size(268, 27);
             this.cbDualComputer.TabIndex = 22;
@@ -297,28 +244,13 @@
             this.cbHideSkills.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cbHideSkills.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
             this.cbHideSkills.IsDarkMode = false;
-            this.cbHideSkills.Location = new System.Drawing.Point(3, 87);
+            this.cbHideSkills.Location = new System.Drawing.Point(3, 51);
             this.cbHideSkills.Name = "cbHideSkills";
             this.cbHideSkills.Size = new System.Drawing.Size(268, 27);
             this.cbHideSkills.TabIndex = 17;
             this.cbHideSkills.Tag = "iatag_ui_hideskills";
             this.cbHideSkills.Text = "Hide Skills";
             this.cbHideSkills.CheckedChanged += new System.EventHandler(this.cbDisplaySkills_CheckedChanged);
-            // 
-            // cbShowRecipesAsItems
-            // 
-            this.cbShowRecipesAsItems.Bold = false;
-            this.cbShowRecipesAsItems.EnabledCalc = true;
-            this.cbShowRecipesAsItems.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cbShowRecipesAsItems.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbShowRecipesAsItems.IsDarkMode = false;
-            this.cbShowRecipesAsItems.Location = new System.Drawing.Point(3, 54);
-            this.cbShowRecipesAsItems.Name = "cbShowRecipesAsItems";
-            this.cbShowRecipesAsItems.Size = new System.Drawing.Size(268, 27);
-            this.cbShowRecipesAsItems.TabIndex = 7;
-            this.cbShowRecipesAsItems.Tag = "iatag_ui_showrecipesasitems";
-            this.cbShowRecipesAsItems.Text = "Show recipes as items";
-            this.cbShowRecipesAsItems.CheckedChanged += new System.EventHandler(this.cbShowRecipesAsItems_CheckedChanged);
             // 
             // pbAutomaticUpdates
             // 
@@ -684,7 +616,6 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
         private FirefoxCheckBox cbMinimizeToTray;
-        private FirefoxCheckBox cbShowRecipesAsItems;
         private PanelBox panelBox4;
         private FirefoxButton buttonLanguageSelect;
         private FirefoxButton buttonMigratePostgres;
@@ -693,10 +624,7 @@
         private FirefoxButton buttonAdvancedSettings;
         private System.Windows.Forms.LinkLabel linkSourceCode;
         private FirefoxCheckBox cbDualComputer;
-        private FirefoxCheckBox cbShowAugments;
         private FirefoxButton buttonDevTools;
-        private System.Windows.Forms.LinkLabel helpWhatIsRecipeAsItems;
-        private System.Windows.Forms.LinkLabel helpWhatIsAugmentAsItem;
         private System.Windows.Forms.LinkLabel helpWhatIsUsingMultiplePc;
         private System.Windows.Forms.Button buttonPaypal;
         private System.Windows.Forms.Button buttonPatreon;

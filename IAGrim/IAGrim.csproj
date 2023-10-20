@@ -342,7 +342,6 @@
     <Compile Include="Backup\FileWriter\FileExporter.cs" />
     <Compile Include="Backup\FileWriter\GDFileExporter.cs" />
     <Compile Include="Backup\FileWriter\IAFileExporter.cs" />
-    <Compile Include="Database\DAO\AugmentationItemDaoImpl.cs" />
     <Compile Include="Database\DAO\BuddyItemDaoImpl.cs" />
     <Compile Include="Database\DAO\DatabaseItemStatDaoImpl.cs" />
     <Compile Include="Database\DAO\Dto\StatFetch.cs" />
@@ -350,7 +349,6 @@
     <Compile Include="Database\DAO\Util\ItemOperationsUtility.cs" />
     <Compile Include="Database\DAO\ItemSkillDaoImpl.cs" />
     <Compile Include="Database\DAO\ItemTagDaoImpl.cs" />
-    <Compile Include="Database\DAO\RecipeItemDaoImpl.cs" />
     <Compile Include="Database\DAO\Table\BuddyItemRecordTable.cs" />
     <Compile Include="Database\DAO\Table\BuddyItemsTable.cs" />
     <Compile Include="Database\DAO\Table\DatabaseItemStatTable.cs" />
@@ -364,7 +362,6 @@
     <Compile Include="Database\DAO\Table\SkillTable.cs" />
     <Compile Include="Database\Dto\ModSelection.cs" />
     <Compile Include="Database\Dto\ItemSearchRequest.cs" />
-    <Compile Include="Database\Interfaces\IAugmentationItemDao.cs" />
     <Compile Include="Database\Interfaces\IBuddyItemDao.cs" />
     <Compile Include="Database\Interfaces\IBuddySubscriptionDao.cs" />
     <Compile Include="Database\Interfaces\IDatabaseItemDao.cs" />
@@ -373,26 +370,21 @@
     <Compile Include="Database\Interfaces\IItemSkillDao.cs" />
     <Compile Include="Database\Interfaces\IItemTagDao.cs" />
     <Compile Include="Database\Interfaces\IPlayerItemDao.cs" />
-    <Compile Include="Database\Interfaces\IRecipeItemDao.cs" />
     <Compile Include="Database\Migrations\DatabaseItemHashFixMigration.cs" />
     <Compile Include="Database\Migrations\IDatabaseMigration.cs" />
     <Compile Include="Database\Migrations\MigrationHandler.cs" />
-    <Compile Include="Database\Model\AugmentationItem.cs" />
     <Compile Include="Database\Model\BaseItem.cs" />
-    <Compile Include="Database\Model\DatabaseItemDto.cs" />
     <Compile Include="Database\Model\DeletedPlayerItem.cs" />
     <Compile Include="Database\Model\ItemSkill.cs" />
     <Compile Include="Database\Model\ItemTag.cs" />
     <Compile Include="Database\Model\PlayerItemRecord.cs" />
     <Compile Include="Database\Model\PlayerItemSkill.cs" />
-    <Compile Include="Database\Model\RecipeDbStatRow.cs" />
     <Compile Include="Database\Model\RecordCollection.cs" />
     <Compile Include="Database\Model\SetBonusRecord.cs" />
     <Compile Include="Database\Model\SkillModifierStat.cs" />
     <Compile Include="Database\SessionFactoryLoader\SessionFactory.cs" />
     <Compile Include="Database\SearchResult.cs" />
     <Compile Include="Database\Synchronizer\BasicSynchronizer.cs" />
-    <Compile Include="Database\Synchronizer\AugmentationItemRepo.cs" />
     <Compile Include="Database\Synchronizer\BuddyItemRepo.cs" />
     <Compile Include="Database\Synchronizer\BuddySubscriptionRepo.cs" />
     <Compile Include="Database\Synchronizer\Core\ThreadExecuter.cs" />
@@ -401,7 +393,6 @@
     <Compile Include="Database\Synchronizer\DatabaseItemStatRepo.cs" />
     <Compile Include="Database\Synchronizer\ItemSkillRepo.cs" />
     <Compile Include="Database\Synchronizer\PlayerItemRepo.cs" />
-    <Compile Include="Database\Synchronizer\RecipeItemRepo.cs" />
     <Compile Include="Parsers\Arz\ArzParser.cs" />
     <Compile Include="Parsers\Arz\ComplexItemParser.cs" />
     <Compile Include="Parsers\Arz\dto\ItemGrantedSkill.cs" />
@@ -422,7 +413,6 @@
     <Compile Include="Database\DAO\DatabaseItemDaoImpl.cs" />
     <Compile Include="Database\Model\DatabaseSetting.cs" />
     <Compile Include="Database\Model\PlayerItem.cs" />
-    <Compile Include="Database\Model\RecipeItem.cs" />
     <Compile Include="Database\DAO\SessionFactory.cs" />
     <Compile Include="Parsers\GameDataParsing\Model\ItemAccumulator.cs" />
     <Compile Include="Parsers\GameDataParsing\Model\ItemTagAccumulator.cs" />
@@ -437,7 +427,6 @@
     <Compile Include="Parsers\GameDataParsing\UI\ParsingDatabaseProgressView.Designer.cs">
       <DependentUpon>ParsingDatabaseProgressView.cs</DependentUpon>
     </Compile>
-    <Compile Include="Parsers\RecipeParser.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -696,9 +685,6 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Database\Model\PlayerItemRecord.hbm.xml" />
-    <EmbeddedResource Include="Database\Model\AugmentationItem.hbm.xml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <None Include="Resources\arrow.bmp" />
     <None Include="Resources\arrow.png" />
     <None Include="Resources\2_Arrow_circle_history_refresh-512.png" />
@@ -819,9 +805,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Database\Model\DatabaseItemStat.hbm.xml" />
     <EmbeddedResource Include="Database\Model\BuddySubscription.hbm.xml" />
-    <EmbeddedResource Include="Database\Model\RecipeItem.hbm.xml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Database\Model\ItemTag.hbm.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>

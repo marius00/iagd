@@ -1,24 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using IAGrim.Database;
 using IAGrim.Database.DAO;
 using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Interfaces;
-using IAGrim.Database.Migrations;
 using IAGrim.Database.Synchronizer;
 using IAGrim.Database.Synchronizer.Core;
-using IAGrim.Parsers;
-using IAGrim.Parsers.Arz;
-using IAGrim.Parsers.GameDataParsing.Service;
 using IAGrim.Parsers.TransferStash;
 using IAGrim.Services.MessageProcessor;
-using IAGrim.Settings;
 using IAGrim.UI.Controller;
-using IAGrim.UI.Misc.CEF;
-using IAGrim.Utilities;
 using log4net;
 
 namespace IAGrim.Services {
@@ -65,9 +56,7 @@ namespace IAGrim.Services {
             IItemTagDao itemTagDao;
             IBuddyItemDao buddyItemDao;
             IBuddySubscriptionDao buddySubscriptionDao;
-            IRecipeItemDao recipeItemDao;
             IItemSkillDao itemSkillDao;
-            IAugmentationItemDao augmentationItemRepo;
             IItemCollectionDao itemCollectionRepo;
             IReplicaItemDao replicaItemDao;
             IBuddyReplicaItemDao buddyReplicaItemDao;
@@ -79,9 +68,7 @@ namespace IAGrim.Services {
                 itemTagDao = new ItemTagRepo(threadExecuter, factory, dialect);
                 buddyItemDao = new BuddyItemRepo(threadExecuter, factory, dialect);
                 buddySubscriptionDao = new BuddySubscriptionRepo(threadExecuter, factory, dialect);
-                recipeItemDao = new RecipeItemRepo(threadExecuter, factory, dialect);
                 itemSkillDao = new ItemSkillRepo(threadExecuter, factory);
-                augmentationItemRepo = new AugmentationItemRepo(threadExecuter, factory, new DatabaseItemStatDaoImpl(factory, dialect), dialect);
                 itemCollectionRepo = new ItemCollectionRepo(threadExecuter, factory, dialect);
                 replicaItemDao = new ItemReplicaRepo(threadExecuter, factory, dialect);
                 buddyReplicaItemDao = new BuddyItemReplicaRepo(threadExecuter, factory, dialect);
@@ -93,9 +80,7 @@ namespace IAGrim.Services {
                 itemTagDao = new ItemTagDaoImpl(factory, dialect);
                 buddyItemDao = new BuddyItemDaoImpl(factory, databaseItemStatDao, dialect);
                 buddySubscriptionDao = new BuddySubscriptionDaoImpl(factory, dialect);
-                recipeItemDao = new RecipeItemDaoImpl(factory, dialect);
                 itemSkillDao = new ItemSkillDaoImpl(factory);
-                augmentationItemRepo = new AugmentationItemDaoImpl(factory, databaseItemStatDao, dialect);
                 itemCollectionRepo = new ItemCollectionDaoImpl(factory, dialect);
                 replicaItemDao = new ReplicaItemDaoImpl(factory, dialect);
                 buddyReplicaItemDao = new BuddyReplicaItemDaoImpl(factory, dialect);
@@ -105,11 +90,9 @@ namespace IAGrim.Services {
             // Chicken and the egg..
             var itemStatService = new ItemStatService(databaseItemStatDao, itemSkillDao, settingsService);
             SearchController searchController = new SearchController(
-                databaseItemDao,
                 playerItemDao,
                 itemStatService,
                 buddyItemDao,
-                augmentationItemRepo,
                 settingsService,
                 itemCollectionRepo
             );
@@ -122,11 +105,9 @@ namespace IAGrim.Services {
             services.Add(buddyItemDao);
             services.Add(buddySubscriptionDao);
             services.Add(itemSkillDao);
-            services.Add(augmentationItemRepo);
             
             services.Add(settingsService);
             services.Add(grimDawnDetector);
-            services.Add(recipeItemDao);
             services.Add(itemCollectionRepo);
             services.Add(searchController);
             services.Add(new ItemReplicaService(playerItemDao, buddyItemDao));

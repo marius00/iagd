@@ -65,7 +65,6 @@ namespace IAGrim.UI {
         private BuddyItemsService _buddyItemsService;
         private BackgroundTask _backupBackgroundTask;
         private ItemTransferController _transferController;
-        private readonly RecipeParser _recipeParser;
         private readonly ParsingService _parsingService;
         private AuthService _authService;
         private BackupServiceWorker _backupServiceWorker;
@@ -194,7 +193,6 @@ namespace IAGrim.UI {
             var settingsService = _serviceProvider.Get<SettingsService>();
             _automaticUpdateChecker = new AutomaticUpdateChecker(settingsService);
             _settingsController = new SettingsController(settingsService);
-            _recipeParser = new RecipeParser(serviceProvider.Get<IRecipeItemDao>());
             _parsingService = parsingService;
             _userFeedbackService = new UserFeedbackService(_cefBrowserHandler);
         }
@@ -459,15 +457,6 @@ namespace IAGrim.UI {
                 timer.Tick += TimerTickLookForGrimDawn;
                 timer.Interval = 10000;
                 timer.Start();
-            }
-
-            // Load recipes
-            foreach (string file in GlobalPaths.FormulasFiles) {
-                if (!string.IsNullOrEmpty(file)) {
-                    bool isHardcore = file.EndsWith("gsh");
-                    Logger.InfoFormat("Reading recipes at \"{0}\", IsHardcore={1}", file, isHardcore);
-                    _recipeParser.UpdateFormulas(file, isHardcore);
-                }
             }
 
             

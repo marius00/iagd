@@ -14,8 +14,6 @@ namespace IAGrim.Services {
             BuddyItems,
             CloudSavesEnabled,
             CannotFindGrimdawn,
-            ShowRecipesAsItems,
-            ShowAugmentsAsItems,
             TransferToAnyMod,
             RestoreBackup,
             DuplicateItem,

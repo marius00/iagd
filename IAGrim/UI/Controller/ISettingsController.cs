@@ -8,7 +8,6 @@ namespace IAGrim.UI.Controller {
     [Obsolete]
     interface ISettingsController {
         bool MinimizeToTray { get; set; }
-        bool ShowRecipesAsItems { get; set; }
 
         void LoadDefaults();
 

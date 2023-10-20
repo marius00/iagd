@@ -12,10 +12,8 @@ namespace IAGrim.Settings.Dto {
 
         // Settings
         private bool _subscribeExperimentalUpdates;
-        private bool _showRecipesAsItems;
         private bool _minimizeToTray;
         private bool _usingDualComputer;
-        private bool _showAugmentsAsItems;
         private bool _mergeDuplicates;
         private bool _transferAnyMod;
         private bool _darkMode;
@@ -51,14 +49,6 @@ namespace IAGrim.Settings.Dto {
             }
         }
 
-        public bool ShowRecipesAsItems {
-            get => _showRecipesAsItems;
-            set {
-                _showRecipesAsItems = value;
-                OnMutate?.Invoke(null, null);
-            }
-        }
-
         public bool MinimizeToTray {
             get => _minimizeToTray;
             set {
@@ -71,14 +61,6 @@ namespace IAGrim.Settings.Dto {
             get => _usingDualComputer;
             set {
                 _usingDualComputer = value;
-                OnMutate?.Invoke(null, null);
-            }
-        }
-
-        public bool ShowAugmentsAsItems {
-            get => _showAugmentsAsItems;
-            set {
-                _showAugmentsAsItems = value;
                 OnMutate?.Invoke(null, null);
             }
         }

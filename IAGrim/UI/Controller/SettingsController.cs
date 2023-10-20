@@ -25,7 +25,6 @@ namespace IAGrim.UI.Controller {
         public void LoadDefaults() {
             MinimizeToTray = _settings.GetPersistent().MinimizeToTray;
             MergeDuplicates = _settings.GetPersistent().MergeDuplicates;
-            ShowRecipesAsItems = _settings.GetPersistent().ShowRecipesAsItems;
             AutoUpdateModSettings = _settings.GetPersistent().AutoUpdateModSettings;
             HideSkills = _settings.GetPersistent().HideSkills;
         }
@@ -51,16 +50,6 @@ namespace IAGrim.UI.Controller {
             }
         }
 
-        /// <summary>
-        /// List recipes along with items
-        /// </summary>
-        public bool ShowRecipesAsItems {
-            get => _settings.GetPersistent().ShowRecipesAsItems;
-            set {
-                _settings.GetPersistent().ShowRecipesAsItems = value;
-                OnPropertyChanged();
-            }
-        }
 
         public bool HideSkills {
             get => _settings.GetPersistent().HideSkills;

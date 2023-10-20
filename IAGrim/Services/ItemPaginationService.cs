@@ -74,28 +74,11 @@ namespace IAGrim.Services {
                            && bi1.SuffixRecord == bi2.SuffixRecord;
 
                 }
-            } else if (a is RecipeItem ri1) {
-                if (b is RecipeItem ri2) {
-                    return ri1.BaseRecord == ri2.BaseRecord;
-                }
             }
 
             return false;
         }
 
-        private bool IsIdenticalToExistingList(List<PlayerHeldItem> newList) {
-            if (newList.Count != _items.Count)
-                return false;
-
-            // O(n^2)
-            foreach (var item in newList) {
-                if (!_items.Any(existing => Compare(existing, item))) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
 
         public bool Update(List<PlayerHeldItem> items, bool orderByLevel) {
             // TODO: Figure out why this is causing issues for some users, suspect it may be that the setItems is done before the view is rendered, thus ending up without any view at all.

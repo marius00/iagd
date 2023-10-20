@@ -12,11 +12,6 @@ namespace IAGrim.Database.Interfaces {
         IList<string> ListAllRecords();
 
         long GetRowCount();
-        IList<RecipeItem> SearchForRecipeItems(ItemSearchRequest query);
-
-        DatabaseItemDto FindDtoByRecord(string record);
-        List<DatabaseItemDto> GetCraftableItems();
-        List<DatabaseItemDto> GetByClass(string itemClass);
         IList<ItemSetAssociation> GetItemSetAssociations();
         IList<string> GetSpecialStackableRecords();
         IList<string> GetStackableComponentsPotionsMisc();

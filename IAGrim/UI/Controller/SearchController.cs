@@ -20,12 +20,10 @@ namespace IAGrim.UI.Controller {
         private const int TakeSize = 64;
 
         private static readonly ILog Logger = LogManager.GetLogger(typeof(SearchController));
-        private readonly IDatabaseItemDao _dbItemDao;
         private readonly IPlayerItemDao _playerItemDao;
         private readonly ItemStatService _itemStatService;
         private readonly IBuddyItemDao _buddyItemDao;
         private readonly ItemPaginationService _itemPaginationService;
-        private readonly IAugmentationItemDao _augmentationItemRepo;
         private readonly SettingsService _settings;
         private readonly IItemCollectionDao _itemCollectionRepo;
 
@@ -35,19 +33,15 @@ namespace IAGrim.UI.Controller {
         public event EventHandler OnSearch;
 
         public SearchController(
-            IDatabaseItemDao databaseItemDao,
             IPlayerItemDao playerItemDao,
             ItemStatService itemStatService,
             IBuddyItemDao buddyItemDao,
-            IAugmentationItemDao augmentationItemRepo,
             SettingsService settings,
             IItemCollectionDao itemCollectionRepo) {
-            _dbItemDao = databaseItemDao;
             _playerItemDao = playerItemDao;
             _itemStatService = itemStatService;
             _itemPaginationService = new ItemPaginationService(TakeSize);
             _buddyItemDao = buddyItemDao;
-            _augmentationItemRepo = augmentationItemRepo;
             _settings = settings;
             _itemCollectionRepo = itemCollectionRepo;
 
@@ -124,14 +118,6 @@ namespace IAGrim.UI.Controller {
                     : string.Empty;
             }
 
-            if (!duplicatesOnly && _settings.GetPersistent().ShowRecipesAsItems && !query.SocketedOnly) {
-                AddRecipeItems(items, query);
-            }
-
-            if (!duplicatesOnly && _settings.GetPersistent().ShowAugmentsAsItems && !query.SocketedOnly) {
-                AddAugmentItems(items, query);
-            }
-
             if (_itemPaginationService.Update(items, orderByLevel)) {
                 if (!ApplyItems(false)) {
                     Browser.SetItems(new List<List<JsonItem>>(0), 0);
@@ -155,27 +141,6 @@ namespace IAGrim.UI.Controller {
             else {
                 message = RuntimeSettings.Language.GetTag("iatag_items_found_selfonly", items.Count);
             }
-        }
-
-        private void AddAugmentItems(List<PlayerHeldItem> items, ItemSearchRequest query) {
-            var augments = _augmentationItemRepo.Search(query);
-            var remainingRecipes = augments.Where(recipe => items.All(item => item.BaseRecord != recipe.BaseRecord));
-            items.AddRange(remainingRecipes);
-        }
-
-        private void AddRecipeItems(List<PlayerHeldItem> items, ItemSearchRequest query) {
-            var recipes = _dbItemDao.SearchForRecipeItems(query);
-
-            var itemsWithRecipe = items.FindAll(item => recipes.Any(recipe => recipe.BaseRecord == item.BaseRecord));
-            foreach (var item in items) {
-                if (itemsWithRecipe.Any(recipe => recipe.BaseRecord == item.BaseRecord)) {
-                    item.HasRecipe = true;
-                }
-            }
-
-            // TODO: This should use .Except(), find out why its not working with .Except()
-            var remainingRecipes = recipes.Where(recipe => itemsWithRecipe.All(item => item.BaseRecord != recipe.BaseRecord));
-            items.AddRange(remainingRecipes);
         }
 
     }

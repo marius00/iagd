@@ -60,7 +60,6 @@ namespace IAGrim.UI.Tabs {
 
             _controller.BindCheckbox(cbMinimizeToTray);
 
-            _controller.BindCheckbox(cbShowRecipesAsItems);
             _controller.BindCheckbox(cbHideSkills);
             _controller.LoadDefaults();
 
@@ -76,7 +75,6 @@ namespace IAGrim.UI.Tabs {
             radioBeta.Checked = _settings.GetPersistent().SubscribeExperimentalUpdates;
             radioRelease.Checked = !_settings.GetPersistent().SubscribeExperimentalUpdates;
             cbDualComputer.Checked = _settings.GetPersistent().UsingDualComputer;
-            cbShowAugments.Checked = _settings.GetPersistent().ShowAugmentsAsItems;
             cbStartMinimized.Checked = _settings.GetLocal().StartMinimized;
             cbDarkMode.Checked = _settings.GetPersistent().DarkMode;
             cbAutoDismiss.Checked = _settings.GetPersistent().AutoDismissNotifications;
@@ -153,22 +151,11 @@ namespace IAGrim.UI.Tabs {
             _settings.GetPersistent().UsingDualComputer = (sender as FirefoxCheckBox).Checked;
         }
 
-        private void cbShowAugments_CheckedChanged(object sender, EventArgs e) {
-            _settings.GetPersistent().ShowAugmentsAsItems = (sender as FirefoxCheckBox).Checked;
-        }
 
         private void buttonDevTools_Click(object sender, EventArgs e) {
             _cefBrowserHandler.ShowDevTools();
         }
 
-        private void helpWhatIsRecipeAsItems_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            _cefBrowserHandler.ShowHelp(HelpService.HelpType.ShowRecipesAsItems);
-        }
-
-        private void helpWhatIsAugmentAsItem_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            _cefBrowserHandler.ShowHelp(HelpService.HelpType.ShowAugmentsAsItems);
-
-        }
 
         private void helpWhatIsUsingMultiplePc_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             _cefBrowserHandler.ShowHelp(HelpService.HelpType.MultiplePcs);

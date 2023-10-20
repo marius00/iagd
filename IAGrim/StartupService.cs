@@ -79,9 +79,6 @@ namespace IAGrim {
                         Logger.Info($"There are {numItemsStored} items stored in the database.");
                 }
 
-                Logger.Info(settings.GetPersistent().ShowRecipesAsItems
-                    ? "Show recipes as items is enabled"
-                    : "Show recipes as items is disabled");
 
                 Logger.Info("Transfer to any mod is " + (settings.GetPersistent().TransferAnyMod ? "enabled" : "disabled"));
                 Logger.Info("Experimental updates is " + (settings.GetPersistent().SubscribeExperimentalUpdates ? "enabled" : "disabled"));
