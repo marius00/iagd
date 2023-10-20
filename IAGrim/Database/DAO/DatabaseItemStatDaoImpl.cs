@@ -112,65 +112,6 @@ namespace IAGrim.Database {
         }
 
         
-        public string GetSkillName(string skillRecord) {
-
-            // TODO:
-            // buffSkillName => New query, nature's blessing is a buff and thus has no name on the root
-            string sql = $" SELECT t.{ItemTagTable.Name} FROM {DatabaseItemTable.Table} i, {DatabaseItemStatTable.Table} s, {ItemTagTable.Table} t " +
-                         $" WHERE {DatabaseItemStatTable.Stat} = 'skillDisplayName' " +
-                         $" AND s.{DatabaseItemStatTable.Item} = i.{DatabaseItemTable.Id} " +
-                         $" AND i.{DatabaseItemTable.Record} = :record " +
-                         $" AND t.{ItemTagTable.Id} = s.{DatabaseItemStatTable.TextValue} ";
-
-            using (var session = SessionCreator.OpenSession()) {
-                string result = session.CreateSQLQuery(sql)
-                    .SetParameter("record", skillRecord)
-                    .UniqueResult<string>();
-
-                
-                if (string.IsNullOrEmpty(result)) {
-                    // The skill actually triggers a buff, and the buff is the one containing the name.
-                    string deepQuery = sql.Replace(":record",
-                        $@" (SELECT {DatabaseItemStatTable.TextValue} FROM {DatabaseItemTable.Table} i, {DatabaseItemStatTable.Table} s
-	                        WHERE {DatabaseItemStatTable.Stat} = 'buffSkillName'
-	                        AND s.{DatabaseItemStatTable.Item} = i.{DatabaseItemTable.Id} 
-	                        AND i.{DatabaseItemTable.Record} = :record
-	                        LIMIT 1
-	                        )
-                    ");
-
-                    result = session.CreateSQLQuery(deepQuery)
-                        .SetParameter("record", skillRecord)
-                        .UniqueResult<string>();
-                }
-
-                return result;
-            }
-        }
-
-        public Dictionary<string, float> GetSkillTiers() {
-            string sql = @"
-                select baserecord as BaseRecord, val1 as Tier from DatabaseItem_v2 item, DatabaseItemStat_v2 s
-                WHERE s.id_databaseitem = item.id_databaseitem
-                AND item.baserecord IN (
-	                select TextValue from DatabaseItemStat_v2 statItem
-	                WHERE statItem.stat = 'modifiedSkillName1'
-                )
-                AND Stat = 'skillTier'";
-
-            Dictionary<string, float> dict = new Dictionary<string, float>(100);
-            using (var session = SessionCreator.OpenSession()) {
-                var results = session.CreateSQLQuery(sql)
-                        .SetResultTransformer(Transformers.AliasToBean<SkillTierMapping>())
-                        .List<SkillTierMapping>();
-                foreach (var m in results) {
-                    dict[m.BaseRecord] = (float)m.Tier;
-                }
-
-                return dict;
-            }
-        }
-
 
         public Dictionary<String, List<DBStatRow>> GetStats(ISession session, StatFetch fetchMode) {
             return GetStats(session, new List<string>(), fetchMode);

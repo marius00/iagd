@@ -23,8 +23,6 @@ namespace IAGrim.Backup.Cloud.Service {
         private DateTimeOffset _lastSearchDt = DateTimeOffset.UtcNow;
         const int MaxBatchSize = 100;
 
-        public event EventHandler OnUploadComplete;
-
         public BackupService(
             AuthService authService,
             IPlayerItemDao playerItemDao,

@@ -50,16 +50,5 @@ namespace IAGrim.Database.Synchronizer {
             );
         }
 
-        public string GetSkillName(string skillRecord) {
-            return ThreadExecuter.Execute(
-                () => repo.GetSkillName(skillRecord)
-            );
-        }
-
-        public Dictionary<string, float> GetSkillTiers() {
-            return ThreadExecuter.Execute(
-                () => repo.GetSkillTiers()
-            );
-        }
     }
 }

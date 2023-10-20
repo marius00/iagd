@@ -8,7 +8,6 @@ namespace IAGrim.Database.Interfaces {
         Dictionary<string, string> GetTagDictionary();
         void Save(List<DatabaseItem> items, ProgressTracker progressTracker);
         void CreateItemIndexes(ProgressTracker progressTracker);
-        DatabaseItem FindByRecord(string record);
         IList<string> ListAllRecords();
 
         long GetRowCount();

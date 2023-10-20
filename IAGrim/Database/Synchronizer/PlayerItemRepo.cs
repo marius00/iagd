@@ -48,12 +48,6 @@ namespace IAGrim.Database.Synchronizer {
             );
         }
 
-        public Dictionary<string, int> GetCountByRecord(string mod) {
-            return ThreadExecuter.Execute(
-                () => _repo.GetCountByRecord(mod)
-            );
-        }
-
         public IList<PlayerItem> GetByRecord(string prefixRecord, string baseRecord, string suffixRecord, string materiaRecord, string mod, bool isHardcore) {
             return ThreadExecuter.Execute(
                 () => _repo.GetByRecord(prefixRecord, baseRecord, suffixRecord, materiaRecord, mod, isHardcore)

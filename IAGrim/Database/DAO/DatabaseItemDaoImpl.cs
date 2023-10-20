@@ -318,18 +318,6 @@ namespace IAGrim.Database {
         }
 
 
-        public DatabaseItem FindByRecord(string record) {
-            using (ISession session = SessionCreator.OpenSession()) {
-                using (ITransaction transaction = session.BeginTransaction()) {
-                    var item = session.CreateCriteria<DatabaseItem>().Add(Restrictions.Eq("Record", record)).UniqueResult();
-                    if (item != null)
-                        return (DatabaseItem) item;
-                }
-            }
-
-            return null;
-        }
-
 
         internal class InteralRowStat {
             public string Record { get; set; }

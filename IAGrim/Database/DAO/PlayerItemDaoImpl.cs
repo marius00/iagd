@@ -66,48 +66,6 @@ namespace IAGrim.Database {
         }
 
         /// <summary>
-        /// Return the number of items per record
-        /// </summary>
-        /// <param name="mod">The mod to check on/for</param>
-        /// <returns></returns>
-        public Dictionary<string, int> GetCountByRecord(string mod) {
-            using (var session = SessionCreator.OpenSession()) {
-                IList<object[]> rows;
-
-                if (string.IsNullOrEmpty(mod)) {
-                    var sql = string.Join(" ",
-                        $"SELECT sum(max(1, {PlayerItemTable.Stackcount})), {PlayerItemTable.Record} ",
-                        $"FROM {PlayerItemTable.Table}",
-                        $"WHERE {PlayerItemTable.Mod} IS NULL OR {PlayerItemTable.Mod} = ''",
-                        $"GROUP BY {PlayerItemTable.Record}"
-                    );
-                    rows = session.CreateSQLQuery(sql).List<object[]>();
-                }
-                else {
-                    var sql = string.Join(" ",
-                        $"SELECT sum(max(1, {PlayerItemTable.Stackcount})), {PlayerItemTable.Record} ",
-                        $"FROM {PlayerItemTable.Table}",
-                        $"WHERE {PlayerItemTable.Mod} = :mod",
-                        $"GROUP BY {PlayerItemTable.Record}"
-                    );
-
-                    rows = session.CreateSQLQuery(sql).SetParameter("mod", mod)
-                        .List<object[]>();
-                }
-
-                var result = new Dictionary<string, int>();
-
-                foreach (var row in rows) {
-                    var sum = (long) row[0];
-                    var record = (string) row[1];
-                    result[record] = (int) sum + (result.ContainsKey(record) ? result[record] : 0);
-                }
-
-                return result;
-            }
-        }
-
-        /// <summary>
         /// Get the "level of green" for a set of records
         /// An item with a white suffix and green prefix is "less than" an item with a green suffix and green prefix
         /// </summary>

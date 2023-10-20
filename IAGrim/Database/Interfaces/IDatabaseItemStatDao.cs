@@ -11,8 +11,5 @@ namespace IAGrim.Database.Interfaces {
         Dictionary<long, List<DBStatRow>> GetStats(List<long> records, StatFetch fetchMode);
         Dictionary<string, string> MapItemBitmaps(List<string> records);
         void Save(IEnumerable<DatabaseItemStat> objs, ProgressTracker progressTracker);
-
-        string GetSkillName(string skillRecord);
-        Dictionary<string, float> GetSkillTiers();
     }
 }

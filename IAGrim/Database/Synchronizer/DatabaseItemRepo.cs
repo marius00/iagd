@@ -20,11 +20,6 @@ namespace IAGrim.Database.Synchronizer {
         }
 
 
-        public DatabaseItem FindByRecord(string record) {
-            return ThreadExecuter.Execute(
-                () => _repo.FindByRecord(record)
-            );
-        }
 
         public long GetRowCount() {
             return ThreadExecuter.Execute(
