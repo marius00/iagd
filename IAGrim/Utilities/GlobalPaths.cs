@@ -102,8 +102,8 @@ namespace IAGrim.Utilities {
         public static string SavePath {
             get {
                 var p = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games",
-                    "Grim Dawn", "Save");
-                Directory.CreateDirectory(Path.Combine(p, "main"));
+                    "Grim Dawn", "Save", "main");
+                Directory.CreateDirectory(p);
                 return p;
             }
         }
