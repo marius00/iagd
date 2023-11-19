@@ -474,7 +474,7 @@ namespace IAGrim.UI {
             _cefBrowserHandler.OnAuthSuccess += (_, __) => onlineSettings.UpdateUi();
 
 
-            UIHelper.AddAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, playerItemDao, _parsingService, grimDawnDetector, settingsService, _cefBrowserHandler, databaseItemDao), modsPanel);
+            UIHelper.AddAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, playerItemDao, _parsingService, grimDawnDetector, settingsService, _cefBrowserHandler, databaseItemDao, replicaItemDao), modsPanel);
 
             UIHelper.AddAndShow(new LoggingWindow(), panelLogging);
 

@@ -2,6 +2,7 @@
 using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Model;
 using IAGrim.Database.Synchronizer.Core;
+using System.Security.Policy;
 
 namespace IAGrim.Database.Synchronizer {
     class ItemReplicaRepo : BasicSynchronizer<ReplicaItem>, IReplicaItemDao {
@@ -14,6 +15,11 @@ namespace IAGrim.Database.Synchronizer {
         public void UpdatePlayerItemId(int uqHash, long playerItemId) {
             ThreadExecuter.Execute(
                 () => repo.UpdatePlayerItemId(uqHash, playerItemId)
+            );
+        }
+        public void DeleteAll() {
+            ThreadExecuter.Execute(
+                () => repo.DeleteAll()
             );
         }
     }
