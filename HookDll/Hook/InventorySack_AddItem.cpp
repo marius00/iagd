@@ -112,6 +112,7 @@ InventorySack_AddItem::InventorySack_AddItem(DataQueue* dataQueue, HANDLE hEvent
 	InventorySack_AddItem::m_hEvent = hEvent;
 	privateStashHook = GetPrivateStash(dataQueue, hEvent);
 	m_storageFolder = GetIagdFolder() + L"itemqueue\\ingoing\\";
+	LogToFile(L"Storing instaloot items into " + m_storageFolder);
 
 	boost::filesystem::create_directories(m_storageFolder);
 	m_settingsReader = SettingsReader();
