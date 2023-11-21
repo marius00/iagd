@@ -24,7 +24,6 @@ namespace IAGrim.UI.Controller {
         private readonly ItemStatService _itemStatService;
         private readonly IBuddyItemDao _buddyItemDao;
         private readonly ItemPaginationService _itemPaginationService;
-        private readonly SettingsService _settings;
         private readonly IItemCollectionDao _itemCollectionRepo;
 
 
@@ -36,13 +35,11 @@ namespace IAGrim.UI.Controller {
             IPlayerItemDao playerItemDao,
             ItemStatService itemStatService,
             IBuddyItemDao buddyItemDao,
-            SettingsService settings,
             IItemCollectionDao itemCollectionRepo) {
             _playerItemDao = playerItemDao;
             _itemStatService = itemStatService;
             _itemPaginationService = new ItemPaginationService(TakeSize);
             _buddyItemDao = buddyItemDao;
-            _settings = settings;
             _itemCollectionRepo = itemCollectionRepo;
 
             JsIntegration.OnRequestItems += JsBind_OnRequestItems;

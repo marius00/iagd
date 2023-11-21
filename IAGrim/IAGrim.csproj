@@ -357,7 +357,6 @@
     <Compile Include="Database\DAO\Table\ItemQualityTable.cs" />
     <Compile Include="Database\DAO\Table\ItemTagTable.cs" />
     <Compile Include="Database\DAO\Table\PlayerItemTable.cs" />
-    <Compile Include="Database\DAO\Table\RecipeItemTable.cs" />
     <Compile Include="Database\DAO\Table\SkillMappingTable.cs" />
     <Compile Include="Database\DAO\Table\SkillTable.cs" />
     <Compile Include="Database\Dto\ModSelection.cs" />

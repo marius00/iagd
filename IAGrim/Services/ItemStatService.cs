@@ -86,10 +86,6 @@ namespace IAGrim.Services {
             ApplyStatsToDbItems(items, StatFetch.AugmentItems);
         }
 
-        private void ApplyStatsToRecipeItems(List<PlayerHeldItem> items) {
-            ApplyStatsToDbItems(items, StatFetch.RecipeItems);
-        }
-
         private void ApplyStatsToDbItems(List<PlayerHeldItem> items, StatFetch type) {
             var records = GetRecordsForItems(items);
             Dictionary<string, List<DBStatRow>> statMap = _databaseItemStatDao.GetStats(records, type);
@@ -131,14 +127,6 @@ namespace IAGrim.Services {
                 var buddyItems = GetBuddyItems(items);
                 if (buddyItems.Count > 0) {
                     ApplyStatsToBuddyItems(buddyItems);
-                }
-
-
-
-                var remaining = items.Where(m => !IsPlayerItem(m) && !IsBuddyItem(m))
-                    .ToList();
-                if (remaining.Count > 0) {
-                    ApplyStatsToRecipeItems(remaining);
                 }
             }
         }
