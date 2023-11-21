@@ -634,10 +634,6 @@ namespace IAGrim.Database {
                 queryParams.Add("wildcard", $"%{query.Wildcard.ToLower()}%");
             }
 
-            if (query.RecipeItemsOnly) {
-                queryFragments.Add("PI.BaseRecord IN (SELECT baserecord FROM RecipeItem_V2)");
-            }
-
             // Filter by mod/hc
             if (string.IsNullOrEmpty(query.Mod)) {
                 queryFragments.Add("(PI.Mod IS NULL OR PI.Mod = '')");
@@ -902,11 +898,11 @@ namespace IAGrim.Database {
 
 
                     // Even if we have no items, at least list vanilla/nomod
-                    if (!selection.Any(m => string.IsNullOrEmpty(m.Mod) && m.IsHardcore)) {
+                    if (!selection.Any(m => string.IsNullOrEmpty(m.Mod) && m.IsHardcore) && selection.Any(m => m.IsHardcore)) {
                         selection.Add(new ModSelection { IsHardcore = true });
                     }
 
-                    if (!selection.Any(m => string.IsNullOrEmpty(m.Mod) && !m.IsHardcore)) {
+                    if (!selection.Any(m => string.IsNullOrEmpty(m.Mod) && !m.IsHardcore) && selection.Any(m => !m.IsHardcore)) {
                         selection.Add(new ModSelection { IsHardcore = false });
                     }
 
