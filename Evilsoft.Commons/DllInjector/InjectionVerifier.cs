@@ -106,11 +106,11 @@ namespace EvilsoftCommons.DllInjector {
                     processTemp.Start();
                     processTemp.WaitForExit(3000);
 
+
                     while (!processTemp.StandardOutput.EndOfStream) {
                         string line = processTemp.StandardOutput.ReadLine();
                         output.Add(line);
 
-                        
                         if (line.Contains(exportOnlyInPlaytest)) // Export only exists in playtest
                             return true;
                     }
@@ -120,7 +120,7 @@ namespace EvilsoftCommons.DllInjector {
                 }
             }
             else {
-                Logger.Warn("Could not find Listdlls.exe, unable to verify isPlaytest.");
+                Logger.Warn("Could not find dumpbin.exe, unable to verify isPlaytest.");
             }
             return false;
         }

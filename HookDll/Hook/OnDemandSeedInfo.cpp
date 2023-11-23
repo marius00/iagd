@@ -239,12 +239,14 @@ void OnDemandSeedInfo::Process() {
 	BOOL fSuccess = ReadFile(hPipe, buffer, sizeof(buffer) / sizeof(char), &numBytesRead, nullptr);
 	if (fSuccess && numBytesRead > 0) {
 		// Parse and queue item seed read
+		LogToFile("Received item to parse for real stats..");
 		ParsedSeedRequest* obj = Parse(&buffer[0], numBytesRead);
 		ParsedSeedRequestPtr abc(obj);
 		if (!m_itemQueue.push(abc, 300)) {
 			slowDown = true;
 			// Will just discard data if >N
 			// TODO: Notify IA that it needs to slow the fk down?
+			LogToFile("Slowing down.. too many items queued");
 		}
 
 		DataItemPtr item(new DataItem(TYPE_ITEMSEEDDATA_PLAYERID_DEBUG_RECV, sizeof(numBytesRead), (char*)&numBytesRead));
@@ -322,6 +324,8 @@ void* __fastcall OnDemandSeedInfo::HookedMethod(void* This, int v) {
 		while (!g_self->m_itemQueue.empty() && num++ < 15) {
 			ParsedSeedRequestPtr ptr = g_self->m_itemQueue.pop();
 			ParsedSeedRequest obj = *ptr.get();
+
+			LogToFile("Fetching items stats for " + obj.itemReplicaInfo.baseRecord);
 			g_self->GetItemInfo(obj);
 		}
 	}
