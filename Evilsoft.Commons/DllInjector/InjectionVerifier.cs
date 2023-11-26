@@ -111,8 +111,15 @@ namespace EvilsoftCommons.DllInjector {
                         string line = processTemp.StandardOutput.ReadLine();
                         output.Add(line);
 
-                        if (line.Contains(exportOnlyInPlaytest)) // Export only exists in playtest
+                        if (line.Contains(exportOnlyInPlaytest)) { // Export only exists in v1.2
                             return true;
+                        }
+                    }
+
+                    if (processTemp.ExitCode != 0) {
+                        Logger.Fatal("Could not determine if running GD v1.1 or v1.2, will most likely crash the game.");
+                        Logger.Fatal("Halting IA");
+                        System.Environment.Exit(1);
                     }
                 }
                 catch (Exception ex) {
