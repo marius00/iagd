@@ -61,20 +61,19 @@ namespace IAGrim.Parsers.Arz {
             Logger.Info($"Loading item icons from {arcItemsFile}.");
 
             var isArcFileLocked = IOHelper.IsFileLocked(new FileInfo(arcItemsFile));
-            var arcTempFile = new TemporaryCopy(arcItemsFile, isArcFileLocked);
-            var arcItemFileName = arcTempFile.Filename;
 
             if (isArcFileLocked) {
-                Logger.Info($"The file {arcItemsFile} is currently locked for reading. Perhaps Grim Dawn is running?");
-                Logger.Info($"A copy of {arcItemsFile} has been created at {arcItemFileName}");
+                Logger.Error($"The file {arcItemsFile} is currently locked for reading. Perhaps Grim Dawn is running?");
+                throw new IOException($"Unable to read {arcItemsFile}, file is locked.");
             }
 
-            if (!File.Exists(arcItemFileName)) {
-                Logger.Warn($"Item icon file \"{arcItemFileName}\" could not be located.");
+
+            if (!File.Exists(arcItemsFile)) {
+                Logger.Warn($"Item icon file \"{arcItemsFile}\" could not be located.");
             }
 
             try {
-                DDSImageReader.ExtractItemIcons(arcItemFileName, GlobalPaths.StorageFolder);
+                DDSImageReader.ExtractItemIcons(arcItemsFile, GlobalPaths.StorageFolder);
             }
             catch (ArgumentException ex) {
                 // Ideally we'd like to catch the specific exception, but the available log files don't contain the exception name..

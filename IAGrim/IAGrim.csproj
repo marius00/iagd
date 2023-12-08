@@ -581,7 +581,6 @@
     <Compile Include="Utilities\Logging\TextBoxAppender.cs" />
     <Compile Include="Utilities\Registry\RegistryHelper.cs" />
     <Compile Include="Utilities\TempFile.cs" />
-    <Compile Include="Utilities\TemporaryCopy.cs" />
     <Compile Include="Utilities\UsageStatisticsReporter.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -58,10 +58,12 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
 
         private void LoadTags(string file) {
             bool isTagfileLocked = IOHelper.IsFileLocked(new FileInfo(file));
-            TemporaryCopy tempfile = isTagfileLocked ? new TemporaryCopy(file) : null;
+            if (isTagfileLocked) {
+                throw new IOException($"Unable to read {file}, file is locked.");
+            }
             Logger.Debug($"Loading tags from {file}");
 
-            List<IItemTag> tags = Parser.Arz.ArzParser.ParseArcFile(isTagfileLocked ? tempfile.Filename : file);
+            List<IItemTag> tags = Parser.Arz.ArzParser.ParseArcFile(file);
             tags.ForEach(m => _tagAccumulator.Add(m.Tag, m.Name));
             Logger.Debug($"Loaded {tags.Count} tags from {file}");
         }

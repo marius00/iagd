@@ -12,6 +12,7 @@ using IAGrim.Parsers.Arz;
 using IAGrim.Services;
 using IAGrim.Settings;
 using IAGrim.Utilities;
+using DllInjector;
 
 namespace IAGrim.UI {
     public partial class ModsDatabaseConfig : Form {
@@ -130,6 +131,11 @@ namespace IAGrim.UI {
         }
 
         private void buttonForceUpdate_Click(object sender, EventArgs e) {
+            if (EvilsoftCommons.DllInjector.DllInjector.FindProcessForWindow("Grim Dawn").Count > 0) {
+                MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_gdisrunning"));
+                return;
+            }
+
             _databaseItemDao.Clean();
 
             var isGdParsed2 = _databaseItemDao.GetRowCount() > 0;

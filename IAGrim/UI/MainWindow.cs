@@ -70,6 +70,7 @@ namespace IAGrim.UI {
         private BackupServiceWorker _backupServiceWorker;
         private readonly UserFeedbackService _userFeedbackService;
         private MinimizeToTrayHandler _minimizeToTrayHandler;
+        private ModsDatabaseConfig _modsDatabaseConfigTab;
 
 
         #region Stash Status
@@ -101,7 +102,7 @@ namespace IAGrim.UI {
                     }
                     case InjectionHelper.INJECTION_ERROR_32BIT: {
                         _itemReplicaService.SetIsGrimDawnRunning(false);
-                        RuntimeSettings.StashStatus = StashAvailability.NOT64BIT;
+                            RuntimeSettings.StashStatus = StashAvailability.NOT64BIT;
                         statusLabel.Text = e.UserState as string;
                         if (!_hasShownStashErrorPage) {
                             _cefBrowserHandler.ShowHelp(HelpService.HelpType.No32Bit);
@@ -113,7 +114,7 @@ namespace IAGrim.UI {
                     // No grim dawn client, so stash is closed!
                     case InjectionHelper.NO_PROCESS_FOUND_ON_STARTUP: {
                         _itemReplicaService.SetIsGrimDawnRunning(false);
-                        if (RuntimeSettings.StashStatus == StashAvailability.UNKNOWN) {
+                            if (RuntimeSettings.StashStatus == StashAvailability.UNKNOWN) {
                             RuntimeSettings.StashStatus = StashAvailability.CLOSED;
                         }
 
@@ -127,7 +128,7 @@ namespace IAGrim.UI {
                     // Injection error
                     case InjectionHelper.INJECTION_ERROR_POSSIBLE_ACCESS_DENIED: {
                         _itemReplicaService.SetIsGrimDawnRunning(false);
-                        RuntimeSettings.StashStatus = StashAvailability.ERROR;
+                            RuntimeSettings.StashStatus = StashAvailability.ERROR;
                         if (!_hasShownStashErrorPage) {
                             _cefBrowserHandler.ShowHelp(HelpService.HelpType.StashError);
                             _hasShownStashErrorPage = true;
@@ -474,7 +475,8 @@ namespace IAGrim.UI {
             _cefBrowserHandler.OnAuthSuccess += (_, __) => onlineSettings.UpdateUi();
 
 
-            UIHelper.AddAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, playerItemDao, _parsingService, grimDawnDetector, settingsService, _cefBrowserHandler, databaseItemDao, replicaItemDao), modsPanel);
+            _modsDatabaseConfigTab = new ModsDatabaseConfig(DatabaseLoadedTrigger, playerItemDao, _parsingService, grimDawnDetector, settingsService, _cefBrowserHandler, databaseItemDao, replicaItemDao);
+            UIHelper.AddAndShow(_modsDatabaseConfigTab, modsPanel);
 
             UIHelper.AddAndShow(new LoggingWindow(), panelLogging);
 
