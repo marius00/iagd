@@ -509,6 +509,7 @@ iatag_ui_fire=Fire
 iatag_ui_forgottengods=Forgotten Gods
 iatag_ui_frost=Frost/freeze
 iatag_ui_gamestash=Game Stash
+iatag_ui_gdisrunning=Grim Dawn is currently running. Please close Grim Dawn before attempting to parse the database
 iatag_ui_gdstash=GD Stash
 iatag_ui_generating_skills=Generating skills
 iatag_ui_generating_special_stats=Generating special stats
