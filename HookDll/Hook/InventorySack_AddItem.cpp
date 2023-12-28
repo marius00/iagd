@@ -586,7 +586,7 @@ void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int
 	if (m_isTransferStashOpen) {
 		void* sackPtr = GetSackToDepositTo((GAME::GameEngine*)This);
 		if (sackPtr != nullptr) {
-			float itemPosition[] = { 1, 1 };
+			GAME::Rect itemPosition;
 			boost::lock_guard<boost::mutex> guard(m_mutex);
 
 
@@ -608,9 +608,8 @@ void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int
 							LogToFile(L"Moving to " + targetFile);
 						}
 						else {
-							GAME::Color c;
-							if (dll_InventorySack_FindNextPosition(sackPtr, item, &c, true)) {
-								dll_InventorySack_AddItem_Vec2(sackPtr, itemPosition, item, false);
+							if (dll_InventorySack_FindNextPosition(sackPtr, item, &itemPosition, true)) {
+								dll_InventorySack_AddItem_Vec2(sackPtr, (void*)&itemPosition, item, false);
 								LogToFile(L"Item deposited, moving to " + targetFile);
 								success = true;
 							}

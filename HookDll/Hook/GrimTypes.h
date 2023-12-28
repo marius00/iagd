@@ -19,6 +19,13 @@ namespace GAME
 		float y;
 		float z;
 	};
+	struct Rect
+	{
+		float top;
+		float right;
+		float bottom;
+		float left;
+	};
 
 	struct Color
 	{
