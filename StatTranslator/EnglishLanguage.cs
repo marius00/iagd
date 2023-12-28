@@ -534,7 +534,7 @@ namespace StatTranslator {
             {"iatag_ui_electrocute", "Electrocute"},
             {"iatag_ui_bleeding", "Bleeding"},
             {"iatag_ui_damage", "Damage"},
-            {"iatag_ui_totaldmg", "Total Damage"},
+            {"iatag_ui_totaldmg", "All Damage"},
             {"iatag_ui_retaliation", "Retaliation"},
             {"iatag_ui_elemental", "Elemental"},
             {"iatag_ui_piercing", "Piercing"},
