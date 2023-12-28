@@ -38,6 +38,7 @@ GetPrivateStash InventorySack_AddItem::privateStashHook;
 InventorySack_AddItem::InventorySack_AddItem_Drop InventorySack_AddItem::dll_InventorySack_AddItem_Drop;
 InventorySack_AddItem::InventorySack_AddItem_Vec2 InventorySack_AddItem::dll_InventorySack_AddItem_Vec2;
 InventorySack_AddItem::InventorySack_SetTransferOpen InventorySack_AddItem::dll_InventorySack_SetTransferOpen;
+InventorySack_AddItem::InventorySack_FindNextPosition InventorySack_AddItem::dll_InventorySack_FindNextPosition;
 std::wstring InventorySack_AddItem::m_storageFolder;
 int InventorySack_AddItem::m_stashTabLootFrom;
 int InventorySack_AddItem::m_stashTabDepositTo;
@@ -100,6 +101,7 @@ void InventorySack_AddItem::EnableHook() {
 
 	// bool GAME::GameInfo::GetHardcore(void)
 	dll_GameInfo_GetHardcore = (GameInfo_GetHardcore)GetProcAddressOrLogToFile(L"Engine.dll", GET_HARDCORE);
+	dll_InventorySack_FindNextPosition = (InventorySack_FindNextPosition)GetProcAddressOrLogToFile(L"Game.dll", "?FindNextPosition@InventorySack@GAME@@IEBA_NPEBVItem@2@AEAVRect@2@_N@Z");
 
 	
 	if (m_isGrimDawnParsed)
@@ -606,9 +608,17 @@ void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int
 							LogToFile(L"Moving to " + targetFile);
 						}
 						else {
-							dll_InventorySack_AddItem_Vec2(sackPtr, itemPosition, item, false);
-							LogToFile(L"Item deposited, moving to " + targetFile);
-							success = true;
+							GAME::Color c;
+							if (dll_InventorySack_FindNextPosition(sackPtr, item, &c, true)) {
+								dll_InventorySack_AddItem_Vec2(sackPtr, itemPosition, item, false);
+								LogToFile(L"Item deposited, moving to " + targetFile);
+								success = true;
+							}
+							else {
+								targetFile = m_storageFolder + randomFilename();
+								LogToFile(L"Target sack is full, re-depositing to IA as " + targetFile);
+							}
+
 						}
 					}
 					catch (...) {

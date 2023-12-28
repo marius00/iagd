@@ -55,7 +55,8 @@ private:
 	typedef int*(__thiscall* InventorySack_AddItem_Vec2)(void* This, void* position, GAME::Item* item, bool SkipPlaySound);
 	typedef void* (__thiscall* InventorySack_SetTransferOpen)(void* This, bool isOpen);
 
-	typedef bool(__thiscall *GameInfo_GetHardcore)(void*);
+	typedef bool(__thiscall* InventorySack_FindNextPosition)(void*, GAME::Item* item, GAME::Color*, bool unknown);
+	typedef bool(__thiscall* GameInfo_GetHardcore)(void*);
 	typedef int* (__thiscall* GameEngine_Update)(void* This, int v);
 	typedef char* (__thiscall* GameEngine_GetGameInfo)(void* This);
 
@@ -71,6 +72,7 @@ private:
 	static InventorySack_SetTransferOpen dll_InventorySack_SetTransferOpen;
 	static std::wstring m_storageFolder;
 	static ULONGLONG m_lastNotificationTickTime;
+	static InventorySack_FindNextPosition dll_InventorySack_FindNextPosition;
 
 
 	// Hook proxy methods
