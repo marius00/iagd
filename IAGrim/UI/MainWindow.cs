@@ -613,7 +613,7 @@ namespace IAGrim.UI {
             settingsService.GetLocal().OnMutate += delegate(object o, EventArgs args) { _cefBrowserHandler.SetOnlineBackupsEnabled(!settingsService.GetLocal().OptOutOfBackups); };
 
 
-            _csvParsingService = new CsvParsingService(playerItemDao, replicaItemDao, _userFeedbackService, cacher, _transferController, transferStashService, settingsService);
+            _csvParsingService = new CsvParsingService(playerItemDao, replicaItemDao, _userFeedbackService, cacher, transferStashService);
             _csvFileMonitor.OnModified += (_, arg) => {
                 var csvEvent = arg as CsvFileMonitor.CsvEvent;
                 _csvParsingService.Queue(csvEvent.Filename, csvEvent.Cooldown);

@@ -60,9 +60,17 @@ namespace IAGrim.Utilities {
             }
         }
 
-        public static string CsvLocationDeleted {
+        public static string CsvLocationIngoingDeleted {
             get {
                 string path = Path.Combine(CsvLocation, "ingoing", "deleted");
+                Directory.CreateDirectory(path);
+                return path;
+            }
+        }
+
+        public static string CsvLocationOutgoingDeleted {
+            get {
+                string path = Path.Combine(CsvLocation, "deleted");
                 Directory.CreateDirectory(path);
                 return path;
             }
