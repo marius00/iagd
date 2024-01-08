@@ -38,7 +38,9 @@ private:
 	static int m_gameUpdateIterationsRun;
 
 	static bool m_isTransferStashOpen;
-	static std::set<std::wstring> m_depositQueue;
+
+	// queue[modname] = files
+	static std::map<std::wstring, std::set<std::wstring>> m_depositQueue;
 	static boost::mutex m_mutex;
 
 

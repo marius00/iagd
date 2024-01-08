@@ -51,7 +51,8 @@ int InventorySack_AddItem::m_gameUpdateIterationsRun;
 InventorySack_AddItem::GameEngine_Update InventorySack_AddItem::dll_GameEngine_Update;
 bool InventorySack_AddItem::m_isTransferStashOpen;
 
-std::set<std::wstring> InventorySack_AddItem::m_depositQueue;
+std::map<std::wstring, std::set<std::wstring>> InventorySack_AddItem::m_depositQueue;
+
 boost::mutex InventorySack_AddItem::m_mutex;
 
 void InventorySack_AddItem::EnableHook() {
@@ -155,7 +156,7 @@ void InventorySack_AddItem::SetActive(bool isActive)
 
 	// IA has been shut down, start the thread now
 	if (isActivating) {
-		(HANDLE)_beginthread(ThreadMain, NULL, 0);
+		// (HANDLE)_beginthread(ThreadMain, NULL, 0);
 	}
 }
 
@@ -272,7 +273,6 @@ bool InventorySack_AddItem::IsRelevant(const GAME::ItemReplicaInfo& item) {
 
 	// Transmute - Should be impossible, but never know..
 	if (!item.enchantmentRecord.empty()) {
-		DisplayMessage(L"Item has a transmute - Souldbound item", L"Item Assistant");
 		return false;
 	}
 
@@ -436,16 +436,11 @@ bool InventorySack_AddItem::HandleItem(void* stash, GAME::Item* item) {
 /// <param name="modName"></param>
 /// <param name="isHardcore"></param>
 /// <returns></returns>
-std::wstring GetFolderToLootFrom(std::wstring modName, bool isHardcore) {
+std::wstring GetFolderToLootFrom(bool isHardcore) {
 	boost::property_tree::wptree loadPtreeRoot;
 
 	std::wstring folder;
-	if (modName.empty()) {
-		folder = GetIagdFolder() + L"itemqueue\\outgoing\\" + (isHardcore ? L"hc" : L"sc");
-	}
-	else {
-		folder = GetIagdFolder() + L"itemqueue\\outgoing\\" + (isHardcore ? L"hc" : L"sc") + L"\\" + modName;
-	}
+	folder = GetIagdFolder() + L"itemqueue\\outgoing\\" + (isHardcore ? L"hc" : L"sc");
 
 	if (!boost::filesystem::is_directory(folder)) {
 		boost::filesystem::create_directories(folder);
@@ -570,6 +565,7 @@ void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int
 	}
 
 	m_gameUpdateIterationsRun = 0;
+	LogToFile(L"Debug: Proceeding #1");
 
 	auto engine = fnGetEngine();
 	if (engine == nullptr) {
@@ -583,6 +579,8 @@ void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int
 		return false;
 	}
 
+	LogToFile(L"Debug: Proceeding #2");
+
 	if (m_isTransferStashOpen) {
 		void* sackPtr = GetSackToDepositTo((GAME::GameEngine*)This);
 		if (sackPtr != nullptr) {
@@ -591,8 +589,16 @@ void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int
 
 
 			bool success = false;
-			std::wstring targetFolder = GetFolderToMoveTo(GetModName(gameInfo), fnGetHardcore(gameInfo));
-			for (auto it = m_depositQueue.begin(); it != m_depositQueue.end(); ++it) {
+			auto modName = GetModName(gameInfo);
+			std::wstring targetFolder = GetFolderToMoveTo(modName, fnGetHardcore(gameInfo));
+
+			if (m_depositQueue.find(modName) == m_depositQueue.end()) {
+				return dll_GameEngine_Update(This, v);
+			}
+			
+			// Find the queue for the current mod
+			auto currentDepositQueue = m_depositQueue.find(modName)->second;
+			for (auto it = currentDepositQueue.begin(); it != currentDepositQueue.end(); ++it) {
 				std::wstring targetFile = targetFolder + L"\\" + randomFilename();
 				LogToFile(L"Handling file " + *it);
 
@@ -636,13 +642,13 @@ void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int
 			}
 
 
-			if (!m_depositQueue.empty()) {
+			if (!currentDepositQueue.empty()) {
 				if (success) {
-					if (m_depositQueue.size() == 1) {
+					if (currentDepositQueue.size() == 1) {
 						DisplayMessage(L"An item was deposited", L"By Item Assistant");
 					}
 					else {
-						DisplayMessage(m_depositQueue.size() + L" items were deposited", L"By Item Assistant");
+						DisplayMessage(currentDepositQueue.size() + L" items were deposited", L"By Item Assistant");
 					}
 
 					// Sort the items, as we've deposited them all in position 1,1
@@ -656,7 +662,7 @@ void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int
 
 
 				// We got a mutex so this is safe (and if it wasn't, we'd just loot it next time IA starts)
-				m_depositQueue.clear();
+				currentDepositQueue.clear();
 			}
 
 		}
@@ -664,6 +670,7 @@ void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int
 
 	return dll_GameEngine_Update(This, v);
 }
+
 
 /// <summary>
 /// Looks for new files added to the current itemqueue\outgoing\sc-hc\modname folder, to deposit into the game.
@@ -674,36 +681,69 @@ void InventorySack_AddItem::ThreadMain(void*) {
 	LogToFile(L"IA is running, starting deposit listener..");
 	std::set<std::wstring> knownFiles = std::set<std::wstring>();
 	while (m_isActive) {
-		Sleep(500);
+		Sleep(1);
 
-		auto engine = fnGetEngine(true);
-		if (engine == nullptr) {
-			LogToFile(L"Debug: NoEngine");
-			continue;
-		}
+		// Check both "sc" and "hc"
+		for (int isHardcore = 0; isHardcore <= 1; isHardcore++) {
+			std::wstring folder = GetFolderToLootFrom(isHardcore != 0);
+			 LogToFile(std::wstring(L"Looking for files in dir: ") + folder);
 
-		GAME::GameInfo* gameInfo = fnGetGameInfo(engine);
-		if (gameInfo == nullptr) {
-			LogToFile(L"GameInfo is null, aborting..");
-			continue;
-		}
+			for (auto& queuedItemFile : boost::make_iterator_range(boost::filesystem::directory_iterator(folder), {})) {
+				bool isDirectory = boost::filesystem::is_directory(queuedItemFile.path());
+				auto filename = std::wstring(queuedItemFile.path().c_str());
 
-		std::wstring folder = GetFolderToLootFrom(GetModName(gameInfo), fnGetHardcore(gameInfo, true));
-		// LogToFile(std::wstring(L"Looking for files in dir: ") + folder);
+				// If this is a directory, then it's a mod. (\sc\modname\itemfile.csv)
+				if (isDirectory) {
+					for (auto& queuedModItemFile : boost::make_iterator_range(boost::filesystem::directory_iterator(queuedItemFile.path()), {})) {
+						// Nested directory? No idea, user is messing around? Not expected to be here.
+						bool isDirectory = boost::filesystem::is_directory(queuedModItemFile.path());
+						boost::filesystem::path p(queuedItemFile.path());
+						
 
-		for (auto& entry : boost::make_iterator_range(boost::filesystem::directory_iterator(folder), {})) {
-			auto filename = std::wstring(entry.path().c_str());
-			if (knownFiles.find(filename) == knownFiles.end()) {
-				boost::lock_guard<boost::mutex> guard(m_mutex);
+						auto filename = std::wstring(queuedModItemFile.path().c_str());
+						if (!isDirectory) {
+							if (knownFiles.find(filename) == knownFiles.end()) {
+								boost::lock_guard<boost::mutex> guard(m_mutex);
 
-				if (boost::algorithm::ends_with(filename, ".csv")) {
-					LogToFile(std::wstring(L"Found file: ") + std::wstring(entry.path().c_str()));
-					m_depositQueue.insert(filename);
+								if (boost::algorithm::ends_with(filename, ".csv")) {
+									LogToFile(std::wstring(L"Found file (" + p.filename().wstring() + L"): ") + std::wstring(filename));
+
+									if (m_depositQueue.find(p.filename().wstring()) == m_depositQueue.end()) {
+										m_depositQueue[p.filename().wstring()] = std::set<std::wstring>();
+									}
+
+									m_depositQueue.find(p.filename().wstring())->second.insert(filename);
+								}
+								else {
+									LogToFile(std::wstring(L"Ignoring file (" + p.filename().wstring() + L"): ") + std::wstring(filename));
+								}
+								knownFiles.insert(filename);
+							}
+						}
+						else {
+							LogToFile(std::wstring(L"Ignoring nested folder: ") + std::wstring(filename));
+						}
+					}
 				}
 				else {
-					LogToFile(std::wstring(L"Ignoring file: ") + std::wstring(entry.path().c_str()));
+					if (knownFiles.find(filename) == knownFiles.end()) {
+						boost::lock_guard<boost::mutex> guard(m_mutex);
+
+						if (boost::algorithm::ends_with(filename, ".csv")) {
+							LogToFile(std::wstring(L"Found file (vanilla): ") + std::wstring(filename));
+
+							if (m_depositQueue.find(L"") == m_depositQueue.end()) {
+								m_depositQueue[L""] = std::set<std::wstring>();
+							}
+
+							m_depositQueue.find(L"")->second.insert(filename);
+						}
+						else {
+							LogToFile(std::wstring(L"Ignoring file (vanilla): ") + std::wstring(filename));
+						}
+						knownFiles.insert(filename);
+					}
 				}
-				knownFiles.insert(filename);
 			}
 		}
 	}
