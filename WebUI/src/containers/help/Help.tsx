@@ -53,6 +53,17 @@ const helpEntries = [
         type: IHelpEntryType.Help
     },
     {
+        title: `There is an error with the path..`,
+        tag: 'PathError',
+        body: () => <div>
+            Item Assistant has encountered an error injecting the item monitoring code into Grim Dawn<br/>
+            <br/>
+            There appears to be an error in the path/folder where IA is installed.. <br/>
+			Try installing IA in a different folder, or running IA as administrator. (If that fails, ask for help on discord) <br/>
+        </div>,
+        type: IHelpEntryType.Help
+    },
+    {
         title: `IA says "Stash: NOT64BIT"`,
         tag: 'No32Bit',
         body: () => <div>

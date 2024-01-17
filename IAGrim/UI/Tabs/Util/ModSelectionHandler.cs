@@ -69,8 +69,18 @@ namespace IAGrim.UI.Tabs.Util {
             modFilter_DropDown(null, null);
 
             if (_cbModFilter.Items.Count == 0) {
-                _setStatus(RuntimeSettings.Language.GetTag("iatag_stash_not_found"));
-                Logger.Warn("Could not locate any stash files");
+                if (_playerItemDao.GetNumItems() == 0) {
+                    _setStatus(RuntimeSettings.Language.GetTag("iatag_no_items_stored"));
+
+                }
+                else if (_settings.GetLocal().PreferLegacyMode) {
+                    _setStatus(RuntimeSettings.Language.GetTag("iatag_stash_not_found"));
+                    Logger.Warn("Could not locate any stash files");
+                }
+                else {
+                    _setStatus(RuntimeSettings.Language.GetTag("iatag_error_modfilter"));
+                    Logger.Warn("Error loading mod filter");
+                }
             }
             else {
                 var lastSelectedMod = _settings.GetLocal().LastSelectedMod;

@@ -77,6 +77,8 @@ namespace IAGrim.UI {
 
         // TODO: TEMPORARY FIX!
         private bool _hasShownStashErrorPage = false;
+        private bool _hasShownPathErrorPage = false;
+        private bool _hasShown32bitErrorPage = false;
 
         /// <summary>
         /// Toolstrip callback for GDInjector
@@ -90,23 +92,32 @@ namespace IAGrim.UI {
             else {
                 switch (e.ProgressPercentage) {
                     case InjectionHelper.INJECTION_ERROR: {
-                        _itemReplicaService.SetIsGrimDawnRunning(false);
-                        RuntimeSettings.StashStatus = StashAvailability.ERROR;
-                        statusLabel.Text = e.UserState as string;
-                        if (!_hasShownStashErrorPage) {
-                            _cefBrowserHandler.ShowHelp(HelpService.HelpType.StashError);
-                            _hasShownStashErrorPage = true;
-                        }
+                            _itemReplicaService.SetIsGrimDawnRunning(false);
+                            RuntimeSettings.StashStatus = StashAvailability.ERROR;
+                            statusLabel.Text = e.UserState as string;
+                            if (!_hasShownStashErrorPage) {
+                                _cefBrowserHandler.ShowHelp(HelpService.HelpType.StashError);
+                                _hasShownStashErrorPage = true;
+                            }
 
-                        break;
-                    }
+                            break;
+                        }
+                    case InjectionHelper.PATH_ERROR: {
+                            RuntimeSettings.StashStatus = StashAvailability.ERROR;
+                            if (!_hasShownPathErrorPage) {
+                                _cefBrowserHandler.ShowHelp(HelpService.HelpType.PathError);
+                                _hasShownPathErrorPage = true;
+                            }
+
+                            break;
+                        }
                     case InjectionHelper.INJECTION_ERROR_32BIT: {
                         _itemReplicaService.SetIsGrimDawnRunning(false);
-                            RuntimeSettings.StashStatus = StashAvailability.NOT64BIT;
+                        RuntimeSettings.StashStatus = StashAvailability.NOT64BIT;
                         statusLabel.Text = e.UserState as string;
-                        if (!_hasShownStashErrorPage) {
+                        if (!_hasShown32bitErrorPage) {
                             _cefBrowserHandler.ShowHelp(HelpService.HelpType.No32Bit);
-                            _hasShownStashErrorPage = true;
+                            _hasShown32bitErrorPage = true;
                         }
 
                         break;

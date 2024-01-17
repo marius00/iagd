@@ -659,9 +659,10 @@ namespace StatTranslator {
             {"iatag_stash_unknown", "Stash: Unknown"},
             {"iatag_stash_", "Stash: "},
             {"iatag_copied_clipboard", "Items copied to clipboard"},
-            {"iatag_stash_not_found", "Could not locate and stash files."},
+            {"iatag_stash_not_found", "Could not locate stash files."},
+            {"iatag_no_items_stored", "No items found / New install? IA is monitoring for items.. See the FAQ for more details." },
+            {"iatag_error_modfilter", "An error occurred loading the sc/hc mod filter" },
             {"iatag_legacy_backup", "Invalid backup file. If this is a really old backup, please see the instructions on restoring from a legacy backup."},
-            {"iatag_postgres_backup", "Invalid backup file. This backup format has been deprecated. Contact me on itemassistant@gmail.com and I'll send you a manual restore."},
             {"iatag_looted_from_stash", "Looted {0} items from stash {1}"},
             {"iatag_purchase_stash", "Please purchase more stash pages!"},
             {"iatag_invalid_deposit_stash_number", "You have configured IA to deposit to stash {0} but you only have {1} pages"},
@@ -671,8 +672,6 @@ namespace StatTranslator {
             {"iatag_no_matching_items_found", "No matching items found"},
             {"iatag_items_found_selfonly", "{0} matching items found"},
             {"iatag_items_found_self_and_buddy", "{0} matching items found (with an additional {1} from your friends)"},
-
-            {"iatag_not_implemented", "Functionality not implemented"},
 
             {"iatag_rarity_any", "Any"},
             {"iatag_rarity_yellow", "Yellow"},
