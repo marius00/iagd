@@ -8,6 +8,9 @@ class GrimNotParsed extends PureComponent<{}, {}> {
     return (
       <div className={styles.center}>
       {translate('app.error.grimnotparsed')}
+      <br/>
+      <br/>
+      <img src={"components/GrimNotParsed.png"} />
     </div>);
   }
 }

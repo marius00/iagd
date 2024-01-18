@@ -41,6 +41,10 @@ namespace IAGrim.Services {
             MessageBox.Show("Error - Not implemented!");
         }
 
+        public void SetIsFirstRun() {
+            // shrug..
+        }
+
         public void SetIsGrimParsed(bool enabled) {
             // shrug..
         }
@@ -54,5 +58,6 @@ namespace IAGrim.Services {
         void ShowHelp(HelpService.HelpType type);
         void ShowCharacterBackups(); // TODO: Not strictly the right place for it..
         void SetIsGrimParsed(bool enabled); // TODO: Not strictly the right place for it..
+        void SetIsFirstRun();
     }
 }

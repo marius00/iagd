@@ -1,6 +1,5 @@
 .center {
     margin-top: 30px;
-    white-space: pre;
     padding: 20px;
     background-color: rgb(255,174,201);
 
@@ -8,4 +7,5 @@
     left: 50%;
     transform: translateX(-50%);
     z-index: 1000;
+    width: 90%;
 }

@@ -166,7 +166,10 @@ namespace IAGrim.UI {
         /// <param name="e"></param>
         private void Browser_IsBrowserInitializedChanged(object sender, EventArgs e) {
             var args = e as FrameLoadEndEventArgs;
-            ChromiumWebBrowser browser = sender as ChromiumWebBrowser;
+            ChromiumWebBrowser browser = (sender as ChromiumWebBrowser);
+            if (browser == null) {
+                browser = (sender as CefBrowserHandler).BrowserControl;
+            }
             if (args != null && args.Frame.IsMain) {
                 // https://github.com/cefsharp/CefSharp/issues/3021
                 if (browser?.CanExecuteJavascriptInMainFrame ?? true) {
@@ -184,6 +187,9 @@ namespace IAGrim.UI {
                         
 
                         _cefBrowserHandler.SetOnlineBackupsEnabled(!settingsService.GetLocal().OptOutOfBackups);
+                        if (_serviceProvider.Get<IPlayerItemDao>().GetNumItems() == 0) {
+                            _cefBrowserHandler.SetIsFirstRun();
+                        }
                     }
                 }
             }

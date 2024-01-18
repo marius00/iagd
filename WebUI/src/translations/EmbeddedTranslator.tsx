@@ -57,7 +57,7 @@ class EmbeddedTranslator {
     'collections.ingress1': 'If you like or dislike this feature, complain on discord or the forum.',
     'collections.ingress2': 'This feature will get deprecated or improved pending user feedback.',
     'notification.clearall': 'Clear all',
-    'app.error.grimnotparsed': 'Grim Dawn database not parsed.\n\nPlease access the Grim Dawn tab to parse the game before proceeding.',
+    'app.error.grimnotparsed': 'Getting started\n\nThe first step in using Item Assistant is parsing the Grim Dawn database..\n\nGo to the "Grim Dawn" tab and parse the game.\nIf the game path is not already detected, simply start Grim Dawn and it should get found automatically.',
   };
 
 

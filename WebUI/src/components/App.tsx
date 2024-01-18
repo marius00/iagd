@@ -14,6 +14,7 @@ import ItemContainer from "../containers/ItemContainer";
 import CollectionItemContainer from "../containers/CollectionItemContainer";
 import NotificationContainer, {NotificationMessage} from "./NotificationComponent";
 import GrimNotParsed from "./GrimNotParsed";
+import FirstRunHelpThingie from "./FirstRunHelpThingie";
 import IItemAggregateRow from "../interfaces/IItemAggregateRow";
 
 interface ApplicationState {
@@ -29,6 +30,7 @@ interface ApplicationState {
   notifications: NotificationMessage[];
   hideItemSkills: boolean;
   isGrimParsed: boolean;
+  isFirstRun: boolean;
 }
 
 class App extends PureComponent<object, object> {
@@ -45,6 +47,7 @@ class App extends PureComponent<object, object> {
     notifications: [],
     hideItemSkills: false,
     isGrimParsed: true,
+    isFirstRun: false,
   } as ApplicationState;
 
   componentDidMount() {
@@ -56,10 +59,13 @@ class App extends PureComponent<object, object> {
       console.log('==========>', numItems);
       window.scrollTo(0, 0);
 
+      let isFirstRun = this.state.isFirstRun && numItems === 0;
+
       this.setState({
         isLoading: false,
         items: items,
-        numItems: numItems || 0
+        numItems: numItems || 0,
+        isFirstRun: isFirstRun,
       });
     };
 
@@ -82,6 +88,14 @@ class App extends PureComponent<object, object> {
       console.log('CollectionItems:', collectionItems);
       this.setState({
         collectionItems: collectionItems
+      });
+    };
+
+    // Enable "is first run" tutorial window
+    // @ts-ignore: setIsFirstRun doesn't exist on window
+    window.setIsFirstRun = () => {
+      this.setState({
+        isFirstRun: true,
       });
     };
 
@@ -282,7 +296,8 @@ class App extends PureComponent<object, object> {
           showVideoGuide={this.state.items.length <= 100}
         />
 
-        {!this.state.isGrimParsed && <GrimNotParsed />}
+        {this.state.activeTab === 0 && !this.state.isGrimParsed && <GrimNotParsed />}
+        {this.state.activeTab === 0 && this.state.isGrimParsed && this.state.isFirstRun && <FirstRunHelpThingie />}
         {this.state.isLoading && isEmbedded && <Spinner/>}
 
 

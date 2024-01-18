@@ -75,7 +75,17 @@ namespace DllInjector {
 
             try {
                 BackgroundWorker worker = sender as BackgroundWorker;
-                
+
+                Logger.Info("Generating the path to the IA DLL...");
+                try {
+                    Path.Combine(Directory.GetCurrentDirectory(), (e.Argument as RunArguments).DllName);
+                }
+                catch (Exception ex) {
+                    Logger.Fatal("Error generating path to the IA dll, try installing IA in a different folder...");
+                    Logger.Fatal(ex.Message, ex);
+                    worker.ReportProgress(PATH_ERROR, null);
+                }
+
                 while (!worker.CancellationPending) {
                     if (!File.Exists("DllInjector64.exe")) {
                         new AvastedWarning().ShowDialog();
@@ -211,14 +221,7 @@ namespace DllInjector {
                 worker.ReportProgress(NO_PROCESS_FOUND, null);
 
 
-            Logger.Info("Generating the path to the IA DLL...");
-            try {
-                Path.Combine(Directory.GetCurrentDirectory(), arguments.DllName);
-            } catch (Exception ex) {
-                Logger.Fatal("Error generating path to the IA dll, try installing IA in a different folder...");
-                Logger.Fatal(ex.Message, ex);
-                worker.ReportProgress(PATH_ERROR, null);
-            }
+
             string dll64Bit = Path.Combine(Directory.GetCurrentDirectory(), arguments.DllName);
             if (!File.Exists(dll64Bit)) {
                 Logger.FatalFormat("Could not find {1} at \"{0}\"", dll64Bit, arguments.DllName);
