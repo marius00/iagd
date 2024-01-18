@@ -127,7 +127,8 @@ class App extends PureComponent<object, object> {
     // @ts-ignore
     window.setIsGrimParsed = (isGrimParsed: boolean) => {
       this.setState({
-        isGrimParsed: isGrimParsed
+        isGrimParsed: isGrimParsed,
+         isLoading: false,
       });
     };
 
@@ -136,7 +137,8 @@ class App extends PureComponent<object, object> {
     window.showHelp = (tag: string) => {
       this.setState({
         activeTab: 2,
-        helpSearchFilter: tag
+        helpSearchFilter: tag,
+        isLoading: false,
       });
     };
 
