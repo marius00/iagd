@@ -14,6 +14,7 @@ import ItemContainer from "../containers/ItemContainer";
 import CollectionItemContainer from "../containers/CollectionItemContainer";
 import NotificationContainer, {NotificationMessage} from "./NotificationComponent";
 import GrimNotParsed from "./GrimNotParsed";
+import ModFilterWarning from "./ModFilterWarning";
 import FirstRunHelpThingie from "./FirstRunHelpThingie";
 import IItemAggregateRow from "../interfaces/IItemAggregateRow";
 
@@ -31,6 +32,8 @@ interface ApplicationState {
   hideItemSkills: boolean;
   isGrimParsed: boolean;
   isFirstRun: boolean;
+  showModFilterWarning: number;
+  hasShownModFilterWarning: boolean;
 }
 
 class App extends PureComponent<object, object> {
@@ -48,6 +51,8 @@ class App extends PureComponent<object, object> {
     hideItemSkills: false,
     isGrimParsed: true,
     isFirstRun: false,
+    showModFilterWarning: 0,
+    hasShownModFilterWarning: false,
   } as ApplicationState;
 
   componentDidMount() {
@@ -97,6 +102,17 @@ class App extends PureComponent<object, object> {
       this.setState({
         isFirstRun: true,
       });
+    };
+
+    // Enable "is first run" tutorial window
+    // @ts-ignore: setIsFirstRun doesn't exist on window
+    window.setModFilterWarning = (numOtherItems: number) => {
+      if (!this.state.hasShownModFilterWarning) {
+        this.setState({
+          showModFilterWarning: numOtherItems,
+          hasShownModFilterWarning: true,
+        });
+      }
     };
 
     // @ts-ignore: Does not exist on window
@@ -304,6 +320,7 @@ class App extends PureComponent<object, object> {
         {this.state.activeTab === 0 && !isEmbedded ? <MockItemsButton onClick={(items) => this.setItems(items)}/> : ''}
         {this.state.activeTab === 3 && <CharacterListContainer/>}
 
+        {this.state.activeTab === 0 && this.state.showModFilterWarning > 0 && <ModFilterWarning numOtherItems={this.state.showModFilterWarning} /> }
         {this.state.activeTab === 0 && <ItemContainer
             showBackupCloudIcon={this.state.showBackupCloudIcon}
             items={this.state.items}

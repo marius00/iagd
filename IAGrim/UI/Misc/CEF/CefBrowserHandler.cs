@@ -181,7 +181,17 @@ namespace IAGrim.UI.Misc.CEF {
                 Logger.Warn("Attempted to set setIsFirstRun but CEF not yet initialized.");
             }
         }
+
+        public void ShowModFilterWarning(int numOtherItems) {
+            if (BrowserControl.CanExecuteJavascriptInMainFrame) {
+                BrowserControl.ExecuteScriptAsync("window.setModFilterWarning", numOtherItems);
+            }
+            else {
+                Logger.Warn("Attempted to set setIsFirstRun but CEF not yet initialized.");
+            }
+        }
         
+
         public bool SetOnlineBackupsEnabled(bool enabled) {
             if (BrowserControl.CanExecuteJavascriptInMainFrame) {
                 BrowserControl.ExecuteScriptAsync("window.setOnlineBackupsEnabled", enabled);
