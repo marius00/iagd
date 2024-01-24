@@ -175,7 +175,7 @@ class ReplicaItem extends PureComponent<Props, object> {
           <p className={styles.watermark}>{translate('item.buddies.watermark')}</p>
         </div>}
         {type === IItemType.Player && !item.replicaStats && <div className={styles.watermarkContainer}>
-            <p className={styles.watermark}>{translate('item.genericstats.watermark')}</p>
+            <p className={styles.watermark}>{translate('item.genericstats.warning')}</p>
         </div>}
       </div>
     );

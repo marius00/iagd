@@ -47,8 +47,6 @@ namespace IAGrim.UI.Misc.CEF {
                 {"app.tab.help", lang.GetTag("iatag_html_tab_header_help")},
                 {"app.tab.crafting", lang.GetTag("iatag_html_tab_header_crafting")},
                 {"app.tab.components", lang.GetTag("iatag_html_tab_header_components")},
-                {"app.tab.videoGuide", lang.GetTag("iatag_html_tab_header_videoguide")},
-                {"app.tab.videoGuideUrl", lang.GetTag("iatag_html_tab_header_videoguide_url")},
                 {"app.tab.discord", lang.GetTag("iatag_html_tab_header_discord")},
                 {"items.label.noItemsFound", lang.GetTag("iatag_html_items_no_items")},
                 {"items.label.youCanCraftThisItem", lang.GetTag("iatag_html_items_youcancraftthisitem")},
@@ -91,7 +89,7 @@ namespace IAGrim.UI.Misc.CEF {
                 {"notification.clearall", lang.GetTag("iatag_html_clearall")},
                 {"app.error.grimnotparsed", lang.GetTag("iatag_html_grimnotparsed")},
 
-                {"item.genericstats.watermark", lang.GetTag("iatag_html_genericstats")},
+                {"item.genericstats.warning", lang.GetTag("iatag_html_genericstats")},
                 {"item.buddies.watermark", lang.GetTag("iatag_html_buddies_watermark")},
             };
 

@@ -165,18 +165,6 @@ const helpEntries = [
         type: IHelpEntryType.Informational
     },
     {
-        title: `Why does IA show me items I don't have?`, // TODO: Link to this on recipe and buddy items?
-        tag: 'ShowingItemsIDontHave',
-        body: () => <div>
-            Item Assistant lets you show recipes and augments as items, as a reminder that you can obtain them.<br/>
-            <br/>
-            If you don't wish IA to display these items: <br/>
-            Go to settings and disable "Show recipes as items" and "Show augments as items". <br/><br/>
-            It's merely a "convenience feature" to have IA list things you 'might' have or be able to make. <br/>
-        </div>,
-        type: IHelpEntryType.Informational
-    },
-    {
         title: `I can't find my items!`,
         tag: 'CantFindItemsMod',
         body: () => <div>
@@ -244,23 +232,6 @@ const helpEntries = [
             installed, and you will have to enable it manually via custom backups.
         </div>,
         type: IHelpEntryType.Informational
-    },
-    {
-        title: `I disabled cloud saving and all my characters are gone!`,
-        tag: 'DisabledCloudsaveFreakout',
-        body: () => <div>
-            {toNumberedList(`
-        Don't freak out
-        This was not IA
-        This is expected`)}
-            Look up a guide online on disabling cloud saving.<br/>
-            When cloud saves are disabled, Grim Dawn looks for your characters in a <i>different folder</i>.<br/><br/>
-            You simply need to <a
-            href="https://forums.crateentertainment.com/t/how-to-move-your-saves-from-steam-cloud-to-grim-dawns-default-location/28921">copy
-            them to a new folder</a>,
-            and everything will be right in the world.
-        </div>,
-        type: IHelpEntryType.Help
     },
     {
         title: `Could not create SSL/TLS secure channel`,
@@ -379,16 +350,6 @@ const helpEntries = [
         body: () => <div>
             Yes! Your items are separated by mod and hardcore/softcore. <br/>
             In the upper right corner of IA you can select which items you which to display.
-        </div>,
-        type: IHelpEntryType.Informational
-    },
-    {
-        title: `Settings: What is show recipes as items?`,
-        tag: 'ShowRecipesAsItems',
-        body: () => <div>
-            <b>Show recipes as items will include your recipes when searching for items</b><br/>
-            Some players are more interested in what is available, in both items and what they can make<br/>
-            And this option lets them see craftable items as well as their own.
         </div>,
         type: IHelpEntryType.Informational
     },
@@ -521,6 +482,7 @@ const helpEntries = [
         title: `IA is looting items, but they never get removed in-game!`,
         tag: 'WindowsAntiRansomwareIssue',
         body: () => <div>
+        <b>Relevant for legacy looting mode only:</b> <br/>
             Item assistant is looting items, they never vanish in-game, and it cannot transfer items back into the
             game? <br/>
             The most common cause here is the anti-ransomware protection in Windows 10.<br/>

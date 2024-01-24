@@ -5,7 +5,6 @@ import translate from "../../translations/EmbeddedTranslator";
 import Patreon from "./Patreon";
 import {openUrl} from "../../integration/integration";
 import OpenInNew from '@material-ui/icons/OpenInNew'; //https://material.io/resources/icons/?style=baseline
-import VideoLibrary from '@material-ui/icons/VideoLibrary';
 import LiveHelp from '@material-ui/icons/LiveHelp';
 import Help from '@material-ui/icons/Help';
 
@@ -14,13 +13,10 @@ import Home from '@material-ui/icons/Home';
 
 export interface Props {
   activeTab: number;
-  showVideoGuide: boolean;
-
   setActiveTab(idx: number): void;
 }
 
-function Header({activeTab, setActiveTab, showVideoGuide}: Props) {
-  const videoGuideVisible = showVideoGuide && translate('app.tab.discord').length > 0;
+function Header({activeTab, setActiveTab}: Props) {
   return (
     <header class={style.header}>
       <nav>
@@ -39,9 +35,6 @@ function Header({activeTab, setActiveTab, showVideoGuide}: Props) {
         <Link activeClassName={style.active} href="#" onClick={() => openUrl("https://grimdawn.evilsoft.net/enchantments/")}>
           <OpenInNew/> {translate('app.tab.components')}
         </Link>
-        {videoGuideVisible && <Link activeClassName={style.active} href="#" onClick={() => openUrl(translate('app.tab.videoGuideUrl'))}>
-            <VideoLibrary/> {translate('app.tab.videoGuide')}
-        </Link>}
         <Link activeClassName={style.active} href="#" onClick={() => openUrl("https://discord.gg/5wuCPbB")}>
           <LiveHelp/> {translate('app.tab.discord')}
         </Link>

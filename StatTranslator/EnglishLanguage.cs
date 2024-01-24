@@ -371,8 +371,6 @@ namespace StatTranslator {
             {"iatag_html_tab_header_collections", "Collections"},
             {"iatag_html_tab_header_crafting", "Crafting"},
             {"iatag_html_tab_header_components", "Components"},
-            {"iatag_html_tab_header_videoguide", "Video Guide"},
-            {"iatag_html_tab_header_videoguide_url", "https://www.twitch.tv/videos/210592694"},
             {"iatag_html_tab_header_discord", "Discord"},
             {"iatag_html_crafting_lacking", "You are currently lacking:"},
             {"iatag_html_items_no_items", "No items found!"},

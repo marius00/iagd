@@ -309,7 +309,6 @@ class App extends PureComponent<object, object> {
         <Header
           activeTab={this.state.activeTab}
           setActiveTab={(idx: number) => this.setState({activeTab: idx})}
-          showVideoGuide={this.state.items.length <= 100}
         />
 
         {this.state.activeTab === 0 && !this.state.isGrimParsed && <GrimNotParsed />}
