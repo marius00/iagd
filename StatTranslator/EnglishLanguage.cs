@@ -394,7 +394,7 @@ namespace StatTranslator {
             {"iatag_html_ingress2", "It may get improved or removed in the future, depending on usage."},
             {"iatag_html_clearall", "Clear all"},
             {"iatag_html_grimnotparsed", "Getting started\r\n\r\nThe first step in using Item Assistant is parsing the Grim Dawn database..\r\n\r\nGo to the \"Grim Dawn\" tab and parse the game.\r\nIf the game path is not already detected, simply start Grim Dawn and it should get found automatically."},
-            {"iatag_html_genericstats", "Generic Stats"},
+            {"iatag_html_genericstats", "You are seeing the generic stats for this item.\r\nSee the help tab for more information"},
             {"iatag_html_buddies_watermark", "Buddyitem"},
 
             {"iatag_ui_orderbylevel_tooltip", "If items should be ordered by level, instead of alphabetically."},
