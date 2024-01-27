@@ -77,12 +77,14 @@ const helpEntries = [
         type: IHelpEntryType.Help
     },
     {
-        title: `IA says "Generic stat"`,
+        title: `IA says "Base stats"`,
         tag: 'GenericStatNoReplica',
         body: () => <div>
-            If an item says "Generic stats", IA is not yet able to display the true stats of this item. <br/>
-            Instead the generic stats will be displayed, as you would see them on grimtools and the like. <br/>
-            IA will automatically start updating the real display stats of items while you are playing Grim Dawn.
+            When an item says "Base stats", IA is not yet able to <u>display</u> the true stats of this item. <br/>
+            Although Item Assistant is always able to exactly reproduce your item, displaying the true stats inside IA requires some assistance from Grim Dawn <br/>
+            As you are playing the game, IA will automatically start fetching the real display stats of your items. <br/>
+            While this is happening, IA will display the base values for items.<br/><br/>
+            Transferring the item back into the game will always reproduce the exact item you put in.
         </div>,
         type: IHelpEntryType.Help
     },

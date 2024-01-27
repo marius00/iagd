@@ -190,6 +190,15 @@ namespace IAGrim.UI {
                         if (_serviceProvider.Get<IPlayerItemDao>().GetNumItems() == 0) {
                             _cefBrowserHandler.SetIsFirstRun();
                         }
+
+                        else if (DateTime.Now.Month == 4 && DateTime.Now.Day == 1) {
+                            if (settingsService.GetLocal().EasterPrank) {
+                                _cefBrowserHandler.SetEasterEggMode();
+                                settingsService.GetLocal().EasterPrank = false;
+                            }
+                        } else {
+                            settingsService.GetLocal().EasterPrank = true;
+                        }
                     }
                 }
             }
@@ -563,8 +572,6 @@ namespace IAGrim.UI {
             _backupBackgroundTask = new BackgroundTask(new FileBackup(playerItemDao, settingsService));
 
             LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
-            new EasterEgg(settingsService).Activate(this);
-
 
             var itemReplicaProcessor = _serviceProvider.Get<ItemReplicaProcessor>();
             if (settingsService.GetLocal().PreferLegacyMode) {

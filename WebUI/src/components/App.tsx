@@ -14,6 +14,7 @@ import ItemContainer from "../containers/ItemContainer";
 import CollectionItemContainer from "../containers/CollectionItemContainer";
 import NotificationContainer, {NotificationMessage} from "./NotificationComponent";
 import GrimNotParsed from "./GrimNotParsed";
+import EasterEgg from "./EasterEgg";
 import ModFilterWarning from "./ModFilterWarning";
 import FirstRunHelpThingie from "./FirstRunHelpThingie";
 import IItemAggregateRow from "../interfaces/IItemAggregateRow";
@@ -34,6 +35,7 @@ interface ApplicationState {
   isFirstRun: boolean;
   showModFilterWarning: number;
   hasShownModFilterWarning: boolean;
+  easterEggMode: boolean;
 }
 
 class App extends PureComponent<object, object> {
@@ -53,6 +55,7 @@ class App extends PureComponent<object, object> {
     isFirstRun: false,
     showModFilterWarning: 0,
     hasShownModFilterWarning: false,
+    easterEggMode: false,
   } as ApplicationState;
 
   componentDidMount() {
@@ -101,6 +104,13 @@ class App extends PureComponent<object, object> {
     window.setIsFirstRun = () => {
       this.setState({
         isFirstRun: true,
+      });
+    };
+
+    // @ts-ignore: setEasterEggMode doesn't exist on window
+    window.setEasterEggMode = () => {
+      this.setState({
+        easterEggMode: true,
       });
     };
 
@@ -304,6 +314,10 @@ class App extends PureComponent<object, object> {
 
 
   render() {
+    if (this.state.easterEggMode) {
+      return <EasterEgg close={() => this.setState({easterEggMode: false})} />;
+    }
+
     return (
       <div className={'App ' + (this.state.isDarkMode ? 'App-dark' : 'App-Light')}>
         <Header

@@ -182,6 +182,15 @@ namespace IAGrim.UI.Misc.CEF {
             }
         }
 
+        public void SetEasterEggMode() {
+            if (BrowserControl.CanExecuteJavascriptInMainFrame) {
+                BrowserControl.ExecuteScriptAsync("window.setEasterEggMode", true);
+            }
+            else {
+                Logger.Warn("Attempted to set setEasterEggMode but CEF not yet initialized.");
+            }
+        }
+
         public void ShowModFilterWarning(int numOtherItems) {
             if (BrowserControl.CanExecuteJavascriptInMainFrame) {
                 BrowserControl.ExecuteScriptAsync("window.setModFilterWarning", numOtherItems);

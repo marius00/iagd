@@ -560,7 +560,6 @@
     <Compile Include="Utilities\ActionCooldown.cs" />
     <Compile Include="Utilities\Cloud\FileBackup.cs" />
     <Compile Include="Utilities\DependencyChecker.cs" />
-    <Compile Include="Utilities\EasterEgg.cs" />
     <Compile Include="Utilities\GlobalPaths.cs" />
     <Compile Include="Utilities\LoggerUsernameConverter.cs" />
     <Compile Include="Utilities\RuntimeSettings.cs" />
