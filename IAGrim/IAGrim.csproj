@@ -357,7 +357,7 @@
     <Compile Include="Database\DAO\Table\ItemQualityTable.cs" />
     <Compile Include="Database\DAO\Table\ItemTagTable.cs" />
     <Compile Include="Database\DAO\Table\PlayerItemTable.cs" />
-    <Compile Include="Database\DAO\Table\RecipeItemTable.cs" />
+    
     <Compile Include="Database\DAO\Table\SkillMappingTable.cs" />
     <Compile Include="Database\DAO\Table\SkillTable.cs" />
     <Compile Include="Database\Dto\ModSelection.cs" />
@@ -561,7 +561,7 @@
     <Compile Include="Utilities\ActionCooldown.cs" />
     <Compile Include="Utilities\Cloud\FileBackup.cs" />
     <Compile Include="Utilities\DependencyChecker.cs" />
-    <Compile Include="Utilities\EasterEgg.cs" />
+    
     <Compile Include="Utilities\GlobalPaths.cs" />
     <Compile Include="Utilities\LoggerUsernameConverter.cs" />
     <Compile Include="Utilities\RuntimeSettings.cs" />
@@ -582,7 +582,6 @@
     <Compile Include="Utilities\Logging\TextBoxAppender.cs" />
     <Compile Include="Utilities\Registry\RegistryHelper.cs" />
     <Compile Include="Utilities\TempFile.cs" />
-    <Compile Include="Utilities\TemporaryCopy.cs" />
     <Compile Include="Utilities\UsageStatisticsReporter.cs" />
   </ItemGroup>
   <ItemGroup>

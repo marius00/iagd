@@ -296,7 +296,7 @@ iatag_html_displaying=Displaying {0}
 iatag_html_filter_missing=Missing only
 iatag_html_filter_owned=Owned only
 iatag_html_filter_purple=Purples only
-iatag_html_genericstats=You are seeing the generic stats for this item.\nSee the help tab for more information
+iatag_html_genericstats=You are seeing this item's base stats.\nIt will be updated with the actual stats as you play. See the help tab for more information.
 iatag_html_grimnotparsed=Getting started\n\nThe first step in using Item Assistant is parsing the Grim Dawn database..\n\nGo to the "Grim Dawn" tab and parse the game.\nIf the game path is not already detected, simply start Grim Dawn and it should get found automatically.
 iatag_html_h2=Experimental feature
 iatag_html_ingress1=This feature was added as Proof-of-concept at request from a user.
