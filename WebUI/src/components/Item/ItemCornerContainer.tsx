@@ -31,7 +31,7 @@ function getEaster(Y: number) {
 
 function isItEaster(): boolean {
   const easterSunday = getEaster(new Date().getFullYear());
-  const startOfEaster = new Date(easterSunday.getFullYear(), easterSunday.getMonth(), easterSunday.getDay() - 7);
+  const startOfEaster = new Date(easterSunday.getFullYear(), easterSunday.getMonth(), easterSunday.getDate() - 7);
   return new Date() >= startOfEaster && new Date <= easterSunday;
 }
 
@@ -42,8 +42,10 @@ function getCloudIcon(isOk: boolean) {
   let suffix = '';
   if (isHalloween) {
     suffix = '-hw';
+    console.log("Switching to halloween cloud icons");
   } else if (isEaster) {
     suffix = '-easter';
+      console.log("Switching to easter cloud icons");
   }
 
   return isOk ? `static/cloud-ok${suffix}.png` : `static/cloud-err${suffix}.png`;
