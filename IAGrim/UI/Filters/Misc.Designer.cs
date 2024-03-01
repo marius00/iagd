@@ -51,7 +51,6 @@ namespace IAGrim.UI.Filters {
             this.cbRunspeed = new FirefoxCheckBox();
             this.cbDefense = new FirefoxCheckBox();
             this.exp = new FirefoxCheckBox();
-            this.cbCraftable = new FirefoxCheckBox();
             this.miscPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -60,7 +59,6 @@ namespace IAGrim.UI.Filters {
             this.miscPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.miscPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
-            this.miscPanel.Controls.Add(this.cbCraftable);
             this.miscPanel.Controls.Add(this.cbCunning);
             this.miscPanel.Controls.Add(this.cbSpirit);
             this.miscPanel.Controls.Add(this.cbPhysique);
@@ -511,23 +509,7 @@ namespace IAGrim.UI.Filters {
             this.exp.TabIndex = 3;
             this.exp.Tag = "iatag_ui_experience";
             this.exp.Text = "Experience";
-            // 
-            // cbCraftable
-            // 
-            this.cbCraftable.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbCraftable.Bold = false;
-            this.cbCraftable.EnabledCalc = true;
-            this.cbCraftable.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cbCraftable.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.cbCraftable.IsDarkMode = false;
-            this.cbCraftable.Location = new System.Drawing.Point(4, 866);
-            this.cbCraftable.Name = "cbCraftable";
-            this.cbCraftable.Size = new System.Drawing.Size(272, 27);
-            this.cbCraftable.TabIndex = 25;
-            this.cbCraftable.Tag = "iatag_ui_onlycraftable";
-            this.cbCraftable.Text = "Craftable only";
-            this.cbCraftable.UseVisualStyleBackColor = true;
+
             // 
             // Misc
             // 
@@ -570,6 +552,5 @@ namespace IAGrim.UI.Filters {
         private FirefoxCheckBox cbCunning;
         private FirefoxCheckBox cbSpirit;
         private FirefoxCheckBox cbPhysique;
-        private FirefoxCheckBox cbCraftable;
     }
 }

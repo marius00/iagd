@@ -25,7 +25,6 @@ namespace IAGrim.UI.Filters {
         public bool GrantsSkill => cbGrantsSkill.Checked;
         public bool WithSummonerSkillOnly => cbSummonerSkill.Checked;
 
-        public bool CraftableOnly => cbCraftable.Checked;
 
         public List<string[]> Filters {
             get {

@@ -80,7 +80,7 @@
             this.totalDamage.Size = new System.Drawing.Size(275, 27);
             this.totalDamage.TabIndex = 35;
             this.totalDamage.Tag = "iatag_ui_totaldmg";
-            this.totalDamage.Text = "Total Damage";
+            this.totalDamage.Text = "All Damage";
             // 
             // dmgRetaliation
             // 

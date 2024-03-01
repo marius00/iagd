@@ -8,7 +8,6 @@ namespace IAGrim.Database.DAO.Dto {
     public enum StatFetch {
         PlayerItems,
         BuddyItems,
-        RecipeItems,
         AugmentItems,
         Skills,
         All

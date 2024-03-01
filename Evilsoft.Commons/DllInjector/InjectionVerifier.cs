@@ -106,13 +106,20 @@ namespace EvilsoftCommons.DllInjector {
                     processTemp.Start();
                     processTemp.WaitForExit(3000);
 
+
                     while (!processTemp.StandardOutput.EndOfStream) {
                         string line = processTemp.StandardOutput.ReadLine();
                         output.Add(line);
 
-                        
-                        if (line.Contains(exportOnlyInPlaytest)) // Export only exists in playtest
+                        if (line.Contains(exportOnlyInPlaytest)) { // Export only exists in v1.2
                             return true;
+                        }
+                    }
+
+                    if (processTemp.ExitCode != 0) {
+                        Logger.Fatal("Could not determine if running GD v1.1 or v1.2, will most likely crash the game.");
+                        Logger.Fatal("Halting IA");
+                        System.Environment.Exit(1);
                     }
                 }
                 catch (Exception ex) {
@@ -120,7 +127,7 @@ namespace EvilsoftCommons.DllInjector {
                 }
             }
             else {
-                Logger.Warn("Could not find Listdlls.exe, unable to verify isPlaytest.");
+                Logger.Warn("Could not find dumpbin.exe, unable to verify isPlaytest.");
             }
             return false;
         }

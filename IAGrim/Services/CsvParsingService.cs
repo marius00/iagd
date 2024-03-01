@@ -27,17 +27,13 @@ namespace IAGrim.Services {
         private readonly UserFeedbackService _userFeedbackService;
         private readonly TransferStashServiceCache _cache;
         private readonly TransferStashService _transferStashService;
-        private readonly ItemTransferController _itemTransferController;
-        private readonly SettingsService _settings;
 
-        public CsvParsingService(IPlayerItemDao playerItemDao, IReplicaItemDao replicaItemDao, UserFeedbackService userFeedbackService, TransferStashServiceCache cache, ItemTransferController itemTransferController, TransferStashService transferStashService, SettingsService settings) {
+        public CsvParsingService(IPlayerItemDao playerItemDao, IReplicaItemDao replicaItemDao, UserFeedbackService userFeedbackService, TransferStashServiceCache cache, TransferStashService transferStashService) {
             _playerItemDao = playerItemDao;
             _replicaItemDao = replicaItemDao;
             _userFeedbackService = userFeedbackService;
             _cache = cache;
-            _itemTransferController = itemTransferController;
             _transferStashService = transferStashService;
-            _settings = settings;
         }
 
         private class QueuedCsv {
@@ -55,6 +51,22 @@ namespace IAGrim.Services {
                 });
             }
 
+            var now = DateTime.Now;
+
+
+            try {
+                foreach (var root in new string[] { GlobalPaths.CsvLocationOutgoingDeleted, GlobalPaths.CsvLocationIngoingDeleted }) {
+                    foreach (var file in Directory.EnumerateFiles(root, "*.csv", SearchOption.AllDirectories)) {
+                        var daysOld = (now - File.GetLastWriteTime(file)).TotalDays;
+                        if (daysOld > 3) {
+                            Logger.Info($"Deleting old file {file}, {(now - File.GetLastWriteTime(file)).TotalDays} days old.");
+                            File.Delete(file);
+                        }
+                    }
+                }
+            } catch (IOException ex) {
+                Logger.Warn(ex);
+            }
 
             // Process any newly added files. Threaded to ensure a proper delay between write and read.
             var t = new Thread(() => {
@@ -87,7 +99,7 @@ namespace IAGrim.Services {
                             }
                             else if (classificationService.Duplicates.Count > 0) {
                                 Logger.Info("Deleting duplicate item file");
-                                File.Move(entry.Filename, Path.Combine(GlobalPaths.CsvLocationDeleted, Path.GetFileName(entry.Filename)));
+                                File.Move(entry.Filename, Path.Combine(GlobalPaths.CsvLocationIngoingDeleted, Path.GetFileName(entry.Filename)));
                             }
                             else {
                                 // Transfer back in-game, should never have been looted.

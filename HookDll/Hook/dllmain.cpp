@@ -312,6 +312,12 @@ int ProcessAttach(HINSTANCE _hModule) {
 	LogToFile(L"Attatching to process..");
 	g_hEvent = CreateEvent(NULL,FALSE,FALSE, L"IA_Worker");
 
+#ifdef PLAYTEST
+	LogToFile(L"DLL for GD 1.2");
+#else
+	LogToFile(L"DLL for GD 1.1.x");
+#endif
+
 
 	LogToFile(L"Creating seed info container class..");
 	listener = new OnDemandSeedInfo(&g_dataQueue, g_hEvent);

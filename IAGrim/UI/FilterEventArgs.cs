@@ -19,7 +19,6 @@ namespace IAGrim.UI
 
         public bool GrantsSkill { get; set; }
 
-        public bool RecipeItemsOnly { get; set; }
 
         public bool WithSummonerSkillOnly { get; set; }
 

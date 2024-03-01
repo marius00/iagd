@@ -14,8 +14,6 @@ class EmbeddedTranslator {
     'app.tab.crafting': 'Crafting',
     'app.tab.help': 'Help',
     'app.tab.components': 'Components',
-    'app.tab.videoGuide': 'Video Guide',
-    'app.tab.videoGuideUrl': 'https://www.twitch.tv/videos/210592694',
     'app.tab.discord': 'Help / Discord',
     'items.label.noItemsFound': 'No items found',
     'items.label.youCanCraftThisItem': 'You can craft this item',
@@ -30,7 +28,7 @@ class EmbeddedTranslator {
     'item.buddies.plural': 'Several of your Buddies have this item',
     'item.buddies.watermark': 'Buddyitem',
     'item.buddies.tooltip': 'One of your buddies has this item',
-    'item.genericstats.watermark': 'Generic Stats',
+    'item.genericstats.warning': 'You are seeing the generic stats for this item.\nSee the help tab for more information',
     'items.label.doubleGreen': 'This item has two green affixes',
     'items.label.tripleGreen': 'This item has three green affixes! (Rare!)',
     'item.label.bonusToAllPets': 'Bonus to All Pets:',
@@ -57,7 +55,7 @@ class EmbeddedTranslator {
     'collections.ingress1': 'If you like or dislike this feature, complain on discord or the forum.',
     'collections.ingress2': 'This feature will get deprecated or improved pending user feedback.',
     'notification.clearall': 'Clear all',
-    'app.error.grimnotparsed': 'Grim Dawn database not parsed.\n\nPlease access the Grim Dawn tab to parse the game before proceeding.',
+    'app.error.grimnotparsed': 'Getting started\n\nThe first step in using Item Assistant is parsing the Grim Dawn database..\n\nGo to the "Grim Dawn" tab and parse the game.\nIf the game path is not already detected, simply start Grim Dawn and it should get found automatically.',
   };
 
 

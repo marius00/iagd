@@ -26,27 +26,8 @@ namespace DllInjector {
         public const int INJECTION_ERROR_POSSIBLE_ACCESS_DENIED = 3;
         public const int STILL_RUNNING = 4;
         public const int INJECTION_ERROR_32BIT = 5;
-        private readonly InjectionMethods _injectionMethods = new InjectionMethods();
-
-
+        public const int PATH_ERROR = 6;
         private readonly ProgressChangedEventHandler _registeredProgressCallback;
-
-        class InjectionMethods {
-            private int _chosenInjectionMethodIdx = 0;
-            private readonly int[] _injectionMethods = new int[] { 1, 3, 5, 6 };
-
-            public int GetInjectionMethod() {
-                return _injectionMethods[_chosenInjectionMethodIdx];
-            }
-
-            public int GetNextInjectionMethod() {
-                return _injectionMethods[(_chosenInjectionMethodIdx + 1) % _injectionMethods.Length];
-            }
-
-            public void SwitchInjectionMethod() {
-                _chosenInjectionMethodIdx = (_chosenInjectionMethodIdx + 1) % _injectionMethods.Length;
-            }
-        }
 
         class RunArguments {
             public string WindowName;
@@ -94,9 +75,19 @@ namespace DllInjector {
 
             try {
                 BackgroundWorker worker = sender as BackgroundWorker;
-                
+
+                Logger.Info("Generating the path to the IA DLL...");
+                try {
+                    Path.Combine(Directory.GetCurrentDirectory(), (e.Argument as RunArguments).DllName);
+                }
+                catch (Exception ex) {
+                    Logger.Fatal("Error generating path to the IA dll, try installing IA in a different folder...");
+                    Logger.Fatal(ex.Message, ex);
+                    worker.ReportProgress(PATH_ERROR, null);
+                }
+
                 while (!worker.CancellationPending) {
-                    if (!File.Exists("DllInjector64.exe") || !File.Exists("DllInjector32.exe")) {
+                    if (!File.Exists("DllInjector64.exe")) {
                         new AvastedWarning().ShowDialog();
                         Logger.Fatal("Shutting down injection helper. End user has been avasted and IA is now inoperational until reinstalled.");
                         return;
@@ -151,10 +142,15 @@ namespace DllInjector {
             catch (ArgumentException ex) {
                 Logger.Warn("Error checking 32/64 bit status", ex);
                 return false;
+            } catch (InvalidOperationException ex) {
+                Logger.Warn("Error checking 32/64 bit status", ex);
+                return false;
+
             }
         }
 
         private static IntPtr Inject64Bit(string exe, string dll, int method) {
+            // Methods which tends to work: 1, 3, 5, 6
             return InjectXBit("DllInjector64.exe", exe, dll, method);
         }
 
@@ -253,12 +249,10 @@ namespace DllInjector {
                                 _previouslyInjected.Add(pid);
                             }
                             else  {
-                                Inject64Bit("Grim Dawn.exe", dll64Bit, _injectionMethods.GetInjectionMethod());
+                                Inject64Bit("Grim Dawn.exe", dll64Bit, 1);
 
                                 if (!InjectionVerifier.VerifyInjection(pid, dll64Bit)) {
-                                    Logger.Error($"Error injecting DLL into Grim Dawn. Injection method {_injectionMethods.GetInjectionMethod()}, switching to injection method {_injectionMethods.GetNextInjectionMethod()}");
-                                    _injectionMethods.SwitchInjectionMethod();
-                                    
+                                    Logger.Error($"Error injecting DLL into Grim Dawn.");
 
                                     worker.ReportProgress(INJECTION_ERROR, null);
                                 }

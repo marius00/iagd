@@ -70,12 +70,15 @@ namespace IAGrim.UI {
         private BackupServiceWorker _backupServiceWorker;
         private readonly UserFeedbackService _userFeedbackService;
         private MinimizeToTrayHandler _minimizeToTrayHandler;
+        private ModsDatabaseConfig _modsDatabaseConfigTab;
 
 
         #region Stash Status
 
         // TODO: TEMPORARY FIX!
         private bool _hasShownStashErrorPage = false;
+        private bool _hasShownPathErrorPage = false;
+        private bool _hasShown32bitErrorPage = false;
 
         /// <summary>
         /// Toolstrip callback for GDInjector
@@ -89,23 +92,32 @@ namespace IAGrim.UI {
             else {
                 switch (e.ProgressPercentage) {
                     case InjectionHelper.INJECTION_ERROR: {
-                        _itemReplicaService.SetIsGrimDawnRunning(false);
-                        RuntimeSettings.StashStatus = StashAvailability.ERROR;
-                        statusLabel.Text = e.UserState as string;
-                        if (!_hasShownStashErrorPage) {
-                            _cefBrowserHandler.ShowHelp(HelpService.HelpType.StashError);
-                            _hasShownStashErrorPage = true;
-                        }
+                            _itemReplicaService.SetIsGrimDawnRunning(false);
+                            RuntimeSettings.StashStatus = StashAvailability.ERROR;
+                            statusLabel.Text = e.UserState as string;
+                            if (!_hasShownStashErrorPage) {
+                                _cefBrowserHandler.ShowHelp(HelpService.HelpType.StashError);
+                                _hasShownStashErrorPage = true;
+                            }
 
-                        break;
-                    }
+                            break;
+                        }
+                    case InjectionHelper.PATH_ERROR: {
+                            RuntimeSettings.StashStatus = StashAvailability.ERROR;
+                            if (!_hasShownPathErrorPage) {
+                                _cefBrowserHandler.ShowHelp(HelpService.HelpType.PathError);
+                                _hasShownPathErrorPage = true;
+                            }
+
+                            break;
+                        }
                     case InjectionHelper.INJECTION_ERROR_32BIT: {
                         _itemReplicaService.SetIsGrimDawnRunning(false);
                         RuntimeSettings.StashStatus = StashAvailability.NOT64BIT;
                         statusLabel.Text = e.UserState as string;
-                        if (!_hasShownStashErrorPage) {
+                        if (!_hasShown32bitErrorPage) {
                             _cefBrowserHandler.ShowHelp(HelpService.HelpType.No32Bit);
-                            _hasShownStashErrorPage = true;
+                            _hasShown32bitErrorPage = true;
                         }
 
                         break;
@@ -113,7 +125,7 @@ namespace IAGrim.UI {
                     // No grim dawn client, so stash is closed!
                     case InjectionHelper.NO_PROCESS_FOUND_ON_STARTUP: {
                         _itemReplicaService.SetIsGrimDawnRunning(false);
-                        if (RuntimeSettings.StashStatus == StashAvailability.UNKNOWN) {
+                            if (RuntimeSettings.StashStatus == StashAvailability.UNKNOWN) {
                             RuntimeSettings.StashStatus = StashAvailability.CLOSED;
                         }
 
@@ -127,7 +139,7 @@ namespace IAGrim.UI {
                     // Injection error
                     case InjectionHelper.INJECTION_ERROR_POSSIBLE_ACCESS_DENIED: {
                         _itemReplicaService.SetIsGrimDawnRunning(false);
-                        RuntimeSettings.StashStatus = StashAvailability.ERROR;
+                            RuntimeSettings.StashStatus = StashAvailability.ERROR;
                         if (!_hasShownStashErrorPage) {
                             _cefBrowserHandler.ShowHelp(HelpService.HelpType.StashError);
                             _hasShownStashErrorPage = true;
@@ -154,7 +166,10 @@ namespace IAGrim.UI {
         /// <param name="e"></param>
         private void Browser_IsBrowserInitializedChanged(object sender, EventArgs e) {
             var args = e as FrameLoadEndEventArgs;
-            ChromiumWebBrowser browser = sender as ChromiumWebBrowser;
+            ChromiumWebBrowser browser = (sender as ChromiumWebBrowser);
+            if (browser == null) {
+                browser = (sender as CefBrowserHandler).BrowserControl;
+            }
             if (args != null && args.Frame.IsMain) {
                 // https://github.com/cefsharp/CefSharp/issues/3021
                 if (browser?.CanExecuteJavascriptInMainFrame ?? true) {
@@ -172,6 +187,18 @@ namespace IAGrim.UI {
                         
 
                         _cefBrowserHandler.SetOnlineBackupsEnabled(!settingsService.GetLocal().OptOutOfBackups);
+                        if (_serviceProvider.Get<IPlayerItemDao>().GetNumItems() == 0) {
+                            _cefBrowserHandler.SetIsFirstRun();
+                        }
+
+                        else if (DateTime.Now.Month == 4 && DateTime.Now.Day == 1) {
+                            if (settingsService.GetLocal().EasterPrank) {
+                                _cefBrowserHandler.SetEasterEggMode();
+                                settingsService.GetLocal().EasterPrank = false;
+                            }
+                        } else {
+                            settingsService.GetLocal().EasterPrank = true;
+                        }
                     }
                 }
             }
@@ -474,7 +501,8 @@ namespace IAGrim.UI {
             _cefBrowserHandler.OnAuthSuccess += (_, __) => onlineSettings.UpdateUi();
 
 
-            UIHelper.AddAndShow(new ModsDatabaseConfig(DatabaseLoadedTrigger, playerItemDao, _parsingService, grimDawnDetector, settingsService, _cefBrowserHandler, databaseItemDao), modsPanel);
+            _modsDatabaseConfigTab = new ModsDatabaseConfig(DatabaseLoadedTrigger, playerItemDao, _parsingService, grimDawnDetector, settingsService, _cefBrowserHandler, databaseItemDao, replicaItemDao);
+            UIHelper.AddAndShow(_modsDatabaseConfigTab, modsPanel);
 
             UIHelper.AddAndShow(new LoggingWindow(), panelLogging);
 
@@ -544,8 +572,6 @@ namespace IAGrim.UI {
             _backupBackgroundTask = new BackgroundTask(new FileBackup(playerItemDao, settingsService));
 
             LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
-            new EasterEgg(settingsService).Activate(this);
-
 
             var itemReplicaProcessor = _serviceProvider.Get<ItemReplicaProcessor>();
             if (settingsService.GetLocal().PreferLegacyMode) {
@@ -611,7 +637,7 @@ namespace IAGrim.UI {
             settingsService.GetLocal().OnMutate += delegate(object o, EventArgs args) { _cefBrowserHandler.SetOnlineBackupsEnabled(!settingsService.GetLocal().OptOutOfBackups); };
 
 
-            _csvParsingService = new CsvParsingService(playerItemDao, replicaItemDao, _userFeedbackService, cacher, _transferController, transferStashService, settingsService);
+            _csvParsingService = new CsvParsingService(playerItemDao, replicaItemDao, _userFeedbackService, cacher, transferStashService);
             _csvFileMonitor.OnModified += (_, arg) => {
                 var csvEvent = arg as CsvFileMonitor.CsvEvent;
                 _csvParsingService.Queue(csvEvent.Filename, csvEvent.Cooldown);

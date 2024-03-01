@@ -38,6 +38,7 @@ GetPrivateStash InventorySack_AddItem::privateStashHook;
 InventorySack_AddItem::InventorySack_AddItem_Drop InventorySack_AddItem::dll_InventorySack_AddItem_Drop;
 InventorySack_AddItem::InventorySack_AddItem_Vec2 InventorySack_AddItem::dll_InventorySack_AddItem_Vec2;
 InventorySack_AddItem::InventorySack_SetTransferOpen InventorySack_AddItem::dll_InventorySack_SetTransferOpen;
+InventorySack_AddItem::InventorySack_FindNextPosition InventorySack_AddItem::dll_InventorySack_FindNextPosition;
 std::wstring InventorySack_AddItem::m_storageFolder;
 int InventorySack_AddItem::m_stashTabLootFrom;
 int InventorySack_AddItem::m_stashTabDepositTo;
@@ -100,6 +101,7 @@ void InventorySack_AddItem::EnableHook() {
 
 	// bool GAME::GameInfo::GetHardcore(void)
 	dll_GameInfo_GetHardcore = (GameInfo_GetHardcore)GetProcAddressOrLogToFile(L"Engine.dll", GET_HARDCORE);
+	dll_InventorySack_FindNextPosition = (InventorySack_FindNextPosition)GetProcAddressOrLogToFile(L"Game.dll", "?FindNextPosition@InventorySack@GAME@@IEBA_NPEBVItem@2@AEAVRect@2@_N@Z");
 
 	
 	if (m_isGrimDawnParsed)
@@ -112,6 +114,7 @@ InventorySack_AddItem::InventorySack_AddItem(DataQueue* dataQueue, HANDLE hEvent
 	InventorySack_AddItem::m_hEvent = hEvent;
 	privateStashHook = GetPrivateStash(dataQueue, hEvent);
 	m_storageFolder = GetIagdFolder() + L"itemqueue\\ingoing\\";
+	LogToFile(L"Storing instaloot items into " + m_storageFolder);
 
 	boost::filesystem::create_directories(m_storageFolder);
 	m_settingsReader = SettingsReader();
@@ -482,8 +485,22 @@ std::wstring GetFolderToMoveTo(std::wstring modName, bool isHardcore) {
 /// <param name="filename">A valid CSV file</param>
 /// <returns></returns>
 GAME::ItemReplicaInfo* InventorySack_AddItem::ReadReplicaInfo(const std::wstring& filename) {
-	std::ifstream file(filename);
-	return GAME::Deserialize(GAME::GetNextLineAndSplitIntoTokens(file));
+	try {
+		std::ifstream file(filename);
+		return GAME::Deserialize(GAME::GetNextLineAndSplitIntoTokens(file));
+	}
+	catch (std::exception& ex) {
+		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+		std::wstring wide = converter.from_bytes(ex.what());
+
+		LogToFile(L"ERROR Creating ReplicaItem.." + wide);
+
+	}
+	catch (...) {
+		LogToFile(L"ERROR Creating ReplicaItem.. (triple-dot)");
+	}
+
+	return nullptr;
 }
 
 /// <summary>
@@ -569,10 +586,11 @@ void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int
 	if (m_isTransferStashOpen) {
 		void* sackPtr = GetSackToDepositTo((GAME::GameEngine*)This);
 		if (sackPtr != nullptr) {
-			float itemPosition[] = { 1, 1 };
+			GAME::Rect itemPosition;
 			boost::lock_guard<boost::mutex> guard(m_mutex);
 
 
+			bool success = false;
 			std::wstring targetFolder = GetFolderToMoveTo(GetModName(gameInfo), fnGetHardcore(gameInfo));
 			for (auto it = m_depositQueue.begin(); it != m_depositQueue.end(); ++it) {
 				std::wstring targetFile = targetFolder + L"\\" + randomFilename();
@@ -580,11 +598,33 @@ void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int
 
 				GAME::ItemReplicaInfo* replica = ReadReplicaInfo(*it);
 				if (replica != nullptr) {
-					auto item = fnCreateItem(replica);
-					dll_InventorySack_AddItem_Vec2(sackPtr, itemPosition, item, false);
+					//LogToFile(L"DEBUG Creating item from replica..");
+					try {
+						auto item = fnCreateItem(replica);
+						//LogToFile(L"DEBUG Adding item to inventory sack..");
+						if (item == nullptr) {
+							LogToFile(L"Error creating item, re-depositing back into IA. (Mod item transferred into vanilla?)");
+							targetFile = m_storageFolder + randomFilename();
+							LogToFile(L"Moving to " + targetFile);
+						}
+						else {
+							if (dll_InventorySack_FindNextPosition(sackPtr, item, &itemPosition, true)) {
+								dll_InventorySack_AddItem_Vec2(sackPtr, (void*)&itemPosition, item, false);
+								LogToFile(L"Item deposited, moving to " + targetFile);
+								success = true;
+							}
+							else {
+								targetFile = m_storageFolder + randomFilename();
+								LogToFile(L"Target sack is full, re-depositing to IA as " + targetFile);
+							}
+
+						}
+					}
+					catch (...) {
+						LogToFile(L"Invalid item, moving to " + targetFile);
+					}
 					delete replica;
 
-					LogToFile(L"Item deposited, moving to " + targetFile);
 				}
 				else {
 					LogToFile(L"Invalid item, moving to " + targetFile);
@@ -597,16 +637,23 @@ void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int
 
 
 			if (!m_depositQueue.empty()) {
-				if (m_depositQueue.size() == 1) {
-					DisplayMessage(L"An item was deposited", L"By Item Assistant");
+				if (success) {
+					if (m_depositQueue.size() == 1) {
+						DisplayMessage(L"An item was deposited", L"By Item Assistant");
+					}
+					else {
+						DisplayMessage(m_depositQueue.size() + L" items were deposited", L"By Item Assistant");
+					}
+
+					// Sort the items, as we've deposited them all in position 1,1
+					SortInventorySack(sackPtr, 1);
 				}
 				else {
-					DisplayMessage(m_depositQueue.size() + L" items were deposited", L"By Item Assistant");
+					DisplayMessage(L"Could not transfer item, moved back to IA.", L"By Item Assistant");
+
 				}
 				// fnPlayDropSound(item);
 
-				// Sort the items, as we've deposited them all in position 1,1
-				SortInventorySack(sackPtr, 1);
 
 				// We got a mutex so this is safe (and if it wasn't, we'd just loot it next time IA starts)
 				m_depositQueue.clear();

@@ -133,7 +133,6 @@ namespace IAGrim.UI.Tabs {
                 MaximumLevel = ParseNumeric(_maxLevel),
                 Rarity = rarity?.Rarity,
                 PrefixRarity = rarity?.PrefixRarity ?? 0,
-                RecipeItemsOnly = filters.RecipeItemsOnly,
                 Slot = slot?.Filter,
                 PetBonuses = filters.PetBonuses,
                 IsRetaliation = filters.IsRetaliation,
@@ -149,7 +148,7 @@ namespace IAGrim.UI.Tabs {
 
 
             bool includeBuddyItems = !filters.DuplicatesOnly; // If we're looking for duplicates, we're probably doing a cleanup, not caring about buddyitems
-            var message = _searchController.Search(query, filters.DuplicatesOnly, includeBuddyItems, _orderByLevel.Checked);
+            var message = _searchController.Search(query, includeBuddyItems, _orderByLevel.Checked);
 
             Logger.Info("Updating UI...");
 

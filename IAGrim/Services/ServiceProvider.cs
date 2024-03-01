@@ -93,7 +93,6 @@ namespace IAGrim.Services {
                 playerItemDao,
                 itemStatService,
                 buddyItemDao,
-                settingsService,
                 itemCollectionRepo
             );
 

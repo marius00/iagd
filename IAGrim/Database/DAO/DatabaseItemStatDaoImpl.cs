@@ -195,7 +195,6 @@ namespace IAGrim.Database {
                     fetchMode == StatFetch.PlayerItems ? $"AND baserecord IN (SELECT record FROM playeritemrecord)" : "",
                     fetchMode == StatFetch.AugmentItems ? $"AND db.{DatabaseItemTable.Id} IN (SELECT a.{AugmentationItemTable.Id} FROM {AugmentationItemTable.Table} a)" : "",
                     fetchMode == StatFetch.BuddyItems ? $"AND {DatabaseItemTable.Record} IN (SELECT {BuddyItemRecordTable.Record} FROM {BuddyItemRecordTable.Table})" : "",
-                fetchMode == StatFetch.RecipeItems ? $"AND baserecord in (SELECT {RecipeItemTable.Record} FROM {RecipeItemTable.Table})" : "",
                 fetchMode == StatFetch.Skills ? $"AND db.{DatabaseItemTable.Id} IN (SELECT map.{SkillMappingTable.Item} FROM {SkillMappingTable.Table} map)" : "", // Redundant? Either doesn't cover enough, or completely redundant
                 "AND NOT stat IN ( :blacklist )",
                 records.Any() ? $"AND db.{DatabaseItemTable.Record} IN ( :filter )" : ""

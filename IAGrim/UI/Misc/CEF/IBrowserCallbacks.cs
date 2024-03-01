@@ -13,5 +13,6 @@ namespace IAGrim.UI.Misc.CEF {
         void SetCollectionItems(IList<CollectionItem> items);
         void SetCollectionAggregateData(IList<CollectionItemAggregateRow> rows);
         void ShowLoadingAnimation(bool visible);
+        void ShowModFilterWarning(int numOtherItems);
     }
 }

@@ -24,7 +24,6 @@ namespace IAGrim.UI.Controller {
         private readonly ItemStatService _itemStatService;
         private readonly IBuddyItemDao _buddyItemDao;
         private readonly ItemPaginationService _itemPaginationService;
-        private readonly SettingsService _settings;
         private readonly IItemCollectionDao _itemCollectionRepo;
 
 
@@ -36,13 +35,11 @@ namespace IAGrim.UI.Controller {
             IPlayerItemDao playerItemDao,
             ItemStatService itemStatService,
             IBuddyItemDao buddyItemDao,
-            SettingsService settings,
             IItemCollectionDao itemCollectionRepo) {
             _playerItemDao = playerItemDao;
             _itemStatService = itemStatService;
             _itemPaginationService = new ItemPaginationService(TakeSize);
             _buddyItemDao = buddyItemDao;
-            _settings = settings;
             _itemCollectionRepo = itemCollectionRepo;
 
             JsIntegration.OnRequestItems += JsBind_OnRequestItems;
@@ -54,11 +51,12 @@ namespace IAGrim.UI.Controller {
             OnSearch?.Invoke(this, null);
         }
 
-        public string Search(ItemSearchRequest query, bool duplicatesOnly, bool includeBuddyItems, bool orderByLevel) {
+        public string Search(ItemSearchRequest query, bool includeBuddyItems, bool orderByLevel) {
             // Signal that we are loading items
             Browser.ShowLoadingAnimation(true);
 
-            var message = Search_(query, duplicatesOnly, includeBuddyItems, orderByLevel);
+            var message = Search_(query, includeBuddyItems, orderByLevel);
+
 
 
             return message;
@@ -96,7 +94,7 @@ namespace IAGrim.UI.Controller {
             return true;
         }
 
-        private string Search_(ItemSearchRequest query, bool duplicatesOnly, bool includeBuddyItems, bool orderByLevel) {
+        private string Search_(ItemSearchRequest query, bool includeBuddyItems, bool orderByLevel) {
             OnSearch?.Invoke(this, null);
             string message;
 
@@ -125,8 +123,14 @@ namespace IAGrim.UI.Controller {
                 UpdateCollectionItems(query);
             }
             else {
-
                 Browser.ShowLoadingAnimation(false);
+            }
+
+            // We have no search filters, yet can barely find any items. Despite there being more than twice as many items as we found.
+            // This might indicate the mod filter dropdown has the wrong setting.
+            var numOtherItems = _playerItemDao.GetNumItems() - personalCount;
+            if (query.IsEmpty && personalCount < 300 && numOtherItems > personalCount) {
+                Browser.ShowModFilterWarning((int)numOtherItems);
             }
 
             return message;

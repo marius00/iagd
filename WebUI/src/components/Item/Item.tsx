@@ -203,6 +203,16 @@ class Item extends PureComponent<Props, object> {
           </div>
           : ''
         }
+        {item.type === IItemType.Player && !item.replicaStats ?
+          <span className="informative">
+            <a data-tip={translate('item.genericstats.warning')}>
+              <div className="recipe-item-corner">
+                <img className="cursor-help" src="static\warning.png"/>
+              </div>
+            </a>
+          </span>
+          : ''
+        }
 
         <div className="level">
           <p>{translate('item.label.levelRequirement', item.level > 1 ? String(item.level) : translate('item.label.levelRequirementAny'))}</p>
@@ -222,10 +232,6 @@ class Item extends PureComponent<Props, object> {
           </div>
           : ''
         }
-
-        {item.type === IItemType.Player && !item.replicaStats && <div className={styles.watermarkContainer}>
-            <p className={styles.watermark}>{translate('item.genericstats.watermark')}</p>
-        </div>}
       </div>
     );
   }

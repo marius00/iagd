@@ -14,6 +14,9 @@ import ItemContainer from "../containers/ItemContainer";
 import CollectionItemContainer from "../containers/CollectionItemContainer";
 import NotificationContainer, {NotificationMessage} from "./NotificationComponent";
 import GrimNotParsed from "./GrimNotParsed";
+import EasterEgg from "./EasterEgg";
+import ModFilterWarning from "./ModFilterWarning";
+import FirstRunHelpThingie from "./FirstRunHelpThingie";
 import IItemAggregateRow from "../interfaces/IItemAggregateRow";
 
 interface ApplicationState {
@@ -29,6 +32,10 @@ interface ApplicationState {
   notifications: NotificationMessage[];
   hideItemSkills: boolean;
   isGrimParsed: boolean;
+  isFirstRun: boolean;
+  showModFilterWarning: number;
+  hasShownModFilterWarning: boolean;
+  easterEggMode: boolean;
 }
 
 class App extends PureComponent<object, object> {
@@ -45,6 +52,10 @@ class App extends PureComponent<object, object> {
     notifications: [],
     hideItemSkills: false,
     isGrimParsed: true,
+    isFirstRun: false,
+    showModFilterWarning: 0,
+    hasShownModFilterWarning: false,
+    easterEggMode: false,
   } as ApplicationState;
 
   componentDidMount() {
@@ -56,10 +67,13 @@ class App extends PureComponent<object, object> {
       console.log('==========>', numItems);
       window.scrollTo(0, 0);
 
+      let isFirstRun = this.state.isFirstRun && numItems === 0;
+
       this.setState({
         isLoading: false,
         items: items,
-        numItems: numItems || 0
+        numItems: numItems || 0,
+        isFirstRun: isFirstRun,
       });
     };
 
@@ -83,6 +97,32 @@ class App extends PureComponent<object, object> {
       this.setState({
         collectionItems: collectionItems
       });
+    };
+
+    // Enable "is first run" tutorial window
+    // @ts-ignore: setIsFirstRun doesn't exist on window
+    window.setIsFirstRun = () => {
+      this.setState({
+        isFirstRun: true,
+      });
+    };
+
+    // @ts-ignore: setEasterEggMode doesn't exist on window
+    window.setEasterEggMode = () => {
+      this.setState({
+        easterEggMode: true,
+      });
+    };
+
+    // Enable "is first run" tutorial window
+    // @ts-ignore: setIsFirstRun doesn't exist on window
+    window.setModFilterWarning = (numOtherItems: number) => {
+      if (!this.state.hasShownModFilterWarning) {
+        this.setState({
+          showModFilterWarning: numOtherItems,
+          hasShownModFilterWarning: true,
+        });
+      }
     };
 
     // @ts-ignore: Does not exist on window
@@ -127,7 +167,8 @@ class App extends PureComponent<object, object> {
     // @ts-ignore
     window.setIsGrimParsed = (isGrimParsed: boolean) => {
       this.setState({
-        isGrimParsed: isGrimParsed
+        isGrimParsed: isGrimParsed,
+         isLoading: false,
       });
     };
 
@@ -136,7 +177,8 @@ class App extends PureComponent<object, object> {
     window.showHelp = (tag: string) => {
       this.setState({
         activeTab: 2,
-        helpSearchFilter: tag
+        helpSearchFilter: tag,
+        isLoading: false,
       });
     };
 
@@ -272,21 +314,26 @@ class App extends PureComponent<object, object> {
 
 
   render() {
+    if (this.state.easterEggMode) {
+      return <EasterEgg close={() => this.setState({easterEggMode: false})} />;
+    }
+
     return (
       <div className={'App ' + (this.state.isDarkMode ? 'App-dark' : 'App-Light')}>
         <Header
           activeTab={this.state.activeTab}
           setActiveTab={(idx: number) => this.setState({activeTab: idx})}
-          showVideoGuide={this.state.items.length <= 100}
         />
 
-        {!this.state.isGrimParsed && <GrimNotParsed />}
+        {this.state.activeTab === 0 && !this.state.isGrimParsed && <GrimNotParsed />}
+        {this.state.activeTab === 0 && this.state.isGrimParsed && this.state.isFirstRun && <FirstRunHelpThingie />}
         {this.state.isLoading && isEmbedded && <Spinner/>}
 
 
         {this.state.activeTab === 0 && !isEmbedded ? <MockItemsButton onClick={(items) => this.setItems(items)}/> : ''}
         {this.state.activeTab === 3 && <CharacterListContainer/>}
 
+        {this.state.activeTab === 0 && this.state.showModFilterWarning > 0 && <ModFilterWarning numOtherItems={this.state.showModFilterWarning} /> }
         {this.state.activeTab === 0 && <ItemContainer
             showBackupCloudIcon={this.state.showBackupCloudIcon}
             items={this.state.items}

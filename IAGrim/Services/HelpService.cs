@@ -28,6 +28,7 @@ namespace IAGrim.Services {
             OnlineBackups,
             NotEnoughStashTabs,
             StashError,
+            PathError,
             No32Bit,
             WindowsAntiRansomwareIssue,
         }
@@ -38,6 +39,10 @@ namespace IAGrim.Services {
 
         public void ShowCharacterBackups() {
             MessageBox.Show("Error - Not implemented!");
+        }
+
+        public void SetIsFirstRun() {
+            // shrug..
         }
 
         public void SetIsGrimParsed(bool enabled) {
@@ -53,5 +58,6 @@ namespace IAGrim.Services {
         void ShowHelp(HelpService.HelpType type);
         void ShowCharacterBackups(); // TODO: Not strictly the right place for it..
         void SetIsGrimParsed(bool enabled); // TODO: Not strictly the right place for it..
+        void SetIsFirstRun();
     }
 }

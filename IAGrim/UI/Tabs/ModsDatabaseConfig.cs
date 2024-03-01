@@ -12,6 +12,7 @@ using IAGrim.Parsers.Arz;
 using IAGrim.Services;
 using IAGrim.Settings;
 using IAGrim.Utilities;
+using DllInjector;
 
 namespace IAGrim.UI {
     public partial class ModsDatabaseConfig : Form {
@@ -26,6 +27,7 @@ namespace IAGrim.UI {
         private readonly SettingsService _settingsService;
         private readonly IHelpService _helpService;
         private readonly IDatabaseItemDao _databaseItemDao;
+        private readonly IReplicaItemDao _replicaItemDao;
 
         public ModsDatabaseConfig(
             Action itemViewUpdateTrigger,
@@ -33,7 +35,7 @@ namespace IAGrim.UI {
             ParsingService parsingService,
             GrimDawnDetector grimDawnDetector,
             SettingsService settingsService,
-            IHelpService helpService, IDatabaseItemDao databaseItemDao) {
+            IHelpService helpService, IDatabaseItemDao databaseItemDao, IReplicaItemDao replicaItemDao) {
             InitializeComponent();
             _itemViewUpdateTrigger = itemViewUpdateTrigger;
             _playerItemDao = playerItemDao;
@@ -43,6 +45,7 @@ namespace IAGrim.UI {
             _helpService = helpService;
             _databaseItemDao = databaseItemDao;
             _databaseModSelectionService = new DatabaseModSelectionService();
+            _replicaItemDao = replicaItemDao;
         }
 
         private void UpdateListView(IEnumerable<string> paths) {
@@ -128,6 +131,11 @@ namespace IAGrim.UI {
         }
 
         private void buttonForceUpdate_Click(object sender, EventArgs e) {
+            if (EvilsoftCommons.DllInjector.DllInjector.FindProcessForWindow("Grim Dawn").Count > 0) {
+                MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_gdisrunning"));
+                return;
+            }
+
             _databaseItemDao.Clean();
 
             var isGdParsed2 = _databaseItemDao.GetRowCount() > 0;
@@ -159,8 +167,10 @@ namespace IAGrim.UI {
 
         private void buttonUpdateItemStats_Click(object sender, EventArgs e) {
             var updatingPlayerItemsScreen = new UpdatingPlayerItemsScreen(_playerItemDao);
-
             updatingPlayerItemsScreen.ShowDialog();
+
+            _replicaItemDao.DeleteAll();
+
             _itemViewUpdateTrigger?.Invoke();
         }
 
