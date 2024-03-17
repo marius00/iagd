@@ -78,8 +78,7 @@ namespace StatTranslator
                 }
                 // 'sN'
                 else if (entry.Length == 2) {
-                    if (int.TryParse(entry.Replace("s", ""), out fixIndex))
-                    {
+                    if (int.TryParse(entry.Replace("s", "").Replace("\r", ""), out fixIndex)) {
                         itemName[pos] = FilterGenderTag(fixes[fixIndex]);
                     }
 
