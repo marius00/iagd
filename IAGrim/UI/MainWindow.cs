@@ -642,8 +642,16 @@ namespace IAGrim.UI {
                 var csvEvent = arg as CsvFileMonitor.CsvEvent;
                 _csvParsingService.Queue(csvEvent.Filename, csvEvent.Cooldown);
             };
+
+            // Typically new users expect that items just magically appear, which is a terrible user experience when you have thousands of items. But works fine for a small set of items.
+            var shouldAutoSearchOnNewItems = playerItemDao.GetNumItems() < 100;
+
             _csvParsingService.OnItemLooted += (_, arg) => {
                 _searchWindow.SelectModFilterIfNotSelected();
+
+                if (shouldAutoSearchOnNewItems) {
+                    _searchWindow.UpdateListView();
+                }
             };
 
             _csvFileMonitor.StartMonitoring();
