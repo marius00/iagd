@@ -10,8 +10,6 @@ using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.Arz;
 using IAGrim.Parsers.TransferStash;
 using IAGrim.Services.Dto;
-using IAGrim.Settings;
-using IAGrim.UI.Controller;
 using IAGrim.UI.Misc.CEF;
 using IAGrim.Utilities;
 using IAGrim.Utilities.HelperClasses;
@@ -27,6 +25,7 @@ namespace IAGrim.Services {
         private readonly UserFeedbackService _userFeedbackService;
         private readonly TransferStashServiceCache _cache;
         private readonly TransferStashService _transferStashService;
+        public event EventHandler OnItemLooted;
 
         public CsvParsingService(IPlayerItemDao playerItemDao, IReplicaItemDao replicaItemDao, UserFeedbackService userFeedbackService, TransferStashServiceCache cache, TransferStashService transferStashService) {
             _playerItemDao = playerItemDao;
@@ -96,6 +95,7 @@ namespace IAGrim.Services {
                                 // Update replica reference
                                 var hash = ItemReplicaService.GetHash(item);
                                 _replicaItemDao.UpdatePlayerItemId(hash, item.Id);
+                                OnItemLooted?.Invoke(this, null);
                             }
                             else if (classificationService.Duplicates.Count > 0) {
                                 Logger.Info("Deleting duplicate item file");

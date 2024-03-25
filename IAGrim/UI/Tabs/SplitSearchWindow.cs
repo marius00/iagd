@@ -38,6 +38,7 @@ namespace IAGrim.UI.Tabs {
         private ToolTip toolTip1;
         private System.ComponentModel.IContainer components;
         private const int FilterPanelMinSize = 250;
+        private bool _hasCheckedModFilterNotEmpty = false;
 
         /// <summary>
         /// ModSelectionHandler
@@ -78,6 +79,28 @@ namespace IAGrim.UI.Tabs {
             Deactivate += SplitSearchWindow_Deactivate;
 
             InitializeFilterPanel();
+        }
+
+        public void SelectModFilterIfNotSelected() {
+            if (!_hasCheckedModFilterNotEmpty) {
+                if (InvokeRequired) {
+                    Invoke((MethodInvoker)delegate {
+                        this.SelectModFilterIfNotSelected();
+                    });
+                }
+                else {
+                    // Should only happen for the very first item ever looted, but it's a fairly poor user experience when it does happen.
+                    if (_modFilter.SelectedItem == null) {
+                        ModSelectionHandler.ConfigureModFilter();
+                    }
+
+                    if (_modFilter.SelectedItem == null && _modFilter.Items.Count > 0) {
+                        _modFilter.SelectedItem = _modFilter.Items[0];
+                        _hasCheckedModFilterNotEmpty = true;
+                    }
+                }
+
+            }
         }
 
         /// <summary>

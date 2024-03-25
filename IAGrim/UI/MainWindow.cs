@@ -642,6 +642,10 @@ namespace IAGrim.UI {
                 var csvEvent = arg as CsvFileMonitor.CsvEvent;
                 _csvParsingService.Queue(csvEvent.Filename, csvEvent.Cooldown);
             };
+            _csvParsingService.OnItemLooted += (_, arg) => {
+                _searchWindow.SelectModFilterIfNotSelected();
+            };
+
             _csvFileMonitor.StartMonitoring();
             _csvParsingService.Start();
 
