@@ -85,6 +85,7 @@ namespace IAGrim.Settings {
             return new SettingsService(new SettingsTemplate {
                 Local = new LocalSettings { MachineName = Environment.MachineName },
                 Persistent = new PersistentSettings {
+                    AutoDismissNotifications = true,
                 }
             }, filename);
         }
