@@ -256,6 +256,7 @@ iatag_damage_TotalDamage=to All
 iatag_damage_Vitality=Vitality
 iatag_deposit_pipe_success=Item sent to GD
 iatag_deposit_stash_full=Could not insert item, stash full
+iatag_error_modfilter=An error occurred loading the sc/hc mod filter
 iatag_feedback_already_logged_in=You are already logged in
 iatag_feedback_cloud_save_enabled_ingame=WARNING - Grim Dawn Cloud saving is active.
 iatag_feedback_delaying_stash_loot_status=Waiting for stash to close..
@@ -295,8 +296,8 @@ iatag_html_displaying=Displaying {0}
 iatag_html_filter_missing=Missing only
 iatag_html_filter_owned=Owned only
 iatag_html_filter_purple=Purples only
-iatag_html_genericstats=Generic Stats
-iatag_html_grimnotparsed=Grim Dawn database not parsed.\n\nPlease access the Grim Dawn tab to parse the game before proceeding.
+iatag_html_genericstats=You are seeing this item's base stats.\nIt will be updated with the actual stats as you play. See the help tab for more information.
+iatag_html_grimnotparsed=Getting started\n\nThe first step in using Item Assistant is parsing the Grim Dawn database..\n\nGo to the "Grim Dawn" tab and parse the game.\nIf the game path is not already detected, simply start Grim Dawn and it should get found automatically.
 iatag_html_h2=Experimental feature
 iatag_html_ingress1=This feature was added as Proof-of-concept at request from a user.
 iatag_html_ingress2=It may get improved or removed in the future, depending on usage.
@@ -324,8 +325,6 @@ iatag_html_tab_header_crafting=Crafting
 iatag_html_tab_header_discord=Discord
 iatag_html_tab_header_help=Help
 iatag_html_tab_header_items=Items
-iatag_html_tab_header_videoguide=Video Guide
-iatag_html_tab_header_videoguide_url=https://www.twitch.tv/videos/210592694
 iatag_html_transfer=Transfer to Stash
 iatag_html_transfer_cmp=Compare & Transfer
 iatag_html_transferall=Transfer all
@@ -335,12 +334,11 @@ iatag_items_found_self_and_buddy={0} matching items found (with an additional {1
 iatag_items_found_selfonly={0} matching items found
 iatag_legacy_backup=Invalid backup file. If this is a really old backup, please see the instructions on restoring from a legacy backup.
 iatag_looted_from_stash=Looted {0} items from stash {1}
+iatag_no_items_stored=No items found / New install? IA is monitoring for items.. See the FAQ for more details.
 iatag_no_matching_items_found=No matching items found
 iatag_no_stash_abort=No stash chosen. Aborting transfer.
 iatag_not_enough_stash=Transfer Stash only contains {0} pages. IA requires at least 2 pages to function properly.
-iatag_not_implemented=Functionality not implemented
 iatag_pg_restore_error=Error restoring from backup, see log file for more details
-iatag_postgres_backup=Invalid backup file. This backup format has been deprecated. Contact me on itemassistant@gmail.com and I'll send you a manual restore.
 iatag_purchase_stash=Please purchase more stash pages!
 iatag_rarity_any=Any
 iatag_rarity_blue=Blue
@@ -387,7 +385,7 @@ iatag_stash_closed=Stash: Closed
 iatag_stash_crafting=Stash: Crafting
 iatag_stash_error=Stash: ERROR
 iatag_stash_might_be_full=Some items not deposited, stash {0} might be full.
-iatag_stash_not_found=Could not locate and stash files.
+iatag_stash_not_found=Could not locate stash files.
 iatag_stash_not64bit=GD 32bit not supported
 iatag_stash_open=Stash: Open
 iatag_stash_status_error=Could not inject into Grim Dawn, are you sure the bank is CLOSED?
@@ -509,6 +507,7 @@ iatag_ui_fire=Fire
 iatag_ui_forgottengods=Forgotten Gods
 iatag_ui_frost=Frost/freeze
 iatag_ui_gamestash=Game Stash
+iatag_ui_gdisrunning=Grim Dawn is currently running. Please close Grim Dawn before attempting to parse the database
 iatag_ui_gdstash=GD Stash
 iatag_ui_generating_skills=Generating skills
 iatag_ui_generating_special_stats=Generating special stats
@@ -580,7 +579,6 @@ iatag_ui_offensive=Offensive
 iatag_ui_online_backup=Cloud Backup
 iatag_ui_online_backup_email=You are logged in as {OnlineBackupEmail}
 iatag_ui_online_backups_disabled=Online backups are disabled
-iatag_ui_onlycraftable=Craftable only
 iatag_ui_open_logfile=Open the full log file
 iatag_ui_opencustombackup=Open folder
 iatag_ui_openforum=Open Forum
@@ -649,7 +647,7 @@ iatag_ui_tab_mods=Grim Dawn
 iatag_ui_tab_online=Online
 iatag_ui_tab_secondtolast=Second to last tab
 iatag_ui_tab_settings=Settings
-iatag_ui_totaldmg=Total Damage
+iatag_ui_totaldmg=All Damage
 iatag_ui_transferanymod=Transfer to any mod
 iatag_ui_translation=Item Assistant is available in your language! Go to settings and click "Language" to change to English.
 iatag_ui_trauma=Trauma
