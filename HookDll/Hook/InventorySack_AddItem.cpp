@@ -253,6 +253,11 @@ bool InventorySack_AddItem::IsRelevant(const GAME::ItemReplicaInfo& item) {
 		return false;
 	}
 
+	if (item.baseRecord.find("records/items/misc/") != std::string::npos) {
+		DisplayMessage(L"Special item ignored - IA does not loot this item", L"Item Assistant");
+		return false;
+	}
+	
 	if (item.baseRecord.find("/questitems/") != std::string::npos) {
 		DisplayMessage(L"Quest item ignored - IA does not loot quest items", L"Item Assistant");
 		return false;
