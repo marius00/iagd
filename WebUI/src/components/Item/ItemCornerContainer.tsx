@@ -76,8 +76,9 @@ class ItemCornerContainer extends PureComponent<Props, object> {
     const showCloudErrorIcon = item.type === IItemType.Player && !item.hasCloudBackup && isEmbedded && showBackupCloudIcon;
     const showSingularBuddyItemIcon = item.type !== IItemType.Buddy && buddyItems.length === 1;
     const showPluralBuddyItemIcon = item.type !== IItemType.Buddy && buddyItems.length > 1;
-    const showRecipeIcon = item.hasRecipe && item.type !== 0;
+    const showRecipeIcon = item.hasRecipe && item.type === IItemType.Recipe;
     const showAugmentationIcon = item.type === IItemType.Augmentation;
+    const showGenericStatIcon = item.type === IItemType.Player && !item.replicaStats;
     const onClickBuddyIcon = this.props.onClickBuddyIcon;
 
     const cloudIconOk = getCloudIcon(true);
@@ -145,11 +146,20 @@ class ItemCornerContainer extends PureComponent<Props, object> {
         <span data-tip={translate('items.label.youCanCraftThisItem')}>
           <img
             className="cursor-help"
-            data-bind="click: function(item) { jumpToCraft(item.baseRecord); }"
             src="static\recipe.png"
             alt={"You can create this item (recipe)"}
           />
           </span>
+        }
+        {showGenericStatIcon ?
+        <span data-tip={translate('item.genericstats.warning')}>
+          <img
+            className="cursor-help"
+            src="static\warning.png"
+            style="width: 16px;"
+          />
+          </span>
+          : ''
         }
       </div>
     );

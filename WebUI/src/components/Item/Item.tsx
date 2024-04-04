@@ -192,27 +192,11 @@ class Item extends PureComponent<Props, object> {
           : ''
         }
 
-        <ItemCornerContainer items={this.props.items} showBackupCloudIcon={this.props.showBackupCloudIcon} onClickBuddyIcon={() => this.props.transferSingle(this.props.items)} />
-
-        {item.hasRecipe && item.type === IItemType.Recipe ?
-          <div className="recipe-item">
-            <img src="static\recipe.png"/>
-            <span className="craft-link">
-              &nbsp;<span>{translate('items.label.youCanCraftThisItem')}</span>
-            </span>
-          </div>
-          : ''
-        }
-        {item.type === IItemType.Player && !item.replicaStats ?
-          <span className="informative">
-            <a data-tip={translate('item.genericstats.warning')}>
-              <div className="recipe-item-corner">
-                <img className="cursor-help" src="static\warning.png"/>
-              </div>
-            </a>
-          </span>
-          : ''
-        }
+        <ItemCornerContainer
+            items={this.props.items}
+            showBackupCloudIcon={this.props.showBackupCloudIcon}
+            onClickBuddyIcon={() => this.props.transferSingle(this.props.items)}
+        />
 
         <div className="level">
           <p>{translate('item.label.levelRequirement', item.level > 1 ? String(item.level) : translate('item.label.levelRequirementAny'))}</p>
