@@ -14,9 +14,9 @@ public:
 	void DisableHook() override;
 
 protected:
-	typedef void* (__thiscall* OriginalMethodPtr)(void* This, void* character, std::vector<GAME::GameTextLine>& gameTextLines);
+	typedef void* (__thiscall* OriginalMethodPtr)(void* This, void* character, std::vector<GAME::GameTextLine>& gameTextLines, bool unknown);
 	OriginalMethodPtr originalMethod;
 
 	static ItemRelicSeedInfo* g_self;
-	static void* __fastcall HookedMethod(void* This, void* character, std::vector<GAME::GameTextLine>& gameTextLines);
+	static void* __fastcall HookedMethod(void* This, void* character, std::vector<GAME::GameTextLine>& gameTextLines, bool unknown);
 };

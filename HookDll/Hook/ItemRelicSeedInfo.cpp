@@ -32,8 +32,8 @@ void ItemRelicSeedInfo::DisableHook() {
 	Unhook((PVOID*)&originalMethod, HookedMethod);
 }
 
-void* __fastcall ItemRelicSeedInfo::HookedMethod(void* This, void* character, std::vector<GAME::GameTextLine>& gameTextLines) {
-	void* v = g_self->originalMethod(This, character, gameTextLines);
+void* __fastcall ItemRelicSeedInfo::HookedMethod(void* This, void* character, std::vector<GAME::GameTextLine>& gameTextLines, bool unknown) {
+	void* v = g_self->originalMethod(This, character, gameTextLines, unknown);
 
 	GAME::ItemReplicaInfo replica;
 	fnItemGetItemReplicaInfo(This, replica);

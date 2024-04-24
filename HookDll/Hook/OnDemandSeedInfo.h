@@ -44,7 +44,7 @@ protected:
 	// Game interaction
 	ParsedSeedRequest* Parse(char* databuffer, size_t length);
 	void GetItemInfo(ParsedSeedRequest obj);
-	typedef void(__fastcall* pItemEquipmentGetUIDisplayText)(GAME::ItemEquipment*, GAME::Character* myCharacter, std::vector<GAME::GameTextLine>* text);
+	typedef void(__fastcall* pItemEquipmentGetUIDisplayText)(GAME::ItemEquipment*, GAME::Character* myCharacter, std::vector<GAME::GameTextLine>* text, bool unknown);
 	static pItemEquipmentGetUIDisplayText fnItemEquipmentGetUIDisplayText;
 
 	static OnDemandSeedInfo* g_self;

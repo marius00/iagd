@@ -82,11 +82,17 @@ namespace EvilsoftCommons.DllInjector {
             return false;
         }
 
+        public static bool IsGd12(string dll) {
+            return HasSpecificDllExport(dll, "??0GameTextLine@GAME@@QEAA@W4GameTextClass@1@AEBV?$basic_string@GU?$char_traits@G@std@@V?$allocator@G@2@@std@@_NPEBVGraphicsTexture@1@M@Z");
+        }
         public static bool IsPlaytest(string dll) {
+            return HasSpecificDllExport(dll, "?GetUIDisplayText@ItemEquipment@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@_N@Z");
+        }
+
+        private static bool HasSpecificDllExport(string dll, string export) {
             FixRegistryNagOnListDlls();
 
             Logger.Info("Running dumpbin...");
-            string exportOnlyInPlaytest = "??0GameTextLine@GAME@@QEAA@W4GameTextClass@1@AEBV?$basic_string@GU?$char_traits@G@std@@V?$allocator@G@2@@std@@_NPEBVGraphicsTexture@1@M@Z";
 
             List<string> output = new List<string>();
             if (File.Exists("dumpbin.exe")) {
@@ -111,7 +117,7 @@ namespace EvilsoftCommons.DllInjector {
                         string line = processTemp.StandardOutput.ReadLine();
                         output.Add(line);
 
-                        if (line.Contains(exportOnlyInPlaytest)) { // Export only exists in v1.2
+                        if (line.Contains(export)) { // Export only exists on specific versions of GD
                             return true;
                         }
                     }

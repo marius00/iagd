@@ -34,8 +34,8 @@ void EquipmentSeedInfo::DisableHook() {
 
 
 // void GAME::ItemEquipment::GetUIDisplayText(class GAME::Character const *,class mem::vector<struct GAME::GameTextLine> &)
-void* __fastcall EquipmentSeedInfo::HookedMethod(void* This, void* character, std::vector<GAME::GameTextLine>& gameTextLines) {
-	void* v = g_self->originalMethod(This, character, gameTextLines);
+void* __fastcall EquipmentSeedInfo::HookedMethod(void* This, void* character, std::vector<GAME::GameTextLine>& gameTextLines, bool unknown) {
+	void* v = g_self->originalMethod(This, character, gameTextLines, unknown);
 
 
 	// TODO: GetItemReplicaInfo()
