@@ -658,15 +658,28 @@ namespace IAGrim.Database {
                 queryFragments.Add("PI.MateriaRecord is not null and PI.MateriaRecord != ''");
             }
 
-            // Not 100% correct, we may have the same baserecord but different prefix/suffix, gets use pretty close though..
             if (query.DuplicatesOnly) {
-                queryFragments.Add(@"PI.BaseRecord IN (SELECT BaseRecord FROM (
+                var hcSc = query.IsHardcore ? "IsHardcore" : "NOT IsHardcore";
+                if (string.IsNullOrEmpty(query.Mod)) {
+                    queryFragments.Add($@"PI.BaseRecord IN (SELECT BaseRecord FROM (
                     select baserecord || prefixrecord || suffixrecord as Records, count(*) as N, BaseRecord from PlayerItem
-
+                    WHERE (Mod IS NULL OR Mod = '')
+                    AND {hcSc}
                     group by Records
                     HAVING N > 1
                     order by N desc
                     ))");
+                }
+                else {
+                    queryFragments.Add($@"PI.BaseRecord IN (SELECT BaseRecord FROM (
+                    select baserecord || prefixrecord || suffixrecord as Records, count(*) as N, BaseRecord from PlayerItem
+                    WHERE LOWER(Mod) = LOWER( :mod )
+                    AND {hcSc}
+                    group by Records
+                    HAVING N > 1
+                    order by N desc
+                    ))");
+                }
             }
 
             // Add the MINIMUM level requirement (if any)
