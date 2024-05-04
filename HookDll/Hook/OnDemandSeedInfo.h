@@ -44,7 +44,7 @@ protected:
 	// Game interaction
 	ParsedSeedRequest* Parse(char* databuffer, size_t length);
 	void GetItemInfo(ParsedSeedRequest obj);
-	typedef void(__fastcall* pItemEquipmentGetUIDisplayText)(GAME::ItemEquipment*, GAME::Character* myCharacter, std::vector<GAME::GameTextLine>* text, bool unknown);
+	typedef void(__fastcall* pItemEquipmentGetUIDisplayText)(GAME::ItemEquipment*, GAME::Character* myCharacter, std::vector<GAME::GameTextLine>* text, bool includeSetBonusDetails); // If false, we'll get a "click here for more info" text instead.
 	static pItemEquipmentGetUIDisplayText fnItemEquipmentGetUIDisplayText;
 
 	static OnDemandSeedInfo* g_self;
