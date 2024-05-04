@@ -421,6 +421,7 @@ namespace IAGrim.UI {
                 .AddDays(version.Build)
                 .AddSeconds(version.Revision * 2);
             statusLabel.Text = statusLabel.Text + $" - {version.Major}.{version.Minor}.{version.Build}.{version.Revision} from {buildDate.ToString("dd/MM/yyyy")}";
+            tsVersionNumber.Text = $"{version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
 
 
             var settingsService = _serviceProvider.Get<SettingsService>();
