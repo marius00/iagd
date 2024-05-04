@@ -156,7 +156,7 @@ class ItemCornerContainer extends PureComponent<Props, object> {
           <img
             className="cursor-help"
             src="static\warning.png"
-            style="width: 16px;"
+            style="max-width: 16px;"
           />
           </span>
           : ''
