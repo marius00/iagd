@@ -32,10 +32,10 @@ namespace IAGrim.Services.MessageProcessor {
                 _logger.Warn($"Error: ItemSeed NOITEM: " + IOHelper.GetNullString(data, 0));
             }
             else if (type == MessageType.TYPE_ITEMSEEDDATA_PLAYERID_DEBUG_RECV) {
-                _logger.Warn($"DEBUG: ItemSeed, Bytes: {IOHelper.GetInt(data, 0)}");
+                //_logger.Debug($"DEBUG: ItemSeed, Bytes: {IOHelper.GetInt(data, 0)}");
             }
             else if (type == MessageType.TYPE_GAMEENGINE_UPDATE) {
-                _logger.Warn($"DEBUG: GameEngine::Update");
+                //_logger.Debug($"DEBUG: GameEngine::Update");
             }
 #endif
         }

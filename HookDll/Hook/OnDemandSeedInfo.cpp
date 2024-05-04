@@ -41,6 +41,11 @@ void OnDemandSeedInfo::DisableHook() {
 * Continously listen for new events on the pipe
 */
 void OnDemandSeedInfo::ThreadMain(void*) {
+
+	// When spamming too much right as the game first loads, the game tends to crash
+	// This is suboptimal, but it is what it is..
+	Sleep(6000);
+
 	while (g_self->isRunning) {
 		g_self->Process();
 	}
@@ -329,6 +334,8 @@ void* __fastcall OnDemandSeedInfo::HookedMethod(void* This, int v) {
 			g_self->GetItemInfo(obj);
 		}
 	}
+
+	// TODO: Ideally, if we get into "else {}", it would be nice with a ~6s wait time, since the player is probably switching characters
 
 	return r;
 }

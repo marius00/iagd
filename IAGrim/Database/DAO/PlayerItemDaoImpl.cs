@@ -628,6 +628,8 @@ namespace IAGrim.Database {
             var queryFragments = new List<string>();
             var queryParams = new Dictionary<string, object>();
 
+            // TODO: select json_extract(value, '$.Text') from json_each((select text from replicaitem)) 
+            // select 1 from json_each((select text from replicaitem)) where json_extract(value, '$.Text') like '%wyrmclaw%'
             if (!string.IsNullOrEmpty(query.Wildcard)) {
                 queryFragments.Add("(PI.namelowercase LIKE :name OR PI.searchabletext LIKE :wildcard OR R.text LIKE :wildcard)");
                 queryParams.Add("name", $"%{query.Wildcard.Replace(' ', '%').ToLower()}%");

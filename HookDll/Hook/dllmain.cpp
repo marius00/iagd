@@ -310,6 +310,27 @@ int ProcessAttach(HINSTANCE _hModule) {
 	//GetProductAndVersion();
 	LogToFile(std::string("DLL Compiled: ") + std::string(__DATE__) + std::string(" ") + std::string(__TIME__));
 	LogToFile(L"Attatching to process..");
+
+
+	GAME::GameEngine* gameEngine = fnGetGameEngine();
+	if (gameEngine == nullptr) {
+		LogToFile(L"Could not find game engine ptr, aborting DLL injection..");
+		return FALSE;
+	}
+	if (IsGameLoading(gameEngine)) {
+		LogToFile(L"Game is still loading, aborting DLL injection..");
+		return FALSE;
+	}
+	if (IsGameWaiting(gameEngine, true)) { // TODO: When on a PC with IDA installed, figure out what the boolean is.
+		LogToFile(L"Game is waiting, aborting DLL injection..");
+		return FALSE;
+	}
+	if (!IsGameEngineOnline(gameEngine)) {
+		LogToFile(L"Game engine is not yet online, aborting DLL injection..");
+		return FALSE;
+	}
+
+
 	g_hEvent = CreateEvent(NULL,FALSE,FALSE, L"IA_Worker");
 
 #ifdef PLAYTEST
