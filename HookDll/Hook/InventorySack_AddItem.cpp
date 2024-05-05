@@ -336,6 +336,10 @@ void InventorySack_AddItem::DisplayMessage(std::wstring text, std::wstring body)
 		// TODO: How can translation support be added?
 
 		GAME::Engine* engine = fnGetEngine();
+		if (engine == nullptr) {
+			LogToFile(L"Attempted to display text in-game, but no engine was set.");
+			return;
+		}
 		fnShowCinematicText(engine, &text, &body, 5, &color);
 		m_lastNotificationTickTime = now;
 

@@ -90,7 +90,11 @@ namespace GAME {
 /// </summary>
 /// <returns></returns>
 GAME::GameEngine* fnGetGameEngine() {
-	return (GAME::GameEngine*)*(DWORD_PTR*)GetProcAddressOrLogToFile(L"game.dll", "?gGameEngine@GAME@@3PEAVGameEngine@1@EA");
+	auto gameEngine = (GAME::GameEngine*)*(DWORD_PTR*)GetProcAddressOrLogToFile(L"game.dll", "?gGameEngine@GAME@@3PEAVGameEngine@1@EA");
+	if (gameEngine == nullptr) {
+		LogToFile("Got game engine nullptr, beware if a crash follows this.");
+	}
+	return gameEngine;
 }
 
 /// <summary>
@@ -98,7 +102,11 @@ GAME::GameEngine* fnGetGameEngine() {
 /// </summary>
 /// <returns></returns>
 GAME::Engine* fnGetEngine(bool skipLog) {
-	return (GAME::Engine*)*(DWORD_PTR*)GetProcAddressOrLogToFile(L"engine.dll", "?gEngine@GAME@@3PEAVEngine@1@EA", skipLog);
+	auto engine = (GAME::Engine*)*(DWORD_PTR*)GetProcAddressOrLogToFile(L"engine.dll", "?gEngine@GAME@@3PEAVEngine@1@EA", skipLog);
+	if (engine == nullptr) {
+		LogToFile("Got engine nullptr, beware if a crash follows this.");
+	}
+	return engine;
 }
 
 bool fnGetHardcore(GAME::GameInfo* gameInfo, bool skipLog) {
