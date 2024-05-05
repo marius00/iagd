@@ -283,10 +283,30 @@ void OnDemandSeedInfo::GetItemInfo(ParsedSeedRequest obj) {
 		if (newItem) {
 			std::vector<GAME::GameTextLine> gameTextLines = {};
 
+			auto gameEngine = fnGetGameEngine();
+			if (gameEngine == nullptr) {
+				LogToFile("No game engine, skipping item stat generation");
+				DataItemPtr item(new DataItem(TYPE_ITEMSEEDDATA_PLAYERID_ERR_NOGAME, 0, nullptr));
+				m_dataQueue->push(item);
+				SetEvent(m_hEvent);
+				return;
+			}
+
+			GAME::Character* character = (GAME::Character*)fnGetMainPlayer(gameEngine);
+			if (character == nullptr) {
+				LogToFile("No character found, skipping item stat generation");
+				DataItemPtr item(new DataItem(TYPE_ITEMSEEDDATA_PLAYERID_ERR_NOGAME, 0, nullptr));
+				m_dataQueue->push(item);
+				SetEvent(m_hEvent);
+				return;
+			}
+
+			LogToFile(L"Generating stats for pid" + std::to_wstring(obj.playerItemId));
+
 			// TODO: We should fetch this earlier, ensure we don't get the hooked method. -- We seem to be getting 4 replies. 4th one is the message below. 
 			// First is probably in Item:: then ItemEquipment:: (both have hooks), 
 			// Sender is responsible for ensuring that this is NOT as set item, not a potion/scroll/other and not a relic. Eg must be equipment which is not part of a set.
-			fnItemEquipmentGetUIDisplayText((GAME::ItemEquipment*)newItem, (GAME::Character*)fnGetMainPlayer(fnGetGameEngine()), &gameTextLines, true);
+			fnItemEquipmentGetUIDisplayText((GAME::ItemEquipment*)newItem, character, &gameTextLines, true);
 			fnDestroyObjectEx(fnGetObjectManager(), (GAME::Object*)newItem, nullptr, 0);
 
 			std::wstringstream stream;
