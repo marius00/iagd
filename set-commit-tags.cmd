@@ -4,3 +4,6 @@ del ver.txt
 
 git tag %IA_VERSION%
 git push origin %IA_VERSION%
+
+type nul > Installer\dummy-%IA_VERSION%
+scp Installer\dummy-%IA_VERSION% storage@grimdawn.evilsoft.net:/home/storage/grimdawn.evilsoft.net/
