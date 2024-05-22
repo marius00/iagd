@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ServiceModel.Channels;
 using System.Text;
+using System.Text.RegularExpressions;
 using IAGrim.Database;
 using IAGrim.Database.Interfaces;
 using IAGrim.Services.ItemReplica;
@@ -173,7 +174,7 @@ namespace IAGrim.Services.MessageProcessor {
 
             return new ItemStatInfo {
                 Type = type,
-                Text = text,
+                Text = Regex.Replace(text, @"(\^.?)", ""),
             };
         }
     }
