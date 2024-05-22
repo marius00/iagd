@@ -18,7 +18,7 @@ internal class PanelBox : ScrollableControl {
     }
 
     private PointF _textLocation = new PointF(8, 5);
-    public String TextLocation {
+    public string TextLocation {
         get => $"{_textLocation.X}; {_textLocation.Y}";
         set {
             var values = value.Split(';');

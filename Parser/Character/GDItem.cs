@@ -11,16 +11,16 @@ namespace IAGrim.Parser.Character {
             STASH_SHARED, STASH_CHAR, EQUIPPED, INVENTORY
         };
 
-        public String BaseRecord { get; set; }
-        public String PrefixRecord { get; set; }
-        public String SuffixRecord { get; set; }
-        public String ModifierRecord { get; set; }
-        public String TransmuteRecord { get; set; }
+        public string BaseRecord { get; set; }
+        public string PrefixRecord { get; set; }
+        public string SuffixRecord { get; set; }
+        public string ModifierRecord { get; set; }
+        public string TransmuteRecord { get; set; }
         public int Seed { get; set; }
-        public String ComponentRecord { get; set; }
-        public String CompletionBonus { get; set; }
+        public string ComponentRecord { get; set; }
+        public string CompletionBonus { get; set; }
         public int ComponentSeed { get; set; }
-        public String AugmentRecord { get; set; }
+        public string AugmentRecord { get; set; }
         public int unknown { get; set; }
         public int AugmentSeed { get; set; }
         public int unknown2 { get; set; }

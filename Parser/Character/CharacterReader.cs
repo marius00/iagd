@@ -218,7 +218,7 @@ namespace IAGrim.Parser.Character {
             /*           int str = (int)(bio.getPhysique() - 50) / 8;
                        int agi = (int)(bio.getCunning() - 50) / 8;
                        int inte = (int)(bio.getSpirit() - 50) / 8;
-                       String attributes = str + "/" + agi + "/" + inte;
+                       string attributes = str + "/" + agi + "/" + inte;
                        Console.WriteLine("Attributes: " + attributes);*/
 
         }

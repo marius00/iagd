@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace IAGrim.Parser.Character {
     public class GDCharSkill {
-        private const String PATTERN_PLAYERCLASS = "records/skills/playerclass(.*)/.*";
-        private const String PATTERN_MASTERY = "records/skills/playerclass(.*)/_classtraining_class(.*).dbr";
-        private const String PATTERN_DEVOTION = "records/skills/devotion/(.*).dbr";
-        private const String PATTERN_MASTER_SKILL = "records/skills/playerclass(.*)/[^_]+(.*).dbr";
+        private const string PATTERN_PLAYERCLASS = "records/skills/playerclass(.*)/.*";
+        private const string PATTERN_MASTERY = "records/skills/playerclass(.*)/_classtraining_class(.*).dbr";
+        private const string PATTERN_DEVOTION = "records/skills/devotion/(.*).dbr";
+        private const string PATTERN_MASTER_SKILL = "records/skills/playerclass(.*)/[^_]+(.*).dbr";
 
-        public String Name { get; private set; }
-        public String AutoCastSkill { get; private set; }
-        public String AutoCastController { get; private set; }
+        public string Name { get; private set; }
+        public string AutoCastSkill { get; private set; }
+        public string AutoCastController { get; private set; }
         public int Level { get; private set; }
         public int DevotionLevel { get; private set; }
         public int Experience { get; private set; }

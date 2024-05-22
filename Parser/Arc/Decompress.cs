@@ -10,12 +10,12 @@ namespace IAGrim.Parser.Arc {
     public class Decompress : IDisposable {
         private static ILog logger = LogManager.GetLogger(typeof(Decompress));
 
-        public const String LINE_SEPARATOR = "\n";
+        public const string LINE_SEPARATOR = "\n";
         public const char TEXT_SEPARATOR_0A = (char)0x0A;
         public const char TEXT_SEPARATOR_0D = (char)0x0D;
 
-        private String zipFileName;
-        private String arcFileName;
+        private string zipFileName;
+        private string arcFileName;
         private ARCHeader header;
         private ARCFilePart[] parts;
         public String[] strings;
@@ -24,7 +24,7 @@ namespace IAGrim.Parser.Arc {
         private readonly bool lazyInitialize;
 
         public Decompress(String fileName, bool lazyInitialize) {
-            String extension = Path.GetExtension(fileName.ToLowerInvariant());
+            string extension = Path.GetExtension(fileName.ToLowerInvariant());
             if (".zip".Equals(extension)) {
                 zipFileName = fileName;
             }
@@ -160,7 +160,7 @@ namespace IAGrim.Parser.Arc {
             int offset = header.rec_offset + header.rec_size;
 
             for (int i = 0; i < strings.Length; i = i + 1) {
-                String s = IOHelper.GetNullString(bytes, offset);
+                string s = IOHelper.GetNullString(bytes, offset);
 
                 strings[i] = s;
 
@@ -182,7 +182,7 @@ namespace IAGrim.Parser.Arc {
 
             int offset = 0;
             for (int i = 0; i < strings.Length; i = i + 1) {
-                String s = IOHelper.GetNullString(bytes, offset);
+                string s = IOHelper.GetNullString(bytes, offset);
                 strings[i] = s;
                 offset = offset + s.Length + 1; // + 1 for 0 termination byte
             }
@@ -337,7 +337,7 @@ namespace IAGrim.Parser.Arc {
 
 
         public byte[] GetTexture(string filename) {
-            String s = filename;
+            string s = filename;
             
             var maxlen = Math.Min(strings.Length, tocs.Length);
             for (int i = 0; i < maxlen; i++) {

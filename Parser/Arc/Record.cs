@@ -18,6 +18,6 @@ namespace IAGrim.Parser.Arc {
         public int str_offset { get; set; }
 
         public byte[] data { get; set; }     // the decompressed content
-        public String text { get; set; }     // the decompressed content as text
+        public string text { get; set; }     // the decompressed content as text
     }
 }
