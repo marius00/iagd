@@ -305,6 +305,24 @@ bool GetProductAndVersion()
 }
 */
 
+void ReportCancelledInjection() {
+	auto hwnd = FindWindow(L"GDIAWindowClass", NULL);
+	if (hwnd == nullptr) {
+		return;
+	}
+
+	COPYDATASTRUCT data;
+	data.dwData = TYPE_INJECTION_CANCELLED;
+	data.lpData = nullptr;
+	data.cbData = 0;
+
+	// To avoid blocking the main thread, we should not have a lock on the queue while we process the message.
+	SendMessage(hwnd, WM_COPYDATA, 0, (LPARAM)&data);
+	auto lastErrorCode = GetLastError();
+	if (lastErrorCode != 0)
+		LOG(L"After SendMessage error code is " << lastErrorCode);
+}
+
 std::vector<BaseMethodHook*> hooks;
 int ProcessAttach(HINSTANCE _hModule) {
 	//GetProductAndVersion();
@@ -314,18 +332,22 @@ int ProcessAttach(HINSTANCE _hModule) {
 
 	GAME::GameEngine* gameEngine = fnGetGameEngine();
 	if (gameEngine == nullptr) {
+		ReportCancelledInjection();
 		LogToFile(L"Could not find game engine ptr, aborting DLL injection..");
 		return FALSE;
 	}
 	if (IsGameLoading(gameEngine)) {
+		ReportCancelledInjection();
 		LogToFile(L"Game is still loading, aborting DLL injection..");
 		return FALSE;
 	}
 	if (IsGameWaiting(gameEngine, true)) { // TODO: When on a PC with IDA installed, figure out what the boolean is.
+		ReportCancelledInjection();
 		LogToFile(L"Game is waiting, aborting DLL injection..");
 		return FALSE;
 	}
 	if (!IsGameEngineOnline(gameEngine)) {
+		ReportCancelledInjection();
 		LogToFile(L"Game engine is not yet online, aborting DLL injection..");
 		return FALSE;
 	}

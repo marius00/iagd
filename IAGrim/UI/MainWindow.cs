@@ -91,7 +91,18 @@ namespace IAGrim.UI {
             }
             else {
                 switch (e.ProgressPercentage) {
+                    case InjectionHelper.ABORTED:
+                        RuntimeSettings.StashStatus = StashAvailability.MENU;
+                        _itemReplicaService.SetIsGrimDawnRunning(true);
+                        break;
+
+
                     case InjectionHelper.INJECTION_ERROR: {
+                            if (RuntimeSettings.StashStatus == StashAvailability.MENU) {
+                                // False positive, injection failed because we intentionally aborted.
+                                break;
+                            }
+
                             _itemReplicaService.SetIsGrimDawnRunning(false);
                             RuntimeSettings.StashStatus = StashAvailability.ERROR;
                             statusLabel.Text = e.UserState as string;
@@ -102,6 +113,7 @@ namespace IAGrim.UI {
 
                             break;
                         }
+
                     case InjectionHelper.PATH_ERROR: {
                             RuntimeSettings.StashStatus = StashAvailability.ERROR;
                             if (!_hasShownPathErrorPage) {
@@ -111,6 +123,7 @@ namespace IAGrim.UI {
 
                             break;
                         }
+
                     case InjectionHelper.INJECTION_ERROR_32BIT: {
                         _itemReplicaService.SetIsGrimDawnRunning(false);
                         RuntimeSettings.StashStatus = StashAvailability.NOT64BIT;
@@ -122,6 +135,7 @@ namespace IAGrim.UI {
 
                         break;
                     }
+
                     // No grim dawn client, so stash is closed!
                     case InjectionHelper.NO_PROCESS_FOUND_ON_STARTUP: {
                         _itemReplicaService.SetIsGrimDawnRunning(false);
@@ -131,15 +145,17 @@ namespace IAGrim.UI {
 
                         break;
                     }
+
                     // No grim dawn client, so stash is closed!
                     case InjectionHelper.NO_PROCESS_FOUND:
                         RuntimeSettings.StashStatus = StashAvailability.CLOSED;
                         _itemReplicaService.SetIsGrimDawnRunning(false);
                         break;
+
                     // Injection error
                     case InjectionHelper.INJECTION_ERROR_POSSIBLE_ACCESS_DENIED: {
                         _itemReplicaService.SetIsGrimDawnRunning(false);
-                            RuntimeSettings.StashStatus = StashAvailability.ERROR;
+                        RuntimeSettings.StashStatus = StashAvailability.ERROR;
                         if (!_hasShownStashErrorPage) {
                             _cefBrowserHandler.ShowHelp(HelpService.HelpType.StashError);
                             _hasShownStashErrorPage = true;
@@ -345,7 +361,7 @@ namespace IAGrim.UI {
         private void SetFeedback(string feedback) {
             try {
                 if (InvokeRequired) {
-                    Invoke((MethodInvoker) delegate { SetFeedback(feedback); });
+                    Invoke((MethodInvoker)delegate { SetFeedback(feedback); });
                 }
                 else {
                     statusLabel.Text = feedback.Replace("\\n", " - ");
@@ -354,6 +370,21 @@ namespace IAGrim.UI {
             }
             catch (ObjectDisposedException) {
                 Logger.Debug("Attempted to set feedback, but UI already disposed. (Probably shutting down)");
+            }
+        }
+
+        private void SetInjectionAbortedStatus() {
+            try {
+                if (InvokeRequired) {
+                    Invoke((MethodInvoker)delegate { SetInjectionAbortedStatus(); });
+                }
+                else {
+                    InjectorCallback(null, new ProgressChangedEventArgs(InjectionHelper.ABORTED, null));
+                    
+                }
+            }
+            catch (ObjectDisposedException ex) {
+                Logger.Warn(ex.ToString());
             }
         }
 
@@ -582,6 +613,7 @@ namespace IAGrim.UI {
             }
             _messageProcessors.Add(new GenericErrorHandler());
             _messageProcessors.Add(itemReplicaProcessor);
+            _messageProcessors.Add(new InjectionAbortedProcessor(SetInjectionAbortedStatus));
 
 
             RuntimeSettings.StashStatusChanged += GlobalSettings_StashStatusChanged;
@@ -686,7 +718,7 @@ namespace IAGrim.UI {
 
             }
             string dllname = "ItemAssistantHook_x64.dll";
-            _injector = new InjectionHelper(new BackgroundWorker(), _injectorCallbackDelegate, false, "Grim Dawn", string.Empty, dllname);
+            _injector = new InjectionHelper(_injectorCallbackDelegate, false, "Grim Dawn", string.Empty, dllname);
         }
 
 
@@ -731,6 +763,9 @@ namespace IAGrim.UI {
                     tsStashStatus.Tag = "iatag_stash_not64bit";
                     tsStashStatus.Text = RuntimeSettings.Language.GetTag(tsStashStatus.Tag.ToString());
                     tsStashStatus.Visible = true;
+                    break;
+                case StashAvailability.MENU:
+                    tsStashStatus.Visible = settingsService.GetLocal().PreferLegacyMode;
                     break;
                 default:
                     tsStashStatus.ForeColor = Color.FromArgb(255, 192, 0, 0);

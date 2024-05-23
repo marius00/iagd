@@ -97,7 +97,9 @@ namespace EvilsoftCommons.DllInjector {
 
                 StringData = GetDataString(cps.lpData, Type);
 
-                System.Runtime.InteropServices.Marshal.Copy(cps.lpData, Data, 0, (int)cps.dwData);
+                if (cps.dwData != IntPtr.Zero) {
+                    System.Runtime.InteropServices.Marshal.Copy(cps.lpData, Data, 0, (int)cps.dwData);
+                }
             }
 
             [HandleProcessCorruptedStateExceptions]

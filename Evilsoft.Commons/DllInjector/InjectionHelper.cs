@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using DllInjector.UI;
@@ -27,6 +28,7 @@ namespace DllInjector {
         public const int STILL_RUNNING = 4;
         public const int INJECTION_ERROR_32BIT = 5;
         public const int PATH_ERROR = 6;
+        public const int ABORTED = 7;
         private readonly ProgressChangedEventHandler _registeredProgressCallback;
 
         class RunArguments {
@@ -44,7 +46,7 @@ namespace DllInjector {
         /// <param name="windowName">Name of the window you wish to inject to</param>
         /// <param name="className">Name of the class you wish to inject to (IFF window name is empty/null)</param>
         /// <param name="dll">Name of the DLL you wish to inject</param>
-        public InjectionHelper(BackgroundWorker bw, ProgressChangedEventHandler progressChanged, bool unloadOnExit, string windowName, string className, string dll) {
+        public InjectionHelper(ProgressChangedEventHandler progressChanged, bool unloadOnExit, string windowName, string className, string dll) {
             if (string.IsNullOrEmpty(windowName) && string.IsNullOrEmpty(className)) {
                 throw new ArgumentException("Either window or class name must be specified");
             }
@@ -53,17 +55,18 @@ namespace DllInjector {
             }
 
             this._registeredProgressCallback = progressChanged;
-            bw.DoWork += new DoWorkEventHandler(bw_DoWork);
-            bw.WorkerSupportsCancellation = true;
-            bw.WorkerReportsProgress = true;
-            bw.ProgressChanged += progressChanged;
+            _bw = new BackgroundWorker();
+            _bw.DoWork += new DoWorkEventHandler(bw_DoWork);
+            _bw.WorkerSupportsCancellation = true;
+            _bw.WorkerReportsProgress = true;
+            _bw.ProgressChanged += progressChanged;
 
             _exitArguments = new RunArguments {
                 WindowName = windowName,
                 ClassName = className,
                 DllName = dll
             };
-            bw.RunWorkerAsync(_exitArguments);
+            _bw.RunWorkerAsync(_exitArguments);
         }
 
         private void bw_DoWork(object sender, DoWorkEventArgs e) {
@@ -210,7 +213,12 @@ namespace DllInjector {
         }
 
         private void Process(BackgroundWorker worker, RunArguments arguments) {
-            System.Threading.Thread.Sleep(1200);
+            // Don't be so eager to inject, give the DLL some time to call back before retrying/verifying
+            int sleep = 3000;
+            while (sleep > 0 && (!worker?.CancellationPending ?? false)) {
+                System.Threading.Thread.Sleep(100);
+                sleep -= 100;
+            }
 
             HashSet<uint> pids = FindProcesses(arguments);
             
@@ -228,59 +236,69 @@ namespace DllInjector {
             }
             else {
                 foreach (uint pid in pids) {
-                    if (!_previouslyInjected.Contains(pid)) {
-                        var gdFilename = Path.Combine(Path.GetDirectoryName(GetWindowModuleFileName(pid)), "Game.dll");
-                        var isGd1_2 = InjectionVerifier.IsGd12(gdFilename);
-                        var isPlaytest = InjectionVerifier.IsPlaytest(gdFilename);
-                        if (isPlaytest) {
-                            dll64Bit = Path.Combine(Directory.GetCurrentDirectory(), arguments.DllName.Replace("_x64", "_playtest_x64"));
-                            Logger.Info("Playtest detected, using DLL " + dll64Bit);
-
-                            if (!File.Exists(dll64Bit)) {
-                                Logger.Error("Could not find DLL");
-                            }
-                        }
-                        else if (isGd1_2) {
-                            dll64Bit = Path.Combine(Directory.GetCurrentDirectory(), arguments.DllName.Replace("_x64", "_1_2_x64"));
-                            Logger.Info("GD v1.2 pre-playtest detected, using DLL " + dll64Bit);
-
-                            if (!File.Exists(dll64Bit)) {
-                                Logger.Error("Could not find DLL");
-                            }
-                        }
-                        else {
-                            dll64Bit = Path.Combine(Directory.GetCurrentDirectory(), arguments.DllName);
-                        }
-
-                        if (Is64Bit((int)pid, worker)) {
-                            if (InjectionVerifier.VerifyInjection(pid, dll64Bit)) {
-                                Logger.Info($"DLL already injected into target process, skipping injection into {pid}");
-                                _dontLog.Add(pid);
-                                _previouslyInjected.Add(pid);
-                            }
-                            else  {
-                                Inject64Bit("Grim Dawn.exe", dll64Bit, 1);
-
-                                if (!InjectionVerifier.VerifyInjection(pid, dll64Bit)) {
-                                    Logger.Error($"Error injecting DLL into Grim Dawn.");
-
-                                    worker.ReportProgress(INJECTION_ERROR, null);
-                                }
-                            }
-                        }
-                        else {
-                            Logger.Fatal("This version of Item Assistant does not support 32bit Grim Dawn");
-                            worker.ReportProgress(INJECTION_ERROR_32BIT, null);
-                        }
-                    }
-                    else {
+                    if (_previouslyInjected.Contains(pid)) {
                         worker.ReportProgress(STILL_RUNNING, null);
+                        continue;
+                    }
 
+                    // Figure out the filename
+                    dll64Bit = GetFilenameForPid(pid, arguments.DllName);
+
+                    // 32bit not supported
+                    if (!Is64Bit((int)pid, worker)) {
+                        Logger.Fatal("This version of Item Assistant does not support 32bit Grim Dawn");
+                        worker.ReportProgress(INJECTION_ERROR_32BIT, null);
+                        continue;
+                    }
+
+                    // Actual injection
+                    if (InjectionVerifier.VerifyInjection(pid, dll64Bit)) {
+                        Logger.Info($"DLL already injected into target process, skipping injection into {pid}");
+                        _dontLog.Add(pid);
+                        _previouslyInjected.Add(pid);
+                    }
+                    else  {
+                        Inject64Bit("Grim Dawn.exe", dll64Bit, 1);
+
+                        if (!InjectionVerifier.VerifyInjection(pid, dll64Bit)) {
+                            Logger.Error($"Error injecting DLL into Grim Dawn.");
+
+                            worker.ReportProgress(INJECTION_ERROR, null);
+                        }
                     }
                 }
             }
         }
 
+        private static string GetFilenameForPid(uint pid, string dllName) {
+            string dll64Bit;
+
+            // Figure out the filename
+            var gdFilename = Path.Combine(Path.GetDirectoryName(GetWindowModuleFileName(pid)), "Game.dll");
+            var isGd1_2 = InjectionVerifier.IsGd12(gdFilename);
+            var isPlaytest = InjectionVerifier.IsPlaytest(gdFilename);
+            if (isPlaytest) {
+                dll64Bit = Path.Combine(Directory.GetCurrentDirectory(), dllName.Replace("_x64", "_playtest_x64"));
+                Logger.Info("Playtest detected, using DLL " + dll64Bit);
+
+                if (!File.Exists(dll64Bit)) {
+                    Logger.Error("Could not find DLL");
+                }
+            }
+            else if (isGd1_2) {
+                dll64Bit = Path.Combine(Directory.GetCurrentDirectory(), dllName.Replace("_x64", "_1_2_x64"));
+                Logger.Info("GD v1.2 pre-playtest detected, using DLL " + dll64Bit);
+
+                if (!File.Exists(dll64Bit)) {
+                    Logger.Error("Could not find DLL");
+                }
+            }
+            else {
+                dll64Bit = Path.Combine(Directory.GetCurrentDirectory(), dllName);
+            }
+
+            return dll64Bit;
+        }
 
         // Copy-pasta from GrimDawnDetector: Remove once latest PlayTest is public
 
