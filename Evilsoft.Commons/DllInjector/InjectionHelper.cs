@@ -142,14 +142,6 @@ namespace DllInjector {
 
                 return false;
             }
-            catch (ArgumentException ex) {
-                Logger.Warn("Error checking 32/64 bit status", ex);
-                return false;
-            } catch (InvalidOperationException ex) {
-                Logger.Warn("Error checking 32/64 bit status", ex);
-                return false;
-
-            }
         }
 
         private static IntPtr Inject64Bit(string exe, string dll, int method) {
@@ -214,7 +206,7 @@ namespace DllInjector {
 
         private void Process(BackgroundWorker worker, RunArguments arguments) {
             // Don't be so eager to inject, give the DLL some time to call back before retrying/verifying
-            int sleep = 3000;
+            int sleep = 800;
             while (sleep > 0 && (!worker?.CancellationPending ?? false)) {
                 System.Threading.Thread.Sleep(100);
                 sleep -= 100;
@@ -245,10 +237,22 @@ namespace DllInjector {
                     dll64Bit = GetFilenameForPid(pid, arguments.DllName);
 
                     // 32bit not supported
-                    if (!Is64Bit((int)pid, worker)) {
-                        Logger.Fatal("This version of Item Assistant does not support 32bit Grim Dawn");
-                        worker.ReportProgress(INJECTION_ERROR_32BIT, null);
+                    try {
+                        if (!Is64Bit((int)pid, worker)) {
+                            Logger.Fatal("This version of Item Assistant does not support 32bit Grim Dawn");
+                            worker.ReportProgress(INJECTION_ERROR_32BIT, null);
+                            continue;
+                        }
+                    }
+                    catch (ArgumentException ex) {
+                        // Probably just closed the game
+                        Logger.Warn("Error checking 32/64 bit status", ex);
                         continue;
+                    }
+                    catch (InvalidOperationException ex) {
+                        Logger.Warn("Error checking 32/64 bit status", ex);
+                        continue;
+
                     }
 
                     // Actual injection
