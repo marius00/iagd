@@ -19,9 +19,6 @@
     <Filter Include="CoreHooks\ItemSeed">
       <UniqueIdentifier>{4d9ebb39-ad92-4146-8815-ba96a80c9eb2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="CoreHooks\Misc">
-      <UniqueIdentifier>{e28bbdb4-ac23-43b0-bcc1-46f9b75886ce}</UniqueIdentifier>
-    </Filter>
     <Filter Include="CoreHooks\Stash">
       <UniqueIdentifier>{af07545a-97de-4a4c-9bc3-ffbfc51487a5}</UniqueIdentifier>
     </Filter>
@@ -82,9 +79,6 @@
       <Filter>CoreHooks\ItemSeed</Filter>
     </ClInclude>
     <ClInclude Include="OnDemandSeedInfo.h">
-      <Filter>CoreHooks\ItemSeed</Filter>
-    </ClInclude>
-    <ClInclude Include="GameEngineUpdate.h">
       <Filter>CoreHooks\ItemSeed</Filter>
     </ClInclude>
     <ClInclude Include="ItemRelicSeedInfo.h">
@@ -153,9 +147,6 @@
       <Filter>CoreHooks\ItemSeed</Filter>
     </ClCompile>
     <ClCompile Include="OnDemandSeedInfo.cpp">
-      <Filter>CoreHooks\ItemSeed</Filter>
-    </ClCompile>
-    <ClCompile Include="GameEngineUpdate.cpp">
       <Filter>CoreHooks\ItemSeed</Filter>
     </ClCompile>
     <ClCompile Include="ItemRelicSeedInfo.cpp">

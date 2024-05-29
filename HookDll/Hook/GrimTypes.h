@@ -217,7 +217,7 @@ static auto fnShowCinematicText = pShowCinematicText(GetProcAddressOrLogToFile(L
 
 
 typedef bool(__thiscall* IsGameLoadingPtr)(void* This);
-typedef bool(__thiscall* IsGameWaitingPtr)(void* This, bool);
+typedef bool(__thiscall* IsGameWaitingPtr)(void* This, bool completelyUnknownWhatDoesThisDo);
 typedef bool(__thiscall* SortInventorySackPtr)(void* This, int);
 extern IsGameLoadingPtr IsGameLoading;
 extern IsGameLoadingPtr IsGameEngineOnline;

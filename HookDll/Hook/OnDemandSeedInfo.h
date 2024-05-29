@@ -40,6 +40,7 @@ protected:
 	// Feedback for IA
 	DataQueue* m_dataQueue;
 	HANDLE m_hEvent;
+	volatile int m_sleepMilliseconds;
 
 	// Game interaction
 	ParsedSeedRequest* Parse(char* databuffer, size_t length);

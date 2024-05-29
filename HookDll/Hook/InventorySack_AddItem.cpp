@@ -325,6 +325,8 @@ bool InventorySack_AddItem::Persist(GAME::ItemReplicaInfo replicaInfo, bool isHa
 void InventorySack_AddItem::DisplayMessage(std::wstring text, std::wstring body) {
 	const ULONGLONG now = GetTickCount64();
 
+
+
 	// Limit notifications to 1 per 3s, roughly the fade time.
 	if (now - m_lastNotificationTickTime > 3000) {
 		GAME::Color color;
@@ -340,6 +342,14 @@ void InventorySack_AddItem::DisplayMessage(std::wstring text, std::wstring body)
 			LogToFile(L"Attempted to display text in-game, but no engine was set.");
 			return;
 		}
+
+		// TODO: Try to just.. not do this in the menu? can this be a crash source? try to render text in the menu.
+		// TODO: What is parameter 2 "true"??
+		if (!IsGameLoading(engine) && !IsGameWaiting(engine, true) && IsGameEngineOnline(engine)) {
+			return;
+		}
+
+
 		fnShowCinematicText(engine, &text, &body, 5, &color);
 		m_lastNotificationTickTime = now;
 
@@ -366,6 +376,10 @@ std::wstring InventorySack_AddItem::GetModName(GAME::GameInfo* gameInfo) {
 /// <param name="stashTab">GAME::InventorySack*</param>
 /// <returns>If this inventory sack is the one we wish to loot items from</returns>
 bool InventorySack_AddItem::IsSackToLootFrom(void* stashTab, GAME::GameEngine* gameEngine) {
+	if (gameEngine == nullptr) {
+		return false;
+	}
+
 	void* realPtr = fnGetPlayerTransfer(gameEngine);
 	if (realPtr == nullptr) {
 		return false;
@@ -373,7 +387,7 @@ bool InventorySack_AddItem::IsSackToLootFrom(void* stashTab, GAME::GameEngine* g
 
 	auto sacks = static_cast<std::vector<GAME::InventorySack*>*>(realPtr);
 
-	// Not enough sacks to even support running IA
+	// Not enough sacks to support running IA
 	if (sacks->size() < 2) {
 		return false;
 	}
@@ -403,7 +417,7 @@ bool InventorySack_AddItem::IsSackToLootFrom(void* stashTab, GAME::GameEngine* g
 /// <param name="item"></param>
 /// <returns></returns>
 bool InventorySack_AddItem::HandleItem(void* stash, GAME::Item* item) {
-	if (!m_instalootEnabled || !m_isActive)
+	if (!m_instalootEnabled || !m_isActive || stash == nullptr || item == nullptr)
 		return false;
 
 	if (!IsSackToLootFrom(stash, fnGetGameEngine())) {
@@ -518,6 +532,10 @@ GAME::ItemReplicaInfo* InventorySack_AddItem::ReadReplicaInfo(const std::wstring
 /// <param name="gameEngine"></param>
 /// <returns></returns>
 GAME::InventorySack* InventorySack_AddItem::GetSackToDepositTo(GAME::GameEngine* gameEngine) {
+	if (gameEngine == nullptr) {
+		return nullptr;
+	}
+
 	void* realPtr = fnGetPlayerTransfer(gameEngine);
 	if (realPtr == nullptr) {
 		return nullptr;

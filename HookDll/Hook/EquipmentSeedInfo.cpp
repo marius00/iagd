@@ -37,8 +37,6 @@ void EquipmentSeedInfo::DisableHook() {
 void* __fastcall EquipmentSeedInfo::HookedMethod(void* This, void* character, std::vector<GAME::GameTextLine>& gameTextLines, bool unknown) {
 	void* v = g_self->originalMethod(This, character, gameTextLines, unknown);
 
-
-	// TODO: GetItemReplicaInfo()
 	GAME::ItemReplicaInfo replica;
 	fnItemGetItemReplicaInfo(This, replica);
 

@@ -16,6 +16,7 @@ OnDemandSeedInfo::OnDemandSeedInfo(DataQueue* dataQueue, HANDLE hEvent) {
 	m_hEvent = hEvent;
 	hPipe = NULL;
 	m_thread = NULL;
+	m_sleepMilliseconds = 0;
 
 	auto handle = GetProcAddressOrLogToFile(L"game.dll", "?GetUIDisplayText@ItemEquipment@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@_N@Z");
 	if (handle == NULL) LogToFile(L"Error hooking IsGameLoading@GameEngine");
@@ -44,9 +45,19 @@ void OnDemandSeedInfo::ThreadMain(void*) {
 
 	// When spamming too much right as the game first loads, the game tends to crash
 	// This is suboptimal, but it is what it is..
-	Sleep(6000);
+	g_self->m_sleepMilliseconds = 6000;
+
 
 	while (g_self->isRunning) {
+		while (g_self->m_sleepMilliseconds > 0) {
+			Sleep(100);
+			g_self->m_sleepMilliseconds -= 100;
+
+			if (!g_self->isRunning) {
+				return;
+			}
+		}
+
 		g_self->Process();
 	}
 }
@@ -341,7 +352,7 @@ void* __fastcall OnDemandSeedInfo::HookedMethod(void* This, int v) {
 	// Only start processing items if the game is running.
 	// Attempting to create items with a set bonus from the main menu may crash the game.
 	// Items with skills may also end up with imssing info if created from the main menu.
-	if (!IsGameLoading(This) && !IsGameWaiting(This, true) && IsGameEngineOnline(This)) {
+	if (g_self->m_sleepMilliseconds <= 0 && !IsGameLoading(This) && !IsGameWaiting(This, true) && IsGameEngineOnline(This)) {
 		// Process the queue
 		int num = 0;
 		while (!g_self->m_itemQueue.empty() && num++ < 15) {
@@ -352,8 +363,9 @@ void* __fastcall OnDemandSeedInfo::HookedMethod(void* This, int v) {
 			g_self->GetItemInfo(obj);
 		}
 	}
-
-	// TODO: Ideally, if we get into "else {}", it would be nice with a ~6s wait time, since the player is probably switching characters
+	else {
+		g_self->m_sleepMilliseconds = 12000;
+	}
 
 	return r;
 }
