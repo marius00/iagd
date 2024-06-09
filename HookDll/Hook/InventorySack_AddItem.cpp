@@ -346,7 +346,6 @@ bool InventorySack_AddItem::Persist(GAME::ItemReplicaInfo replicaInfo, bool isHa
 
 void InventorySack_AddItem::DisplayMessage(std::wstring text, std::wstring body) {
 	const ULONGLONG now = GetTickCount64();
-	return;
 	try {
 
 
@@ -365,37 +364,12 @@ void InventorySack_AddItem::DisplayMessage(std::wstring text, std::wstring body)
 				LogToFile(LogLevel::WARNING, L"Attempted to display text in-game, but no engine was set.");
 				return;
 			}
-			LogToFile(LogLevel::INFO, L"Doing game loading checks..");
 
-			// TODO: Try to just.. not do this in the menu? can this be a crash source? try to render text in the menu.
-			// TODO: What is parameter 2 "true"??
-
-			if (IsGameLoading == nullptr || IsGameWaiting == nullptr || IsGameEngineOnline == nullptr) {
-				LogToFile(LogLevel::WARNING, L"Something is null..");
-			}
-			/*
-			LogToFile(L"Calling IsGameLoading..");
-			if (IsGameLoading(engine)) {
-				LogToFile(L"Game is loading, skipping display text..");
-				return;
-			}*/
-
-			LogToFile(LogLevel::INFO, L"Calling IsGameWaiting..");
-			if (IsGameWaiting(engine, true)) {
-				LogToFile(LogLevel::INFO, L"Game is waiting, skipping display text..");
-				return;
-			}
-
-			LogToFile(LogLevel::INFO, L"Calling IsGameEngineOnline..");
-			if (!IsGameEngineOnline(engine)) {
-				LogToFile(LogLevel::INFO, L"Game engine is not online, skipping display text..");
-				return;
-			}
 
 			LogToFile(LogLevel::INFO, L"Display: " + text + L" - " + body);
 
-		
-			fnShowCinematicText(engine, &text, &body, 5, &color, true);
+			// Checking if the game is loading here says true.. checking if its waiting crashes.. odd..
+			fnShowCinematicText(engine, &text, &body, 5, &color, false);
 			m_lastNotificationTickTime = now;
 
 		} else {
