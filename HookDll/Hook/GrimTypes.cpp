@@ -43,7 +43,7 @@ namespace GAME {
 
 	GAME::ItemReplicaInfo* Deserialize(std::vector<std::string> tokens) {
 		if (tokens.size() != 13) {
-			LogToFile(L"Error parsing CSV file, expected 13 tokens, got " + std::to_wstring(tokens.size()));
+			LogToFile(LogLevel::WARNING, L"Error parsing CSV file, expected 13 tokens, got " + std::to_wstring(tokens.size()));
 			return nullptr;
 		}
 
@@ -92,7 +92,7 @@ namespace GAME {
 GAME::GameEngine* fnGetGameEngine() {
 	auto gameEngine = (GAME::GameEngine*)*(DWORD_PTR*)GetProcAddressOrLogToFile(L"game.dll", "?gGameEngine@GAME@@3PEAVGameEngine@1@EA");
 	if (gameEngine == nullptr) {
-		LogToFile("Got game engine nullptr, beware if a crash follows this.");
+		LogToFile(LogLevel::WARNING, "Got game engine nullptr, beware if a crash follows this.");
 	}
 	return gameEngine;
 }
@@ -104,7 +104,7 @@ GAME::GameEngine* fnGetGameEngine() {
 GAME::Engine* fnGetEngine(bool skipLog) {
 	auto engine = (GAME::Engine*)*(DWORD_PTR*)GetProcAddressOrLogToFile(L"engine.dll", "?gEngine@GAME@@3PEAVEngine@1@EA", skipLog);
 	if (engine == nullptr) {
-		LogToFile("Got engine nullptr, beware if a crash follows this.");
+		LogToFile(LogLevel::WARNING, "Got engine nullptr, beware if a crash follows this.");
 	}
 	return engine;
 }
@@ -120,10 +120,10 @@ typedef std::basic_string<char, std::char_traits<char>, std::allocator<char> > c
 void* GetProcAddressOrLogToFile(const wchar_t* dll, char* procAddress, bool skipLog) {
 	void* originalMethod = GetProcAddress(::GetModuleHandle(dll), procAddress);
 	if (originalMethod == NULL) {
-		LogToFile(std::string("Error finding export from DLL: ") + std::string(procAddress));
+		LogToFile(LogLevel::FATAL, std::string("Error finding export from DLL: ") + std::string(procAddress));
 	}
 	else if (!skipLog) {
-		LogToFile(std::string("Successfully found DLL export: ") + std::string(procAddress));
+		LogToFile(LogLevel::INFO, std::string("Successfully found DLL export: ") + std::string(procAddress));
 	}
 
 	return originalMethod;

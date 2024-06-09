@@ -26,8 +26,6 @@
 #define STASH_PRIVATE 1000
 
 std::wstring GetIagdFolder();
-void LogToFile(const wchar_t* message);
-void LogToFile(std::wstring message);
 
 HANDLE InventorySack_AddItem::m_hEvent;
 DataQueue* InventorySack_AddItem::m_dataQueue;
@@ -104,8 +102,12 @@ void InventorySack_AddItem::EnableHook() {
 	dll_InventorySack_FindNextPosition = (InventorySack_FindNextPosition)GetProcAddressOrLogToFile(L"Game.dll", "?FindNextPosition@InventorySack@GAME@@IEBA_NPEBVItem@2@AEAVRect@2@_N@Z");
 
 	
-	if (m_isGrimDawnParsed)
+	if (m_isGrimDawnParsed) {
+		LogToFile(L"Grim is parsed, displaying message..");
 		DisplayMessage(L"Item Assistant", L"Item monitoring enabled");
+	}
+
+	LogToFile(L"Instaloot hook enabled");
 }
 
 
@@ -114,7 +116,7 @@ InventorySack_AddItem::InventorySack_AddItem(DataQueue* dataQueue, HANDLE hEvent
 	InventorySack_AddItem::m_hEvent = hEvent;
 	privateStashHook = GetPrivateStash(dataQueue, hEvent);
 	m_storageFolder = GetIagdFolder() + L"itemqueue\\ingoing\\";
-	LogToFile(L"Storing instaloot items into " + m_storageFolder);
+	LogToFile(LogLevel::INFO, L"Storing instaloot items into " + m_storageFolder);
 
 	boost::filesystem::create_directories(m_storageFolder);
 	m_settingsReader = SettingsReader();
@@ -307,7 +309,7 @@ bool InventorySack_AddItem::Persist(GAME::ItemReplicaInfo replicaInfo, bool isHa
 	stream.flush();
 	stream.close();
 
-	LogToFile(L"Storing to " + fullPath);
+	LogToFile(LogLevel::INFO, L"Storing to " + fullPath);
 
 	std::ifstream verification;
 	verification.open(fullPath);
@@ -315,7 +317,7 @@ bool InventorySack_AddItem::Persist(GAME::ItemReplicaInfo replicaInfo, bool isHa
 		return true;
 	}
 
-	LogToFile(L"Error: written CSV file does not exist");
+	LogToFile(LogLevel::WARNING, L"Error: written CSV file does not exist");
 
 
 	return false;
@@ -324,38 +326,70 @@ bool InventorySack_AddItem::Persist(GAME::ItemReplicaInfo replicaInfo, bool isHa
 
 void InventorySack_AddItem::DisplayMessage(std::wstring text, std::wstring body) {
 	const ULONGLONG now = GetTickCount64();
+	return;
+	try {
 
 
+		// Limit notifications to 1 per 3s, roughly the fade time.
+		if (now - m_lastNotificationTickTime > 3000) {
+			GAME::Color color;
+			color.r = 1;
+			color.g = 1;
+			color.b = 1;
+			color.a = 1;
 
-	// Limit notifications to 1 per 3s, roughly the fade time.
-	if (now - m_lastNotificationTickTime > 3000) {
-		GAME::Color color;
-		color.r = 1;
-		color.g = 1;
-		color.b = 1;
-		color.a = 1;
+			// TODO: How can translation support be added?
 
-		// TODO: How can translation support be added?
+			GAME::Engine* engine = fnGetEngine();
+			if (engine == nullptr) {
+				LogToFile(LogLevel::WARNING, L"Attempted to display text in-game, but no engine was set.");
+				return;
+			}
+			LogToFile(LogLevel::INFO, L"Doing game loading checks..");
 
-		GAME::Engine* engine = fnGetEngine();
-		if (engine == nullptr) {
-			LogToFile(L"Attempted to display text in-game, but no engine was set.");
-			return;
+			// TODO: Try to just.. not do this in the menu? can this be a crash source? try to render text in the menu.
+			// TODO: What is parameter 2 "true"??
+
+			if (IsGameLoading == nullptr || IsGameWaiting == nullptr || IsGameEngineOnline == nullptr) {
+				LogToFile(LogLevel::WARNING, L"Something is null..");
+			}
+			/*
+			LogToFile(L"Calling IsGameLoading..");
+			if (IsGameLoading(engine)) {
+				LogToFile(L"Game is loading, skipping display text..");
+				return;
+			}*/
+
+			LogToFile(LogLevel::INFO, L"Calling IsGameWaiting..");
+			if (IsGameWaiting(engine, true)) {
+				LogToFile(LogLevel::INFO, L"Game is waiting, skipping display text..");
+				return;
+			}
+
+			LogToFile(LogLevel::INFO, L"Calling IsGameEngineOnline..");
+			if (!IsGameEngineOnline(engine)) {
+				LogToFile(LogLevel::INFO, L"Game engine is not online, skipping display text..");
+				return;
+			}
+
+			LogToFile(LogLevel::INFO, L"Display: " + text + L" - " + body);
+
+		
+			fnShowCinematicText(engine, &text, &body, 5, &color, true);
+			m_lastNotificationTickTime = now;
+
+		} else {
+			LogToFile(LogLevel::INFO, L"Muted: " + text);
 		}
+	}
+	catch (std::exception& ex) {
+		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+		std::wstring wide = converter.from_bytes(ex.what());
 
-		// TODO: Try to just.. not do this in the menu? can this be a crash source? try to render text in the menu.
-		// TODO: What is parameter 2 "true"??
-		if (!IsGameLoading(engine) && !IsGameWaiting(engine, true) && IsGameEngineOnline(engine)) {
-			return;
-		}
-
-
-		fnShowCinematicText(engine, &text, &body, 5, &color);
-		m_lastNotificationTickTime = now;
-
-		LogToFile(L"Display: " + text);
-	} else {
-		LogToFile(L"Muted: " + text);
+		LogToFile(LogLevel::WARNING, L": Encountered an exception while displaying text in-game: " + wide);
+	}
+	catch (...) {
+		LogToFile(LogLevel::WARNING, L"ERROR: Encountered an exception while displaying text in-game");
 	}
 }
 
@@ -516,11 +550,11 @@ GAME::ItemReplicaInfo* InventorySack_AddItem::ReadReplicaInfo(const std::wstring
 		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 		std::wstring wide = converter.from_bytes(ex.what());
 
-		LogToFile(L"ERROR Creating ReplicaItem.." + wide);
+		LogToFile(LogLevel::FATAL, L"ERROR Creating ReplicaItem.." + wide);
 
 	}
 	catch (...) {
-		LogToFile(L"ERROR Creating ReplicaItem.. (triple-dot)");
+		LogToFile(LogLevel::FATAL, L"ERROR Creating ReplicaItem.. (triple-dot)");
 	}
 
 	return nullptr;
@@ -606,7 +640,7 @@ void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int
 
 	GAME::GameInfo* gameInfo = fnGetGameInfo(engine);
 	if (gameInfo == nullptr) {
-		LogToFile(L"GameInfo is null, aborting..");
+		LogToFile(LogLevel::WARNING, L"GameInfo is null, aborting..");
 		return false;
 	}
 
@@ -621,7 +655,7 @@ void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int
 			std::wstring targetFolder = GetFolderToMoveTo(GetModName(gameInfo), fnGetHardcore(gameInfo));
 			for (auto it = m_depositQueue.begin(); it != m_depositQueue.end(); ++it) {
 				std::wstring targetFile = targetFolder + L"\\" + randomFilename();
-				LogToFile(L"Handling file " + *it);
+				LogToFile(LogLevel::INFO, L"Handling file " + *it);
 
 				GAME::ItemReplicaInfo* replica = ReadReplicaInfo(*it);
 				if (replica != nullptr) {
@@ -630,35 +664,35 @@ void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int
 						auto item = fnCreateItem(replica);
 						//LogToFile(L"DEBUG Adding item to inventory sack..");
 						if (item == nullptr) {
-							LogToFile(L"Error creating item, re-depositing back into IA. (Mod item transferred into vanilla?)");
+							LogToFile(LogLevel::FATAL, L"Error creating item, re-depositing back into IA. (Mod item transferred into vanilla?)");
 							targetFile = m_storageFolder + randomFilename();
-							LogToFile(L"Moving to " + targetFile);
+							LogToFile(LogLevel::INFO, L"Moving to " + targetFile);
 						}
 						else {
 							if (dll_InventorySack_FindNextPosition(sackPtr, item, &itemPosition, true)) {
 								dll_InventorySack_AddItem_Vec2(sackPtr, (void*)&itemPosition, item, false);
-								LogToFile(L"Item deposited, moving to " + targetFile);
+								LogToFile(LogLevel::INFO, L"Item deposited, moving to " + targetFile);
 								success = true;
 							}
 							else {
 								targetFile = m_storageFolder + randomFilename();
-								LogToFile(L"Target sack is full, re-depositing to IA as " + targetFile);
+								LogToFile(LogLevel::INFO, L"Target sack is full, re-depositing to IA as " + targetFile);
 							}
 
 						}
 					}
 					catch (...) {
-						LogToFile(L"Invalid item, moving to " + targetFile);
+						LogToFile(LogLevel::FATAL, L"Invalid item, moving to " + targetFile);
 					}
 					delete replica;
 
 				}
 				else {
-					LogToFile(L"Invalid item, moving to " + targetFile);
+					LogToFile(LogLevel::INFO, L"Invalid item, moving to " + targetFile);
 				}
 
 				if (!MoveFile(it->c_str(), targetFile.c_str())) {
-					LogToFile(L"Failed moving file: \"" + *it + L"\" to \"" + targetFile + L"\", error code: " + std::to_wstring(GetLastError()));
+					LogToFile(LogLevel::WARNING, L"Failed moving file: \"" + *it + L"\" to \"" + targetFile + L"\", error code: " + std::to_wstring(GetLastError()));
 				}
 			}
 
@@ -724,11 +758,11 @@ void InventorySack_AddItem::ThreadMain(void*) {
 				boost::lock_guard<boost::mutex> guard(m_mutex);
 
 				if (boost::algorithm::ends_with(filename, ".csv")) {
-					LogToFile(std::wstring(L"Found file: ") + std::wstring(entry.path().c_str()));
+					LogToFile(LogLevel::INFO, std::wstring(L"Found file: ") + std::wstring(entry.path().c_str()));
 					m_depositQueue.insert(filename);
 				}
 				else {
-					LogToFile(std::wstring(L"Ignoring file: ") + std::wstring(entry.path().c_str()));
+					LogToFile(LogLevel::INFO, std::wstring(L"Ignoring file: ") + std::wstring(entry.path().c_str()));
 				}
 				knownFiles.insert(filename);
 			}

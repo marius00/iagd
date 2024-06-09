@@ -187,8 +187,8 @@ static auto fnGetObjectManager = pGetObjectManager(GetProcAddressOrLogToFile(L"e
 typedef void(__fastcall* pDestroyObjectEx)(GAME::ObjectManager*, GAME::Object* object, const char* file, int line);
 static auto fnDestroyObjectEx = pDestroyObjectEx(GetProcAddressOrLogToFile(L"engine.dll","?DestroyObjectEx@ObjectManager@GAME@@QEAAXPEAVObject@2@PEBDH@Z"));
 
-typedef void(__fastcall* pItemEquipmentGetUIDisplayText)(GAME::ItemEquipment*, GAME::Character* myCharacter, std::vector<GAME::GameTextLine>* text);
-static auto fnItemEquipmentGetUIDisplayText = pItemEquipmentGetUIDisplayText(GetProcAddressOrLogToFile(L"game.dll", "?GetUIDisplayText@ItemEquipment@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@_N@Z"));
+//typedef void(__fastcall* pItemEquipmentGetUIDisplayText)(GAME::ItemEquipment*, GAME::Character* myCharacter, std::vector<GAME::GameTextLine>* text);
+//static auto fnItemEquipmentGetUIDisplayText = pItemEquipmentGetUIDisplayText(GetProcAddressOrLogToFile(L"game.dll", "?GetUIDisplayText@ItemEquipment@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@_N@Z"));
 static auto fnItemGetItemReplicaInfo = ItemGetItemReplicaInfo(GetProcAddressOrLogToFile(L"game.dll", GET_ITEM_REPLICAINFO));
 
 typedef GAME::Player* (__fastcall* pGetMainPlayer)(GAME::GameEngine*);
@@ -202,8 +202,8 @@ static auto fnGetModNameArg = pGetModNameArg(GetProcAddressOrLogToFile(L"engine.
 typedef int(__fastcall* pGetGameInfoMode)(GAME::GameInfo* gi);
 static auto fnGetGameInfoMode = pGetGameInfoMode(GetProcAddressOrLogToFile(L"engine.dll", "?GetMode@GameInfo@GAME@@QEBAIXZ"));
 
-typedef std::wstring const& (__fastcall* pGetModName)(GAME::GameInfo* gi);
-static auto fnGetModName = pGetModName(GetProcAddressOrLogToFile(L"engine.dll", "?GetModName@GameInfo@GAME@@QEBAAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ"));
+//typedef std::wstring const& (__fastcall* pGetModName)(GAME::GameInfo* gi);
+//static auto fnGetModName = pGetModName(GetProcAddressOrLogToFile(L"engine.dll", "?GetModName@GameInfo@GAME@@QEBAAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ"));
 
 
 typedef GAME::GameInfo* (__fastcall* pGetGameInfo)(GAME::Engine* ge);
@@ -212,9 +212,11 @@ static auto fnGetGameInfo = pGetGameInfo(GetProcAddressOrLogToFile(L"engine.dll"
 typedef GAME::GameInfo* (__fastcall* pPlayDropSound)(GAME::Item* ge);
 static auto fnPlayDropSound = pPlayDropSound(GetProcAddressOrLogToFile(L"game.dll", "?PlayDropSound@Item@GAME@@UEAAXXZ"));
 
-typedef GAME::GameInfo* (__fastcall* pShowCinematicText)(GAME::Engine* engine, const std::wstring* header, const std::wstring* content, int CinematicTextType, GAME::Color* color);
-static auto fnShowCinematicText = pShowCinematicText(GetProcAddressOrLogToFile(L"engine.dll", "?ShowCinematicText@Engine@GAME@@QEAAXAEBV?$basic_string@GU?$char_traits@G@std@@V?$allocator@G@2@@std@@0W4CinematicTextType@2@AEBVColor@2@@Z"));
-
+// void GAME::Engine::ShowCinematicText(class std::basic_string<unsigned short,struct std::char_traits<unsigned short>,class std::allocator<unsigned short> > const &,class std::basic_string<unsigned short,struct std::char_traits<unsigned short>,class std::allocator<unsigned short> > const &,enum GAME::CinematicTextType,class GAME::Color const &,bool)
+typedef GAME::GameInfo* (__fastcall* pShowCinematicText)(GAME::Engine* engine, const std::wstring* header, const std::wstring* content, int CinematicTextType, GAME::Color* color, bool unknown);
+static auto fnShowCinematicText = pShowCinematicText(GetProcAddressOrLogToFile(L"engine.dll", "?ShowCinematicText@Engine@GAME@@QEAAXAEBV?$basic_string@GU?$char_traits@G@std@@V?$allocator@G@2@@std@@0W4CinematicTextType@2@AEBVColor@2@_N@Z"));
+// New: ?ShowCinematicText@Engine@GAME@@QEAAXAEBV?$basic_string@GU?$char_traits@G@std@@V?$allocator@G@2@@std@@0W4CinematicTextType@2@AEBVColor@2@_N@Z
+// Old: ?ShowCinematicText@Engine@GAME@@QEAAXAEBV?$basic_string@GU?$char_traits@G@std@@V?$allocator@G@2@@std@@0W4CinematicTextType@2@AEBVColor@2@@Z
 
 typedef bool(__thiscall* IsGameLoadingPtr)(void* This);
 typedef bool(__thiscall* IsGameWaitingPtr)(void* This, bool completelyUnknownWhatDoesThisDo);

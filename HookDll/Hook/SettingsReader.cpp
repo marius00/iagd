@@ -2,10 +2,10 @@
 #include <boost/property_tree/ptree.hpp>                                        
 #include <boost/property_tree/json_parser.hpp>       
 #include <boost/optional/optional.hpp>
+#include "Logger.h"
 
 std::wstring GetIagdFolder();
-void LogToFile(const wchar_t* message);
-void LogToFile(std::wstring message);
+
 
 
 int SettingsReader::GetStashTabToLootFrom() {
@@ -26,11 +26,11 @@ int SettingsReader::GetStashTabToLootFrom() {
 
 
 	if (stashToLootFrom == 0) {
-		LogToFile(L"Configured to loot from last stash tab");
+		LogToFile(LogLevel::INFO, L"Configured to loot from last stash tab");
 
 	}
 	else {
-		LogToFile(L"Configured to loot from tab: " + std::to_wstring(stashToLootFrom));
+		LogToFile(LogLevel::INFO, L"Configured to loot from tab: " + std::to_wstring(stashToLootFrom));
 	}
 
 	return stashToLootFrom;
@@ -54,11 +54,11 @@ int SettingsReader::GetStashTabToDepositTo() {
 
 
 	if (stashToDepositTo == 0) {
-		LogToFile(L"Configured to deposit to last stash tab");
+		LogToFile(LogLevel::INFO, L"Configured to deposit to last stash tab");
 
 	}
 	else {
-		LogToFile(L"Configured to deposit to tab: " + std::to_wstring(stashToDepositTo));
+		LogToFile(LogLevel::INFO, L"Configured to deposit to tab: " + std::to_wstring(stashToDepositTo));
 	}
 
 	return stashToDepositTo;
@@ -80,7 +80,7 @@ bool SettingsReader::GetPreferLegacyMode() {
 	}
 
 	const bool isLegacyMode = loadPtreeRoot.get<bool>(L"local.preferLegacyMode");
-	LogToFile(std::wstring(L"Legacy mode: ") + (isLegacyMode ? L"True" : L"False"));
+	LogToFile(LogLevel::INFO, std::wstring(L"Legacy mode: ") + (isLegacyMode ? L"True" : L"False"));
 
 	return isLegacyMode != 1;
 }
@@ -102,7 +102,7 @@ bool SettingsReader::GetIsGrimDawnParsed() {
 	}
 
 	const bool isGdParsed = loadPtreeRoot.get<bool>(L"local.isGrimDawnParsed");
-	LogToFile(std::wstring(L"Grim Dawn parsed: ") + (isGdParsed ? L"True" : L"False"));
+	LogToFile(LogLevel::INFO, std::wstring(L"Grim Dawn parsed: ") + (isGdParsed ? L"True" : L"False"));
 
 	return isGdParsed;
 }

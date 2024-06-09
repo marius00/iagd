@@ -43,11 +43,13 @@ void OnDemandSeedInfo::DisableHook() {
 */
 void OnDemandSeedInfo::ThreadMain(void*) {
 
+	LogToFile(LogLevel::INFO, L"Seed info thread started, sleeping for 6s..");
+
 	// When spamming too much right as the game first loads, the game tends to crash
 	// This is suboptimal, but it is what it is..
 	g_self->m_sleepMilliseconds = 6000;
 
-
+	LogToFile(LogLevel::INFO, L"Seed info thread ready, starting loop");
 	while (g_self->isRunning) {
 		while (g_self->m_sleepMilliseconds > 0) {
 			Sleep(100);
@@ -92,9 +94,13 @@ void OnDemandSeedInfo::Start() {
 		NULL);
 
 
-	if (hPipe == INVALID_HANDLE_VALUE)
+	if (hPipe == INVALID_HANDLE_VALUE) {
+		LogToFile(LogLevel::WARNING, L"Could not create named pipe for item seed listener");
 		return;
+	}
 
+
+	LogToFile(LogLevel::INFO, L"Queuing thread start for seed info..");
 	isRunning = true;
 	m_thread = (HANDLE)_beginthread(ThreadMain, NULL, 0);
 }
@@ -243,6 +249,7 @@ void OnDemandSeedInfo::Process() {
 
 		// Client connected already, but not ready.
 		else if (GetLastError() == ERROR_PIPE_CONNECTED || GetLastError() == ERROR_IO_PENDING) {
+			LogToFile(LogLevel::WARNING, L"Seed info thread reports PIPE ERROR");
 			isConnected = true;
 			return;
 		}
@@ -255,14 +262,14 @@ void OnDemandSeedInfo::Process() {
 	BOOL fSuccess = ReadFile(hPipe, buffer, sizeof(buffer) / sizeof(char), &numBytesRead, nullptr);
 	if (fSuccess && numBytesRead > 0) {
 		// Parse and queue item seed read
-		LogToFile("Received item to parse for real stats..");
+		LogToFile(LogLevel::INFO, "Received item to parse for real stats..");
 		ParsedSeedRequest* obj = Parse(&buffer[0], numBytesRead);
 		ParsedSeedRequestPtr abc(obj);
 		if (!m_itemQueue.push(abc, 300)) {
 			slowDown = true;
 			// Will just discard data if >N
 			// TODO: Notify IA that it needs to slow the fk down?
-			LogToFile("Slowing down.. too many items queued");
+			LogToFile(LogLevel::INFO, "Slowing down.. too many items queued");
 		}
 
 		DataItemPtr item(new DataItem(TYPE_ITEMSEEDDATA_PLAYERID_DEBUG_RECV, sizeof(numBytesRead), (char*)&numBytesRead));
@@ -274,6 +281,7 @@ void OnDemandSeedInfo::Process() {
 		isConnected = false;
 	}
 	else if (!fSuccess) {
+		LogToFile(LogLevel::WARNING, L"Seed info thread failed reading from pipe, disconnecting..");
 		DisconnectNamedPipe(hPipe);
 		isConnected = false;
 	}
@@ -296,7 +304,7 @@ void OnDemandSeedInfo::GetItemInfo(ParsedSeedRequest obj) {
 
 			auto gameEngine = fnGetGameEngine();
 			if (gameEngine == nullptr) {
-				LogToFile("No game engine, skipping item stat generation");
+				LogToFile(LogLevel::INFO, "No game engine, skipping item stat generation");
 				DataItemPtr item(new DataItem(TYPE_ITEMSEEDDATA_PLAYERID_ERR_NOGAME, 0, nullptr));
 				m_dataQueue->push(item);
 				SetEvent(m_hEvent);
@@ -305,7 +313,7 @@ void OnDemandSeedInfo::GetItemInfo(ParsedSeedRequest obj) {
 
 			GAME::Character* character = (GAME::Character*)fnGetMainPlayer(gameEngine);
 			if (character == nullptr) {
-				LogToFile("No character found, skipping item stat generation");
+				LogToFile(LogLevel::INFO, "No character found, skipping item stat generation");
 				DataItemPtr item(new DataItem(TYPE_ITEMSEEDDATA_PLAYERID_ERR_NOGAME, 0, nullptr));
 				m_dataQueue->push(item);
 				SetEvent(m_hEvent);
@@ -359,7 +367,7 @@ void* __fastcall OnDemandSeedInfo::HookedMethod(void* This, int v) {
 			ParsedSeedRequestPtr ptr = g_self->m_itemQueue.pop();
 			ParsedSeedRequest obj = *ptr.get();
 
-			LogToFile("Fetching items stats for " + obj.itemReplicaInfo.baseRecord);
+			LogToFile(LogLevel::INFO, "Fetching items stats for " + obj.itemReplicaInfo.baseRecord);
 			g_self->GetItemInfo(obj);
 		}
 	}

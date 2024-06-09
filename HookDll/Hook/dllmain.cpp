@@ -21,6 +21,7 @@
 #include "ItemRelicSeedInfo.h"
 #include "HookLog.h"
 #include "SetTransferOpen.h"
+#include "Logger.h"
 #include "SetHardcore.h"
 HookLog g_log;
 
@@ -94,67 +95,109 @@ void LogToFile(const char* message) {
 void LogToFile(const std::string message) {
 	g_log.out((logStartupTimeChar() + message).c_str());
 }
-void LogToFile(std::wstring message) {
-	g_log.out(logStartupTime() + message);
-}
+
 void LogToFile(std::wstringstream message) {
 	g_log.out(logStartupTime() + message.str());
+}
+
+std::wstring LogLevelToString(LogLevel level) {
+	switch (level) {
+	case LogLevel::INFO:
+		return L"INFO ";
+
+	case LogLevel::WARNING:
+		return L"WARN ";
+
+	case LogLevel::FATAL:
+		return L"ERROR ";
+	}
+
+	return L"UNKNOWN";
+}
+std::string LogLevelToStringA(LogLevel level) {
+	switch (level) {
+	case LogLevel::INFO:
+		return "INFO ";
+
+	case LogLevel::WARNING:
+		return "WARN ";
+
+	case LogLevel::FATAL:
+		return "ERROR ";
+	}
+
+	return "UNKNOWN";
+}
+void LogToFile(LogLevel level, const wchar_t* message) {
+	g_log.out(logStartupTime() + LogLevelToString(level) + message);
+}
+void LogToFile(LogLevel level, const char* message) {
+	g_log.out((logStartupTimeChar() + LogLevelToStringA(level).c_str() + std::string(message)).c_str());
+}
+void LogToFile(LogLevel level, const std::string message) {
+	g_log.out((logStartupTimeChar() + LogLevelToStringA(level) + message).c_str());
+}
+void LogToFile(LogLevel level, std::wstring message) {
+	g_log.out(logStartupTime() + LogLevelToString(level) + message);
+}
+void LogToFile(LogLevel level, std::wstringstream message) {
+	g_log.out(logStartupTime() + LogLevelToString(level) + message.str());
 }
 
 
 /// Thread function that dispatches queued message blocks to the IA application.
 void WorkerThreadMethod() {
-    while ((g_hEvent != NULL) && (WaitForSingleObject(g_hEvent,INFINITE) == WAIT_OBJECT_0)) {
-        if (g_hEvent == NULL) {
-            break;
-        }
+	while ((g_hEvent != NULL) && (WaitForSingleObject(g_hEvent, INFINITE) == WAIT_OBJECT_0)) {
+		if (g_hEvent == NULL) {
+			break;
+		}
 
-        DWORD tick = GetTickCount();
-        if (tick < g_lastThreadTick) {
-            // Overflow
-            g_lastThreadTick = tick;
-        }
+		DWORD tick = GetTickCount();
+		if (tick < g_lastThreadTick) {
+			// Overflow
+			g_lastThreadTick = tick;
+		}
 
-        if ((tick - g_lastThreadTick > 1000) || (g_targetWnd == NULL)) {
-            // We either don't have a valid window target OR it has been more than 1 sec since we last update the target.
-            g_targetWnd = FindWindow( L"GDIAWindowClass", NULL);
-            g_lastThreadTick = GetTickCount();
-            LOG(L"FindWindow returned: " << g_targetWnd);
+		if ((tick - g_lastThreadTick > 1000) || (g_targetWnd == NULL)) {
+			// We either don't have a valid window target OR it has been more than 1 sec since we last update the target.
+			g_targetWnd = FindWindow(L"GDIAWindowClass", NULL);
+			g_lastThreadTick = GetTickCount();
+			LOG(L"FindWindow returned: " << g_targetWnd);
 
 			if (g_InventorySack_AddItemInstance != NULL) {
 				g_InventorySack_AddItemInstance->SetActive(g_targetWnd != NULL);
 			}
-        }
+		}
 
-        while (!g_dataQueue.empty()) {
-            DataItemPtr item = g_dataQueue.pop();
+		while (!g_dataQueue.empty()) {
+			DataItemPtr item = g_dataQueue.pop();
 
-            if (g_targetWnd == NULL) {
-                // We have data, but no target window, so just delete the message
-                continue;
-            }
+			if (g_targetWnd == NULL) {
+				// We have data, but no target window, so just delete the message
+				continue;
+			}
 
-            COPYDATASTRUCT data;
-            data.dwData = item->type();
-            data.lpData = item->data();
-            data.cbData = item->size();
+			COPYDATASTRUCT data;
+			data.dwData = item->type();
+			data.lpData = item->data();
+			data.cbData = item->size();
 
-            // To avoid blocking the main thread, we should not have a lock on the queue while we process the message.
-			SendMessage( g_targetWnd, WM_COPYDATA, 0, ( LPARAM ) &data );
+			// To avoid blocking the main thread, we should not have a lock on the queue while we process the message.
+			SendMessage(g_targetWnd, WM_COPYDATA, 0, (LPARAM)&data);
 			auto lastErrorCode = GetLastError();
 			if (lastErrorCode != 0)
 				LOG(L"After SendMessage error code is " << lastErrorCode);
-        }
+		}
 
-    }
+	}
 }
 
 OnDemandSeedInfo* listener = nullptr;
 unsigned __stdcall WorkerThreadMethodWrap(void* argss) {
 
 
-	LogToFile(L"Starting seed info thread..");
-	
+	LogToFile(LogLevel::INFO, L"Initiating class for seed info..");
+
 	if (listener != nullptr) {
 		listener->Start();
 	}
@@ -166,7 +209,7 @@ void StartWorkerThread() {
 	LOG(L"Starting worker thread..");
 	unsigned int pid;
 	g_thread = (HANDLE)_beginthreadex(NULL, 0, &WorkerThreadMethodWrap, NULL, 0, &pid);
-	
+
 
 	DataItemPtr item(new DataItem(TYPE_REPORT_WORKER_THREAD_LAUNCHED, 0, NULL));
 	g_dataQueue.push(item);
@@ -191,7 +234,7 @@ void EndWorkerThread() {
 #pragma endregion
 
 static void ConfigurePlayerPositionHooks(std::vector<BaseMethodHook*>& hooks) {
-	LogToFile(L"Configuring player position hooks..");
+	LogToFile(LogLevel::INFO, L"Configuring player position hooks..");
 	hooks.push_back(new StateRequestMoveAction(&g_dataQueue, g_hEvent, REQUEST_MOVE_ACTION_MOVETO));
 	hooks.push_back(new StateRequestMoveAction(&g_dataQueue, g_hEvent, REQUEST_MOVE_ACTION_IDLE));
 	hooks.push_back(new StateRequestMoveAction(&g_dataQueue, g_hEvent, REQUEST_MOVE_ACTION_LONG_IDLE));
@@ -204,22 +247,22 @@ static void ConfigurePlayerPositionHooks(std::vector<BaseMethodHook*>& hooks) {
 	hooks.push_back(new StateRequestMoveAction(&g_dataQueue, g_hEvent, REQUEST_MOVE_ACTION_SKILL));
 
 	// For these, the target position could actually be the smuggler.
-	LogToFile(L"Configuring player position hooks for move-to-npc..");
+	LogToFile(LogLevel::INFO, L"Configuring player position hooks for move-to-npc..");
 	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_IDLE));
 	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_MOVETO));
 	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_JUMP_TO_SKILL));
 	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_LONG_IDLE));
 	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_MOVE_AND_SKILL));
-	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_MOVE_TO_ACTOR));	
+	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_MOVE_TO_ACTOR));
 	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_MOVE_TO_SKILL));
 	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_PICKUP_ITEM));
 	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_TALK_TO_NPC));
-	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_MOVE_TO_NPC));	
+	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_MOVE_TO_NPC));
 }
 
 // Cloud detection (is cloud enabled?) hooks
 static void ConfigureCloudDetectionHooks(std::vector<BaseMethodHook*>& hooks) {
-	LogToFile(L"Configuring cloud detection hooks..");
+	LogToFile(LogLevel::INFO, L"Configuring cloud detection hooks..");
 	hooks.push_back(new CloudGetNumFiles(&g_dataQueue, g_hEvent));
 	hooks.push_back(new CloudRead(&g_dataQueue, g_hEvent));
 	hooks.push_back(new CloudWrite(&g_dataQueue, g_hEvent));
@@ -227,31 +270,33 @@ static void ConfigureCloudDetectionHooks(std::vector<BaseMethodHook*>& hooks) {
 
 static void ConfigureStashDetectionHooks(std::vector<BaseMethodHook*>& hooks) {
 	// Stash detection hooks
-	LogToFile(L"Configuring stash detection hooks..");
+	LogToFile(LogLevel::INFO, L"Configuring stash detection hooks..");
 	hooks.push_back(new NpcDetectionHook(&g_dataQueue, g_hEvent));
-	hooks.push_back(new CanUseDismantle(&g_dataQueue, g_hEvent));	
+	hooks.push_back(new CanUseDismantle(&g_dataQueue, g_hEvent));
 	hooks.push_back(new SaveTransferStash(&g_dataQueue, g_hEvent));
 	hooks.push_back(new SetTransferOpen(&g_dataQueue, g_hEvent));
 
 
 	try {
-		LogToFile(L"Configuring instaloot hook..");
+		LogToFile(LogLevel::INFO, L"Configuring instaloot hook..");
 		g_InventorySack_AddItemInstance = new InventorySack_AddItem(&g_dataQueue, g_hEvent);
 		hooks.push_back(g_InventorySack_AddItemInstance); // Includes GetPrivateStash internally
-	} catch (std::exception& ex) {
+	}
+	catch (std::exception& ex) {
 		// For now just let it be. Known issue inside InventorySack_AddItem
 
 		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 		std::wstring wide = converter.from_bytes(ex.what());
 
-		LogToFile(L"ERROR Configuring instaloot hook.." + wide);
-		
-	} catch (...) {
+		LogToFile(LogLevel::FATAL, L"ERROR Configuring instaloot hook.." + wide);
+
+	}
+	catch (...) {
 		// For now just let it be. Known issue inside InventorySack_AddItem
-		LogToFile(L"ERROR Configuring instaloot hook.. (triple-dot)");
+		LogToFile(LogLevel::FATAL, L"ERROR Configuring instaloot hook.. (triple-dot)");
 	}
 
-	LogToFile(L"Configuring hc detection hook..");
+	LogToFile(LogLevel::INFO, L"Configuring hc detection hook..");
 	hooks.push_back(new SetHardcore(&g_dataQueue, g_hEvent));
 }
 /*
@@ -326,34 +371,56 @@ void ReportCancelledInjection() {
 std::vector<BaseMethodHook*> hooks;
 int ProcessAttach(HINSTANCE _hModule) {
 	//GetProductAndVersion();
-	LogToFile(std::string("DLL Compiled: ") + std::string(__DATE__) + std::string(" ") + std::string(__TIME__));
-	LogToFile(L"Attatching to process..");
+	LogToFile(LogLevel::INFO, std::string("DLL Compiled: ") + std::string(__DATE__) + std::string(" ") + std::string(__TIME__));
+	LogToFile(LogLevel::INFO, L"Attatching to process..");
 
 
 	GAME::GameEngine* gameEngine = fnGetGameEngine();
 	if (gameEngine == nullptr) {
 		ReportCancelledInjection();
-		LogToFile(L"Could not find game engine ptr, aborting DLL injection..");
+		LogToFile(LogLevel::INFO, L"Could not find game engine ptr, aborting DLL injection..");
 		return FALSE;
 	}
 	if (IsGameLoading(gameEngine)) {
 		ReportCancelledInjection();
-		LogToFile(L"Game is still loading, aborting DLL injection..");
+		LogToFile(LogLevel::INFO, L"Game is still loading, aborting DLL injection..");
 		return FALSE;
 	}
+	else {
+		LogToFile(LogLevel::INFO, L"Game is not loading..");
+	}
+
 	if (IsGameWaiting(gameEngine, true)) { // TODO: When on a PC with IDA installed, figure out what the boolean is.
 		ReportCancelledInjection();
-		LogToFile(L"Game is waiting, aborting DLL injection..");
+		LogToFile(LogLevel::INFO, L"Game is waiting, aborting DLL injection.. [true]");
 		return FALSE;
 	}
+	else {
+		LogToFile(LogLevel::INFO, L"Game is not waiting.. [true]");
+	}
+
+	if (IsGameWaiting(gameEngine, false)) { // TODO: When on a PC with IDA installed, figure out what the boolean is.
+		ReportCancelledInjection();
+		LogToFile(LogLevel::INFO, L"Game is waiting, aborting DLL injection.. [false]");
+		return FALSE;
+	}
+	else {
+		LogToFile(LogLevel::INFO, L"Game is not waiting.. [false]");
+	}
+
 	if (!IsGameEngineOnline(gameEngine)) {
 		ReportCancelledInjection();
-		LogToFile(L"Game engine is not yet online, aborting DLL injection..");
+		LogToFile(LogLevel::INFO, L"Game engine is not yet online, aborting DLL injection..");
 		return FALSE;
 	}
+	else {
+		LogToFile(LogLevel::INFO, L"Game engine is online..");
+	}
+
+	LogToFile(LogLevel::INFO, L"Game is most likely running, proceeding with injection.");
 
 
-	g_hEvent = CreateEvent(NULL,FALSE,FALSE, L"IA_Worker");
+	g_hEvent = CreateEvent(NULL, FALSE, FALSE, L"IA_Worker");
 
 #ifdef PLAYTEST
 	LogToFile(L"DLL for GD 1.2");
@@ -362,42 +429,42 @@ int ProcessAttach(HINSTANCE _hModule) {
 #endif
 
 
-	LogToFile(L"Creating seed info container class..");
-	listener = new OnDemandSeedInfo(&g_dataQueue, g_hEvent);
 
-	LogToFile(L"Preparing hooks..");
+	LogToFile(LogLevel::INFO, L"Preparing hooks..");
 	// Player position hooks
 	ConfigurePlayerPositionHooks(hooks);
 	ConfigureCloudDetectionHooks(hooks);
 	ConfigureStashDetectionHooks(hooks);
 
-	LogToFile(L"Preparing replica hooks..");
+	LogToFile(LogLevel::INFO, L"Preparing replica hooks..");
 	hooks.push_back(new EquipmentSeedInfo(&g_dataQueue, g_hEvent));
 
+	LogToFile(LogLevel::INFO, L"Creating seed info container class..");
+	listener = new OnDemandSeedInfo(&g_dataQueue, g_hEvent);
 	if (listener != nullptr) {
 		hooks.push_back(listener);
 	}
 	hooks.push_back(new ItemRelicSeedInfo(&g_dataQueue, g_hEvent));
 	// hooks.push_back(new GameEngineUpdate(&g_dataQueue, g_hEvent));	 // Debug/test only
-	
-	LogToFile(L"Starting hook enabling.. " + std::to_wstring(hooks.size()) + L" hooks.");
+
+	LogToFile(LogLevel::INFO, L"Starting hook enabling.. " + std::to_wstring(hooks.size()) + L" hooks.");
 	for (unsigned int i = 0; i < hooks.size(); i++) {
 		LOG(L"Enabling hook..");
 		hooks[i]->EnableHook();
 	}
-	LogToFile(L"Hooking complete..");
+	LogToFile(LogLevel::INFO, L"Hooking complete..");
 
-	
-    StartWorkerThread();
-	LogToFile(L"Initialization complete..");
+
+	StartWorkerThread();
+	LogToFile(LogLevel::INFO, L"Initialization complete..");
 
 	g_log.setInitialized(true);
-    return TRUE;
+	return TRUE;
 }
 
 
 #pragma region Attach_Detatch
-int ProcessDetach( HINSTANCE _hModule ) {
+int ProcessDetach(HINSTANCE _hModule) {
 	// Signal that we are shutting down
 	// This message is not at all guaranteed to get sent.
 
@@ -417,22 +484,22 @@ int ProcessDetach( HINSTANCE _hModule ) {
 		listener = nullptr;
 	}
 
-    EndWorkerThread();
+	EndWorkerThread();
 
 	LOG(L"DLL detatched..");
-    return TRUE;
+	return TRUE;
 }
 
 void Dump_ItemStats();
 BOOL APIENTRY DllMain(HINSTANCE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved) {
-    switch (ul_reason_for_call) {
+	switch (ul_reason_for_call) {
 	case DLL_PROCESS_ATTACH:
-        return ProcessAttach( hModule );
+		return ProcessAttach(hModule);
 
 	case DLL_PROCESS_DETACH:
-        return ProcessDetach( hModule );
+		return ProcessDetach(hModule);
 	}
-    return TRUE;
+	return TRUE;
 }
 #pragma endregion
 

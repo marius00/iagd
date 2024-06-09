@@ -6,7 +6,7 @@
 #include <shlobj.h>
 
 void LogToFile(const wchar_t* message);
-void LogToFile(std::wstring message);
+
 
 // TODO: What's this doing in HookLog.cpp ??
 std::wstring GetIagdFolder() {

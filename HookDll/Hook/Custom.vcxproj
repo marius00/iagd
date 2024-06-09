@@ -353,6 +353,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>None</DebugInformationFormat>
       <SDLCheck>true</SDLCheck>
+      <ExceptionHandling>Async</ExceptionHandling>
     </ClCompile>
     <Link>
       <AdditionalDependencies>detours.lib;%(AdditionalDependencies)</AdditionalDependencies>
