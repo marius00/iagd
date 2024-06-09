@@ -6,6 +6,8 @@
 #include "OnDemandSeedInfo.h"
 #include "Exports.h"
 
+#include <codecvt> // wstring_convert
+
 #include "Logger.h"
 
 OnDemandSeedInfo::pItemEquipmentGetUIDisplayText OnDemandSeedInfo::fnItemEquipmentGetUIDisplayText;
@@ -39,7 +41,7 @@ void OnDemandSeedInfo::DisableHook() {
 }
 
 /*
-* Continously listen for new events on the pipe
+* Continuously listen for new events on the pipe
 */
 void OnDemandSeedInfo::ThreadMain(void*) {
 
@@ -51,11 +53,15 @@ void OnDemandSeedInfo::ThreadMain(void*) {
 
 	LogToFile(LogLevel::INFO, L"Seed info thread ready, starting loop");
 	while (g_self->isRunning) {
+
+		// The "m_sleepMilliseconds" is actually a counter read in the Update() method on a different thread. Letting us back off from doing too much in the update thread.
 		while (g_self->m_sleepMilliseconds > 0) {
+			//LogToFile(LogLevel::INFO, L"Sleeping for 100ms.. " + std::to_wstring(g_self->m_sleepMilliseconds) + L"ms remaining");
 			Sleep(100);
 			g_self->m_sleepMilliseconds -= 100;
 
 			if (!g_self->isRunning) {
+				LogToFile(LogLevel::INFO, L"No longer running, cancelling sleep");
 				return;
 			}
 		}
@@ -243,6 +249,8 @@ void OnDemandSeedInfo::Process() {
 	char buffer[8096] = { 0 };
 
 	if (!isConnected) {
+		//LogToFile(LogLevel::INFO, L"Named pipe is not connected, connecting..");
+
 		BOOL client = ConnectNamedPipe(hPipe, NULL);
 		if (client != 0)
 			isConnected = true;
@@ -254,8 +262,10 @@ void OnDemandSeedInfo::Process() {
 			return;
 		}
 
-		else
+		else {
+			LogToFile(LogLevel::WARNING, L"Unknown error occurred connecting to named pipe");
 			return;
+		}
 	}
 
 	bool slowDown = false;
@@ -359,20 +369,53 @@ void* __fastcall OnDemandSeedInfo::HookedMethod(void* This, int v) {
 
 	// Only start processing items if the game is running.
 	// Attempting to create items with a set bonus from the main menu may crash the game.
-	// Items with skills may also end up with imssing info if created from the main menu.
-	if (g_self->m_sleepMilliseconds <= 0 && !IsGameLoading(This) && !IsGameWaiting(This, true) && IsGameEngineOnline(This)) {
-		// Process the queue
-		int num = 0;
-		while (!g_self->m_itemQueue.empty() && num++ < 15) {
-			ParsedSeedRequestPtr ptr = g_self->m_itemQueue.pop();
-			ParsedSeedRequest obj = *ptr.get();
+	// Items with skills may also end up with missing info if created from the main menu.
+	/*GAME::GameEngine* gameEngine = fnGetGameEngine();
+	bool isGameLoading = IsGameLoading(gameEngine);
+	bool isGameWaiting = IsGameWaiting(gameEngine, true);
+	bool isGameEngineOnline = IsGameEngineOnline(gameEngine);
+	*/
 
-			LogToFile(LogLevel::INFO, "Fetching items stats for " + obj.itemReplicaInfo.baseRecord);
-			g_self->GetItemInfo(obj);
+	
+	if (g_self->m_sleepMilliseconds <= 0) {
+		try {
+			bool isGameLoading = IsGameLoading(This);
+			bool isGameWaiting = IsGameWaiting(This, true);
+			bool isGameEngineOnline = IsGameEngineOnline(This);
+
+			if (!isGameLoading && !isGameWaiting && isGameEngineOnline) {
+				// Process the queue
+				int num = 0;
+				while (!g_self->m_itemQueue.empty() && num++ < 2) {
+					ParsedSeedRequestPtr ptr = g_self->m_itemQueue.pop();
+					ParsedSeedRequest obj = *ptr.get();
+
+					LogToFile(LogLevel::INFO, "Fetching items stats for " + obj.itemReplicaInfo.baseRecord);
+					g_self->GetItemInfo(obj);
+				}
+			}
+			else {
+				if (isGameLoading) {
+					LogToFile(LogLevel::INFO, "Game is loading, real stat generation not available.");
+				}
+				if (isGameWaiting) {
+					LogToFile(LogLevel::INFO, "Game is waiting, real stat generation not available.");
+				}
+				if (isGameEngineOnline) {
+					LogToFile(LogLevel::INFO, "///Game engine is not online, real stat generation not available.");
+				}
+				g_self->m_sleepMilliseconds = 12000;
+			}
 		}
-	}
-	else {
-		g_self->m_sleepMilliseconds = 12000;
+		catch (std::exception& ex) {
+			std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+			std::wstring wide = converter.from_bytes(ex.what());
+			LogToFile(LogLevel::FATAL, L"Error parsing on-demand item stats.. " + wide);
+		}
+		catch (...) {
+			LogToFile(LogLevel::FATAL, L"Error parsing on-demand item stats.. (triple-dot)");
+		}
+
 	}
 
 	return r;

@@ -186,8 +186,18 @@ void* __fastcall InventorySack_AddItem::Hooked_GameInfo_GameInfo_Param(void* Thi
 /// <param name="SkipPlaySound"></param>
 /// <returns></returns>
 void* __fastcall InventorySack_AddItem::Hooked_InventorySack_AddItem_Drop(void* This, GAME::Item *item, bool findPosition, bool SkipPlaySound) {
-	if (HandleItem(This, item)) {
-		return (void*)1;
+	try {
+		if (HandleItem(This, item)) {
+			return (void*)1;
+		}
+	}
+	catch (std::exception& ex) {
+		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+		std::wstring wide = converter.from_bytes(ex.what());
+		LogToFile(LogLevel::FATAL, L"Error looting item in Hooked_InventorySack_AddItem_Vec2.. " + wide);
+	}
+	catch (...) {
+		LogToFile(LogLevel::FATAL, L"Error looting item in Hooked_InventorySack_AddItem_Vec2.. (triple-dot)");
 	}
 
 	void* v = dll_InventorySack_AddItem_Drop(This, item, findPosition, SkipPlaySound);
@@ -203,8 +213,18 @@ void* __fastcall InventorySack_AddItem::Hooked_InventorySack_AddItem_Drop(void* 
 /// <param name="SkipPlaySound"></param>
 /// <returns></returns>
 void* __fastcall InventorySack_AddItem::Hooked_InventorySack_AddItem_Vec2(void* This, void* position, GAME::Item* item, bool SkipPlaySound) {
-	if (HandleItem(This, item)) {
-		return (void*)1;
+	try {
+		if (HandleItem(This, item)) {
+			return (void*)1;
+		}
+	}
+	catch (std::exception& ex) {
+		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+		std::wstring wide = converter.from_bytes(ex.what());
+		LogToFile(LogLevel::FATAL, L"Error looting item in Hooked_InventorySack_AddItem_Vec2.. " + wide);
+	}
+	catch (...) {
+		LogToFile(LogLevel::FATAL, L"Error looting item in Hooked_InventorySack_AddItem_Vec2.. (triple-dot)");
 	}
 
 	return dll_InventorySack_AddItem_Vec2(This, position, item, SkipPlaySound);
