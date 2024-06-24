@@ -34,10 +34,20 @@ void SetTransferOpen::DisableHook() {
 }
 
 void* __fastcall SetTransferOpen::HookedMethod(void* This, bool isOpen) {
-	char b[1];
-	b[0] = (isOpen ? 1 : 0);
-	g_self->TransferData(1, (char*)b);
-	LogToFile(LogLevel::INFO, L"Shared stash is " + std::wstring(isOpen ? L"opened" : L"closed"));
+	try {
+		char b[1];
+		b[0] = (isOpen ? 1 : 0);
+		g_self->TransferData(1, (char*)b);
+		LogToFile(LogLevel::INFO, L"Shared stash is " + std::wstring(isOpen ? L"opened" : L"closed"));
+	}
+	catch (std::exception& ex) {
+		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+		std::wstring wide = converter.from_bytes(ex.what());
+		LogToFile(LogLevel::FATAL, L"Error parsing in SetTransferOpen.. " + wide);
+	}
+	catch (...) {
+		LogToFile(LogLevel::FATAL, L"Error parsing in SetTransferOpen.. (triple-dot)");
+	}
 
 	void* v = g_self->originalMethod(This, isOpen);
 	return v;

@@ -46,27 +46,37 @@ void OnDemandSeedInfo::DisableHook() {
 void OnDemandSeedInfo::ThreadMain(void*) {
 
 	LogToFile(LogLevel::INFO, L"Seed info thread started, sleeping for 6s..");
+	try {
 
-	// When spamming too much right as the game first loads, the game tends to crash
-	// This is suboptimal, but it is what it is..
-	g_self->m_sleepMilliseconds = 6000;
+		// When spamming too much right as the game first loads, the game tends to crash
+		// This is suboptimal, but it is what it is..
+		g_self->m_sleepMilliseconds = 6000;
 
-	LogToFile(LogLevel::INFO, L"Seed info thread ready, starting loop");
-	while (g_self->isRunning) {
+		LogToFile(LogLevel::INFO, L"Seed info thread ready, starting loop");
+		while (g_self->isRunning) {
 
-		// The "m_sleepMilliseconds" is actually a counter read in the Update() method on a different thread. Letting us back off from doing too much in the update thread.
-		while (g_self->m_sleepMilliseconds > 0) {
-			//LogToFile(LogLevel::INFO, L"Sleeping for 100ms.. " + std::to_wstring(g_self->m_sleepMilliseconds) + L"ms remaining");
-			Sleep(100);
-			g_self->m_sleepMilliseconds -= 100;
+			// The "m_sleepMilliseconds" is actually a counter read in the Update() method on a different thread. Letting us back off from doing too much in the update thread.
+			while (g_self->m_sleepMilliseconds > 0) {
+				//LogToFile(LogLevel::INFO, L"Sleeping for 100ms.. " + std::to_wstring(g_self->m_sleepMilliseconds) + L"ms remaining");
+				Sleep(100);
+				g_self->m_sleepMilliseconds -= 100;
 
-			if (!g_self->isRunning) {
-				LogToFile(LogLevel::INFO, L"No longer running, cancelling sleep");
-				return;
+				if (!g_self->isRunning) {
+					LogToFile(LogLevel::INFO, L"No longer running, cancelling sleep");
+					return;
+				}
 			}
-		}
 
-		g_self->Process();
+			g_self->Process();
+		}
+	}
+	catch (std::exception& ex) {
+		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+		std::wstring wide = converter.from_bytes(ex.what());
+		LogToFile(LogLevel::FATAL, L"Error parsing in OndemandSeedInfo::ThreadMain.. " + wide);
+	}
+	catch (...) {
+		LogToFile(LogLevel::FATAL, L"Error parsing in OndemandSeedInfo::ThreadMain.. (triple-dot)");
 	}
 }
 

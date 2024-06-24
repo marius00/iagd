@@ -166,11 +166,20 @@ void InventorySack_AddItem::SetActive(bool isActive)
 // Since were creating from an existing object we'll need to call Get() on isHardcore and ModLabel
 void* __fastcall InventorySack_AddItem::Hooked_GameInfo_GameInfo_Param(void* This , void* info) {
 	void* result = dll_GameInfo_GameInfo_Param(This, info);
-
-	bool isHardcore = dll_GameInfo_GetHardcore(This);
-	DataItemPtr dataEvent(new DataItem(TYPE_GameInfo_IsHardcore_via_init, sizeof(isHardcore), (char*)&isHardcore));
-	m_dataQueue->push(dataEvent);
-	SetEvent(m_hEvent);
+	try {
+		bool isHardcore = dll_GameInfo_GetHardcore(This);
+		DataItemPtr dataEvent(new DataItem(TYPE_GameInfo_IsHardcore_via_init, sizeof(isHardcore), (char*)&isHardcore));
+		m_dataQueue->push(dataEvent);
+		SetEvent(m_hEvent);
+	}
+	catch (std::exception& ex) {
+		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+		std::wstring wide = converter.from_bytes(ex.what());
+		LogToFile(LogLevel::FATAL, L"Error parsing in InventorySack_AddItem::Hooked_GameInfo_GameInfo_Param.. " + wide);
+	}
+	catch (...) {
+		LogToFile(LogLevel::FATAL, L"Error parsing in InventorySack_AddItem::Hooked_GameInfo_GameInfo_Param.. (triple-dot)");
+	}
 
 	return result;
 }
@@ -605,116 +614,126 @@ GAME::InventorySack* InventorySack_AddItem::GetSackToDepositTo(GAME::GameEngine*
 /// <param name="f2"></param>
 /// <returns></returns>
 void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int v) {
-	// IA not running? Continue
-	if (!m_isActive) {
-		LogToFile(L"Debug: NotActive");
-		return dll_GameEngine_Update(This, v);
-	}
+	try {
+		// IA not running? Continue
+		if (!m_isActive) {
+			LogToFile(L"Debug: NotActive");
+			return dll_GameEngine_Update(This, v);
+		}
 
-	// If the game is not in a a "ready state", just continue.
-	if (IsGameLoading(This) || IsGameWaiting(This, true) || !IsGameEngineOnline(This)) {
-		LogToFile(L"Debug: NotReady");
-		m_isTransferStashOpen = false; // Just to be on the safe side
-		return dll_GameEngine_Update(This, v);
-	}
+		// If the game is not in a a "ready state", just continue.
+		if (IsGameLoading(This) || IsGameWaiting(This, true) || !IsGameEngineOnline(This)) {
+			LogToFile(L"Debug: NotReady");
+			m_isTransferStashOpen = false; // Just to be on the safe side
+			return dll_GameEngine_Update(This, v);
+		}
 
-	// No need to check *constantly* (at least not until we get a thread here)
-	if (++m_gameUpdateIterationsRun < 30) {
-		//LogToFile(L"Debug: NotIteration");
-		return dll_GameEngine_Update(This, v);
-	}
+		// No need to check *constantly* (at least not until we get a thread here)
+		if (++m_gameUpdateIterationsRun < 30) {
+			//LogToFile(L"Debug: NotIteration");
+			return dll_GameEngine_Update(This, v);
+		}
 
-	m_gameUpdateIterationsRun = 0;
+		m_gameUpdateIterationsRun = 0;
 
-	auto engine = fnGetEngine();
-	if (engine == nullptr) {
-		LogToFile(L"Debug: NoEngine");
-		return dll_GameEngine_Update(This, v);
-	}
+		auto engine = fnGetEngine();
+		if (engine == nullptr) {
+			LogToFile(L"Debug: NoEngine");
+			return dll_GameEngine_Update(This, v);
+		}
 
-	GAME::GameInfo* gameInfo = fnGetGameInfo(engine);
-	if (gameInfo == nullptr) {
-		LogToFile(LogLevel::WARNING, L"GameInfo is null, aborting..");
-		return false;
-	}
+		GAME::GameInfo* gameInfo = fnGetGameInfo(engine);
+		if (gameInfo == nullptr) {
+			LogToFile(LogLevel::WARNING, L"GameInfo is null, aborting..");
+			return false;
+		}
 
-	if (m_isTransferStashOpen) {
-		void* sackPtr = GetSackToDepositTo((GAME::GameEngine*)This);
-		if (sackPtr != nullptr) {
-			GAME::Rect itemPosition;
-			boost::lock_guard<boost::mutex> guard(m_mutex);
+		if (m_isTransferStashOpen) {
+			void* sackPtr = GetSackToDepositTo((GAME::GameEngine*)This);
+			if (sackPtr != nullptr) {
+				GAME::Rect itemPosition;
+				boost::lock_guard<boost::mutex> guard(m_mutex);
 
 
-			bool success = false;
-			std::wstring targetFolder = GetFolderToMoveTo(GetModName(gameInfo), fnGetHardcore(gameInfo));
-			for (auto it = m_depositQueue.begin(); it != m_depositQueue.end(); ++it) {
-				std::wstring targetFile = targetFolder + L"\\" + randomFilename();
-				LogToFile(LogLevel::INFO, L"Handling file " + *it);
+				bool success = false;
+				std::wstring targetFolder = GetFolderToMoveTo(GetModName(gameInfo), fnGetHardcore(gameInfo));
+				for (auto it = m_depositQueue.begin(); it != m_depositQueue.end(); ++it) {
+					std::wstring targetFile = targetFolder + L"\\" + randomFilename();
+					LogToFile(LogLevel::INFO, L"Handling file " + *it);
 
-				GAME::ItemReplicaInfo* replica = ReadReplicaInfo(*it);
-				if (replica != nullptr) {
-					//LogToFile(L"DEBUG Creating item from replica..");
-					try {
-						auto item = fnCreateItem(replica);
-						//LogToFile(L"DEBUG Adding item to inventory sack..");
-						if (item == nullptr) {
-							LogToFile(LogLevel::FATAL, L"Error creating item, re-depositing back into IA. (Mod item transferred into vanilla?)");
-							targetFile = m_storageFolder + randomFilename();
-							LogToFile(LogLevel::INFO, L"Moving to " + targetFile);
-						}
-						else {
-							if (dll_InventorySack_FindNextPosition(sackPtr, item, &itemPosition, true)) {
-								dll_InventorySack_AddItem_Vec2(sackPtr, (void*)&itemPosition, item, false);
-								LogToFile(LogLevel::INFO, L"Item deposited, moving to " + targetFile);
-								success = true;
+					GAME::ItemReplicaInfo* replica = ReadReplicaInfo(*it);
+					if (replica != nullptr) {
+						//LogToFile(L"DEBUG Creating item from replica..");
+						try {
+							auto item = fnCreateItem(replica);
+							//LogToFile(L"DEBUG Adding item to inventory sack..");
+							if (item == nullptr) {
+								LogToFile(LogLevel::FATAL, L"Error creating item, re-depositing back into IA. (Mod item transferred into vanilla?)");
+								targetFile = m_storageFolder + randomFilename();
+								LogToFile(LogLevel::INFO, L"Moving to " + targetFile);
 							}
 							else {
-								targetFile = m_storageFolder + randomFilename();
-								LogToFile(LogLevel::INFO, L"Target sack is full, re-depositing to IA as " + targetFile);
+								if (dll_InventorySack_FindNextPosition(sackPtr, item, &itemPosition, true)) {
+									dll_InventorySack_AddItem_Vec2(sackPtr, (void*)&itemPosition, item, false);
+									LogToFile(LogLevel::INFO, L"Item deposited, moving to " + targetFile);
+									success = true;
+								}
+								else {
+									targetFile = m_storageFolder + randomFilename();
+									LogToFile(LogLevel::INFO, L"Target sack is full, re-depositing to IA as " + targetFile);
+								}
+
 							}
-
 						}
-					}
-					catch (...) {
-						LogToFile(LogLevel::FATAL, L"Invalid item, moving to " + targetFile);
-					}
-					delete replica;
+						catch (...) {
+							LogToFile(LogLevel::FATAL, L"Invalid item, moving to " + targetFile);
+						}
+						delete replica;
 
-				}
-				else {
-					LogToFile(LogLevel::INFO, L"Invalid item, moving to " + targetFile);
-				}
-
-				if (!MoveFile(it->c_str(), targetFile.c_str())) {
-					LogToFile(LogLevel::WARNING, L"Failed moving file: \"" + *it + L"\" to \"" + targetFile + L"\", error code: " + std::to_wstring(GetLastError()));
-				}
-			}
-
-
-			if (!m_depositQueue.empty()) {
-				if (success) {
-					if (m_depositQueue.size() == 1) {
-						DisplayMessage(L"An item was deposited", L"By Item Assistant");
 					}
 					else {
-						DisplayMessage(m_depositQueue.size() + L" items were deposited", L"By Item Assistant");
+						LogToFile(LogLevel::INFO, L"Invalid item, moving to " + targetFile);
 					}
 
-					// Sort the items, as we've deposited them all in position 1,1
-					SortInventorySack(sackPtr, 1);
+					if (!MoveFile(it->c_str(), targetFile.c_str())) {
+						LogToFile(LogLevel::WARNING, L"Failed moving file: \"" + *it + L"\" to \"" + targetFile + L"\", error code: " + std::to_wstring(GetLastError()));
+					}
 				}
-				else {
-					DisplayMessage(L"Could not transfer item, moved back to IA.", L"By Item Assistant");
 
+
+				if (!m_depositQueue.empty()) {
+					if (success) {
+						if (m_depositQueue.size() == 1) {
+							DisplayMessage(L"An item was deposited", L"By Item Assistant");
+						}
+						else {
+							DisplayMessage(m_depositQueue.size() + L" items were deposited", L"By Item Assistant");
+						}
+
+						// Sort the items, as we've deposited them all in position 1,1
+						SortInventorySack(sackPtr, 1);
+					}
+					else {
+						DisplayMessage(L"Could not transfer item, moved back to IA.", L"By Item Assistant");
+
+					}
+					// fnPlayDropSound(item);
+
+
+					// We got a mutex so this is safe (and if it wasn't, we'd just loot it next time IA starts)
+					m_depositQueue.clear();
 				}
-				// fnPlayDropSound(item);
 
-
-				// We got a mutex so this is safe (and if it wasn't, we'd just loot it next time IA starts)
-				m_depositQueue.clear();
 			}
-
 		}
+	}
+	catch (std::exception& ex) {
+		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+		std::wstring wide = converter.from_bytes(ex.what());
+		LogToFile(LogLevel::FATAL, L"Error parsing in InventorySack_AddItem::Hooked_GameEngine_Update.. " + wide);
+	}
+	catch (...) {
+		LogToFile(LogLevel::FATAL, L"Error parsing in InventorySack_AddItem::Hooked_GameEngine_Update.. (triple-dot)");
 	}
 
 	return dll_GameEngine_Update(This, v);
@@ -727,40 +746,50 @@ void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int
 /// <param name=""></param>
 void InventorySack_AddItem::ThreadMain(void*) {
 	LogToFile(L"IA is running, starting deposit listener..");
-	std::set<std::wstring> knownFiles = std::set<std::wstring>();
-	while (m_isActive) {
-		Sleep(500);
+	try {
+		std::set<std::wstring> knownFiles = std::set<std::wstring>();
+		while (m_isActive) {
+			Sleep(500);
 
-		auto engine = fnGetEngine(true);
-		if (engine == nullptr) {
-			LogToFile(L"Debug: NoEngine");
-			continue;
-		}
+			auto engine = fnGetEngine(true);
+			if (engine == nullptr) {
+				LogToFile(L"Debug: NoEngine");
+				continue;
+			}
 
-		GAME::GameInfo* gameInfo = fnGetGameInfo(engine);
-		if (gameInfo == nullptr) {
-			LogToFile(L"GameInfo is null, aborting..");
-			continue;
-		}
+			GAME::GameInfo* gameInfo = fnGetGameInfo(engine);
+			if (gameInfo == nullptr) {
+				LogToFile(L"GameInfo is null, aborting..");
+				continue;
+			}
 
-		std::wstring folder = GetFolderToLootFrom(GetModName(gameInfo), fnGetHardcore(gameInfo, true));
-		// LogToFile(std::wstring(L"Looking for files in dir: ") + folder);
+			std::wstring folder = GetFolderToLootFrom(GetModName(gameInfo), fnGetHardcore(gameInfo, true));
+			// LogToFile(std::wstring(L"Looking for files in dir: ") + folder);
 
-		for (auto& entry : boost::make_iterator_range(boost::filesystem::directory_iterator(folder), {})) {
-			auto filename = std::wstring(entry.path().c_str());
-			if (knownFiles.find(filename) == knownFiles.end()) {
-				boost::lock_guard<boost::mutex> guard(m_mutex);
+			for (auto& entry : boost::make_iterator_range(boost::filesystem::directory_iterator(folder), {})) {
+				auto filename = std::wstring(entry.path().c_str());
+				if (knownFiles.find(filename) == knownFiles.end()) {
+					boost::lock_guard<boost::mutex> guard(m_mutex);
 
-				if (boost::algorithm::ends_with(filename, ".csv")) {
-					LogToFile(LogLevel::INFO, std::wstring(L"Found file: ") + std::wstring(entry.path().c_str()));
-					m_depositQueue.insert(filename);
+					if (boost::algorithm::ends_with(filename, ".csv")) {
+						LogToFile(LogLevel::INFO, std::wstring(L"Found file: ") + std::wstring(entry.path().c_str()));
+						m_depositQueue.insert(filename);
+					}
+					else {
+						LogToFile(LogLevel::INFO, std::wstring(L"Ignoring file: ") + std::wstring(entry.path().c_str()));
+					}
+					knownFiles.insert(filename);
 				}
-				else {
-					LogToFile(LogLevel::INFO, std::wstring(L"Ignoring file: ") + std::wstring(entry.path().c_str()));
-				}
-				knownFiles.insert(filename);
 			}
 		}
+	}
+	catch (std::exception& ex) {
+		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+		std::wstring wide = converter.from_bytes(ex.what());
+		LogToFile(LogLevel::FATAL, L"Error parsing in InventorySack_AddItem::ThreadMain.. " + wide);
+	}
+	catch (...) {
+		LogToFile(LogLevel::FATAL, L"Error parsing in InventorySack_AddItem::ThreadMain.. (triple-dot)");
 	}
 	LogToFile(L"Stopping deposit listener..");
 }

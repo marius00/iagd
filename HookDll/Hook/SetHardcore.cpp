@@ -5,6 +5,8 @@
 #include "MessageType.h"
 #include "SetHardcore.h"
 #include "Exports.h"
+#include "Logger.h"
+#include <codecvt> // wstring_convert
 
 SetHardcore* SetHardcore::g_self;
 
@@ -33,7 +35,17 @@ void SetHardcore::DisableHook() {
 }
 
 void* __fastcall SetHardcore::HookedMethod(void* This, bool isHardcore) {
-	g_self->TransferData(sizeof(isHardcore), (char*)&isHardcore);
+	try {
+		g_self->TransferData(sizeof(isHardcore), (char*)&isHardcore);
+	}
+	catch (std::exception& ex) {
+		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+		std::wstring wide = converter.from_bytes(ex.what());
+		LogToFile(LogLevel::FATAL, L"Error parsing in SetHardcore.. " + wide);
+	}
+	catch (...) {
+		LogToFile(LogLevel::FATAL, L"Error parsing in SetHardcore.. (triple-dot)");
+	}
 
 	void* v = g_self->originalMethod(This, isHardcore);
 	return v;

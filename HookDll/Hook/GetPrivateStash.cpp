@@ -5,6 +5,7 @@
 #include <detours.h>
 #include "GetPrivateStash.h"
 #include "Exports.h"
+#include <codecvt> // wstring_convert
 #include "Logger.h"
 #include "GrimTypes.h"
 
@@ -51,16 +52,27 @@ void* GetPrivateStash::GetPrivateStashInventorySack() {
 
 void* __stdcall GetPrivateStash::HookedMethod64(void* This) {
 	void* v = originalMethod(This);
+	try {
 
-	char b[1];
-	b[0] = 1;
-	DataItemPtr item(new DataItem(TYPE_OPEN_PRIVATE_STASH, 1, (char*)b));
-	m_dataQueue->push(item);
-	SetEvent(m_hEvent);
+		char b[1];
+		b[0] = 1;
+		DataItemPtr item(new DataItem(TYPE_OPEN_PRIVATE_STASH, 1, (char*)b));
+		m_dataQueue->push(item);
+		SetEvent(m_hEvent);
 
 
-	LogToFile(L"Player stash is opened");
+		LogToFile(L"Player stash is opened");
 
-	privateStashSack = v;
+		privateStashSack = v;
+	}
+	catch (std::exception& ex) {
+		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+		std::wstring wide = converter.from_bytes(ex.what());
+		LogToFile(LogLevel::FATAL, L"Error parsing in GetPrivateStash.. " + wide);
+	}
+	catch (...) {
+		LogToFile(LogLevel::FATAL, L"Error parsing in GetPrivateStash.. (triple-dot)");
+	}
+
 	return v;
 }

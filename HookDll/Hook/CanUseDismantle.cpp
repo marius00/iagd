@@ -5,6 +5,8 @@
 #include "MessageType.h"
 #include "CanUseDismantle.h"
 #include "Exports.h"
+#include <codecvt> // wstring_convert
+#include "Logger.h"
 
 CanUseDismantle* CanUseDismantle::g_self;
 
@@ -33,7 +35,17 @@ void CanUseDismantle::DisableHook() {
 }
 
 void* __fastcall CanUseDismantle::HookedMethod(void* This) {
-	g_self->TransferData(0, nullptr);
+	try {
+		g_self->TransferData(0, nullptr);
+	}
+	catch (std::exception& ex) {
+		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+		std::wstring wide = converter.from_bytes(ex.what());
+		LogToFile(LogLevel::FATAL, L"Error parsing in CanUseDismantle.. " + wide);
+	}
+	catch (...) {
+		LogToFile(LogLevel::FATAL, L"Error parsing in CanUseDismantle.. (triple-dot)");
+	}
 
 	void* v = g_self->originalMethod(This);
 	return v;

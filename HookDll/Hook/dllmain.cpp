@@ -422,11 +422,7 @@ int ProcessAttach(HINSTANCE _hModule) {
 
 	g_hEvent = CreateEvent(NULL, FALSE, FALSE, L"IA_Worker");
 
-#ifdef PLAYTEST
 	LogToFile(L"DLL for GD 1.2");
-#else
-	LogToFile(L"DLL for GD 1.1.x");
-#endif
 
 
 

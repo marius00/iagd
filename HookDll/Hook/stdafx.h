@@ -10,3 +10,5 @@
 // Windows Header Files:
 #include <windows.h>
 #include <atlbase.h>
+
+#include <codecvt> // wstring_convert

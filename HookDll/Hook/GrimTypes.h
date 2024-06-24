@@ -161,9 +161,7 @@ namespace GAME
 		std::wstring text;
 		bool needsProcessing;
 		GraphicsTexture* leadingIcon;
-#ifdef PLAYTEST
 		float _iconScale;
-#endif
 	};
 
 	std::wstring Serialize(GAME::ItemReplicaInfo replica);

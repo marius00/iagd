@@ -8,6 +8,7 @@
 #include "Exports.h"
 #include "GrimTypes.h"
 #include "Logger.h"
+#include <codecvt> // wstring_convert
 
 HANDLE SaveTransferStash::m_hEvent;
 DataQueue* SaveTransferStash::m_dataQueue;
@@ -53,16 +54,26 @@ void* SaveTransferStash::GetTransferStashInventorySack() {
 
 // This is spammed non stop when the private stash is open(not transfer)
 void* __fastcall SaveTransferStash::HookedMethod(void* This) {
-
 	void* v = originalMethod(This);
-	m_transferStashSack = v;
+	try {
 
-	// Neat to get this after the save is done -- not before.
-	DataItemPtr item(new DataItem(TYPE_SAVE_TRANSFER_STASH, 0, 0));
-	m_dataQueue->push(item);
-	SetEvent(m_hEvent);
+		m_transferStashSack = v;
 
-	LogToFile(L"Shared stash is closed (saved)");
+		// Neat to get this after the save is done -- not before.
+		DataItemPtr item(new DataItem(TYPE_SAVE_TRANSFER_STASH, 0, 0));
+		m_dataQueue->push(item);
+		SetEvent(m_hEvent);
+
+		LogToFile(L"Shared stash is closed (saved)");
+	}
+	catch (std::exception& ex) {
+		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+		std::wstring wide = converter.from_bytes(ex.what());
+		LogToFile(LogLevel::FATAL, L"Error parsing in SaveTransferStash.. " + wide);
+	}
+	catch (...) {
+		LogToFile(LogLevel::FATAL, L"Error parsing in SaveTransferStash.. (triple-dot)");
+	}
 
 	return v;
 }
