@@ -18,7 +18,7 @@ int SettingsReader::GetStashTabToLootFrom() {
 	auto child = loadPtreeRoot.get_child_optional(L"local.stashToLootFrom");
 	if (!child)
 	{
-		LogToFile(L"No \"loot from\" configuration found, defaulting to last stash tab");
+		LogToFile(LogLevel::WARNING, L"No \"loot from\" configuration found, defaulting to last stash tab");
 		return 0;
 	}
 
@@ -46,11 +46,11 @@ int SettingsReader::GetStashTabToDepositTo() {
 	auto child = loadPtreeRoot.get_child_optional(L"local.stashToDepositTo");
 	if (!child)
 	{
-		LogToFile(L"No \"deposit to\" configuration found, defaulting to second-to-last stash tab");
+		LogToFile(LogLevel::WARNING, L"No \"deposit to\" configuration found, defaulting to second-to-last stash tab");
 		return 0;
 	}
 
-	const int stashToDepositTo= loadPtreeRoot.get<int>(L"local.stashToDepositTo");
+	const int stashToDepositTo = loadPtreeRoot.get<int>(L"local.stashToDepositTo");
 
 
 	if (stashToDepositTo == 0) {
@@ -75,7 +75,7 @@ bool SettingsReader::GetPreferLegacyMode() {
 	auto child = loadPtreeRoot.get_child_optional(L"local.preferLegacyMode");
 	if (!child)
 	{
-		LogToFile(L"Legacy mode: No configuration found, defaulting to standard mode");
+		LogToFile(LogLevel::WARNING, L"Legacy mode: No configuration found, defaulting to standard mode");
 		return true;
 	}
 
@@ -97,7 +97,7 @@ bool SettingsReader::GetIsGrimDawnParsed() {
 	auto child = loadPtreeRoot.get_child_optional(L"local.isGrimDawnParsed");
 	if (!child)
 	{
-		LogToFile(L"GrimDawnParsed: No configuration found, defaulting to NOT parsed");
+		LogToFile(LogLevel::WARNING, L"GrimDawnParsed: No configuration found, defaulting to NOT parsed");
 		return false;
 	}
 

@@ -4,7 +4,6 @@
 enum class LogLevel {
 	WARNING, INFO, FATAL
 };
-void LogToFile(const wchar_t* message);
 
 
 void LogToFile(LogLevel level, const wchar_t* message);

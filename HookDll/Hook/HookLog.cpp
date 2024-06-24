@@ -4,9 +4,7 @@
 #include <iostream>
 #include <windows.h>
 #include <shlobj.h>
-
-void LogToFile(const wchar_t* message);
-
+#include "Logger.h"
 
 // TODO: What's this doing in HookLog.cpp ??
 std::wstring GetIagdFolder() {
@@ -15,7 +13,7 @@ std::wstring GetIagdFolder() {
 
     if (get_folder_path_ret != S_OK) {
         CoTaskMemFree(path_tmp);
-		LogToFile(L"ERROR Could not find roaming appdata folder");
+		LogToFile(LogLevel::WARNING, L"ERROR Could not find roaming appdata folder");
         return std::wstring();
     }
 

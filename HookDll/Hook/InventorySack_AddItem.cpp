@@ -103,11 +103,11 @@ void InventorySack_AddItem::EnableHook() {
 
 	
 	if (m_isGrimDawnParsed) {
-		LogToFile(L"Grim is parsed, displaying message..");
+		LogToFile(LogLevel::INFO, L"Grim is parsed, displaying message..");
 		DisplayMessage(L"Item Assistant", L"Item monitoring enabled");
 	}
 
-	LogToFile(L"Instaloot hook enabled");
+	LogToFile(LogLevel::INFO, L"Instaloot hook enabled");
 }
 
 
@@ -469,12 +469,12 @@ bool InventorySack_AddItem::HandleItem(void* stash, GAME::Item* item) {
 
 	GAME::Engine* engine = fnGetEngine();
 	if (engine == nullptr) {
-		LogToFile(L"Engine is null, aborting..");
+		LogToFile(LogLevel::WARNING, L"Engine is null, aborting..");
 		return false;
 	}
 	GAME::GameInfo* gameInfo = fnGetGameInfo(engine);
 	if (gameInfo == nullptr) {
-		LogToFile(L"GameInfo is null, aborting..");
+		LogToFile(LogLevel::WARNING, L"GameInfo is null, aborting..");
 		return false;
 	}
 
@@ -617,13 +617,13 @@ void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int
 	try {
 		// IA not running? Continue
 		if (!m_isActive) {
-			LogToFile(L"Debug: NotActive");
+			//LogToFile(L"Debug: NotActive");
 			return dll_GameEngine_Update(This, v);
 		}
 
 		// If the game is not in a a "ready state", just continue.
 		if (IsGameLoading(This) || IsGameWaiting(This, true) || !IsGameEngineOnline(This)) {
-			LogToFile(L"Debug: NotReady");
+			//LogToFile(L"Debug: NotReady");
 			m_isTransferStashOpen = false; // Just to be on the safe side
 			return dll_GameEngine_Update(This, v);
 		}
@@ -638,7 +638,7 @@ void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int
 
 		auto engine = fnGetEngine();
 		if (engine == nullptr) {
-			LogToFile(L"Debug: NoEngine");
+			LogToFile(LogLevel::INFO, L"Debug: NoEngine");
 			return dll_GameEngine_Update(This, v);
 		}
 
@@ -745,7 +745,7 @@ void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int
 /// </summary>
 /// <param name=""></param>
 void InventorySack_AddItem::ThreadMain(void*) {
-	LogToFile(L"IA is running, starting deposit listener..");
+	LogToFile(LogLevel::INFO, L"IA is running, starting deposit listener..");
 	try {
 		std::set<std::wstring> knownFiles = std::set<std::wstring>();
 		while (m_isActive) {
@@ -753,13 +753,13 @@ void InventorySack_AddItem::ThreadMain(void*) {
 
 			auto engine = fnGetEngine(true);
 			if (engine == nullptr) {
-				LogToFile(L"Debug: NoEngine");
+				LogToFile(LogLevel::INFO, L"Debug: NoEngine");
 				continue;
 			}
 
 			GAME::GameInfo* gameInfo = fnGetGameInfo(engine);
 			if (gameInfo == nullptr) {
-				LogToFile(L"GameInfo is null, aborting..");
+				LogToFile(LogLevel::INFO, L"GameInfo is null, aborting..");
 				continue;
 			}
 
@@ -791,5 +791,5 @@ void InventorySack_AddItem::ThreadMain(void*) {
 	catch (...) {
 		LogToFile(LogLevel::FATAL, L"Error parsing in InventorySack_AddItem::ThreadMain.. (triple-dot)");
 	}
-	LogToFile(L"Stopping deposit listener..");
+	LogToFile(LogLevel::INFO, L"Stopping deposit listener..");
 }

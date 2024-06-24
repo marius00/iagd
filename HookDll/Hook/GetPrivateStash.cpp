@@ -61,7 +61,7 @@ void* __stdcall GetPrivateStash::HookedMethod64(void* This) {
 		SetEvent(m_hEvent);
 
 
-		LogToFile(L"Player stash is opened");
+		LogToFile(LogLevel::INFO, L"Player stash is opened");
 
 		privateStashSack = v;
 	}

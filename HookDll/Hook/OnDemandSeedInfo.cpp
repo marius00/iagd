@@ -21,7 +21,7 @@ OnDemandSeedInfo::OnDemandSeedInfo(DataQueue* dataQueue, HANDLE hEvent) {
 	m_sleepMilliseconds = 0;
 
 	auto handle = GetProcAddressOrLogToFile(L"game.dll", "?GetUIDisplayText@ItemEquipment@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@_N@Z");
-	if (handle == NULL) LogToFile(L"Error hooking IsGameLoading@GameEngine");
+	if (handle == NULL) LogToFile(LogLevel::FATAL, L"Error hooking IsGameLoading@GameEngine");
 	fnItemEquipmentGetUIDisplayText = pItemEquipmentGetUIDisplayText(handle);
 }
 

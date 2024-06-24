@@ -64,7 +64,7 @@ void* __fastcall SaveTransferStash::HookedMethod(void* This) {
 		m_dataQueue->push(item);
 		SetEvent(m_hEvent);
 
-		LogToFile(L"Shared stash is closed (saved)");
+		LogToFile(LogLevel::INFO, L"Shared stash is closed (saved)");
 	}
 	catch (std::exception& ex) {
 		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;

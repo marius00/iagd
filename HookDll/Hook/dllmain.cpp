@@ -85,21 +85,6 @@ std::string logStartupTimeChar() {
 	return str;
 }
 
-
-void LogToFile(const wchar_t* message) {
-	g_log.out(logStartupTime() + message);
-}
-void LogToFile(const char* message) {
-	g_log.out((logStartupTimeChar() + std::string(message)).c_str());
-}
-void LogToFile(const std::string message) {
-	g_log.out((logStartupTimeChar() + message).c_str());
-}
-
-void LogToFile(std::wstringstream message) {
-	g_log.out(logStartupTime() + message.str());
-}
-
 std::wstring LogLevelToString(LogLevel level) {
 	switch (level) {
 	case LogLevel::INFO:
@@ -162,7 +147,7 @@ void WorkerThreadMethod() {
 			// We either don't have a valid window target OR it has been more than 1 sec since we last update the target.
 			g_targetWnd = FindWindow(L"GDIAWindowClass", NULL);
 			g_lastThreadTick = GetTickCount();
-			LOG(L"FindWindow returned: " << g_targetWnd);
+			// LOG(L"FindWindow returned: " << g_targetWnd);
 
 			if (g_InventorySack_AddItemInstance != NULL) {
 				g_InventorySack_AddItemInstance->SetActive(g_targetWnd != NULL);
@@ -206,7 +191,7 @@ unsigned __stdcall WorkerThreadMethodWrap(void* argss) {
 }
 
 void StartWorkerThread() {
-	LOG(L"Starting worker thread..");
+	LogToFile(LogLevel::INFO, L"Starting worker thread..");
 	unsigned int pid;
 	g_thread = (HANDLE)_beginthreadex(NULL, 0, &WorkerThreadMethodWrap, NULL, 0, &pid);
 
@@ -214,12 +199,12 @@ void StartWorkerThread() {
 	DataItemPtr item(new DataItem(TYPE_REPORT_WORKER_THREAD_LAUNCHED, 0, NULL));
 	g_dataQueue.push(item);
 	SetEvent(g_hEvent);
-	LOG(L"Started worker thread..");
+	LogToFile(LogLevel::INFO, L"Started worker thread..");
 }
 
 
 void EndWorkerThread() {
-	LOG(L"Ending worker thread..");
+	LogToFile(LogLevel::INFO, L"Ending worker thread..");
 	if (g_hEvent != NULL) {
 		SetEvent(g_hEvent);
 		HANDLE h = g_hEvent;
@@ -422,7 +407,7 @@ int ProcessAttach(HINSTANCE _hModule) {
 
 	g_hEvent = CreateEvent(NULL, FALSE, FALSE, L"IA_Worker");
 
-	LogToFile(L"DLL for GD 1.2");
+	LogToFile(LogLevel::INFO, L"DLL for GD 1.2");
 
 
 
@@ -445,7 +430,7 @@ int ProcessAttach(HINSTANCE _hModule) {
 
 	LogToFile(LogLevel::INFO, L"Starting hook enabling.. " + std::to_wstring(hooks.size()) + L" hooks.");
 	for (unsigned int i = 0; i < hooks.size(); i++) {
-		LOG(L"Enabling hook..");
+		LogToFile(LogLevel::INFO, L"Enabling hook..");
 		hooks[i]->EnableHook();
 	}
 	LogToFile(LogLevel::INFO, L"Hooking complete..");
