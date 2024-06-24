@@ -82,9 +82,6 @@ namespace EvilsoftCommons.DllInjector {
             return false;
         }
 
-        public static bool IsGd12(string dll) {
-            return HasSpecificDllExport(dll, "??0GameTextLine@GAME@@QEAA@W4GameTextClass@1@AEBV?$basic_string@GU?$char_traits@G@std@@V?$allocator@G@2@@std@@_NPEBVGraphicsTexture@1@M@Z");
-        }
         public static bool IsPlaytest(string dll) {
             return HasSpecificDllExport(dll, "?GetUIDisplayText@ItemEquipment@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@_N@Z");
         }

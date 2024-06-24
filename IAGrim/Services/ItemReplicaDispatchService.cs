@@ -2,14 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Pipes;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using EvilsoftCommons.Exceptions;
-using IAGrim.Database;
-using IAGrim.Services.ItemReplica;
-using IAGrim.Services.MessageProcessor;
-using IAGrim.Utilities;
 using log4net;
 
 namespace IAGrim.Services {

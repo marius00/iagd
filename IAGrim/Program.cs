@@ -25,6 +25,7 @@ using IAGrim.Settings;
 using IAGrim.Utilities.Cloud;
 using IAGrim.Utilities.Detection;
 using IAGrim.Database.Synchronizer;
+using NHibernate.Cfg.MappingSchema;
 
 namespace IAGrim {
     internal class Program {
@@ -33,8 +34,15 @@ namespace IAGrim {
         private static readonly StartupService StartupService = new StartupService();
 
 #if DEBUG
-        private static void Test() {
 
+        private static string GetDirectoryName(string path) {
+            var args = path.Split('\\');
+            // var directory = args.Take(args.Count() - 1).ToArray();
+            args[args.Count() - 1] = "Game.dll";
+            return string.Join("\\", args);
+        }
+
+        private static void Test() {
         }
 #endif
 

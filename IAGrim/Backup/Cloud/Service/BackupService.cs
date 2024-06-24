@@ -152,6 +152,10 @@ namespace IAGrim.Backup.Cloud.Service {
             var items = _playerItemDao.GetUnsynchronizedItems();
             var batches = ToBatches(items);
 
+            if (items.Count == 0) {
+                return;
+            }
+
             Logger.Debug($"Got {items.Count} items to sync up");
             foreach (var batch in batches) {
                 Logger.Info($"Synchronizing batch with {batch.Count} items to cloud");
