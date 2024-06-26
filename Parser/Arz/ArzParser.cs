@@ -43,7 +43,8 @@ namespace IAGrim.Parser.Arz {
                 "/storyelements/signs/", // Lokarr's set
                 "/storyelements/questassets/", // Gazer Man
                 "/skills/",
-                "/npcgear/"
+                "/npcgear/",
+                "records/storyelementsgdx2/questassets/"
             };
 
             string[] notInteresting = {
