@@ -94,6 +94,8 @@ const helpEntries = [
         body: () => <div>
             If you're encountering the error "Deposited item back in-game, did not pass item classification.", it most likely means you need to parse the database. <br/>
             IA will return any items it cannot identify, since you'd be unable to search for them based on stats. <br/> <br/>
+            It might also be a DLL injection issue, check the log for messages regarding injection issues.
+            <br>
             {typicalParseDbMessage}
         </div>,
         type: IHelpEntryType.Help
@@ -101,24 +103,6 @@ const helpEntries = [
     {
         title: `IA shows me "Unknown Item"!??`,
         tag: 'UnknownItem',
-        body: () => typicalParseDbMessage,
-        type: IHelpEntryType.Help
-    },
-    {
-        title: `My item names are missing`,
-        tag: 'MissingItemNames',
-        body: () => typicalParseDbMessage,
-        type: IHelpEntryType.Help
-    },
-    {
-        title: `My item are named funny stuff like gdxTag0134`,
-        tag: 'NeedParseGdxTag',
-        body: () => typicalParseDbMessage,
-        type: IHelpEntryType.Help
-    },
-    {
-        title: `IA says my items are unidentified??`,
-        tag: 'NotLootingUnidentified',
         body: () => typicalParseDbMessage,
         type: IHelpEntryType.Help
     },
@@ -217,21 +201,6 @@ const helpEntries = [
       Click "View Logs"
       Go to the "data" folder`)}
             The data folder can also be found at <i>%appdata%\..\local\evilsoft\iagd\data</i>
-        </div>,
-        type: IHelpEntryType.Informational
-    },
-    {
-        title: `Why is dropbox/onedrive/gdrive backups disabled?`,
-        tag: 'BackupAutodetectDisabled',
-        body: () => <div>
-            Item Assistant does not have any direct integration with these services.<br/>
-            The way IA creates backups to say Dropbox is by detecting the installation folder, and placing a zip file
-            there with the daily backup.<br/>
-            The same can be achieved by choosing "custom" and simply navigating to the folder of your cloud
-            provider.<br/>
-            <br/>
-            If the icon is disabled, it means IA was not able to automatically detect where you have the cloud sync
-            installed, and you will have to enable it manually via custom backups.
         </div>,
         type: IHelpEntryType.Informational
     },
@@ -356,15 +325,6 @@ const helpEntries = [
         type: IHelpEntryType.Informational
     },
     {
-        title: `Settings: What is show augments as items?`,
-        tag: 'ShowAugmentsAsItems',
-        body: () => <div>
-            <b>Show augments as items will include purchaseable augments when searching for items</b><br/>
-            Some players are more interested in what is available, in both items and what they can purchase
-        </div>,
-        type: IHelpEntryType.Informational
-    },
-    {
         title: `Settings: What is buddy items?`,
         tag: 'BuddyItems',
         body: () => <div>
@@ -460,11 +420,11 @@ const helpEntries = [
         </div>
     },
     {
-        title: `Can I transfer/store items on a different harddrive?`,
+        title: `Can I store items on a different harddrive?`,
         tag: 'StoreOnDifferentDisk',
         body: () => <div>
             Sorta..<br/><br/>
-
+            This is very niche / power user, but it's possible.. <br>
             <ol>
                 <li>Close IA</li>
                 <li>Open "%appdata%\..\local\evilsoft"</li>
@@ -481,27 +441,11 @@ const helpEntries = [
         </div>
     },
     {
-        title: `IA is looting items, but they never get removed in-game!`,
-        tag: 'WindowsAntiRansomwareIssue',
-        body: () => <div>
-        <b>Relevant for legacy looting mode only:</b> <br/>
-            Item assistant is looting items, they never vanish in-game, and it cannot transfer items back into the
-            game? <br/>
-            The most common cause here is the anti-ransomware protection in Windows 10.<br/>
-            If you have recently enabled this on the <i>my documents</i> folder, it's most likely preventing Item
-            Assistant from writing to files under <i>my games</i>, which is under my
-            documents. <br/><br/>
-
-            If this help entry opened automatically for you in item assistant, something is preventing Item Assistant
-            from writing it's changes.
-        </div>
-    },
-    {
         title: `Can I use this with a 4K monitor?`,
         tag: '4K',
         body: () => <div>
             Item Assistant may not function correctly with 4K monitors and UI scaling. <br/>
-            Right click Item Assistant, got to properties and then Compatability mode. <br/>
+            Right click Item Assistant, got to properties and then Compatibility mode. <br/>
             <img src="./4k.png"/>
         </div>
     },
@@ -512,6 +456,20 @@ const helpEntries = [
             IA requires your e-mail for identifying you for online backups. You can opt-out by clicking the "Opt out of online features" on the online tab. <br/>
             I absolutely could not care less about your e-mail, and the backend code is open source just like IA. Don't like it? Simply opt-out of online backups. <br/>
             <span style="display: none;">email, e-mail, privacy, need, login.</span>
+        </div>
+    },
+    {
+        title: `Why can't I find translations / IA is only in English?`,
+        tag: 'translations',
+        body: () => <div>
+            With the release of Grim Dawn v1.2 <i>Crate</i> changed how translations works with Grim Dawn.<br>
+            Item Assistant expects translations to work the way they used to in v1.0 and v1.1 <br>
+            <br>
+            If you wish to run IAGD with a different language than English, you'll need to follow the steps used to translate Grim Dawn back with v1.1 <br>
+            This involves finding the community zip file for your language, downloading that and placing it in a folder inside Grim Dawn.<br>
+            <br>
+            This is out of scope of IAGD itself, you can google guides on how to install translations for v1.1<br><br>
+            Not all translations has full support for IAGD.
         </div>
     },
     /*

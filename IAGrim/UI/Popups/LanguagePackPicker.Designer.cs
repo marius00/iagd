@@ -28,6 +28,7 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.lblWarning = new System.Windows.Forms.Label();
             this.buttonSelect = new FirefoxButton();
+            this.label1 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -37,6 +38,7 @@
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.pictureBox1);
             this.groupBox1.Location = new System.Drawing.Point(8, 9);
             this.groupBox1.Name = "groupBox1";
@@ -89,6 +91,19 @@
             this.buttonSelect.Text = "Change Language";
             this.buttonSelect.Click += new System.EventHandler(this.buttonSelect_Click);
             // 
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(4, 175);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(675, 13);
+            this.label1.TabIndex = 5;
+            this.label1.Tag = "";
+            this.label1.Text = "As of Grim Dawn v1.2, loading language packs in GD has changed. See the IAGD help" +
+    " page for more information on loading language packs.";
+            // 
             // LanguagePackPicker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -110,6 +125,7 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LanguagePackPicker_FormClosing);
             this.Load += new System.EventHandler(this.LanguagePackPicker_Load);
             this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -122,5 +138,6 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label lblWarning;
+        private System.Windows.Forms.Label label1;
     }
 }
