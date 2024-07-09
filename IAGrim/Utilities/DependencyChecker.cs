@@ -52,6 +52,16 @@ namespace IAGrim.Utilities {
 
             return false;
         }
+        public static bool CheckVs2019Installed() {
+            string dependenciesPath = @"SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x64";
+
+            using (RegistryKey dependencies = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(dependenciesPath)) {
+                if (dependencies == null) return false;
+
+                var bld = Convert.ToInt32(dependencies.GetValue("Bld"));
+                return bld >= 27820; // https://stackoverflow.com/questions/46178559/how-to-detect-if-visual-c-2017-redistributable-is-installed
+            }
+        }
 
         // TODO: What uses this? Anything? -- Might have been old chromium
         public static bool CheckVs2013Installed() {

@@ -95,7 +95,7 @@ const helpEntries = [
             If you're encountering the error "Deposited item back in-game, did not pass item classification.", it most likely means you need to parse the database. <br/>
             IA will return any items it cannot identify, since you'd be unable to search for them based on stats. <br/> <br/>
             It might also be a DLL injection issue, check the log for messages regarding injection issues.
-            <br>
+            <br/>
             {typicalParseDbMessage}
         </div>,
         type: IHelpEntryType.Help
@@ -424,7 +424,7 @@ const helpEntries = [
         tag: 'StoreOnDifferentDisk',
         body: () => <div>
             Sorta..<br/><br/>
-            This is very niche / power user, but it's possible.. <br>
+            This is very niche / power user, but it's possible.. <br/>
             <ol>
                 <li>Close IA</li>
                 <li>Open "%appdata%\..\local\evilsoft"</li>
@@ -462,13 +462,13 @@ const helpEntries = [
         title: `Why can't I find translations / IA is only in English?`,
         tag: 'translations',
         body: () => <div>
-            With the release of Grim Dawn v1.2 <i>Crate</i> changed how translations works with Grim Dawn.<br>
-            Item Assistant expects translations to work the way they used to in v1.0 and v1.1 <br>
-            <br>
-            If you wish to run IAGD with a different language than English, you'll need to follow the steps used to translate Grim Dawn back with v1.1 <br>
-            This involves finding the community zip file for your language, downloading that and placing it in a folder inside Grim Dawn.<br>
-            <br>
-            This is out of scope of IAGD itself, you can google guides on how to install translations for v1.1<br><br>
+            With the release of Grim Dawn v1.2 <i>Crate</i> changed how translations works with Grim Dawn.<br/>
+            Item Assistant expects translations to work the way they used to in v1.0 and v1.1 <br/>
+            <br/>
+            If you wish to run IAGD with a different language than English, you'll need to follow the steps used to translate Grim Dawn back with v1.1 <br/>
+            This involves finding the community zip file for your language, downloading that and placing it in a folder inside Grim Dawn.<br/>
+            <br/>
+            This is out of scope of IAGD itself, you can google guides on how to install translations for v1.1<br/><br/>
             Not all translations has full support for IAGD.
         </div>
     },

@@ -53,8 +53,11 @@ namespace IAGrim {
                 MessageBox.Show("It appears VS 2010 (x86) redistributable is not installed.\nPlease install it to continue using IA",
                     "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+            if (!DependencyChecker.CheckVs2019Installed()) {
+                // TODO: VC 2019 required for CefSharp 96.*
+                MessageBox.Show("It appears VS 2019 (x64) redistributable may not be installed.\nInstall VS 2019 (x64) runtimes manually if you experience issues running IA", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
 
-            // TODO: VC 2019 required for CefSharp 96.*
         }
 
         // TODO: This creates another session instance, should be executed inside the ThreadExecuter
