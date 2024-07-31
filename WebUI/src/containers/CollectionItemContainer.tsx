@@ -71,8 +71,8 @@ class CollectionItemContainer extends PureComponent<Props, object> {
         <th>Epic</th>
         <th>Blue</th>
         <th>Green</th>
+        <th>Green (Rare)</th>
         <th>Green (DoubleRare)</th>
-        <th>Green (TripleRare)</th>
       </tr>
       {
         Object.keys(table).map((a, b, c) => {

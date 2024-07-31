@@ -47,10 +47,6 @@ InfoAfterFile=readme.txt
 
 [InstallDelete]
 Type: files; Name: "{app}\SQLite.Interop.dll"
-Type: files; Name: "{app}\AutoMapper.dll"
-Type: files; Name: "{app}\AutoMapper.xml"
-Type: files; Name: "{app}\ItemAssistantHook-exp.dll"
-Type: files; Name: "{app}\ItemAssistantHook.dll"
 
 
 [UninstallDelete]

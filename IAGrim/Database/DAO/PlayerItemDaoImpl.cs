@@ -74,7 +74,10 @@ namespace IAGrim.Database {
         /// <returns></returns>
         private int GetGreenQualityLevelForRecords(Dictionary<string, List<DBStatRow>> stats, List<string> records) {
             // Filter out green components
-            var filteredRecords = records.Where(record => !record.StartsWith("records/items/materia/")).ToList();
+            var filteredRecords = records
+                .Where(record => !record.StartsWith("records/items/materia/"))
+                .Where(record => record.Contains("/lootaffixes/")) // Ignore the base record
+                .ToList();
 
             var classifications = stats
                 .Where(m => filteredRecords.Contains(m.Key))
@@ -82,17 +85,12 @@ namespace IAGrim.Database {
                 .Select(m => m.TextValue)
                 .ToList();
 
-            var score = 0;
 
-            /*
-            score += classifications.Count(m => m == "Common");
-            score += classifications.Count(m => m == "Yellow") * 2;
-            score += classifications.Count(m => m == "Magical") * 3;*/
             if (classifications.All(m => m != "Legendary" && m != "Epic")) {
-                score += classifications.Count(m => m == "Rare") * 1;
+                return classifications.Count(m => m == "Rare");
             }
 
-            return score;
+            return 0;
         }
 
         /// <summary>

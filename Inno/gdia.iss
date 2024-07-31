@@ -33,7 +33,6 @@ Filename: "{app}\2010sp1_vcredist_x86.exe"; Parameters: "/install /quiet /norest
 Filename: "{app}\2015rc3_vc_redist.x86.exe"; Parameters: "/install /quiet /norestart"; Description: "Install VC++ Redistributable 2015 RC3 (x86)"; Flags: runhidden runascurrentuser
 Filename: "{app}\vc2015_redist.x64.exe"; Parameters: "/install /quiet /norestart"; Description: "Install VC++ Redistributable 2015 RC3 (x64)"; Flags: runhidden runascurrentuser
 Filename: "{app}\IAGrim.exe"; Description: "Launch GD Item Assistant"; Flags: postinstall nowait
-Filename: "https://www.twitch.tv/videos/210592694"; Description: "Open video tutorial"; Flags: postinstall shellexec
 
 
 
@@ -53,10 +52,6 @@ InfoAfterFile=readme.txt
 
 [InstallDelete]
 Type: files; Name: "{app}\SQLite.Interop.dll"
-Type: files; Name: "{app}\AutoMapper.dll"
-Type: files; Name: "{app}\AutoMapper.xml"
-Type: files; Name: "{app}\ItemAssistantHook-exp.dll"
-Type: files; Name: "{app}\ItemAssistantHook.dll"
 
 
 [UninstallDelete]

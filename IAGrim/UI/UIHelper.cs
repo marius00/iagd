@@ -36,21 +36,20 @@ namespace IAGrim.UI
 
                         Text = RuntimeSettings.Language.GetTag("iatag_rarity_green"),
                         Rarity = "Green",
-                        PrefixRarity = 1
                     },
                     new ComboBoxItemQuality
                     {
 
                         Text = RuntimeSettings.Language.GetTag("iatag_rarity_green_p1"),
                         Rarity = "Green",
-                        PrefixRarity = 2
+                        PrefixRarity = 1
                     },
                     new ComboBoxItemQuality
                     {
 
                         Text = RuntimeSettings.Language.GetTag("iatag_rarity_green_p2"),
                         Rarity = "Green",
-                        PrefixRarity = 3
+                        PrefixRarity = 2
                     },
                     new ComboBoxItemQuality
                     {

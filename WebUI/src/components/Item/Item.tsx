@@ -147,8 +147,8 @@ class Item extends PureComponent<Props, object> {
             <span>
               <a onClick={() => this.openItemSite()} className={this.translateQualityToClass(item.quality)}>{name}</a>
             </span>
-              {item.greenRarity === 3 ? <span className="cursor-help supergreen" data-tip={translate('items.label.tripleGreen')}> (TripleRare{miText})</span> : ''}
-              {item.greenRarity === 2 ? <span className="cursor-help supergreen" data-tip={translate('items.label.doubleGreen')}> (DoubleRare{miText})</span> : ''}
+              {item.greenRarity === 2 ? <span className="cursor-help supergreen" data-tip={translate('items.label.doubleRare')}> (DoubleRare{miText})</span> : ''}
+              {item.greenRarity === 1 ? <span className="cursor-help supergreen" data-tip={translate('items.label.singleRare')}> (Rare{miText})</span> : ''}
           </div>
           {item.socket && item.socket.length > 0 &&
           <span className="item-socket-label">{item.socket}</span>

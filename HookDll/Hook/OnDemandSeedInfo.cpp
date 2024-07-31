@@ -393,7 +393,7 @@ void* __fastcall OnDemandSeedInfo::HookedMethod(void* This, int v) {
 			bool isGameWaiting = IsGameWaiting(This, true);
 			bool isGameEngineOnline = IsGameEngineOnline(This);
 
-			if (!isGameLoading && !isGameWaiting && isGameEngineOnline) {
+			if (!isGameLoading /* && !isGameWaiting*/ && isGameEngineOnline) {
 				// Process the queue
 				int num = 0;
 				while (!g_self->m_itemQueue.empty() && num++ < 2) {
@@ -408,10 +408,10 @@ void* __fastcall OnDemandSeedInfo::HookedMethod(void* This, int v) {
 				if (isGameLoading) {
 					LogToFile(LogLevel::INFO, "Game is loading, real stat generation not available.");
 				}
-				if (isGameWaiting) {
+				/*if (isGameWaiting) {
 					LogToFile(LogLevel::INFO, "Game is waiting, real stat generation not available.");
-				}
-				if (isGameEngineOnline) {
+				}*/
+				if (!isGameEngineOnline) {
 					LogToFile(LogLevel::INFO, "///Game engine is not online, real stat generation not available.");
 				}
 				g_self->m_sleepMilliseconds = 12000;
