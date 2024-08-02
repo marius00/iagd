@@ -155,7 +155,7 @@ namespace IAGrim.Database {
             }
         }
 
-        public IList<BuddyItem> ListMissingReplica(int limit) {
+        public IList<BuddyItem> ListMissingReplica() {
             // TODO: Relics are "ItemArtifact", those will crash the game.
             var specificItemTypesOnlySql = $@"
                 
@@ -217,7 +217,7 @@ namespace IAGrim.Database {
 
 
                 FROM {BuddyItemsTable.Table} PI, {BuddySubscriptionTable.Table} S
-                WHERE PI.{BuddyItemsTable.RemoteItemId} NOT IN (SELECT R.BuddyItemId FROM BuddyReplicaItem R)
+                WHERE PI.{BuddyItemsTable.RemoteItemId} NOT IN (SELECT R.BuddyItemId FROM ReplicaItem R)
                 AND MOD = '' 
 
                 AND PI.{BuddyItemsTable.BaseRecord} IN ({specificItemTypesOnlySql})
@@ -254,7 +254,6 @@ namespace IAGrim.Database {
 
                     Logger.Debug(q.QueryString);
                     q.SetResultTransformer(Transformers.AliasToBean<BuddyItem>());
-                    q.SetParameter("limit", limit);
                     var result = q.List<BuddyItem>();
 
                     return result;

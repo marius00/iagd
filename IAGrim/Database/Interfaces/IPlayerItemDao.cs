@@ -37,6 +37,6 @@ namespace IAGrim.Database.Interfaces {
 
         void DeleteDuplicates();
 
-        IList<PlayerItem> ListMissingReplica(int limit);
+        IList<PlayerItem> ListMissingReplica();
     }
 }

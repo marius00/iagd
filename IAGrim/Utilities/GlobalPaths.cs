@@ -44,6 +44,22 @@ namespace IAGrim.Utilities {
             }
         }
 
+        public static string CsvReplicaWriteLocation {
+            get {
+                string path = Path.Combine(CoreFolder, "replica", "from_ia");
+                Directory.CreateDirectory(path);
+                return path;
+            }
+        }
+
+        public static string CsvReplicaReadLocation {
+            get {
+                string path = Path.Combine(CoreFolder, "replica", "to_ia");
+                Directory.CreateDirectory(path);
+                return path;
+            }
+        }
+
         public static string CsvLocationIngoing {
             get {
                 string path = Path.Combine(CsvLocation, "ingoing");

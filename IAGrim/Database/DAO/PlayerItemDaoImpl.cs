@@ -316,7 +316,6 @@ namespace IAGrim.Database {
                     {rarity} = :rarity, 
                     {levelReq} = :levelreq, 
                     {prefixRarity} = :prefixrarity,
-                    searchabletext = NULL
                     WHERE {id} = :id"
                 )
                 .SetParameter("name", itemName)
@@ -727,7 +726,6 @@ namespace IAGrim.Database {
                 PI.ModifierRecord as ModifierRecord, 
                 PI.MateriaRecord as MateriaRecord,
                 PI.{PlayerItemTable.PrefixRarity} as PrefixRarity,
-                PI.{PlayerItemTable.AzureUuid} as AzureUuid,
                 PI.{PlayerItemTable.CloudId} as CloudId,
                 PI.{PlayerItemTable.IsCloudSynchronized} as IsCloudSynchronizedValue,
                 PI.{PlayerItemTable.Id} as Id,
@@ -863,7 +861,6 @@ namespace IAGrim.Database {
             string ModifierRecord = Convert<string>(arr[idx++]);
             string MateriaRecord = Convert<string>(arr[idx++]);
             long PrefixRarity = Convert(arr[idx++]);
-            string AzureUuid = Convert<string>(arr[idx++]);
             string CloudId = Convert<string>(arr[idx++]);
             bool IsCloudSynchronized = ConvertToBoolean(arr[idx++]);
             long Id = Convert(arr[idx++]);
@@ -885,7 +882,6 @@ namespace IAGrim.Database {
                 ModifierRecord = ModifierRecord,
                 MateriaRecord = MateriaRecord,
                 PrefixRarity = PrefixRarity,
-                AzureUuid = AzureUuid,
                 CloudId = CloudId,
                 IsCloudSynchronized = IsCloudSynchronized,
                 PetRecord = PetRecord,
@@ -1016,7 +1012,7 @@ DELETE FROM PlayerItem WHERE Id IN (
             }
         }
 
-        public IList<PlayerItem> ListMissingReplica(int limit) {
+        public IList<PlayerItem> ListMissingReplica() {
 
 
             //TODO: Relics are "ItemArtifact", those will crash the game.
@@ -1086,7 +1082,6 @@ DELETE FROM PlayerItem WHERE Id IN (
                 using (session.BeginTransaction()) {
                     return session.CreateSQLQuery(sql)
                         .SetResultTransformer(new AliasToBeanResultTransformer(typeof(PlayerItem)))
-                        .SetParameter("limit", limit)
                         .List<PlayerItem>();
                 }
             }

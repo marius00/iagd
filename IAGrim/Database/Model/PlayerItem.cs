@@ -16,9 +16,6 @@ namespace IAGrim.Database {
     public class PlayerItem : BaseItem, PlayerHeldItem, IComparable, ICloneable, RecordCollection {
         public virtual long Id { get; set; }
 
-        [Obsolete]
-        public virtual string AzureUuid { get; set; }
-
         public virtual string CloudId { get; set; }
 
         public virtual bool IsCloudSynchronized {

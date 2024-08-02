@@ -93,7 +93,6 @@ namespace IAGrim.UI {
                 switch (e.ProgressPercentage) {
                     case InjectionHelper.ABORTED:
                         RuntimeSettings.StashStatus = StashAvailability.MENU;
-                        _itemReplicaService.SetIsGrimDawnRunning(true);
                         break;
 
 
@@ -103,7 +102,6 @@ namespace IAGrim.UI {
                                 break;
                             }
 
-                            _itemReplicaService.SetIsGrimDawnRunning(false);
                             RuntimeSettings.StashStatus = StashAvailability.ERROR;
                             statusLabel.Text = e.UserState as string;
                             if (!_hasShownStashErrorPage) {
@@ -125,7 +123,6 @@ namespace IAGrim.UI {
                         }
 
                     case InjectionHelper.INJECTION_ERROR_32BIT: {
-                        _itemReplicaService.SetIsGrimDawnRunning(false);
                         RuntimeSettings.StashStatus = StashAvailability.NOT64BIT;
                         statusLabel.Text = e.UserState as string;
                         if (!_hasShown32bitErrorPage) {
@@ -138,7 +135,6 @@ namespace IAGrim.UI {
 
                     // No grim dawn client, so stash is closed!
                     case InjectionHelper.NO_PROCESS_FOUND_ON_STARTUP: {
-                        _itemReplicaService.SetIsGrimDawnRunning(false);
                             if (RuntimeSettings.StashStatus == StashAvailability.UNKNOWN) {
                             RuntimeSettings.StashStatus = StashAvailability.CLOSED;
                         }
@@ -149,12 +145,10 @@ namespace IAGrim.UI {
                     // No grim dawn client, so stash is closed!
                     case InjectionHelper.NO_PROCESS_FOUND:
                         RuntimeSettings.StashStatus = StashAvailability.CLOSED;
-                        _itemReplicaService.SetIsGrimDawnRunning(false);
                         break;
 
                     // Injection error
                     case InjectionHelper.INJECTION_ERROR_POSSIBLE_ACCESS_DENIED: {
-                        _itemReplicaService.SetIsGrimDawnRunning(false);
                         RuntimeSettings.StashStatus = StashAvailability.ERROR;
                         if (!_hasShownStashErrorPage) {
                             _cefBrowserHandler.ShowHelp(HelpService.HelpType.StashError);
@@ -164,7 +158,6 @@ namespace IAGrim.UI {
                         break;
                     }
                     case InjectionHelper.STILL_RUNNING:
-                        _itemReplicaService.SetIsGrimDawnRunning(true);
                         break;
                 }
 
@@ -477,7 +470,7 @@ namespace IAGrim.UI {
             var replicaItemDao = _serviceProvider.Get<IReplicaItemDao>();
             var stashWriter = new SafeTransferStashWriter(settingsService, _cefBrowserHandler);
             var transferStashService = new TransferStashService(settingsService);
-            var transferStashService2 = new TransferStashService2(playerItemDao, cacher, transferStashService, stashWriter, settingsService, _cefBrowserHandler, replicaItemDao);
+            var transferStashService2 = new TransferStashService2(playerItemDao, cacher, transferStashService, stashWriter, _cefBrowserHandler);
             _serviceProvider.Add(transferStashService2);
 
             _transferStashWorker = new TransferStashWorker(transferStashService2, _userFeedbackService);
@@ -670,7 +663,7 @@ namespace IAGrim.UI {
             settingsService.GetLocal().OnMutate += delegate(object o, EventArgs args) { _cefBrowserHandler.SetOnlineBackupsEnabled(!settingsService.GetLocal().OptOutOfBackups); };
 
 
-            _csvParsingService = new CsvParsingService(playerItemDao, replicaItemDao, _userFeedbackService, cacher, transferStashService);
+            _csvParsingService = new CsvParsingService(playerItemDao, _userFeedbackService, cacher, transferStashService);
             _csvFileMonitor.OnModified += (_, arg) => {
                 var csvEvent = arg as CsvFileMonitor.CsvEvent;
                 _csvParsingService.Queue(csvEvent.Filename, csvEvent.Cooldown);

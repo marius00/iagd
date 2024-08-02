@@ -3,6 +3,7 @@ using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Model;
 using IAGrim.Database.Synchronizer.Core;
 using System.Security.Policy;
+using System.Collections.Generic;
 
 namespace IAGrim.Database.Synchronizer {
     class ItemReplicaRepo : BasicSynchronizer<ReplicaItem>, IReplicaItemDao {
@@ -12,11 +13,12 @@ namespace IAGrim.Database.Synchronizer {
             this.BaseRepo = repo;
         }
 
-        public void UpdatePlayerItemId(int uqHash, long playerItemId) {
+        public void Save(ReplicaItem obj, List<ReplicaItemRow> rows) {
             ThreadExecuter.Execute(
-                () => repo.UpdatePlayerItemId(uqHash, playerItemId)
+                () => repo.Save(obj, rows)
             );
         }
+
         public void DeleteAll() {
             ThreadExecuter.Execute(
                 () => repo.DeleteAll()

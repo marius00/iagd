@@ -29,7 +29,6 @@
 		<property name="Mod" />
 		<property name="IsHardcore" />
 
-		<property name="AzureUuid" column="azuuid_v2" />
 		<property name="CloudId" column="cloudid" />
 		<property name="IsCloudSynchronizedValue" column="cloud_hassync" />
 		

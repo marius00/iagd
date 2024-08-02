@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using EvilsoftCommons.Exceptions;
@@ -17,7 +19,6 @@ namespace IAGrim.Services {
         private readonly IPlayerItemDao _playerItemDao;
         private readonly IBuddyItemDao _buddyItemDao;
 
-        private readonly ItemReplicaDispatchService _dispatchService;
         private volatile bool _isShuttingDown = false;
         private Thread _t = null;
         private readonly ActionCooldown _cooldown = new ActionCooldown(2500);
@@ -26,11 +27,6 @@ namespace IAGrim.Services {
         public ItemReplicaService(IPlayerItemDao playerItemDao, IBuddyItemDao buddyItemDao) {
             _playerItemDao = playerItemDao;
             _buddyItemDao = buddyItemDao;
-            _dispatchService = new ItemReplicaDispatchService();
-        }
-
-        public void SetIsGrimDawnRunning(bool b) {
-            _dispatchService.SetIsGrimDawnRunning(b);
         }
 
         public void Start() {
@@ -54,42 +50,80 @@ namespace IAGrim.Services {
         }
 
         private bool Process() {
-            if (!_dispatchService.GetIsGrimDawnRunning)
-                return false;
-
             int count = 0;
 
+            // Items already queued
+            foreach (var pi in Directory.EnumerateFiles(GlobalPaths.CsvReplicaWriteLocation)) {
+                _cache.Add("pi/" + pi);
+            }
+            foreach (var mod in Directory.EnumerateDirectories(GlobalPaths.CsvReplicaWriteLocation)) {
+                foreach (var pi in Directory.EnumerateFiles(Path.Combine(GlobalPaths.CsvReplicaWriteLocation, mod))) {
+                    _cache.Add("pi/" + pi);
+                }
+            }
+
             {
-                var items = _playerItemDao.ListMissingReplica(300);
+                var items = _playerItemDao.ListMissingReplica();
                 count += items.Count;
                 foreach (var item in items) {
-                    var hash = GetHash(item);
+                    var hash = "pi/" + item.Id;
                     if (_cache.Exists(hash)) // Don't ask for the same item twice. Esp if the user somehow gets two identical items in, this would infinitely loop.
                         continue;
 
 
-                    List<byte> buffer = Serialize(item);
-                    if (!_dispatchService.DispatchItemSeedInfoRequest(buffer))
-                        return false; //
+                    
+                    string filename = "";
+                    if (string.IsNullOrEmpty(item.Mod)) {
+                        filename = Path.Combine(GlobalPaths.CsvReplicaWriteLocation, "" + item.Id);
+
+                    } else {
+                        Directory.CreateDirectory(Path.Combine(GlobalPaths.CsvReplicaWriteLocation, item.Mod));
+                        filename = Path.Combine(GlobalPaths.CsvReplicaWriteLocation, item.Mod, "" + item.Id);
+                    }
+
+                    var csv = Serialize(item);
+                    if (!File.Exists(filename)) {
+                        File.WriteAllText(filename, csv);
+                    }
 
                     _cache.Add(hash);
                     Thread.Sleep(1);
                 }
             }
 
+
+            // Items already queued
+            foreach (var pi in Directory.EnumerateFiles(GlobalPaths.CsvReplicaWriteLocation)) {
+                _cache.Add("bi/" + pi);
+            }
+            foreach (var mod in Directory.EnumerateDirectories(GlobalPaths.CsvReplicaWriteLocation)) {
+                foreach (var pi in Directory.EnumerateFiles(Path.Combine(GlobalPaths.CsvReplicaWriteLocation, mod))) {
+                    _cache.Add("bi/" + pi);
+                }
+            }
             {
-                var items = _buddyItemDao.ListMissingReplica(300);
+                var items = _buddyItemDao.ListMissingReplica();
                 count += items.Count;
 
                 foreach (var item in items) {
-                    var hash = GetHash(item);
+                    var hash = "bi/" + item.RemoteItemId;
                     if (_cache.Exists(hash)) // Don't ask for the same item twice. Esp if the user somehow gets two identical items in, this would infinitely loop.
                         continue;
 
+                    string filename = "";
+                    if (string.IsNullOrEmpty(item.Mod)) {
+                        filename = Path.Combine(GlobalPaths.CsvReplicaWriteLocation, "" + item.RemoteItemId);
 
-                    List<byte> buffer = Serialize(item);
-                    if (!_dispatchService.DispatchItemSeedInfoRequest(buffer))
-                        return false;
+                    }
+                    else {
+                        Directory.CreateDirectory(Path.Combine(GlobalPaths.CsvReplicaWriteLocation, item.Mod));
+                        filename = Path.Combine(GlobalPaths.CsvReplicaWriteLocation, item.Mod, "" + item.RemoteItemId);
+                    }
+
+                    var csv = Serialize(item);
+                    if (!File.Exists(filename)) {
+                        File.WriteAllText(filename, csv);
+                    }
 
                     _cache.Add(hash);
                     Thread.Sleep(1);
@@ -100,56 +134,8 @@ namespace IAGrim.Services {
         }
 
 
-        /// <summary>
-        /// Create a ReplicaItem hash from a PlayerItem instance
-        /// </summary>
-        /// <param name="pi"></param>
-        /// <returns></returns>
-        public static int GetHash(PlayerItem pi) {
-            ReplicaItem replica = new ReplicaItem {
-                BaseRecord = pi.BaseRecord,
-                EnchantmentRecord = pi.EnchantmentRecord,
-                EnchantmentSeed = (uint)pi.EnchantmentSeed,
-                MateriaRecord = pi.MateriaRecord,
-                ModifierRecord = pi.ModifierRecord,
-                PrefixRecord = pi.PrefixRecord,
-                RelicCompletionBonusRecord = pi.RelicCompletionBonusRecord,
-                RelicSeed = (uint)pi.RelicSeed,
-                Seed = pi.USeed,
-                SuffixRecord = pi.SuffixRecord,
-                TransmuteRecord = pi.TransmuteRecord,
-            };
 
-            return ItemReplicaProcessor.GetHash(replica);
-        }
-
-
-        /// <summary>
-        /// Create a ReplicaItem hash from a BuddyItem instance
-        /// </summary>
-        /// <param name="pi"></param>
-        /// <returns></returns>
-        public static int GetHash(BuddyItem pi) {
-            ReplicaItem replica = new ReplicaItem {
-                BaseRecord = pi.BaseRecord,
-                EnchantmentRecord = pi.EnchantmentRecord,
-                EnchantmentSeed = (uint)pi.EnchantmentSeed,
-                MateriaRecord = pi.MateriaRecord,
-                ModifierRecord = pi.ModifierRecord,
-                PrefixRecord = pi.PrefixRecord,
-                RelicCompletionBonusRecord = string.Empty,
-                RelicSeed = (uint)pi.RelicSeed,
-                Seed = (uint)pi.Seed,
-                SuffixRecord = pi.SuffixRecord,
-                TransmuteRecord = pi.TransmuteRecord,
-            };
-
-            return ItemReplicaProcessor.GetHash(replica);
-        }
-
-        private static List<byte> Serialize(BuddyItem bi) {
-            List<byte> buffer = new List<byte>();
-
+        private static string Serialize(BuddyItem bi) {
             if (bi.BaseRecord.Length > 255 || bi.SuffixRecord?.Length > 255 || bi.PrefixRecord?.Length > 255
                 || bi.MateriaRecord?.Length > 255 || bi.ModifierRecord?.Length > 255 || bi.EnchantmentRecord?.Length > 255
                 || bi.TransmuteRecord?.Length > 255) {
@@ -157,48 +143,33 @@ namespace IAGrim.Services {
                 return null;
             }
 
-            int type = 2; // BuddyItem
-            buffer.AddRange(BitConverter.GetBytes(type));
-            buffer.AddRange(BitConverter.GetBytes(bi.RemoteItemId.Length));
-            buffer.AddRange(Encoding.ASCII.GetBytes(bi.RemoteItemId));
+            //const int TYPE_PLAYERITEM = 1;
+            const int TYPE_BUDDYITEM = 2;
 
-            buffer.AddRange(BitConverter.GetBytes((int)bi.Seed));
-            buffer.AddRange(BitConverter.GetBytes((int)bi.RelicSeed));
-            buffer.AddRange(BitConverter.GetBytes((int)bi.EnchantmentSeed));
+            StringBuilder sb = new StringBuilder();
 
-            buffer.AddRange(BitConverter.GetBytes(bi.BaseRecord.Length));
-            buffer.AddRange(Encoding.ASCII.GetBytes(bi.BaseRecord));
+            sb.Append(TYPE_BUDDYITEM + ";");
+            sb.Append(bi.RemoteItemId + ";");
+            sb.Append(bi.Seed + ";");
+            sb.Append(bi.RelicSeed + ";");
+            sb.Append(bi.EnchantmentSeed + ";");
+            sb.Append(bi.BaseRecord + ";");
+            sb.Append(bi.PrefixRecord + ";");
+            sb.Append(bi.SuffixRecord + ";");
+            sb.Append(bi.ModifierRecord + ";");
+            sb.Append(bi.MateriaRecord + ";");
+            sb.Append(bi.EnchantmentRecord + ";");
+            sb.Append(bi.TransmuteRecord);
+            Logger.Debug($"Dispatching: {sb.ToString()}");
+            if (sb.ToString().Count(s => s == ';') != 11) {
+                Logger.Warn("Could not serialize item, invalid ; count");
+                return null;
+            }
 
-            buffer.AddRange(BitConverter.GetBytes(bi.PrefixRecord?.Length ?? 0));
-            if (!string.IsNullOrEmpty(bi.PrefixRecord))
-                buffer.AddRange(Encoding.ASCII.GetBytes(bi.PrefixRecord));
-
-            buffer.AddRange(BitConverter.GetBytes(bi.SuffixRecord?.Length ?? 0));
-            if (!string.IsNullOrEmpty(bi.SuffixRecord))
-                buffer.AddRange(Encoding.ASCII.GetBytes(bi.SuffixRecord));
-
-            buffer.AddRange(BitConverter.GetBytes(bi.ModifierRecord?.Length ?? 0));
-            if (!string.IsNullOrEmpty(bi.ModifierRecord))
-                buffer.AddRange(Encoding.ASCII.GetBytes(bi.ModifierRecord));
-
-            buffer.AddRange(BitConverter.GetBytes(bi.MateriaRecord?.Length ?? 0));
-            if (!string.IsNullOrEmpty(bi.MateriaRecord))
-                buffer.AddRange(Encoding.ASCII.GetBytes(bi.MateriaRecord));
-
-            buffer.AddRange(BitConverter.GetBytes(bi.EnchantmentRecord?.Length ?? 0));
-            if (!string.IsNullOrEmpty(bi.EnchantmentRecord))
-                buffer.AddRange(Encoding.ASCII.GetBytes(bi.EnchantmentRecord));
-
-            buffer.AddRange(BitConverter.GetBytes(bi.TransmuteRecord?.Length ?? 0));
-            if (!string.IsNullOrEmpty(bi.TransmuteRecord))
-                buffer.AddRange(Encoding.ASCII.GetBytes(bi.TransmuteRecord));
-
-            return buffer;
+            return sb.ToString();
         }
 
-        private static List<byte> Serialize(PlayerItem pi) {
-            List<byte> buffer = new List<byte>();
-
+        private static string Serialize(PlayerItem pi) {
             if (pi.BaseRecord?.Length > 255 || pi.SuffixRecord?.Length > 255 || pi.PrefixRecord?.Length > 255
                 || pi.MateriaRecord?.Length > 255 || pi.ModifierRecord?.Length > 255 || pi.EnchantmentRecord?.Length > 255
                 || pi.TransmuteRecord?.Length > 255) {
@@ -206,8 +177,12 @@ namespace IAGrim.Services {
                 return null;
             }
 
-#if DEBUG
+            const int TYPE_PLAYERITEM = 1;
+            //const int TYPE_BUDDYITEM = 2;
+
             StringBuilder sb = new StringBuilder();
+
+            sb.Append(TYPE_PLAYERITEM + ";");
             sb.Append(pi.Id + ";");
             sb.Append(pi.Seed + ";");
             sb.Append(pi.RelicSeed + ";");
@@ -218,45 +193,14 @@ namespace IAGrim.Services {
             sb.Append(pi.ModifierRecord + ";");
             sb.Append(pi.MateriaRecord + ";");
             sb.Append(pi.EnchantmentRecord + ";");
-            sb.Append(pi.TransmuteRecord + ";");
+            sb.Append(pi.TransmuteRecord);
             Logger.Debug($"Dispatching: {sb.ToString()}");
-#endif
+            if (sb.ToString().Count(s => s == ';') != 11) {
+                Logger.Warn("Could not serialize item, invalid ; count");
+                return null;
+            }
 
-            int type = 1; // PlayerItem
-            buffer.AddRange(BitConverter.GetBytes(type));
-            buffer.AddRange(BitConverter.GetBytes((long)pi.Id));
-            buffer.AddRange(BitConverter.GetBytes((int)pi.Seed));
-            buffer.AddRange(BitConverter.GetBytes((int)pi.RelicSeed));
-            buffer.AddRange(BitConverter.GetBytes((int)pi.EnchantmentSeed));
-
-            buffer.AddRange(BitConverter.GetBytes(pi.BaseRecord.Length));
-            buffer.AddRange(Encoding.ASCII.GetBytes(pi.BaseRecord));
-
-            buffer.AddRange(BitConverter.GetBytes(pi.PrefixRecord?.Length ?? 0));
-            if (!string.IsNullOrEmpty(pi.PrefixRecord))
-                buffer.AddRange(Encoding.ASCII.GetBytes(pi.PrefixRecord));
-
-            buffer.AddRange(BitConverter.GetBytes(pi.SuffixRecord?.Length ?? 0));
-            if (!string.IsNullOrEmpty(pi.SuffixRecord))
-                buffer.AddRange(Encoding.ASCII.GetBytes(pi.SuffixRecord));
-
-            buffer.AddRange(BitConverter.GetBytes(pi.ModifierRecord?.Length ?? 0));
-            if (!string.IsNullOrEmpty(pi.ModifierRecord))
-                buffer.AddRange(Encoding.ASCII.GetBytes(pi.ModifierRecord));
-
-            buffer.AddRange(BitConverter.GetBytes(pi.MateriaRecord?.Length ?? 0));
-            if (!string.IsNullOrEmpty(pi.MateriaRecord))
-                buffer.AddRange(Encoding.ASCII.GetBytes(pi.MateriaRecord));
-
-            buffer.AddRange(BitConverter.GetBytes(pi.EnchantmentRecord?.Length ?? 0));
-            if (!string.IsNullOrEmpty(pi.EnchantmentRecord))
-                buffer.AddRange(Encoding.ASCII.GetBytes(pi.EnchantmentRecord));
-
-            buffer.AddRange(BitConverter.GetBytes(pi.TransmuteRecord?.Length ?? 0));
-            if (!string.IsNullOrEmpty(pi.TransmuteRecord))
-                buffer.AddRange(Encoding.ASCII.GetBytes(pi.TransmuteRecord));
-
-            return buffer;
+            return sb.ToString();
         }
 
         public void Dispose() {

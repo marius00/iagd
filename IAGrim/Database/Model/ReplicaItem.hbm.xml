@@ -10,6 +10,10 @@
 			<column name="playeritemid" unique="true" index="idx_replicaitem_playeritemid" />
 		</property>
 
+		<property name="BuddyItemId">
+			<column name="buddyitemid" unique="true" index="idx_replicaitem_buddyitemid" />
+		</property>
+
 		<property name="BaseRecord" />
 		<property name="PrefixRecord" />
 		<property name="SuffixRecord" />
@@ -21,7 +25,6 @@
 		<property name="RelicSeed" />
 		<property name="EnchantmentRecord" />
 		<property name="EnchantmentSeed" />
-		<property name="Text" />
 
 		<property name="UqHash" not-null="true">
 			<column name="uqhash" unique="true" index="uq_hash"  not-null="true"/>

@@ -95,7 +95,7 @@ namespace IAGrim.Backup.Cloud.Service {
 
         private static void EnsureLegacyCompatible(IList<PlayerItem> items) {
             foreach (var item in items.Where(item => string.IsNullOrEmpty(item.CloudId))) {
-                var guid = string.IsNullOrEmpty(item.AzureUuid) ? Guid.NewGuid().ToString().Replace("-", "") : item.AzureUuid;
+                var guid = Guid.NewGuid().ToString().Replace("-", "");
                 item.CloudId = guid;
             }
         }
