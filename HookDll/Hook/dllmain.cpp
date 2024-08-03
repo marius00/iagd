@@ -15,10 +15,8 @@
 #include "SaveTransferStash.h"
 #include "Exports.h"
 #include "CanUseDismantle.h"
-#include "EquipmentSeedInfo.h"
 #include "OnDemandSeedInfo.h"
 #include "GameEngineUpdate.h"
-#include "ItemRelicSeedInfo.h"
 #include "HookLog.h"
 #include "SetTransferOpen.h"
 #include "Logger.h"
@@ -151,6 +149,7 @@ void WorkerThreadMethod() {
 
 			if (g_InventorySack_AddItemInstance != NULL) {
 				g_InventorySack_AddItemInstance->SetActive(g_targetWnd != NULL);
+				// TODO: Need to add OnDemandSeedInfo here as well as long as it uses messages
 			}
 		}
 
@@ -418,14 +417,12 @@ int ProcessAttach(HINSTANCE _hModule) {
 	ConfigureStashDetectionHooks(hooks);
 
 	LogToFile(LogLevel::INFO, L"Preparing replica hooks..");
-	hooks.push_back(new EquipmentSeedInfo(&g_dataQueue, g_hEvent));
 
 	LogToFile(LogLevel::INFO, L"Creating seed info container class..");
 	listener = new OnDemandSeedInfo(&g_dataQueue, g_hEvent);
 	if (listener != nullptr) {
 		hooks.push_back(listener);
 	}
-	hooks.push_back(new ItemRelicSeedInfo(&g_dataQueue, g_hEvent));
 	// hooks.push_back(new GameEngineUpdate(&g_dataQueue, g_hEvent));	 // Debug/test only
 
 	LogToFile(LogLevel::INFO, L"Starting hook enabling.. " + std::to_wstring(hooks.size()) + L" hooks.");

@@ -28,11 +28,8 @@ public:
 
 protected:
 	// Pipe&thread stuff
-	const char* pipeName = "\\\\.\\pipe\\gdiahook";
 	HANDLE m_thread;
-	HANDLE hPipe;
-	bool isConnected;
-	volatile bool isRunning;
+	volatile bool m_isActive;
 	void Process();
 	static void ThreadMain(void*);
 	BaseDataQueue<ParsedSeedRequestPtr> m_itemQueue;
@@ -43,7 +40,6 @@ protected:
 	volatile int m_sleepMilliseconds;
 
 	// Game interaction
-	ParsedSeedRequest* Parse(char* databuffer, size_t length);
 	void GetItemInfo(ParsedSeedRequest obj);
 	typedef void(__fastcall* pItemEquipmentGetUIDisplayText)(GAME::ItemEquipment*, GAME::Character* myCharacter, std::vector<GAME::GameTextLine>* text, bool includeSetBonusDetails); // If false, we'll get a "click here for more info" text instead.
 	static pItemEquipmentGetUIDisplayText fnItemEquipmentGetUIDisplayText;
@@ -55,4 +51,7 @@ protected:
 	typedef void* (__thiscall* OriginalMethodPtr)(void* This, int v);
 	OriginalMethodPtr originalMethod;
 	static void* __fastcall HookedMethod(void* This, int v);
+	static std::wstring GetModName(GAME::GameInfo* gameInfo);
+	ParsedSeedRequest* ReadReplicaInfo(const std::wstring& filename);
+	ParsedSeedRequest* DeserializeReplicaCsv(std::vector<std::string> tokens);
 };

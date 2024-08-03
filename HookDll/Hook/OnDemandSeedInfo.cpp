@@ -5,10 +5,18 @@
 #include "MessageType.h"
 #include "OnDemandSeedInfo.h"
 #include "Exports.h"
+#include <boost/property_tree/ptree.hpp>                                        
+#include <boost/property_tree/json_parser.hpp>       
+#include <boost/filesystem.hpp>
+#include <boost/range/iterator_range.hpp>
+#include <boost/algorithm/string/predicate.hpp>
+#include <iostream>
+#include <boost/algorithm/string.hpp> 
 
 #include <codecvt> // wstring_convert
 
 #include "Logger.h"
+std::wstring GetIagdFolder();
 
 OnDemandSeedInfo::pItemEquipmentGetUIDisplayText OnDemandSeedInfo::fnItemEquipmentGetUIDisplayText;
 OnDemandSeedInfo* OnDemandSeedInfo::g_self;
@@ -16,7 +24,6 @@ OnDemandSeedInfo::OnDemandSeedInfo() {}
 OnDemandSeedInfo::OnDemandSeedInfo(DataQueue* dataQueue, HANDLE hEvent) {
 	m_dataQueue = dataQueue;
 	m_hEvent = hEvent;
-	hPipe = NULL;
 	m_thread = NULL;
 	m_sleepMilliseconds = 0;
 
@@ -37,6 +44,7 @@ void OnDemandSeedInfo::EnableHook() {
 	);
 }
 void OnDemandSeedInfo::DisableHook() {
+	Stop();
 	Unhook((PVOID*)&originalMethod, HookedMethod);
 }
 
@@ -53,7 +61,7 @@ void OnDemandSeedInfo::ThreadMain(void*) {
 		g_self->m_sleepMilliseconds = 6000;
 
 		LogToFile(LogLevel::INFO, L"Seed info thread ready, starting loop");
-		while (g_self->isRunning) {
+		while (g_self->m_isActive) {
 
 			// The "m_sleepMilliseconds" is actually a counter read in the Update() method on a different thread. Letting us back off from doing too much in the update thread.
 			while (g_self->m_sleepMilliseconds > 0) {
@@ -61,7 +69,7 @@ void OnDemandSeedInfo::ThreadMain(void*) {
 				Sleep(100);
 				g_self->m_sleepMilliseconds -= 100;
 
-				if (!g_self->isRunning) {
+				if (!g_self->m_isActive) {
 					LogToFile(LogLevel::INFO, L"No longer running, cancelling sleep");
 					return;
 				}
@@ -84,7 +92,7 @@ void OnDemandSeedInfo::ThreadMain(void*) {
 * Stop the running thread
 */
 void OnDemandSeedInfo::Stop() {
-	isRunning = false;
+	m_isActive = false;
 	if (m_thread != NULL) {
 		CloseHandle(m_thread);
 		m_thread = NULL;
@@ -97,221 +105,222 @@ void OnDemandSeedInfo::Stop() {
 */
 void OnDemandSeedInfo::Start() {
 	g_self = this;
-	isConnected = false;
-
-	hPipe = CreateNamedPipeA(
-		pipeName,
-		PIPE_ACCESS_DUPLEX,
-		PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE,
-		PIPE_UNLIMITED_INSTANCES,
-		8096 * 40,
-		8096 * 40,
-		0,
-		NULL);
-
-
-	if (hPipe == INVALID_HANDLE_VALUE) {
-		LogToFile(LogLevel::WARNING, L"Could not create named pipe for item seed listener");
-		return;
-	}
-
 
 	LogToFile(LogLevel::INFO, L"Queuing thread start for seed info..");
-	isRunning = true;
+	m_isActive = true;
 	m_thread = (HANDLE)_beginthread(ThreadMain, NULL, 0);
 }
 
-/*
-* Parse data from the PIPE
-* As per definition in Item Assistant (sender)
-*/
-ParsedSeedRequest* OnDemandSeedInfo::Parse(char* databuffer, size_t length) {
-	int pos = 0;
-	__int32 recordLength;
-	__int64 playerItemId;
-	char buddyItemId[64] = { 0 }; // Think maxlen is 36
-	const int TYPE_PLAYERITEM = 1;
-	const int TYPE_BUDDYITEM = 2;
 
 
-	__int32 requestType;
-	memcpy(&requestType, databuffer + pos, sizeof(__int32));
-	pos += sizeof(__int32);
-
-	if (requestType == TYPE_PLAYERITEM) {
-		memcpy(&playerItemId, databuffer + pos, sizeof(__int64));
-		pos += sizeof(__int64);
+ParsedSeedRequest* OnDemandSeedInfo::DeserializeReplicaCsv(std::vector<std::string> tokens) {
+	if (tokens.size() != 12) {
+		LogToFile(LogLevel::WARNING, L"Error parsing CSV file, expected 12 tokens, got " + std::to_wstring(tokens.size()));
+		return nullptr;
 	}
-	else if (requestType == TYPE_BUDDYITEM) {
-		recordLength = 0;
-		memcpy(&recordLength, databuffer + pos, sizeof(__int32));
-		pos += sizeof(__int32);
 
-		memcpy(buddyItemId, databuffer + pos, recordLength);
-		pos += recordLength;
+	GAME::ItemReplicaInfo item;
+	ParsedSeedRequest* result = new ParsedSeedRequest();
+
+	
+	int idx = 0;
+	int type = stoul(tokens.at(idx++));
+	if (type == 1) {
+		result->playerItemId = (unsigned int)stoul(tokens.at(idx++));
+	}
+	else if (type == 2) {
+		result->buddyItemId = tokens.at(idx++);
 	}
 	else {
 		return nullptr;
 	}
 
-	__int32 seed;
-	memcpy(&seed, databuffer + pos, sizeof(__int32));
-	pos += sizeof(__int32);
+	item.seed = (unsigned int)stoul(tokens.at(idx++));
+	item.relicSeed = (unsigned int)stoul(tokens.at(idx++));
+	item.enchantmentSeed = (unsigned int)stoul(tokens.at(idx++));
 
-	__int32 relicSeed;
-	memcpy(&relicSeed, databuffer + pos, sizeof(__int32));
-	pos += sizeof(__int32);
+	item.baseRecord = tokens.at(idx++);
+	item.prefixRecord = tokens.at(idx++);
+	item.suffixRecord = tokens.at(idx++);
 
-	__int32 enchantmentSeed;
-	memcpy(&enchantmentSeed, databuffer + pos, sizeof(__int32));
-	pos += sizeof(__int32);
+	item.modifierRecord = tokens.at(idx++);
+	item.materiaRecord = tokens.at(idx++);
+	item.enchantmentRecord = tokens.at(idx++);
+	item.transmuteRecord = tokens.at(idx++);
 
-	// Base record
-	recordLength = 0;
-	memcpy(&recordLength, databuffer + pos, sizeof(__int32));
-	pos += sizeof(__int32);
+	std::string s;
+	for (auto it = tokens.begin(); it != tokens.end(); ++it) {
+		s = s + *it + ";";
+	}
+	//LogToFile(LogLevel::INFO, "READ: " + s);
+	
+	boost::algorithm::trim(item.baseRecord);
+	boost::algorithm::trim(item.prefixRecord);
+	boost::algorithm::trim(item.suffixRecord);
+	boost::algorithm::trim(item.modifierRecord);
+	boost::algorithm::trim(item.materiaRecord);
+	boost::algorithm::trim(item.enchantmentRecord);
+	boost::algorithm::trim(item.transmuteRecord);
 
+	result->itemReplicaInfo = item;
 
-	char baseRecord[256] = { 0 };
-	memcpy(baseRecord, databuffer + pos, recordLength);
-	pos += recordLength;
-
-	// Prefix record
-	recordLength = 0;
-	memcpy(&recordLength, databuffer + pos, sizeof(__int32));
-	pos += sizeof(__int32);
-
-	char prefixRecord[256] = { 0 };
-	memcpy(prefixRecord, databuffer + pos, recordLength);
-	pos += recordLength;
-
-	// Suffix record
-	recordLength = 0;
-	memcpy(&recordLength, databuffer + pos, sizeof(__int32));
-	pos += sizeof(__int32);
-
-	char suffixRecord[256] = { 0 };
-	memcpy(suffixRecord, databuffer + pos, recordLength);
-	pos += recordLength;
-
-	// Modifier record
-	recordLength = 0;
-	memcpy(&recordLength, databuffer + pos, sizeof(__int32));
-	pos += sizeof(__int32);
-
-	char modifierRecord[256] = { 0 };
-	memcpy(modifierRecord, databuffer + pos, recordLength);
-	pos += recordLength;
-
-	// Materia record
-	recordLength = 0;
-	memcpy(&recordLength, databuffer + pos, sizeof(__int32));
-	pos += sizeof(__int32);
-
-	char materiaRecord[256] = { 0 };
-	memcpy(materiaRecord, databuffer + pos, recordLength);
-	pos += recordLength;
-
-	// Enchantment record
-	recordLength = 0;
-	memcpy(&recordLength, databuffer + pos, sizeof(__int32));
-	pos += sizeof(__int32);
-
-	char enchantmentRecord[256] = { 0 };
-	memcpy(enchantmentRecord, databuffer + pos, recordLength);
-	pos += recordLength;
-
-	// Transmute record
-	recordLength = 0;
-	memcpy(&recordLength, databuffer + pos, sizeof(__int32));
-	pos += sizeof(__int32);
-
-	char transmuteRecord[256] = { 0 };
-	memcpy(transmuteRecord, databuffer + pos, recordLength);
-	pos += recordLength;
-
-
-	GAME::ItemReplicaInfo replica;
-	replica.seed = seed;
-	replica.relicSeed = relicSeed;
-	replica.enchantmentSeed = enchantmentSeed;
-	replica.baseRecord = std::string(baseRecord);
-	replica.prefixRecord = std::string(prefixRecord);
-	replica.suffixRecord = std::string(suffixRecord);
-	replica.modifierRecord = std::string(modifierRecord);
-	replica.materiaRecord = std::string(materiaRecord);
-	replica.enchantmentRecord = std::string(enchantmentRecord);
-	replica.transmuteRecord = std::string(transmuteRecord);
-	replica.stackSize = 1;
-
-	ParsedSeedRequest* result = new ParsedSeedRequest();
-	result->itemReplicaInfo = replica;
-	result->playerItemId = playerItemId;
-	result->buddyItemId = std::string(buddyItemId);
 	return result;
+}
+
+/// <summary>
+/// Read a .CSV file into a GAME::ItemReplicaInfo object
+/// </summary>
+/// <param name="filename">A valid CSV file</param>
+/// <returns></returns>
+ParsedSeedRequest* OnDemandSeedInfo::ReadReplicaInfo(const std::wstring& filename) {
+	try {
+		std::ifstream file(filename);
+		return DeserializeReplicaCsv(GAME::GetNextLineAndSplitIntoTokens(file));
+	}
+	catch (std::exception& ex) {
+		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+		std::wstring wide = converter.from_bytes(ex.what());
+
+		LogToFile(LogLevel::FATAL, L"ERROR Creating ReplicaItem.." + wide);
+
+	}
+	catch (...) {
+		LogToFile(LogLevel::FATAL, L"ERROR Creating ReplicaItem.. (triple-dot)");
+	}
+
+	return nullptr;
+}
+
+/// <summary>
+/// We look for CSV files that the IA client has written to a specific folder, when wanting to move items back into the game.
+/// </summary>
+/// <param name="modName"></param>
+/// <param name="isHardcore"></param>
+/// <returns></returns>
+std::wstring GetFolderToReadFrom(std::wstring modName, bool isHardcore) {
+	boost::property_tree::wptree loadPtreeRoot;
+
+	std::wstring folder;
+	if (modName.empty()) {
+		folder = GetIagdFolder() + L"replica\\from_ia\\" + (isHardcore ? L"hc" : L"sc");
+	}
+	else {
+		folder = GetIagdFolder() + L"replica\\from_ia\\" + (isHardcore ? L"hc" : L"sc") + L"\\" + modName;
+	}
+
+	if (!boost::filesystem::is_directory(folder)) {
+		boost::filesystem::create_directories(folder);
+	}
+
+	return folder;
+}
+
+std::wstring OnDemandSeedInfo::GetModName(GAME::GameInfo* gameInfo) {
+	std::wstring modName;
+	if (fnGetGameInfoMode(gameInfo) != 1) { // Skip mod name if we're in Crucible, we don't treat that as a mod.
+		fnGetModNameArg(gameInfo, &modName);
+		modName.erase(std::remove(modName.begin(), modName.end(), '\r'), modName.end());
+		modName.erase(std::remove(modName.begin(), modName.end(), '\n'), modName.end());
+	}
+
+	return modName;
 }
 
 /*
 * Process a single request on the named pipe
 */
 void OnDemandSeedInfo::Process() {
-	DWORD numBytesRead;
-	char buffer[8096] = { 0 };
+	try {
+		boost::filesystem::create_directories(GetIagdFolder() + L"replica\\to_ia\\");
 
-	if (!isConnected) {
-		//LogToFile(LogLevel::INFO, L"Named pipe is not connected, connecting..");
+		std::set<std::wstring> knownFiles = std::set<std::wstring>();
+		while (m_isActive) {
+			Sleep(500);
 
-		BOOL client = ConnectNamedPipe(hPipe, NULL);
-		if (client != 0)
-			isConnected = true;
+			auto engine = fnGetEngine(true);
+			if (engine == nullptr) {
+				LogToFile(LogLevel::INFO, L"Debug: NoEngine");
+				continue;
+			}
 
-		// Client connected already, but not ready.
-		else if (GetLastError() == ERROR_PIPE_CONNECTED || GetLastError() == ERROR_IO_PENDING) {
-			LogToFile(LogLevel::WARNING, L"Seed info thread reports PIPE ERROR");
-			isConnected = true;
-			return;
+			GAME::GameInfo* gameInfo = fnGetGameInfo(engine);
+			if (gameInfo == nullptr) {
+				LogToFile(LogLevel::INFO, L"GameInfo is null, aborting..");
+				continue;
+			}
+
+			std::wstring folder = GetFolderToReadFrom(GetModName(gameInfo), fnGetHardcore(gameInfo, true));
+
+			for (auto& entry : boost::make_iterator_range(boost::filesystem::directory_iterator(folder), {})) {
+				auto filename = std::wstring(entry.path().c_str());
+				if (knownFiles.find(filename) == knownFiles.end()) {
+
+					if (boost::algorithm::ends_with(filename, ".csv")) {
+						LogToFile(LogLevel::INFO, std::wstring(L"Queued file: ") + std::wstring(entry.path().c_str()));
+
+						ParsedSeedRequest* obj = ReadReplicaInfo(entry.path().c_str());
+						if (obj == nullptr) {
+							LogToFile(LogLevel::WARNING, std::wstring(L"Ignoring file, got nullptr when deserializing: ") + std::wstring(entry.path().c_str()));
+						}
+						else {
+							ParsedSeedRequestPtr abc(obj);
+							m_itemQueue.push(abc);
+						}
+					}
+					else {
+						LogToFile(LogLevel::INFO, std::wstring(L"Ignoring file: ") + std::wstring(entry.path().c_str()));
+					}
+					knownFiles.insert(filename); // TODO: Still needed?
+
+					DeleteFile(filename.c_str());
+
+					if (m_itemQueue.size() > 20) {
+						Sleep(3500);
+					}
+				}
+			}
 		}
-
-		else {
-			LogToFile(LogLevel::WARNING, L"Unknown error occurred connecting to named pipe");
-			return;
-		}
 	}
-
-	bool slowDown = false;
-	BOOL fSuccess = ReadFile(hPipe, buffer, sizeof(buffer) / sizeof(char), &numBytesRead, nullptr);
-	if (fSuccess && numBytesRead > 0) {
-		// Parse and queue item seed read
-		LogToFile(LogLevel::INFO, "Received item to parse for real stats..");
-		ParsedSeedRequest* obj = Parse(&buffer[0], numBytesRead);
-		ParsedSeedRequestPtr abc(obj);
-		if (!m_itemQueue.push(abc, 300)) {
-			slowDown = true;
-			// Will just discard data if >N
-			// TODO: Notify IA that it needs to slow the fk down?
-			LogToFile(LogLevel::INFO, "Slowing down.. too many items queued");
-		}
-
-		DataItemPtr item(new DataItem(TYPE_ITEMSEEDDATA_PLAYERID_DEBUG_RECV, sizeof(numBytesRead), (char*)&numBytesRead));
-		m_dataQueue->push(item);
-		SetEvent(m_hEvent);
-
-		FlushFileBuffers(hPipe);
-		DisconnectNamedPipe(hPipe);
-		isConnected = false;
+	catch (std::exception& ex) {
+		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+		std::wstring wide = converter.from_bytes(ex.what());
+		LogToFile(LogLevel::FATAL, L"Error parsing in OnDemandSeedInfo::ThreadMain.. " + wide);
 	}
-	else if (!fSuccess) {
-		LogToFile(LogLevel::WARNING, L"Seed info thread failed reading from pipe, disconnecting..");
-		DisconnectNamedPipe(hPipe);
-		isConnected = false;
+	catch (...) {
+		LogToFile(LogLevel::FATAL, L"Error parsing in OnDemandSeedInfo::ThreadMain.. (triple-dot)");
 	}
-
-	// Give the game loop some time to catch up
-	if (slowDown) {
-		Sleep(2500);
-	}
+	LogToFile(LogLevel::INFO, L"Stopping deposit listener..");
 }
 
+std::string toString(std::wstring s) {
+	using convert_type = std::codecvt_utf8<wchar_t>;
+	std::wstring_convert<convert_type, wchar_t> converter;
+	return converter.to_bytes(s);
+}
+
+
+std::string toJson(ParsedSeedRequest obj, std::vector<GAME::GameTextLine>& gameTextLines) {
+	boost::property_tree::ptree root;
+	root.put("playerItemId", obj.playerItemId);
+	root.put("buddyItemId", obj.buddyItemId.c_str());
+
+
+
+	boost::property_tree::ptree stats;
+	for (auto& it : gameTextLines) {
+		boost::property_tree::ptree stat;
+
+		stat.put<std::string>("text", toString(it.text));
+		stat.put("type", it.textClass);
+		stats.push_back(std::make_pair("", stat));
+	}
+
+	root.add_child("stats", stats);
+
+	std::stringstream json;
+	boost::property_tree::write_json(json, root);
+	return json.str();
+}
 
 // TODO: Either rename, or make this method do less. Probably the latter
 void OnDemandSeedInfo::GetItemInfo(ParsedSeedRequest obj) {
@@ -346,18 +355,18 @@ void OnDemandSeedInfo::GetItemInfo(ParsedSeedRequest obj) {
 			fnItemEquipmentGetUIDisplayText((GAME::ItemEquipment*)newItem, character, &gameTextLines, true);
 			fnDestroyObjectEx(fnGetObjectManager(), (GAME::Object*)newItem, nullptr, 0);
 
-			std::wstringstream stream;
 
-			GAME::ItemReplicaInfo replica;
-			stream << obj.playerItemId << "\n"; // Differs from TYPE_ITEMSEEDDATA
-			stream << obj.buddyItemId.c_str() << "\n";
-			stream << GAME::Serialize(obj.itemReplicaInfo) << "\n";
-			stream << GAME::GameTextLineToString(gameTextLines);
-
-			std::wstring str = stream.str();
-			DataItemPtr item(new DataItem(TYPE_ITEMSEEDDATA_PLAYERID, str.size() * sizeof(wchar_t), (char*)str.c_str()));
-			m_dataQueue->push(item);
-			SetEvent(m_hEvent);
+			LogToFile(LogLevel::INFO, L"Generating json..");
+			
+			std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+			std::wstring buddyItemId = converter.from_bytes(obj.buddyItemId);
+			std::wstring fullPath = GetIagdFolder() + L"replica\\to_ia\\" + std::to_wstring(obj.playerItemId) + buddyItemId + L".json";
+			std::wofstream stream;
+			stream.open(fullPath);
+			stream << toJson(obj, gameTextLines).c_str();
+			stream.flush();
+			stream.close();
+			LogToFile(LogLevel::INFO, L"Wrote items stats to " + fullPath);
 		}
 		else {
 			std::string str = obj.itemReplicaInfo.baseRecord;
@@ -372,6 +381,7 @@ void OnDemandSeedInfo::GetItemInfo(ParsedSeedRequest obj) {
 		SetEvent(m_hEvent);
 	}
 }
+
 
 
 void* __fastcall OnDemandSeedInfo::HookedMethod(void* This, int v) {
@@ -390,17 +400,23 @@ void* __fastcall OnDemandSeedInfo::HookedMethod(void* This, int v) {
 	if (g_self->m_sleepMilliseconds <= 0) {
 		try {
 			bool isGameLoading = IsGameLoading(This);
-			bool isGameWaiting = IsGameWaiting(This, true);
+			///bool isGameWaiting = IsGameWaiting(This, true);
 			bool isGameEngineOnline = IsGameEngineOnline(This);
 
 			if (!isGameLoading /* && !isGameWaiting*/ && isGameEngineOnline) {
+
 				// Process the queue
 				int num = 0;
-				while (!g_self->m_itemQueue.empty() && num++ < 2) {
+
+				while (!g_self->m_itemQueue.empty() && num++ < 5) {
+					LogToFile(LogLevel::INFO, L"Processing..");
 					ParsedSeedRequestPtr ptr = g_self->m_itemQueue.pop();
+					if (ptr == nullptr) {
+						return r;
+					}
 					ParsedSeedRequest obj = *ptr.get();
 
-					LogToFile(LogLevel::INFO, "Fetching items stats for " + obj.itemReplicaInfo.baseRecord);
+					LogToFile(LogLevel::INFO, L"Fetching items stats for " + GAME::Serialize(obj.itemReplicaInfo));
 					g_self->GetItemInfo(obj);
 				}
 			}
