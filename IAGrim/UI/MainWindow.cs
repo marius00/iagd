@@ -35,6 +35,8 @@ using IAGrim.Backup.Cloud.Util;
 using IAGrim.Parsers.TransferStash;
 using IAGrim.Settings;
 using System.IO;
+using IAGrim.Services.ItemReplica;
+using System.Runtime.InteropServices;
 
 namespace IAGrim.UI {
     public partial class MainWindow : Form {
@@ -54,6 +56,7 @@ namespace IAGrim.UI {
 
         private StashFileMonitor _stashFileMonitor = new StashFileMonitor();
         private CsvFileMonitor _csvFileMonitor = new CsvFileMonitor();
+        private CsvFileMonitor _replicaCsvFileMonitor = new CsvFileMonitor();
         private ItemReplicaService _itemReplicaService;
 
         private Action<RegisterWindow.DataAndType> _registerWindowDelegate;
@@ -61,6 +64,7 @@ namespace IAGrim.UI {
         private InjectionHelper _injector;
         private ProgressChangedEventHandler _injectorCallbackDelegate;
         private CsvParsingService _csvParsingService;
+        private ItemReplicaParser _itemReplicaParser;
 
         private BuddyItemsService _buddyItemsService;
         private BackgroundTask _backupBackgroundTask;
@@ -93,7 +97,6 @@ namespace IAGrim.UI {
                 switch (e.ProgressPercentage) {
                     case InjectionHelper.ABORTED:
                         RuntimeSettings.StashStatus = StashAvailability.MENU;
-                        _itemReplicaService.SetIsGrimDawnRunning(true);
                         break;
 
 
@@ -103,7 +106,6 @@ namespace IAGrim.UI {
                                 break;
                             }
 
-                            _itemReplicaService.SetIsGrimDawnRunning(false);
                             RuntimeSettings.StashStatus = StashAvailability.ERROR;
                             statusLabel.Text = e.UserState as string;
                             if (!_hasShownStashErrorPage) {
@@ -125,7 +127,6 @@ namespace IAGrim.UI {
                         }
 
                     case InjectionHelper.INJECTION_ERROR_32BIT: {
-                        _itemReplicaService.SetIsGrimDawnRunning(false);
                         RuntimeSettings.StashStatus = StashAvailability.NOT64BIT;
                         statusLabel.Text = e.UserState as string;
                         if (!_hasShown32bitErrorPage) {
@@ -138,7 +139,6 @@ namespace IAGrim.UI {
 
                     // No grim dawn client, so stash is closed!
                     case InjectionHelper.NO_PROCESS_FOUND_ON_STARTUP: {
-                        _itemReplicaService.SetIsGrimDawnRunning(false);
                             if (RuntimeSettings.StashStatus == StashAvailability.UNKNOWN) {
                             RuntimeSettings.StashStatus = StashAvailability.CLOSED;
                         }
@@ -149,12 +149,10 @@ namespace IAGrim.UI {
                     // No grim dawn client, so stash is closed!
                     case InjectionHelper.NO_PROCESS_FOUND:
                         RuntimeSettings.StashStatus = StashAvailability.CLOSED;
-                        _itemReplicaService.SetIsGrimDawnRunning(false);
                         break;
 
                     // Injection error
                     case InjectionHelper.INJECTION_ERROR_POSSIBLE_ACCESS_DENIED: {
-                        _itemReplicaService.SetIsGrimDawnRunning(false);
                         RuntimeSettings.StashStatus = StashAvailability.ERROR;
                         if (!_hasShownStashErrorPage) {
                             _cefBrowserHandler.ShowHelp(HelpService.HelpType.StashError);
@@ -164,7 +162,6 @@ namespace IAGrim.UI {
                         break;
                     }
                     case InjectionHelper.STILL_RUNNING:
-                        _itemReplicaService.SetIsGrimDawnRunning(true);
                         break;
                 }
 
@@ -275,8 +272,14 @@ namespace IAGrim.UI {
             _csvFileMonitor?.Dispose();
             _csvFileMonitor = null;
 
+            _replicaCsvFileMonitor?.Dispose();
+            _replicaCsvFileMonitor = null;
+
             _csvParsingService?.Dispose();
             _csvParsingService = null;
+
+            _itemReplicaService?.Dispose();
+            _itemReplicaService = null;
 
             _minimizeToTrayHandler?.Dispose();
             _minimizeToTrayHandler = null;
@@ -289,8 +292,6 @@ namespace IAGrim.UI {
 
             _buddyItemsService?.Dispose();
             _buddyItemsService = null;
-
-            _itemReplicaService.Dispose();
 
             _injector?.Dispose();
             _injector = null;
@@ -477,7 +478,7 @@ namespace IAGrim.UI {
             var replicaItemDao = _serviceProvider.Get<IReplicaItemDao>();
             var stashWriter = new SafeTransferStashWriter(settingsService, _cefBrowserHandler);
             var transferStashService = new TransferStashService(settingsService);
-            var transferStashService2 = new TransferStashService2(playerItemDao, cacher, transferStashService, stashWriter, settingsService, _cefBrowserHandler, replicaItemDao);
+            var transferStashService2 = new TransferStashService2(playerItemDao, cacher, transferStashService, stashWriter, _cefBrowserHandler);
             _serviceProvider.Add(transferStashService2);
 
             _transferStashWorker = new TransferStashWorker(transferStashService2, _userFeedbackService);
@@ -605,14 +606,12 @@ namespace IAGrim.UI {
 
             LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
 
-            var itemReplicaProcessor = _serviceProvider.Get<ItemReplicaProcessor>();
             if (settingsService.GetLocal().PreferLegacyMode) {
                 _messageProcessors.Add(new PlayerPositionTracker(Debugger.IsAttached && false));
                 _messageProcessors.Add(new StashStatusHandler());
                 _messageProcessors.Add(new CloudDetectorProcessor(SetFeedback, _serviceProvider.Get<SettingsService>()));
             }
             _messageProcessors.Add(new GenericErrorHandler());
-            _messageProcessors.Add(itemReplicaProcessor);
             _messageProcessors.Add(new InjectionAbortedProcessor(SetInjectionAbortedStatus));
 
 
@@ -670,10 +669,15 @@ namespace IAGrim.UI {
             settingsService.GetLocal().OnMutate += delegate(object o, EventArgs args) { _cefBrowserHandler.SetOnlineBackupsEnabled(!settingsService.GetLocal().OptOutOfBackups); };
 
 
-            _csvParsingService = new CsvParsingService(playerItemDao, replicaItemDao, _userFeedbackService, cacher, transferStashService);
+            _csvParsingService = new CsvParsingService(playerItemDao, _userFeedbackService, cacher, transferStashService);
             _csvFileMonitor.OnModified += (_, arg) => {
                 var csvEvent = arg as CsvFileMonitor.CsvEvent;
                 _csvParsingService.Queue(csvEvent.Filename, csvEvent.Cooldown);
+            };
+
+            _itemReplicaParser = new ItemReplicaParser(replicaItemDao);
+            _replicaCsvFileMonitor.OnModified += (_, arg) => {
+                _itemReplicaParser.Process(arg);
             };
 
             // Typically new users expect that items just magically appear, which is a terrible user experience when you have thousands of items. But works fine for a small set of items.
@@ -687,8 +691,13 @@ namespace IAGrim.UI {
                 }
             };
 
-            _csvFileMonitor.StartMonitoring();
+            _csvFileMonitor.StartMonitoring(GlobalPaths.CsvLocationIngoing, "*.csv");
+            _replicaCsvFileMonitor.StartMonitoring(GlobalPaths.CsvReplicaReadLocation, "*.json");
             _csvParsingService.Start();
+
+
+            var preloadThread= new Thread(_itemReplicaParser.Preload);
+            preloadThread.Start();
 
             tsStashStatus.Visible = settingsService.GetLocal().PreferLegacyMode;
 

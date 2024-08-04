@@ -25,12 +25,12 @@ namespace IAGrim.Services {
         }
 
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
-        public bool StartMonitoring() {
+        public bool StartMonitoring(string path, string filter) {
             _watcher = new FileSystemWatcher();
-            _watcher.Path = GlobalPaths.CsvLocationIngoing;
+            _watcher.Path = path;
             _watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName |
                                     NotifyFilters.DirectoryName;
-            _watcher.Filter = "*.csv";
+            _watcher.Filter = filter;
             _watcher.IncludeSubdirectories = false;
             _watcher.Created += _watcher_Created;
             

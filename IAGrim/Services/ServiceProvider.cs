@@ -8,6 +8,7 @@ using IAGrim.Database.Interfaces;
 using IAGrim.Database.Synchronizer;
 using IAGrim.Database.Synchronizer.Core;
 using IAGrim.Parsers.TransferStash;
+using IAGrim.Services.ItemReplica;
 using IAGrim.Services.MessageProcessor;
 using IAGrim.UI.Controller;
 using log4net;
@@ -59,7 +60,6 @@ namespace IAGrim.Services {
             IItemSkillDao itemSkillDao;
             IItemCollectionDao itemCollectionRepo;
             IReplicaItemDao replicaItemDao;
-            IBuddyReplicaItemDao buddyReplicaItemDao;
 
             if (dialect == SqlDialect.Sqlite) {
                 playerItemDao = new PlayerItemRepo(threadExecuter, factory, dialect);
@@ -71,7 +71,6 @@ namespace IAGrim.Services {
                 itemSkillDao = new ItemSkillRepo(threadExecuter, factory);
                 itemCollectionRepo = new ItemCollectionRepo(threadExecuter, factory, dialect);
                 replicaItemDao = new ItemReplicaRepo(threadExecuter, factory, dialect);
-                buddyReplicaItemDao = new BuddyItemReplicaRepo(threadExecuter, factory, dialect);
             }
             else {
                 databaseItemStatDao = new DatabaseItemStatDaoImpl(factory, dialect);
@@ -83,7 +82,6 @@ namespace IAGrim.Services {
                 itemSkillDao = new ItemSkillDaoImpl(factory);
                 itemCollectionRepo = new ItemCollectionDaoImpl(factory, dialect);
                 replicaItemDao = new ReplicaItemDaoImpl(factory, dialect);
-                buddyReplicaItemDao = new BuddyReplicaItemDaoImpl(factory, dialect);
             }
             
 
@@ -111,9 +109,8 @@ namespace IAGrim.Services {
             services.Add(searchController);
             services.Add(new ItemReplicaService(playerItemDao, buddyItemDao));
             services.Add(replicaItemDao);
-            services.Add(buddyReplicaItemDao);
 
-            services.Add(new ItemReplicaProcessor(replicaItemDao, buddyReplicaItemDao));
+            services.Add(new ItemReplicaParser(replicaItemDao));
 
             services.Add(itemStatService);
 

@@ -21,15 +21,13 @@ namespace IAGrim.Services {
         private readonly ConcurrentQueue<QueuedCsv> _queue = new ConcurrentQueue<QueuedCsv>();
         private volatile bool _isCancelled;
         private readonly IPlayerItemDao _playerItemDao;
-        private readonly IReplicaItemDao _replicaItemDao;
         private readonly UserFeedbackService _userFeedbackService;
         private readonly TransferStashServiceCache _cache;
         private readonly TransferStashService _transferStashService;
         public event EventHandler OnItemLooted;
 
-        public CsvParsingService(IPlayerItemDao playerItemDao, IReplicaItemDao replicaItemDao, UserFeedbackService userFeedbackService, TransferStashServiceCache cache, TransferStashService transferStashService) {
+        public CsvParsingService(IPlayerItemDao playerItemDao, UserFeedbackService userFeedbackService, TransferStashServiceCache cache, TransferStashService transferStashService) {
             _playerItemDao = playerItemDao;
-            _replicaItemDao = replicaItemDao;
             _userFeedbackService = userFeedbackService;
             _cache = cache;
             _transferStashService = transferStashService;
@@ -91,10 +89,6 @@ namespace IAGrim.Services {
                             if (classificationService.Remaining.Count > 0) {
                                 _playerItemDao.Save(item);
                                 File.Delete(entry.Filename);
-
-                                // Update replica reference
-                                var hash = ItemReplicaService.GetHash(item);
-                                _replicaItemDao.UpdatePlayerItemId(hash, item.Id);
                                 OnItemLooted?.Invoke(this, null);
                             }
                             else if (classificationService.Duplicates.Count > 0) {

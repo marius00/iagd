@@ -6,9 +6,13 @@ using System.Threading.Tasks;
 
 namespace IAGrim.Services.ItemReplica {
     class ReplicaCache {
-        private readonly Dictionary<int, byte> _cache = new Dictionary<int, byte>();
+        private readonly Dictionary<string, byte> _cache = new Dictionary<string, byte>();
 
-        public void Add(int hash) {
+        public void Add(string hash) {
+            if (Exists(hash)) {
+                return;
+            }
+
             _cache.Add(hash, 0);
 
             // TODO: In the future, delete the oldest or something
@@ -16,7 +20,7 @@ namespace IAGrim.Services.ItemReplica {
                 _cache.Clear();
         }
 
-        public bool Exists(int hash) {
+        public bool Exists(string hash) {
             return _cache.ContainsKey(hash);
         }
     }

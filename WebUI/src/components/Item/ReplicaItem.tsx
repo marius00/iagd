@@ -116,6 +116,8 @@ class ReplicaItem extends PureComponent<Props, object> {
 
     const setName = GetSetName(item.baseRecord);
     let setItemsList = this.getSetItemTooltip(setName, item.isHardcore);
+    const showGenericStatIcon = item.type === IItemType.Player && !item.replicaStats;
+    const showRecipeIcon = item.hasRecipe && item.type === IItemType.Recipe;
 
     const miText = item.isMonsterInfrequent ? ' / MI' : '';
     return (
@@ -155,21 +157,33 @@ class ReplicaItem extends PureComponent<Props, object> {
           {setName !== undefined && <div><br />
             <span className="set-name">{translate('item.label.setbonus')}</span> <span className="set-name" data-tip={setItemsList}>{setName}</span></div>}
 
-            {true ?
+            {showRecipeIcon ?
               <span className="informative">
                 <a data-tip={translate('items.label.youCanCraftThisItem')}>
                   <div className="recipe-item-corner">
-                    <img className="cursor-help" src="static\recipe.png" alt={translate('item.genericstats.warning')}/>
+                    <img className="cursor-help" src="static\recipe.png" alt={translate('items.label.youCanCraftThisIte')}/>
+                  </div>
+                </a>
+              </span>
+              : ''
+            }
+            {showGenericStatIcon ?
+              <span className="informative">
+                <a data-tip={translate('item.genericstats.warning')}>
+                  <div className="recipe-item-corner">
+                    <img className="cursor-help" src="static\warning.png" style="max-width: 16px;" alt={translate('item.genericstats.warning')}/>
                   </div>
                 </a>
               </span>
               : ''
             }
 
+
           {item.skill ? <Skill skill={item.skill} keyPrefix={getUniqueId(item)}/> : ''}
 
         </div>
         {this.renderBuddyItem(item)}
+
 
         <div className="level">
           <p>{translate('item.label.levelRequirement', item.level > 1 ? String(item.level) : translate('item.label.levelRequirementAny'))}</p>

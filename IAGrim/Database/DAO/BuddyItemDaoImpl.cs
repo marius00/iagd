@@ -43,7 +43,7 @@ namespace IAGrim.Database {
                         .ExecuteUpdate();
 
                     // Replica stats
-                    session.CreateSQLQuery($"DELETE FROM BuddyReplicaItem WHERE NOT buddyitemid IN (SELECT {BuddyItemsTable.RemoteItemId} FROM {BuddyItemsTable.Table})")
+                    session.CreateSQLQuery($"DELETE FROM ReplicaItem2 WHERE playeritemid IS NULL AND NOT buddyitemid IN (SELECT {BuddyItemsTable.RemoteItemId} FROM {BuddyItemsTable.Table})")
                         .ExecuteUpdate();
 
                     transaction.Commit();
@@ -155,7 +155,7 @@ namespace IAGrim.Database {
             }
         }
 
-        public IList<BuddyItem> ListMissingReplica(int limit) {
+        public IList<BuddyItem> ListMissingReplica() {
             // TODO: Relics are "ItemArtifact", those will crash the game.
             var specificItemTypesOnlySql = $@"
                 
@@ -196,35 +196,34 @@ namespace IAGrim.Database {
 
             var sql = $@"SELECT
 
-                                {BuddyItemsTable.BaseRecord} as BaseRecord,
-                                {BuddyItemsTable.PrefixRecord} as PrefixRecord,
-                                {BuddyItemsTable.SuffixRecord} as SuffixRecord,
-                                {BuddyItemsTable.ModifierRecord} as ModifierRecord,
-                                {BuddyItemsTable.TransmuteRecord} as TransmuteRecord,
-                                {BuddyItemsTable.MateriaRecord} as MateriaRecord,
-                                {BuddyItemsTable.Rarity} as Rarity,
-                                {BuddyItemsTable.PrefixRarity} as PrefixRarity,
-                                {BuddyItemsTable.Name} as Name,
-                                {BuddyItemsTable.Seed} as Seed,
-                                {BuddyItemsTable.RelicSeed} as RelicSeed,
-                                {BuddyItemsTable.EnchantmentSeed} as EnchantmentSeed,
+                                BI.{BuddyItemsTable.BaseRecord} as BaseRecord,
+                                BI.{BuddyItemsTable.PrefixRecord} as PrefixRecord,
+                                BI.{BuddyItemsTable.SuffixRecord} as SuffixRecord,
+                                BI.{BuddyItemsTable.ModifierRecord} as ModifierRecord,
+                                BI.{BuddyItemsTable.TransmuteRecord} as TransmuteRecord,
+                                BI.{BuddyItemsTable.MateriaRecord} as MateriaRecord,
+                                BI.{BuddyItemsTable.Rarity} as Rarity,
+                                BI.{BuddyItemsTable.PrefixRarity} as PrefixRarity,
+                                BI.{BuddyItemsTable.Name} as Name,
+                                BI.{BuddyItemsTable.Seed} as Seed,
+                                BI.{BuddyItemsTable.RelicSeed} as RelicSeed,
+                                BI.{BuddyItemsTable.EnchantmentSeed} as EnchantmentSeed,
  
-                                {BuddyItemsTable.LevelRequirement} as MinimumLevel,
-                                {BuddyItemsTable.RemoteItemId} as RemoteItemId,
-                                {BuddyItemsTable.StackCount} as Count,
-                                {BuddyItemsTable.SubscriptionId} as BuddyId,
+                                BI.{BuddyItemsTable.LevelRequirement} as MinimumLevel,
+                                BI.{BuddyItemsTable.RemoteItemId} as RemoteItemId,
+                                BI.{BuddyItemsTable.StackCount} as Count,
+                                BI.{BuddyItemsTable.SubscriptionId} as BuddyId,
                                 S.{BuddySubscriptionTable.Nickname} as Stash
 
 
-                FROM {BuddyItemsTable.Table} PI, {BuddySubscriptionTable.Table} S
-                WHERE PI.{BuddyItemsTable.RemoteItemId} NOT IN (SELECT R.BuddyItemId FROM BuddyReplicaItem R)
-                AND MOD = '' 
+                FROM {BuddyItemsTable.Table} BI, {BuddySubscriptionTable.Table} S
+                WHERE BI.{BuddyItemsTable.RemoteItemId} NOT IN (SELECT R.BuddyItemId FROM ReplicaItem2 R)
 
-                AND PI.{BuddyItemsTable.BaseRecord} IN ({specificItemTypesOnlySql})
+                AND BI.{BuddyItemsTable.BaseRecord} IN ({specificItemTypesOnlySql})
                 AND {BuddyItemsTable.SubscriptionId} = {BuddySubscriptionTable.Id}
 
                 order by RANDOM ()
-                LIMIT :limit ";
+                ";
 
             using (ISession session = SessionCreator.OpenSession()) {
                 using (session.BeginTransaction()) {
@@ -254,7 +253,6 @@ namespace IAGrim.Database {
 
                     Logger.Debug(q.QueryString);
                     q.SetResultTransformer(Transformers.AliasToBean<BuddyItem>());
-                    q.SetParameter("limit", limit);
                     var result = q.List<BuddyItem>();
 
                     return result;
@@ -645,40 +643,41 @@ namespace IAGrim.Database {
             Dictionary<string, object> queryParams = new Dictionary<string, object>();
 
             if (!string.IsNullOrEmpty(query.Wildcard)) {
-                queryFragments.Add($"{BuddyItemsTable.NameLowercase} LIKE :name");
+                queryFragments.Add($"(BI.{BuddyItemsTable.NameLowercase} LIKE :name OR R.id IN (SELECT replicaitemid FROM replicaitemrow WHERE text LIKE :wildcard))");
+                queryParams.Add("wildcard", $"%{query.Wildcard.ToLower()}%");
                 queryParams.Add("name", $"%{query.Wildcard.Replace(' ', '%').ToLowerInvariant()}%");
             }
 
 
-            queryFragments.Add($"(LOWER({BuddyItemsTable.Mod}) = LOWER( :mod ) OR {BuddyItemsTable.Mod} IS NULL)");
+            queryFragments.Add($"(LOWER(BI.{BuddyItemsTable.Mod}) = LOWER( :mod ) OR BI.{BuddyItemsTable.Mod} IS NULL)");
             queryParams.Add("mod", query.Mod);
 
             if (!string.IsNullOrEmpty(query.Rarity)) {
-                queryFragments.Add($"{BuddyItemsTable.Rarity} = :rarity");
+                queryFragments.Add($"BI.{BuddyItemsTable.Rarity} = :rarity");
                 queryParams.Add("rarity", query.Rarity);
             }
             
             if (query.PrefixRarity > 1) {
-                queryFragments.Add($"{BuddyItemsTable.PrefixRarity} >= :prefixRarity");
+                queryFragments.Add($"BI.{BuddyItemsTable.PrefixRarity} >= :prefixRarity");
                 queryParams.Add("prefixRarity", query.PrefixRarity);
             }
 
-            queryFragments.Add(query.IsHardcore ? "IsHardcore" : "NOT IsHardcore");
+            queryFragments.Add(query.IsHardcore ? "BI.IsHardcore" : "NOT BI.IsHardcore");
 
             if (query.RecentOnly) {
-                queryFragments.Add($"{BuddyItemsTable.CreatedAt} > :filter_recentOnly");
+                queryFragments.Add($"BI.{BuddyItemsTable.CreatedAt} > :filter_recentOnly");
                 queryParams.Add("filter_recentOnly", DateTime.UtcNow.AddHours(-12).ToTimestamp());
             }
 
             // Add the MINIMUM level requirement (if any)
             if (query.MinimumLevel > 0) {
-                queryFragments.Add($"{BuddyItemsTable.LevelRequirement} >= :minlevel");
+                queryFragments.Add($"BI.{BuddyItemsTable.LevelRequirement} >= :minlevel");
                 queryParams.Add("minlevel", query.MinimumLevel);
             }
 
             // Add the MAXIMUM level requirement (if any)
             if (query.MaximumLevel < 120 && query.MaximumLevel > 0) {
-                queryFragments.Add($"{BuddyItemsTable.LevelRequirement} <= :maxlevel");
+                queryFragments.Add($"BI.{BuddyItemsTable.LevelRequirement} <= :maxlevel");
                 queryParams.Add("maxlevel", query.MaximumLevel);
             }
 
@@ -686,33 +685,33 @@ namespace IAGrim.Database {
 
             List<string> sql = new List<string>();
             sql.Add($@"SELECT
-                                {BuddyItemsTable.BaseRecord} as BaseRecord,
-                                {BuddyItemsTable.PrefixRecord} as PrefixRecord,
-                                {BuddyItemsTable.SuffixRecord} as SuffixRecord,
-                                {BuddyItemsTable.ModifierRecord} as ModifierRecord,
-                                {BuddyItemsTable.TransmuteRecord} as TransmuteRecord,
-                                {BuddyItemsTable.MateriaRecord} as MateriaRecord,
-                                {BuddyItemsTable.Rarity} as Rarity,
-                                {BuddyItemsTable.PrefixRarity} as PrefixRarity,
-                                {BuddyItemsTable.Name} as Name,
+                                BI.{BuddyItemsTable.BaseRecord} as BaseRecord,
+                                BI.{BuddyItemsTable.PrefixRecord} as PrefixRecord,
+                                BI.{BuddyItemsTable.SuffixRecord} as SuffixRecord,
+                                BI.{BuddyItemsTable.ModifierRecord} as ModifierRecord,
+                                BI.{BuddyItemsTable.TransmuteRecord} as TransmuteRecord,
+                                BI.{BuddyItemsTable.MateriaRecord} as MateriaRecord,
+                                BI.{BuddyItemsTable.Rarity} as Rarity,
+                                BI.{BuddyItemsTable.PrefixRarity} as PrefixRarity,
+                                BI.{BuddyItemsTable.Name} as Name,
  
-                                {BuddyItemsTable.LevelRequirement} as MinimumLevel,
-                                {BuddyItemsTable.RemoteItemId} as RemoteItemId,
-                                {BuddyItemsTable.StackCount} as Count,
-                                {BuddyItemsTable.SubscriptionId} as BuddyId,
+                                BI.{BuddyItemsTable.LevelRequirement} as MinimumLevel,
+                                BI.{BuddyItemsTable.RemoteItemId} as RemoteItemId,
+                                BI.{BuddyItemsTable.StackCount} as Count,
+                                BI.{BuddyItemsTable.SubscriptionId} as BuddyId,
                                 S.{BuddySubscriptionTable.Nickname} as Stash,
-                                coalesce((SELECT group_concat(Record, '|') FROM {BuddyItemRecordTable.Table} pir WHERE pir.{BuddyItemRecordTable.Item} = PI.{BuddyItemsTable.RemoteItemId} AND NOT {BuddyItemRecordTable.Record} IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord)), '') AS PetRecord,
-                                R.text AS ReplicaInfo
-                FROM {BuddyItemsTable.Table} PI, {BuddySubscriptionTable.Table} S 
-                LEFT OUTER JOIN BuddyReplicaItem R ON PI.{BuddyItemsTable.RemoteItemId} = R.buddyitemid
+                                coalesce((SELECT group_concat(Record, '|') FROM {BuddyItemRecordTable.Table} pir WHERE pir.{BuddyItemRecordTable.Item} = BI.{BuddyItemsTable.RemoteItemId} AND NOT {BuddyItemRecordTable.Record} IN (BI.BaseRecord, BI.SuffixRecord, BI.MateriaRecord, BI.PrefixRecord)), '') AS PetRecord,
+                                IFNULL((select json_group_array(json_object('text', text, 'type', type)) from ReplicaItemRow where replicaitemid = R.id), '[]') AS ReplicaInfo
+                FROM {BuddyItemsTable.Table} BI, {BuddySubscriptionTable.Table} S 
+                LEFT OUTER JOIN ReplicaItem2 R ON BI.{BuddyItemsTable.RemoteItemId} = R.buddyitemid
                 WHERE "
                     + string.Join(" AND ", queryFragments)
-                    + $" AND {BuddyItemsTable.SubscriptionId} = {BuddySubscriptionTable.Id} "
+                    + $" AND BI.{BuddyItemsTable.SubscriptionId} = S.{BuddySubscriptionTable.Id} "
             );
 
             var subquery = CreateDatabaseStatQueryParams(query);
             if (subquery != null) {
-                sql.Add($" AND PI.{BuddyItemsTable.RemoteItemId} IN ({subquery.SQL})");
+                sql.Add($" AND BI.{BuddyItemsTable.RemoteItemId} IN ({subquery.SQL})");
             }
 
 

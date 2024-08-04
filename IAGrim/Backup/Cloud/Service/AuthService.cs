@@ -89,49 +89,6 @@ namespace IAGrim.Backup.Cloud.Service {
             public string Email { get; set; }
         }
 
-        private AccessStatus Migrate() {
-            try {
-                Logger.Info("Starting migration to new backup provider");
-                var httpClient = new HttpClient(new HttpClientHandler {
-                    AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-                }) {Timeout = TimeSpan.FromSeconds(15)};
-
-                var url = Uris.MigrateUrl + "?token=" + _authenticationProvider.GetLegacyToken();
-                var result = httpClient.GetAsync(url).Result;
-                var status = result.StatusCode;
-
-                if (status == HttpStatusCode.OK) {
-                    Logger.Info($"Got Status {result} migrating authentication token");
-                    var body = result.Content.ReadAsStringAsync().Result;
-                    var accessToken = JsonConvert.DeserializeObject<MigrateResponseType>(body);
-                    _authenticationProvider.SetToken(accessToken.Email, accessToken.Token);
-
-                    return AccessStatus.Authorized;
-                }
-                else if (status == HttpStatusCode.Unauthorized || status == HttpStatusCode.Forbidden) {
-                    Logger.Warn("Migration failed, unauthorized");
-                    return AccessStatus.Unauthorized;
-                }
-                else if (status == HttpStatusCode.InternalServerError) {
-                    Logger.Warn("Server response 500 migrating access token towards backup service");
-                    return AccessStatus.Unknown;
-                }
-                else {
-                    Logger.Error($"Got Status {result} migrating authentication token");
-
-                    return AccessStatus.Unknown;
-                }
-            }
-            catch (AggregateException ex) {
-                Logger.Warn(ex.Message, ex);
-                return AccessStatus.Unknown;
-            }
-            catch (WebException ex) {
-                Logger.Warn(ex.Message, ex);
-                return AccessStatus.Unknown;
-            }
-        }
-
         public void Logout() {
             try {
                 if (_authenticationProvider.HasToken()) {
@@ -163,11 +120,7 @@ namespace IAGrim.Backup.Cloud.Service {
                 return cached;
             }
 
-            if (_authenticationProvider.CanMigrate()) {
-                // We have a legacy access token, can migrate to the new cloud solution.
-                return Migrate();
-            }
-            else if (_authenticationProvider.HasToken()) {
+            if (_authenticationProvider.HasToken()) {
                 var result = IsTokenValid(_authenticationProvider.GetUser(), _authenticationProvider.GetToken());
                 MemoryCache.Default.Set(CacheKey, result, DateTimeOffset.Now.AddDays(1));
 

@@ -40,7 +40,8 @@ public:
     T pop();
 
     /// Returns true if no items on queue
-    bool empty() const { return m_queue.empty(); }
+	bool empty() const { return m_queue.empty(); }
+	size_t size();
 
 private:
     typedef std::queue<T> DataItemQueue;
@@ -63,14 +64,21 @@ void BaseDataQueue<T>::push(T item) {
 
 template <typename T>
 bool BaseDataQueue<T>::push(T item, int limit) {
-    boost::lock_guard<boost::mutex> guard(m_mutex);
-    if (m_queue.size() <= limit) {
-        m_queue.push(item);
-        return true;
-    }
-    else {
-        return false;
-    }
+	boost::lock_guard<boost::mutex> guard(m_mutex);
+	if (m_queue.size() <= limit) {
+		m_queue.push(item);
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+
+template <typename T>
+size_t BaseDataQueue<T>::size() {
+	boost::lock_guard<boost::mutex> guard(m_mutex);
+	return m_queue.size();
 }
 
 

@@ -14,18 +14,6 @@ namespace IAGrim.Database {
     public class ReplicaItem {
         public virtual long Id { get; set; }
         public virtual long? PlayerItemId { get; set; }
-        public virtual string BaseRecord { get; set; } = "";
-        public virtual string PrefixRecord { get; set; } = "";
-        public virtual string SuffixRecord { get; set; } = "";
-        public virtual string ModifierRecord { get; set; } = "";
-        public virtual string TransmuteRecord { get; set; } = "";
-        public virtual uint Seed { get; set; } = 0u;
-        public virtual string MateriaRecord { get; set; } = "";
-        public virtual string RelicCompletionBonusRecord { get; set; } = "";
-        public virtual uint RelicSeed { get; set; } = 0u;
-        public virtual string EnchantmentRecord { get; set; } = "";
-        public virtual uint EnchantmentSeed { get; set; } = 0u;
-        public virtual string Text { get; set; }
-        public virtual int UqHash { get; set; }
+        public virtual string BuddyItemId { get; set; }
     }
 }

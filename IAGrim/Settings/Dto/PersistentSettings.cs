@@ -23,10 +23,6 @@ namespace IAGrim.Settings.Dto {
 
         private long _cloudUploadTimestamp;
 
-
-        // Azure Backups
-        [Obsolete]
-        private string _azureAuthToken;
         
         private string _cloudAuthToken;
         private string _cloudUser;
@@ -103,16 +99,6 @@ namespace IAGrim.Settings.Dto {
             get => _hideSkills;
             set {
                 _hideSkills = value;
-                OnMutate?.Invoke(null, null);
-            }
-        }
-
-        // Azure Backups
-        [Obsolete]
-        public string AzureAuthToken {
-            get => _azureAuthToken;
-            set {
-                _azureAuthToken = value;
                 OnMutate?.Invoke(null, null);
             }
         }

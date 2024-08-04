@@ -78,9 +78,9 @@ namespace IAGrim.Database.Synchronizer {
             );
         }
 
-        public IList<PlayerItem> ListMissingReplica(int limit) {
+        public IList<PlayerItem> ListMissingReplica() {
             return ThreadExecuter.Execute(
-                () => _repo.ListMissingReplica(limit)
+                () => _repo.ListMissingReplica()
             );
         }
 

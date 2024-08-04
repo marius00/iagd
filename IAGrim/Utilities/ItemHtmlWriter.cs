@@ -72,6 +72,9 @@ namespace IAGrim.Utilities {
 
                 if (!string.IsNullOrEmpty(pi.ReplicaInfo)) {
                     replicaStats = JsonConvert.DeserializeObject<List<ItemStatInfo>>(pi.ReplicaInfo);
+                    if (replicaStats.Count == 0) {
+                        replicaStats = null; // Too many things check for null instead of empty, so just set it to null.
+                    }
                 }
 
 

@@ -52,9 +52,6 @@ class ReplicaStatContainer extends PureComponent<Props, object> {
         return true;
       }
 
-      if (isSkipping && row.type === 0 /* Newline */)
-        numWhitespaces++;
-
       if (isSkipping && numWhitespaces < 2) // Second whitespace generally ends the skill description.
         return true;
 
@@ -73,6 +70,10 @@ class ReplicaStatContainer extends PureComponent<Props, object> {
           // Skip skill information
           if (shouldSkip(row)) {
             return null;
+          }
+
+          if (row.type === 0 /* Newline */) {
+            return <br/>;
           }
 
           if (!this.isSkillBooster(row)) {

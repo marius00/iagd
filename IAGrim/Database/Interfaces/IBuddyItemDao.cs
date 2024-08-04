@@ -19,6 +19,6 @@ namespace IAGrim.Database.Interfaces {
         void Save(BuddySubscription subscription, List<BuddyItem> items);
         void Delete(BuddySubscription subscription, List<DeleteItemDto> items);
 
-        IList<BuddyItem> ListMissingReplica(int limit);
+        IList<BuddyItem> ListMissingReplica();
     }
 }
