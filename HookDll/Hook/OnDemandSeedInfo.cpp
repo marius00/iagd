@@ -304,6 +304,19 @@ std::string toJson(ParsedSeedRequest obj, std::vector<GAME::GameTextLine>& gameT
 	root.put("playerItemId", obj.playerItemId);
 	root.put("buddyItemId", obj.buddyItemId.c_str());
 
+	boost::property_tree::ptree replica;
+	replica.put("baseRecord", obj.itemReplicaInfo.baseRecord);
+	replica.put("prefixRecord", obj.itemReplicaInfo.prefixRecord);
+	replica.put("suffixRecord", obj.itemReplicaInfo.suffixRecord);
+	replica.put("modifierRecord", obj.itemReplicaInfo.modifierRecord);
+	replica.put("transmuteRecord", obj.itemReplicaInfo.transmuteRecord);
+	replica.put("seed", obj.itemReplicaInfo.seed);
+	replica.put("materiaRecord", obj.itemReplicaInfo.materiaRecord);
+	replica.put("relicBonus", obj.itemReplicaInfo.relicBonus);
+	replica.put("relicSeed", obj.itemReplicaInfo.relicSeed);
+	replica.put("enchantmentRecord", obj.itemReplicaInfo.enchantmentRecord);
+	replica.put("enchantmentSeed", obj.itemReplicaInfo.enchantmentSeed);
+	root.add_child("replica", replica);
 
 
 	boost::property_tree::ptree stats;
@@ -360,13 +373,16 @@ void OnDemandSeedInfo::GetItemInfo(ParsedSeedRequest obj) {
 			
 			std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 			std::wstring buddyItemId = converter.from_bytes(obj.buddyItemId);
-			std::wstring fullPath = GetIagdFolder() + L"replica\\to_ia\\" + std::to_wstring(obj.playerItemId) + buddyItemId + L".json";
+			std::wstring fullPath = GetIagdFolder() + L"replica\\to_ia\\" + std::to_wstring(obj.playerItemId) + buddyItemId;
 			std::wofstream stream;
 			stream.open(fullPath);
 			stream << toJson(obj, gameTextLines).c_str();
 			stream.flush();
 			stream.close();
 			LogToFile(LogLevel::INFO, L"Wrote items stats to " + fullPath);
+
+			// Now that we're done writing we can move it and give it the .json suffix, that way IA isn't trying to read it while we're writing
+			MoveFile(fullPath.c_str(), (fullPath + L".json").c_str());
 		}
 		else {
 			std::string str = obj.itemReplicaInfo.baseRecord;

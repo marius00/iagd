@@ -247,6 +247,11 @@ namespace IAGrim.Database {
                         .ExecuteUpdate();
 
                     // Delete any items with stacksize 0 (but only newly transferred ones, ignore any older items in case of errors)
+
+                    session.CreateQuery($"DELETE FROM ReplicaItem2 WHERE playeritemid IN (SELECT id FROM {table} WHERE {stack} <= 0 AND {id} IN ( :ids ))")
+                        .SetParameterList("ids", items.Select(m => m.Id).ToList())
+                        .ExecuteUpdate();
+
                     session.CreateQuery($"DELETE FROM {table} WHERE {stack} <= 0 AND {id} IN ( :ids )")
                         .SetParameterList("ids", items.Select(m => m.Id).ToList())
                         .ExecuteUpdate();
@@ -315,7 +320,7 @@ namespace IAGrim.Database {
                     {nameLowercase} = :namelowercase, 
                     {rarity} = :rarity, 
                     {levelReq} = :levelreq, 
-                    {prefixRarity} = :prefixrarity,
+                    {prefixRarity} = :prefixrarity
                     WHERE {id} = :id"
                 )
                 .SetParameter("name", itemName)
@@ -370,6 +375,10 @@ namespace IAGrim.Database {
             using (var session = SessionCreator.OpenSession()) {
                 using (var transaction = session.BeginTransaction()) {
                     foreach (var item in items) {
+                        session.CreateSQLQuery($"DELETE FROM ReplicaItem2 WHERE playeritemid IN (select id from playeritem WHERE {PlayerItemTable.CloudId} = :uuid)")
+                            .SetParameter("uuid", item.Id)
+                            .ExecuteUpdate();
+
                         session.CreateQuery($"DELETE FROM PlayerItem WHERE {PlayerItemTable.CloudId} = :uuid")
                             .SetParameter("uuid", item.Id)
                             .ExecuteUpdate();
@@ -625,12 +634,11 @@ namespace IAGrim.Database {
             var queryFragments = new List<string>();
             var queryParams = new Dictionary<string, object>();
 
-            // TODO: select json_extract(value, '$.Text') from json_each((select text from replicaitem)) 
-            // select 1 from json_each((select text from replicaitem)) where json_extract(value, '$.Text') like '%wyrmclaw%'
             if (!string.IsNullOrEmpty(query.Wildcard)) {
-                queryFragments.Add("(PI.namelowercase LIKE :name OR PI.searchabletext LIKE :wildcard OR R.text LIKE :wildcard)");
-                queryParams.Add("name", $"%{query.Wildcard.Replace(' ', '%').ToLower()}%");
+                // queryFragments.Add("(PI.namelowercase LIKE :name OR R.text LIKE :wildcard)");
+                queryFragments.Add("(PI.namelowercase LIKE :name OR R.id IN (SELECT replicaitemid FROM replicaitemrow WHERE text LIKE :wildcard))");
                 queryParams.Add("wildcard", $"%{query.Wildcard.ToLower()}%");
+                queryParams.Add("name", $"%{query.Wildcard.Replace(' ', '%').ToLower()}%");
             }
 
             // Filter by mod/hc
@@ -732,10 +740,10 @@ namespace IAGrim.Database {
                 PI.{PlayerItemTable.Mod} as Mod,
                 CAST({PlayerItemTable.IsHardcore} as bit) as IsHardcore,
                 coalesce((SELECT group_concat(Record, '|') FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord)), '') AS PetRecord,
-                R.text AS ReplicaInfo,
+                IFNULL((select json_group_array(json_object('text', text, 'type', type)) from ReplicaItemRow where replicaitemid = R.id), '[]') AS ReplicaInfo,
                 PI.{PlayerItemTable.Seed} as Seed
                 FROM PlayerItem PI 
-                LEFT OUTER JOIN ReplicaItem R ON PI.ID = R.playeritemid
+                LEFT OUTER JOIN ReplicaItem2 R ON PI.ID = R.playeritemid
                 WHERE " + string.Join(" AND ", queryFragments)
             };
 
@@ -1056,25 +1064,24 @@ DELETE FROM PlayerItem WHERE Id IN (
 
             var sql = $@"
                 SELECT
-                {PlayerItemTable.Id} as Id,
-                {PlayerItemTable.Seed} as Seed,
+                PI.{PlayerItemTable.Id} as Id,
+                PI.{PlayerItemTable.Seed} as Seed,
                 PI.RelicSeed as RelicSeed,
                 PI.EnchantmentSeed as EnchantmentSeed,
-                {PlayerItemTable.Record} as BaseRecord, 
-                {PlayerItemTable.Prefix} as PrefixRecord, 
-                {PlayerItemTable.Suffix} as SuffixRecord, 
-                {PlayerItemTable.ModifierRecord} as ModifierRecord, 
+                PI.{PlayerItemTable.Record} as BaseRecord, 
+                PI.{PlayerItemTable.Prefix} as PrefixRecord, 
+                PI.{PlayerItemTable.Suffix} as SuffixRecord, 
+                PI.{PlayerItemTable.ModifierRecord} as ModifierRecord, 
                 PI.MateriaRecord as MateriaRecord,
                 PI.EnchantmentRecord as EnchantmentRecord,
                 PI.TransmuteRecord as TransmuteRecord
                 FROM PlayerItem PI 
-                WHERE PI.Id NOT IN (SELECT R.PlayerItemId FROM ReplicaItem R WHERE R.PlayerItemId IS NOT NULL)
-                AND MOD = '' 
+                WHERE PI.Id NOT IN (SELECT R.PlayerItemId FROM ReplicaItem2 R WHERE R.PlayerItemId IS NOT NULL)
 
                 AND PI.Id IN ({specificItemTypesOnlySql})
                 
                 order by RANDOM ()
-                LIMIT :limit ";
+                ";
 
 
 

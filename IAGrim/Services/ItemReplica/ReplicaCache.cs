@@ -9,6 +9,10 @@ namespace IAGrim.Services.ItemReplica {
         private readonly Dictionary<string, byte> _cache = new Dictionary<string, byte>();
 
         public void Add(string hash) {
+            if (Exists(hash)) {
+                return;
+            }
+
             _cache.Add(hash, 0);
 
             // TODO: In the future, delete the oldest or something

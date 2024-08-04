@@ -35,6 +35,8 @@ using IAGrim.Backup.Cloud.Util;
 using IAGrim.Parsers.TransferStash;
 using IAGrim.Settings;
 using System.IO;
+using IAGrim.Services.ItemReplica;
+using System.Runtime.InteropServices;
 
 namespace IAGrim.UI {
     public partial class MainWindow : Form {
@@ -54,6 +56,7 @@ namespace IAGrim.UI {
 
         private StashFileMonitor _stashFileMonitor = new StashFileMonitor();
         private CsvFileMonitor _csvFileMonitor = new CsvFileMonitor();
+        private CsvFileMonitor _replicaCsvFileMonitor = new CsvFileMonitor();
         private ItemReplicaService _itemReplicaService;
 
         private Action<RegisterWindow.DataAndType> _registerWindowDelegate;
@@ -61,6 +64,7 @@ namespace IAGrim.UI {
         private InjectionHelper _injector;
         private ProgressChangedEventHandler _injectorCallbackDelegate;
         private CsvParsingService _csvParsingService;
+        private ItemReplicaParser _itemReplicaParser;
 
         private BuddyItemsService _buddyItemsService;
         private BackgroundTask _backupBackgroundTask;
@@ -268,8 +272,14 @@ namespace IAGrim.UI {
             _csvFileMonitor?.Dispose();
             _csvFileMonitor = null;
 
+            _replicaCsvFileMonitor?.Dispose();
+            _replicaCsvFileMonitor = null;
+
             _csvParsingService?.Dispose();
             _csvParsingService = null;
+
+            _itemReplicaService?.Dispose();
+            _itemReplicaService = null;
 
             _minimizeToTrayHandler?.Dispose();
             _minimizeToTrayHandler = null;
@@ -282,8 +292,6 @@ namespace IAGrim.UI {
 
             _buddyItemsService?.Dispose();
             _buddyItemsService = null;
-
-            _itemReplicaService.Dispose();
 
             _injector?.Dispose();
             _injector = null;
@@ -598,14 +606,12 @@ namespace IAGrim.UI {
 
             LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
 
-            var itemReplicaProcessor = _serviceProvider.Get<ItemReplicaProcessor>();
             if (settingsService.GetLocal().PreferLegacyMode) {
                 _messageProcessors.Add(new PlayerPositionTracker(Debugger.IsAttached && false));
                 _messageProcessors.Add(new StashStatusHandler());
                 _messageProcessors.Add(new CloudDetectorProcessor(SetFeedback, _serviceProvider.Get<SettingsService>()));
             }
             _messageProcessors.Add(new GenericErrorHandler());
-            _messageProcessors.Add(itemReplicaProcessor);
             _messageProcessors.Add(new InjectionAbortedProcessor(SetInjectionAbortedStatus));
 
 
@@ -669,6 +675,11 @@ namespace IAGrim.UI {
                 _csvParsingService.Queue(csvEvent.Filename, csvEvent.Cooldown);
             };
 
+            _itemReplicaParser = new ItemReplicaParser(replicaItemDao);
+            _replicaCsvFileMonitor.OnModified += (_, arg) => {
+                _itemReplicaParser.Process(arg);
+            };
+
             // Typically new users expect that items just magically appear, which is a terrible user experience when you have thousands of items. But works fine for a small set of items.
             var shouldAutoSearchOnNewItems = playerItemDao.GetNumItems() < 100;
 
@@ -680,8 +691,13 @@ namespace IAGrim.UI {
                 }
             };
 
-            _csvFileMonitor.StartMonitoring();
+            _csvFileMonitor.StartMonitoring(GlobalPaths.CsvLocationIngoing, "*.csv");
+            _replicaCsvFileMonitor.StartMonitoring(GlobalPaths.CsvReplicaReadLocation, "*.json");
             _csvParsingService.Start();
+
+
+            var preloadThread= new Thread(_itemReplicaParser.Preload);
+            preloadThread.Start();
 
             tsStashStatus.Visible = settingsService.GetLocal().PreferLegacyMode;
 

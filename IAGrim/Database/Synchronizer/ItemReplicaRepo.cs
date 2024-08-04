@@ -19,6 +19,18 @@ namespace IAGrim.Database.Synchronizer {
             );
         }
 
+        public IList<long> GetPlayerItemIds() {
+            return ThreadExecuter.Execute(
+                () => repo.GetPlayerItemIds()
+            );
+        }
+
+        public IList<string> GetBuddyItemIds() {
+            return ThreadExecuter.Execute(
+                () => repo.GetBuddyItemIds()
+            );
+        }
+
         public void DeleteAll() {
             ThreadExecuter.Execute(
                 () => repo.DeleteAll()

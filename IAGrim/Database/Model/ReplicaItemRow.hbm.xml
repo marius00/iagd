@@ -7,7 +7,7 @@
 		</id>
 
 		<property name="ReplicaItemId">
-			<column name="replicaitemid" unique="true" index="idx_replicaitemstat_replicaitemid" />
+			<column name="replicaitemid" index="idx_replicaitemstat_replicaitemid" />
 		</property>
 
 		<property name="Type" />

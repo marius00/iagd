@@ -464,7 +464,7 @@ int ProcessDetach(HINSTANCE _hModule) {
 
 	EndWorkerThread();
 
-	LOG(L"DLL detatched..");
+	LOG(L"DLL detached..");
 	return TRUE;
 }
 

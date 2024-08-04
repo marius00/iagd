@@ -261,7 +261,7 @@
     <Compile Include="Services\ItemReplicaService.cs" />
     <Compile Include="Services\ItemReplica\ReplicaCache.cs" />
     <Compile Include="Services\MessageProcessor\InjectionAbortedProcessor.cs" />
-    <Compile Include="Services\MessageProcessor\ItemReplicaProcessor.cs" />
+    <Compile Include="Services\ItemReplica\ItemReplicaParser.cs" />
     <Compile Include="Services\ServiceProvider.cs" />
     <Compile Include="Settings\Dto\LocalSettings.cs" />
     <Compile Include="Settings\Dto\PersistentSettings.cs" />

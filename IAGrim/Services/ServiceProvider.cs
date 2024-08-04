@@ -8,6 +8,7 @@ using IAGrim.Database.Interfaces;
 using IAGrim.Database.Synchronizer;
 using IAGrim.Database.Synchronizer.Core;
 using IAGrim.Parsers.TransferStash;
+using IAGrim.Services.ItemReplica;
 using IAGrim.Services.MessageProcessor;
 using IAGrim.UI.Controller;
 using log4net;
@@ -109,7 +110,7 @@ namespace IAGrim.Services {
             services.Add(new ItemReplicaService(playerItemDao, buddyItemDao));
             services.Add(replicaItemDao);
 
-            services.Add(new ItemReplicaProcessor(replicaItemDao));
+            services.Add(new ItemReplicaParser(replicaItemDao));
 
             services.Add(itemStatService);
 

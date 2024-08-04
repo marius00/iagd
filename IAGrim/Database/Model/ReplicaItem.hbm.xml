@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="IAGrim" namespace="IAGrim.Database">
-	<class name="ReplicaItem" table="ReplicaItem">
+	<class name="ReplicaItem" table="ReplicaItem2">
 		<id name="Id">
 			<generator class="hilo" />
 		</id>
@@ -12,22 +12,6 @@
 
 		<property name="BuddyItemId">
 			<column name="buddyitemid" unique="true" index="idx_replicaitem_buddyitemid" />
-		</property>
-
-		<property name="BaseRecord" />
-		<property name="PrefixRecord" />
-		<property name="SuffixRecord" />
-		<property name="ModifierRecord" />
-		<property name="TransmuteRecord" />
-		<property name="Seed" />
-		<property name="MateriaRecord" />
-		<property name="RelicCompletionBonusRecord" />
-		<property name="RelicSeed" />
-		<property name="EnchantmentRecord" />
-		<property name="EnchantmentSeed" />
-
-		<property name="UqHash" not-null="true">
-			<column name="uqhash" unique="true" index="uq_hash"  not-null="true"/>
 		</property>
 	</class>
 </hibernate-mapping>

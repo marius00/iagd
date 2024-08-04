@@ -34,7 +34,6 @@
 		
 
 		<property name="CreationDate" column="created_at" />
-		<property name="SearchableText" column="searchabletext" />
 
 		<!--  cascade="all-delete-orphan"  -->
 		<!--

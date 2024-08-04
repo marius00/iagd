@@ -11,6 +11,7 @@ using IAGrim.Services.ItemReplica;
 using IAGrim.Services.MessageProcessor;
 using IAGrim.Utilities;
 using log4net;
+using NHibernate.Transform;
 
 namespace IAGrim.Services {
     // TODO: Class does too much, and is somewhat of a mess.
@@ -36,6 +37,22 @@ namespace IAGrim.Services {
             _t = new Thread(() => {
                 ExceptionReporter.EnableLogUnhandledOnThread();
 
+                // Items already queued
+                foreach (var pi in Directory.EnumerateFiles(GlobalPaths.CsvReplicaWriteLocation)) {
+                    _cache.Add(Path.GetFileName(pi));
+                    
+                }
+                foreach (var mod in Directory.EnumerateDirectories(GlobalPaths.CsvReplicaWriteLocation)) {
+                    foreach (var pi in Directory.EnumerateFiles(Path.Combine(GlobalPaths.CsvReplicaWriteLocation, mod))) {
+                        _cache.Add(Path.GetFileName(pi));
+                    }
+                }
+                
+                // Items awaiting processing
+                foreach (var pi in Directory.EnumerateFiles(GlobalPaths.CsvReplicaReadLocation)) {
+                    _cache.Add(Path.GetFileName(pi).Replace(".json", ".csv"));
+                }
+
                 while (!_isShuttingDown) {
                     if (_cooldown.IsReady) {
                         Process();
@@ -52,38 +69,34 @@ namespace IAGrim.Services {
         private bool Process() {
             int count = 0;
 
-            // Items already queued
-            foreach (var pi in Directory.EnumerateFiles(GlobalPaths.CsvReplicaWriteLocation)) {
-                _cache.Add("pi/" + pi);
-            }
-            foreach (var mod in Directory.EnumerateDirectories(GlobalPaths.CsvReplicaWriteLocation)) {
-                foreach (var pi in Directory.EnumerateFiles(Path.Combine(GlobalPaths.CsvReplicaWriteLocation, mod))) {
-                    _cache.Add("pi/" + pi);
-                }
-            }
 
             {
                 var items = _playerItemDao.ListMissingReplica();
                 count += items.Count;
                 foreach (var item in items) {
-                    var hash = "pi/" + item.Id;
-                    if (_cache.Exists(hash)) // Don't ask for the same item twice. Esp if the user somehow gets two identical items in, this would infinitely loop.
+                    var hash = item.Id + ".csv";
+                    if (_cache.Exists(
+                            hash)) // Don't ask for the same item twice. Esp if the user somehow gets two identical items in, this would infinitely loop.
                         continue;
 
 
-                    
-                    string filename = "";
+                    var path = "";
+                    var filename = item.Id + ".csv";
                     if (string.IsNullOrEmpty(item.Mod)) {
-                        filename = Path.Combine(GlobalPaths.CsvReplicaWriteLocation, "" + item.Id);
-
-                    } else {
-                        Directory.CreateDirectory(Path.Combine(GlobalPaths.CsvReplicaWriteLocation, item.Mod));
-                        filename = Path.Combine(GlobalPaths.CsvReplicaWriteLocation, item.Mod, "" + item.Id);
+                        path = Path.Combine(GlobalPaths.CsvReplicaWriteLocation, item.IsHardcore ? "hc" : "sc");
+                    }
+                    else {
+                        path = Path.Combine(GlobalPaths.CsvReplicaWriteLocation, item.IsHardcore ? "hc" : "sc", item.Mod);
                     }
 
+                    Directory.CreateDirectory(path);
+                    filename = Path.Combine(path, filename);
+
                     var csv = Serialize(item);
-                    if (!File.Exists(filename)) {
-                        File.WriteAllText(filename, csv);
+                    if (csv != null) {
+                        if (!File.Exists(filename)) {
+                            File.WriteAllText(filename, csv);
+                        }
                     }
 
                     _cache.Add(hash);
@@ -91,38 +104,32 @@ namespace IAGrim.Services {
                 }
             }
 
-
-            // Items already queued
-            foreach (var pi in Directory.EnumerateFiles(GlobalPaths.CsvReplicaWriteLocation)) {
-                _cache.Add("bi/" + pi);
-            }
-            foreach (var mod in Directory.EnumerateDirectories(GlobalPaths.CsvReplicaWriteLocation)) {
-                foreach (var pi in Directory.EnumerateFiles(Path.Combine(GlobalPaths.CsvReplicaWriteLocation, mod))) {
-                    _cache.Add("bi/" + pi);
-                }
-            }
             {
                 var items = _buddyItemDao.ListMissingReplica();
                 count += items.Count;
 
                 foreach (var item in items) {
-                    var hash = "bi/" + item.RemoteItemId;
+                    var hash = item.RemoteItemId + ".csv";
                     if (_cache.Exists(hash)) // Don't ask for the same item twice. Esp if the user somehow gets two identical items in, this would infinitely loop.
                         continue;
 
-                    string filename = "";
-                    if (string.IsNullOrEmpty(item.Mod)) {
-                        filename = Path.Combine(GlobalPaths.CsvReplicaWriteLocation, "" + item.RemoteItemId);
 
+                    var path = "";
+                    var filename = item.RemoteItemId + ".csv";
+                    if (string.IsNullOrEmpty(item.Mod)) {
+                        path = Path.Combine(GlobalPaths.CsvReplicaWriteLocation, item.IsHardcore ? "hc" : "sc");
                     }
                     else {
-                        Directory.CreateDirectory(Path.Combine(GlobalPaths.CsvReplicaWriteLocation, item.Mod));
-                        filename = Path.Combine(GlobalPaths.CsvReplicaWriteLocation, item.Mod, "" + item.RemoteItemId);
+                        path = Path.Combine(GlobalPaths.CsvReplicaWriteLocation, item.IsHardcore ? "hc" : "sc", item.Mod);
                     }
+                    Directory.CreateDirectory(path);
+                    filename = Path.Combine(path, filename);
 
                     var csv = Serialize(item);
-                    if (!File.Exists(filename)) {
-                        File.WriteAllText(filename, csv);
+                    if (csv != null) {
+                        if (!File.Exists(filename)) {
+                            File.WriteAllText(filename, csv);
+                        }
                     }
 
                     _cache.Add(hash);
@@ -153,13 +160,13 @@ namespace IAGrim.Services {
             sb.Append(bi.Seed + ";");
             sb.Append(bi.RelicSeed + ";");
             sb.Append(bi.EnchantmentSeed + ";");
-            sb.Append(bi.BaseRecord + ";");
-            sb.Append(bi.PrefixRecord + ";");
-            sb.Append(bi.SuffixRecord + ";");
-            sb.Append(bi.ModifierRecord + ";");
-            sb.Append(bi.MateriaRecord + ";");
-            sb.Append(bi.EnchantmentRecord + ";");
-            sb.Append(bi.TransmuteRecord);
+            sb.Append(bi.BaseRecord?.Trim() + ";");
+            sb.Append(bi.PrefixRecord?.Trim() + ";");
+            sb.Append(bi.SuffixRecord?.Trim() + ";");
+            sb.Append(bi.ModifierRecord?.Trim() + ";");
+            sb.Append(bi.MateriaRecord?.Trim() + ";");
+            sb.Append(bi.EnchantmentRecord?.Trim() + ";");
+            sb.Append(bi.TransmuteRecord?.Trim());
             Logger.Debug($"Dispatching: {sb.ToString()}");
             if (sb.ToString().Count(s => s == ';') != 11) {
                 Logger.Warn("Could not serialize item, invalid ; count");
@@ -187,13 +194,13 @@ namespace IAGrim.Services {
             sb.Append(pi.Seed + ";");
             sb.Append(pi.RelicSeed + ";");
             sb.Append(pi.EnchantmentSeed + ";");
-            sb.Append(pi.BaseRecord + ";");
-            sb.Append(pi.PrefixRecord + ";");
-            sb.Append(pi.SuffixRecord + ";");
-            sb.Append(pi.ModifierRecord + ";");
-            sb.Append(pi.MateriaRecord + ";");
-            sb.Append(pi.EnchantmentRecord + ";");
-            sb.Append(pi.TransmuteRecord);
+            sb.Append(pi.BaseRecord?.Trim() + ";");
+            sb.Append(pi.PrefixRecord?.Trim() + ";");
+            sb.Append(pi.SuffixRecord?.Trim() + ";");
+            sb.Append(pi.ModifierRecord?.Trim() + ";");
+            sb.Append(pi.MateriaRecord?.Trim() + ";");
+            sb.Append(pi.EnchantmentRecord?.Trim() + ";");
+            sb.Append(pi.TransmuteRecord?.Trim());
             Logger.Debug($"Dispatching: {sb.ToString()}");
             if (sb.ToString().Count(s => s == ';') != 11) {
                 Logger.Warn("Could not serialize item, invalid ; count");
