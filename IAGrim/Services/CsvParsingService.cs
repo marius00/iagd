@@ -153,20 +153,21 @@ namespace IAGrim.Services {
                 return null;
             }
 
+
             return new PlayerItem {
                 Mod = pieces[0],
                 IsHardcore = "1".Equals(pieces[1]),
-                BaseRecord = pieces[2],
-                PrefixRecord = pieces[3],
-                SuffixRecord = pieces[4],
+                BaseRecord = pieces[2].Trim(),
+                PrefixRecord = pieces[3]?.Trim(),
+                SuffixRecord = pieces[4]?.Trim(),
                 Seed = ToInt(pieces[5]),
-                ModifierRecord = pieces[6],
-                MateriaRecord = pieces[7],
-                RelicCompletionBonusRecord = pieces[8],
+                ModifierRecord = pieces[6]?.Trim(),
+                MateriaRecord = pieces[7]?.Trim(),
+                RelicCompletionBonusRecord = pieces[8]?.Trim(),
                 RelicSeed = ToInt(pieces[9]),
-                EnchantmentRecord = pieces[10],
+                EnchantmentRecord = pieces[10]?.Trim(),
                 EnchantmentSeed = ToInt(pieces[11]),
-                TransmuteRecord = pieces[12],
+                TransmuteRecord = pieces[12]?.Trim(),
                 Tags = new HashSet<DBStatRow>(0)
             };
         }

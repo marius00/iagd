@@ -248,7 +248,7 @@ namespace IAGrim.Database {
 
                     // Delete any items with stacksize 0 (but only newly transferred ones, ignore any older items in case of errors)
 
-                    session.CreateQuery($"DELETE FROM ReplicaItem2 WHERE playeritemid IN (SELECT id FROM {table} WHERE {stack} <= 0 AND {id} IN ( :ids ))")
+                    session.CreateSQLQuery($"DELETE FROM ReplicaItem2 WHERE playeritemid IN (SELECT id FROM {table} WHERE {stack} <= 0 AND {id} IN ( :ids ))")
                         .SetParameterList("ids", items.Select(m => m.Id).ToList())
                         .ExecuteUpdate();
 
@@ -863,18 +863,18 @@ namespace IAGrim.Database {
             long stackCount = Convert(arr[idx++]);
             string rarity = Convert<string>(arr[idx++]);
             int levelrequirement = (int)Convert(arr[idx++]);
-            string baserecord = Convert<string>(arr[idx++]);
-            string prefixrecord = Convert<string>(arr[idx++]);
-            string suffixrecord = Convert<string>(arr[idx++]);
-            string ModifierRecord = Convert<string>(arr[idx++]);
-            string MateriaRecord = Convert<string>(arr[idx++]);
+            string baserecord = Convert<string>(arr[idx++])?.Trim();
+            string prefixrecord = Convert<string>(arr[idx++])?.Trim();
+            string suffixrecord = Convert<string>(arr[idx++])?.Trim();
+            string ModifierRecord = Convert<string>(arr[idx++])?.Trim();
+            string MateriaRecord = Convert<string>(arr[idx++])?.Trim();
             long PrefixRarity = Convert(arr[idx++]);
             string CloudId = Convert<string>(arr[idx++]);
             bool IsCloudSynchronized = ConvertToBoolean(arr[idx++]);
             long Id = Convert(arr[idx++]);
             string Mod = Convert<string>(arr[idx++]);
             bool IsHardcore = ConvertToBoolean(arr[idx++]);
-            string PetRecord = Convert<string>(arr[idx++]);
+            string PetRecord = Convert<string>(arr[idx++])?.Trim();
             string replicaInfo = Convert<string>(arr[idx++]);
             long seed = Convert<long>(arr[idx++]);
 

@@ -304,6 +304,7 @@ std::string toJson(ParsedSeedRequest obj, std::vector<GAME::GameTextLine>& gameT
 	root.put("playerItemId", obj.playerItemId);
 	root.put("buddyItemId", obj.buddyItemId.c_str());
 
+	// Completely redundant information, might help others to use this DLL.
 	boost::property_tree::ptree replica;
 	replica.put("baseRecord", obj.itemReplicaInfo.baseRecord);
 	replica.put("prefixRecord", obj.itemReplicaInfo.prefixRecord);
