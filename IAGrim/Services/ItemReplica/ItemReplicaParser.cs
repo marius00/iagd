@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using EvilsoftCommons.Exceptions;
 using IAGrim.Database;
 using IAGrim.Database.Interfaces;
 using IAGrim.Utilities;
@@ -50,6 +51,8 @@ namespace IAGrim.Services.ItemReplica {
         }
 
         public void Preload() {
+            ExceptionReporter.EnableLogUnhandledOnThread();
+
             var playerItemIDs = new HashSet<long>(_replicaItemDao.GetPlayerItemIds());
             var buddyItemIDs = new HashSet<string>(_replicaItemDao.GetBuddyItemIds());
 

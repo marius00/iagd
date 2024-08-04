@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using EvilsoftCommons;
+using EvilsoftCommons.Exceptions;
 using IAGrim.Database;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parser.Arc;
@@ -17,6 +18,8 @@ namespace IAGrim.Parsers.Arz {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ArzParser));
 
         public static void LoadIconsOnly(string grimDawnLocation) {
+            ExceptionReporter.EnableLogUnhandledOnThread();
+
             void LoadIconsOrWarn(string arcfile) {
                 if (!string.IsNullOrEmpty(arcfile)) {
                     Logger.Debug($"Loading icons from {arcfile}");
@@ -27,13 +30,19 @@ namespace IAGrim.Parsers.Arz {
                 }
             }
 
-            Logger.Debug("Icon loading requested");
-            LoadIconsOrWarn(GrimFolderUtility.FindArcFile(grimDawnLocation, "items.arc"));
-            LoadIconsOrWarn(GrimFolderUtility.FindArcFile(grimDawnLocation, "Level Art.arc"));
+            try {
 
-            foreach (var path in GrimFolderUtility.GetGrimExpansionFolders(grimDawnLocation)) {
-                LoadIconsOrWarn(GrimFolderUtility.FindArcFile(path, "items.arc"));
-                LoadIconsOrWarn(GrimFolderUtility.FindArcFile(path, "Level Art.arc"));
+                Logger.Debug("Icon loading requested");
+                LoadIconsOrWarn(GrimFolderUtility.FindArcFile(grimDawnLocation, "items.arc"));
+                LoadIconsOrWarn(GrimFolderUtility.FindArcFile(grimDawnLocation, "Level Art.arc"));
+
+                foreach (var path in GrimFolderUtility.GetGrimExpansionFolders(grimDawnLocation)) {
+                    LoadIconsOrWarn(GrimFolderUtility.FindArcFile(path, "items.arc"));
+                    LoadIconsOrWarn(GrimFolderUtility.FindArcFile(path, "Level Art.arc"));
+                }
+            }
+            catch (Exception ex) {
+                Logger.Warn("Error parsing icons: " + ex.Message);
             }
         }
 
