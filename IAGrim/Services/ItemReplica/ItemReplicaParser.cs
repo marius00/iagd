@@ -106,6 +106,11 @@ namespace IAGrim.Services.ItemReplica {
                     item.PlayerItemId = null;
                 }
 
+                if (string.IsNullOrEmpty(item.BuddyItemId)) {
+                    // Unique constraint will fail if its 0, this is likely a buddy item
+                    item.BuddyItemId = null;
+                }
+
 
                 _logger.Debug("Storing replica item stats for item " + item.PlayerItemId + item.BuddyItemId);
                 _replicaItemDao.Save(item, stats);
