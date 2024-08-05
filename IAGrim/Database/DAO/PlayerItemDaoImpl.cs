@@ -1074,6 +1074,7 @@ DELETE FROM PlayerItem WHERE Id IN (
                 PI.{PlayerItemTable.ModifierRecord} as ModifierRecord, 
                 PI.MateriaRecord as MateriaRecord,
                 PI.EnchantmentRecord as EnchantmentRecord,
+                PI.mod as Mod,
                 PI.TransmuteRecord as TransmuteRecord
                 FROM PlayerItem PI 
                 WHERE PI.Id NOT IN (SELECT R.PlayerItemId FROM ReplicaItem2 R WHERE R.PlayerItemId IS NOT NULL)

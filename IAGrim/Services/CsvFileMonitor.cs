@@ -33,7 +33,8 @@ namespace IAGrim.Services {
             _watcher.Filter = filter;
             _watcher.IncludeSubdirectories = false;
             _watcher.Created += _watcher_Created;
-            
+            _watcher.Renamed += _watcher_Created;
+
             _watcher.Error += Watcher_Error;
             _watcher.EnableRaisingEvents = true;
 
