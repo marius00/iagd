@@ -191,9 +191,9 @@ namespace IAGrim.Services {
 
             sb.Append(TYPE_PLAYERITEM + ";");
             sb.Append(pi.Id + ";");
-            sb.Append(pi.Seed + ";");
-            sb.Append(pi.RelicSeed + ";");
-            sb.Append(pi.EnchantmentSeed + ";");
+            sb.Append(pi.USeed + ";");
+            sb.Append((uint)pi.RelicSeed + ";");
+            sb.Append((uint)pi.EnchantmentSeed + ";");
             sb.Append(pi.BaseRecord?.Trim() + ";");
             sb.Append(pi.PrefixRecord?.Trim() + ";");
             sb.Append(pi.SuffixRecord?.Trim() + ";");
