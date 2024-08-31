@@ -120,10 +120,12 @@ namespace IAGrim.Services.ItemReplica {
                 _logger.Warn("Error storing replica item stats for item: " + ex.Message);
             }
             finally {
-                if (File.Exists(Path.Combine(GlobalPaths.CsvReplicaDumpLocation, Path.GetFileName(filename)))) {
-                    File.Delete(Path.Combine(GlobalPaths.CsvReplicaDumpLocation, Path.GetFileName(filename)));
-                }
-                File.Move(filename, Path.Combine(GlobalPaths.CsvReplicaDumpLocation, Path.GetFileName(filename)));
+                try {
+                    if (File.Exists(Path.Combine(GlobalPaths.CsvReplicaDumpLocation, Path.GetFileName(filename)))) {
+                        File.Delete(Path.Combine(GlobalPaths.CsvReplicaDumpLocation, Path.GetFileName(filename)));
+                    }
+                    File.Move(filename, Path.Combine(GlobalPaths.CsvReplicaDumpLocation, Path.GetFileName(filename)));
+                } catch (Exception) { /* Ok whatever, IO stuff happens. */ }
             }
         }
 
