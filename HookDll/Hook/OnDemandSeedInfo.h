@@ -5,6 +5,14 @@
 #include "BaseMethodHook.h"
 #include <string>
 #include <thread>
+#include <boost/property_tree/ptree.hpp>                                        
+#include <boost/property_tree/json_parser.hpp>       
+#include <boost/filesystem.hpp>
+#include <boost/range/iterator_range.hpp>
+#include <boost/algorithm/string/predicate.hpp>
+#include <iostream>
+#include <boost/algorithm/string.hpp> 
+
 #include "GrimTypes.h"
 
 
@@ -40,7 +48,7 @@ protected:
 	volatile int m_sleepMilliseconds;
 
 	// Game interaction
-	void GetItemInfo(ParsedSeedRequest obj);
+	boost::property_tree::ptree GetItemInfo(ParsedSeedRequest obj);
 	typedef void(__fastcall* pItemEquipmentGetUIDisplayText)(GAME::ItemEquipment*, GAME::Character* myCharacter, std::vector<GAME::GameTextLine>* text, bool includeSetBonusDetails); // If false, we'll get a "click here for more info" text instead.
 	static pItemEquipmentGetUIDisplayText fnItemEquipmentGetUIDisplayText;
 

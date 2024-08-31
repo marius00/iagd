@@ -1,18 +1,11 @@
 #include "stdafx.h"
 #include <set>
 #include <stdio.h>
+#include <random>
 #include <stdlib.h>
 #include "MessageType.h"
 #include "OnDemandSeedInfo.h"
 #include "Exports.h"
-#include <boost/property_tree/ptree.hpp>                                        
-#include <boost/property_tree/json_parser.hpp>       
-#include <boost/filesystem.hpp>
-#include <boost/range/iterator_range.hpp>
-#include <boost/algorithm/string/predicate.hpp>
-#include <iostream>
-#include <boost/algorithm/string.hpp> 
-
 #include <codecvt> // wstring_convert
 
 #include "Logger.h"
@@ -233,7 +226,6 @@ void OnDemandSeedInfo::Process() {
 	try {
 		boost::filesystem::create_directories(GetIagdFolder() + L"replica\\to_ia\\");
 
-		std::set<std::wstring> knownFiles = std::set<std::wstring>();
 		while (m_isActive) {
 			Sleep(500);
 
@@ -253,30 +245,27 @@ void OnDemandSeedInfo::Process() {
 
 			for (auto& entry : boost::make_iterator_range(boost::filesystem::directory_iterator(folder), {})) {
 				auto filename = std::wstring(entry.path().c_str());
-				if (knownFiles.find(filename) == knownFiles.end()) {
 
-					if (boost::algorithm::ends_with(filename, ".csv")) {
-						LogToFile(LogLevel::INFO, std::wstring(L"Queued file: ") + std::wstring(entry.path().c_str()));
+				if (boost::algorithm::ends_with(filename, ".csv")) {
+					LogToFile(LogLevel::INFO, std::wstring(L"Queued file: ") + std::wstring(entry.path().c_str()));
 
-						ParsedSeedRequest* obj = ReadReplicaInfo(entry.path().c_str());
-						if (obj == nullptr) {
-							LogToFile(LogLevel::WARNING, std::wstring(L"Ignoring file, got nullptr when deserializing: ") + std::wstring(entry.path().c_str()));
-						}
-						else {
-							ParsedSeedRequestPtr abc(obj);
-							m_itemQueue.push(abc);
-						}
+					ParsedSeedRequest* obj = ReadReplicaInfo(entry.path().c_str());
+					if (obj == nullptr) {
+						LogToFile(LogLevel::WARNING, std::wstring(L"Ignoring file, got nullptr when deserializing: ") + std::wstring(entry.path().c_str()));
 					}
 					else {
-						LogToFile(LogLevel::INFO, std::wstring(L"Ignoring file: ") + std::wstring(entry.path().c_str()));
+						ParsedSeedRequestPtr abc(obj);
+						m_itemQueue.push(abc);
 					}
-					knownFiles.insert(filename); // TODO: Still needed?
+				}
+				else {
+					LogToFile(LogLevel::INFO, std::wstring(L"Ignoring file: ") + std::wstring(entry.path().c_str()));
+				}
 
-					DeleteFile(filename.c_str());
+				DeleteFile(filename.c_str());
 
-					if (m_itemQueue.size() > 20) {
-						Sleep(3500);
-					}
+				if (m_itemQueue.size() > 20) {
+					Sleep(1);
 				}
 			}
 		}
@@ -299,7 +288,7 @@ std::string toString(std::wstring s) {
 }
 
 
-std::string toJson(ParsedSeedRequest obj, std::vector<GAME::GameTextLine>& gameTextLines) {
+boost::property_tree::ptree toJson(ParsedSeedRequest obj, std::vector<GAME::GameTextLine>& gameTextLines) {
 	boost::property_tree::ptree root;
 	root.put("playerItemId", obj.playerItemId);
 	root.put("buddyItemId", obj.buddyItemId.c_str());
@@ -331,13 +320,11 @@ std::string toJson(ParsedSeedRequest obj, std::vector<GAME::GameTextLine>& gameT
 
 	root.add_child("stats", stats);
 
-	std::stringstream json;
-	boost::property_tree::write_json(json, root);
-	return json.str();
+	return root;
 }
 
 // TODO: Either rename, or make this method do less. Probably the latter
-void OnDemandSeedInfo::GetItemInfo(ParsedSeedRequest obj) {
+boost::property_tree::ptree OnDemandSeedInfo::GetItemInfo(ParsedSeedRequest obj) {
 	// Check for access to Game.dll
 	if (GetModuleHandleA("Game.dll")) {
 		GAME::ItemReplicaInfo replica = obj.itemReplicaInfo;
@@ -351,7 +338,7 @@ void OnDemandSeedInfo::GetItemInfo(ParsedSeedRequest obj) {
 				DataItemPtr item(new DataItem(TYPE_ITEMSEEDDATA_PLAYERID_ERR_NOGAME, 0, nullptr));
 				m_dataQueue->push(item);
 				SetEvent(m_hEvent);
-				return;
+				return boost::property_tree::ptree();
 			}
 
 			GAME::Character* character = (GAME::Character*)fnGetMainPlayer(gameEngine);
@@ -360,7 +347,7 @@ void OnDemandSeedInfo::GetItemInfo(ParsedSeedRequest obj) {
 				DataItemPtr item(new DataItem(TYPE_ITEMSEEDDATA_PLAYERID_ERR_NOGAME, 0, nullptr));
 				m_dataQueue->push(item);
 				SetEvent(m_hEvent);
-				return;
+				return boost::property_tree::ptree();
 			}
 
 			// TODO: We should fetch this earlier, ensure we don't get the hooked method. -- We seem to be getting 4 replies. 4th one is the message below. 
@@ -371,19 +358,8 @@ void OnDemandSeedInfo::GetItemInfo(ParsedSeedRequest obj) {
 
 
 			LogToFile(LogLevel::INFO, L"Generating json..");
-			
-			std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-			std::wstring buddyItemId = converter.from_bytes(obj.buddyItemId);
-			std::wstring fullPath = GetIagdFolder() + L"replica\\to_ia\\" + std::to_wstring(obj.playerItemId) + buddyItemId;
-			std::wofstream stream;
-			stream.open(fullPath);
-			stream << toJson(obj, gameTextLines).c_str();
-			stream.flush();
-			stream.close();
-			LogToFile(LogLevel::INFO, L"Wrote items stats to " + fullPath);
 
-			// Now that we're done writing we can move it and give it the .json suffix, that way IA isn't trying to read it while we're writing
-			MoveFile(fullPath.c_str(), (fullPath + L".json").c_str());
+			return toJson(obj, gameTextLines);
 		}
 		else {
 			std::string str = obj.itemReplicaInfo.baseRecord;
@@ -397,27 +373,34 @@ void OnDemandSeedInfo::GetItemInfo(ParsedSeedRequest obj) {
 		m_dataQueue->push(item);
 		SetEvent(m_hEvent);
 	}
+
+	return boost::property_tree::ptree();
 }
 
+
+std::wstring randomFilename32() {
+	std::wstring str(L"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
+
+	std::random_device rd;
+	std::mt19937 generator(rd());
+
+	std::shuffle(str.begin(), str.end(), generator);
+
+	return str.substr(0, 32);    // assumes 32 < number of characters in str         
+}
 
 
 void* __fastcall OnDemandSeedInfo::HookedMethod(void* This, int v) {
 	void* r = g_self->originalMethod(This, v);
 
-	// Only start processing items if the game is running.
-	// Attempting to create items with a set bonus from the main menu may crash the game.
-	// Items with skills may also end up with missing info if created from the main menu.
-	/*GAME::GameEngine* gameEngine = fnGetGameEngine();
-	bool isGameLoading = IsGameLoading(gameEngine);
-	bool isGameWaiting = IsGameWaiting(gameEngine, true);
-	bool isGameEngineOnline = IsGameEngineOnline(gameEngine);
-	*/
 
 	
 	if (g_self->m_sleepMilliseconds <= 0) {
 		try {
+			// Only start processing items if the game is running.
+			// Attempting to create items with a set bonus from the main menu may crash the game.
+			// Items with skills may also end up with missing info if created from the main menu.
 			bool isGameLoading = IsGameLoading(This);
-			///bool isGameWaiting = IsGameWaiting(This, true);
 			bool isGameEngineOnline = IsGameEngineOnline(This);
 
 			if (!isGameLoading /* && !isGameWaiting*/ && isGameEngineOnline) {
@@ -425,7 +408,9 @@ void* __fastcall OnDemandSeedInfo::HookedMethod(void* This, int v) {
 				// Process the queue
 				int num = 0;
 
-				while (!g_self->m_itemQueue.empty() && num++ < 5) {
+				boost::property_tree::ptree result;
+				
+				while (!g_self->m_itemQueue.empty() && num++ < 100) {
 					LogToFile(LogLevel::INFO, L"Processing..");
 					ParsedSeedRequestPtr ptr = g_self->m_itemQueue.pop();
 					if (ptr == nullptr) {
@@ -434,16 +419,37 @@ void* __fastcall OnDemandSeedInfo::HookedMethod(void* This, int v) {
 					ParsedSeedRequest obj = *ptr.get();
 
 					LogToFile(LogLevel::INFO, L"Fetching items stats for " + GAME::Serialize(obj.itemReplicaInfo));
-					g_self->GetItemInfo(obj);
+					boost::property_tree::ptree json = g_self->GetItemInfo(obj);
+					if (!json.empty()) {
+						std::string id = std::to_string(obj.playerItemId) + obj.buddyItemId;
+						result.push_back(std::make_pair(id, json));
+					}
+				}
+
+				if (result.size() > 0) {
+					// Write json array
+					std::wstring fullPath = GetIagdFolder() + L"replica\\to_ia\\" + randomFilename32();
+
+
+					std::stringstream json;
+					boost::property_tree::write_json(json, result);
+
+					std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+					std::wofstream stream;
+					stream.open(fullPath);
+					stream << json.str().c_str();
+					stream.flush();
+					stream.close();
+					LogToFile(LogLevel::INFO, L"Wrote items stats to " + fullPath);
+
+					// Now that we're done writing we can move it and give it the .json suffix, that way IA isn't trying to read it while we're writing
+					MoveFile(fullPath.c_str(), (fullPath + L".json").c_str());
 				}
 			}
 			else {
 				if (isGameLoading) {
 					LogToFile(LogLevel::INFO, "Game is loading, real stat generation not available.");
 				}
-				/*if (isGameWaiting) {
-					LogToFile(LogLevel::INFO, "Game is waiting, real stat generation not available.");
-				}*/
 				if (!isGameEngineOnline) {
 					LogToFile(LogLevel::INFO, "///Game engine is not online, real stat generation not available.");
 				}

@@ -87,35 +87,34 @@ namespace IAGrim.Services.ItemReplica {
             try {
                 var json = File.ReadAllText(filename);
                 _logger.Info($"Parsing file {filename} for item stats");
+                var arr = JsonConvert.DeserializeObject<Dictionary<string, JsonObj>>(json);
+                foreach (var itemTemplate in arr) {
+                    var template = itemTemplate.Value;
+                    var stats = template.stats
+                        .Select(m => new ReplicaItemRow {
+                            Text = Regex.Replace(m.text.Trim(), @"(\^.?)", ""),
+                            Type = Int32.Parse(m.type),
+                        }).ToList();
 
-                var template = JsonConvert.DeserializeObject<JsonObj>(json);
-                var stats = template.stats
-                    .Select(m => new ReplicaItemRow {
-                        Text = Regex.Replace(m.text.Trim(), @"(\^.?)", ""),
-                        Type = Int32.Parse(m.type),
-                    }).ToList();
+
+                    var item = new ReplicaItem {
+                        PlayerItemId = long.Parse(template.playerItemId),
+                        BuddyItemId = template.buddyItemId
+                    };
+
+                    if (item.PlayerItemId == 0) {
+                        // Unique constraint will fail if its 0, this is likely a buddy item
+                        item.PlayerItemId = null;
+                    }
+
+                    if (string.IsNullOrEmpty(item.BuddyItemId)) {
+                        item.BuddyItemId = null;
+                    }
 
 
-                var item = new ReplicaItem {
-                    PlayerItemId = long.Parse(template.playerItemId),
-                    BuddyItemId = template.buddyItemId
-                };
-
-                if (item.PlayerItemId == 0) {
-                    // Unique constraint will fail if its 0, this is likely a buddy item
-                    item.PlayerItemId = null;
+                    _logger.Debug("Storing replica item stats for item " + item.PlayerItemId + item.BuddyItemId);
+                    _replicaItemDao.Save(item, stats);
                 }
-
-                if (string.IsNullOrEmpty(item.BuddyItemId)) {
-                    // Unique constraint will fail if its 0, this is likely a buddy item
-                    item.BuddyItemId = null;
-                }
-
-
-                _logger.Debug("Storing replica item stats for item " + item.PlayerItemId + item.BuddyItemId);
-                _replicaItemDao.Save(item, stats);
-
-
             }
             catch (Exception ex) {
                 _logger.Warn("Error storing replica item stats for item: " + ex.Message);
