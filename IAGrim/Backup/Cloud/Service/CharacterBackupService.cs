@@ -32,6 +32,10 @@ namespace IAGrim.Backup.Cloud.Service {
                 return;
             }
 
+            if (!FileBackup.MyDocumentsGrimDawnExists()) {
+                return;
+            }
+
             if (!_isActive)
                 return;
 

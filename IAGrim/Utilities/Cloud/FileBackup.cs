@@ -141,6 +141,11 @@ namespace IAGrim.Utilities.Cloud {
             return false;
         }
 
+        public static bool MyDocumentsGrimDawnExists() {
+            string characterFolder = Path.Combine(GlobalPaths.SavePath, "main");
+            return Directory.Exists(characterFolder);
+        }
+
         public static DateTime GetHighestCharacterTimestamp() {
             string characterFolder = Path.Combine(GlobalPaths.SavePath, "main");
             var characters = Directory.GetDirectories(characterFolder).ToList();
