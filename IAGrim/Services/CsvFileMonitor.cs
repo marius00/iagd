@@ -34,6 +34,7 @@ namespace IAGrim.Services {
             _watcher.IncludeSubdirectories = false;
             _watcher.Created += _watcher_Created;
             _watcher.Renamed += _watcher_Created;
+            _watcher.InternalBufferSize = 65536;
 
             _watcher.Error += Watcher_Error;
             _watcher.EnableRaisingEvents = true;
