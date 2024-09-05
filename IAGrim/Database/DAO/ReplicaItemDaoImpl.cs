@@ -20,9 +20,12 @@ namespace IAGrim.Database {
         public void Save(ReplicaItem obj, List<ReplicaItemRow> rows) {
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
-                    session.Save(obj);
+                    var id = session.CreateSQLQuery("INSERT INTO ReplicaItem2 (playeritemid, buddyitemid) VALUES (:player, :buddy) RETURNING id")
+                        .SetParameter("player", obj.PlayerItemId)
+                        .SetParameter("buddy", obj.BuddyItemId)
+                        .ExecuteUpdate();
                     foreach (ReplicaItemRow row in rows) {
-                        row.ReplicaItemId = obj.Id;
+                        row.ReplicaItemId = id;
                         session.Save(row);
                     }
 
