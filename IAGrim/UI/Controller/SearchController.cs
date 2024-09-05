@@ -17,7 +17,7 @@ using IAGrim.Settings;
 
 namespace IAGrim.UI.Controller {
     public class SearchController {
-        private const int TakeSize = 64;
+        private const int TakeSize = 64*4;
 
         private static readonly ILog Logger = LogManager.GetLogger(typeof(SearchController));
         private readonly IPlayerItemDao _playerItemDao;
