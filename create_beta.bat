@@ -5,8 +5,6 @@ copy /y %appdata%\..\local\evilsoft\iagd\tags_ia.template.txt installer\tags_ia.
 "Inno\iscc" Inno\gdia_beta.iss
 
 
-echo "Checking for unstaged changes before tagging to git.."
-git diff --exit-code || exit
 set-commit-tags.cmd
 
 echo All good

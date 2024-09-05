@@ -302,6 +302,9 @@ namespace IAGrim.UI {
             _window?.Dispose();
             _window = null;
 
+            _itemReplicaParser?.Dispose();
+            _itemReplicaParser = null;
+
             IterAndCloseForms(Controls);
         }
 
@@ -677,8 +680,9 @@ namespace IAGrim.UI {
 
             _itemReplicaParser = new ItemReplicaParser(replicaItemDao);
             _replicaCsvFileMonitor.OnModified += (_, arg) => {
-                _itemReplicaParser.Process(arg);
+                _itemReplicaParser.Enqueue(arg);
             };
+            _itemReplicaParser.Start();
 
             // Typically new users expect that items just magically appear, which is a terrible user experience when you have thousands of items. But works fine for a small set of items.
             var shouldAutoSearchOnNewItems = playerItemDao.GetNumItems() < 100;

@@ -96,10 +96,10 @@ namespace IAGrim.Services {
                     if (csv != null) {
                         if (!File.Exists(filename)) {
                             File.WriteAllText(filename, csv);
+                            _cache.Add(hash);
                         }
                     }
 
-                    _cache.Add(hash);
                     Thread.Sleep(1);
                 }
             }
@@ -129,10 +129,10 @@ namespace IAGrim.Services {
                     if (csv != null) {
                         if (!File.Exists(filename)) {
                             File.WriteAllText(filename, csv);
+                            _cache.Add(hash);
                         }
                     }
 
-                    _cache.Add(hash);
                     Thread.Sleep(1);
                 }
             }

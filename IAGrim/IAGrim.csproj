@@ -253,6 +253,7 @@
     <Compile Include="Parsers\TransferStash\TransferStashServiceCache.cs" />
     <Compile Include="Parsers\TransferStash\TransferStashWorker.cs" />
     <Compile Include="Services\CsvParsingService.cs" />
+    <Compile Include="Services\DebugLockedFileUtil.cs" />
     <Compile Include="Services\HelpService.cs" />
     <Compile Include="Services\ItemReplica\ItemStatInfo.cs" />
     <Compile Include="Services\ItemReplicaService.cs" />

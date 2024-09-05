@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using EvilsoftCommons.Exceptions;
 using IAGrim.Database;
 using IAGrim.Database.Interfaces;
 using IAGrim.Utilities;
 using log4net;
+using log4net.Repository.Hierarchy;
 using Newtonsoft.Json;
 
 
@@ -29,15 +32,14 @@ namespace IAGrim.Services.ItemReplica {
     class ItemReplicaParser : IDisposable {
         private readonly ILog _logger = LogManager.GetLogger(typeof(ItemReplicaParser));
         private readonly IReplicaItemDao _replicaItemDao;
+        private Thread _thread = null;
+        private volatile bool _isCancelled;
+        private readonly ConcurrentQueue<string> _queue = new ConcurrentQueue<string>();
 
         public ItemReplicaParser(IReplicaItemDao replicaItemDao) {
             this._replicaItemDao = replicaItemDao;
         }
 
-        public void Process(EventArgs arg) {
-            var csvEvent = arg as CsvFileMonitor.CsvEvent; // Stupid name, its json..
-            Process(csvEvent.Filename);
-        }
 
         class JsonObj {
             public string playerItemId { get; set; }
@@ -79,8 +81,35 @@ namespace IAGrim.Services.ItemReplica {
                     }
                 }
 
-                Process(filename);
+                Enqueue(filename);
             }
+        }
+
+        public void Start() {
+            _thread = new Thread(Exec);
+            _thread.Start();
+        }
+
+        private void Exec() {
+            while (!_isCancelled) {
+                while (_queue.TryDequeue(out var filename) && !_isCancelled) {
+                    Process(filename);
+                }
+
+                try {
+                    Thread.Sleep(1500);
+                }
+                catch (Exception) {
+                }
+            }
+        }
+        public void Enqueue(EventArgs arg) {
+            var csvEvent = arg as CsvFileMonitor.CsvEvent; // Stupid name, its json..
+            Enqueue(csvEvent.Filename);
+        }
+
+        public void Enqueue(string filename) {
+            _queue.Enqueue(filename);
         }
 
         private void Process(string filename) {
@@ -116,6 +145,18 @@ namespace IAGrim.Services.ItemReplica {
                     _replicaItemDao.Save(item, stats);
                 }
             }
+            catch (IOException ex) {
+                _logger.Warn("IOException reading replica file: " + ex.Message);
+                if (ex.Message.Contains("because it is being used by another process")) {
+                    var locks = DebugLockedFileUtil.WhoIsLocking(filename);
+                    foreach (var process in locks) {
+                        _logger.Warn($"The process \"{process.ProcessName}\" is locking {filename}");
+                    }
+                }
+            }
+            catch (System.Data.SQLite.SQLiteException ex) {
+                _logger.Warn("Error storing replica item stats for item: " + ex.Message);
+            }
             catch (Exception ex) {
                 _logger.Warn("Error storing replica item stats for item: " + ex.Message);
             }
@@ -130,6 +171,7 @@ namespace IAGrim.Services.ItemReplica {
         }
 
         public void Dispose() {
+            _isCancelled = true;
         }
     }
 }
