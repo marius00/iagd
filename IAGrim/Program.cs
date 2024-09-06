@@ -20,6 +20,7 @@ using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Synchronizer.Core;
 using IAGrim.Services;
 using IAGrim.Settings;
+using System.Diagnostics;
 
 
 namespace IAGrim {

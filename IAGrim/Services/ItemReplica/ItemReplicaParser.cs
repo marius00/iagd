@@ -91,6 +91,7 @@ namespace IAGrim.Services.ItemReplica {
         }
 
         private void Exec() {
+            ExceptionReporter.EnableLogUnhandledOnThread();
             while (!_isCancelled) {
                 while (_queue.TryDequeue(out var filename) && !_isCancelled) {
                     Process(filename);

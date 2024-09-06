@@ -23,7 +23,7 @@ namespace IAGrim.Database {
                     var id = session.CreateSQLQuery("INSERT INTO ReplicaItem2 (playeritemid, buddyitemid) VALUES (:player, :buddy) RETURNING id")
                         .SetParameter("player", obj.PlayerItemId)
                         .SetParameter("buddy", obj.BuddyItemId)
-                        .ExecuteUpdate();
+                        .UniqueResult<long>();
                     foreach (ReplicaItemRow row in rows) {
                         row.ReplicaItemId = id;
                         session.Save(row);
