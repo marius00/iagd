@@ -636,9 +636,9 @@ namespace IAGrim.Database {
 
             if (!string.IsNullOrEmpty(query.Wildcard)) {
                 // queryFragments.Add("(PI.namelowercase LIKE :name OR R.text LIKE :wildcard)");
-                queryFragments.Add("(PI.namelowercase LIKE :name OR R.id IN (SELECT replicaitemid FROM replicaitemrow WHERE text LIKE :wildcard))");
-                queryParams.Add("wildcard", $"%{query.Wildcard.ToLower()}%");
-                queryParams.Add("name", $"%{query.Wildcard.Replace(' ', '%').ToLower()}%");
+                queryFragments.Add("(PI.namelowercase LIKE :name OR R.id IN (SELECT replicaitemid FROM replicaitemrow WHERE IFNULL(textlowercase, text) LIKE :wildcard))");
+                queryParams.Add("wildcard", $"%{query.Wildcard.ToLowerInvariant()}%");
+                queryParams.Add("name", $"%{query.Wildcard.Replace(' ', '%').ToLowerInvariant()}%");
             }
 
             // Filter by mod/hc

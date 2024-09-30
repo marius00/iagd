@@ -82,37 +82,6 @@ namespace IAGrim.Services {
             return items.Where(IsBuddyItem).Select(item => item as BuddyItem).ToList();
         }
 
-        private void ApplyStatsToAugmentations(List<PlayerHeldItem> items) {
-            ApplyStatsToDbItems(items, StatFetch.AugmentItems);
-        }
-
-        private void ApplyStatsToDbItems(List<PlayerHeldItem> items, StatFetch type) {
-            var records = GetRecordsForItems(items);
-            Dictionary<string, List<DBStatRow>> statMap = _databaseItemStatDao.GetStats(records, type);
-
-            foreach (PlayerHeldItem phi in items) {
-                List<DBStatRow> stats = new List<DBStatRow>();
-                if (statMap.ContainsKey(phi.BaseRecord))
-                    stats.AddRange(Filter(statMap[phi.BaseRecord]));
-
-                var statsWithText = Filter(stats.Where(m => !string.IsNullOrEmpty(m.TextValue)));
-                List<DBStatRow> statsWithNumerics = stats.Where(m => string.IsNullOrEmpty(m.TextValue))
-                    .GroupBy(r => r.Stat)
-                    .Select(g => new DBStatRow {
-                        Record = g.FirstOrDefault()?.Record,
-                        TextValue = g.FirstOrDefault()?.TextValue,
-                        Stat = g.FirstOrDefault()?.Stat,
-                        Value = g.Sum(v => v.Value)
-                    })
-                    .ToList();
-
-                statsWithNumerics.AddRange(statsWithText);
-
-                phi.Tags = new HashSet<DBStatRow>(statsWithNumerics);
-            }
-
-            Logger.Debug($"Applied stats to {items.Count} items");
-        }
 
         public void ApplyStats(IEnumerable<PlayerHeldItem> itemSource) {
             var items = itemSource.ToList();

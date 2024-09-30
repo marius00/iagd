@@ -79,8 +79,7 @@ namespace IAGrim.Services {
                 count += items.Count;
                 foreach (var item in items) {
                     var hash = item.Id + ".csv";
-                    if (_cache.Exists(
-                            hash)) // Don't ask for the same item twice. Esp if the user somehow gets two identical items in, this would infinitely loop.
+                    if (_cache.Exists(hash)) // Don't ask for the same item twice. Esp if the user somehow gets two identical items in, this would infinitely loop.
                         continue;
 
 

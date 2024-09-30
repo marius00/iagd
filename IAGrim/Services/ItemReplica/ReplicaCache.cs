@@ -16,7 +16,7 @@ namespace IAGrim.Services.ItemReplica {
             _cache.Add(hash, 0);
 
             // TODO: In the future, delete the oldest or something
-            if (_cache.Keys.Count > 10000)
+            if (_cache.Keys.Count > 500000)
                 _cache.Clear();
         }
 

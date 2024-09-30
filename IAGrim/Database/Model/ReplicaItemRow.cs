@@ -10,5 +10,6 @@ namespace IAGrim.Database {
         public virtual long ReplicaItemId { get; set; }
         public virtual long Type { get; set; } = 0;
         public virtual string Text { get; set; } = "";
+        public virtual string TextLowercase { get; set; } = "";
     }
 }

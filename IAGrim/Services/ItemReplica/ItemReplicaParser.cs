@@ -123,6 +123,7 @@ namespace IAGrim.Services.ItemReplica {
                     var stats = template.stats
                         .Select(m => new ReplicaItemRow {
                             Text = Regex.Replace(m.text.Trim(), @"(\^.?)", ""),
+                            TextLowercase = Regex.Replace(m.text.Trim(), @"(\^.?)", "").ToLowerInvariant(),
                             Type = Int32.Parse(m.type),
                         }).ToList();
 
