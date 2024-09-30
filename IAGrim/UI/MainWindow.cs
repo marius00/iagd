@@ -440,6 +440,7 @@ namespace IAGrim.UI {
         private void DatabaseLoadedTrigger() {
             _searchWindow.UpdateInterface();
             _searchWindow?.UpdateListViewDelayed();
+            _itemReplicaService.Reset();
         }
 
         private void MainWindow_Load(object sender, EventArgs e) {
