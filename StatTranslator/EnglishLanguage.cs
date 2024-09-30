@@ -724,6 +724,7 @@ namespace StatTranslator {
             {"iatag_slot_sword2h", "Sword (2h)"},
             {"iatag_slot_mace2h", "Mace (2h)"},
             {"iatag_slot_axe2h", "Axe (2h)"},
+            {"iatag_slot_spear2h", "Spear (2h)"},
             {"iatag_slot_ranged1h", "Ranged (1h)"},
             {"iatag_slot_ranged2h", "Ranged (2h)"},
             {"iatag_slot_scroll", "Scroll"},

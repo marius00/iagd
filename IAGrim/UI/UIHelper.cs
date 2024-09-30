@@ -144,7 +144,7 @@ namespace IAGrim.UI
                     new ComboBoxItem
                     {
                         Text = language.GetTag("iatag_slot_weapon2h"),
-                        Filter = new[] {"WeaponMelee_Sword2h", "WeaponMelee_Mace2h", "WeaponMelee_Axe2h"}
+                        Filter = new[] {"WeaponMelee_Sword2h", "WeaponMelee_Mace2h", "WeaponMelee_Axe2h", "WeaponMelee_Spear2h" }
                     },
                     new ComboBoxItem
                     {

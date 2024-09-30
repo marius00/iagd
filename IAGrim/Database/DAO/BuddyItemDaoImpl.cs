@@ -179,6 +179,7 @@ namespace IAGrim.Database {
                             'WeaponMelee_Dagger', 
                             'WeaponMelee_Mace', 
                             'WeaponMelee_Axe',
+                            'WeaponMelee_Spear2h',
                             'WeaponMelee_Scepter',
                             'WeaponMelee_Sword',
                             'WeaponMelee_Sword2h',
