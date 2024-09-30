@@ -23,11 +23,15 @@ namespace IAGrim.Services {
         private volatile bool _isShuttingDown = false;
         private Thread _t = null;
         private readonly ActionCooldown _cooldown = new ActionCooldown(2500);
-        private readonly ReplicaCache _cache = new ReplicaCache();
+        private ReplicaCache _cache = new ReplicaCache();
 
         public ItemReplicaService(IPlayerItemDao playerItemDao, IBuddyItemDao buddyItemDao) {
             _playerItemDao = playerItemDao;
             _buddyItemDao = buddyItemDao;
+        }
+
+        public void Reset() {
+            _cache = new ReplicaCache();
         }
 
         public void Start() {
