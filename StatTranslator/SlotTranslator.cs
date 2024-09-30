@@ -26,6 +26,7 @@ namespace StatTranslator
                     ["WeaponMelee_Sword2h"] = language.GetTag("iatag_slot_sword2h"),
                     ["WeaponMelee_Mace2h"] = language.GetTag("iatag_slot_mace2h"),
                     ["WeaponMelee_Axe2h"] = language.GetTag("iatag_slot_axe2h"),
+                    ["WeaponMelee_Spear2h"] = language.GetTag("iatag_slot_spear2h"),
                     ["WeaponHunting_Ranged1h"] = language.GetTag("iatag_slot_ranged1h"),
                     ["WeaponHunting_Ranged2h"] = language.GetTag("iatag_slot_ranged2h"),
                     ["WeaponArmor_Offhand"] = language.GetTag("iatag_slot_offhand"),
