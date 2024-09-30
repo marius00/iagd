@@ -1049,6 +1049,7 @@ DELETE FROM PlayerItem WHERE Id IN (
                             'WeaponMelee_Axe',
                             'WeaponMelee_Scepter',
                             'WeaponMelee_Sword',
+                            'WeaponMelee_Spear2h',
                             'WeaponMelee_Sword2h',
                             'WeaponMelee_Mace2h',
                             'WeaponMelee_Axe2h',
