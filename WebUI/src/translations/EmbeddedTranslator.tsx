@@ -11,7 +11,6 @@ class EmbeddedTranslator {
   static defaults: { [index: string]: string } = {
     'app.tab.items': 'Items',
     'app.tab.collections': 'Collections',
-    'app.tab.crafting': 'Crafting',
     'app.tab.help': 'Help',
     'app.tab.components': 'Components',
     'app.tab.discord': 'Help / Discord',
