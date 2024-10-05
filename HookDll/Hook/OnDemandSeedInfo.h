@@ -20,6 +20,7 @@ struct ParsedSeedRequest {
 	__int64 playerItemId;
 	GAME::ItemReplicaInfo itemReplicaInfo;
 	std::string buddyItemId;
+	bool isRelic;
 };
 typedef boost::shared_ptr<ParsedSeedRequest> ParsedSeedRequestPtr;
 
@@ -51,6 +52,7 @@ protected:
 	boost::property_tree::ptree GetItemInfo(ParsedSeedRequest obj);
 	typedef void(__fastcall* pItemEquipmentGetUIDisplayText)(GAME::ItemEquipment*, GAME::Character* myCharacter, std::vector<GAME::GameTextLine>* text, bool includeSetBonusDetails); // If false, we'll get a "click here for more info" text instead.
 	static pItemEquipmentGetUIDisplayText fnItemEquipmentGetUIDisplayText;
+	static pItemEquipmentGetUIDisplayText fnItemRelicGetUIDisplayText;
 
 	static OnDemandSeedInfo* g_self;
 

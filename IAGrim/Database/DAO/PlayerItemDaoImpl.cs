@@ -1056,7 +1056,8 @@ DELETE FROM PlayerItem WHERE Id IN (
                             'WeaponHunting_Ranged1h',
                             'WeaponHunting_Ranged2h',
                             'WeaponArmor_Offhand',
-                            'WeaponArmor_Shield'
+                            'WeaponArmor_Shield',
+                            'ItemArtifact'
                         ) 
                         AND db.id_databaseitem = dbs.id_databaseitem
                     )

@@ -12,6 +12,7 @@
 std::wstring GetIagdFolder();
 
 OnDemandSeedInfo::pItemEquipmentGetUIDisplayText OnDemandSeedInfo::fnItemEquipmentGetUIDisplayText;
+OnDemandSeedInfo::pItemEquipmentGetUIDisplayText OnDemandSeedInfo::fnItemRelicGetUIDisplayText;
 OnDemandSeedInfo* OnDemandSeedInfo::g_self;
 OnDemandSeedInfo::OnDemandSeedInfo() {}
 OnDemandSeedInfo::OnDemandSeedInfo(DataQueue* dataQueue, HANDLE hEvent) {
@@ -21,8 +22,13 @@ OnDemandSeedInfo::OnDemandSeedInfo(DataQueue* dataQueue, HANDLE hEvent) {
 	m_sleepMilliseconds = 0;
 
 	auto handle = GetProcAddressOrLogToFile(L"game.dll", "?GetUIDisplayText@ItemEquipment@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@_N@Z");
-	if (handle == NULL) LogToFile(LogLevel::FATAL, L"Error hooking IsGameLoading@GameEngine");
+	if (handle == NULL) LogToFile(LogLevel::FATAL, L"Error hooking GetUIDisplayText@ItemEquipment");
 	fnItemEquipmentGetUIDisplayText = pItemEquipmentGetUIDisplayText(handle);
+
+
+	auto handle2 = GetProcAddressOrLogToFile(L"game.dll", GET_ITEMARTIFACT_GETUIDISPLAYTEXT);
+	if (handle2 == NULL) LogToFile(LogLevel::FATAL, L"Error hooking GetUIDisplayText@ItemArtifact");
+	fnItemRelicGetUIDisplayText = pItemEquipmentGetUIDisplayText(handle2);
 }
 
 
@@ -156,6 +162,10 @@ ParsedSeedRequest* OnDemandSeedInfo::DeserializeReplicaCsv(std::vector<std::stri
 	boost::algorithm::trim(item.transmuteRecord);
 
 	result->itemReplicaInfo = item;
+
+
+	// Relics have a different function it needs called
+	result->isRelic = item.baseRecord.find("/gearrelic/") != std::string::npos;
 
 	return result;
 }
@@ -353,7 +363,15 @@ boost::property_tree::ptree OnDemandSeedInfo::GetItemInfo(ParsedSeedRequest obj)
 			// TODO: We should fetch this earlier, ensure we don't get the hooked method. -- We seem to be getting 4 replies. 4th one is the message below. 
 			// First is probably in Item:: then ItemEquipment:: (both have hooks), 
 			// Sender is responsible for ensuring that this is NOT as set item, not a potion/scroll/other and not a relic. Eg must be equipment which is not part of a set.
-			fnItemEquipmentGetUIDisplayText((GAME::ItemEquipment*)newItem, character, &gameTextLines, true);
+
+			if (obj.isRelic) {
+				fnItemRelicGetUIDisplayText((GAME::ItemEquipment*)newItem, character, &gameTextLines, true);
+			}
+			else {
+				fnItemEquipmentGetUIDisplayText((GAME::ItemEquipment*)newItem, character, &gameTextLines, true);
+			}
+			
+
 			fnDestroyObjectEx(fnGetObjectManager(), (GAME::Object*)newItem, nullptr, 0);
 
 
