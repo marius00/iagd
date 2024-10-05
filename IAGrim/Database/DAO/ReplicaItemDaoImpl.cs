@@ -69,6 +69,9 @@ namespace IAGrim.Database {
                     int numRowsAffected = session.CreateSQLQuery("DELETE FROM ReplicaItem2")
                         .ExecuteUpdate();
 
+                    session.CreateSQLQuery("DELETE FROM ReplicaItemRow")
+                        .ExecuteUpdate();
+
                     transaction.Commit();
                 }
 
