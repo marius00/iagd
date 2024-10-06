@@ -31,6 +31,13 @@ namespace IAGrim.Database {
         public virtual string Rarity { get; set; }
         public string Mod { get; set; }
         public virtual bool IsHardcore { get; set; }
+        /// <summary>
+        /// Workaround for NHibernate issue, when it failed to convert SQLite's INTEGER (it deserializes CAST(... AS BIT) into Int64...) to .net's bool, even with cast (probably, metadata issue).
+        /// </summary>
+        public long IsHardcore_long {
+            get => IsHardcore ? 1 : 0;
+            set => IsHardcore = value != 0;
+        }
 
         public bool IsExpansion1 { get; set; }
 
