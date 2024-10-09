@@ -215,6 +215,7 @@ namespace IAGrim.Database {
                                 BI.{BuddyItemsTable.RemoteItemId} as RemoteItemId,
                                 BI.{BuddyItemsTable.StackCount} as Count,
                                 BI.{BuddyItemsTable.SubscriptionId} as BuddyId,
+                                BI.{BuddyItemsTable.IsHardcore} as IsHardcore,
                                 S.{BuddySubscriptionTable.Nickname} as Stash
 
 
@@ -247,6 +248,7 @@ namespace IAGrim.Database {
                     q.AddScalar("BuddyId", NHibernateUtil.Int64);
                     q.AddScalar("RemoteItemId", NHibernateUtil.String);
                     q.AddScalar("PetRecord", NHibernateUtil.String);
+                    q.AddScalar("IsHardcore", NHibernateUtil.Boolean);
 
                     q.AddScalar("Seed", NHibernateUtil.Int64);
                     q.AddScalar("RelicSeed", NHibernateUtil.Int64);

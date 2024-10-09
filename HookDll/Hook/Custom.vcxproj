@@ -202,7 +202,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>
     </LinkIncremental>
-    <IncludePath>C:\Program Files (x86)\Windows Kits\10\Include\10.0.20348.0\um;..\Detours-master\src;..\;C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.30.30705\atlmfc\include;C:\Program Files (x86)\Windows Kits\10\Include\10.0.20348.0\ucrt;$(BOOST);$(IncludePath)</IncludePath>
+    <IncludePath>C:\Program Files (x86)\Windows Kits\10\Include\10.0.20348.0\um;..\Detours-master\src;..\;C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.30.30705\atlmfc\include;C:\Program Files (x86)\Windows Kits\10\Include\10.0.20348.0\ucrt;$(BOOST);D:\Dev\boost_1_78_0;$(IncludePath)</IncludePath>
     <LibraryPath>..\Detours-master\x64;$(BOOST)\lib64-msvc-14.0;C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.30.30705\atlmfc\lib\x64;$(LibraryPath)</LibraryPath>
     <TargetName>ItemAssistantHook_x64</TargetName>
   </PropertyGroup>
