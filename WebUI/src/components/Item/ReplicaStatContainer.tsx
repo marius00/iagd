@@ -40,9 +40,6 @@ class ReplicaStatContainer extends PureComponent<Props, object> {
       <ItemStat {...stat} key={`stat-body-${id}-${statToString(stat)}`.replace(' ', '_')}/>
     );
 
-    console.log('skillz', skills);
-    console.log('rows', rows);
-
     // "Hack" to skip all the rows for a skill
     let numWhitespaces = 0;
     let isSkipping = false;

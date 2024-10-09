@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -12,6 +13,7 @@ using IAGrim.Database.Model;
 using IAGrim.Services;
 using IAGrim.Settings;
 using IAGrim.UI.Controller.dto;
+using IAGrim.UI.Misc.Protocol;
 using IAGrim.Utilities;
 using log4net;
 using Newtonsoft.Json;
@@ -40,34 +42,32 @@ namespace IAGrim.UI.Misc.CEF {
             Dispose();
         }
 
-        public void ShowCharacterBackups() {
+        private void SendMessage(IOMessage message) {
             if (BrowserControl != null && BrowserControl.CanExecuteJavascriptInMainFrame) {
-                BrowserControl.ExecuteScriptAsync("window.showCharacterBackups", "");
-                if (_tabControl.InvokeRequired) {
-                    _tabControl.Invoke((MethodInvoker) delegate { _tabControl.SelectedIndex = 0; });
-                }
-                else {
-                    _tabControl.SelectedIndex = 0;
-                }
+                BrowserControl.ExecuteScriptAsync("window.message", JsonConvert.SerializeObject(message, _serializerSettings));
             }
             else {
-                Logger.Warn("Attempted to show character backups but CEF not yet initialized.");
+                Logger.Warn("Attempted to communicate with the frontend, but CEF not yet initialized, discarded: " + JsonConvert.SerializeObject(message, _serializerSettings));
+            }
+        }
+
+        public void ShowCharacterBackups() {
+            SendMessage(new IOMessage { Type = IOMessageType.ShowCharacterBackups });
+            SwitchToFrontendTab();
+        }
+
+        private void SwitchToFrontendTab() {
+            if (_tabControl.InvokeRequired) {
+                _tabControl.Invoke((MethodInvoker)delegate { _tabControl.SelectedIndex = 0; });
+            }
+            else {
+                _tabControl.SelectedIndex = 0;
             }
         }
 
         public void ShowHelp(HelpService.HelpType type) {
-            if (BrowserControl != null && BrowserControl.CanExecuteJavascriptInMainFrame) {
-                BrowserControl.ExecuteScriptAsync("window.showHelp", type.ToString());
-                if (_tabControl.InvokeRequired) {
-                    _tabControl.Invoke((MethodInvoker) delegate { _tabControl.SelectedIndex = 0; });
-                }
-                else {
-                    _tabControl.SelectedIndex = 0;
-                }
-            }
-            else {
-                Logger.Warn("Attempted to show help but CEF not yet initialized.");
-            }
+            SendMessage(new IOMessage { Type = IOMessageType.ShowHelp, Data = type.ToString() });
+            SwitchToFrontendTab();
         }
 
         public void Dispose() {
@@ -93,21 +93,11 @@ namespace IAGrim.UI.Misc.CEF {
         }
 
         public void SetCollectionAggregateData(IList<CollectionItemAggregateRow> rows) {
-            if (BrowserControl.CanExecuteJavascriptInMainFrame) {
-                BrowserControl.ExecuteScriptAsync("window.setAggregateItemData", JsonConvert.SerializeObject(rows, _serializerSettings));
-            }
-            else {
-                Logger.Warn("Attempted to update item aggregate but CEF not yet initialized.");
-            }
+            SendMessage(new IOMessage { Type = IOMessageType.SetAggregateItemData, Data = rows });
         }
 
         public void ShowLoadingAnimation(bool visible) {
-            if (BrowserControl != null && BrowserControl.CanExecuteJavascriptInMainFrame) {
-                BrowserControl.ExecuteScriptAsync("window.setIsLoading", visible);
-            }
-            else {
-                Logger.Warn("Attempted to update items but CEF not yet initialized.");
-            }
+            SendMessage(new IOMessage { Type = IOMessageType.SetState, Data = new IOMessageStateChange { Type = IOMessageStateChangeType.IsLoading, Value = visible } });
         }
 
         /// <summary>
@@ -116,99 +106,60 @@ namespace IAGrim.UI.Misc.CEF {
         /// <param name="items">The current batch</param>
         /// <param name="numItemsFound">The number of items found, total (eg 3000 found, but batch has 64)</param>
         public void SetItems(List<List<JsonItem>> items, int numItemsFound) {
-            if (BrowserControl != null && BrowserControl.CanExecuteJavascriptInMainFrame) {
-                BrowserControl.ExecuteScriptAsync("window.setItems", JsonConvert.SerializeObject(items, _serializerSettings), numItemsFound);
-            }
-            else {
-                Logger.Warn("Attempted to update items but CEF not yet initialized.");
-            }
+            SendMessage(new IOMessage { 
+                Type = IOMessageType.SetItems, 
+                Data = new IOMessageSetItems {
+                    NumItemsFound = numItemsFound,
+                    Items = items,
+                    ReplaceExistingItems = true,
+                }
+            });
         }
 
         public void SetCollectionItems(IList<CollectionItem> items) {
-            if (BrowserControl.CanExecuteJavascriptInMainFrame) {
-                BrowserControl.ExecuteScriptAsync("window.setCollectionItems", JsonConvert.SerializeObject(items, _serializerSettings));
-            }
-            else {
-                Logger.Warn("Attempted to update items but CEF not yet initialized.");
-            }
+            SendMessage(new IOMessage {
+                Type = IOMessageType.SetCollectionItems,
+                Data = items
+            });
         }
 
         public void AddItems(List<List<JsonItem>> items) {
-            if (BrowserControl.CanExecuteJavascriptInMainFrame) {
-                BrowserControl.ExecuteScriptAsync("window.addItems", JsonConvert.SerializeObject(items, _serializerSettings));
-            }
-            else {
-                Logger.Warn("Attempted to update items but CEF not yet initialized.");
-            }
+            SendMessage(new IOMessage {
+                Type = IOMessageType.SetItems,
+                Data = new IOMessageSetItems {
+                    Items = items,
+                    ReplaceExistingItems = false,
+                }
+            });
         }
 
-        public bool SetDarkMode(bool enabled) {
-            if (BrowserControl.CanExecuteJavascriptInMainFrame) {
-                BrowserControl.ExecuteScriptAsync("window.setIsDarkmode", enabled);
-                return true;
-            }
-            else {
-                Logger.Warn("Attempted to set dark/light mode but CEF not yet initialized.");
-                return false;
-            }
+        public void SetDarkMode(bool enabled) {
+            SendMessage(new IOMessage { Type = IOMessageType.SetState, Data = new IOMessageStateChange { Type = IOMessageStateChangeType.DarkMode, Value = enabled } });
         }
 
-        public bool SetHideItemSkills(bool enabled) {
-            if (BrowserControl.CanExecuteJavascriptInMainFrame) {
-                BrowserControl.ExecuteScriptAsync("window.setHideItemSkills", enabled);
-                return true;
-            }
-            else {
-                Logger.Warn("Attempted to set hide item skilsl but CEF not yet initialized.");
-                return false;
-            }
+        public void SetHideItemSkills(bool enabled) {
+            SendMessage(new IOMessage { Type = IOMessageType.SetState, Data = new IOMessageStateChange { Type = IOMessageStateChangeType.HideItemSkills, Value = enabled } });
         }
 
         public void SetIsGrimParsed(bool enabled) {
-            if (BrowserControl.CanExecuteJavascriptInMainFrame) {
-                BrowserControl.ExecuteScriptAsync("window.setIsGrimParsed", enabled);
-            }
-            else {
-                Logger.Warn("Attempted to set GD parsed but CEF not yet initialized.");
-            }
+            SendMessage(new IOMessage { Type = IOMessageType.SetState, Data = new IOMessageStateChange { Type = IOMessageStateChangeType.GrimDawnIsParsed, Value = enabled } });
         }
 
         public void SetIsFirstRun() {
-            if (BrowserControl.CanExecuteJavascriptInMainFrame) {
-                BrowserControl.ExecuteScriptAsync("window.setIsFirstRun", true);
-            }
-            else {
-                Logger.Warn("Attempted to set setIsFirstRun but CEF not yet initialized.");
-            }
+            SendMessage(new IOMessage { Type = IOMessageType.SetState, Data = new IOMessageStateChange { Type = IOMessageStateChangeType.FirstRun, Value = true } });
         }
 
         public void SetEasterEggMode() {
-            if (BrowserControl.CanExecuteJavascriptInMainFrame) {
-                BrowserControl.ExecuteScriptAsync("window.setEasterEggMode", true);
-            }
-            else {
-                Logger.Warn("Attempted to set setEasterEggMode but CEF not yet initialized.");
-            }
+            SendMessage(new IOMessage { Type = IOMessageType.SetState, Data = new IOMessageStateChange { Type = IOMessageStateChangeType.EasterEggMode, Value = true } });
         }
 
         public void ShowModFilterWarning(int numOtherItems) {
-            if (BrowserControl.CanExecuteJavascriptInMainFrame) {
-                BrowserControl.ExecuteScriptAsync("window.setModFilterWarning", numOtherItems);
-            }
-            else {
-                Logger.Warn("Attempted to set setIsFirstRun but CEF not yet initialized.");
-            }
+            SendMessage(new IOMessage { Type = IOMessageType.ShowModFilterWarning, Data = numOtherItems });
         }
         
 
-        public bool SetOnlineBackupsEnabled(bool enabled) {
-            if (BrowserControl.CanExecuteJavascriptInMainFrame) {
-                BrowserControl.ExecuteScriptAsync("window.setOnlineBackupsEnabled", enabled);
-                return true;
-            } else {
-                Logger.Warn("Attempted to toggle hide online backup icon but CEF not yet initialized.");
-                return false;
-            }
+        public void SetOnlineBackupsEnabled(bool enabled) {
+            SendMessage(new IOMessage { Type = IOMessageType.SetState, Data = new IOMessageStateChange { Type = IOMessageStateChangeType.ShowCloudIcon, Value = enabled } });
         }
 
 
@@ -230,28 +181,19 @@ namespace IAGrim.UI.Misc.CEF {
         }
 
 
-        public void ShowMessage(string message, UserFeedbackLevel level, string helpUrl = null) {
+        public void ShowMessage(string message, UserFeedbackLevel level = UserFeedbackLevel.Info, string helpUrl = null) {
             string levelLowercased = level.ToString().ToLowerInvariant();
             var m = message.Replace("\n", "\\n").Replace("'", "\\'");
             if (!string.IsNullOrEmpty(message)) {
-                if (BrowserControl.CanExecuteJavascriptInMainFrame) {
-                    var autoDismissMessage = IsProgramActive.IsActive() || _settings.GetPersistent().AutoDismissNotifications;
-                    var ret = new Dictionary<string, string> {
-                        {"message", m},
-                        {"type", levelLowercased},
-                        {"fade", autoDismissMessage ? "true" : "false"},
-                    };
+                var autoDismissMessage = IsProgramActive.IsActive() || _settings.GetPersistent().AutoDismissNotifications;
+                var ret = new Dictionary<string, string> {
+                    {"message", m},
+                    {"type", levelLowercased},
+                    {"fade", autoDismissMessage ? "true" : "false"},
+                };
 
-                    BrowserControl.ExecuteScriptAsync("window.showMessage", JsonConvert.SerializeObject(ret, _serializerSettings));
-                }
-                else {
-                    Logger.Warn($"Attempted to display message \"{message}\" but browser is not yet initialized");
-                }
+                SendMessage(new IOMessage { Type = IOMessageType.ShowMessage, Data = ret });
             }
-        }
-
-        public void ShowMessage(string message) {
-            ShowMessage(message, UserFeedbackLevel.Info);
         }
 
 

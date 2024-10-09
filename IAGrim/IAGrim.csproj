@@ -311,6 +311,11 @@
     <Compile Include="UI\DarkMode.cs" />
     <Compile Include="UI\Misc\IsProgramActive.cs" />
     <Compile Include="UI\Misc\MinimizeToTrayHandler.cs" />
+    <Compile Include="UI\Misc\Protocol\IOMessageSetItems.cs" />
+    <Compile Include="UI\Misc\Protocol\IOMessageStateChange.cs" />
+    <Compile Include="UI\Misc\Protocol\IOMessage.cs" />
+    <Compile Include="UI\Misc\Protocol\IOMessageStateChangeType.cs" />
+    <Compile Include="UI\Misc\Protocol\IOMessageType.cs" />
     <Compile Include="UI\Misc\RequestCharacterDownloadUrlEventArgs.cs" />
     <Compile Include="UI\Misc\RequestCharacterListEventArg.cs" />
     <Compile Include="UI\Popups\AddEditBuddy.cs">
