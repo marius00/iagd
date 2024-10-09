@@ -1065,19 +1065,24 @@ DELETE FROM PlayerItem WHERE Id IN (
                 ";
 
             var sql = $@"
-                SELECT
-                PI.{PlayerItemTable.Id} as Id,
-                PI.{PlayerItemTable.Seed} as Seed,
-                PI.RelicSeed as RelicSeed,
-                PI.EnchantmentSeed as EnchantmentSeed,
-                PI.{PlayerItemTable.Record} as BaseRecord, 
-                PI.{PlayerItemTable.Prefix} as PrefixRecord, 
-                PI.{PlayerItemTable.Suffix} as SuffixRecord, 
-                PI.{PlayerItemTable.ModifierRecord} as ModifierRecord, 
+                select PI.name as Name, 
+                PI.StackCount, 
+                PI.rarity as Rarity, 
+                PI.levelrequirement as LevelRequirement, 
+                PI.baserecord as BaseRecord, 
+                PI.prefixrecord as PrefixRecord, 
+                PI.suffixrecord as SuffixRecord, 
+                PI.ModifierRecord as ModifierRecord, 
                 PI.MateriaRecord as MateriaRecord,
-                PI.EnchantmentRecord as EnchantmentRecord,
-                PI.mod as Mod,
-                PI.TransmuteRecord as TransmuteRecord
+                PI.{PlayerItemTable.PrefixRarity} as PrefixRarity,
+                PI.{PlayerItemTable.CloudId} as CloudId,
+                PI.{PlayerItemTable.IsCloudSynchronized} as IsCloudSynchronizedValue,
+                PI.{PlayerItemTable.Id} as Id,
+                PI.{PlayerItemTable.Mod} as Mod,
+                CAST({PlayerItemTable.IsHardcore} as bit) as IsHardcore,
+                '' AS PetRecord,
+                '[]' AS ReplicaInfo,
+                PI.{PlayerItemTable.Seed} as Seed
                 FROM PlayerItem PI 
                 WHERE PI.Id NOT IN (SELECT R.PlayerItemId FROM ReplicaItem2 R WHERE R.PlayerItemId IS NOT NULL)
 
@@ -1090,9 +1095,10 @@ DELETE FROM PlayerItem WHERE Id IN (
 
             using (var session = SessionCreator.OpenSession()) {
                 using (session.BeginTransaction()) {
-                    return session.CreateSQLQuery(sql)
-                        .SetResultTransformer(new AliasToBeanResultTransformer(typeof(PlayerItem)))
-                        .List<PlayerItem>();
+                    return session.CreateSQLQuery(sql).List()
+                        .Cast<object>()
+                        .Select(ToPlayerItem)
+                        .ToList();
                 }
             }
         }
