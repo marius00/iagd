@@ -14,24 +14,24 @@ namespace IAGrim.Services {
         private int _skip;
         private List<PlayerHeldItem> _items = new List<PlayerHeldItem>();
 
-        public int NumItems {
+        public int NumItems => _items.Count;
+
+        private int Remaining {
             get {
-                var uniques = _items.Select(item => {
-                    if (item is PlayerItem pi) {
-                        return (pi.BaseRecord ?? string.Empty) + (pi.PrefixRecord ?? string.Empty) + (pi.SuffixRecord ?? string.Empty) + pi.Seed;
-                    }
-                    else if (item is BuddyItem bi) {
-                        return (bi.BaseRecord ?? string.Empty) + (bi.PrefixRecord ?? string.Empty) + (bi.SuffixRecord ?? string.Empty) + bi.Seed;
+                if (_limit >= NumItems - _skip) {
+                    return Math.Min(_limit, NumItems - _skip);
+                } else {
+                    int takeUntil = Math.Min(_limit, NumItems - _skip);
+
+                    // If the next base record is the same, keep taking more items to prevent splitting an item "stack"
+                    while (takeUntil < NumItems - _skip - 1 && _items[takeUntil].BaseRecord == _items[takeUntil+1].BaseRecord) {
+                        takeUntil++;
                     }
 
-                    return item.BaseRecord;
-                }).ToHashSet();
-
-                return uniques.Count;
+                    return takeUntil;
+                }
             }
         }
-
-        private int Remaining => Math.Min(_limit, NumItems - _skip);
 
 
         public ItemPaginationService(int limit) {

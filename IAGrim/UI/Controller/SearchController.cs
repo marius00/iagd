@@ -1,10 +1,8 @@
 ﻿using IAGrim.Database;
 using IAGrim.Database.Dto;
 using IAGrim.Database.Interfaces;
-using IAGrim.Database.Synchronizer;
 using IAGrim.Services;
 using IAGrim.UI.Controller.dto;
-using IAGrim.UI.Misc;
 using IAGrim.UI.Misc.CEF;
 using IAGrim.Utilities;
 using log4net;
@@ -13,7 +11,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using EvilsoftCommons.Exceptions;
-using IAGrim.Settings;
 
 namespace IAGrim.UI.Controller {
     public class SearchController {
@@ -51,17 +48,6 @@ namespace IAGrim.UI.Controller {
             OnSearch?.Invoke(this, null);
         }
 
-        public string Search(ItemSearchRequest query, bool includeBuddyItems, bool orderByLevel) {
-            // Signal that we are loading items
-            Browser.ShowLoadingAnimation(true);
-
-            var message = Search_(query, includeBuddyItems, orderByLevel);
-
-
-
-            return message;
-        }
-
         private void UpdateCollectionItems(ItemSearchRequest query) {
             Thread thread = new Thread(() => {
                 ExceptionReporter.EnableLogUnhandledOnThread();
@@ -94,9 +80,12 @@ namespace IAGrim.UI.Controller {
             return true;
         }
 
-        private string Search_(ItemSearchRequest query, bool includeBuddyItems, bool orderByLevel) {
+        public string Search(ItemSearchRequest query, bool includeBuddyItems, bool orderByLevel) {
             OnSearch?.Invoke(this, null);
             string message;
+
+            // Signal that we are loading items
+            Browser.ShowLoadingAnimation(true);
 
 
             Logger.Info("Searching for items..");
