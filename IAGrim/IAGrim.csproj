@@ -401,7 +401,6 @@
     <Compile Include="Database\Model\SetBonusRecord.cs" />
     <Compile Include="Database\Model\SkillModifierStat.cs" />
     <Compile Include="Database\SessionFactoryLoader\SessionFactory.cs" />
-    <Compile Include="Database\SearchResult.cs" />
     <Compile Include="Database\Synchronizer\BasicSynchronizer.cs" />
     <Compile Include="Database\Synchronizer\BuddyItemRepo.cs" />
     <Compile Include="Database\Synchronizer\BuddySubscriptionRepo.cs" />

@@ -24,8 +24,10 @@ namespace IAGrim.Services {
                     int takeUntil = Math.Min(_limit, NumItems - _skip);
 
                     // If the next base record is the same, keep taking more items to prevent splitting an item "stack"
-                    while (takeUntil < NumItems - _skip - 1 && _items[takeUntil].BaseRecord == _items[takeUntil+1].BaseRecord) {
+                    while ( _items[takeUntil].BaseRecord == _items[takeUntil+1].BaseRecord) {
                         takeUntil++;
+                        if (takeUntil >= NumItems - 1)
+                            return takeUntil + 1;
                     }
 
                     return takeUntil;

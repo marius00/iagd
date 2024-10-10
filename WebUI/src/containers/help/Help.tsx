@@ -101,12 +101,6 @@ const helpEntries = [
         type: IHelpEntryType.Help
     },
     {
-        title: `IA shows me "Unknown Item"!??`,
-        tag: 'UnknownItem',
-        body: () => typicalParseDbMessage,
-        type: IHelpEntryType.Help
-    },
-    {
         title: `My icons are missing!`,
         tag: 'MissingIcons',
         body: () => <div>
@@ -472,16 +466,6 @@ const helpEntries = [
             Not all translations has full support for IAGD.
         </div>
     },
-    /*
-    {
-      title: `aaaaaaaaaaaaaaaaaaa`,
-      tag: 'UnknownItem',
-      body: () => <div>
-        bbbbbbbbbbbbbbbbbbbbbbb
-      </div>
-    },
-
-  */
 ] as IHelpEntry[];
 
 // Converts a JSX element tree to an array of text (extract text content from <div>mytext</div> for example)
