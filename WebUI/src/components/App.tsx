@@ -18,24 +18,26 @@ import EasterEgg from "./EasterEgg";
 import ModFilterWarning from "./ModFilterWarning";
 import FirstRunHelpThingie from "./FirstRunHelpThingie";
 import IItemAggregateRow from "../interfaces/IItemAggregateRow";
+import NoMoreInstantSyncWarning from "./NoMoreInstantSyncWarning/NoMoreInstantSyncWarning";
 
 interface ApplicationState {
-    items: IItem[][];
-    isLoading: boolean;
-    activeTab: number;
-    collectionItems: ICollectionItem[];
-    itemAggregate: IItemAggregateRow[];
-    isDarkMode: boolean;
-    helpSearchFilter: string;
-    numItems: number;
-    showBackupCloudIcon: boolean;
-    notifications: NotificationMessage[];
-    hideItemSkills: boolean;
-    isGrimParsed: boolean;
-    isFirstRun: boolean;
-    showModFilterWarning: number;
-    hasShownModFilterWarning: boolean;
-    easterEggMode: boolean;
+  items: IItem[][];
+  isLoading: boolean;
+  activeTab: number;
+  collectionItems: ICollectionItem[];
+  itemAggregate: IItemAggregateRow[];
+  isDarkMode: boolean;
+  helpSearchFilter: string;
+  numItems: number;
+  showBackupCloudIcon: boolean;
+  notifications: NotificationMessage[];
+  hideItemSkills: boolean;
+  isGrimParsed: boolean;
+  isFirstRun: boolean;
+  showModFilterWarning: number;
+  hasShownModFilterWarning: boolean;
+  easterEggMode: boolean;
+  showNoMoreInstantSyncWarning: boolean;
 }
 
 interface IOMessage {
@@ -67,6 +69,7 @@ enum IOMessageStateChangeType {
     FirstRun,
     EasterEggMode,
     IsLoading,
+    ShowNoMoreInstantSyncWarning,
 }
 
 interface IOMessageSetItems {
@@ -76,186 +79,194 @@ interface IOMessageSetItems {
 }
 
 class App extends PureComponent<object, object> {
-    state = {
-        items: [],
-        isLoading: true,
-        activeTab: 0,
-        collectionItems: [],
-        itemAggregate: [],
-        isDarkMode: false,
-        helpSearchFilter: '',
-        numItems: 0,
-        showBackupCloudIcon: true,
-        notifications: [],
-        hideItemSkills: false,
-        isGrimParsed: true,
-        isFirstRun: false,
-        showModFilterWarning: 0,
-        hasShownModFilterWarning: false,
-        easterEggMode: false,
-    } as ApplicationState;
+  state = {
+      items: [],
+      isLoading: true,
+      activeTab: 0,
+      collectionItems: [],
+      itemAggregate: [],
+      isDarkMode: false,
+      helpSearchFilter: '',
+      numItems: 0,
+      showBackupCloudIcon: true,
+      notifications: [],
+      hideItemSkills: false,
+      isGrimParsed: true,
+      isFirstRun: false,
+      showModFilterWarning: 0,
+      hasShownModFilterWarning: false,
+      easterEggMode: false,
+      showNoMoreInstantSyncWarning: false,
+  } as ApplicationState;
 
-    componentDidMount() {
-        // Mock data for not embedded / dev mode
-        if (!isEmbedded) {
-            this.setState({collectionItems: MockCollectionItemData});
-        }
+  componentDidMount() {
+      // Mock data for not embedded / dev mode
+      if (!isEmbedded) {
+          this.setState({collectionItems: MockCollectionItemData});
+      }
 
-        // Show a notification message such as "Item transferred" or "Too close to stash"
-        // @ts-ignore: showMessage doesn't exist on window
-        const showMessage = (s: any) => {
-            let notifications = [...this.state.notifications]
-            while (notifications.length >= 8) {
-                notifications.shift();
-            }
+      // Show a notification message such as "Item transferred" or "Too close to stash"
+      // @ts-ignore: showMessage doesn't exist on window
+      const showMessage = (s: any) => {
+          let notifications = [...this.state.notifications]
+          while (notifications.length >= 8) {
+              notifications.shift();
+          }
 
-            let id = "" + Math.random();
-            notifications.push({
-                message: s.message,
-                type: s.type,
-                id: id
-            });
+          let id = "" + Math.random();
+          notifications.push({
+              message: s.message,
+              type: s.type,
+              id: id
+          });
 
-            // If IA has focus, we don't need to keep these messages
-            if (s.fade === "true") {
-                setTimeout(() => {
-                    let notifications = [...this.state.notifications].filter(n => n.id !== id);
-                    this.setState({
-                        notifications: notifications
-                    });
+          // If IA has focus, we don't need to keep these messages
+          if (s.fade === "true") {
+              setTimeout(() => {
+                  let notifications = [...this.state.notifications].filter(n => n.id !== id);
+                  this.setState({
+                      notifications: notifications
+                  });
 
-                }, 3500);
-            }
+              }, 3500);
+          }
 
-            this.setState({
-                notifications: notifications
-            });
-        };
+          this.setState({
+              notifications: notifications
+          });
+      };
 
-        // @ts-ignore: message doesn't exist on window
-        window.message = (input: string) => {
-            let message = JSON.parse(input) as IOMessage;
+      // @ts-ignore: message doesn't exist on window
+      window.message = (input: string) => {
+          let message = JSON.parse(input) as IOMessage;
 
-            switch (message.type) {
-                case IOMessageType.ShowCharacterBackups:
-                    this.setState({
-                        activeTab: 3,
-                    });
-                    break;
+          switch (message.type) {
+              case IOMessageType.ShowCharacterBackups:
+                  this.setState({
+                      activeTab: 3,
+                  });
+                  break;
 
-                case IOMessageType.ShowHelp:
-                    this.setState({
-                        activeTab: 2,
-                        helpSearchFilter: message.data as string,
-                        isLoading: false,
-                    });
-                    break;
+              case IOMessageType.ShowHelp:
+                  this.setState({
+                      activeTab: 2,
+                      helpSearchFilter: message.data as string,
+                      isLoading: false,
+                  });
+                  break;
 
-                case IOMessageType.ShowMessage:
-                    showMessage(message.data);
-                    break;
+              case IOMessageType.ShowMessage:
+                  showMessage(message.data);
+                  break;
 
-                case IOMessageType.ShowModFilterWarning:
-                    // Enable "is first run" tutorial window
-                    if (!this.state.hasShownModFilterWarning) {
-                        this.setState({
-                            showModFilterWarning: message.data as number,
-                            hasShownModFilterWarning: true,
-                        });
-                    }
-                    break;
+              case IOMessageType.ShowModFilterWarning:
+                  // Enable "is first run" tutorial window
+                  if (!this.state.hasShownModFilterWarning) {
+                      this.setState({
+                          showModFilterWarning: message.data as number,
+                          hasShownModFilterWarning: true,
+                      });
+                  }
+                  break;
 
-                case IOMessageType.SetItems: {
-                    let data = message.data as IOMessageSetItems;
+              case IOMessageType.SetItems: {
+                  let data = message.data as IOMessageSetItems;
 
-                    if (data.replaceExistingItems) {
-                        window.scrollTo(0, 0);
-                        let isFirstRun = this.state.isFirstRun && data.numItemsFound === 0;
-                        this.setState({
-                            isLoading: false,
-                            items: data.items,
-                            numItems: data.numItemsFound || 0,
-                            isFirstRun: isFirstRun,
-                        });
-                    } else {
-                        const items = [...this.state.items];
-                        this.setState({
-                            isLoading: false,
-                            items: items.concat(data.items)
-                        });
-                    }
+                  if (data.replaceExistingItems) {
+                      window.scrollTo(0, 0);
+                      let isFirstRun = this.state.isFirstRun && data.numItemsFound === 0;
+                      this.setState({
+                          isLoading: false,
+                          items: data.items,
+                          numItems: data.numItemsFound || 0,
+                          isFirstRun: isFirstRun,
+                      });
+                  } else {
+                      const items = [...this.state.items];
+                      this.setState({
+                          isLoading: false,
+                          items: items.concat(data.items)
+                      });
+                  }
 
-                    console.log("Item state is now", this.state.items);
-                }
-                    break;
+                  console.log("Item state is now", this.state.items);
+              }
+                  break;
 
-                case IOMessageType.SetCollectionItems:
-                    this.setState({
-                        collectionItems: message.data
-                    });
-                    break;
+              case IOMessageType.SetCollectionItems:
+                  this.setState({
+                      collectionItems: message.data
+                  });
+                  break;
 
-                case IOMessageType.SetAggregateItemData: {
-                    let data = message.data;
-                    const itemAggregate = typeof data === 'string' ? JSON.parse(data) : data;
-                    console.log('Item Aggregate:', itemAggregate);
-                    this.setState({
-                        itemAggregate: itemAggregate
-                    });
-                }
-                    break;
+              case IOMessageType.SetAggregateItemData: {
+                  let data = message.data;
+                  const itemAggregate = typeof data === 'string' ? JSON.parse(data) : data;
+                  console.log('Item Aggregate:', itemAggregate);
+                  this.setState({
+                      itemAggregate: itemAggregate
+                  });
+              }
+                  break;
 
-                case IOMessageType.SetState: {
-                    let data = message.data as IOMessageStateChange;
-                    switch (data.type) {
-                        // TODO: This could be a lookup map.. enum => state value..
-                        case IOMessageStateChangeType.ShowCloudIcon:
-                            this.setState({
-                                showBackupCloudIcon: data.value
-                            });
-                            break;
-                        case IOMessageStateChangeType.GrimDawnIsParsed:
-                            this.setState({
-                                isGrimParsed: data.value,
-                                isLoading: false,
-                            });
-                            break;
+              case IOMessageType.SetState: {
+                  let data = message.data as IOMessageStateChange;
+                  switch (data.type) {
+                      // TODO: This could be a lookup map.. enum => state value..
+                      case IOMessageStateChangeType.ShowCloudIcon:
+                          this.setState({
+                              showBackupCloudIcon: data.value
+                          });
+                          break;
+                      case IOMessageStateChangeType.GrimDawnIsParsed:
+                          this.setState({
+                              isGrimParsed: data.value,
+                              isLoading: false,
+                          });
+                          break;
 
-                        case IOMessageStateChangeType.EasterEggMode:
-                            this.setState({
-                                easterEggMode: true,
-                            });
-                            break;
+                    case IOMessageStateChangeType.EasterEggMode:
+                      this.setState({
+                        easterEggMode: true,
+                      });
+                      break;
 
-                        case IOMessageStateChangeType.FirstRun:
-                            this.setState({
-                                isFirstRun: true,
-                            });
-                            break;
-                        case IOMessageStateChangeType.HideItemSkills:
-                            this.setState({
-                                hideItemSkills: data.value
-                            });
-                            break;
 
-                        case IOMessageStateChangeType.DarkMode:
-                            this.setState({
-                                isDarkMode: data.value
-                            });
-                            break;
+                    case IOMessageStateChangeType.ShowNoMoreInstantSyncWarning:
+                      this.setState({
+                        showNoMoreInstantSyncWarning: true,
+                      });
+                      break;
 
-                        case IOMessageStateChangeType.IsLoading:
-                            this.setState({
-                                isLoading: data.value
-                            });
-                            break;
+                    case IOMessageStateChangeType.FirstRun:
+                          this.setState({
+                              isFirstRun: true,
+                          });
+                          break;
+                      case IOMessageStateChangeType.HideItemSkills:
+                          this.setState({
+                              hideItemSkills: data.value
+                          });
+                          break;
 
-                    }
-                }
-                    break;
-            }
-        };
-    }
+                      case IOMessageStateChangeType.DarkMode:
+                          this.setState({
+                              isDarkMode: data.value
+                          });
+                          break;
+
+                      case IOMessageStateChangeType.IsLoading:
+                          this.setState({
+                              isLoading: data.value
+                          });
+                          break;
+
+                  }
+              }
+                  break;
+          }
+      };
+  }
 
 
     // Used primarily for setting mock items for testing
@@ -343,6 +354,10 @@ class App extends PureComponent<object, object> {
         if (this.state.easterEggMode) {
             return <EasterEgg close={() => this.setState({easterEggMode: false})}/>;
         }
+
+      if (this.state.showNoMoreInstantSyncWarning) {
+        return <NoMoreInstantSyncWarning/>;
+      }
 
         return (
             <div className={'App ' + (this.state.isDarkMode ? 'App-dark' : 'App-Light')}>

@@ -37,6 +37,7 @@ using IAGrim.Settings;
 using System.IO;
 using IAGrim.Services.ItemReplica;
 using System.Runtime.InteropServices;
+using NHibernate.Cfg;
 
 namespace IAGrim.UI {
     public partial class MainWindow : Form {
@@ -75,6 +76,7 @@ namespace IAGrim.UI {
         private readonly UserFeedbackService _userFeedbackService;
         private MinimizeToTrayHandler _minimizeToTrayHandler;
         private ModsDatabaseConfig _modsDatabaseConfigTab;
+        public static int NumInstantSyncItemCount = 300;
 
 
         #region Stash Status
@@ -686,13 +688,21 @@ namespace IAGrim.UI {
             _itemReplicaParser.Start();
 
             // Typically new users expect that items just magically appear, which is a terrible user experience when you have thousands of items. But works fine for a small set of items.
-            var shouldAutoSearchOnNewItems = playerItemDao.GetNumItems() < 100;
+            // Maybe you should get a help screen when crossing "the magic threshold"? Explaining how it changes..
+            var shouldAutoSearchOnNewItems = playerItemDao.GetNumItems() < NumInstantSyncItemCount;
 
             _csvParsingService.OnItemLooted += (_, arg) => {
                 _searchWindow.SelectModFilterIfNotSelected();
 
                 if (shouldAutoSearchOnNewItems) {
                     _searchWindow.UpdateListView();
+                }
+
+                if (playerItemDao.GetNumItems() > NumInstantSyncItemCount) {
+                    settingsService.GetLocal().PendingInstantSyncWarning = false;
+                    shouldAutoSearchOnNewItems = false;
+                    _cefBrowserHandler.ShowNoMoreInstantSyncWarning();
+                    Logger.Info($"Item count has reached {NumInstantSyncItemCount}, showing warning and disabling instant sync");
                 }
             };
 

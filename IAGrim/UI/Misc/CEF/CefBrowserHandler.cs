@@ -100,6 +100,10 @@ namespace IAGrim.UI.Misc.CEF {
             SendMessage(new IOMessage { Type = IOMessageType.SetState, Data = new IOMessageStateChange { Type = IOMessageStateChangeType.IsLoading, Value = visible } });
         }
 
+        public void ShowNoMoreInstantSyncWarning() {
+            SendMessage(new IOMessage { Type = IOMessageType.SetState, Data = new IOMessageStateChange { Type = IOMessageStateChangeType.ShowNoMoreInstantSyncWarning, Value = true } });
+        }
+
         /// <summary>
         /// Set the current batch of items
         /// </summary>

@@ -5,6 +5,7 @@ using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.Arz;
 using IAGrim.Parsers.GameDataParsing.Service;
 using IAGrim.Settings;
+using IAGrim.UI;
 using IAGrim.Utilities;
 using IAGrim.Utilities.HelperClasses;
 using log4net;
@@ -75,6 +76,11 @@ namespace IAGrim {
                     long numItemsStored = session.CreateCriteria<PlayerItem>()
                         .SetProjection(NHibernate.Criterion.Projections.RowCountInt64())
                         .UniqueResult<long>();
+
+                    if (numItemsStored < MainWindow.NumInstantSyncItemCount * 2.0/3.0) {
+                        settings.GetLocal().PendingInstantSyncWarning = true;
+                        Logger.Info($"The user has less than 2/3rd of {MainWindow.NumInstantSyncItemCount} items, queueing instant sync warning banner");
+                    }
 
                     if (numItemsStored == 0)
                         Logger.Warn($"There are {numItemsStored} items stored in the database. <---- Unless you just installed IA, this is bad. No items.");

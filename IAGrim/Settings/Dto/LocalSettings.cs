@@ -15,6 +15,7 @@ namespace IAGrim.Settings.Dto {
         private bool _easterPrank;
         private bool _hasSuggestedLanguageChange;
         private int _stashToDepositTo;
+        private bool _pendingInstantSyncWarning;
         private int _stashToLootFrom;
         private GDTransferFile _lastSelectedMod;
         private string _lastSelectedTargetMod;
@@ -102,6 +103,14 @@ namespace IAGrim.Settings.Dto {
             get => _stashToDepositTo;
             set {
                 _stashToDepositTo = value;
+                OnMutate?.Invoke(null, null);
+            }
+        }
+
+        public bool PendingInstantSyncWarning {
+            get => _pendingInstantSyncWarning;
+            set {
+                _pendingInstantSyncWarning = value;
                 OnMutate?.Invoke(null, null);
             }
         }

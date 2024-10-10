@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace IAGrim.UI.Misc.Protocol {
+﻿namespace IAGrim.UI.Misc.Protocol {
     internal enum IOMessageStateChangeType {
         ShowCloudIcon,
         DarkMode,
@@ -13,5 +7,6 @@ namespace IAGrim.UI.Misc.Protocol {
         FirstRun,
         EasterEggMode,
         IsLoading,
+        ShowNoMoreInstantSyncWarning,
     }
 }

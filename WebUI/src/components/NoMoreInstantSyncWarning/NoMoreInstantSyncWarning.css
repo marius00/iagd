@@ -1,0 +1,49 @@
+.large {
+    font-size: 18px !important;
+}
+
+.black {
+    color: #ffc744  !important;
+    background-color: #000000 !important;
+}
+
+.border {
+    border: 1px solid #ccc !important;
+}
+
+.panel {
+    margin-top: 16px;
+    margin-bottom: 16px;
+}
+
+.container {
+    position: relative;
+    max-width: 90vw;
+    margin-left: 30px;
+    margin-bottom: 30px;
+    padding: 30px;
+    text-align: center;
+}
+
+.outer {
+    padding: 30px 30px 30px 5px;
+    text-align: center;
+}
+
+.img {
+    max-height: 600px;
+}
+.text {
+    max-width: 800px;
+    display: inline-block;
+}
+.btn {
+    background-color: #ff7f7f;
+    border-radius: 5px;
+    border: 1px solid #551c1c;
+    color: black;
+    width: 230px;
+    display: inline-block;
+    cursor: pointer;
+    padding: 12px;
+}
