@@ -696,14 +696,15 @@ namespace IAGrim.UI {
 
                 if (shouldAutoSearchOnNewItems) {
                     _searchWindow.UpdateListView();
+
+                    if (playerItemDao.GetNumItems() > NumInstantSyncItemCount) {
+                        settingsService.GetLocal().PendingInstantSyncWarning = false;
+                        shouldAutoSearchOnNewItems = false;
+                        _cefBrowserHandler.ShowNoMoreInstantSyncWarning();
+                        Logger.Info($"Item count has reached {NumInstantSyncItemCount}, showing warning and disabling instant sync");
+                    }
                 }
 
-                if (playerItemDao.GetNumItems() > NumInstantSyncItemCount) {
-                    settingsService.GetLocal().PendingInstantSyncWarning = false;
-                    shouldAutoSearchOnNewItems = false;
-                    _cefBrowserHandler.ShowNoMoreInstantSyncWarning();
-                    Logger.Info($"Item count has reached {NumInstantSyncItemCount}, showing warning and disabling instant sync");
-                }
             };
 
             _csvFileMonitor.StartMonitoring(GlobalPaths.CsvLocationIngoing, "*.csv");
