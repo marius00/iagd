@@ -403,3 +403,4 @@ bin
 /current-cefsharp-hash.txt
 /WebUI/size-plugin.json
 /WebUI/src/assets/*.png
+/WebUI/src/static

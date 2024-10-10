@@ -11,6 +11,14 @@ After first cloning the project, the developer should run "npm install" to downl
 
 When running the project on port 3000 (default), IA will load the live view instead of reading from file. (Only when starting IA in debug mode)
 
+## Icons
+The icons needs to be placed in `src\static` which is not checked into git.
+They can be copied from `%appdata%\..\local\evilsoft\iagd\storage\static`.
+
+Including icons in the project requires them to be included in the C# project as resources.
+
+_No good reason behind this, just not taken the time to do this properly._ 
+
 ## CLI Commands
 
 * `build.cmd` Builds the project and copies the files to the debug folder in IAGD (also does some post-processing)
@@ -18,18 +26,7 @@ When running the project on port 3000 (default), IA will load the live view inst
 
 ## NPM Commands
 *   `npm install`: Installs dependencies
-
 *   `npm run dev`: Run a development, HMR server
-
 *   `npm run serve`: Run a production-like server
-
 *   `npm run build`: Production-ready build
-
 *   `npm run lint`: Pass TypeScript files using ESLint
-
-*   `npm run test`: Run Jest and Enzyme with
-    [`enzyme-adapter-preact-pure`](https://github.com/preactjs/enzyme-adapter-preact-pure) for
-    your tests
-
-
-For detailed explanation on how things work, checkout the [CLI Readme](https://github.com/developit/preact-cli/blob/master/README.md).

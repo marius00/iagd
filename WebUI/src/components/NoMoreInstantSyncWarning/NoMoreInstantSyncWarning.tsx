@@ -2,7 +2,11 @@ import {h} from "preact";
 import {PureComponent} from "preact/compat";
 import styles from "./NoMoreInstantSyncWarning.css";
 
-class NoMoreInstantSyncWarning extends PureComponent<object> {
+interface Props {
+  close: () => void;
+}
+
+class NoMoreInstantSyncWarning extends PureComponent<Props, object> {
   state = {
     isHidden: false,
   }
@@ -26,7 +30,7 @@ class NoMoreInstantSyncWarning extends PureComponent<object> {
             This change will help keep your item view stable, without jumping around for a single new item being added to a list of thousands.<br/>
           </p>
           <br/>
-          <p className={styles.btn} onClick={() => this.setState({isHidden: true})}>I understand</p>
+          <p className={styles.btn} onClick={ () => this.props.close()}>I understand</p>
         </div>
       </div>
     );
