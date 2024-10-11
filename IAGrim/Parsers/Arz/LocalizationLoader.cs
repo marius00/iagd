@@ -127,7 +127,7 @@ namespace IAGrim.Parsers.Arz {
             foreach (var line in data.Split('\n')) {
                 var sline = line.Split('=');
                 if (sline.Length == 2) {
-                    result[sline[0].Trim()] = sline[1].Replace("^k", "");
+                    result[sline[0].Trim()] = sline[1].Replace("^k", "").TrimEnd('\r');
                 }
             }
 
