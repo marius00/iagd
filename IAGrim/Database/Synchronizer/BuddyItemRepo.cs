@@ -91,5 +91,11 @@ namespace IAGrim.Database.Synchronizer {
                 () => _repo.RemoveBuddy(buddyId)
             );
         }
+
+        public void Delete() {
+            ThreadExecuter.Execute(
+                () => _repo.Delete()
+            );
+        }
     }
 }

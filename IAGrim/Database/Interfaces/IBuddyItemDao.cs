@@ -20,5 +20,7 @@ namespace IAGrim.Database.Interfaces {
         void Delete(BuddySubscription subscription, List<DeleteItemDto> items);
 
         IList<BuddyItem> ListMissingReplica();
+
+        void Delete();
     }
 }

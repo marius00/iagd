@@ -188,6 +188,7 @@ namespace IAGrim.UI.Tabs {
             _authAuthService.Logout();
             _settings.GetPersistent().CloudUploadTimestamp = 0;
             _playerItemDao.ResetOnlineSyncState();
+            _buddyItemDao.Delete();
             MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_backup_logout_successful_body"), RuntimeSettings.Language.GetTag("iatag_ui_backup_logout_successful_header"));
             UpdateUi();
         }

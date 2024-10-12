@@ -764,5 +764,27 @@ namespace IAGrim.Database {
                 }
             }
         }
+
+        public void Delete() {
+            using (ISession session = SessionCreator.OpenSession()) {
+                using (ITransaction transaction = session.BeginTransaction()) {
+                    session.CreateSQLQuery($"DELETE FROM {BuddyItemsTable.Table} WHERE {BuddyItemsTable.SubscriptionId}")
+                        .ExecuteUpdate();
+
+                    session.CreateSQLQuery($"DELETE FROM {BuddySubscriptionTable.Table} WHERE {BuddySubscriptionTable.Id}")
+                        .ExecuteUpdate();
+
+                    // Remove record from records table (lookup table)
+                    session.CreateSQLQuery($"DELETE FROM {BuddyItemRecordTable.Table}")
+                        .ExecuteUpdate();
+
+                    // Replica stats
+                    session.CreateSQLQuery($"DELETE FROM ReplicaItem2 WHERE playeritemid IS NULL AND buddyitemid IS NOT NULL")
+                        .ExecuteUpdate();
+
+                    transaction.Commit();
+                }
+            }
+        }
     }
 }

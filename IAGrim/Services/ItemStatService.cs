@@ -83,6 +83,10 @@ namespace IAGrim.Services {
         }
 
 
+        /// <summary>
+        /// This prepares the "Tags" list, which is used for icons and determining item type for tooltips
+        /// </summary>
+        /// <param name="itemSource"></param>
         public void ApplyStats(IEnumerable<PlayerHeldItem> itemSource) {
             var items = itemSource.ToList();
             if (items.Count > 0) {
