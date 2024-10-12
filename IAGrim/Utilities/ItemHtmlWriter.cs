@@ -173,15 +173,13 @@ namespace IAGrim.Utilities {
             Logger.Debug("Copy complete");
         }
 
-        public static List<List<JsonItem>> ToJsonSerializable(List<PlayerHeldItem> items) {
-            var jsonItems = items.Select(GetJsonItem).ToList();
-
-            var merged = ItemOperationsUtility.MergeStackSize(jsonItems);
-            foreach (var itemList in merged) {
-                itemList.Sort();
+        public static List<List<JsonItem>> ToJsonSerializable(List<List<PlayerHeldItem>> items) {
+            List<List<JsonItem>> result = new List<List<JsonItem>>(items.Count);
+            foreach (List<PlayerHeldItem> itemList in items) {
+                result.Add(itemList.Select(GetJsonItem).ToList());
             }
 
-            return merged;
+            return result;
         }
 
 

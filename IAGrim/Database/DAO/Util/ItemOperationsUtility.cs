@@ -4,7 +4,6 @@ using System.Linq;
 using IAGrim.Database.Interfaces;
 using IAGrim.Database.Model;
 using IAGrim.Services.Dto;
-using IAGrim.UI.Controller.dto;
 using IAGrim.Utilities;
 using NHibernate;
 using NHibernate.Criterion;
@@ -13,15 +12,23 @@ using StatTranslator;
 namespace IAGrim.Database.DAO.Util {
     static class ItemOperationsUtility {
 
-        public static List<List<JsonItem>> MergeStackSize(IEnumerable<JsonItem> items) {
-            Dictionary<string, List<JsonItem>> map = new Dictionary<string, List<JsonItem>>();
+        public static List<List<PlayerHeldItem>> MergeStackSize(IEnumerable<PlayerHeldItem> items) {
+            Dictionary<string, List<PlayerHeldItem>> map = new Dictionary<string, List<PlayerHeldItem>>();
             foreach (var item in items) {
-                var key = item.MergeIdentifier;
+                var mergeIdentifier = item.BaseRecord ?? string.Empty;
+                if (item is PlayerItem pi) {
+                    mergeIdentifier += (pi.PrefixRecord ?? string.Empty) + (pi.SuffixRecord ?? string.Empty);
+                }
+                else if (item is BuddyItem bi) {
+                    mergeIdentifier += (bi.PrefixRecord ?? string.Empty) + (bi.SuffixRecord ?? string.Empty);
+                }
+
+                var key = mergeIdentifier;
                 if (map.ContainsKey(key)) {
                     map[key].Add(item);
                 }
                 else {
-                    map[key] = new List<JsonItem>() { item };
+                    map[key] = new List<PlayerHeldItem>() { item };
                 }
             }
 

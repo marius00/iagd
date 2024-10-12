@@ -11,10 +11,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using EvilsoftCommons.Exceptions;
+using IAGrim.Database.DAO.Util;
 
 namespace IAGrim.UI.Controller {
     public class SearchController {
-        private const int TakeSize = 64*4;
+        private const int TakeSize = 64;
 
         private static readonly ILog Logger = LogManager.GetLogger(typeof(SearchController));
         private readonly IPlayerItemDao _playerItemDao;
@@ -65,10 +66,10 @@ namespace IAGrim.UI.Controller {
                 Browser.AddItems(new List<List<JsonItem>>(0));
                 return false;
             }
-            
-            _itemStatService.ApplyStats(items);
 
+            _itemStatService.ApplyStats(items.SelectMany(m => m));
             var convertedItems = ItemHtmlWriter.ToJsonSerializable(items);
+
             if (append) {
                 Browser.AddItems(convertedItems);
             }
@@ -76,7 +77,6 @@ namespace IAGrim.UI.Controller {
                 Browser.SetItems(convertedItems, _itemPaginationService.NumItems);
             }
 
-            // UpdateCollectionItems();
             return true;
         }
 
@@ -109,7 +109,11 @@ namespace IAGrim.UI.Controller {
                     : string.Empty;
             }
 
-            if (_itemPaginationService.Update(items, orderByLevel)) {
+
+            var merged = ItemOperationsUtility.MergeStackSize(items);
+            
+
+            if (_itemPaginationService.Update(merged, orderByLevel)) {
                 if (!ApplyItems(false)) {
                     Browser.SetItems(new List<List<JsonItem>>(0), 0);
                 }
