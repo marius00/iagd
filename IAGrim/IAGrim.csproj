@@ -252,7 +252,7 @@
     <Compile Include="Services\DebugLockedFileUtil.cs" />
     <Compile Include="Services\HelpService.cs" />
     <Compile Include="Services\ItemReplica\ItemStatInfo.cs" />
-    <Compile Include="Services\ItemReplicaService.cs" />
+    <Compile Include="Services\ItemReplica\ItemReplicaService.cs" />
     <Compile Include="Services\ItemReplica\ReplicaCache.cs" />
     <Compile Include="Services\MessageProcessor\InjectionAbortedProcessor.cs" />
     <Compile Include="Services\ItemReplica\ItemReplicaParser.cs" />

@@ -12,6 +12,7 @@ using IAGrim.Utilities;
 using log4net;
 using log4net.Repository.Hierarchy;
 using Newtonsoft.Json;
+using NHibernate.Exceptions;
 
 
 // Release notes:
@@ -114,6 +115,7 @@ namespace IAGrim.Services.ItemReplica {
         }
 
         private void Process(string filename) {
+            string latest = string.Empty;
             try {
                 var json = File.ReadAllText(filename);
                 _logger.Info($"Parsing file {filename} for item stats");
@@ -143,6 +145,7 @@ namespace IAGrim.Services.ItemReplica {
                     }
 
 
+                    latest = $"PID({item.PlayerItemId}), BID({item.BuddyItemId})";
                     _logger.Debug("Storing replica item stats for item " + item.PlayerItemId + item.BuddyItemId);
                     _replicaItemDao.Save(item, stats);
                 }
@@ -157,10 +160,13 @@ namespace IAGrim.Services.ItemReplica {
                 }
             }
             catch (System.Data.SQLite.SQLiteException ex) {
-                _logger.Warn("Error storing replica item stats for item: " + ex.Message);
+                _logger.Warn($"Error storing replica item stats for item {latest}: " + ex.Message);
+            }
+            catch (GenericADOException ex) {
+                _logger.Warn($"Error storing replica item stats for item {latest}: " + ex.Message);
             }
             catch (Exception ex) {
-                _logger.Warn("Error storing replica item stats for item: " + ex.Message);
+                _logger.Warn($"Error storing replica item stats for item {latest}: " + ex.Message);
             }
             finally {
                 try {

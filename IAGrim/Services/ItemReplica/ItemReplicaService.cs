@@ -9,6 +9,7 @@ using IAGrim.Database;
 using IAGrim.Database.Interfaces;
 using IAGrim.Services.ItemReplica;
 using IAGrim.Services.MessageProcessor;
+using IAGrim.Settings;
 using IAGrim.Utilities;
 using log4net;
 using NHibernate.Transform;
@@ -19,15 +20,17 @@ namespace IAGrim.Services {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ItemReplicaService));
         private readonly IPlayerItemDao _playerItemDao;
         private readonly IBuddyItemDao _buddyItemDao;
+        private readonly SettingsService _settingsService;
 
         private volatile bool _isShuttingDown = false;
         private Thread _t = null;
         private readonly ActionCooldown _cooldown = new ActionCooldown(2500);
         private ReplicaCache _cache = new ReplicaCache();
 
-        public ItemReplicaService(IPlayerItemDao playerItemDao, IBuddyItemDao buddyItemDao) {
+        public ItemReplicaService(IPlayerItemDao playerItemDao, IBuddyItemDao buddyItemDao, SettingsService settingsService) {
             _playerItemDao = playerItemDao;
             _buddyItemDao = buddyItemDao;
+            _settingsService = settingsService;
         }
 
         public void Reset() {
@@ -107,7 +110,9 @@ namespace IAGrim.Services {
                 }
             }
 
-            {
+            
+
+            if (!_settingsService.GetLocal().OptOutOfBackups) {
                 var items = _buddyItemDao.ListMissingReplica();
                 count += items.Count;
 

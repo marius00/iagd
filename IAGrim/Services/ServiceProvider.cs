@@ -107,7 +107,7 @@ namespace IAGrim.Services {
             services.Add(grimDawnDetector);
             services.Add(itemCollectionRepo);
             services.Add(searchController);
-            services.Add(new ItemReplicaService(playerItemDao, buddyItemDao));
+            services.Add(new ItemReplicaService(playerItemDao, buddyItemDao, settingsService));
             services.Add(replicaItemDao);
 
             services.Add(new ItemReplicaParser(replicaItemDao));
