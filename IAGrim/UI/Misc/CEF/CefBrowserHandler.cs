@@ -265,6 +265,10 @@ namespace IAGrim.UI.Misc.CEF {
             }
         }
 
+        public bool IsReady() {
+            return BrowserControl.CanExecuteJavascriptInMainFrame;
+        }
+
         public event EventHandler OnAuthSuccess;
         /* End CefBackupAuthentication End */
     }
