@@ -32,6 +32,7 @@ namespace IAGrim.Database.Interfaces {
         List<PlayerItem> SearchForItems(ItemSearchRequest query);
 
         IList<ModSelection> GetModSelection();
+        Dictionary<long, string> FindRecordsFromIds(IEnumerable<long> ids);
 
         bool Exists(PlayerItem item);
 

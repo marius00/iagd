@@ -960,6 +960,26 @@ namespace IAGrim.Database {
             }
         }
 
+        public Dictionary<long, string> FindRecordsFromIds(IEnumerable<long> ids) {
+            Dictionary<long, string> result = new Dictionary<long, string>();
+            using (var session = SessionCreator.OpenSession()) {
+                using (session.BeginTransaction()) {
+                    foreach (var pair in session.CreateSQLQuery($"SELECT id,baserecord FROM playeritem WHERE id IN ( :ids )")
+                        .SetParameterList("ids", ids)
+                        .List()) {
+
+                        var arr = (object[])pair;
+
+                        var baseRecord = Convert<string>(arr[1])?.Trim();
+                        long Id = Convert(arr[0]);
+                        result[Id] = baseRecord;
+                    }
+                }
+            }
+
+            return result;
+        }
+
         /// <summary>
         /// Delete duplicate items (items duplicated via bugs, not simply similar items)
         /// </summary>

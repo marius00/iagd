@@ -33,24 +33,33 @@ namespace IAGrim.Services.ItemReplica {
     class ItemReplicaParser : IDisposable {
         private readonly ILog _logger = LogManager.GetLogger(typeof(ItemReplicaParser));
         private readonly IReplicaItemDao _replicaItemDao;
+        private readonly IPlayerItemDao _playerItemDao;
         private Thread _thread = null;
         private volatile bool _isCancelled;
         private readonly ConcurrentQueue<string> _queue = new ConcurrentQueue<string>();
+        
 
-        public ItemReplicaParser(IReplicaItemDao replicaItemDao) {
+        public ItemReplicaParser(IReplicaItemDao replicaItemDao, IPlayerItemDao playerItemDao) {
             this._replicaItemDao = replicaItemDao;
+            this._playerItemDao = playerItemDao;
         }
 
 
         class JsonObj {
             public string playerItemId { get; set; }
             public string buddyItemId { get; set; }
+            public JsonReplicaObj replica { get; set; }
             public List<JsonStatObj> stats { get; set; }
         }
 
         class JsonStatObj {
             public string text { get; set; }
             public string type { get; set; }
+        }
+
+        class JsonReplicaObj {
+            public string baseRecord { get; set; }
+            public string prefixRecord { get; set; }
         }
 
         public void Preload() {
@@ -120,6 +129,10 @@ namespace IAGrim.Services.ItemReplica {
                 var json = File.ReadAllText(filename);
                 _logger.Info($"Parsing file {filename} for item stats");
                 var arr = JsonConvert.DeserializeObject<Dictionary<string, JsonObj>>(json);
+
+                var playerItemIds = arr.Select(m => long.Parse(m.Value.playerItemId));
+                var playerRecordMap = _playerItemDao.FindRecordsFromIds(playerItemIds);
+
                 foreach (var itemTemplate in arr) {
                     var template = itemTemplate.Value;
                     var stats = template.stats
@@ -130,8 +143,19 @@ namespace IAGrim.Services.ItemReplica {
                         }).ToList();
 
 
+                    var playerItemId = long.Parse(template.playerItemId);
+                    if (playerItemId > 0 && string.IsNullOrEmpty(template.buddyItemId)) {
+                        if (!playerRecordMap.ContainsKey(playerItemId)) {
+                            _logger.Warn($"Could not find playerItemId({playerItemId} in the db");
+                            continue;
+                        } else if (playerRecordMap[playerItemId] != template.replica.baseRecord) {
+                            _logger.Warn($"Got record '{template.replica.baseRecord}' for PID({playerItemId}), expected record '{playerRecordMap[playerItemId]}'");
+                            continue;
+                        }
+                    }
+
                     var item = new ReplicaItem {
-                        PlayerItemId = long.Parse(template.playerItemId),
+                        PlayerItemId = playerItemId,
                         BuddyItemId = template.buddyItemId
                     };
 

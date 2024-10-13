@@ -126,5 +126,11 @@ namespace IAGrim.Database.Synchronizer {
                 () => _repo.UpdateAllItemStats(items, progress)
             );
         }
+
+        public Dictionary<long, string> FindRecordsFromIds(IEnumerable<long> ids) {
+            return ThreadExecuter.Execute(
+                () => _repo.FindRecordsFromIds(ids)
+            );
+        }
     }
 }

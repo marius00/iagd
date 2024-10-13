@@ -681,7 +681,7 @@ namespace IAGrim.UI {
                 _csvParsingService.Queue(csvEvent.Filename, csvEvent.Cooldown);
             };
 
-            _itemReplicaParser = new ItemReplicaParser(replicaItemDao);
+            _itemReplicaParser = new ItemReplicaParser(replicaItemDao, playerItemDao);
             _replicaCsvFileMonitor.OnModified += (_, arg) => {
                 _itemReplicaParser.Enqueue(arg);
             };
