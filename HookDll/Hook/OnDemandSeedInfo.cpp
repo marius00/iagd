@@ -205,10 +205,10 @@ std::wstring GetFolderToReadFrom(std::wstring modName, bool isHardcore) {
 
 	std::wstring folder;
 	if (modName.empty()) {
-		folder = GetIagdFolder() + L"replica\\from_ia\\" + (isHardcore ? L"hc" : L"sc");
+		folder = GetIagdFolder() + L"replica\\from_ia";
 	}
 	else {
-		folder = GetIagdFolder() + L"replica\\from_ia\\" + (isHardcore ? L"hc" : L"sc") + L"\\" + modName;
+		folder = GetIagdFolder() + L"replica\\from_ia\\" + modName;
 	}
 
 	if (!boost::filesystem::is_directory(folder)) {

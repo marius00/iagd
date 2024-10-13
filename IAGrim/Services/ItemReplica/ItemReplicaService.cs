@@ -89,10 +89,10 @@ namespace IAGrim.Services {
                     var path = "";
                     var filename = item.Id + ".csv";
                     if (string.IsNullOrEmpty(item.Mod)) {
-                        path = Path.Combine(GlobalPaths.CsvReplicaWriteLocation, item.IsHardcore ? "hc" : "sc");
+                        path = GlobalPaths.CsvReplicaWriteLocation;
                     }
                     else {
-                        path = Path.Combine(GlobalPaths.CsvReplicaWriteLocation, item.IsHardcore ? "hc" : "sc", item.Mod);
+                        path = Path.Combine(GlobalPaths.CsvReplicaWriteLocation, item.Mod);
                     }
 
                     Directory.CreateDirectory(path);
@@ -125,10 +125,10 @@ namespace IAGrim.Services {
                     var path = "";
                     var filename = item.RemoteItemId + ".csv";
                     if (string.IsNullOrEmpty(item.Mod)) {
-                        path = Path.Combine(GlobalPaths.CsvReplicaWriteLocation, item.IsHardcore ? "hc" : "sc");
+                        path = Path.Combine(GlobalPaths.CsvReplicaWriteLocation);
                     }
                     else {
-                        path = Path.Combine(GlobalPaths.CsvReplicaWriteLocation, item.IsHardcore ? "hc" : "sc", item.Mod);
+                        path = Path.Combine(GlobalPaths.CsvReplicaWriteLocation, item.Mod);
                     }
                     Directory.CreateDirectory(path);
                     filename = Path.Combine(path, filename);
