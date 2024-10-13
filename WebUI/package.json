@@ -23,8 +23,6 @@
   "dependencies": {
     "@material-ui/core": "^4.12.4",
     "@material-ui/icons": "^4.11.3",
-    "@types/react-tooltip": "^4.2.4",
-    "@types/uuid": "^8.3.1",
     "cross-env": "^7.0.3",
     "getenv": "^1.0.0",
     "preact": "^10.3.1",
@@ -32,6 +30,7 @@
     "preact-router": "^3.2.1",
     "react": "^17.0.2",
     "react-tooltip": "^4.2.21",
+    "react-virtualized": "^9.22.5",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
@@ -39,6 +38,10 @@
     "@types/jest": "^26.0.8",
     "@typescript-eslint/eslint-plugin": "^2.25.0",
     "@typescript-eslint/parser": "^2.25.0",
+    "@types/react-tooltip": "^4.2.4",
+    "@types/react-virtualized": "^9.21.30",
+    "@types/uuid": "^8.3.1",
+    "@types/express-serve-static-core": "^4.17.28",
     "enzyme": "^3.11.0",
     "enzyme-adapter-preact-pure": "^3.1.0",
     "eslint": "^6.8.0",

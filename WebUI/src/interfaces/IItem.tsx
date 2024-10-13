@@ -21,7 +21,6 @@ export default interface IItem {
   petStats: IStat[];
   skill?: ISkill | null;
   hasCloudBackup?: boolean;
-  slot?: string;
   extras?: string | undefined;
   isMonsterInfrequent?: boolean;
   isHardcore: boolean;

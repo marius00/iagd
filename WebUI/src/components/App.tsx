@@ -175,6 +175,7 @@ class App extends PureComponent<object, object> {
           if (data.replaceExistingItems) {
             window.scrollTo(0, 0);
             let isFirstRun = this.state.isFirstRun && data.numItemsFound === 0;
+            console.log("THISSSS", JSON.stringify(data.items));
             this.setState({
               isLoading: false,
               items: data.items,

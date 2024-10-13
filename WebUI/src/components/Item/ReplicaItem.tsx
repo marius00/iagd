@@ -14,12 +14,14 @@ import { v4 as uuidv4 } from 'uuid';
 import {PureComponent} from "preact/compat";
 import ReplicaStatContainer from "./ReplicaStatContainer";
 import styles from './ReplicaItem.css';
+import {IReplicaRow} from "../../interfaces/IReplicaRow";
 
 interface Props {
   item: IItem;
   transferSingle: (item: IItem) => void;
   getItemName: (baseRecord: string) => ICollectionItem;
   showBackupCloudIcon: boolean;
+  style: any;
 }
 
 export function getUniqueId(item: IItem): string {
@@ -90,7 +92,8 @@ class ReplicaItem extends PureComponent<Props, object> {
     if (!isEmbedded) // Online items stores icons separately
       icon = `http://static.iagd.evilsoft.net/img/${icon}`;
 
-    return <div className="item-icon-container" data-tip={item.slot}>
+    const slot = item.replicaStats ? item.replicaStats.filter((value: IReplicaRow) => value.type === 64).map((value: IReplicaRow) => value.text).pop() : '';
+    return <div className="item-icon-container" data-tip={slot}>
       <div className={'item-icon-background item-icon-'+ item.quality.toLowerCase()} />
       <img src={icon} className={"item-icon" }/>
     </div>;
@@ -121,7 +124,7 @@ class ReplicaItem extends PureComponent<Props, object> {
 
     const miText = item.isMonsterInfrequent ? ' / MI' : '';
     return (
-      <div className={"item"}>
+      <div className={"item"} style={this.props.style}>
         {this.renderIcon()}
         <div className="text">
           <div>
