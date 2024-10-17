@@ -39,10 +39,6 @@ class Item extends PureComponent<Props, object> {
     return initialString?.replaceAll(/{?\^.}?/g, '');
   }
 
-  openItemSite() {
-    openUrl(`https://grimdawn.evilsoft.net/search/?query=${this.stripColorCodes(this.props.items[0].name)}`);
-  }
-
   renderBuddyItemText(items: IItem[]) {
     const buddyItems = items.filter(m => m.type === IItemType.Buddy);
     const hasRegularItems = items.filter(m => m.type === IItemType.Player).length > 0;
@@ -144,9 +140,7 @@ class Item extends PureComponent<Props, object> {
         {this.renderIcon()}
         <div className="text">
           <div>
-            <span>
-              <a onClick={() => this.openItemSite()} className={this.translateQualityToClass(item.quality)}>{name}</a>
-            </span>
+            <span className={this.translateQualityToClass(item.quality)}>{name}</span>
               {item.greenRarity === 2 ? <span className="cursor-help supergreen" data-tip={translate('items.label.doubleRare')}> (DoubleRare{miText})</span> : ''}
               {item.greenRarity === 1 ? <span className="cursor-help supergreen" data-tip={translate('items.label.singleRare')}> (Rare{miText})</span> : ''}
           </div>
