@@ -8,6 +8,7 @@ using System.Threading;
 using EvilsoftCommons.Exceptions;
 using IAGrim.Database;
 using IAGrim.Database.Interfaces;
+using IAGrim.UI.Misc.CEF;
 using IAGrim.Utilities;
 using log4net;
 using log4net.Repository.Hierarchy;
@@ -34,14 +35,16 @@ namespace IAGrim.Services.ItemReplica {
         private readonly ILog _logger = LogManager.GetLogger(typeof(ItemReplicaParser));
         private readonly IReplicaItemDao _replicaItemDao;
         private readonly IPlayerItemDao _playerItemDao;
+        private readonly IBrowserCallbacks _browser;
         private Thread _thread = null;
         private volatile bool _isCancelled;
         private readonly ConcurrentQueue<string> _queue = new ConcurrentQueue<string>();
         
 
-        public ItemReplicaParser(IReplicaItemDao replicaItemDao, IPlayerItemDao playerItemDao) {
+        public ItemReplicaParser(IReplicaItemDao replicaItemDao, IPlayerItemDao playerItemDao, IBrowserCallbacks browser) {
             this._replicaItemDao = replicaItemDao;
             this._playerItemDao = playerItemDao;
+            this._browser = browser;
         }
 
 
@@ -162,10 +165,11 @@ namespace IAGrim.Services.ItemReplica {
                     if (item.PlayerItemId == 0) {
                         // Unique constraint will fail if its 0, this is likely a buddy item
                         item.PlayerItemId = null;
-                    }
-
-                    if (string.IsNullOrEmpty(item.BuddyItemId)) {
+                    } else if (string.IsNullOrEmpty(item.BuddyItemId)) {
                         item.BuddyItemId = null;
+
+                        _browser.SignalReplicaStatChange(item.PlayerItemId.Value, stats.Select(m => new ItemStatInfo { Text = m.Text, Type = (int)m.Type }).ToList());
+
                     }
 
 

@@ -11,6 +11,7 @@ using CefSharp.WinForms.Internals;
 using IAGrim.Backup.Cloud.CefSharp;
 using IAGrim.Database.Model;
 using IAGrim.Services;
+using IAGrim.Services.ItemReplica;
 using IAGrim.Settings;
 using IAGrim.UI.Controller.dto;
 using IAGrim.UI.Misc.Protocol;
@@ -160,7 +161,19 @@ namespace IAGrim.UI.Misc.CEF {
         public void ShowModFilterWarning(int numOtherItems) {
             SendMessage(new IOMessage { Type = IOMessageType.ShowModFilterWarning, Data = numOtherItems });
         }
-        
+
+        public void SignalCloudIconChange(IList<long> playerItemIds) {
+            SendMessage(new IOMessage { Type = IOMessageType.UpdateCloudIconStatus, Data = new IOMessageCloudIconStateChange { Ids = playerItemIds } });
+        }
+        public void SignalReplicaStatChange(long playerItemId, IList<ItemStatInfo> stats) {
+            SendMessage(new IOMessage {
+                Type = IOMessageType.UpdateItemStats,
+                Data = new IOMessageSetReplicaStats { Id = playerItemId, ReplicaStats = stats }
+            }
+            );
+        }
+
+
 
         public void SetOnlineBackupsEnabled(bool enabled) {
             SendMessage(new IOMessage { Type = IOMessageType.SetState, Data = new IOMessageStateChange { Type = IOMessageStateChangeType.ShowCloudIcon, Value = enabled } });
@@ -248,7 +261,7 @@ namespace IAGrim.UI.Misc.CEF {
             }
         }
 
-        /* Start CefBackupAuthentication Start */
+        #region CefBackupAuthentication
         public void Open(string url) {
             if (BrowserControl.CanExecuteJavascriptInMainFrame) {
                 Logger.Debug("Opening IAGD login page..:");
@@ -270,6 +283,6 @@ namespace IAGrim.UI.Misc.CEF {
         }
 
         public event EventHandler OnAuthSuccess;
-        /* End CefBackupAuthentication End */
+        #endregion CefBackupAuthentication
     }
 }

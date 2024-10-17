@@ -546,7 +546,7 @@ namespace IAGrim.UI {
             UIHelper.AddAndShow(new LoggingWindow(), panelLogging);
 
             var itemTagDao = _serviceProvider.Get<IItemTagDao>();
-            var backupService = new BackupService(_authService, playerItemDao, settingsService);
+            var backupService = new BackupService(_authService, playerItemDao, settingsService, _cefBrowserHandler);
             _charBackupService = new CharacterBackupService(settingsService, _authService);
             _backupServiceWorker = new BackupServiceWorker(backupService, _charBackupService);
             searchController.JsIntegration.OnRequestBackedUpCharacterList += (_, args) => {
@@ -681,7 +681,7 @@ namespace IAGrim.UI {
                 _csvParsingService.Queue(csvEvent.Filename, csvEvent.Cooldown);
             };
 
-            _itemReplicaParser = new ItemReplicaParser(replicaItemDao, playerItemDao);
+            _itemReplicaParser = new ItemReplicaParser(replicaItemDao, playerItemDao, _cefBrowserHandler);
             _replicaCsvFileMonitor.OnModified += (_, arg) => {
                 _itemReplicaParser.Enqueue(arg);
             };

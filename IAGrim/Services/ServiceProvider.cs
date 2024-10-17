@@ -110,8 +110,6 @@ namespace IAGrim.Services {
             services.Add(new ItemReplicaService(playerItemDao, buddyItemDao, settingsService));
             services.Add(replicaItemDao);
 
-            services.Add(new ItemReplicaParser(replicaItemDao, playerItemDao));
-
             services.Add(itemStatService);
 
             var cacher = new TransferStashServiceCache(databaseItemDao);

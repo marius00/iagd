@@ -11,6 +11,7 @@ import ICollectionItem from '../interfaces/ICollectionItem';
 import {PureComponent} from "preact/compat";
 import ItemComparer from "../components/Item/ItemComparer";
 import IItemType from "../interfaces/IItemType";
+import React from "react";
 
 interface Props {
   items: IItem[][];
@@ -124,6 +125,18 @@ class ItemContainer extends PureComponent<Props, object> {
         .reduce((a,b) => a + b, 0);
 
       console.log(items, numItemsDisplayed);
+      const renderItem = React.useCallback((items, i) => (
+        <Item
+          items={items}
+          key={getUniqueId(items[0])}
+          transferAll={(item: IItem[]) => this.transferAll(item)}
+          transferSingle={(item: IItem[]) => this.transferSingleWrapper(item)}
+          getItemName={(baseRecord: string) => this.findByRecord(baseRecord)}
+          requestUnknownItemHelp={this.props.requestUnknownItemHelp}
+          showBackupCloudIcon={this.props.showBackupCloudIcon}
+          hideItemSkills={this.props.hideItemSkills}
+        />
+      ), [this.props.items]);
       return (
         <div class="items">
           <div class="clipboard-container">
@@ -141,18 +154,7 @@ class ItemContainer extends PureComponent<Props, object> {
               transferSingle={(item: IItem) => this.transferSingle(item)}
           />}
 
-          {items.map((item) =>
-            <Item
-              items={item}
-              key={'item-' + getUniqueId(item[0])}
-              transferAll={(item: IItem[]) => this.transferAll(item)}
-              transferSingle={(item: IItem[]) => this.transferSingleWrapper(item)}
-              getItemName={(baseRecord:string) => this.findByRecord(baseRecord)}
-              requestUnknownItemHelp={this.props.requestUnknownItemHelp}
-              showBackupCloudIcon={this.props.showBackupCloudIcon}
-              hideItemSkills={this.props.hideItemSkills}
-            />
-          )}
+          {items.map(renderItem)}
 
           {canLoadMoreItems && <button onClick={this.props.onRequestMoreItems} className="load-more-items">{translate('button.loadmoreitems')}</button>}
           {canLoadMoreItems && <OnScrollLoader onTrigger={this.props.onRequestMoreItems} />}

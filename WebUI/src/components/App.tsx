@@ -19,9 +19,11 @@ import ModFilterWarning from "./ModFilterWarning";
 import FirstRunHelpThingie from "./FirstRunHelpThingie";
 import IItemAggregateRow from "../interfaces/IItemAggregateRow";
 import NoMoreInstantSyncWarning from "./NoMoreInstantSyncWarning/NoMoreInstantSyncWarning";
+import {IReplicaRow} from "../interfaces/IReplicaRow";
 
 interface ApplicationState {
   items: IItem[][];
+  itemLookupMap: Map<number, number>;
   isLoading: boolean;
   activeTab: number;
   collectionItems: ICollectionItem[];
@@ -50,6 +52,15 @@ interface IOMessageStateChange {
   value: boolean;
 }
 
+interface IOMessageCloudIconStateChange {
+  ids: number[];
+}
+
+interface IOMessageSetReplicaStats {
+  id: number;
+  replicaStats: IReplicaRow[];
+}
+
 enum IOMessageType {
   ShowHelp,
   ShowMessage,
@@ -59,6 +70,8 @@ enum IOMessageType {
   SetItems,
   SetCollectionItems,
   ShowModFilterWarning,
+  UpdateCloudIconStatus,
+  UpdateItemStats,
 }
 
 enum IOMessageStateChangeType {
@@ -78,9 +91,14 @@ interface IOMessageSetItems {
   numItemsFound: number;
 }
 
+
 class App extends PureComponent<object, object> {
+  delayedUpdateTimer: any;
+  delayedMessageQueue = [] as IOMessage[];
+
   state = {
     items: [],
+    itemLookupMap: new Map<number,number>(),
     isLoading: true,
     activeTab: 0,
     collectionItems: [],
@@ -103,6 +121,73 @@ class App extends PureComponent<object, object> {
     // Mock data for not embedded / dev mode
     if (!isEmbedded) {
       this.setState({collectionItems: MockCollectionItemData});
+    }
+
+    // Things such as real item stats and cloud sync status gets aggregated and updated every few seconds.
+    // This is not critical to display realtime, and we may have hundreds of events per second during syncs
+    if (!this.delayedUpdateTimer) {
+      const self = this;
+      this.delayedUpdateTimer = setInterval(function () {
+        const messages = [...self.delayedMessageQueue];
+        self.delayedMessageQueue = [];
+        console.log("messages:", messages);
+        if (messages.length === 0) {
+          // Prevent state changes when empty
+          return;
+        }
+
+        const items = [...self.state.items];
+        for (let i = 0; i < messages.length; i++) {
+          const message = messages[i];
+          switch (message.type) {
+            case IOMessageType.UpdateCloudIconStatus: {
+              const playerItemIds = (message.data as IOMessageCloudIconStateChange).ids;
+              for (let pidIdx = 0; pidIdx < playerItemIds.length; pidIdx++) {
+                const playerItemId = playerItemIds[pidIdx];
+                if (self.state.itemLookupMap.has(playerItemId)) {
+                  const loc = self.state.itemLookupMap.get(playerItemId) as number;
+
+                  for (let idx = 0; idx < self.state.items[loc].length; idx++) {
+                    if (self.state.items[loc][idx].uniqueIdentifier.startsWith("PI/" + playerItemId)) {
+
+                      // console.log("Successfully(?) marked PI " + playerItemId + " as having a cloud backup");
+                      const subItems = [...items[loc]] as IItem[];
+                      subItems[idx].hasCloudBackup = true;
+                      items[loc] = subItems;
+                    }
+                  }
+                }
+              }
+            }
+              break;
+
+            case IOMessageType.UpdateItemStats: {
+              // Obs! When finding the subindex, if it's not === 0, there is no reason to re-render the view is there?
+              // Gotta test if the comparison window will work if we don't re-render on a subindex change. -- Will require a 'isDirty' state to see if we call setState or not..
+              const payload = message.data as IOMessageSetReplicaStats;
+              const playerItemId = payload.id;
+              if (self.state.itemLookupMap.has(playerItemId)) {
+                const loc = self.state.itemLookupMap.get(playerItemId) as number;
+
+                for (let idx = 0; idx < self.state.items[loc].length; idx++) {
+                  if (self.state.items[loc][idx].uniqueIdentifier.startsWith("PI/" + playerItemId)) {
+
+                    const subItems = [...items[loc]] as IItem[];
+                    subItems[idx].replicaStats = payload.replicaStats;
+                    subItems[idx].bodyStats = [];
+                    subItems[idx].headerStats = [];
+                    subItems[idx].petStats = [];
+                    items[loc] = subItems;
+                  }
+                }
+              }
+            }
+              break;
+          } // switch
+        } // for
+
+        self.setState({items: items});
+      }, 6 * 1000);
     }
 
     // Show a notification message such as "Item transferred" or "Too close to stash"
@@ -169,23 +254,32 @@ class App extends PureComponent<object, object> {
           }
           break;
 
+        case IOMessageType.UpdateItemStats:
+        case IOMessageType.UpdateCloudIconStatus:
+          this.delayedMessageQueue.push(message);
+          break;
+
         case IOMessageType.SetItems: {
           let data = message.data as IOMessageSetItems;
 
           if (data.replaceExistingItems) {
             window.scrollTo(0, 0);
             let isFirstRun = this.state.isFirstRun && data.numItemsFound === 0;
+
+            const lookupMap = this.calculateItemLocations(data.items, 0, undefined);
             this.setState({
               isLoading: false,
               items: data.items,
               numItems: data.numItemsFound || 0,
               isFirstRun: isFirstRun,
+              itemLookupMap: lookupMap,
             });
           } else {
             const items = [...this.state.items];
             this.setState({
               isLoading: false,
-              items: items.concat(data.items)
+              items: items.concat(data.items),
+              itemLookupMap: this.calculateItemLocations(data.items, items.length, this.state.itemLookupMap),
             });
           }
 
@@ -214,9 +308,9 @@ class App extends PureComponent<object, object> {
           switch (data.type) {
             // TODO: This could be a lookup map.. enum => state value..
             case IOMessageStateChangeType.ShowCloudIcon:
-              this.setState({
+              /*this.setState({
                 showBackupCloudIcon: data.value
-              });
+              });*/
               break;
             case IOMessageStateChangeType.GrimDawnIsParsed:
               this.setState({
@@ -274,14 +368,26 @@ class App extends PureComponent<object, object> {
     this.setState({items: items, isLoading: false});
   }
 
-  itemSort(a: IItem, b: IItem) {
-    if (a.type !== b.type) {
-      // Highest number wins (PlayerItem is id 2, BudddyItem is id 1, so playeritems gets first)
-      return b.type - a.type;
+  // Creates a [playerItemId => idxPosition] map so we know where a given playerItem is located
+  // This gets us to the correct row in the outer array, eliminating at least O(n) complexity in lookups.
+  calculateItemLocations = (items: IItem[][], offset: number, lookupMap?: Map<number, number>): Map<number, number> => {
+    const regex = /PI\/(\d+)\/.*/;
+
+    let result = new Map<number, number>();
+    if (lookupMap) {
+      result = lookupMap;
     }
 
-    // Don't care, as long as its consistent.
-    return a.uniqueIdentifier < b.uniqueIdentifier;
+    for (let i = 0; i < items.length; i++) {
+      for (let m = 0; m < items[i].length; m++) {
+        const pid = items[i][m].uniqueIdentifier.match(regex);
+        if (pid?.length === 2) {
+          result.set(parseInt(pid[1]), i + offset);
+        }
+      }
+    }
+
+    return result;
   }
 
   /**

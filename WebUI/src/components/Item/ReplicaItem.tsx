@@ -9,7 +9,6 @@ import IItemType from '../../interfaces/IItemType';
 import GetSetName, { GetSetItems } from '../../integration/ItemSetService';
 import ICollectionItem from '../../interfaces/ICollectionItem';
 import { IStat, statToString } from '../../interfaces/IStat';
-import ItemCornerContainer from './ItemCornerContainer';
 import { v4 as uuidv4 } from 'uuid';
 import {PureComponent} from "preact/compat";
 import ReplicaStatContainer from "./ReplicaStatContainer";
@@ -31,7 +30,7 @@ export function getUniqueId(item: IItem): string {
 }
 
 /**
- * Comparison item
+ * Comparison item, this is used inside the "compare items" modal
  */
 class ReplicaItem extends PureComponent<Props, object> {
   stripColorCodes(initialString: any | string): string {
@@ -73,16 +72,6 @@ class ReplicaItem extends PureComponent<Props, object> {
     return "";
   }
 
-  statToString(stat: IStat) {
-    return stat.text
-      .replace("{0}", stat.param0)
-      .replace("{1}", stat.param1)
-      .replace("{2}", stat.param2)
-      .replace("{3}", stat.param3)
-      .replace("{4}", stat.param4)
-      .replace("{5}", stat.param5)
-      .replace("{6}", stat.param6);
-  }
 
   renderIcon() {
     const item = this.props.item;

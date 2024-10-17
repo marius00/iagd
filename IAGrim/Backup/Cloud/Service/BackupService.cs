@@ -8,6 +8,7 @@ using IAGrim.Backup.Cloud.Util;
 using IAGrim.Database;
 using IAGrim.Database.Interfaces;
 using IAGrim.Settings;
+using IAGrim.UI.Misc.CEF;
 using IAGrim.Utilities;
 using log4net;
 
@@ -16,6 +17,7 @@ namespace IAGrim.Backup.Cloud.Service {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(BackupService));
         private readonly SettingsService _settings;
         private CloudSyncService _cloudSyncService;
+        private readonly IBrowserCallbacks _browser;
         private readonly AuthService _authService;
         private readonly IPlayerItemDao _playerItemDao;
         private Limitations _cooldowns;
@@ -26,10 +28,13 @@ namespace IAGrim.Backup.Cloud.Service {
         public BackupService(
             AuthService authService,
             IPlayerItemDao playerItemDao,
-            SettingsService settings) {
+            SettingsService settings, 
+            IBrowserCallbacks browser
+            ) {
             _authService = authService;
             _playerItemDao = playerItemDao;
             _settings = settings;
+            _browser = browser;
         }
 
         public void Execute() {
@@ -164,6 +169,7 @@ namespace IAGrim.Backup.Cloud.Service {
                         // TODO: Hopefully all were stored?
                         Logger.Info($"Upload successful, marking {batch.Count} as synchronized");
                         _playerItemDao.SetAsSynchronized(batch);
+                        _browser.SignalCloudIconChange(batch.Select(m => m.Id).ToList());
                     }
                     else {
                         Logger.Warn($"Upload of {batch.Count} items unsuccessful");

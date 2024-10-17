@@ -14,5 +14,7 @@ namespace IAGrim.UI.Misc.Protocol {
         SetItems,
         SetCollectionItems,
         ShowModFilterWarning,
+        UpdateCloudIconStatus,
+        UpdateItemStats,
     }
 }
