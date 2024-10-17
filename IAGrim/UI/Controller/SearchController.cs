@@ -74,7 +74,7 @@ namespace IAGrim.UI.Controller {
                 Browser.AddItems(convertedItems);
             }
             else {
-                Browser.SetItems(convertedItems, _itemPaginationService.NumItems);
+                Browser.SetItems(convertedItems, _itemPaginationService.NumTotalItems);
             }
 
             return true;
@@ -113,7 +113,7 @@ namespace IAGrim.UI.Controller {
             var merged = ItemOperationsUtility.MergeStackSize(items);
             
 
-            if (_itemPaginationService.Update(merged, orderByLevel)) {
+            if (_itemPaginationService.Update(merged, orderByLevel, items.Count)) {
                 if (!ApplyItems(false)) {
                     Browser.SetItems(new List<List<JsonItem>>(0), 0);
                 }

@@ -16,7 +16,15 @@ namespace IAGrim.Services {
         private int _skip;
         private List<List<PlayerHeldItem>> _items = new List<List<PlayerHeldItem>>();
 
+        /// <summary>
+        /// Total item count after aggregation
+        /// </summary>
         public int NumItems => _items.Count;
+
+        /// <summary>
+        /// Total item count before aggregation
+        /// </summary>
+        public int NumTotalItems { get; private set; }
 
         private int Remaining {
             get {
@@ -72,10 +80,11 @@ namespace IAGrim.Services {
         }
 
 
-        public bool Update(List<List<PlayerHeldItem>> items, bool orderByLevel) {
+        public bool Update(List<List<PlayerHeldItem>> items, bool orderByLevel, int numTotalItems) {
             this._skip = 0;
             this._items = items;
             _items.Sort(orderByLevel ? CompareToMinimumLevel : _comparer);
+            this.NumTotalItems = numTotalItems;
             return true;
         }
 

@@ -67,12 +67,10 @@ const helpEntries = [
         title: `IA says "Stash: NOT64BIT"`,
         tag: 'No32Bit',
         body: () => <div>
-            As of version 1.3 of Item Assistant, only 64 bit Grim Dawn is supported. <br/>
-            If you do not wish to run 64 bit version of Grim Dawn, you'll need to downgrade to version 1.2 of Item Assistant <br/>
-            The version is available on the website as the "32-bit version" <br/> <br/>
+            Item Assistant only supports the 64 bit version of Grim Dawn. <br/>
             To ensure that you always run the 64-bit version, you can add "/x64" as a launch option in steam.
             <img src="./x64steam.png"/> <br/>
-            You do not need to do any conversions on your stash. Just run 64 bit grim dawn.
+            If you believe you are already running Grim Dawn x64, you are mistaken. Add the launch parameters. You'll see (x64) in the bottom right corner in-game.
         </div>,
         type: IHelpEntryType.Help
     },
@@ -348,19 +346,13 @@ const helpEntries = [
         type: IHelpEntryType.Informational
     },
     {
-        title: `Settings: What is regular updates?`,
+        title: `Settings: What is th e difference between regular and experimental updates?`,
         tag: 'RegularUpdates',
         body: () => <div>
             With regular updates you'll occationally be notified of a new version of IA. <br/>
             You'll always get the latest version, but it may take a couple of weeks before you're notified. <br/>
             <b>Recommended for those who don't wish to be bothered with frequent updates.</b>
-        </div>,
-        type: IHelpEntryType.Informational
-    },
-    {
-        title: `Settings: What is experimental updates?`,
-        tag: 'ExperimentalUpdates',
-        body: () => <div>
+			<br/><br/>
             With experimental updates you'll always get the latest version of IA. <br/>
             This can include very minor bugfixes, and may during periods mean daily updates. <br/>
             <b>Recommended for those who always wish to be on the latest version, and don't mind upgrading
