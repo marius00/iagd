@@ -24,7 +24,6 @@ namespace IAGrim.UI.Controller {
 
         public void LoadDefaults() {
             MinimizeToTray = _settings.GetPersistent().MinimizeToTray;
-            MergeDuplicates = _settings.GetPersistent().MergeDuplicates;
             AutoUpdateModSettings = _settings.GetPersistent().AutoUpdateModSettings;
             HideSkills = _settings.GetPersistent().HideSkills;
         }
@@ -69,19 +68,6 @@ namespace IAGrim.UI.Controller {
                 OnPropertyChanged();
             }
         }
-
-
-        /// <summary>
-        /// Merge duplicate items into a single entry
-        /// </summary>
-        public bool MergeDuplicates {
-            get => _settings.GetPersistent().MergeDuplicates;
-            set {
-                _settings.GetPersistent().MergeDuplicates = value;
-                OnPropertyChanged();
-            }
-        }
-
 
 
         #endregion

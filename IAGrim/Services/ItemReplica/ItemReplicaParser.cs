@@ -11,7 +11,6 @@ using IAGrim.Database.Interfaces;
 using IAGrim.UI.Misc.CEF;
 using IAGrim.Utilities;
 using log4net;
-using log4net.Repository.Hierarchy;
 using Newtonsoft.Json;
 using NHibernate.Exceptions;
 

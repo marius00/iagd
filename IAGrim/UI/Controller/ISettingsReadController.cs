@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 namespace IAGrim.UI.Controller {
     interface ISettingsReadController {
         bool MinimizeToTray { get; }
-        bool MergeDuplicates { get; }
         bool AutoUpdateModSettings { get; }
     }
 }

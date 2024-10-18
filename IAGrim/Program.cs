@@ -192,14 +192,6 @@ namespace IAGrim {
                 StartupService.PerformIconCheck(grimDawnDetector, settingsService);
 
 
-                try {
-                    var playerItemDao = serviceProvider.Get<IPlayerItemDao>();
-                    playerItemDao.DeleteDuplicates();
-                }
-                catch (Exception ex) {
-                    Logger.Warn("Something went terribly wrong trying to ensure no duplicate items are found, however we'll just ignore it instead of blocking you access to your items.. sigh..", ex);
-                }
-
                 _mw.Visible = false;
                 if (new DonateNagScreen(settingsService).CanNag)
                     Application.Run(new DonateNagScreen(settingsService));

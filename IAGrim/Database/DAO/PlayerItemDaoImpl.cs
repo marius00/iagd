@@ -980,66 +980,6 @@ namespace IAGrim.Database {
             return result;
         }
 
-        /// <summary>
-        /// Delete duplicate items (items duplicated via bugs, not simply similar items)
-        /// </summary>
-        public void DeleteDuplicates() {
-            using (var session = SessionCreator.OpenSession()) {
-                using (var transaction = session.BeginTransaction()) {
-                    // Mark all duplicates for deletion from online backups
-                    session.CreateSQLQuery(@"
-insert into deletedplayeritem_v3(id)
-select cloudid FROM playeritem WHERE Id IN (
-	SELECT Id FROM (
-		SELECT MAX(Id) as Id, (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) as UQ FROM PlayerItem WHERE (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) IN (
-			SELECT UQ FROM (
-				SELECT (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) as UQ, COUNT(*) as C FROM PlayerItem
-					WHERE baserecord NOT LIKE '%materia%'
-					AND baserecord NOT LIKE '%questitems%'
-					AND baserecord NOT LIKE '%potions%'
-					AND baserecord NOT LIKE '%crafting%'
-					AND StackCount < 2 -- Potions, components, etc
-					GROUP BY UQ
-				) X 
-			WHERE C > 1
-		)
-
-		Group BY UQ
-	) Z
-)
-
-AND cloud_hassync
-AND cloudid IS NOT NULL 
-AND cloudid NOT IN (SELECT id FROM deletedplayeritem_v3)
-AND cloudid != ''
-").ExecuteUpdate();
-                    // Delete duplicates (if there are multiple, only one will be deleted)
-                    session.CreateSQLQuery(@"
-DELETE FROM PlayerItem WHERE Id IN (
-	SELECT Id FROM (
-		SELECT MAX(Id) as Id, (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) as UQ FROM PlayerItem WHERE (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) IN (
-			SELECT UQ FROM (
-				SELECT (baserecord || prefixrecord || modifierrecord || suffixrecord || materiarecord || transmuterecord || seed) as UQ, COUNT(*) as C FROM PlayerItem
-					WHERE baserecord NOT LIKE '%materia%'
-					AND baserecord NOT LIKE '%questitems%'
-					AND baserecord NOT LIKE '%potions%'
-					AND baserecord NOT LIKE '%crafting%'
-					AND StackCount < 2 -- Potions, components, etc
-					GROUP BY UQ
-				) X 
-			WHERE C > 1
-		)
-
-		Group BY UQ
-	) Z
-)
-").ExecuteUpdate();
-
-                    transaction.Commit();
-                }
-            }
-        }
-
         public IList<PlayerItem> ListMissingReplica() {
 
 

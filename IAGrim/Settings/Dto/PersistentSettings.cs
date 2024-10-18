@@ -14,7 +14,6 @@ namespace IAGrim.Settings.Dto {
         private bool _subscribeExperimentalUpdates;
         private bool _minimizeToTray;
         private bool _usingDualComputer;
-        private bool _mergeDuplicates;
         private bool _transferAnyMod;
         private bool _darkMode;
         private bool _autoUpdateModSettings;
@@ -57,14 +56,6 @@ namespace IAGrim.Settings.Dto {
             get => _usingDualComputer;
             set {
                 _usingDualComputer = value;
-                OnMutate?.Invoke(null, null);
-            }
-        }
-
-        public bool MergeDuplicates {
-            get => _mergeDuplicates;
-            set {
-                _mergeDuplicates = value;
                 OnMutate?.Invoke(null, null);
             }
         }
