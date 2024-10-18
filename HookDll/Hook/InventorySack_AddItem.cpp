@@ -106,6 +106,9 @@ void InventorySack_AddItem::EnableHook() {
 		LogToFile(LogLevel::INFO, L"Grim is parsed, displaying message..");
 		DisplayMessage(L"Item Assistant", L"Item monitoring enabled");
 	}
+	else {
+		LogToFile(LogLevel::INFO, L"Grim is not parsed, skipping message..");
+	}
 
 	LogToFile(LogLevel::INFO, L"Instaloot hook enabled");
 }
@@ -303,12 +306,6 @@ bool InventorySack_AddItem::IsRelevant(const GAME::ItemReplicaInfo& item) {
 	if (item.baseRecord.find("gearaccessories/necklaces/a00_necklace.dbr") != std::string::npos 
 		|| item.baseRecord.find("questassets/q000_torso.dbr") != std::string::npos) {
 		DisplayMessage(L"Special item - This item is not supported by IA", L"Item Assistant");
-		return false;
-	}
-
-	// Transmute - Should be impossible, but never know..
-	if (!item.enchantmentRecord.empty()) {
-		DisplayMessage(L"Item has a transmute - Souldbound item", L"Item Assistant");
 		return false;
 	}
 
