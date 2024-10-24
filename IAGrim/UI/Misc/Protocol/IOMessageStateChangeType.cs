@@ -8,5 +8,6 @@
         EasterEggMode,
         IsLoading,
         ShowNoMoreInstantSyncWarning,
+        GdSeasonError,
     }
 }

@@ -36,8 +36,6 @@ using IAGrim.Parsers.TransferStash;
 using IAGrim.Settings;
 using System.IO;
 using IAGrim.Services.ItemReplica;
-using System.Runtime.InteropServices;
-using NHibernate.Cfg;
 
 namespace IAGrim.UI {
     public partial class MainWindow : Form {
@@ -83,6 +81,7 @@ namespace IAGrim.UI {
 
         // TODO: TEMPORARY FIX!
         private bool _hasShownStashErrorPage = false;
+        private bool _hasShownSeasonErrorPage = false;
         private bool _hasShownPathErrorPage = false;
         private bool _hasShown32bitErrorPage = false;
 
@@ -113,6 +112,16 @@ namespace IAGrim.UI {
                             if (!_hasShownStashErrorPage) {
                                 _cefBrowserHandler.ShowHelp(HelpService.HelpType.StashError);
                                 _hasShownStashErrorPage = true;
+                            }
+
+                            break;
+                        }
+
+
+                    case InjectionHelper.GD_SEASON: {
+                            if (!_hasShownSeasonErrorPage) {
+                                _cefBrowserHandler.SetGdSeasonMode();
+                                _hasShownSeasonErrorPage = true;
                             }
 
                             break;

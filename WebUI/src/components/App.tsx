@@ -20,6 +20,7 @@ import FirstRunHelpThingie from "./FirstRunHelpThingie";
 import IItemAggregateRow from "../interfaces/IItemAggregateRow";
 import NoMoreInstantSyncWarning from "./NoMoreInstantSyncWarning/NoMoreInstantSyncWarning";
 import {IReplicaRow} from "../interfaces/IReplicaRow";
+import GdSeasonError from "./GdSeasonError";
 
 interface ApplicationState {
   items: IItem[][];
@@ -39,6 +40,7 @@ interface ApplicationState {
   showModFilterWarning: number;
   hasShownModFilterWarning: boolean;
   easterEggMode: boolean;
+  gdSeasonError: boolean;
   showNoMoreInstantSyncWarning: boolean;
 }
 
@@ -83,6 +85,7 @@ enum IOMessageStateChangeType {
   EasterEggMode,
   IsLoading,
   ShowNoMoreInstantSyncWarning,
+  GdSeasonError,
 }
 
 interface IOMessageSetItems {
@@ -114,6 +117,7 @@ class App extends PureComponent<object, object> {
     showModFilterWarning: 0,
     hasShownModFilterWarning: false,
     easterEggMode: false,
+    gdSeasonError: false,
     showNoMoreInstantSyncWarning: false,
   } as ApplicationState;
 
@@ -325,6 +329,12 @@ class App extends PureComponent<object, object> {
               });
               break;
 
+            case IOMessageStateChangeType.GdSeasonError:
+              this.setState({
+                gdSeasonError: true,
+              });
+              break;
+
 
             case IOMessageStateChangeType.ShowNoMoreInstantSyncWarning:
               this.setState({
@@ -460,6 +470,10 @@ class App extends PureComponent<object, object> {
     if (this.state.easterEggMode) {
       return <EasterEgg close={() => this.setState({easterEggMode: false})}/>;
     }
+    if (this.state.gdSeasonError) {
+      return <GdSeasonError close={() => this.setState({gdSeasonError: false})}/>;
+    }
+
 
     if (this.state.showNoMoreInstantSyncWarning) {
       return <NoMoreInstantSyncWarning close={() => this.setState({showNoMoreInstantSyncWarning: false})}/>;

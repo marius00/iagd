@@ -158,6 +158,10 @@ namespace IAGrim.UI.Misc.CEF {
             SendMessage(new IOMessage { Type = IOMessageType.SetState, Data = new IOMessageStateChange { Type = IOMessageStateChangeType.EasterEggMode, Value = true } });
         }
 
+        public void SetGdSeasonMode() {
+            SendMessage(new IOMessage { Type = IOMessageType.SetState, Data = new IOMessageStateChange { Type = IOMessageStateChangeType.GdSeasonError, Value = true } });
+        }
+
         public void ShowModFilterWarning(int numOtherItems) {
             SendMessage(new IOMessage { Type = IOMessageType.ShowModFilterWarning, Data = numOtherItems });
         }

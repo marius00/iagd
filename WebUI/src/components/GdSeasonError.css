@@ -1,0 +1,35 @@
+.center {
+    margin-top: 30px;
+    padding: 20px;
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.yellowmodal {
+    background-color: rgb(253, 249, 219);
+    color: rgb(122,89,62);
+    font-family: cursive;
+
+    z-index: 1000;
+    min-width: 300px;
+    max-width: 1024px;
+    width: 80vw;
+
+    text-align: center;
+    user-select: none;
+    font-size: 20px;
+      border-radius: 8px;
+      border: 1px solid #551c1c;
+}
+
+.btnClose {
+  background-color: #ff7f7f;
+  border-radius: 5px;
+  border: 1px solid #551c1c;
+  color: black;
+  width: 230px;
+  display: inline-block;
+  cursor: pointer;
+  padding: 4px;
+}

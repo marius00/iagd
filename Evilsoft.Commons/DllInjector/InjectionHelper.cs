@@ -30,6 +30,7 @@ namespace DllInjector {
         public const int INJECTION_ERROR_32BIT = 5;
         public const int PATH_ERROR = 6;
         public const int ABORTED = 7;
+        public const int GD_SEASON = 8;
         private readonly ProgressChangedEventHandler _registeredProgressCallback;
 
         class RunArguments {
@@ -213,13 +214,22 @@ namespace DllInjector {
                 sleep -= 100;
             }
 
+            if (System.Diagnostics.Process.GetProcessesByName("GDCommunityLauncher").Length > 0) {
+                worker.ReportProgress(GD_SEASON, null);
+                return;
+            }
+
             HashSet<uint> pids = FindProcesses(arguments);
-            
-            
-            if (pids.Count == 0 && _previouslyInjected.Count == 0)
+
+
+            if (pids.Count == 0 && _previouslyInjected.Count == 0) {
                 worker.ReportProgress(NO_PROCESS_FOUND_ON_STARTUP, null);
-            else if (pids.Count == 0)
+            }
+            else if (pids.Count == 0) {
                 worker.ReportProgress(NO_PROCESS_FOUND, null);
+            }
+
+
 
 
 

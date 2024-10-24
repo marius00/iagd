@@ -404,3 +404,4 @@ bin
 /WebUI/size-plugin.json
 /WebUI/src/assets/*.png
 /WebUI/src/static
+/HookDll/Hook/cmake-build-debug
