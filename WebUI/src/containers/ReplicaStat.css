@@ -15,7 +15,7 @@
 
 
 /* 64: Slot & Quality, ex: Epic Ring, 3: No idea.. buddyitems? */
-.replica-type-64, replica-type-3 {
+.replica-type-64, .replica-type-3 {
   display: none;
 }
 
