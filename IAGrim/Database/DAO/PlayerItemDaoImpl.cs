@@ -986,7 +986,7 @@ namespace IAGrim.Database {
             //TODO: Relics are "ItemArtifact", those will crash the game.
             // TODO: Seems super redundant to check prefix, suffix and materia for Class? BaseRecord determines slot no? Same thing is done in regular searches..
             var specificItemTypesOnlySql = $@"
-                SELECT Playeritemid FROM PlayerItemRecord WHERE record IN (
+                SELECT id FROM PlayerItem WHERE baserecord IN (
                     select baserecord from databaseitem_V2 db where db.baserecord in (
                         select baserecord from {PlayerItemTable.Table}
                     )
