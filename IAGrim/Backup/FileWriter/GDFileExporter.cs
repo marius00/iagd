@@ -7,7 +7,7 @@ using System.IO;
 namespace IAGrim.Backup.FileWriter {
 
     public class GDFileExporter : FileExporter {
-        const int SUPPORTED_FILE_VER = 1;
+        const int SUPPORTED_FILE_VER = 2;
         private readonly string _filename;
         private readonly string _mod;
 
@@ -22,7 +22,7 @@ namespace IAGrim.Backup.FileWriter {
             int pos = 0;
 
             int file_ver = IOHelper.GetInt(bytes, pos); pos += 4;
-            if (file_ver != SUPPORTED_FILE_VER)
+            if (file_ver > SUPPORTED_FILE_VER || file_ver < 1)
                 throw new InvalidDataException($"This format of GDStash/Mambastash files is not supported, expected {SUPPORTED_FILE_VER}, got {file_ver}");
 
             string ReadString() {
@@ -46,10 +46,23 @@ namespace IAGrim.Backup.FileWriter {
                 pi.RelicSeed = IOHelper.GetUInt(bytes, pos); pos += 4;
                 pi.EnchantmentRecord = ReadString();
 
-                pi.UNKNOWN = IOHelper.GetUInt(bytes, pos); pos += 4;
-                pi.EnchantmentSeed = IOHelper.GetUInt(bytes, pos); pos += 4;
                 pi.MateriaCombines = IOHelper.GetUInt(bytes, pos); pos += 4;
+                pi.EnchantmentSeed = IOHelper.GetUInt(bytes, pos); pos += 4;
+
+                if (file_ver != 1) {
+                    var ascendantID = ReadString();
+                    var ascendant2hID = ReadString();
+                }
+
+                pi.UNKNOWN = IOHelper.GetUInt(bytes, pos); pos += 4;
                 pi.StackCount = IOHelper.GetUInt(bytes, pos); pos += 4;
+
+
+                if (file_ver != 1) {
+                    var rerollsUsed = IOHelper.GetUInt(bytes, pos); pos += 4;
+                }
+
+
                 pi.IsHardcore = bytes[pos++] == 1;
                 //pi.IsExpansion1 = this.isExpansion1;
                 pi.Mod = this._mod;
@@ -80,11 +93,15 @@ namespace IAGrim.Backup.FileWriter {
                     IOHelper.Write(fs, (uint)pi.RelicSeed);
                     IOHelper.WriteBytePrefixed(fs, pi.EnchantmentRecord);
 
-                    IOHelper.Write(fs, (uint)pi.UNKNOWN);
-                    IOHelper.Write(fs, (uint)pi.EnchantmentSeed);
                     IOHelper.Write(fs, (uint)pi.MateriaCombines);
+                    IOHelper.Write(fs, (uint)pi.EnchantmentSeed);
+
+                    IOHelper.WriteBytePrefixed(fs, ""); // ascendantID
+                    IOHelper.WriteBytePrefixed(fs, ""); // ascendant2hID
+                    IOHelper.Write(fs, (uint)pi.UNKNOWN);
 
                     IOHelper.Write(fs, (uint)pi.StackCount);
+                    IOHelper.Write(fs, (uint)0); // rerollsUsed
                     IOHelper.Write(fs, pi.IsHardcore);
                     IOHelper.Write(fs, (byte)0); // Char name                    
                 }
