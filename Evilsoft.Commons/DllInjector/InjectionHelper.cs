@@ -304,7 +304,7 @@ namespace DllInjector {
             return string.Join("\\", args);
         }
 
-
+        private static Dictionary<string, bool> _isPlaytestCache = new Dictionary<string, bool>(1);
         private static string GetFilenameForPid(uint pid, string dllName) {
             string dll64Bit;
             try {
@@ -315,8 +315,12 @@ namespace DllInjector {
 
                 // Figure out the filename
                 var gdFilename = GetGameDllPath(GetWindowModuleFileName(pid));
-                var isPlaytest = InjectionVerifier.IsPlaytest(gdFilename) && false; // No playtest dll at the moment, will probably be one again very soon.
-                if (isPlaytest) {
+
+                if (!_isPlaytestCache.ContainsKey(gdFilename)) {
+                    _isPlaytestCache[gdFilename] = InjectionVerifier.IsPlaytest(gdFilename) && false; // No playtest dll at the moment, will probably be one again very soon.
+                }
+
+                if (_isPlaytestCache[gdFilename]) {
                     dll64Bit = Path.Combine(Directory.GetCurrentDirectory(), dllName.Replace("_x64", "_playtest_x64"));
                     Logger.Info("Playtest detected, using DLL " + dll64Bit);
 
