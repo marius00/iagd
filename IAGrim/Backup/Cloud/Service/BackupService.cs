@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using CefSharp.DevTools.Debugger;
 using EvilsoftCommons.Exceptions;
 using IAGrim.Backup.Cloud.Dto;
 using IAGrim.Backup.Cloud.Util;
@@ -11,6 +12,7 @@ using IAGrim.Settings;
 using IAGrim.UI.Misc.CEF;
 using IAGrim.Utilities;
 using log4net;
+using NHibernate.Mapping;
 
 namespace IAGrim.Backup.Cloud.Service {
     public class BackupService {
@@ -85,15 +87,19 @@ namespace IAGrim.Backup.Cloud.Service {
             if (items.Count <= 0) return;
 
             Logger.Debug($"Detected {items.Count} items marked for removal from cloud");
+
             List<DeleteItemDto> dtos = new List<DeleteItemDto>(items.Count);
             dtos.AddRange(items.Select(item => new DeleteItemDto {Id = item.Id}));
-
-            if (_cloudSyncService.Delete(dtos)) {
-                _playerItemDao.ClearItemsMarkedForOnlineDeletion();
-                Logger.Debug($"Removal successful ({items.Count} items)");
-            }
-            else {
-                Logger.Warn("Got an error while removing remote items");
+            for (int i = 0; i < dtos.Count; i += 100) {
+                var toSync = dtos.GetRange(i, Math.Min(100, dtos.Count - i));
+                if (_cloudSyncService.Delete(toSync)) {
+                    _playerItemDao.ClearItemsMarkedForOnlineDeletion();
+                    Logger.Debug($"Removal successful ({items.Count} items)");
+                }
+                else {
+                    Logger.Warn("Got an error while removing remote items");
+                    return;
+                }
             }
         }
 
