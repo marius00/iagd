@@ -33,6 +33,7 @@ namespace IAGrim.Database {
         public virtual long Seed { get; set; }
         public virtual long RelicSeed { get; set; }
         public virtual long EnchantmentSeed { get; set; }
+        public virtual long RerollsUsed { get; set; }
 
         public virtual ulong Count {
             get { return (ulong)StackCount; }

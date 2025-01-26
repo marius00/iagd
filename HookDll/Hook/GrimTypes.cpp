@@ -9,13 +9,16 @@ namespace GAME {
 		stream << replica.prefixRecord.c_str() << ";";
 		stream << replica.suffixRecord.c_str() << ";";
 		stream << replica.seed << ";";
+		stream << 0 << ";"; // TODO: Ascendant, RerollsUsed
 		stream << replica.modifierRecord.c_str() << ";";
 		stream << replica.materiaRecord.c_str() << ";";
 		stream << replica.relicBonus.c_str() << ";";
 		stream << replica.relicSeed << ";";
 		stream << replica.enchantmentRecord.c_str() << ";";
 		stream << replica.enchantmentSeed << ";";
-		stream << replica.transmuteRecord.c_str();
+		stream << replica.transmuteRecord.c_str() << ";";
+		stream << "" << ";"; // TODO: Ascendant, AscendantAffixNameRecord
+		stream << ""; // TODO: Ascendant, AscendantAffix2hNameRecord
 
 		return stream.str();
 	}
@@ -42,10 +45,12 @@ namespace GAME {
 	}
 
 	GAME::ItemReplicaInfo* Deserialize(std::vector<std::string> tokens) {
-		if (tokens.size() != 13) {
-			LogToFile(LogLevel::WARNING, L"Error parsing CSV file, expected 13 tokens, got " + std::to_wstring(tokens.size()));
+		if (tokens.size() != 13 && tokens.size() != 16) {
+			LogToFile(LogLevel::WARNING, L"Error parsing CSV file, expected 13 or 16 tokens, got " + std::to_wstring(tokens.size()));
 			return nullptr;
 		}
+
+		bool isNewDlc = tokens.size() == 16;
 
 		GAME::ItemReplicaInfo* item = new GAME::ItemReplicaInfo();
 		int idx = 2; // 0: is the mod name, 1: is "isHardcore"
@@ -53,6 +58,10 @@ namespace GAME {
 		item->prefixRecord = tokens.at(idx++);
 		item->suffixRecord = tokens.at(idx++);
 		item->seed = (unsigned int)stoul(tokens.at(idx++));
+		if (isNewDlc) {
+			// TODO: Ascendant
+			unsigned int rerollsUsed = (unsigned int)stoul(tokens.at(idx++));
+		}
 		item->modifierRecord = tokens.at(idx++);
 		item->materiaRecord = tokens.at(idx++);
 		item->relicBonus = tokens.at(idx++);
@@ -60,6 +69,11 @@ namespace GAME {
 		item->enchantmentRecord = tokens.at(idx++);
 		item->enchantmentSeed = (unsigned int)stoul(tokens.at(idx++));
 		item->transmuteRecord = tokens.at(idx++);
+		if (isNewDlc) {
+			// TODO: Ascendant
+			auto ascendantAffixNameRecord = tokens.at(idx++);
+			auto ascendantAffix2hNameRecord = tokens.at(idx++);
+		}
 
 		return item;
 	}

@@ -15,6 +15,7 @@ using IAGrim.Services;
 using IAGrim.Utilities;
 using Ionic.Zip;
 using log4net;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace IAGrim.UI.Popups.ImportExport.Panels {
     partial class ImportMode : Form {
@@ -160,6 +161,7 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
                 var items = io.Read(Read(_filename));
                 Logger.Debug($"Storing {items.Count} items to db");
                 progressBar1.Maximum = items.Count;
+                progressBar1.Value = 0;
                 buttonImport.Enabled = false;
                 Thread t = new Thread(() => {
                     ExceptionReporter.EnableLogUnhandledOnThread();

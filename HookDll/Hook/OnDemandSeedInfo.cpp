@@ -113,10 +113,12 @@ void OnDemandSeedInfo::Start() {
 
 
 ParsedSeedRequest* OnDemandSeedInfo::DeserializeReplicaCsv(std::vector<std::string> tokens) {
-	if (tokens.size() != 12) {
-		LogToFile(LogLevel::WARNING, L"Error parsing CSV file, expected 12 tokens, got " + std::to_wstring(tokens.size()));
+	if (tokens.size() != 12 && tokens.size() != 15) {
+		LogToFile(LogLevel::WARNING, L"Error parsing CSV file, expected 12 or 15 tokens, got " + std::to_wstring(tokens.size()));
 		return nullptr;
 	}
+
+	bool isNewDlc = tokens.size() == 15;
 
 	GAME::ItemReplicaInfo item;
 	ParsedSeedRequest* result = new ParsedSeedRequest();
@@ -138,6 +140,10 @@ ParsedSeedRequest* OnDemandSeedInfo::DeserializeReplicaCsv(std::vector<std::stri
 	item.relicSeed = (unsigned int)stoul(tokens.at(idx++));
 	item.enchantmentSeed = (unsigned int)stoul(tokens.at(idx++));
 
+	if (isNewDlc) {
+		auto rerollsUsed = (unsigned int)stoul(tokens.at(idx++));
+	}
+
 	item.baseRecord = tokens.at(idx++);
 	item.prefixRecord = tokens.at(idx++);
 	item.suffixRecord = tokens.at(idx++);
@@ -146,6 +152,11 @@ ParsedSeedRequest* OnDemandSeedInfo::DeserializeReplicaCsv(std::vector<std::stri
 	item.materiaRecord = tokens.at(idx++);
 	item.enchantmentRecord = tokens.at(idx++);
 	item.transmuteRecord = tokens.at(idx++);
+
+	if (isNewDlc) {
+		auto ascendantAffixNameRecord  = tokens.at(idx++);
+		auto ascendantAffix2hNameRecord= tokens.at(idx++);
+	}
 
 	std::string s;
 	for (auto it = tokens.begin(); it != tokens.end(); ++it) {
@@ -160,6 +171,7 @@ ParsedSeedRequest* OnDemandSeedInfo::DeserializeReplicaCsv(std::vector<std::stri
 	boost::algorithm::trim(item.materiaRecord);
 	boost::algorithm::trim(item.enchantmentRecord);
 	boost::algorithm::trim(item.transmuteRecord);
+	// TODO: !! Trip ascendant records
 
 	result->itemReplicaInfo = item;
 
@@ -317,6 +329,7 @@ boost::property_tree::ptree toJson(ParsedSeedRequest obj, std::vector<GAME::Game
 	replica.put("enchantmentRecord", obj.itemReplicaInfo.enchantmentRecord);
 	replica.put("enchantmentSeed", obj.itemReplicaInfo.enchantmentSeed);
 	root.add_child("replica", replica);
+	// TODO: ascendant changes here, not critical, not used by IAGD
 
 
 	boost::property_tree::ptree stats;

@@ -7,9 +7,6 @@
 #include "MessageType.h"
 #include "StateRequestNpcAction.h"
 #include "StateRequestMoveAction.h"
-#include "CloudGetNumFiles.h"
-#include "CloudRead.h"
-#include "CloudWrite.h"
 #include "InventorySack_AddItem.h"
 #include "NpcDetectionHook.h"
 #include "SaveTransferStash.h"
@@ -244,14 +241,6 @@ static void ConfigurePlayerPositionHooks(std::vector<BaseMethodHook*>& hooks) {
 	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_MOVE_TO_NPC));
 }
 
-// Cloud detection (is cloud enabled?) hooks
-static void ConfigureCloudDetectionHooks(std::vector<BaseMethodHook*>& hooks) {
-	LogToFile(LogLevel::INFO, L"Configuring cloud detection hooks..");
-	hooks.push_back(new CloudGetNumFiles(&g_dataQueue, g_hEvent));
-	hooks.push_back(new CloudRead(&g_dataQueue, g_hEvent));
-	hooks.push_back(new CloudWrite(&g_dataQueue, g_hEvent));
-}
-
 static void ConfigureStashDetectionHooks(std::vector<BaseMethodHook*>& hooks) {
 	// Stash detection hooks
 	LogToFile(LogLevel::INFO, L"Configuring stash detection hooks..");
@@ -413,7 +402,6 @@ int ProcessAttach(HINSTANCE _hModule) {
 	LogToFile(LogLevel::INFO, L"Preparing hooks..");
 	// Player position hooks
 	ConfigurePlayerPositionHooks(hooks);
-	ConfigureCloudDetectionHooks(hooks);
 	ConfigureStashDetectionHooks(hooks);
 
 	LogToFile(LogLevel::INFO, L"Preparing replica hooks..");

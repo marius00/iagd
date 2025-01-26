@@ -12,13 +12,17 @@
         public string MateriaRecord { get; set; } = "";
         public string RelicCompletionBonusRecord { get; set; } = "";
         public string EnchantmentRecord { get; set; } = "";
+        public string AscendantAffixNameRecord { get; set; } = "";
+        public string AscendantAffix2hNameRecord { get; set; } = "";
 
         public long Seed { get; set; } = 0u;
         public long RelicSeed { get; set; } = 0u;
         public long EnchantmentSeed { get; set; } = 0u;
         public long MateriaCombines { get; set; } = 0u;
         public long StackCount { get; set; } = 1;
-        
+        public long RerollsUsed { get; set; } = 0u;
+
+
         public long CreatedAt { get; set; }
 
         public long PrefixRarity { get; set; }

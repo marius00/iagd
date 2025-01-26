@@ -204,6 +204,8 @@ namespace IAGrim.Database {
                                 BI.{BuddyItemsTable.ModifierRecord} as ModifierRecord,
                                 BI.{BuddyItemsTable.TransmuteRecord} as TransmuteRecord,
                                 BI.{BuddyItemsTable.MateriaRecord} as MateriaRecord,
+                                BI.AscendantAffixNameRecord as AscendantAffixNameRecord,
+                                BI.AscendantAffix2hNameRecord as AscendantAffix2hNameRecord,
                                 BI.{BuddyItemsTable.Rarity} as Rarity,
                                 BI.{BuddyItemsTable.PrefixRarity} as PrefixRarity,
                                 BI.{BuddyItemsTable.Name} as Name,
@@ -216,6 +218,7 @@ namespace IAGrim.Database {
                                 BI.{BuddyItemsTable.StackCount} as Count,
                                 BI.{BuddyItemsTable.SubscriptionId} as BuddyId,
                                 BI.{BuddyItemsTable.IsHardcore} as IsHardcore,
+                                BI.RerollsUsed as RerollsUsed,
                                 S.{BuddySubscriptionTable.Nickname} as Stash
 
 
@@ -239,6 +242,8 @@ namespace IAGrim.Database {
                     q.AddScalar("PrefixRarity", NHibernateUtil.Int64);
                     q.AddScalar("TransmuteRecord", NHibernateUtil.String);
                     q.AddScalar("MateriaRecord", NHibernateUtil.String);
+                    q.AddScalar("AscendantAffixNameRecord", NHibernateUtil.String);
+                    q.AddScalar("AscendantAffix2hNameRecord", NHibernateUtil.String);
                     q.AddScalar("Rarity", NHibernateUtil.String);
                     q.AddScalar("Name", NHibernateUtil.String);
                     q.AddScalar("MinimumLevel", NHibernateUtil.UInt32);
@@ -249,6 +254,7 @@ namespace IAGrim.Database {
                     q.AddScalar("RemoteItemId", NHibernateUtil.String);
                     q.AddScalar("PetRecord", NHibernateUtil.String);
                     q.AddScalar("IsHardcore", NHibernateUtil.Boolean);
+                    q.AddScalar("RerollsUsed", NHibernateUtil.Int64);
 
                     q.AddScalar("Seed", NHibernateUtil.Int64);
                     q.AddScalar("RelicSeed", NHibernateUtil.Int64);

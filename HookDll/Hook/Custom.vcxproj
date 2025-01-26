@@ -37,9 +37,6 @@
   <ItemGroup>
     <ClInclude Include="BaseMethodHook.h" />
     <ClInclude Include="CanUseDismantle.h" />
-    <ClInclude Include="CloudGetNumFiles.h" />
-    <ClInclude Include="CloudRead.h" />
-    <ClInclude Include="CloudWrite.h" />
     <ClInclude Include="GrimTypes.h" />
     <ClInclude Include="HookLog.h" />
     <ClInclude Include="Logger.h" />
@@ -63,9 +60,6 @@
   <ItemGroup>
     <ClCompile Include="BaseMethodHook.cpp" />
     <ClCompile Include="CanUseDismantle.cpp" />
-    <ClCompile Include="CloudGetNumFiles.cpp" />
-    <ClCompile Include="CloudRead.cpp" />
-    <ClCompile Include="CloudWrite.cpp" />
     <ClCompile Include="GrimTypes.cpp" />
     <ClCompile Include="HookLog.cpp" />
     <ClCompile Include="OnDemandSeedInfo.cpp" />

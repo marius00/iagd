@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading;
-using EvilsoftCommons.Exceptions;
+﻿using EvilsoftCommons.Exceptions;
 using IAGrim.Database;
 using IAGrim.Database.Interfaces;
 using IAGrim.UI.Misc.CEF;
@@ -13,6 +6,13 @@ using IAGrim.Utilities;
 using log4net;
 using Newtonsoft.Json;
 using NHibernate.Exceptions;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading;
 
 
 // Release notes:

@@ -148,26 +148,31 @@ namespace IAGrim.Services {
         private PlayerItem Deserialize(string csv) {
             var pieces = csv.Split(';');
 
-            if (pieces.Length != 13) {
+            if (pieces.Length != 13 && pieces.Length != 16) {
                 Logger.Warn($"Expected 13 columns in row, got {pieces.Length}");
                 return null;
             }
 
+            var isNewDlc = pieces.Length == 16;
 
+            int n = 0;
             return new PlayerItem {
-                Mod = pieces[0],
-                IsHardcore = "1".Equals(pieces[1]),
-                BaseRecord = pieces[2].Trim(),
-                PrefixRecord = pieces[3]?.Trim(),
-                SuffixRecord = pieces[4]?.Trim(),
-                Seed = ToInt(pieces[5]),
-                ModifierRecord = pieces[6]?.Trim(),
-                MateriaRecord = pieces[7]?.Trim(),
-                RelicCompletionBonusRecord = pieces[8]?.Trim(),
-                RelicSeed = ToInt(pieces[9]),
-                EnchantmentRecord = pieces[10]?.Trim(),
-                EnchantmentSeed = ToInt(pieces[11]),
-                TransmuteRecord = pieces[12]?.Trim(),
+                Mod = pieces[n++],
+                IsHardcore = "1".Equals(pieces[n++]),
+                BaseRecord = pieces[n++].Trim(),
+                PrefixRecord = pieces[n++]?.Trim(),
+                SuffixRecord = pieces[n++]?.Trim(),
+                Seed = ToInt(pieces[n++]),
+                RerollsUsed = isNewDlc ? ToInt(pieces[n++]) : 0,
+                ModifierRecord = pieces[n++]?.Trim(),
+                MateriaRecord = pieces[n++]?.Trim(),
+                RelicCompletionBonusRecord = pieces[n++]?.Trim(),
+                RelicSeed = ToInt(pieces[n++]),
+                EnchantmentRecord = pieces[n++]?.Trim(),
+                EnchantmentSeed = ToInt(pieces[n++]),
+                TransmuteRecord = pieces[n++]?.Trim(),
+                AscendantAffixNameRecord = isNewDlc ? pieces[n++] : null,
+                AscendantAffix2hNameRecord = isNewDlc ? pieces[n++] : null,
                 Tags = new HashSet<DBStatRow>(0)
             };
         }
@@ -181,13 +186,16 @@ namespace IAGrim.Services {
                 + item.PrefixRecord + sep
                 + item.SuffixRecord + sep
                 + item.Seed + sep
+                + item.RerollsUsed + sep
                 + item.ModifierRecord + sep
                 + item.MateriaRecord + sep
                 + item.RelicCompletionBonusRecord + sep
                 + item.RelicSeed + sep
                 + item.EnchantmentRecord + sep
                 + item.EnchantmentSeed + sep
-                + item.TransmuteRecord;
+                + item.TransmuteRecord + sep
+                + item.AscendantAffixNameRecord + sep
+                + item.AscendantAffix2hNameRecord;
         }
     }
 }

@@ -117,6 +117,14 @@ namespace IAGrim.Database {
                 records.Add(item.MateriaRecord);
             }
 
+            if (!string.IsNullOrEmpty(item.AscendantAffixNameRecord)) {
+                records.Add(item.AscendantAffixNameRecord);
+            }
+
+            if (!string.IsNullOrEmpty(item.AscendantAffix2hNameRecord)) {
+                records.Add(item.AscendantAffix2hNameRecord);
+            }
+
             return records;
         }
 
@@ -611,6 +619,8 @@ namespace IAGrim.Database {
                                 select baserecord from playeritem union 
                                 select prefixrecord from playeritem union 
                                 select suffixrecord from playeritem union 
+                                select ascendantaffixnamerecord from playeritem union 
+                                select ascendantaffix2hnamerecord from playeritem union 
                                 select materiarecord from playeritem
                             )
                             AND {fragment}
@@ -733,13 +743,16 @@ namespace IAGrim.Database {
                 PI.suffixrecord as SuffixRecord, 
                 PI.ModifierRecord as ModifierRecord, 
                 PI.MateriaRecord as MateriaRecord,
+                PI.AscendantAffixNameRecord as AscendantAffixNameRecord,
+                PI.AscendantAffix2hNameRecord as AscendantAffix2hNameRecord,
                 PI.{PlayerItemTable.PrefixRarity} as PrefixRarity,
                 PI.{PlayerItemTable.CloudId} as CloudId,
                 PI.{PlayerItemTable.IsCloudSynchronized} as IsCloudSynchronizedValue,
                 PI.{PlayerItemTable.Id} as Id,
                 PI.{PlayerItemTable.Mod} as Mod,
                 CAST({PlayerItemTable.IsHardcore} as bit) as IsHardcore,
-                coalesce((SELECT group_concat(Record, '|') FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord)), '') AS PetRecord,
+                IFNULL(RerollsUsed, 0) as RerollsUsed,
+                coalesce((SELECT group_concat(Record, '|') FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord, PI.AscendantAffixNameRecord, PI.AscendantAffix2hNameRecord)), '') AS PetRecord,
                 IFNULL((select json_group_array(json_object('text', text, 'type', type)) from ReplicaItemRow where replicaitemid = R.id), '[]') AS ReplicaInfo,
                 PI.{PlayerItemTable.Seed} as Seed
                 FROM PlayerItem PI 
@@ -804,12 +817,6 @@ namespace IAGrim.Database {
                     }
 
                     Logger.Debug(q.QueryString);
-                    //q.SetResultTransformer(new AliasToBeanResultTransformer(typeof(PlayerItem)));
-                    /*
-                    List<PlayerItem> items = new List<PlayerItem>();
-                    foreach (var item in q.List()) {
-                        items.Add(ToPlayerItem(item));
-                    }*/
 
                     var items = q.List<object>().Select(ToPlayerItem).ToList();
                     Logger.Debug($"Search returned {items.Count} items");
@@ -868,12 +875,15 @@ namespace IAGrim.Database {
             string suffixrecord = Convert<string>(arr[idx++])?.Trim();
             string ModifierRecord = Convert<string>(arr[idx++])?.Trim();
             string MateriaRecord = Convert<string>(arr[idx++])?.Trim();
+            string AscendantAffixNameRecord = Convert<string>(arr[idx++])?.Trim();
+            string AscendantAffix2hNameRecord = Convert<string>(arr[idx++])?.Trim();
             long PrefixRarity = Convert(arr[idx++]);
             string CloudId = Convert<string>(arr[idx++]);
             bool IsCloudSynchronized = ConvertToBoolean(arr[idx++]);
             long Id = Convert(arr[idx++]);
             string Mod = Convert<string>(arr[idx++]);
             bool IsHardcore = ConvertToBoolean(arr[idx++]);
+            long RerollsUsed = Convert(arr[idx++]);
             string PetRecord = Convert<string>(arr[idx++])?.Trim();
             string replicaInfo = Convert<string>(arr[idx++]);
             long seed = Convert<long>(arr[idx++]);
@@ -889,6 +899,8 @@ namespace IAGrim.Database {
                 SuffixRecord = suffixrecord,
                 ModifierRecord = ModifierRecord,
                 MateriaRecord = MateriaRecord,
+                AscendantAffixNameRecord = AscendantAffixNameRecord,
+                AscendantAffix2hNameRecord = AscendantAffix2hNameRecord,
                 PrefixRarity = PrefixRarity,
                 CloudId = CloudId,
                 IsCloudSynchronized = IsCloudSynchronized,
@@ -896,6 +908,7 @@ namespace IAGrim.Database {
                 Id = Id,
                 Mod = Mod,
                 IsHardcore = IsHardcore,
+                RerollsUsed = RerollsUsed,
                 ReplicaInfo = replicaInfo,
                 Seed = seed
             };
@@ -1034,12 +1047,15 @@ namespace IAGrim.Database {
                 PI.suffixrecord as SuffixRecord, 
                 PI.ModifierRecord as ModifierRecord, 
                 PI.MateriaRecord as MateriaRecord,
+                PI.AscendantAffixNameRecord as AscendantAffixNameRecord,
+                PI.AscendantAffix2hNameRecord as AscendantAffix2hNameRecord,
                 PI.{PlayerItemTable.PrefixRarity} as PrefixRarity,
                 PI.{PlayerItemTable.CloudId} as CloudId,
                 PI.{PlayerItemTable.IsCloudSynchronized} as IsCloudSynchronizedValue,
                 PI.{PlayerItemTable.Id} as Id,
                 PI.{PlayerItemTable.Mod} as Mod,
                 CAST({PlayerItemTable.IsHardcore} as bit) as IsHardcore,
+                IFNULL(RerollsUsed, 0) as RerollsUsed,
                 '' AS PetRecord,
                 '[]' AS ReplicaInfo,
                 PI.{PlayerItemTable.Seed} as Seed

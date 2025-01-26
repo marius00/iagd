@@ -10,8 +10,8 @@ namespace IAGrim.Backup.FileWriter {
 
     public class IAFileExporter : FileExporter {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(IAFileExporter));
-        private readonly short _currentFileVer = 4;
-        readonly List<int> _supportedFileVer = new List<int> { 1, 2, 3, 4, 5 };
+        private readonly short _currentFileVer = 6;
+        readonly List<int> _supportedFileVer = new List<int> { 1, 2, 3, 4, 5, 6 };
         private readonly string _filename;
 
         public IAFileExporter(string filename) {
@@ -80,8 +80,11 @@ namespace IAGrim.Backup.FileWriter {
                     pi.IsCloudSynchronized = bytes[pos++] == 1;
                 }
                 // File v4 is identical to v3
-                if (fileVer >= 5) {
-                    // TODO: Just a placeholder to ensure that v4 is never added
+                if (fileVer >= 6) {
+                    pi.AscendantAffixNameRecord = ReadString();
+                    pi.AscendantAffix2hNameRecord = ReadString();
+                    pi.RerollsUsed = IOHelper.GetUInt(bytes, pos);
+                    pos += 4;
                 }
 
                 items.Add(pi);
@@ -122,6 +125,10 @@ namespace IAGrim.Backup.FileWriter {
                     IOHelper.WriteBytePrefixed(fs, string.Empty);
                     IOHelper.WriteBytePrefixed(fs, pi.CloudId);
                     IOHelper.Write(fs, pi.IsCloudSynchronized);
+
+                    IOHelper.WriteBytePrefixed(fs, pi.AscendantAffixNameRecord);
+                    IOHelper.WriteBytePrefixed(fs, pi.AscendantAffix2hNameRecord);
+                    IOHelper.Write(fs, (uint)pi.RerollsUsed);
                 }
             }
         }

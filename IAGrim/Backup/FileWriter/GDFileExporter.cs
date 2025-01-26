@@ -50,8 +50,8 @@ namespace IAGrim.Backup.FileWriter {
                 pi.EnchantmentSeed = IOHelper.GetUInt(bytes, pos); pos += 4;
 
                 if (file_ver != 1) {
-                    var ascendantID = ReadString();
-                    var ascendant2hID = ReadString();
+                    pi.AscendantAffixNameRecord = ReadString();
+                    pi.AscendantAffix2hNameRecord = ReadString();
                 }
 
                 pi.UNKNOWN = IOHelper.GetUInt(bytes, pos); pos += 4;
@@ -59,7 +59,7 @@ namespace IAGrim.Backup.FileWriter {
 
 
                 if (file_ver != 1) {
-                    var rerollsUsed = IOHelper.GetUInt(bytes, pos); pos += 4;
+                    pi.RerollsUsed = IOHelper.GetUInt(bytes, pos); pos += 4;
                 }
 
 
@@ -96,12 +96,12 @@ namespace IAGrim.Backup.FileWriter {
                     IOHelper.Write(fs, (uint)pi.MateriaCombines);
                     IOHelper.Write(fs, (uint)pi.EnchantmentSeed);
 
-                    IOHelper.WriteBytePrefixed(fs, ""); // ascendantID
-                    IOHelper.WriteBytePrefixed(fs, ""); // ascendant2hID
+                    IOHelper.WriteBytePrefixed(fs, pi.AscendantAffixNameRecord);
+                    IOHelper.WriteBytePrefixed(fs, pi.AscendantAffix2hNameRecord);
                     IOHelper.Write(fs, (uint)pi.UNKNOWN);
 
                     IOHelper.Write(fs, (uint)pi.StackCount);
-                    IOHelper.Write(fs, (uint)0); // rerollsUsed
+                    IOHelper.Write(fs, (uint)pi.RerollsUsed);
                     IOHelper.Write(fs, pi.IsHardcore);
                     IOHelper.Write(fs, (byte)0); // Char name                    
                 }

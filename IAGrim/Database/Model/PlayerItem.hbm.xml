@@ -16,11 +16,14 @@
 		<property name="RelicCompletionBonusRecord" />
 		<property name="RelicSeed" />
 		<property name="EnchantmentRecord" />
+		<property name="AscendantAffixNameRecord" />
+		<property name="AscendantAffix2hNameRecord" />
 		<property name="PrefixRarity" />
 		<property name="UNKNOWN" />
 		<property name="EnchantmentSeed" />
 		<property name="MateriaCombines" />
 		<property name="StackCount" />
+		<property name="RerollsUsed" />
 		<property name="Name" />
 		<property name="NameLowercase" column="namelowercase" index="idx_playeritem_lowercasename" />
 

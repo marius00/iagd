@@ -153,7 +153,7 @@ namespace IAGrim.Services {
         private static string Serialize(BuddyItem bi) {
             if (bi.BaseRecord.Length > 255 || bi.SuffixRecord?.Length > 255 || bi.PrefixRecord?.Length > 255
                 || bi.MateriaRecord?.Length > 255 || bi.ModifierRecord?.Length > 255 || bi.EnchantmentRecord?.Length > 255
-                || bi.TransmuteRecord?.Length > 255) {
+                || bi.TransmuteRecord?.Length > 255 || bi.AscendantAffixNameRecord?.Length > 255 || bi.AscendantAffix2hNameRecord?.Length > 255) {
                 Logger.Warn("Received a buddy item with one or more records having a length of >255. Stat reproduction not possible.");
                 return null;
             }
@@ -168,15 +168,18 @@ namespace IAGrim.Services {
             sb.Append(bi.Seed + ";");
             sb.Append(bi.RelicSeed + ";");
             sb.Append(bi.EnchantmentSeed + ";");
+            sb.Append(bi.RerollsUsed + ";");
             sb.Append(bi.BaseRecord?.Trim() + ";");
             sb.Append(bi.PrefixRecord?.Trim() + ";");
             sb.Append(bi.SuffixRecord?.Trim() + ";");
             sb.Append(bi.ModifierRecord?.Trim() + ";");
             sb.Append(bi.MateriaRecord?.Trim() + ";");
             sb.Append(bi.EnchantmentRecord?.Trim() + ";");
-            sb.Append(bi.TransmuteRecord?.Trim());
+            sb.Append(bi.TransmuteRecord?.Trim() + ";");
+            sb.Append(bi.AscendantAffixNameRecord?.Trim() + ";");
+            sb.Append(bi.AscendantAffix2hNameRecord?.Trim());
             Logger.Debug($"Dispatching: {sb.ToString()}");
-            if (sb.ToString().Count(s => s == ';') != 11) {
+            if (sb.ToString().Count(s => s == ';') != 14) {
                 Logger.Warn("Could not serialize item, invalid ; count");
                 return null;
             }
@@ -187,7 +190,7 @@ namespace IAGrim.Services {
         private static string Serialize(PlayerItem pi) {
             if (pi.BaseRecord?.Length > 255 || pi.SuffixRecord?.Length > 255 || pi.PrefixRecord?.Length > 255
                 || pi.MateriaRecord?.Length > 255 || pi.ModifierRecord?.Length > 255 || pi.EnchantmentRecord?.Length > 255
-                || pi.TransmuteRecord?.Length > 255) {
+                || pi.TransmuteRecord?.Length > 255 || pi.AscendantAffixNameRecord?.Length > 255 || pi.AscendantAffix2hNameRecord?.Length > 255) {
                 Logger.Warn("Received a player item with one or more records having a length of >255. Stat reproduction not possible.");
                 return null;
             }
@@ -202,15 +205,18 @@ namespace IAGrim.Services {
             sb.Append(pi.USeed + ";");
             sb.Append((uint)pi.RelicSeed + ";");
             sb.Append((uint)pi.EnchantmentSeed + ";");
+            sb.Append(pi.RerollsUsed + ";");
             sb.Append(pi.BaseRecord?.Trim() + ";");
             sb.Append(pi.PrefixRecord?.Trim() + ";");
             sb.Append(pi.SuffixRecord?.Trim() + ";");
             sb.Append(pi.ModifierRecord?.Trim() + ";");
             sb.Append(pi.MateriaRecord?.Trim() + ";");
             sb.Append(pi.EnchantmentRecord?.Trim() + ";");
-            sb.Append(pi.TransmuteRecord?.Trim());
+            sb.Append(pi.TransmuteRecord?.Trim() + ";");
+            sb.Append(pi.AscendantAffixNameRecord?.Trim() + ";");
+            sb.Append(pi.AscendantAffix2hNameRecord?.Trim());
             Logger.Debug($"Dispatching: {sb.ToString()}");
-            if (sb.ToString().Count(s => s == ';') != 11) {
+            if (sb.ToString().Count(s => s == ';') != 14) {
                 Logger.Warn("Could not serialize item, invalid ; count");
                 return null;
             }

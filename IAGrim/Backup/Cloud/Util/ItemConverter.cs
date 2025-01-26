@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using EvilsoftCommons;
 using IAGrim.Backup.Cloud.Dto;
 using IAGrim.Database;
@@ -30,6 +29,9 @@ namespace IAGrim.Backup.Cloud.Util {
                 NameLowercase = pi.NameLowercase,
                 Rarity = pi.Rarity,
                 PrefixRarity = pi.PrefixRarity,
+                AscendantAffix2hNameRecord = pi.AscendantAffix2hNameRecord,
+                RerollsUsed = pi.RerollsUsed,
+                AscendantAffixNameRecord = pi.AscendantAffixNameRecord,
             };
         }
 
@@ -56,8 +58,10 @@ namespace IAGrim.Backup.Cloud.Util {
                 LevelRequirement = itemDto.LevelRequirement,
                 Name = itemDto.Name,
                 NameLowercase = itemDto.NameLowercase,
-                Rarity = itemDto.Rarity
-                
+                Rarity = itemDto.Rarity,
+                AscendantAffix2hNameRecord = itemDto.AscendantAffix2hNameRecord,
+                AscendantAffixNameRecord = itemDto.AscendantAffixNameRecord,
+                RerollsUsed = itemDto.RerollsUsed,
             };
         }
     }

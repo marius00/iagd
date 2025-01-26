@@ -16,6 +16,8 @@
     <property name="ModifierRecord" column="modifierrecord" />
     <property name="TransmuteRecord" column="transmuterecord" />
     <property name="MateriaRecord" column="materiarecord" />
+    <property name="AscendantAffixNameRecord" />
+    <property name="AscendantAffix2hNameRecord" />
     <property name="StackCount" column="stackcount" />
     <property name="IsHardcore" column="ishardcore" />
     <property name="Mod" column="mod" />
@@ -29,5 +31,6 @@
     <property name="Seed" column="seed" />
     <property name="RelicSeed" column="relicseed" />
     <property name="EnchantmentSeed" column="enchantmentseed" />
+    <property name="RerollsUsed" />
   </class>
 </hibernate-mapping>
