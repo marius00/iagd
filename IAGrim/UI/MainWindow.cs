@@ -744,13 +744,6 @@ namespace IAGrim.UI {
             _injectorCallbackDelegate = InjectorCallback;
 
 
-            try {
-                File.Delete(Path.Combine(GlobalPaths.CoreFolder, "iagd_hook.log"));
-            }
-            catch (IOException ex) {
-                Logger.Info("Failed to delete DLL log", ex);
-
-            }
             string dllname = "ItemAssistantHook_x64.dll";
             _injector = new InjectionHelper(_injectorCallbackDelegate, false, "Grim Dawn", string.Empty, dllname);
         }
