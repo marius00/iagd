@@ -29,7 +29,6 @@ body {
 	--item-stat-label: #000000;
 	--item-stat-modifier: #495057;
 	--item-golden-header: #8e5420;
-	--item-skill-trigger: black;
 	--item-border: #896947;
 	--item-transfer: black;
 	--item-misc-info: black;
@@ -37,6 +36,7 @@ body {
 	--item-grantskill-label: inherit;
 	--item-grantskill-content: inherit;
 	--item-skill: #000000;
+	--item-itemdescription: black;
 
 	--item-skill-trigger: gray;
 	--item-supergreen: var(--item-color-green);
@@ -44,6 +44,8 @@ body {
 	--item-set: black;
 	--item-pet: black;
 	--item-pet-bullet: black;
+	--item-setinfo-name: #318C88;
+	--item-setinfo-description: black;
 	--item-disabled: gray;
 
 	--item-color-green: #006400;
@@ -52,6 +54,7 @@ body {
 	--item-color-unknown: #81551a;
 	--item-color-yellow: #7d7703;
 	--item-warning-zero: orange;
+
 	--itemcompare-header-bg: rgb(63, 48, 72);
 	--itemcompare-header-h2: #fff8f8;
 	--itemcompare-header-x-hover: #3c3c3c59;
@@ -71,7 +74,6 @@ body {
 	--item-stat-label: #a88054;
 	--item-stat-modifier: #dbb284;
 	--item-golden-header: #e3ba6b;
-	--item-skill-trigger: gray;
 	--item-border: #211e1c;
 	--item-transfer: #ffffff;
 	--item-misc-info: #999999;
@@ -79,18 +81,25 @@ body {
 	--item-grantskill-label: #e3ba6b;
 	--item-grantskill-content: #6699ff;
 	--item-skill: #338cce;
+	--item-itemdescription: #b3af8c;
+
+	--item-skill-trigger: gray;
 	--item-supergreen: #3eea4a;
 	--item-socket: #dec2a3;
 	--item-set: #dbb284;
 	--item-pet: #dbb284;
 	--item-pet-bullet: white;
+	--item-setinfo-name: #4fbcbf;
+	--item-setinfo-description: #b3af8c;
 	--item-disabled: gray;
+
 	--item-color-green: #08b908;
 	--item-color-blue: #338cce;
 	--item-color-epic: #a638ff;
 	--item-color-unknown: #81551a;
 	--item-color-yellow: #f1e51b;
 	--item-warning-zero: red;
+
 	--itemcompare-header-bg: #2f2a2a82;
 	--itemcompare-header-h2: #c1aeae;
 	--itemcompare-header-x-hover: #3c3c3c59;
