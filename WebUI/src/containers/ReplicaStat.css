@@ -2,9 +2,19 @@
   margin: 2px;
 }
 
-/* Item description, bla bla text */
-.replica-type-16, .replica-type-20, .replica-type-21 {
-  color: var(--item-misc-info);
+/* Item description */
+.replica-type-16 {
+  color: var(--item-itemdescription);
+}
+
+/* Set name */
+.replica-type-20 {
+  color: var(--item-setinfo-name);
+}
+
+/* Set description */
+.replica-type-21 {
+  color: var(--item-setinfo-description);
 }
 
 /* 4: Item name: Armor, 5: Weapon, 6: Gazer man (head?), 77: GI */
@@ -18,7 +28,6 @@
 .replica-type-64, .replica-type-3 {
   display: none;
 }
-
 
 .replica-type-0 {
   white-space: pre-wrap;
