@@ -60,6 +60,8 @@ class ReplicaStatContainer extends PureComponent<Props, object> {
       return false;
     }
 
+    let setSkillStage = 0;
+
     let hasShownSkills = false;
     return (
       <p className="replica">
@@ -67,6 +69,31 @@ class ReplicaStatContainer extends PureComponent<Props, object> {
           // Skip skill information
           if (shouldSkip(row)) {
             return null;
+          }
+
+          if (row.type === 80 /* Set skill, e.g. Secrets of the Guardian (50% Chance on Critical Attack) */) {
+            // All rows of this skill's info have type 80, so these rows are rendered as plain black text (in dark mode)
+
+            // With the following "state machine", "80" types are replaced with more appropriate ones:
+            // setSkillStage=0 => render with type=23 // Skill name
+            // setSkillStage=1 => render with type=21 // Skill description
+            // setSkillStage=2 => render with type=40 // Skill stat row
+            // setSkillStage=3 => render with type=40
+            // setSkillStage=4 => render with type=40
+            // etc...
+            let replicaStat;
+
+            if (setSkillStage === 0) {
+              replicaStat = <ReplicaStat {...row} key={id + idx} type={23}/>
+            } else if (setSkillStage === 1) {
+              replicaStat = <ReplicaStat {...row} key={id + idx} type={21}/>
+            } else if (setSkillStage > 1) {
+              replicaStat = <ReplicaStat {...row} key={id + idx} type={40}/>
+            }
+
+            ++setSkillStage;
+
+            return replicaStat;
           }
 
           if (row.type === 0 /* Newline */) {
