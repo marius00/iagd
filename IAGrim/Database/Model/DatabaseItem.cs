@@ -18,6 +18,8 @@ namespace IAGrim.Database {
 
         public virtual string Name { set; get; }
 
+        public virtual string NameLowercase { get; set; }
+
         public virtual string GetTag(string tag) {
             if (Stats.Any(m => tag.Equals(m.Stat)))
                 return Stats.FirstOrDefault(m => tag.Equals(m.Stat))?.TextValue;

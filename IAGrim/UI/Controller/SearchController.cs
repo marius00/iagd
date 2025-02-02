@@ -52,7 +52,9 @@ namespace IAGrim.UI.Controller {
         private void UpdateCollectionItems(ItemSearchRequest query) {
             Thread thread = new Thread(() => {
                 ExceptionReporter.EnableLogUnhandledOnThread();
-                Browser.SetCollectionItems(_itemCollectionRepo.GetItemCollection(query));
+
+                var itemCollection = _itemCollectionRepo.GetItemCollection(query);
+                Browser.SetCollectionItems(itemCollection);
             });
             thread.Start();
 

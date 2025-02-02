@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace StatTranslator
@@ -22,15 +23,44 @@ namespace StatTranslator
         }
 
         public static string GetGendered(string s, string genderTag) {
-            var tag = genderTag.Replace("[", @"\[").Replace("]", @"\]");
-            var regex = new Regex(tag + @"(\w+)", RegexOptions.IgnoreCase);
-            var match = regex.Match(s);
+            var tag = Regex.Escape(genderTag);
+            var match = Regex.Match(s, tag + @"(?<gendered>\w+)", RegexOptions.IgnoreCase);
+
             if (match.Success)
             {
-                return match.Groups[1].Captures[0].Value;
+                return match.Groups["gendered"].Value;
             }
 
             return s.Replace("$", "");
+        }
+
+        /// <summary>
+        /// Determines gender in the <paramref name="parts"/> array.
+        /// <param name="parts">An array, which represents the original name, splitted by the space.</param>
+        /// </summary>
+        public static string DetermineGender(string[] parts) {
+            for (int i = 0; i < parts.Length; ++i)
+            {
+                var part = parts[i].Trim();
+
+                // Check if the part starts with [XX]
+                if (part.Length >= 4
+                    && part[0] == '['
+                    && part[3] == ']')
+                {
+                    var isMultiGenderPart = part.IndexOf('[', 1) > 0;
+
+                    if (isMultiGenderPart)
+                    {
+                        // Multigender part - skip
+                        continue;
+                    }
+
+                    return part.Substring(0, 4);
+                }
+            }
+
+            return null;
         }
 
         public static string FilterGenderTag(string s) {
@@ -87,6 +117,29 @@ namespace StatTranslator
             }
             
             return string.Join(" ", itemName.Where(m => !string.IsNullOrEmpty(m)).ToList());
+        }
+
+        public string TranslateName(string rawName) {
+            if (string.IsNullOrEmpty(rawName))
+            {
+                return rawName;
+            }
+
+            var parts = rawName.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            var genderTag = DetermineGender(parts);
+
+            // Gender not determined - return original name
+            if (string.IsNullOrEmpty(genderTag))
+            {
+                return rawName;
+            }
+
+            for (int i = 0; i < parts.Length; ++i)
+            {
+                parts[i] = GetGendered(parts[i], genderTag);
+            }
+
+            return string.Join(" ", parts);
         }
     }
 }

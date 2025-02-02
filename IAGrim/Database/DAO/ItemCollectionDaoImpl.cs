@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Model;
+using IAGrim.Utilities;
 
 namespace IAGrim.Database {
     /// <summary>
@@ -47,7 +48,7 @@ namespace IAGrim.Database {
             }
 
             if (!string.IsNullOrEmpty(query.Wildcard)) {
-                sql.Add("AND name LIKE :name");
+                sql.Add("AND (name LIKE :name OR namelowercase LIKE :name)");
             }
 
             // Add the MINIMUM level requirement (if any)
@@ -85,7 +86,7 @@ namespace IAGrim.Database {
                         q.SetParameterList("class", query.Slot);
                     }
                     if (!string.IsNullOrEmpty(query.Wildcard)) {
-                        q.SetParameter("name", $"%{query.Wildcard.ToLower()}%");
+                        q.SetParameter("name", $"%{query.Wildcard.ToLowerInvariant()}%");
                     }
                     if (query.MaximumLevel < 120 && query.MaximumLevel > 0) {
                         q.SetParameter("maxlevel", query.MaximumLevel);
@@ -96,7 +97,15 @@ namespace IAGrim.Database {
 
 
 
-                    return q.SetResultTransformer(Transformers.AliasToBean<CollectionItem>()).List<CollectionItem>();
+                    var collectionItems = q.SetResultTransformer(Transformers.AliasToBean<CollectionItem>()).List<CollectionItem>();
+
+                    foreach (var item in collectionItems)
+                    {
+                        string localizedName = RuntimeSettings.Language.TranslateName(item.Name);
+                        item.Name = localizedName;
+                    }
+
+                    return collectionItems;
                 }
             }
         }

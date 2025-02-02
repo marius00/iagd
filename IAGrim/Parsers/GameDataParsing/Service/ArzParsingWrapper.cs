@@ -129,6 +129,7 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
                     }
 
                     Items[i].Name = string.Join(" ", finalTags).Trim();
+                    Items[i].NameLowercase = Items[i].Name.ToLowerInvariant();
                 }
 
                 tracker.Increment();

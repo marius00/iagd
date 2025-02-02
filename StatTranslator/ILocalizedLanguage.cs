@@ -6,6 +6,8 @@
 
         string TranslateName(string prefix, string quality, string style, string name, string suffix);
 
+        string TranslateName(string rawName);
+
         bool WarnIfMissing { get; }
     }
 }

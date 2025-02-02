@@ -28,6 +28,10 @@ namespace StatTranslator {
             return _itemCombinator.TranslateName(prefix, quality, style, name, suffix);
         }
 
+        public string TranslateName(string rawName) {
+            return _itemCombinator.TranslateName(rawName);
+        }
+
         public string GetTag(string tag) {
             if (_stats.ContainsKey(tag)) {
                 return _stats[tag];

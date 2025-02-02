@@ -790,6 +790,10 @@ namespace StatTranslator {
             return _itemCombinator.TranslateName(prefix, quality, style, name, suffix);
         }
 
+        public string TranslateName(string rawName) {
+            return _itemCombinator.TranslateName(rawName);
+        }
+
         public string[] Serialize() {
             return _stats.Keys.ToArray();
         }
