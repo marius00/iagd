@@ -182,20 +182,20 @@ namespace IAGrim.Services {
             return ""
                 + item.Mod + sep
                 + (item.IsHardcore ? 1 : 0) + sep
-                + item.BaseRecord + sep
-                + item.PrefixRecord + sep
-                + item.SuffixRecord + sep
+                + item.BaseRecord?.Trim() + sep
+                + item.PrefixRecord?.Trim() + sep
+                + item.SuffixRecord?.Trim() + sep
                 + item.Seed + sep
                 + item.RerollsUsed + sep
-                + item.ModifierRecord + sep
-                + item.MateriaRecord + sep
-                + item.RelicCompletionBonusRecord + sep
+                + item.ModifierRecord?.Trim() + sep
+                + item.MateriaRecord?.Trim() + sep
+                + item.RelicCompletionBonusRecord?.Trim() + sep
                 + item.RelicSeed + sep
-                + item.EnchantmentRecord + sep
+                + item.EnchantmentRecord?.Trim() + sep
                 + item.EnchantmentSeed + sep
-                + item.TransmuteRecord + sep
-                + item.AscendantAffixNameRecord + sep
-                + item.AscendantAffix2hNameRecord;
+                + item.TransmuteRecord?.Trim() + sep
+                + item.AscendantAffixNameRecord?.Trim() + sep
+                + item.AscendantAffix2hNameRecord?.Trim();
         }
     }
 }
