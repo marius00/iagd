@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using CefSharp.DevTools.Debugger;
-using EvilsoftCommons.Exceptions;
 using IAGrim.Backup.Cloud.Dto;
 using IAGrim.Backup.Cloud.Util;
 using IAGrim.Database;
@@ -12,7 +10,6 @@ using IAGrim.Settings;
 using IAGrim.UI.Misc.CEF;
 using IAGrim.Utilities;
 using log4net;
-using NHibernate.Mapping;
 
 namespace IAGrim.Backup.Cloud.Service {
     public class BackupService {
@@ -37,6 +34,10 @@ namespace IAGrim.Backup.Cloud.Service {
             _playerItemDao = playerItemDao;
             _settings = settings;
             _browser = browser;
+        }
+
+        public void Logout() {
+            _authService.UnAuthenticate();
         }
 
         public void Execute() {

@@ -2,6 +2,7 @@
 
 ## Prerequisites
 * Nodejs 12 (will _not_ compile on nodejs 18+)
+Install nvm and do `nvm use 12.22.12`
 
 
 ## The Web View

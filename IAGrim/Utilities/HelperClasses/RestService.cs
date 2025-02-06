@@ -35,7 +35,7 @@ namespace IAGrim.Utilities.HelperClasses {
             }
             else {
                 Logger.Warn($"Got response code {result.StatusCode} on GET {url}");
-                throw new HttpException();
+                throw new HttpException((int)result.StatusCode, "Error");
             }
         }
 

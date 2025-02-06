@@ -3,13 +3,11 @@ using System.Net;
 using System.Net.Http;
 using System.Runtime.Caching;
 using CefSharp;
-using EvilsoftCommons.Exceptions;
 using IAGrim.Backup.Cloud.CefSharp.Events;
 using IAGrim.Database.Interfaces;
 using IAGrim.UI.Misc.CEF;
 using IAGrim.Utilities.HelperClasses;
 using log4net;
-using Newtonsoft.Json;
 
 namespace IAGrim.Backup.Cloud.Service {
     public class AuthService {

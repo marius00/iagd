@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Net;
 using System.Threading;
+using System.Web;
 using EvilsoftCommons.Exceptions;
 using IAGrim.Backup.Cloud.Service;
 using log4net;
@@ -46,6 +48,13 @@ namespace IAGrim.Backup.Cloud.Util {
                     Thread.Sleep(1000);
                     _backupService.Execute();
                     _characterBackupService.Execute();
+                }
+                catch (HttpException ex) {
+                    if (ex.WebEventCode == (int)HttpStatusCode.Unauthorized) {
+                        _backupService.Logout();
+                    }
+                    Logger.Error(ex.Message);
+                    Logger.Error(ex.StackTrace);
                 }
                 catch (Exception ex) {
                     Logger.Error(ex.Message);
