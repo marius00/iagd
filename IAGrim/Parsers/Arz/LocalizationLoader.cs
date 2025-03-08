@@ -181,7 +181,13 @@ namespace IAGrim.Parsers.Arz {
 
             try {
                 using (ZipFile zip = ZipFile.Read(filename)) {
-                    foreach (var itemsFile in zip.EntryFileNames.Where(m => m.Contains("items") || m.Contains("skills"))) {
+                    foreach (var itemsFile in
+                        zip.EntryFileNames
+                            .Where(m =>
+                                m.Contains("items")
+                                    || m.Contains("skills")
+                                    || m.Contains("endlessdungeon"))) // fg dir has tagsgdx2_endlessdungeon.txt file, which also has localization for items
+                    {
                         var tags = ReadFile(zip, itemsFile);
                         _tagsItems = Merge(_tagsItems, tags);
                     }
