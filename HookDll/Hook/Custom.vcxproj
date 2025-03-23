@@ -323,11 +323,11 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>detours.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <GenerateDebugInformation>No</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OutputFile>$(OutDir)ItemAssistantHook$(TargetExt)</OutputFile>
+      <OutputFile>$(OutDir)ItemAssistantHook_x64.dll</OutputFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release-playtest|x64'">

@@ -32,10 +32,6 @@
 
 #define CAN_USE_DISMANTLE "?MainPlayerCanUseDismantle@GameEngine@GAME@@QEBA_NXZ"
 
-#define CLOUD_WRITE "?CloudWrite@Steamworks@GAME@@QEBA_NAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PEBXI_N@Z"
-#define CLOUD_READ "?CloudRead@Steamworks@GAME@@QEBA_NAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PEAXI@Z"
-#define CLOUD_GET_NUM_FILES "?CloudGetNumFiles@Steamworks@GAME@@QEBAIXZ"
-
 #define GET_PRIVATE_STASH "?GetPrivateStash@Player@GAME@@QEAAAEAV?$vector@PEAVInventorySack@GAME@@@mem@@XZ"
 
 #define ITEM_EQUIPMENT_GETUIDISPLAYTEXT "?GetUIDisplayText@ItemEquipment@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@_N@Z"

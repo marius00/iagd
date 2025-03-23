@@ -18,22 +18,24 @@ OnDemandSeedInfo::OnDemandSeedInfo() {}
 OnDemandSeedInfo::OnDemandSeedInfo(DataQueue* dataQueue, HANDLE hEvent) {
 	m_dataQueue = dataQueue;
 	m_hEvent = hEvent;
-	m_thread = NULL;
+	m_thread = nullptr;
 	m_sleepMilliseconds = 0;
+	originalMethod = nullptr;
 
 	auto handle = GetProcAddressOrLogToFile(L"game.dll", "?GetUIDisplayText@ItemEquipment@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@_N@Z");
-	if (handle == NULL) LogToFile(LogLevel::FATAL, L"Error hooking GetUIDisplayText@ItemEquipment");
+	if (handle == nullptr) LogToFile(LogLevel::FATAL, L"Error hooking GetUIDisplayText@ItemEquipment");
 	fnItemEquipmentGetUIDisplayText = pItemEquipmentGetUIDisplayText(handle);
 
 
 	auto handle2 = GetProcAddressOrLogToFile(L"game.dll", GET_ITEMARTIFACT_GETUIDISPLAYTEXT);
-	if (handle2 == NULL) LogToFile(LogLevel::FATAL, L"Error hooking GetUIDisplayText@ItemArtifact");
+	if (handle2 == nullptr) LogToFile(LogLevel::FATAL, L"Error hooking GetUIDisplayText@ItemArtifact");
 	fnItemRelicGetUIDisplayText = pItemEquipmentGetUIDisplayText(handle2);
 }
 
 
 
 void OnDemandSeedInfo::EnableHook() {
+	g_self = this;
 	originalMethod = (OriginalMethodPtr)HookGame(
 		"?Update@GameEngine@GAME@@QEAAXH@Z",
 		HookedMethod,
@@ -422,6 +424,12 @@ std::wstring randomFilename32() {
 
 
 void* __fastcall OnDemandSeedInfo::HookedMethod(void* This, int v) {
+	if (This == nullptr) {
+		LogToFile(LogLevel::WARNING, L"Update@GameEngine called with 'This' being null");
+	}
+	if (g_self == nullptr) {
+		LogToFile(LogLevel::FATAL, L"Update@GameEngine called with 'g_self' being null");
+	}
 	void* r = g_self->originalMethod(This, v);
 
 
