@@ -83,7 +83,8 @@ namespace EvilsoftCommons.DllInjector {
         }
 
         public static bool IsPlaytest(string dll) {
-            return HasSpecificDllExport(dll, "?GetUIDisplayText@ItemEquipment@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@_N@Z");
+            // A couple of ones, just in case one changes.
+            return HasSpecificDllExport(dll, "??0AscendantAltar@GAME@@QEAA@XZ") || HasSpecificDllExport(dll, "?AddAscendantExperienceMod@GameEngine@GAME@@QEAAXM@Z");
         }
 
         private static bool HasSpecificDllExport(string dll, string export) {

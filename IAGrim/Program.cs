@@ -21,6 +21,7 @@ using IAGrim.Database.Synchronizer.Core;
 using IAGrim.Services;
 using IAGrim.Settings;
 using System.Diagnostics;
+using IAGrim.StashFile;
 
 
 namespace IAGrim {
@@ -39,7 +40,6 @@ namespace IAGrim {
         }
 
         private static void Test() {
-
             int x = 9;
         }
 #endif

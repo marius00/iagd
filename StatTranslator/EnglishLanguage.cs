@@ -454,6 +454,7 @@ namespace StatTranslator {
             {"iatag_ui_no_expansion", "AOM/FG disabled"},
             {"iatag_ui_vanilla_xpac", "AoM"},
             {"iatag_ui_forgottengods", "Forgotten Gods"},
+            {"iatag_ui_fangsofasterkarn", "Fangs of Asterkarn"},
             {"iatag_ui_none", "None"},
             {"iatag_ui_yes", "Yes"},
             {"iatag_ui_no", "No"},

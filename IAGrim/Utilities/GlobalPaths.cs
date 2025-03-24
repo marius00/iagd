@@ -159,6 +159,8 @@ namespace IAGrim.Utilities {
                     "transfer.bst", // Softcore Vanilla FG/AOM disabled (Vanilla only, owns expansions)
                     "transfer.cst", // Softcore FG disabled (Vanilla+AOM) 
                     "transfer.csh", // Hardcore FG disabled (Vanilla+AOM) 
+                    "transfer.dsh", // Hardcore Asterkarn disabled?
+                    "transfer.dst", // Softcore Asterkarn disabled?
                     "transfer.bsh" // Hardcore FG/AOM disabled (Vanilla only, owns expansions)
                 };
             }

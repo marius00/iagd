@@ -317,7 +317,7 @@ namespace DllInjector {
                 var gdFilename = GetGameDllPath(GetWindowModuleFileName(pid));
 
                 if (!_isPlaytestCache.ContainsKey(gdFilename)) {
-                    _isPlaytestCache[gdFilename] = InjectionVerifier.IsPlaytest(gdFilename) && false; // No playtest dll at the moment, will probably be one again very soon.
+                    _isPlaytestCache[gdFilename] = InjectionVerifier.IsPlaytest(gdFilename); // No playtest dll at the moment, will probably be one again very soon.
                 }
 
                 if (_isPlaytestCache[gdFilename]) {

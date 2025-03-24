@@ -19,6 +19,7 @@ namespace IAGrim.UI.Service {
             var tagVanilla = RuntimeSettings.Language.GetTag("iatag_ui_vanilla");
             var tagVanillaXpac = RuntimeSettings.Language.GetTag("iatag_ui_vanilla_xpac");
             var tagForgottenGods = RuntimeSettings.Language.GetTag("iatag_ui_forgottengods");
+            var tagFangsOfAsterkarn = RuntimeSettings.Language.GetTag("iatag_ui_fangsofasterkarn");
             switch (expansionLevel) {
                 case 0:
                     return tagVanilla;
@@ -26,6 +27,8 @@ namespace IAGrim.UI.Service {
                     return tagVanillaXpac;
                 case 2:
                     return tagForgottenGods;
+                case 3:
+                    return tagFangsOfAsterkarn;
                 default:
                     return $"{expansionLevel} Expansions"; // No translation, this is a worst case IA is outdated error.
             }

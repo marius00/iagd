@@ -29,6 +29,8 @@ namespace IAGrim.Parser.Stash {
         public uint RelicSeed = 0u;
 
         public string EnchantmentRecord = "";
+        public string AscendantRecord = "";
+        public string AscendantRecord2H = "";
 
         public uint UNKNOWN = 0u;
 
@@ -37,6 +39,8 @@ namespace IAGrim.Parser.Stash {
         public uint MateriaCombines = 0u;
 
         public uint StackCount = 1u;
+
+        public uint Rerolls = 0u;
 
         public uint XOffset = 0;
 
@@ -64,9 +68,10 @@ namespace IAGrim.Parser.Stash {
                 || !pCrypto.ReadCryptoString(out this.SuffixRecord) || !pCrypto.ReadCryptoString(out this.ModifierRecord) 
                 || !pCrypto.ReadCryptoString(out this.TransmuteRecord) || !pCrypto.ReadCryptoUInt(out this.Seed) 
                 || !pCrypto.ReadCryptoString(out this.MateriaRecord) || !pCrypto.ReadCryptoString(out this.RelicCompletionBonusRecord) 
-                || !pCrypto.ReadCryptoUInt(out this.RelicSeed) || !pCrypto.ReadCryptoString(out this.EnchantmentRecord) 
+                || !pCrypto.ReadCryptoUInt(out this.RelicSeed) || !pCrypto.ReadCryptoString(out this.EnchantmentRecord)
+                || !pCrypto.ReadCryptoString(out this.AscendantRecord) || !pCrypto.ReadCryptoString(out this.AscendantRecord2H)
                 || !pCrypto.ReadCryptoUInt(out this.UNKNOWN) || !pCrypto.ReadCryptoUInt(out this.EnchantmentSeed) 
-                || !pCrypto.ReadCryptoUInt(out this.MateriaCombines) || !pCrypto.ReadCryptoUInt(out this.StackCount);
+                || !pCrypto.ReadCryptoUInt(out this.MateriaCombines) || !pCrypto.ReadCryptoUInt(out this.StackCount) || !pCrypto.ReadCryptoUInt(out this.Rerolls);
 
             flag = flag || !pCrypto.ReadCryptoUInt(out this.XOffset) || !pCrypto.ReadCryptoUInt(out this.YOffset);
             return !flag;
@@ -113,6 +118,8 @@ namespace IAGrim.Parser.Stash {
             if (!Equals(this.EnchantmentRecord, that.EnchantmentRecord)) return false;
             if (!Equals(this.EnchantmentSeed, that.EnchantmentSeed)) return false;
             if (!Equals(this.MateriaCombines, that.MateriaCombines)) return false;
+            if (!Equals(this.AscendantRecord, that.AscendantRecord)) return false;
+            if (!Equals(this.AscendantRecord2H, that.AscendantRecord2H)) return false;
 
             return true;
         }

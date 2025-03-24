@@ -50,11 +50,27 @@ namespace GAME
 		unsigned int enchantmentLevel;
 		unsigned int enchantmentSeed;
 		std::basic_string<char, std::char_traits<char>, std::allocator<char> > transmuteRecord;
+
+#ifdef PLAYTEST
+		std::basic_string<char, std::char_traits<char>, std::allocator<char> > ascendant1;
+		std::basic_string<char, std::char_traits<char>, std::allocator<char> > ascendant2;
+#endif
+
 		// TODO: Ascendant
 		unsigned int var1;
 		Vec3 velocity;
 		unsigned int owner;
 		unsigned int stackSize;
+
+#ifdef PLAYTEST
+		/**
+		 New string at +288 
+		 New string at +320
+
+		 new number at end?
+		 */
+		unsigned int maybeRerolls;
+#endif
 		unsigned int visiblePlayerId;
 		unsigned int droppedPlayerId;
 	};

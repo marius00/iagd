@@ -108,7 +108,9 @@ namespace IAGrim.Parsers.Arz {
                 Mod = mod,
                 IsHardcore = isHardcore,
                 CreationDate = DateTime.UtcNow.ToTimestamp(),
-                CloudId = Guid.NewGuid().ToString()
+                CloudId = Guid.NewGuid().ToString(),
+                AscendantAffix2hNameRecord = item.AscendantRecord2H,
+                AscendantAffixNameRecord = item.AscendantRecord,
             };
         }
 
