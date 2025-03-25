@@ -134,13 +134,14 @@ namespace IAGrim.Services.ItemReplica {
 
                 var playerItemIds = arr.Select(m => long.Parse(m.Value.playerItemId));
                 var playerRecordMap = _playerItemDao.FindRecordsFromIds(playerItemIds);
-
                 foreach (var itemTemplate in arr) {
                     var template = itemTemplate.Value;
                     var stats = template.stats
                         .Select(m => new ReplicaItemRow {
-                            Text = Regex.Replace(m.text.Trim(), @"(\^.?)", ""),
-                            TextLowercase = Regex.Replace(m.text.Trim(), @"(\^.?)", "").ToLowerInvariant(),
+                            // Strip out [0-9] damage suffixes introduced in the Asterkarn DLC
+                            // Strip out ^K ^W color codes
+                            Text = Regex.Replace(Regex.Replace(m.text.Trim(), @"(\^.?)", ""), @" (\[|\().+(\]|\))$", ""),
+                            TextLowercase = Regex.Replace(Regex.Replace(m.text.Trim(), @"(\^.?)", ""), @" (\[|\().+(\]|\))$", "").ToLowerInvariant(),
                             Type = Int32.Parse(m.type),
                         }).ToList();
 
