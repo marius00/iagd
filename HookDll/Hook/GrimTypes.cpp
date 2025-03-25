@@ -9,7 +9,11 @@ namespace GAME {
 		stream << replica.prefixRecord.c_str() << ";";
 		stream << replica.suffixRecord.c_str() << ";";
 		stream << replica.seed << ";";
-		stream << 0 << ";"; // TODO: Ascendant, RerollsUsed
+#ifdef PLAYTEST
+		stream << replica.maybeRerolls << ";";
+#else
+		stream << 0 << ";";
+#endif
 		stream << replica.modifierRecord.c_str() << ";";
 		stream << replica.materiaRecord.c_str() << ";";
 		stream << replica.relicBonus.c_str() << ";";
@@ -17,8 +21,14 @@ namespace GAME {
 		stream << replica.enchantmentRecord.c_str() << ";";
 		stream << replica.enchantmentSeed << ";";
 		stream << replica.transmuteRecord.c_str() << ";";
-		stream << "" << ";"; // TODO: Ascendant, AscendantAffixNameRecord
-		stream << ""; // TODO: Ascendant, AscendantAffix2hNameRecord
+
+#ifdef PLAYTEST
+		stream << replica.ascendant1.c_str() << ";";
+		stream << replica.ascendant2.c_str();
+#else
+		stream << "" << ";";
+		stream << "";
+#endif
 
 		return stream.str();
 	}
@@ -59,8 +69,7 @@ namespace GAME {
 		item->suffixRecord = tokens.at(idx++);
 		item->seed = (unsigned int)stoul(tokens.at(idx++));
 		if (isNewDlc) {
-			// TODO: Ascendant
-			unsigned int rerollsUsed = (unsigned int)stoul(tokens.at(idx++));
+			item->maybeRerolls = (unsigned int)stoul(tokens.at(idx++));
 		}
 		item->modifierRecord = tokens.at(idx++);
 		item->materiaRecord = tokens.at(idx++);
@@ -70,9 +79,8 @@ namespace GAME {
 		item->enchantmentSeed = (unsigned int)stoul(tokens.at(idx++));
 		item->transmuteRecord = tokens.at(idx++);
 		if (isNewDlc) {
-			// TODO: Ascendant
-			auto ascendantAffixNameRecord = tokens.at(idx++);
-			auto ascendantAffix2hNameRecord = tokens.at(idx++);
+			item->ascendant1 = tokens.at(idx++);
+			item->ascendant2 = tokens.at(idx++);
 		}
 
 		return item;

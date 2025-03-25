@@ -56,7 +56,6 @@ namespace GAME
 		std::basic_string<char, std::char_traits<char>, std::allocator<char> > ascendant2;
 #endif
 
-		// TODO: Ascendant
 		unsigned int var1;
 		Vec3 velocity;
 		unsigned int owner;
