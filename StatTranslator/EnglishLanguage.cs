@@ -624,6 +624,7 @@ namespace StatTranslator {
             {"class07", "Inquisitor"},
             {"class08", "Necromancer"},
             {"class09", "Oathkeeper"},
+            {"class10", "Berserker"},
 
             {"iatag_ui_questionmark", " ? "},
             {"iatag_ui_howdoifindgrimdawn", "How can I find the Grim Dawn install?"},

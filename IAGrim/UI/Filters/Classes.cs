@@ -46,11 +46,12 @@ namespace IAGrim.UI.Filters {
             _classes["class07"] = cbInquisitor;
             _classes["class08"] = cbNecromancer;
             _classes["class09"] = cbOathkeeper;
+            _classes["class10"] = cbBerserker;
 
             // Hardcoded classes from the base game -- Helps a bit with 4k scaling to not create these dynamically.
             var prefilled = new[] {
                 "class01", "class02", "class03", "class04", "class05",
-                "class06", "class07", "class08", "class09"
+                "class06", "class07", "class08", "class09", "class10"
             };
             int yOffsetHeight = cbDemolitionist.Location.Y - cbSoldier.Location.Y;
             int cbHeight = cbDemolitionist.Height;

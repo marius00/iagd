@@ -33,6 +33,7 @@
             this.cbArcanist = new FirefoxCheckBox();
             this.cbInquisitor = new FirefoxCheckBox();
             this.cbNecromancer = new FirefoxCheckBox();
+            this.cbBerserker = new FirefoxCheckBox();
             this.classesPanelBox.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -41,6 +42,7 @@
             this.classesPanelBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.classesPanelBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.classesPanelBox.Controls.Add(this.cbBerserker);
             this.classesPanelBox.Controls.Add(this.cbSoldier);
             this.classesPanelBox.Controls.Add(this.cbDemolitionist);
             this.classesPanelBox.Controls.Add(this.cbOccultist);
@@ -207,6 +209,22 @@
             this.cbNecromancer.Tag = "class08";
             this.cbNecromancer.Text = "Necromancer";
             // 
+            // cbBerserker
+            // 
+            this.cbBerserker.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbBerserker.Bold = false;
+            this.cbBerserker.EnabledCalc = true;
+            this.cbBerserker.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbBerserker.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbBerserker.IsDarkMode = false;
+            this.cbBerserker.Location = new System.Drawing.Point(3, 332);
+            this.cbBerserker.Name = "cbBerserker";
+            this.cbBerserker.Size = new System.Drawing.Size(275, 27);
+            this.cbBerserker.TabIndex = 30;
+            this.cbBerserker.Tag = "class10";
+            this.cbBerserker.Text = "Berserker";
+            // 
             // Classes
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -231,5 +249,6 @@
         private FirefoxCheckBox cbArcanist;
         private FirefoxCheckBox cbInquisitor;
         private FirefoxCheckBox cbNecromancer;
+        private FirefoxCheckBox cbBerserker;
     }
 }
