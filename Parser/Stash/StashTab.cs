@@ -6,6 +6,7 @@ using IAGrim.StashFile;
 namespace IAGrim.Parser.Stash {
     public class StashTab {
         private static readonly string[] StackableSlots = { "ItemRelic", "OneShot_PotionHealth", "OneShot_PotionMana", "OneShot_Scroll" };
+        private readonly uint Version;
 
         // TODO: Load this dynamically
         // select s.id_databaseitem, i.name from databaseitemstat_v2 s, databaseitem_v2 i where stat = 'preventEasyDrops' and i.id_databaseitem = s.id_databaseitem -- These are stackable
@@ -66,8 +67,9 @@ namespace IAGrim.Parser.Stash {
 
         public List<Item> Items { get; private set; }
 
-        public StashTab() {
+        public StashTab(uint version) {
             this.Items = new List<Item>();
+            this.Version = version;
         }
 
         public static bool CanStack(string slot) {
@@ -84,7 +86,7 @@ namespace IAGrim.Parser.Stash {
             else {
                 this.Items = new List<Item>();
                 for (uint num2 = 0u; num2 < num; num2 += 1u) {
-                    Item item = new Item();
+                    Item item = new Item(this.Version);
                     bool flag2 = !item.Read(pCrypto);
                     if (flag2) {
                         result = false;

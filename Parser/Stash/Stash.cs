@@ -107,7 +107,7 @@ namespace IAGrim.StashFile {
             this.Tabs = new List<StashTab>();
             int num2 = 0;
             while ((long)num2 < (long)((ulong)numStashTabs)) {
-                StashTab stashTab = new StashTab();
+                StashTab stashTab = new StashTab(this.Version);
                 bool flag6 = !stashTab.Read(pCrypto);
                 if (flag6) {
                     result = false;

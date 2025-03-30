@@ -49,8 +49,10 @@ namespace IAGrim.Parser.Stash {
         // Default values chosen to minimize overlap while still allowing 16 items into the tab
         public int Height = 4;
         public int Width = 2;
+        private uint Version;
 
-        public Item() {
+        public Item(uint version) {
+            this.Version = version;
             this.RandomizeSeed();
             this.RandomizeRelicSeed();
         }
@@ -64,14 +66,28 @@ namespace IAGrim.Parser.Stash {
         }
 
         public bool Read(GDCryptoDataBuffer pCrypto) {
-            bool flag = !pCrypto.ReadCryptoString(out this.BaseRecord) || !pCrypto.ReadCryptoString(out this.PrefixRecord) 
-                || !pCrypto.ReadCryptoString(out this.SuffixRecord) || !pCrypto.ReadCryptoString(out this.ModifierRecord) 
-                || !pCrypto.ReadCryptoString(out this.TransmuteRecord) || !pCrypto.ReadCryptoUInt(out this.Seed) 
-                || !pCrypto.ReadCryptoString(out this.MateriaRecord) || !pCrypto.ReadCryptoString(out this.RelicCompletionBonusRecord) 
-                || !pCrypto.ReadCryptoUInt(out this.RelicSeed) || !pCrypto.ReadCryptoString(out this.EnchantmentRecord)
-                || !pCrypto.ReadCryptoString(out this.AscendantRecord) || !pCrypto.ReadCryptoString(out this.AscendantRecord2H)
-                || !pCrypto.ReadCryptoUInt(out this.UNKNOWN) || !pCrypto.ReadCryptoUInt(out this.EnchantmentSeed) 
-                || !pCrypto.ReadCryptoUInt(out this.MateriaCombines) || !pCrypto.ReadCryptoUInt(out this.StackCount) || !pCrypto.ReadCryptoUInt(out this.Rerolls);
+            bool flag;
+            if (this.Version >= 8u) {
+                flag = !pCrypto.ReadCryptoString(out this.BaseRecord) || !pCrypto.ReadCryptoString(out this.PrefixRecord)
+                                                                           || !pCrypto.ReadCryptoString(out this.SuffixRecord) || !pCrypto.ReadCryptoString(out this.ModifierRecord)
+                                                                           || !pCrypto.ReadCryptoString(out this.TransmuteRecord) || !pCrypto.ReadCryptoUInt(out this.Seed)
+                                                                           || !pCrypto.ReadCryptoString(out this.MateriaRecord) || !pCrypto.ReadCryptoString(out this.RelicCompletionBonusRecord)
+                                                                           || !pCrypto.ReadCryptoUInt(out this.RelicSeed) || !pCrypto.ReadCryptoString(out this.EnchantmentRecord)
+                                                                           || !pCrypto.ReadCryptoString(out this.AscendantRecord) || !pCrypto.ReadCryptoString(out this.AscendantRecord2H)
+                                                                           || !pCrypto.ReadCryptoUInt(out this.UNKNOWN) || !pCrypto.ReadCryptoUInt(out this.EnchantmentSeed)
+                                                                           || !pCrypto.ReadCryptoUInt(out this.MateriaCombines) || !pCrypto.ReadCryptoUInt(out this.StackCount) || !pCrypto.ReadCryptoUInt(out this.Rerolls);
+            }
+            else {
+                flag = !pCrypto.ReadCryptoString(out this.BaseRecord) || !pCrypto.ReadCryptoString(out this.PrefixRecord)
+                                                                           || !pCrypto.ReadCryptoString(out this.SuffixRecord) || !pCrypto.ReadCryptoString(out this.ModifierRecord)
+                                                                           || !pCrypto.ReadCryptoString(out this.TransmuteRecord) || !pCrypto.ReadCryptoUInt(out this.Seed)
+                                                                           || !pCrypto.ReadCryptoString(out this.MateriaRecord) || !pCrypto.ReadCryptoString(out this.RelicCompletionBonusRecord)
+                                                                           || !pCrypto.ReadCryptoUInt(out this.RelicSeed) || !pCrypto.ReadCryptoString(out this.EnchantmentRecord)
+                                                                           || !pCrypto.ReadCryptoUInt(out this.UNKNOWN) || !pCrypto.ReadCryptoUInt(out this.EnchantmentSeed)
+                                                                           || !pCrypto.ReadCryptoUInt(out this.MateriaCombines) || !pCrypto.ReadCryptoUInt(out this.StackCount);
+
+            }
+
 
             flag = flag || !pCrypto.ReadCryptoUInt(out this.XOffset) || !pCrypto.ReadCryptoUInt(out this.YOffset);
             return !flag;

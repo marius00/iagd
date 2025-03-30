@@ -115,7 +115,7 @@ namespace IAGrim.Parsers.Arz {
         }
 
         public static Item Map(PlayerItem item) {
-            return new Item {
+            return new Item (6u) {
                 BaseRecord = item.BaseRecord,
                 EnchantmentRecord = item.EnchantmentRecord,
                 EnchantmentSeed = (uint) item.EnchantmentSeed,
