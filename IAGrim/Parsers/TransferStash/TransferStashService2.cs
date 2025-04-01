@@ -39,7 +39,7 @@ namespace IAGrim.Parsers.TransferStash {
             if (stash.Tabs.Count < 5) {
                 Logger.Debug($"Transfer stash only has {stash.Tabs.Count} tabs, upgrading to 5 tabs.");
                 while (stash.Tabs.Count < 5) {
-                    stash.Tabs.Add(new StashTab());
+                    stash.Tabs.Add(new StashTab(6));
                 }
             }
 #endif
