@@ -133,4 +133,7 @@
   <ItemGroup>
     <None Include="README.md" />
   </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="GDIAHook.rc" />
+  </ItemGroup>
 </Project>
