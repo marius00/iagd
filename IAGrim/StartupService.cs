@@ -32,14 +32,11 @@ namespace IAGrim {
             Logger.InfoFormat("Running version {0}.{1}.{2}.{3} from {4:dd/MM/yyyy}",
                 version.Major, version.Minor, version.Build, version.Revision, buildDate);
 
+            FileVersionInfo dllVersion = FileVersionInfo.GetVersionInfo(Path.Combine(Directory.GetCurrentDirectory(), "ItemAssistantHook_x64.dll"));
+            FileVersionInfo playtestDllVersion = FileVersionInfo.GetVersionInfo(Path.Combine(Directory.GetCurrentDirectory(), "ItemAssistantHook_playtest_x64.dll"));
 
-            var dllVersion = Assembly.LoadFile(Path.Combine(Directory.GetCurrentDirectory(), "ItemAssistantHook_x64.dll")).GetName().Version;
-            var playtestDllVersion = Assembly.LoadFile(Path.Combine(Directory.GetCurrentDirectory(), "ItemAssistantHook_playtest_x64.dll")).GetName().Version;
-
-            Logger.InfoFormat("DLL version version {0}.{1}.{2}.{3}",
-                dllVersion.Major, dllVersion.Minor, dllVersion.Build, dllVersion.Revision);
-            Logger.InfoFormat("Playtest DLL version {0}.{1}.{2}.{3}",
-                playtestDllVersion.Major, playtestDllVersion.Minor, playtestDllVersion.Build, playtestDllVersion.Revision);
+            Logger.InfoFormat($"DLL version version {dllVersion.FileVersion}");
+            Logger.InfoFormat($"Playtest DLL version version {playtestDllVersion.FileVersion}");
 
             if (!DependencyChecker.CheckNet472Installed()) {
                 MessageBox.Show("It appears .Net Framework 4.7.2 is not installed.\nIA May not function correctly", "Warning",
