@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("EvilSoft")]
 [assembly: AssemblyProduct("IAGrim")]
-[assembly: AssemblyCopyright("Copyright © 2018")]
+[assembly: AssemblyCopyright("Open source, free to use")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

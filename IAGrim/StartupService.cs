@@ -29,9 +29,24 @@ namespace IAGrim {
             DateTime buildDate = new DateTime(2000, 1, 1)
                 .AddDays(version.Build)
                 .AddSeconds(version.Revision * 2);
-
             Logger.InfoFormat("Running version {0}.{1}.{2}.{3} from {4:dd/MM/yyyy}",
                 version.Major, version.Minor, version.Build, version.Revision, buildDate);
+
+            FileVersionInfo dllVersion = FileVersionInfo.GetVersionInfo(Path.Combine(Directory.GetCurrentDirectory(), "ItemAssistantHook_x64.dll"));
+            FileVersionInfo playtestDllVersion = FileVersionInfo.GetVersionInfo(Path.Combine(Directory.GetCurrentDirectory(), "ItemAssistantHook_playtest_x64.dll"));
+
+            Logger.InfoFormat($"DLL version version {dllVersion.FileVersion}");
+            Logger.InfoFormat($"Playtest DLL version version {playtestDllVersion.FileVersion}");
+
+            // TODO: 
+            var minimumDllVersion = File.ReadAllText("dllver.txt").Trim();
+            if (dllVersion.FileVersion.CompareTo(minimumDllVersion) < 0) {
+                Logger.Error("The DLL version is incompatible, did you perhaps run into a conflict while updating and clicked ignore?");
+                Logger.Error("Item Assistant needs to be re-installed without GD running.");
+
+                MessageBox.Show("IAGD install is corrupted.\nReinstall IAGD without GD running.", "Warning",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
 
             if (!DependencyChecker.CheckNet472Installed()) {
                 MessageBox.Show("It appears .Net Framework 4.7.2 is not installed.\nIA May not function correctly", "Warning",

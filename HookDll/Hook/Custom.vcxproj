@@ -79,6 +79,9 @@
   <ItemGroup>
     <None Include="README.md" />
   </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="GDIAHook.rc" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{C4C69969-235A-4049-87F2-3E82D67A1812}</ProjectGuid>
     <RootNamespace>GDIAHook</RootNamespace>
@@ -353,6 +356,9 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OutputFile>$(OutDir)ItemAssistantHook_x64.dll</OutputFile>
     </Link>
+    <PreBuildEvent>
+      <Command>cmd ../setversion.cmd</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release-Instaloot|Win32'">
     <ClCompile>
