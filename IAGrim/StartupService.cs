@@ -38,6 +38,12 @@ namespace IAGrim {
             Logger.InfoFormat($"DLL version version {dllVersion.FileVersion}");
             Logger.InfoFormat($"Playtest DLL version version {playtestDllVersion.FileVersion}");
 
+            var minimumDllVersion = File.ReadAllText("dllver.txt").Trim();
+            if (dllVersion.FileVersion.CompareTo(minimumDllVersion) < 0) {
+                Logger.Error("The DLL version is incompatible, did you perhaps run into a conflict while updating and clicked ignore?");
+                Logger.Error("Item Assistant needs to be re-installed without GD running.");
+            }
+
             if (!DependencyChecker.CheckNet472Installed()) {
                 MessageBox.Show("It appears .Net Framework 4.7.2 is not installed.\nIA May not function correctly", "Warning",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);

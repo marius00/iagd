@@ -356,6 +356,9 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OutputFile>$(OutDir)ItemAssistantHook_x64.dll</OutputFile>
     </Link>
+    <PreBuildEvent>
+      <Command>cmd ../setversion.cmd</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release-Instaloot|Win32'">
     <ClCompile>
