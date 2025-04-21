@@ -38,10 +38,14 @@ namespace IAGrim {
             Logger.InfoFormat($"DLL version version {dllVersion.FileVersion}");
             Logger.InfoFormat($"Playtest DLL version version {playtestDllVersion.FileVersion}");
 
+            // TODO: 
             var minimumDllVersion = File.ReadAllText("dllver.txt").Trim();
             if (dllVersion.FileVersion.CompareTo(minimumDllVersion) < 0) {
                 Logger.Error("The DLL version is incompatible, did you perhaps run into a conflict while updating and clicked ignore?");
                 Logger.Error("Item Assistant needs to be re-installed without GD running.");
+
+                MessageBox.Show("IAGD install is corrupted.\nReinstall IAGD without GD running.", "Warning",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
             if (!DependencyChecker.CheckNet472Installed()) {
