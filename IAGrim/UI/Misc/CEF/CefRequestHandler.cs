@@ -92,6 +92,10 @@ namespace IAGrim.UI.Misc.CEF {
         public void OnRenderViewReady(IWebBrowser chromiumWebBrowser, CefSharp.IBrowser browser) {
         }
 
+        public void OnRenderProcessTerminated(IWebBrowser chromiumWebBrowser, IBrowser browser, CefTerminationStatus status, int errorCode, string errorMessage) {
+            
+        }
+
         public void OnRenderProcessTerminated(IWebBrowser chromiumWebBrowser, CefSharp.IBrowser browser, CefTerminationStatus status) {
         }
     }
