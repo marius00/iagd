@@ -69,7 +69,11 @@ namespace GAME {
 		item->suffixRecord = tokens.at(idx++);
 		item->seed = (unsigned int)stoul(tokens.at(idx++));
 		if (isNewDlc) {
+#ifdef PLAYTEST
 			item->maybeRerolls = (unsigned int)stoul(tokens.at(idx++));
+#else
+			auto maybeRerolls = (unsigned int)stoul(tokens.at(idx++));
+#endif
 		}
 		item->modifierRecord = tokens.at(idx++);
 		item->materiaRecord = tokens.at(idx++);
@@ -79,8 +83,13 @@ namespace GAME {
 		item->enchantmentSeed = (unsigned int)stoul(tokens.at(idx++));
 		item->transmuteRecord = tokens.at(idx++);
 		if (isNewDlc) {
+#ifdef PLAYTEST
 			item->ascendant1 = tokens.at(idx++);
 			item->ascendant2 = tokens.at(idx++);
+#else
+			auto ascendant1 = tokens.at(idx++);
+			auto ascendant2 = tokens.at(idx++);
+#endif
 		}
 
 		return item;
