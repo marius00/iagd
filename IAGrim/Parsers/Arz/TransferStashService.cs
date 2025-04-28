@@ -78,8 +78,9 @@ namespace IAGrim.Parsers.Arz {
                     }
                     Directory.CreateDirectory(path);
 
-                    File.WriteAllText(Path.Combine(path, Guid.NewGuid().ToString() + ".csv"), csv);
-                    Logger.Info($"Wrote item to {path}");
+                    var csvFilename = Path.Combine(path, Guid.NewGuid().ToString() + ".csv");
+                    File.WriteAllText(csvFilename, csv);
+                    Logger.Info($"Wrote item {item.Id} to {csvFilename}");
                     item.StackCount = 0;
                 } catch (IOException e) {
                     Logger.Warn(e.Message, e);

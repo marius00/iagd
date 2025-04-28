@@ -254,9 +254,12 @@ namespace IAGrim.Database {
                         .SetParameterList("ids", items.Select(m => m.Id).ToList())
                         .ExecuteUpdate();
 
-                    // Delete any items with stacksize 0 (but only newly transferred ones, ignore any older items in case of errors)
 
-                    session.CreateSQLQuery($"DELETE FROM ReplicaItem2 WHERE playeritemid IN (SELECT id FROM {table} WHERE {stack} <= 0 AND {id} IN ( :ids ))")
+                    session.CreateSQLQuery($"DELETE FROM ReplicaItemRow WHERE replicaitemid IN (SELECT id FROM ReplicaItem2 WHERE playeritemid IN ( :ids ))")
+                        .SetParameterList("ids", items.Select(m => m.Id).ToList())
+                        .ExecuteUpdate();
+
+                    session.CreateSQLQuery($"DELETE FROM ReplicaItem2 WHERE playeritemid IN ( :ids )")
                         .SetParameterList("ids", items.Select(m => m.Id).ToList())
                         .ExecuteUpdate();
 

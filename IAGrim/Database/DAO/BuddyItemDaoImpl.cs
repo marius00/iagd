@@ -42,7 +42,11 @@ namespace IAGrim.Database {
                     session.CreateSQLQuery($"DELETE FROM {BuddyItemRecordTable.Table} WHERE NOT {BuddyItemRecordTable.Item} IN (SELECT {BuddyItemsTable.RemoteItemId} FROM {BuddyItemsTable.Table})")
                         .ExecuteUpdate();
 
+
                     // Replica stats
+                    session.CreateSQLQuery($"DELETE FROM ReplicaItemRow WHERE replicaitemid IN (SELECT id FROM ReplicaItem2 WHERE playeritemid IS NULL AND NOT buddyitemid IN (SELECT {BuddyItemsTable.RemoteItemId} FROM {BuddyItemsTable.Table}))")
+                        .ExecuteUpdate();
+
                     session.CreateSQLQuery($"DELETE FROM ReplicaItem2 WHERE playeritemid IS NULL AND NOT buddyitemid IN (SELECT {BuddyItemsTable.RemoteItemId} FROM {BuddyItemsTable.Table})")
                         .ExecuteUpdate();
 
@@ -148,6 +152,12 @@ namespace IAGrim.Database {
 
                     // Remove record from records table (lookup table)
                     session.CreateSQLQuery($"DELETE FROM {BuddyItemRecordTable.Table} WHERE NOT {BuddyItemRecordTable.Item} IN (SELECT {BuddyItemsTable.RemoteItemId} FROM {BuddyItemsTable.Table})")
+                        .ExecuteUpdate();
+
+                    session.CreateSQLQuery($"DELETE FROM ReplicaItemRow WHERE replicaitemid IN (SELECT id FROM ReplicaItem2 WHERE playeritemid IS NULL AND NOT buddyitemid IN (SELECT {BuddyItemsTable.RemoteItemId} FROM {BuddyItemsTable.Table}))")
+                        .ExecuteUpdate();
+
+                    session.CreateSQLQuery($"DELETE FROM ReplicaItem2 WHERE playeritemid IS NULL AND NOT buddyitemid IN (SELECT {BuddyItemsTable.RemoteItemId} FROM {BuddyItemsTable.Table})")
                         .ExecuteUpdate();
 
                     transaction.Commit();
@@ -785,8 +795,13 @@ namespace IAGrim.Database {
                         .ExecuteUpdate();
 
                     // Replica stats
+                    session.CreateSQLQuery($"DELETE FROM ReplicaItemRow WHERE replicaitemid IN (SELECT id FROM ReplicaItem2 WHERE playeritemid IS NULL AND buddyitemid IS NOT NULL)")
+                        .ExecuteUpdate();
+
                     session.CreateSQLQuery($"DELETE FROM ReplicaItem2 WHERE playeritemid IS NULL AND buddyitemid IS NOT NULL")
                         .ExecuteUpdate();
+
+
 
                     transaction.Commit();
                 }

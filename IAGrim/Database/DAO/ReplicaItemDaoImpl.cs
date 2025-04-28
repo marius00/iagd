@@ -20,10 +20,29 @@ namespace IAGrim.Database {
         public void Save(ReplicaItem obj, List<ReplicaItemRow> rows) {
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
+                    if (obj.PlayerItemId.HasValue && obj.PlayerItemId.Value > 0) {
+                        var affected = session.CreateSQLQuery("DELETE FROM ReplicaItemRow WHERE replicaitemid IN (SELECT id FROM ReplicaItem2 WHERE playeritemid = :player)").SetParameter("player", obj.PlayerItemId.Value).ExecuteUpdate();
+                        session.CreateSQLQuery("DELETE FROM ReplicaItem2 WHERE playeritemid = :player").SetParameter("player", obj.PlayerItemId.Value).ExecuteUpdate();
+                        if (affected > 0) {
+                            Logger.Info($"Already had rows for pid:{obj.PlayerItemId}, replacing..");
+                        }
+                    }
+                    else if (!string.IsNullOrEmpty(obj.BuddyItemId)) {
+                        var affected = session.CreateSQLQuery("DELETE FROM ReplicaItemRow WHERE replicaitemid IN (SELECT id FROM ReplicaItem2 WHERE buddyitemid = :buddy)").SetParameter("buddy", obj.BuddyItemId).ExecuteUpdate();
+                        session.CreateSQLQuery("DELETE FROM ReplicaItem2 WHERE buddyitemid = :buddy").SetParameter("buddy", obj.BuddyItemId).ExecuteUpdate();
+                        if (affected > 0) {
+                            Logger.Info($"Already had rows for bid:{obj.BuddyItemId}, replacing..");
+                        }
+                    }
+                    else {
+                        Logger.Error("Got a replica item without playeritem or buddyitem");
+                    }
+
                     var id = session.CreateSQLQuery("INSERT INTO ReplicaItem2 (playeritemid, buddyitemid) VALUES (:player, :buddy) RETURNING id")
                         .SetParameter("player", obj.PlayerItemId)
                         .SetParameter("buddy", obj.BuddyItemId)
                         .UniqueResult<long>();
+
                     foreach (ReplicaItemRow row in rows) {
                         row.ReplicaItemId = id;
                         session.Save(row);
