@@ -157,6 +157,7 @@ namespace IAGrim.UI.Tabs {
                 Rarity = rarity?.Rarity,
                 PrefixRarity = rarity?.PrefixRarity ?? 0,
                 Slot = slot?.Filter,
+                SlotInverse = slot?.Inverse ?? false,
                 PetBonuses = filters.PetBonuses,
                 IsRetaliation = filters.IsRetaliation,
                 DuplicatesOnly = filters.DuplicatesOnly,

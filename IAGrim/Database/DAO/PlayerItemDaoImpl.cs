@@ -790,7 +790,7 @@ namespace IAGrim.Database {
                 )
                 ";
 
-                sql.Add($" AND PI.Id IN ({subQuerySql})");
+                sql.Add($" AND PI.Id {(query.SlotInverse ? "NOT" : "")} IN ({subQuerySql})");
 
                 // ItemRelic = Components, we don't want to find every item that has a component, only those that are one.
                 if (query.Slot.Length == 1 && query.Slot[0] == "ItemRelic") {
