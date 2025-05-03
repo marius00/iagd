@@ -34,6 +34,7 @@ namespace StatTranslator
                     ["ItemRelic"] = language.GetTag("iatag_slot_component"),
                     ["ItemArtifact"] = language.GetTag("iatag_slot_relic"),
                     ["ItemFactionBooster"] = language.GetTag("iatag_slot_scroll"),
+                    ["ItemFactionWarrant"] = language.GetTag("iatag_slot_warrant"),
                     ["ItemEnchantment"] = language.GetTag("iatag_slot_augmentation")
                 };
             }

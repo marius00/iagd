@@ -714,6 +714,7 @@ namespace StatTranslator {
             {"iatag_slot_shield", "Shield"},
             {"iatag_slot_component", "Component"},
             {"iatag_slot_relic", "Relic"},
+            {"iatag_slot_warrant", "Warrant"},
             {"iatag_slot_other", "Other"},
 
             {"iatag_slot_dagger1h", "Dagger (1h)"},

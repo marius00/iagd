@@ -378,6 +378,7 @@ iatag_slot_shoulder=Shoulder
 iatag_slot_spear2h=Spear (2h)
 iatag_slot_sword1h=Sword (1h)
 iatag_slot_sword2h=Sword (2h)
+iatag_slot_warrant=Warrant
 iatag_slot_weapon1h=Weapon (1h)
 iatag_slot_weapon2h=Weapon (2h)
 iatag_slot_weaponranged1h=Weapon (Ranged 1h)
