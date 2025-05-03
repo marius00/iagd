@@ -185,7 +185,8 @@ namespace IAGrim.UI
                 slotFilter.Add(new ComboBoxItem
                 {
                     Text = language.GetTag("iatag_slot_other"),
-                    Filter = otherTable.ToArray<string>()
+                    Filter = otherTable.ToArray<string>(),
+                    Inverse = true,
                 });
 
 

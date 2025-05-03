@@ -13,6 +13,14 @@ namespace IAGrim.Database.Dto {
         public float MaximumLevel { get; set; }
         public string Rarity { get; set; }
         public string[] Slot { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the search should exclude items with types specified in the <see cref="Slot"/> array.
+        /// If <see langword="true"/>, items with types in <see cref="Slot"/> will be excluded.
+        /// If <see langword="false"/>, items with types in <see cref="Slot"/> will be included.
+        /// </summary>
+        public bool SlotInverse { get; set; }
+
         public bool PetBonuses { get; set; }
         public bool IsRetaliation { get; set; }
         public bool DuplicatesOnly { get; set; }
