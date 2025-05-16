@@ -223,6 +223,11 @@ namespace IAGrim.UI.Misc.CEF {
                 Logger.Info("Creating Chromium instance..");
                 _tabControl = tabControl;
 
+                var settings = new CefSettings();
+                settings.CefCommandLineArgs.Add("disable-popup-blocking");
+                Cef.Initialize(settings);
+
+
 
                 // TODO: Read and analyze https://github.com/cefsharp/CefSharp/issues/2246 -- Is this the correct way to do things in the future?
                 CefSharpSettings.WcfEnabled = true;
@@ -233,7 +238,7 @@ namespace IAGrim.UI.Misc.CEF {
                 BrowserControl.JavascriptObjectRepository.Register("core", bindable, isAsync: false, options: BindingOptions.DefaultBinder);
                 BrowserControl.IsBrowserInitializedChanged += browserIsBrowserInitializedChanged;
                 BrowserControl.FrameLoadEnd += (sender, args) => browserIsBrowserInitializedChanged(this, args);
-                ;
+
 
 
                 var requestHandler = new CefRequestHandler();
