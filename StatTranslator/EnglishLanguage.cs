@@ -675,7 +675,7 @@ namespace StatTranslator {
             {"iatag_rarity_yellow", "Yellow"},
             {"iatag_rarity_green", "Green"},
             {"iatag_rarity_green_p1", "Green (Rare)"},
-            {"iatag_rarity_green_p2", "Green (DoubleRare)"},
+            {"iatag_rarity_green_p2", "Green (Double)"},
             {"iatag_rarity_blue", "Blue"},
             {"iatag_rarity_epic", "Epic"},
             {"TagQualityOld", "Obsolete"},

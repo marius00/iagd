@@ -446,7 +446,7 @@ namespace IAGrim.UI.Tabs {
             this._itemQuality.Location = new System.Drawing.Point(415, 17);
             this._itemQuality.Margin = new System.Windows.Forms.Padding(3, 17, 3, 3);
             this._itemQuality.Name = "_itemQuality";
-            this._itemQuality.Size = new System.Drawing.Size(59, 21);
+            this._itemQuality.Size = new System.Drawing.Size(90, 21);
             this._itemQuality.TabIndex = 43;
             this._itemQuality.Tag = "iatag_ui_itemquality_tooltip";
             this.toolTip1.SetToolTip(this._itemQuality, "The minimum item quality");
@@ -456,7 +456,7 @@ namespace IAGrim.UI.Tabs {
             this._slotFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this._slotFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._slotFilter.FormattingEnabled = true;
-            this._slotFilter.Location = new System.Drawing.Point(480, 17);
+            this._slotFilter.Location = new System.Drawing.Point(511, 17);
             this._slotFilter.Margin = new System.Windows.Forms.Padding(3, 17, 3, 3);
             this._slotFilter.Name = "_slotFilter";
             this._slotFilter.Size = new System.Drawing.Size(120, 21);
@@ -469,7 +469,7 @@ namespace IAGrim.UI.Tabs {
             this._modFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this._modFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._modFilter.FormattingEnabled = true;
-            this._modFilter.Location = new System.Drawing.Point(606, 17);
+            this._modFilter.Location = new System.Drawing.Point(637, 17);
             this._modFilter.Margin = new System.Windows.Forms.Padding(3, 17, 3, 3);
             this._modFilter.Name = "_modFilter";
             this._modFilter.Size = new System.Drawing.Size(102, 21);
@@ -481,7 +481,7 @@ namespace IAGrim.UI.Tabs {
             // 
             this._levelRequirementGroup.Controls.Add(this._minLevel);
             this._levelRequirementGroup.Controls.Add(this._maxLevel);
-            this._levelRequirementGroup.Location = new System.Drawing.Point(714, 3);
+            this._levelRequirementGroup.Location = new System.Drawing.Point(745, 3);
             this._levelRequirementGroup.Name = "_levelRequirementGroup";
             this._levelRequirementGroup.Size = new System.Drawing.Size(78, 43);
             this._levelRequirementGroup.TabIndex = 50;
@@ -497,9 +497,9 @@ namespace IAGrim.UI.Tabs {
             this._minLevel.Name = "_minLevel";
             this._minLevel.Size = new System.Drawing.Size(30, 20);
             this._minLevel.TabIndex = 46;
+            this._minLevel.Tag = "iatag_ui_minlevel_tooltip";
             this._minLevel.Text = "0";
             this._minLevel.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this._minLevel.Tag = "iatag_ui_minlevel_tooltip";
             this.toolTip1.SetToolTip(this._minLevel, "The minimum level required to use this item");
             this._minLevel.WordWrap = false;
             // 
@@ -510,9 +510,9 @@ namespace IAGrim.UI.Tabs {
             this._maxLevel.Name = "_maxLevel";
             this._maxLevel.Size = new System.Drawing.Size(30, 20);
             this._maxLevel.TabIndex = 47;
+            this._maxLevel.Tag = "iatag_ui_maxlevel_tooltip";
             this._maxLevel.Text = "110";
             this._maxLevel.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this._maxLevel.Tag = "iatag_ui_maxlevel_tooltip";
             this.toolTip1.SetToolTip(this._maxLevel, "The maximum level required to use this item");
             this._maxLevel.WordWrap = false;
             // 
