@@ -9,14 +9,14 @@ namespace IAGrim.Backup.Cloud {
         public static void Initialize(string env) {
             string host;
 
-            if (env == EnvLocalDev) {
-                host = "https://api.iagd.evilsoft.net";
-            }
-            else if (env == EnvCloud) {
-                host = "https://api.iagd.evilsoft.net";
-            }
-            else {
-                throw new ArgumentException(env);
+            switch (env)
+            {
+                case EnvLocalDev:
+                case EnvCloud:
+                    host = "https://api.iagd.evilsoft.net";
+                    break;
+                default:
+                    throw new ArgumentException(env);
             }
 
             TokenVerificationUri = $"{host}/logincheck";
@@ -33,7 +33,7 @@ namespace IAGrim.Backup.Cloud {
             ListCharacterUrl = $"{host}/character";
             DownloadCharacterUrl = $"{host}/character/download";
 
-            LoginPageUrl = "http://iagd.evilsoft.net/login";
+            LoginPageUrl = "https://iagd.evilsoft.net/login";
         }
         public static string LoginPageUrl { get; private set; }
         public static string DownloadUrl { get; private set; }
