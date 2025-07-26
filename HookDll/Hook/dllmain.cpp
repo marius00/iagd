@@ -127,49 +127,59 @@ void LogToFile(LogLevel level, std::wstringstream message) {
 
 /// Thread function that dispatches queued message blocks to the IA application.
 void WorkerThreadMethod() {
-	while ((g_hEvent != NULL) && (WaitForSingleObject(g_hEvent, INFINITE) == WAIT_OBJECT_0)) {
-		if (g_hEvent == NULL) {
-			break;
-		}
-
-		DWORD tick = GetTickCount();
-		if (tick < g_lastThreadTick) {
-			// Overflow
-			g_lastThreadTick = tick;
-		}
-
-		if ((tick - g_lastThreadTick > 1000) || (g_targetWnd == NULL)) {
-			// We either don't have a valid window target OR it has been more than 1 sec since we last update the target.
-			g_targetWnd = FindWindow(L"GDIAWindowClass", NULL);
-			g_lastThreadTick = GetTickCount();
-			// LOG(L"FindWindow returned: " << g_targetWnd);
-
-			if (g_InventorySack_AddItemInstance != NULL) {
-				g_InventorySack_AddItemInstance->SetActive(g_targetWnd != NULL);
-				// TODO: Need to add OnDemandSeedInfo here as well as long as it uses messages
-			}
-		}
-
-		while (!g_dataQueue.empty()) {
-			DataItemPtr item = g_dataQueue.pop();
-
-			if (g_targetWnd == NULL) {
-				// We have data, but no target window, so just delete the message
-				continue;
+	try {
+		while ((g_hEvent != NULL) && (WaitForSingleObject(g_hEvent, INFINITE) == WAIT_OBJECT_0)) {
+			if (g_hEvent == NULL) {
+				break;
 			}
 
-			COPYDATASTRUCT data;
-			data.dwData = item->type();
-			data.lpData = item->data();
-			data.cbData = item->size();
+			DWORD tick = GetTickCount();
+			if (tick < g_lastThreadTick) {
+				// Overflow
+				g_lastThreadTick = tick;
+			}
 
-			// To avoid blocking the main thread, we should not have a lock on the queue while we process the message.
-			SendMessage(g_targetWnd, WM_COPYDATA, 0, (LPARAM)&data);
-			auto lastErrorCode = GetLastError();
-			if (lastErrorCode != 0)
-				LOG(L"After SendMessage error code is " << lastErrorCode);
+			if ((tick - g_lastThreadTick > 1000) || (g_targetWnd == NULL)) {
+				// We either don't have a valid window target OR it has been more than 1 sec since we last update the target.
+				g_targetWnd = FindWindow(L"GDIAWindowClass", NULL);
+				g_lastThreadTick = GetTickCount();
+				// LOG(L"FindWindow returned: " << g_targetWnd);
+
+				if (g_InventorySack_AddItemInstance != NULL) {
+					g_InventorySack_AddItemInstance->SetActive(g_targetWnd != NULL);
+					// TODO: Need to add OnDemandSeedInfo here as well as long as it uses messages
+				}
+			}
+
+			while (!g_dataQueue.empty()) {
+				DataItemPtr item = g_dataQueue.pop();
+
+				if (g_targetWnd == NULL) {
+					// We have data, but no target window, so just delete the message
+					continue;
+				}
+
+				COPYDATASTRUCT data;
+				data.dwData = item->type();
+				data.lpData = item->data();
+				data.cbData = item->size();
+
+				// To avoid blocking the main thread, we should not have a lock on the queue while we process the message.
+				SendMessage(g_targetWnd, WM_COPYDATA, 0, (LPARAM)&data);
+				auto lastErrorCode = GetLastError();
+				if (lastErrorCode != 0)
+					LOG(L"After SendMessage error code is " << lastErrorCode);
+			}
+
 		}
-
+	}
+	catch (std::exception& ex) {
+		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+		std::wstring wide = converter.from_bytes(ex.what());
+		LogToFile(LogLevel::FATAL, L"ERROR In the worker thread.." + wide);
+	}
+	catch (...) {
+		LogToFile(LogLevel::FATAL, L"ERROR In the worker thread.. (triple-dot)");
 	}
 }
 
@@ -204,7 +214,9 @@ void EndWorkerThread() {
 	if (g_hEvent != NULL) {
 		SetEvent(g_hEvent);
 		HANDLE h = g_hEvent;
+
 		g_hEvent = NULL;
+		Sleep(1500); // The worker thread might have just read from g_hEvent, seen that it is not NULL, then sent it in to WaitForSingleObject right after we close it.		
 		CloseHandle(h);
 
 		//WaitForSingleObject(g_thread, INFINITE);
