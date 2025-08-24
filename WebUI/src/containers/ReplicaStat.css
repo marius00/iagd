@@ -35,7 +35,7 @@
 }
 
 /* Weapon damage and total armor.. also the stupid "+334 Damage Per Second (If Equipped)" */
-.replica-type-17 {
+.replica-type-17, .replica-type-66 {
   color: var(--item-stat-modifier);
 }
 
@@ -48,7 +48,7 @@
 }
 
 /* Regular item stats */
- .replica-type-18, .replica-type-25, .replica-type-26, .replica-type-40 {
+ .replica-type-18, .replica-type-25, .replica-type-26, .replica-type-40, .replica-type-82, .replica-type-71 {
    color: var(--item-stat-modifier);
  }
 
@@ -77,19 +77,29 @@ p .replica-type-26 {
   color: var(--item-grantskill-label);
 }
 /* Skill name */
-.replica-type-35, .replica-type-36 {
-  font-weight: bold;
-  color: var(--item-grantskill-content);
+.replica-type-36 {
+    font-weight: bold;
+    color: var(--item-grantskill-content);
+}
+
+/* [Release Ctrl to Hide Details] */
+.replica-type-35 {
+    display: none;
 }
 
 /* Skill description */
-.replica-type-37, .replica-type-38 {
+.replica-type-37, .replica-type-38, .replica-type-39, .replica-type-81, .replica-type-70 {
   color: var(--item-misc-info);
 }
 
 /* Level requirement, spirit requirement, etc.. show or noshow? */
-.replica-type-19 {
+.replica-type-19, .replica-type-81 {
   color: var(--item-disabled);
+}
+
+
+.App-dark .replica {
+    color: var(--item-disabled);
 }
 
 /* Component name */
