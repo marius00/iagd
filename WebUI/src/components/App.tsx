@@ -226,9 +226,7 @@ class App extends PureComponent<object, object> {
     };
 
     // @ts-ignore: message doesn't exist on window
-    window.message = (input: string) => {
-      let message = JSON.parse(input) as IOMessage;
-
+    window.message = (message: IOMessage) => {
       switch (message.type) {
         case IOMessageType.ShowCharacterBackups:
           this.setState({

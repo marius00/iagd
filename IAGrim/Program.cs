@@ -179,29 +179,26 @@ namespace IAGrim {
                 }
             }
 
-            using (CefBrowserHandler browser = new CefBrowserHandler(settingsService)) {
-                _mw = new MainWindow(
-                    serviceProvider,
-                    browser,
-                    parsingService
-                );
+            _mw = new MainWindow(
+                serviceProvider,
+                parsingService
+            );
 
-                Logger.Info("Checking for database updates..");
+            Logger.Info("Checking for database updates..");
 
-                var grimDawnDetector = serviceProvider.Get<GrimDawnDetector>();
-                StartupService.PerformIconCheck(grimDawnDetector, settingsService);
+            var grimDawnDetector = serviceProvider.Get<GrimDawnDetector>();
+            StartupService.PerformIconCheck(grimDawnDetector, settingsService);
 
 
-                _mw.Visible = false;
-                if (new DonateNagScreen(settingsService).CanNag)
-                    Application.Run(new DonateNagScreen(settingsService));
+            _mw.Visible = false;
+            if (new DonateNagScreen(settingsService).CanNag)
+                Application.Run(new DonateNagScreen(settingsService));
 
-                Logger.Info("Running the main application..");
+            Logger.Info("Running the main application..");
 
 
-                StartupService.PerformGrimUpdateCheck(settingsService);
-                Application.Run(_mw);
-            }
+            StartupService.PerformGrimUpdateCheck(settingsService);
+            Application.Run(_mw);
 
             Logger.Info("Application ended.");
         }

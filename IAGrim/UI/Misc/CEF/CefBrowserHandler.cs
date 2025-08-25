@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
-using System.Diagnostics;
-using System.IO;
-using System.Net;
-using System.Windows.Forms;
-using CefSharp;
-using CefSharp.WinForms;
-using CefSharp.WinForms.Internals;
-using IAGrim.Backup.Cloud.CefSharp;
+﻿using IAGrim.Backup.Cloud.CefSharp.Events;
 using IAGrim.Database.Model;
 using IAGrim.Services;
 using IAGrim.Services.ItemReplica;
@@ -18,15 +8,23 @@ using IAGrim.UI.Misc.Protocol;
 using IAGrim.Utilities;
 using log4net;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Net;
+using System.Web;
+using System.Windows.Forms;
+using Microsoft.Web.WebView2.Core;
+using Microsoft.Web.WebView2.WinForms;
 
 namespace IAGrim.UI.Misc.CEF {
-    public class CefBrowserHandler : IDisposable, ICefBackupAuthentication, IUserFeedbackHandler, IBrowserCallbacks, IHelpService {
+    public class CefBrowserHandler : ICefBackupAuthentication, IUserFeedbackHandler, IBrowserCallbacks, IHelpService {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(CefBrowserHandler));
         private TabControl _tabControl; // TODO: UGh.. why?
         private readonly SettingsService _settings;
 
-        public ChromiumWebBrowser BrowserControl { get; private set; }
-        private readonly object _lockObj = new object();
+        public Microsoft.Web.WebView2.WinForms.WebView2 BrowserControl { get; private set; }
 
         private readonly JsonSerializerSettings _serializerSettings = new JsonSerializerSettings {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
@@ -39,17 +37,20 @@ namespace IAGrim.UI.Misc.CEF {
             _settings = settings;
         }
 
-        ~CefBrowserHandler() {
-            Dispose();
-        }
-
         private void SendMessage(IOMessage message) {
-            if (BrowserControl != null && BrowserControl.CanExecuteJavascriptInMainFrame) {
-                BrowserControl.ExecuteScriptAsync("window.message", JsonConvert.SerializeObject(message, _serializerSettings));
-            }
-            else {
+            if (BrowserControl?.Parent == null) {
                 Logger.Warn("Attempted to communicate with the frontend, but CEF not yet initialized, discarded: " + JsonConvert.SerializeObject(message, _serializerSettings));
+                return;
             }
+
+            if (BrowserControl.Parent.InvokeRequired) {
+                BrowserControl.Parent.Invoke((MethodInvoker)delegate { SendMessage(message); });
+                return;
+            }
+
+
+            var script = "window.message(" + JsonConvert.SerializeObject(message, _serializerSettings) + ")";
+            BrowserControl.ExecuteScriptAsync(script);
         }
 
         public void ShowCharacterBackups() {
@@ -69,28 +70,6 @@ namespace IAGrim.UI.Misc.CEF {
         public void ShowHelp(HelpService.HelpType type) {
             SendMessage(new IOMessage { Type = IOMessageType.ShowHelp, Data = type.ToString() });
             SwitchToFrontendTab();
-        }
-
-        public void Dispose() {
-            try {
-                lock (_lockObj) {
-                    if (BrowserControl != null) {
-                        CefSharpSettings.WcfTimeout = TimeSpan.Zero;
-                        BrowserControl.Dispose();
-
-                        Cef.Shutdown();
-                        BrowserControl = null;
-                    }
-                }
-            }
-            catch (Exception ex) {
-                // We're shutting down, doesn't matter. -- Rather not have these reported online.
-                Logger.Warn(ex.Message, ex);
-            }
-        }
-
-        public void ShowDevTools() {
-            BrowserControl.ShowDevTools();
         }
 
         public void SetCollectionAggregateData(IList<CollectionItemAggregateRow> rows) {
@@ -184,22 +163,6 @@ namespace IAGrim.UI.Misc.CEF {
         }
 
 
-        private string GetSiteUri() {
-#if DEBUG
-            var client = new WebClient();
-
-            try {
-                Logger.Debug("Checking if NodeJS is running...");
-                client.DownloadString("http://localhost:3000/");
-                Logger.Debug("NodeJS running");
-                return "http://localhost:3000/";
-            }
-            catch (System.Net.WebException) {
-                Logger.Debug("NodeJS not running, defaulting to standard view");
-            }
-#endif
-            return GlobalPaths.ItemsHtmlFile;
-        }
 
 
         public void ShowMessage(string message, UserFeedbackLevel level = UserFeedbackLevel.Info, string helpUrl = null) {
@@ -218,36 +181,17 @@ namespace IAGrim.UI.Misc.CEF {
         }
 
 
-        public void InitializeChromium(object bindable, EventHandler browserIsBrowserInitializedChanged, TabControl tabControl) {
+        public void InitializeChromium(Microsoft.Web.WebView2.WinForms.WebView2 browserControlView2, JavascriptIntegration bindable, TabControl tabControl) {
             try {
-                Logger.Info("Creating Chromium instance..");
                 _tabControl = tabControl;
-
-                var settings = new CefSettings();
-                settings.CefCommandLineArgs.Add("disable-popup-blocking");
-                Cef.Initialize(settings);
+                this.BrowserControl = browserControlView2;
 
 
+                BrowserControl.CoreWebView2.AddHostObjectToScript("core", bindable);
 
-                // TODO: Read and analyze https://github.com/cefsharp/CefSharp/issues/2246 -- Is this the correct way to do things in the future?
-                CefSharpSettings.WcfEnabled = true;
-                BrowserControl = new ChromiumWebBrowser(GetSiteUri());
+                browserControlView2.NavigationStarting += BrowserControlView2_NavigationStarting;
+                //browserControlView2.CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
 
-                // TODO: browser.JavascriptObjectRepository.ObjectBoundInJavascript += (sender, e) =>
-                BrowserControl.JavascriptObjectRepository.Settings.LegacyBindingEnabled = true;
-                BrowserControl.JavascriptObjectRepository.Register("core", bindable, isAsync: false, options: BindingOptions.DefaultBinder);
-                BrowserControl.IsBrowserInitializedChanged += browserIsBrowserInitializedChanged;
-                BrowserControl.FrameLoadEnd += (sender, args) => browserIsBrowserInitializedChanged(this, args);
-
-
-
-                var requestHandler = new CefRequestHandler();
-                requestHandler.OnAuthentication += (sender, args) => OnAuthSuccess?.Invoke(sender, args);
-                BrowserControl.RequestHandler = requestHandler;
-
-                BrowserControl.LifeSpanHandler = new AzureOnClosePopupHijack();
-
-                Logger.Info("Chromium created..");
             }
             catch (System.IO.FileNotFoundException ex) {
                 MessageBox.Show("Error \"File Not Found\" loading Chromium, did you forget to install Visual C++ runtimes?\n\nvc_redist86 in the IA folder.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -270,12 +214,66 @@ namespace IAGrim.UI.Misc.CEF {
             }
         }
 
+        private void CoreWebView2_NewWindowRequested(object sender, Microsoft.Web.WebView2.Core.CoreWebView2NewWindowRequestedEventArgs e) {
+            Microsoft.Web.WebView2.WinForms.WebView2 webView21 = new WebView2();
+            ((System.ComponentModel.ISupportInitialize)(webView21)).BeginInit();
+            webView21.AllowExternalDrop = true;
+            webView21.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                                                                           | System.Windows.Forms.AnchorStyles.Left)
+                                                                          | System.Windows.Forms.AnchorStyles.Right)));
+            webView21.CreationProperties = null;
+            webView21.DefaultBackgroundColor = System.Drawing.Color.White;
+            webView21.Location = new System.Drawing.Point(3, 3);
+            webView21.Name = "loginpopup";
+            webView21.Size = new System.Drawing.Size(1100, 570);
+            webView21.TabIndex = 0;
+            webView21.ZoomFactor = 1D;
+            ((System.ComponentModel.ISupportInitialize)(webView21)).EndInit();
+            webView21.NavigationStarting += BrowserControlView2_NavigationStarting;
+            e.NewWindow = webView21.CoreWebView2;
+        }
+
+        private static string ExtractToken(string url) {
+            return HttpUtility.ParseQueryString(url).Get("token");
+        }
+        private static string ExtractUser(string url) {
+            return HttpUtility.ParseQueryString(url).Get("email");
+        }
+        private void BrowserControlView2_NavigationStarting(object sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationStartingEventArgs e) {
+            var url = e.Uri;
+            // URL Hook for online backup login. (Binding a JS object to new windows proved to be too painful)
+            if (url.StartsWith("https://token.iagd.evilsoft.net/")) {
+                var token = ExtractToken(url);
+                var user = ExtractUser(url);
+                Logger.Info($"Got a login request for {user}");
+                OnAuthSuccess?.Invoke(sender, new AuthResultEvent(user, token));
+                e.Cancel = true;
+            }
+
+            // Allow localdev
+            else if (url.StartsWith("http://localhost:3000")) {
+                Logger.Debug($"URL Requested: {url}, Status: Allowed");
+                return;
+            }
+
+
+            // TODO: Rewrite this, who the hell knows what this does.
+            else if (!url.StartsWith("https://iagd.evilsoft.net") && !url.StartsWith("http://iagd.evilsoft.net") && !url.StartsWith("https://api.iagd.evilsoft.net") && !url.Contains("grimdawn.evilsoft.net") && !url.Contains("iagd.evilsoft.net") && (url.StartsWith("http://") || url.StartsWith("https://"))) {
+                Logger.Debug($"URL Requested: {url}, Status: Deny, Action: DefaultBrowser");
+                System.Diagnostics.Process.Start(url);
+                e.Cancel = true;
+            }
+
+
+            Logger.Debug($"URL Requested: {url}, Status: Allowed");
+        }
+
         #region CefBackupAuthentication
         public void Open(string url) {
-            if (BrowserControl.CanExecuteJavascriptInMainFrame) {
+            if (BrowserControl != null) {
                 Logger.Debug("Opening IAGD login page..:");
                 Logger.Debug($"window.open('{url}');");
-                BrowserControl.ExecuteScriptAsync("window.open", url);
+                BrowserControl.ExecuteScriptAsync("window.open('" + url + "')");
             }
             else {
                 MessageBox.Show(
@@ -287,9 +285,6 @@ namespace IAGrim.UI.Misc.CEF {
             }
         }
 
-        public bool IsReady() {
-            return BrowserControl.CanExecuteJavascriptInMainFrame;
-        }
 
         [Obsolete("Old login system via redirects")]
         public event EventHandler OnAuthSuccess;

@@ -1,7 +1,7 @@
 import { isEmbedded } from '../integration/integration';
 
 interface IntegrationInterface {
-  getTranslationStrings(): { [index: string]: string };
+  GetTranslationStrings(): { [index: string]: string };
 }
 declare let core: IntegrationInterface;
 
@@ -64,7 +64,7 @@ class EmbeddedTranslator {
     // Fetch data from host
     if (Object.getOwnPropertyNames(EmbeddedTranslator.translation).length === 0 && typeof core !== 'undefined') {
       console.debug("Fetching translation strings");
-      const d = core.getTranslationStrings();
+      const d = core.GetTranslationStrings();
       EmbeddedTranslator.translation = typeof d === 'string' ? JSON.parse(d) : d;
     }
 

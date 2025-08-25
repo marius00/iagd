@@ -1,16 +1,18 @@
 ﻿using IAGrim.Database.Dto;
 using IAGrim.Database.Interfaces;
-using IAGrim.Theme;
-using IAGrim.UI.Controller;
-using IAGrim.UI.Tabs.Util;
-using log4net;
-using System;
-using System.Linq;
-using System.Windows.Forms;
 using IAGrim.Parsers.Arz;
 using IAGrim.Settings;
 using IAGrim.Settings.Dto;
+using IAGrim.Theme;
+using IAGrim.UI.Controller;
+using IAGrim.UI.Tabs.Util;
 using IAGrim.Utilities;
+using log4net;
+using Microsoft.Web.WebView2.WinForms;
+using System;
+using System.Linq;
+using System.Net;
+using System.Windows.Forms;
 
 namespace IAGrim.UI.Tabs {
     internal sealed class SplitSearchWindow : Form {
@@ -38,6 +40,7 @@ namespace IAGrim.UI.Tabs {
         private ToolTip toolTip1;
         private System.ComponentModel.IContainer components;
         private const int FilterPanelMinSize = 250;
+        private Microsoft.Web.WebView2.WinForms.WebView2 webView21;
         private bool _hasCheckedModFilterNotEmpty = false;
 
         /// <summary>
@@ -45,15 +48,7 @@ namespace IAGrim.UI.Tabs {
         /// </summary>
         public ModSelectionHandler ModSelectionHandler { get; }
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="browser"></param>
-        /// <param name="setStatus"></param>
-        /// <param name="playerItemDao"></param>
-        /// <param name="searchController"></param>
-        /// <param name="itemTagDao"></param>
-        public SplitSearchWindow(Control browser,
+        public SplitSearchWindow(
             Action<string> setStatus,
             IPlayerItemDao playerItemDao,
             SearchController searchController,
@@ -73,13 +68,32 @@ namespace IAGrim.UI.Tabs {
 
             ModSelectionHandler = new ModSelectionHandler(_modFilter, playerItemDao, UpdateListViewDelayed, setStatus, _settings);
 
-            _toolStripContainer.ContentPanel.Controls.Add(browser);
-
             Activated += SplitSearchWindow_Activated;
             Deactivate += SplitSearchWindow_Deactivate;
 
+            webView21.Source = new Uri(GetSiteUri());
             InitializeFilterPanel();
         }
+
+
+        private string GetSiteUri() {
+#if DEBUG
+            var client = new WebClient();
+
+            try {
+                Logger.Debug("Checking if NodeJS is running...");
+                client.DownloadString("http://localhost:3000/");
+                Logger.Debug("NodeJS running");
+                return "http://localhost:3000/";
+            }
+            catch (System.Net.WebException) {
+                Logger.Debug("NodeJS not running, defaulting to standard view");
+            }
+#endif
+            return GlobalPaths.ItemsHtmlFile;
+        }
+
+        public WebView2 Browser => this.webView21;
 
         public void SelectModFilterIfNotSelected() {
             if (!_hasCheckedModFilterNotEmpty) {
@@ -341,6 +355,7 @@ namespace IAGrim.UI.Tabs {
             this.components = new System.ComponentModel.Container();
             this._mainSplitter = new System.Windows.Forms.SplitContainer();
             this._toolStripContainer = new System.Windows.Forms.ToolStripContainer();
+            this.webView21 = new Microsoft.Web.WebView2.WinForms.WebView2();
             this._flowPanelFilter = new System.Windows.Forms.FlowLayoutPanel();
             this._searchBox = new System.Windows.Forms.TextBox();
             this._orderByLevel = new System.Windows.Forms.CheckBox();
@@ -354,7 +369,9 @@ namespace IAGrim.UI.Tabs {
             ((System.ComponentModel.ISupportInitialize)(this._mainSplitter)).BeginInit();
             this._mainSplitter.Panel2.SuspendLayout();
             this._mainSplitter.SuspendLayout();
+            this._toolStripContainer.ContentPanel.SuspendLayout();
             this._toolStripContainer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.webView21)).BeginInit();
             this._flowPanelFilter.SuspendLayout();
             this._levelRequirementGroup.SuspendLayout();
             this.SuspendLayout();
@@ -381,6 +398,7 @@ namespace IAGrim.UI.Tabs {
             // 
             // _toolStripContainer.ContentPanel
             // 
+            this._toolStripContainer.ContentPanel.Controls.Add(this.webView21);
             this._toolStripContainer.ContentPanel.Size = new System.Drawing.Size(1106, 576);
             this._toolStripContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this._toolStripContainer.LeftToolStripPanelVisible = false;
@@ -390,6 +408,20 @@ namespace IAGrim.UI.Tabs {
             this._toolStripContainer.Size = new System.Drawing.Size(1106, 601);
             this._toolStripContainer.TabIndex = 48;
             this._toolStripContainer.Text = "toolStripContainer1";
+            // 
+            // webView21
+            // 
+            this.webView21.AllowExternalDrop = true;
+            this.webView21.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.webView21.CreationProperties = null;
+            this.webView21.DefaultBackgroundColor = System.Drawing.Color.White;
+            this.webView21.Location = new System.Drawing.Point(3, 3);
+            this.webView21.Name = "webView21";
+            this.webView21.Size = new System.Drawing.Size(1100, 570);
+            this.webView21.TabIndex = 0;
+            this.webView21.ZoomFactor = 1D;
             // 
             // _flowPanelFilter
             // 
@@ -534,8 +566,10 @@ namespace IAGrim.UI.Tabs {
             this._mainSplitter.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this._mainSplitter)).EndInit();
             this._mainSplitter.ResumeLayout(false);
+            this._toolStripContainer.ContentPanel.ResumeLayout(false);
             this._toolStripContainer.ResumeLayout(false);
             this._toolStripContainer.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.webView21)).EndInit();
             this._flowPanelFilter.ResumeLayout(false);
             this._flowPanelFilter.PerformLayout();
             this._levelRequirementGroup.ResumeLayout(false);

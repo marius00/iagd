@@ -36,9 +36,10 @@ namespace IAGrim.Backup.Cloud.Service {
             _authentication = authentication;
             _authenticationProvider = authenticationProvider;
             _playerItemDao = playerItemDao;
-            _authentication.OnAuthSuccess += AuthenticationOnSuccess;
+            //_authentication.OnAuthSuccess += AuthenticationOnSuccess;
         }
 
+        /* ppp
         private void AuthenticationOnSuccess(object sender, EventArgs eventArgs) {
             var args = eventArgs as AuthResultEvent;
             (sender as IBrowser)?.CloseBrowser(true);
@@ -51,7 +52,7 @@ namespace IAGrim.Backup.Cloud.Service {
             else {
                 Logger.Warn($"Token for {args.User} failed validation");
             }
-        }
+        }*/
 
         private static AccessStatus IsTokenValid(string user, string token) {
             try {
