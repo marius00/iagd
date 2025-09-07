@@ -2,7 +2,6 @@
 using System.Security.Cryptography.X509Certificates;
 using System.Web;
 using CefSharp;
-using IAGrim.Backup.Cloud;
 using IAGrim.Backup.Cloud.CefSharp.Events;
 using log4net;
 
@@ -11,11 +10,14 @@ namespace IAGrim.UI.Misc.CEF {
     // Overrides links inside the embedded webview.
     public class CefRequestHandler : IRequestHandler {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(CefRequestHandler));
+        [Obsolete("Old login system via redirects")]
         public event EventHandler OnAuthentication;
 
+        [Obsolete("Old login system via redirects")]
         private static string ExtractToken(string url) {
             return HttpUtility.ParseQueryString(url).Get("token");
         }
+        [Obsolete("Old login system via redirects")]
         private static string ExtractUser(string url) {
             return HttpUtility.ParseQueryString(url).Get("email");
         }

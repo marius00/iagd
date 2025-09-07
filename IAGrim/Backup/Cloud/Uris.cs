@@ -20,6 +20,7 @@ namespace IAGrim.Backup.Cloud {
             }
 
             TokenVerificationUri = $"{host}/logincheck";
+            TokenPollUri = $"{host}/status";
             UploadItemsUrl = $"{host}/upload";
             DownloadUrl = $"{host}/download";
             DeleteItemsUrl = $"{host}/remove";
@@ -38,6 +39,7 @@ namespace IAGrim.Backup.Cloud {
         public static string LoginPageUrl { get; private set; }
         public static string DownloadUrl { get; private set; }
         public static string TokenVerificationUri { get; private set; }
+        public static string TokenPollUri { get; private set; }
         public static string UploadItemsUrl { get; private set; }
         public static string DeleteItemsUrl { get; private set; }
         public static string FetchLimitationsUrl { get; private set; }

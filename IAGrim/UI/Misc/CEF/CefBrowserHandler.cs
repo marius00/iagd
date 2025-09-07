@@ -291,6 +291,7 @@ namespace IAGrim.UI.Misc.CEF {
             return BrowserControl.CanExecuteJavascriptInMainFrame;
         }
 
+        [Obsolete("Old login system via redirects")]
         public event EventHandler OnAuthSuccess;
         #endregion CefBackupAuthentication
     }
