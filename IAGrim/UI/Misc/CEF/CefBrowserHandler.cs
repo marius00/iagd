@@ -188,7 +188,8 @@ namespace IAGrim.UI.Misc.CEF {
             BrowserControl.ExecuteScriptAsync("window.open('" + url + "')");
         }
 
-        public event EventHandler? OnAuthSuccess;
+        [Obsolete("Old login system via redirects")]
+        public event EventHandler OnAuthSuccess;
         #endregion CefBackupAuthentication
     }
 }

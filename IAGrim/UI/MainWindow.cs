@@ -262,6 +262,9 @@ namespace IAGrim.UI {
             FormClosing -= MainWindow_FormClosing;
             SizeChanged -= OnMinimizeWindow;
 
+            _authService?.Dispose();
+            _authService = null;
+
             _stashFileMonitor?.Dispose();
             _stashFileMonitor = null;
 
@@ -625,12 +628,7 @@ namespace IAGrim.UI {
 
             // Popup login diag
             if (_authService.CheckAuthentication() == AuthService.AccessStatus.Unauthorized && !settingsService.GetLocal().OptOutOfBackups) {
-                var t = new System.Windows.Forms.Timer {Interval = 100};
-                t.Tick += (o, args) => {
-                    _authService.Authenticate();
-                    t.Stop();
-                };
-                t.Start();
+                _authService.Authenticate();
             }
 
 

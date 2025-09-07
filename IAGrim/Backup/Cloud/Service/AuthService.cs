@@ -1,18 +1,24 @@
 ﻿using System.Net;
 using System.Runtime.Caching;
-using IAGrim.Backup.Cloud.CefSharp.Events;
+using System.Diagnostics;
+using EvilsoftCommons.Exceptions;
 using IAGrim.Database.Interfaces;
 using IAGrim.UI.Misc.CEF;
 using IAGrim.Utilities.HelperClasses;
 using log4net;
+using Newtonsoft.Json;
+using System.Threading;
 
 namespace IAGrim.Backup.Cloud.Service {
-    public class AuthService {
+    public class AuthService : IDisposable {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(AuthService));
         private const string CacheKey = "IAGDIsCloudAuthenticated";
         private readonly ICefBackupAuthentication _authentication;
         private readonly AuthenticationProvider _authenticationProvider;
         private readonly IPlayerItemDao _playerItemDao;
+        private Thread _pollingThread = null;
+        private volatile bool _isDisposing = false;
+        private string _pollingId;
 
         public enum AccessStatus {
             Authorized,
@@ -44,7 +50,7 @@ namespace IAGrim.Backup.Cloud.Service {
 
         private static AccessStatus IsTokenValid(string user, string token) {
             try {
-                using (var httpClient = new HttpClient {Timeout = TimeSpan.FromSeconds(5)}) {
+                using (var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(5) }) {
                     httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", token);
                     httpClient.DefaultRequestHeaders.TryAddWithoutValidation("X-Api-User", user);
 
@@ -80,18 +86,15 @@ namespace IAGrim.Backup.Cloud.Service {
             }
         }
 
-        class MigrateResponseType {
-            public string Token { get; set; }
-            public string Email { get; set; }
-        }
-
         public void Logout() {
             try {
                 if (_authenticationProvider.HasToken()) {
                     Logger.Info("Logging out of cloud backups");
-                    var httpClient = new HttpClient {Timeout = TimeSpan.FromSeconds(5)};
-                    httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", _authenticationProvider.GetToken());
-                    httpClient.DefaultRequestHeaders.TryAddWithoutValidation("X-Api-User", _authenticationProvider.GetUser());
+                    var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(5) };
+                    httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization",
+                        _authenticationProvider.GetToken());
+                    httpClient.DefaultRequestHeaders.TryAddWithoutValidation("X-Api-User",
+                        _authenticationProvider.GetUser());
 
                     var status = httpClient.GetAsync(Uris.LogoutUrl).Result.StatusCode;
 
@@ -99,7 +102,8 @@ namespace IAGrim.Backup.Cloud.Service {
                         Logger.Info($"Successfully logged out of cloud backups");
                     }
                     else {
-                        Logger.Info($"Failed logging out of cloud backups, status code {status} (this is OK, client still deletes token and gets logged out)");
+                        Logger.Info(
+                            $"Failed logging out of cloud backups, status code {status} (this is OK, client still deletes token and gets logged out)");
                     }
                 }
             }
@@ -136,14 +140,66 @@ namespace IAGrim.Backup.Cloud.Service {
         }
 
         public void Authenticate() {
-            // Open chromium
-            // Redirect to protected page
-            // Protected page redirects to magic://something
-            // Chromium hook notifies authentication complete
-            // Close chromium popup
-            // Mark as authenticated
+            _pollingId = Guid.NewGuid().ToString();
+            Process.Start(Uris.LoginPageUrl + $"?token={_pollingId}");
 
-            _authentication.Open(Uris.LoginPageUrl);
+            if (_pollingThread != null) {
+                try {
+                    _pollingThread?.Abort();
+                    _pollingThread = null;
+                }
+                catch (Exception ex) {
+                    Logger.Warn(ex.Message, ex);
+                }
+            }
+
+            _pollingThread = new Thread(PollForAccessTokenStatus);
+            _pollingThread.Start();
+        }
+
+        private void PollForAccessTokenStatus() {
+            ExceptionReporter.EnableLogUnhandledOnThread();
+            if (Thread.CurrentThread.Name == null) {
+                Thread.CurrentThread.Name = "PollForAccessTokenStatus";
+                Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
+            }
+
+            int numErrors = 0;
+            int numRuns = 0;
+            using (var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(5) }) {
+                while (!_isDisposing && numRuns++ < 240 /* ~8 minutes */) {
+                    Thread.Sleep(2000);
+
+                    var content = new FormUrlEncodedContent(new[]
+                    {
+                        new KeyValuePair<string, string>("token", _pollingId),
+                    });
+
+                    var result = httpClient.PostAsync(Uris.TokenPollUri, content).Result;
+                    var status = result.StatusCode;
+                    
+                    string body = result.Content.ReadAsStringAsync().Result;
+                    if (status == HttpStatusCode.OK) {
+                        Logger.Info($"Got Status {result} verifying authentication token");
+                        Dictionary<string, object> dataMap = JsonConvert.DeserializeObject<Dictionary<string, object>>(body);
+                        if (dataMap["status"].ToString() == "COMPLETED") {
+                            Logger.Info("Cloud reports login succeeded");
+                            AuthenticationOnSuccess(this, new AuthResultEvent(dataMap["email"].ToString(), dataMap["token"].ToString()));
+                            return;
+                        }
+                        else {
+                            Logger.Info("Login still pending..");
+                        }
+                    }
+                    else {
+                        Logger.Error($"Got Status {result} polling login status");
+
+                        if (numErrors++ > 5) {
+                            return;
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -155,29 +211,34 @@ namespace IAGrim.Backup.Cloud.Service {
         }
 
         public AuthenticationProvider GetAuthProvider() {
-            if (CheckAuthentication() == AccessStatus.Authorized) {
-                return _authenticationProvider;
-            }
-
-            return null;
+            return CheckAuthentication() == AccessStatus.Authorized ? _authenticationProvider : null;
         }
 
         public RestService GetRestService() {
-            if (CheckAuthentication() == AccessStatus.Authorized) {
-                var token = _authenticationProvider.GetToken();
+            if (CheckAuthentication() != AccessStatus.Authorized) return null;
 
-                HttpClientHandler handler = new HttpClientHandler() {
-                    AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-                };
+            var token = _authenticationProvider.GetToken();
 
-                var httpClient = new HttpClient(handler);
-                httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", token);
-                httpClient.DefaultRequestHeaders.TryAddWithoutValidation("X-Api-User", _authenticationProvider.GetUser());
-                httpClient.Timeout = TimeSpan.FromSeconds(5);
-                return new RestService(httpClient);
+            var handler = new HttpClientHandler() {
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+            };
+
+            var httpClient = new HttpClient(handler);
+            httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", token);
+            httpClient.DefaultRequestHeaders.TryAddWithoutValidation("X-Api-User", _authenticationProvider.GetUser());
+            httpClient.Timeout = TimeSpan.FromSeconds(5);
+            return new RestService(httpClient);
+        }
+
+        public void Dispose() {
+            try {
+                _isDisposing = true;
+                _pollingThread?.Abort();
+                _pollingThread = null;
             }
-
-            return null;
+            catch (Exception ex) {
+                Logger.Warn(ex.Message, ex);
+            }
         }
     }
 }
