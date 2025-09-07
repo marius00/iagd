@@ -24,7 +24,9 @@
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3405.78" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NHibernate" Version="5.5.3" />
+    <PackageReference Include="NHibernate.Extensions.Sqlite" Version="9.0.8" />
     <PackageReference Include="SQLite" Version="3.13.0" />
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="3.0.2" />
     <PackageReference Include="System.Management" Version="9.0.8" />
     <PackageReference Include="System.Runtime.Caching" Version="9.0.8" />
   </ItemGroup>

@@ -79,6 +79,7 @@ namespace IAGrim
 
             Logger.Info("Starting IA:GD..");
             ExceptionReporter.UrlStats = "https://webstats.evilsoft.net/report/iagd";
+            SQLitePCL.Batteries.Init();
 
 
             Logger.Info("Starting exception monitor for bug reports..");
