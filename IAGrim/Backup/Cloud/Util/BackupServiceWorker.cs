@@ -50,7 +50,7 @@ namespace IAGrim.Backup.Cloud.Util {
                     _characterBackupService.Execute();
                 }
                 catch (HttpException ex) {
-                    if (ex.WebEventCode == (int)HttpStatusCode.Unauthorized) {
+                    if (ex.Code == (int)HttpStatusCode.Unauthorized) {
                         _backupService.Logout();
                     }
                     Logger.Error(ex.Message);

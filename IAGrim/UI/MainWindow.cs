@@ -1,11 +1,9 @@
-﻿using CefSharp;
-using EvilsoftCommons;
+﻿using EvilsoftCommons;
 using EvilsoftCommons.Cloud;
 using EvilsoftCommons.DllInjector;
 using EvilsoftCommons.Exceptions;
 using IAGrim.BuddyShare;
 using IAGrim.Database.Interfaces;
-using IAGrim.Parsers;
 using IAGrim.Parsers.Arz;
 using IAGrim.Parsers.Arz.dto;
 using IAGrim.Parsers.GameDataParsing.Service;
@@ -27,7 +25,6 @@ using IAGrim.Backup.Cloud.Service;
 using IAGrim.Backup.Cloud.Util;
 using IAGrim.Parsers.TransferStash;
 using IAGrim.Settings;
-using System.IO;
 using IAGrim.Services.ItemReplica;
 
 namespace IAGrim.UI {

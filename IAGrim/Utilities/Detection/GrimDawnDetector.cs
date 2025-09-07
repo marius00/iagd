@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using IAGrim.Settings;
 using IAGrim.Utilities.Detection;
+using System.Management;
 
 namespace IAGrim {
     public class GrimDawnDetector {

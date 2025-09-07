@@ -1,26 +1,14 @@
-﻿using IAGrim.Database.Dto;
-using IAGrim.Database.Interfaces;
+﻿using IAGrim.Database.Interfaces;
 using log4net;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Transform;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data;
-using System.Data.SQLite;
-using System.Linq;
-using System.Text;
-using DataAccess;
 using IAGrim.Database.DAO.Table;
 using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Model;
 using IAGrim.Parsers.GameDataParsing.Model;
-using IAGrim.Services.Dto;
-using log4net.Repository.Hierarchy;
-using System.Data.Common;
-using System.Data.Odbc;
-using static System.Data.Entity.Infrastructure.Design.Executor;
+using Microsoft.Data.Sqlite;
 
 namespace IAGrim.Database {
     /// <summary>
@@ -102,11 +90,11 @@ namespace IAGrim.Database {
         }
 
         private void ExecuteTransactionSqlSqlite(string[] commands, ProgressTracker progressTracker) {
-            using (SQLiteConnection dbConnection = new SQLiteConnection(SessionFactoryLoader.SessionFactory.ConnectionString)) {
+            using (SqliteConnection dbConnection = new SqliteConnection(SessionFactoryLoader.SessionFactory.ConnectionString)) {
                 dbConnection.Open();
 
                 using (var transaction = dbConnection.BeginTransaction()) {
-                    using (SQLiteCommand command = new SQLiteCommand(dbConnection)) {
+                    using (SqliteCommand command = new SqliteCommand()) {
                         foreach (var sql in commands) {
                             command.CommandText = sql;
                             command.ExecuteNonQuery();
@@ -292,18 +280,17 @@ namespace IAGrim.Database {
 
         private int InsertStatsSqlite(string sql, List<DatabaseItem> items) {
             int numStats = 0;
-            using (SQLiteConnection dbConnection = new SQLiteConnection(SessionFactoryLoader.SessionFactory.ConnectionString)) {
+            using (Microsoft.Data.Sqlite.SqliteConnection dbConnection = new SqliteConnection(SessionFactoryLoader.SessionFactory.ConnectionString)) {
                 dbConnection.Open();
 
                 using (var transaction = dbConnection.BeginTransaction()) {
-                    using (SQLiteCommand command = new SQLiteCommand(dbConnection)) {
-                        command.CommandText = sql;
+                    using (Microsoft.Data.Sqlite.SqliteCommand command = new Microsoft.Data.Sqlite.SqliteCommand(sql)) {
                         foreach (DatabaseItem item in items) {
                             foreach (DatabaseItemStat stat in item.Stats) {
-                                command.Parameters.Add(new SQLiteParameter("@id", item.Id));
-                                command.Parameters.Add(new SQLiteParameter("@stat", stat.Stat));
-                                command.Parameters.Add(new SQLiteParameter("@tv", stat.TextValue));
-                                command.Parameters.Add(new SQLiteParameter("@val", stat.Value));
+                                command.Parameters.Add(new Microsoft.Data.Sqlite.SqliteParameter("@id", item.Id));
+                                command.Parameters.Add(new SqliteParameter("@stat", stat.Stat));
+                                command.Parameters.Add(new SqliteParameter("@tv", stat.TextValue));
+                                command.Parameters.Add(new SqliteParameter("@val", stat.Value));
                                 command.ExecuteNonQuery();
                                 numStats++;
                             }

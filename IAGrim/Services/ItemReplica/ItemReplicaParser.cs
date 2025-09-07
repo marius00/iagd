@@ -4,6 +4,7 @@ using IAGrim.Database.Interfaces;
 using IAGrim.UI.Misc.CEF;
 using IAGrim.Utilities;
 using log4net;
+using Microsoft.Data.Sqlite;
 using Newtonsoft.Json;
 using NHibernate.Exceptions;
 using System;
@@ -186,7 +187,7 @@ namespace IAGrim.Services.ItemReplica {
                     }
                 }
             }
-            catch (System.Data.SQLite.SQLiteException ex) {
+            catch (SqliteException ex) {
                 _logger.Warn($"Error storing replica item stats for item {latest}: " + ex.Message);
             }
             catch (GenericADOException ex) {

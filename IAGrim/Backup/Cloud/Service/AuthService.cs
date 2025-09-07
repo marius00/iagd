@@ -8,6 +8,7 @@ using IAGrim.Utilities.HelperClasses;
 using log4net;
 using Newtonsoft.Json;
 using System.Threading;
+using IAGrim.Backup.Cloud.CefSharp.Events;
 
 namespace IAGrim.Backup.Cloud.Service {
     public class AuthService : IDisposable {
