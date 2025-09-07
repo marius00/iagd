@@ -1,14 +1,14 @@
-﻿using System.Net;
-using System.Runtime.Caching;
+﻿
 using System.Diagnostics;
+using System.Net;
+using System.Runtime.Caching;
 using EvilsoftCommons.Exceptions;
+using IAGrim.Backup.Cloud.CefSharp.Events;
 using IAGrim.Database.Interfaces;
 using IAGrim.UI.Misc.CEF;
 using IAGrim.Utilities.HelperClasses;
 using log4net;
 using Newtonsoft.Json;
-using System.Threading;
-using IAGrim.Backup.Cloud.CefSharp.Events;
 
 namespace IAGrim.Backup.Cloud.Service {
     public class AuthService : IDisposable {
@@ -27,7 +27,8 @@ namespace IAGrim.Backup.Cloud.Service {
             Unknown
         }
 
-        public AuthService(ICefBackupAuthentication authentication, AuthenticationProvider authenticationProvider, IPlayerItemDao playerItemDao) {
+        public AuthService(ICefBackupAuthentication authentication, AuthenticationProvider authenticationProvider,
+            IPlayerItemDao playerItemDao) {
             _authentication = authentication;
             _authenticationProvider = authenticationProvider;
             _playerItemDao = playerItemDao;
