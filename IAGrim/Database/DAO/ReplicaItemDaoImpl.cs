@@ -2,9 +2,6 @@
 using log4net;
 using NHibernate;
 using IAGrim.Database.DAO.Util;
-using NHibernate.Exceptions;
-using System.Collections.Generic;
-using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 using NHibernate.Criterion;
 using NHibernate.Transform;
 

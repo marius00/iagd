@@ -8,7 +8,6 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
-using DllInjector.UI;
 using EvilsoftCommons.DllInjector;
 using EvilsoftCommons.Exceptions;
 using log4net;
@@ -93,7 +92,6 @@ namespace DllInjector {
 
                 while (!worker.CancellationPending) {
                     if (!File.Exists("DllInjector64.exe")) {
-                        new AvastedWarning().ShowDialog();
                         Logger.Fatal("Shutting down injection helper. End user has been avasted and IA is now inoperational until reinstalled.");
                         return;
                     }

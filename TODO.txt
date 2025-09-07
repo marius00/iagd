@@ -1,0 +1,9 @@
+Pending:
+* Version number
+* Assembly info like EvilSoft and IAGrim
+* Remove any excess eqlite libraries
+* Check what we need in terms of VC++ runtimes (can prolly remove some)
+* Replace .net version for installer
+* We now miss [assembly: log4net.Config.XmlConfigurator(ConfigFile = "Log4Net.config", Watch = true)]
+* IAGD Icon
+* Possibly patreon and gdrive icons (iagrim\properties\resources.resx)

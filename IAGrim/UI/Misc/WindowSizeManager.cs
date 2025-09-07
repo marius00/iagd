@@ -1,9 +1,4 @@
-﻿using System;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
-using CefSharp.DevTools.HeadlessExperimental;
-using IAGrim.Settings;
+﻿using IAGrim.Settings;
 namespace IAGrim.UI.Misc {
     /// <summary>
     /// Responsible for persisting the window size and location across runs.

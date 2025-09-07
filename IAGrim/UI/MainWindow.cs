@@ -19,16 +19,9 @@ using IAGrim.Utilities;
 using IAGrim.Utilities.Cloud;
 using IAGrim.Utilities.HelperClasses;
 using log4net;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
 using System.Reflection;
-using System.Threading;
-using System.Windows.Forms;
-using CefSharp.WinForms;
 using DllInjector;
 using IAGrim.Backup.Cloud.Service;
 using IAGrim.Backup.Cloud.Util;
@@ -75,6 +68,7 @@ namespace IAGrim.UI {
         private MinimizeToTrayHandler _minimizeToTrayHandler;
         private ModsDatabaseConfig _modsDatabaseConfigTab;
         public static int NumInstantSyncItemCount = 300;
+        private Microsoft.Web.WebView2.WinForms.WebView2 _webView2;
 
 
         #region Stash Status
@@ -92,7 +86,7 @@ namespace IAGrim.UI {
         /// <param name="e"></param>
         private void InjectorCallback(object sender, ProgressChangedEventArgs e) {
             if (InvokeRequired) {
-                Invoke((MethodInvoker) delegate { InjectorCallback(sender, e); });
+                Invoke((System.Windows.Forms.MethodInvoker) delegate { InjectorCallback(sender, e); });
             }
             else {
                 switch (e.ProgressPercentage) {
@@ -182,70 +176,61 @@ namespace IAGrim.UI {
 
         #endregion Stash Status
 
-
-        /// <summary>
-        /// Perform a search the moment were initialized
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Browser_IsBrowserInitializedChanged(object sender, EventArgs e) {
-            var args = e as FrameLoadEndEventArgs;
-            ChromiumWebBrowser browser = (sender as ChromiumWebBrowser);
-            if (browser == null) {
-                browser = (sender as CefBrowserHandler).BrowserControl;
-            }
-            if (args != null && args.Frame.IsMain) {
-                // https://github.com/cefsharp/CefSharp/issues/3021
-                if (browser?.CanExecuteJavascriptInMainFrame ?? true) {
-                    if (InvokeRequired) {
-                        Invoke((MethodInvoker) delegate { Browser_IsBrowserInitializedChanged(sender, e); });
-                    }
-                    else {
-                        _searchWindow?.UpdateListViewDelayed();
-
-                        var isGdParsed = _serviceProvider.Get<IDatabaseItemDao>().GetRowCount() > 0;
-                        var settingsService = _serviceProvider.Get<SettingsService>();
-                        _cefBrowserHandler.SetDarkMode(settingsService.GetPersistent().DarkMode);
-                        _cefBrowserHandler.SetHideItemSkills(settingsService.GetPersistent().HideSkills);
-                        _cefBrowserHandler.SetIsGrimParsed(isGdParsed);
-                        
-
-                        _cefBrowserHandler.SetOnlineBackupsEnabled(!settingsService.GetLocal().OptOutOfBackups);
-                        if (_serviceProvider.Get<IPlayerItemDao>().GetNumItems() == 0) {
-                            _cefBrowserHandler.SetIsFirstRun();
-                        }
-
-                        else if (DateTime.Now.Month == 4 && DateTime.Now.Day == 1) {
-                            if (settingsService.GetLocal().EasterPrank) {
-                                _cefBrowserHandler.SetEasterEggMode();
-                                settingsService.GetLocal().EasterPrank = false;
-                            }
-                        } else {
-                            settingsService.GetLocal().EasterPrank = true;
-                        }
-                    }
-                }
-            }
-        }
-
-
         public MainWindow(
             ServiceProvider serviceProvider,
-            CefBrowserHandler browser,
             ParsingService parsingService
         ) {
             this._serviceProvider = serviceProvider;
-            _cefBrowserHandler = browser;
+            var settingsService = _serviceProvider.Get<SettingsService>();
+            _webView2 = new Microsoft.Web.WebView2.WinForms.WebView2();
+            _cefBrowserHandler = new CefBrowserHandler(settingsService, tabControl1, _webView2);
             InitializeComponent();
             FormClosing += MainWindow_FormClosing;
 
             _minimizeToTrayHandler = new MinimizeToTrayHandler(this, notifyIcon1, serviceProvider.Get<SettingsService>());
 
-            var settingsService = _serviceProvider.Get<SettingsService>();
             _automaticUpdateChecker = new AutomaticUpdateChecker(settingsService);
             _settingsController = new SettingsController(settingsService);
             _parsingService = parsingService;
             _userFeedbackService = new UserFeedbackService(_cefBrowserHandler);
+
+            _webView2.CoreWebView2InitializationCompleted += Edge_CoreWebView2InitializationCompleted;
+        }
+
+        private void Edge_CoreWebView2InitializationCompleted(object? sender, Microsoft.Web.WebView2.Core.CoreWebView2InitializationCompletedEventArgs args)
+        {
+            if (InvokeRequired)
+            {
+                Invoke((System.Windows.Forms.MethodInvoker)delegate { Edge_CoreWebView2InitializationCompleted(sender, args); });
+            }
+            else
+            {
+                _searchWindow?.UpdateListViewDelayed();
+
+                var isGdParsed = _serviceProvider.Get<IDatabaseItemDao>().GetRowCount() > 0;
+                var settingsService = _serviceProvider.Get<SettingsService>();
+                _cefBrowserHandler.SetDarkMode(settingsService.GetPersistent().DarkMode);
+                _cefBrowserHandler.SetHideItemSkills(settingsService.GetPersistent().HideSkills);
+                _cefBrowserHandler.SetIsGrimParsed(isGdParsed);
+
+
+                _cefBrowserHandler.SetOnlineBackupsEnabled(!settingsService.GetLocal().OptOutOfBackups);
+                if (_serviceProvider.Get<IPlayerItemDao>().GetNumItems() == 0)
+                {
+                    _cefBrowserHandler.SetIsFirstRun();
+                }
+
+                else if (DateTime.Now.Month == 4 && DateTime.Now.Day == 1)
+                {
+                    if (!settingsService.GetLocal().EasterPrank) return;
+                    _cefBrowserHandler.SetEasterEggMode();
+                    settingsService.GetLocal().EasterPrank = false;
+                }
+                else
+                {
+                    settingsService.GetLocal().EasterPrank = true;
+                }
+            }
         }
 
         /// <summary>
@@ -328,7 +313,7 @@ namespace IAGrim.UI {
             // Most if not all actions may interact with SQL
             // SQL is done on the UI thread.
             if (InvokeRequired) {
-                Invoke((MethodInvoker) delegate { CustomWndProc(bt); });
+                Invoke((System.Windows.Forms.MethodInvoker) delegate { CustomWndProc(bt); });
                 return;
             }
 
@@ -376,7 +361,7 @@ namespace IAGrim.UI {
         private void SetFeedback(string feedback) {
             try {
                 if (InvokeRequired) {
-                    Invoke((MethodInvoker)delegate { SetFeedback(feedback); });
+                    Invoke((System.Windows.Forms.MethodInvoker)delegate { SetFeedback(feedback); });
                 }
                 else {
                     statusLabel.Text = feedback.Replace("\\n", " - ");
@@ -391,7 +376,7 @@ namespace IAGrim.UI {
         private void SetInjectionAbortedStatus() {
             try {
                 if (InvokeRequired) {
-                    Invoke((MethodInvoker)delegate { SetInjectionAbortedStatus(); });
+                    Invoke((System.Windows.Forms.MethodInvoker)SetInjectionAbortedStatus);
                 }
                 else {
                     InjectorCallback(null, new ProgressChangedEventArgs(InjectionHelper.ABORTED, null));
@@ -400,15 +385,6 @@ namespace IAGrim.UI {
             }
             catch (ObjectDisposedException ex) {
                 Logger.Warn(ex.ToString());
-            }
-        }
-
-        private void SetTooltipAtmouse(string message) {
-            if (InvokeRequired) {
-                Invoke((MethodInvoker) delegate { SetTooltipAtmouse(message); });
-            }
-            else {
-                _tooltipHelper.ShowTooltipAtMouse(message, _cefBrowserHandler.BrowserControl);
             }
         }
 
@@ -481,7 +457,6 @@ namespace IAGrim.UI {
             var searchController = _serviceProvider.Get<SearchController>();
             searchController.JsIntegration.OnRequestSetItemAssociations += (s, evvv) => { (evvv as GetSetItemAssociationsEventArgs).Elements = databaseItemDao.GetItemSetAssociations(); };
 
-            _cefBrowserHandler.InitializeChromium(searchController.JsIntegration, Browser_IsBrowserInitializedChanged, tabControl1);
             searchController.Browser = _cefBrowserHandler;
             searchController.JsIntegration.OnClipboard += SetItemsClipboard;
 
@@ -652,10 +627,8 @@ namespace IAGrim.UI {
             if (_authService.CheckAuthentication() == AuthService.AccessStatus.Unauthorized && !settingsService.GetLocal().OptOutOfBackups) {
                 var t = new System.Windows.Forms.Timer {Interval = 100};
                 t.Tick += (o, args) => {
-                    if (_cefBrowserHandler.BrowserControl.CanExecuteJavascriptInMainFrame) {
-                        _authService.Authenticate();
-                        t.Stop();
-                    }
+                    _authService.Authenticate();
+                    t.Stop();
                 };
                 t.Start();
             }
@@ -751,7 +724,7 @@ namespace IAGrim.UI {
 
         private void GlobalSettings_StashStatusChanged(object sender, EventArgs e) {
             if (InvokeRequired) {
-                Invoke((MethodInvoker) delegate { GlobalSettings_StashStatusChanged(sender, e); });
+                Invoke((System.Windows.Forms.MethodInvoker) delegate { GlobalSettings_StashStatusChanged(sender, e); });
                 return;
             }
 
@@ -828,7 +801,7 @@ namespace IAGrim.UI {
 
         private void SetItemsClipboard(object ignored, EventArgs _args) {
             if (InvokeRequired) {
-                Invoke((MethodInvoker) delegate { SetItemsClipboard(ignored, _args); });
+                Invoke((System.Windows.Forms.MethodInvoker) delegate { SetItemsClipboard(ignored, _args); });
             }
             else {
                 if (_args is ClipboardEventArg args) {

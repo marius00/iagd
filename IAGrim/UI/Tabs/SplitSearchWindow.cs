@@ -18,7 +18,7 @@ namespace IAGrim.UI.Tabs {
         private readonly Action<string> _setStatus;
         private readonly SearchController _searchController;
         private readonly IItemTagDao _itemTagDao;
-        private Timer _delayedTextChangedTimer;
+        private System.Windows.Forms.Timer _delayedTextChangedTimer;
         private DesiredSkills _filterWindow;
         private TextBox _searchBox;
         private CheckBox _orderByLevel;
@@ -53,7 +53,7 @@ namespace IAGrim.UI.Tabs {
         /// <param name="playerItemDao"></param>
         /// <param name="searchController"></param>
         /// <param name="itemTagDao"></param>
-        public SplitSearchWindow(Control browser,
+        public SplitSearchWindow(Microsoft.Web.WebView2.WinForms.WebView2 browser,
             Action<string> setStatus,
             IPlayerItemDao playerItemDao,
             SearchController searchController,
@@ -331,7 +331,7 @@ namespace IAGrim.UI.Tabs {
         private void UpdateListViewDelayed(int delay) {
             _delayedTextChangedTimer?.Stop();
 
-            _delayedTextChangedTimer = new Timer();
+            _delayedTextChangedTimer = new System.Windows.Forms.Timer();
             _delayedTextChangedTimer.Tick += HandleDelayedTextChangedTimerTick;
             _delayedTextChangedTimer.Interval = delay;
             _delayedTextChangedTimer.Start();

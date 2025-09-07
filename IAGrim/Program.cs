@@ -1,4 +1,20 @@
-﻿using EvilsoftCommons.Exceptions;
+using EvilsoftCommons.Exceptions;
+using EvilsoftCommons.SingleInstance;
+using IAGrim.Backup.Cloud;
+using IAGrim.Database.DAO.Util;
+using IAGrim.Database.Interfaces;
+using IAGrim.Database.Migrations;
+using IAGrim.Database.Synchronizer.Core;
+using IAGrim.Parsers.GameDataParsing.Service;
+using IAGrim.Services;
+using IAGrim.Settings;
+using IAGrim.UI;
+using IAGrim.UI.Misc.CEF;
+using IAGrim.Utilities;
+using log4net;
+using StatTranslator;
+
+using EvilsoftCommons.Exceptions;
 using EvilsoftCommons.SingleInstance;
 using IAGrim.Database;
 using IAGrim.Database.Interfaces;
@@ -21,33 +37,22 @@ using IAGrim.Database.Synchronizer.Core;
 using IAGrim.Services;
 using IAGrim.Settings;
 using System.Diagnostics;
-using IAGrim.StashFile;
+using log4net.Repository.Hierarchy;
 
-
-namespace IAGrim {
-    internal class Program {
+namespace IAGrim
+{
+    internal static class Program
+    {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(Program));
         private static MainWindow _mw;
         private static readonly StartupService StartupService = new StartupService();
 
-#if DEBUG
-
-        private static string GetDirectoryName(string path) {
-            var args = path.Split('\\');
-            // var directory = args.Take(args.Count() - 1).ToArray();
-            args[args.Count() - 1] = "Game.dll";
-            return string.Join("\\", args);
-        }
-
-        private static void Test() {
-            int x = 9;
-        }
-#endif
-
-        private static void LoadUuid(SettingsService settings) {
+        private static void LoadUuid(SettingsService settings)
+        {
             var uuid = settings.GetPersistent().UUID;
 
-            if (string.IsNullOrEmpty(uuid)) {
+            if (string.IsNullOrEmpty(uuid))
+            {
                 uuid = Guid.NewGuid().ToString().Replace("-", "");
                 settings.GetPersistent().UUID = uuid;
             }
@@ -59,13 +64,18 @@ namespace IAGrim {
         public static MainWindow MainWindow => _mw;
 
 
+        /// <summary>
+        ///  The main entry point for the application.
+        /// </summary>
         [STAThread]
-        private static void Main(string[] args) {
-            if (Thread.CurrentThread.Name == null) {
+        static void Main(string[] args)
+        {
+            if (Thread.CurrentThread.Name == null)
+            {
                 Thread.CurrentThread.Name = "Main";
                 Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
             }
-            
+
 
             Logger.Info("Starting IA:GD..");
             ExceptionReporter.UrlStats = "https://webstats.evilsoft.net/report/iagd";
@@ -78,8 +88,8 @@ namespace IAGrim {
             Uris.Initialize(Uris.EnvCloud);
             StartupService.Init();
 
+
 #if DEBUG
-            Test();
             Uris.Initialize(Uris.EnvLocalDev);
 #endif
 
@@ -96,24 +106,30 @@ namespace IAGrim {
             ItemHtmlWriter.CopyMissingFiles();
 
             Guid guid = new Guid("{F3693953-C090-4F93-86A2-B98AB96A9368}");
-            using (SingleInstance singleInstance = new SingleInstance(guid)) {
-                if (singleInstance.IsFirstInstance) {
+            using (SingleInstance singleInstance = new SingleInstance(guid))
+            {
+                if (singleInstance.IsFirstInstance)
+                {
                     Logger.Info("Calling run..");
                     singleInstance.ArgumentsReceived += singleInstance_ArgumentsReceived;
                     singleInstance.ListenForArgumentsFromSuccessiveInstances();
-                    using (ThreadExecuter threadExecuter = new ThreadExecuter()) {
+                    using (ThreadExecuter threadExecuter = new ThreadExecuter())
+                    {
                         Application.EnableVisualStyles();
                         Application.SetCompatibleTextRenderingDefault(false);
                         Logger.Info("Visual styles enabled..");
                         Run(args, threadExecuter);
                     }
                 }
-                else {
-                    if (args != null && args.Length > 0) {
+                else
+                {
+                    if (args != null && args.Length > 0)
+                    {
                         singleInstance.PassArgumentsToFirstInstance(args);
                     }
-                    else {
-                        singleInstance.PassArgumentsToFirstInstance(new string[] {"--ignore"});
+                    else
+                    {
+                        singleInstance.PassArgumentsToFirstInstance(new string[] { "--ignore" });
                     }
 
                     Logger.Info("Already has an instance of IA Running, exiting..");
@@ -122,34 +138,24 @@ namespace IAGrim {
 
             Logger.Info("IA Exited");
             LogManager.Shutdown();
+
+
         }
 
-
-        /// <summary>
-        /// Attempting to run a second copy of the program
-        /// </summary>
-        private static void singleInstance_ArgumentsReceived(object _, ArgumentsReceivedEventArgs e) {
-            try {
-                if (_mw != null) {
-                    _mw.Invoke((MethodInvoker) delegate { _mw.Activate(); });
-                }
-            }
-            catch (Exception ex) {
-                Logger.Warn(ex.Message, ex);
-            }
-        }
-
-
-        private static void DumpTranslationTemplate() {
-            try {
+        private static void DumpTranslationTemplate()
+        {
+            try
+            {
                 File.WriteAllText(Path.Combine(GlobalPaths.CoreFolder, "tags_ia.template.txt"), new EnglishLanguage(new Dictionary<string, string>()).Export());
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Logger.Debug("Error dumping translation template", ex);
             }
         }
 
-        private static void Run(string[] args, ThreadExecuter threadExecuter) {
+        private static void Run(string[] args, ThreadExecuter threadExecuter)
+        {
             var dialect = SqlDialect.Sqlite;
             var factory = new SessionFactory(dialect);
             var serviceProvider = ServiceProvider.Initialize(threadExecuter, dialect);
@@ -173,37 +179,58 @@ namespace IAGrim {
 
 
             // TODO: Offload to the new language loader
-            if (RuntimeSettings.Language is EnglishLanguage language) {
-                foreach (var tag in itemTagDao.GetClassItemTags()) {
+            if (RuntimeSettings.Language is EnglishLanguage language)
+            {
+                foreach (var tag in itemTagDao.GetClassItemTags())
+                {
                     language.SetTagIfMissing(tag.Tag, tag.Name);
                 }
             }
 
-            using (CefBrowserHandler browser = new CefBrowserHandler(settingsService)) {
-                _mw = new MainWindow(
-                    serviceProvider,
-                    browser,
-                    parsingService
-                );
+            _mw = new MainWindow(
+                serviceProvider,
+                parsingService
+            );
 
-                Logger.Info("Checking for database updates..");
+            Logger.Info("Checking for database updates..");
 
-                var grimDawnDetector = serviceProvider.Get<GrimDawnDetector>();
-                StartupService.PerformIconCheck(grimDawnDetector, settingsService);
+            var grimDawnDetector = serviceProvider.Get<GrimDawnDetector>();
+            StartupService.PerformIconCheck(grimDawnDetector, settingsService);
 
 
-                _mw.Visible = false;
-                if (new DonateNagScreen(settingsService).CanNag)
-                    Application.Run(new DonateNagScreen(settingsService));
+            _mw.Visible = false;
+            if (new DonateNagScreen(settingsService).CanNag)
+                Application.Run(new DonateNagScreen(settingsService));
 
-                Logger.Info("Running the main application..");
+            Logger.Info("Running the main application..");
 
 
-                StartupService.PerformGrimUpdateCheck(settingsService);
-                Application.Run(_mw);
-            }
+            StartupService.PerformGrimUpdateCheck(settingsService);
+
+            // To customize application configuration such as set high DPI settings or default font,
+            // see https://aka.ms/applicationconfiguration.
+            ApplicationConfiguration.Initialize();
+            Application.Run(_mw);
 
             Logger.Info("Application ended.");
         }
+
+    /// <summary>
+    /// Attempting to run a second copy of the program
+    /// </summary>
+    private static void singleInstance_ArgumentsReceived(object _, ArgumentsReceivedEventArgs e)
+        {
+            try {
+                if (_mw != null)
+                {
+                    _mw.Invoke((MethodInvoker)delegate { _mw.Activate(); });
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn(ex.Message, ex);
+            }
+        }
+
     }
 }

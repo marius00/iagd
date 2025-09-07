@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Runtime.ExceptionServices;
-using System.Threading;
-using CefSharp.DevTools.SystemInfo;
 using EvilsoftCommons.Exceptions;
 using log4net;
 

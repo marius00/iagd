@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using IAGrim.Database.Model;
 using IAGrim.Settings.Dto;
@@ -10,6 +11,8 @@ using Newtonsoft.Json;
 // ReSharper disable UnusedMember.Global
 
 namespace IAGrim.UI.Misc.CEF {
+
+    [ComVisible(true)]
     public class JavascriptIntegration {
         private readonly JsonSerializerSettings _settings = new JsonSerializerSettings {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,

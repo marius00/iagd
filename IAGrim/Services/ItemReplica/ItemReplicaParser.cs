@@ -28,7 +28,6 @@ using System.Threading;
  *
  * This update requires re-parsing all item stats
  */
-
 namespace IAGrim.Services.ItemReplica {
     class ItemReplicaParser : IDisposable {
         private readonly ILog _logger = LogManager.GetLogger(typeof(ItemReplicaParser));

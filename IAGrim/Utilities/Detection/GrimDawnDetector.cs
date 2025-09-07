@@ -1,21 +1,11 @@
-﻿using EvilsoftCommons.Exceptions;
-using IAGrim.Utilities;
-using log4net;
+﻿using log4net;
 using Microsoft.Win32;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Management;
+
 using System.Runtime.InteropServices;
 using System.Text;
-using Gameloop.Vdf;
 using IAGrim.Settings;
-using IAGrim.Settings.Dto;
 using IAGrim.Utilities.Detection;
-using NHibernate.Util;
 
 namespace IAGrim {
     public class GrimDawnDetector {

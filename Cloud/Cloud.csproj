@@ -8,10 +8,11 @@
 
   <ItemGroup>
     <PackageReference Include="log4net" Version="3.2.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
+    <ProjectReference Include="..\EvilsoftCommons\EvilsoftCommons.csproj" />
   </ItemGroup>
 
 </Project>

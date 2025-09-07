@@ -405,3 +405,12 @@ bin
 /WebUI/src/assets/*.png
 /WebUI/src/static
 /HookDll/Hook/cmake-build-debug
+/Inno/2010sp1_vcredist_x86.exe
+/Inno/2015rc3_vc_redist.x86.exe
+/Inno/ISCrypt.dll
+/Inno/ISPP.dll
+/Inno/ISPPBuiltins.iss
+/Inno/Ispack-setup.exe
+/Inno/ndp472-kb4054531-web.exe
+/Inno/vc2015_redist.x64.exe
+/Inno/vcredist_x86.exe

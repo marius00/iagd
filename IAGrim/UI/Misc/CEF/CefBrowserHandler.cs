@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
-using System.Diagnostics;
-using System.IO;
-using System.Net;
-using System.Windows.Forms;
-using CefSharp;
-using CefSharp.WinForms;
-using CefSharp.WinForms.Internals;
-using IAGrim.Backup.Cloud.CefSharp;
+﻿using System.Net;
 using IAGrim.Database.Model;
 using IAGrim.Services;
 using IAGrim.Services.ItemReplica;
@@ -17,15 +7,16 @@ using IAGrim.UI.Controller.dto;
 using IAGrim.UI.Misc.Protocol;
 using IAGrim.Utilities;
 using log4net;
+using Microsoft.Web.WebView2.WinForms;
 using Newtonsoft.Json;
 
 namespace IAGrim.UI.Misc.CEF {
-    public class CefBrowserHandler : IDisposable, ICefBackupAuthentication, IUserFeedbackHandler, IBrowserCallbacks, IHelpService {
+    public class CefBrowserHandler : ICefBackupAuthentication, IUserFeedbackHandler, IBrowserCallbacks, IHelpService {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(CefBrowserHandler));
         private TabControl _tabControl; // TODO: UGh.. why?
         private readonly SettingsService _settings;
 
-        public ChromiumWebBrowser BrowserControl { get; private set; }
+        public Microsoft.Web.WebView2.WinForms.WebView2 BrowserControl { get; private set; }
         private readonly object _lockObj = new object();
 
         private readonly JsonSerializerSettings _serializerSettings = new JsonSerializerSettings {
@@ -35,21 +26,16 @@ namespace IAGrim.UI.Misc.CEF {
             NullValueHandling = NullValueHandling.Ignore
         };
 
-        public CefBrowserHandler(SettingsService settings) {
+        public CefBrowserHandler(SettingsService settings, TabControl tabControl, WebView2 browserControl)
+        {
             _settings = settings;
-        }
-
-        ~CefBrowserHandler() {
-            Dispose();
+            _tabControl = tabControl;
+            BrowserControl = browserControl;
         }
 
         private void SendMessage(IOMessage message) {
-            if (BrowserControl != null && BrowserControl.CanExecuteJavascriptInMainFrame) {
-                BrowserControl.ExecuteScriptAsync("window.message", JsonConvert.SerializeObject(message, _serializerSettings));
-            }
-            else {
-                Logger.Warn("Attempted to communicate with the frontend, but CEF not yet initialized, discarded: " + JsonConvert.SerializeObject(message, _serializerSettings));
-            }
+            BrowserControl.ExecuteScriptAsync("window.message(" + JsonConvert.SerializeObject(message, _serializerSettings) + ")");
+
         }
 
         public void ShowCharacterBackups() {
@@ -69,28 +55,6 @@ namespace IAGrim.UI.Misc.CEF {
         public void ShowHelp(HelpService.HelpType type) {
             SendMessage(new IOMessage { Type = IOMessageType.ShowHelp, Data = type.ToString() });
             SwitchToFrontendTab();
-        }
-
-        public void Dispose() {
-            try {
-                lock (_lockObj) {
-                    if (BrowserControl != null) {
-                        CefSharpSettings.WcfTimeout = TimeSpan.Zero;
-                        BrowserControl.Dispose();
-
-                        Cef.Shutdown();
-                        BrowserControl = null;
-                    }
-                }
-            }
-            catch (Exception ex) {
-                // We're shutting down, doesn't matter. -- Rather not have these reported online.
-                Logger.Warn(ex.Message, ex);
-            }
-        }
-
-        public void ShowDevTools() {
-            BrowserControl.ShowDevTools();
         }
 
         public void SetCollectionAggregateData(IList<CollectionItemAggregateRow> rows) {
@@ -217,81 +181,14 @@ namespace IAGrim.UI.Misc.CEF {
             }
         }
 
-
-        public void InitializeChromium(object bindable, EventHandler browserIsBrowserInitializedChanged, TabControl tabControl) {
-            try {
-                Logger.Info("Creating Chromium instance..");
-                _tabControl = tabControl;
-
-                var settings = new CefSettings();
-                settings.CefCommandLineArgs.Add("disable-popup-blocking");
-                Cef.Initialize(settings);
-
-
-
-                // TODO: Read and analyze https://github.com/cefsharp/CefSharp/issues/2246 -- Is this the correct way to do things in the future?
-                CefSharpSettings.WcfEnabled = true;
-                BrowserControl = new ChromiumWebBrowser(GetSiteUri());
-
-                // TODO: browser.JavascriptObjectRepository.ObjectBoundInJavascript += (sender, e) =>
-                BrowserControl.JavascriptObjectRepository.Settings.LegacyBindingEnabled = true;
-                BrowserControl.JavascriptObjectRepository.Register("core", bindable, isAsync: false, options: BindingOptions.DefaultBinder);
-                BrowserControl.IsBrowserInitializedChanged += browserIsBrowserInitializedChanged;
-                BrowserControl.FrameLoadEnd += (sender, args) => browserIsBrowserInitializedChanged(this, args);
-
-
-
-                var requestHandler = new CefRequestHandler();
-                requestHandler.OnAuthentication += (sender, args) => OnAuthSuccess?.Invoke(sender, args);
-                BrowserControl.RequestHandler = requestHandler;
-
-                BrowserControl.LifeSpanHandler = new AzureOnClosePopupHijack();
-
-                Logger.Info("Chromium created..");
-            }
-            catch (System.IO.FileNotFoundException ex) {
-                MessageBox.Show("Error \"File Not Found\" loading Chromium, did you forget to install Visual C++ runtimes?\n\nvc_redist86 in the IA folder.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                Logger.Warn(ex.Message);
-                Logger.Warn(ex.StackTrace);
-                throw;
-            }
-            catch (IOException ex) {
-                MessageBox.Show("Error loading Chromium, You may be lacking the proper Visual C++ runtimes.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                Process.Start("https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170#visual-studio-2015-2017-2019-and-2022");
-                Logger.Warn(ex.Message);
-                Logger.Warn(ex.StackTrace);
-                throw;
-            }
-            catch (Exception ex) {
-                MessageBox.Show("Unknown error loading Chromium, please see log file for more information.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                Logger.Warn(ex.Message);
-                Logger.Warn(ex.StackTrace);
-                throw;
-            }
-        }
-
         #region CefBackupAuthentication
         public void Open(string url) {
-            if (BrowserControl.CanExecuteJavascriptInMainFrame) {
-                Logger.Debug("Opening IAGD login page..:");
-                Logger.Debug($"window.open('{url}');");
-                BrowserControl.ExecuteScriptAsync("window.open", url);
-            }
-            else {
-                MessageBox.Show(
-                    RuntimeSettings.Language.GetTag("iatag_ui_javascript_not_ready_body"),
-                    RuntimeSettings.Language.GetTag("iatag_ui_javascript_not_ready_title"),
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning
-                );
-            }
+            Logger.Debug("Opening IAGD login page..:");
+            Logger.Debug($"window.open('{url}');");
+            BrowserControl.ExecuteScriptAsync("window.open('" + url + "')");
         }
 
-        public bool IsReady() {
-            return BrowserControl.CanExecuteJavascriptInMainFrame;
-        }
-
-        public event EventHandler OnAuthSuccess;
+        public event EventHandler? OnAuthSuccess;
         #endregion CefBackupAuthentication
     }
 }

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
+﻿using System.Net;
 using System.Runtime.Caching;
-using CefSharp;
 using IAGrim.Backup.Cloud.CefSharp.Events;
 using IAGrim.Database.Interfaces;
 using IAGrim.UI.Misc.CEF;
@@ -32,11 +29,12 @@ namespace IAGrim.Backup.Cloud.Service {
 
         private void AuthenticationOnSuccess(object sender, EventArgs eventArgs) {
             var args = eventArgs as AuthResultEvent;
-            (sender as IBrowser)?.CloseBrowser(true);
 
             if (IsTokenValid(args.User, args.Token) == AccessStatus.Authorized) {
                 Logger.Info($"Token validated for {args.User}");
                 _authenticationProvider.SetToken(args.User, args.Token);
+
+                // This somewhat needlessly introduces the System.Runtime.Caching package
                 MemoryCache.Default.Set(CacheKey, true, DateTimeOffset.Now.AddDays(1));
             }
             else {

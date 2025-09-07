@@ -3,7 +3,6 @@ using Microsoft.Win32;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -18,7 +17,6 @@ namespace EvilsoftCommons.Cloud {
             Providers = new HashSet<CloudProvider>();
             FindDropbox();
             FindOneDrive();
-            FindGoogleDrive();
         }
 
 
@@ -121,49 +119,6 @@ namespace EvilsoftCommons.Cloud {
                     logger.Debug($"Error detecting OneDrive installation path (this is fine, don't worry): {ex.Message}");
                     logger.Debug(ex.StackTrace);
                 }
-            }
-        }
-
-        private void FindGoogleDrive() {
-            string drivePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Google", "Drive");
-
-            try {
-                if (Directory.Exists(drivePath)) {
-                    string[] files = Directory.GetFiles(drivePath, "sync_config.db", SearchOption.AllDirectories);
-                    foreach (string dbFilePath in files) {
-                        if (File.Exists(dbFilePath)) {
-                            string csGdrive = @"Data Source=" + dbFilePath + ";Version=3;New=False;Compress=True;";
-                            SQLiteConnection con = new SQLiteConnection(csGdrive);
-                            con.Open();
-                            try {
-                                SQLiteCommand sqLitecmd = new SQLiteCommand(con);
-
-                                //To retrieve the folder use the following command text
-                                sqLitecmd.CommandText = "select * from data where entry_key='local_sync_root_path'";
-
-                                SQLiteDataReader reader = sqLitecmd.ExecuteReader();
-                                reader.Read();
-
-                                //String retrieved is in the format "\\?\<path>" that's why I have used Substring function to extract the path alone.
-                                var path = reader["data_value"].ToString().Substring(4);
-
-                                if (Directory.Exists(path)) {
-                                    Providers.Add(new CloudProvider {
-                                        Location = path,
-                                        Provider = CloudProviderEnum.GOOGLE_DRIVE
-                                    });
-                                }
-                            }
-                            finally {
-                                con.Dispose();
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex) {
-                logger.Warn(ex.Message);
-                logger.Warn(ex.StackTrace);
             }
         }
 
