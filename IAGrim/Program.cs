@@ -1,43 +1,20 @@
 using EvilsoftCommons.Exceptions;
 using EvilsoftCommons.SingleInstance;
 using IAGrim.Backup.Cloud;
-using IAGrim.Database.DAO.Util;
-using IAGrim.Database.Interfaces;
-using IAGrim.Database.Migrations;
-using IAGrim.Database.Synchronizer.Core;
-using IAGrim.Parsers.GameDataParsing.Service;
-using IAGrim.Services;
-using IAGrim.Settings;
-using IAGrim.UI;
-using IAGrim.UI.Misc.CEF;
-using IAGrim.Utilities;
-using log4net;
-using StatTranslator;
-
-using EvilsoftCommons.Exceptions;
-using EvilsoftCommons.SingleInstance;
 using IAGrim.Database;
+using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Interfaces;
 using IAGrim.Database.Migrations;
-using IAGrim.Parsers.GameDataParsing.Service;
-using IAGrim.UI;
-using IAGrim.UI.Misc.CEF;
-using IAGrim.Utilities;
-using log4net;
-using StatTranslator;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Windows.Forms;
-using IAGrim.Backup.Cloud;
-using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Synchronizer.Core;
+using IAGrim.Parsers.GameDataParsing.Service;
 using IAGrim.Services;
 using IAGrim.Settings;
-using System.Diagnostics;
-using log4net.Repository.Hierarchy;
+using IAGrim.UI;
+using IAGrim.Utilities;
+using log4net;
+using log4net.Config;
+using StatTranslator;
+using System.Reflection;
 
 namespace IAGrim
 {
@@ -75,6 +52,9 @@ namespace IAGrim
                 Thread.CurrentThread.Name = "Main";
                 Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
             }
+
+            var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
+            XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
 
 
             Logger.Info("Starting IA:GD..");
@@ -225,7 +205,7 @@ namespace IAGrim
             try {
                 if (_mw != null)
                 {
-                    _mw.Invoke((MethodInvoker)delegate { _mw.Activate(); });
+                    _mw.Invoke((System.Windows.Forms.MethodInvoker)delegate { _mw.Activate(); });
                 }
             }
             catch (Exception ex)

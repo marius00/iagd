@@ -35,6 +35,17 @@ namespace IAGrim.UI.Misc.CEF {
         }
 
         private void SendMessage(IOMessage message) {
+            if (BrowserControl?.Parent == null) {
+                Logger.Warn("Attempted to communicate with the frontend, but CEF not yet initialized, discarded: " + JsonConvert.SerializeObject(message, _serializerSettings));
+                return;
+            }
+
+
+            if (BrowserControl.Parent.InvokeRequired) {
+                BrowserControl.Parent.Invoke((MethodInvoker)delegate { SendMessage(message); });
+                return;
+            }
+
             if (IsReady) {
                 BrowserControl.ExecuteScriptAsync("window.message(" + JsonConvert.SerializeObject(message, _serializerSettings) + ")");
             }

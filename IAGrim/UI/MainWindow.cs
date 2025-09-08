@@ -625,12 +625,6 @@ namespace IAGrim.UI {
             }
 
 
-            // Popup login diag
-            if (_authService.CheckAuthentication() == AuthService.AccessStatus.Unauthorized && !settingsService.GetLocal().OptOutOfBackups) {
-                _authService.Authenticate();
-            }
-
-
             searchController.JsIntegration.ItemTransferEvent += TransferItem;
             new WindowSizeManager(this, settingsService);
 
