@@ -1,7 +1,4 @@
 ﻿
-using System.Diagnostics;
-using System.Net;
-using System.Runtime.Caching;
 using EvilsoftCommons.Exceptions;
 using IAGrim.Backup.Cloud.CefSharp.Events;
 using IAGrim.Database.Interfaces;
@@ -9,6 +6,10 @@ using IAGrim.UI.Misc.CEF;
 using IAGrim.Utilities.HelperClasses;
 using log4net;
 using Newtonsoft.Json;
+using System.Diagnostics;
+using System.Net;
+using System.Runtime.Caching;
+using System.Security.Policy;
 
 namespace IAGrim.Backup.Cloud.Service {
     public class AuthService : IDisposable {
@@ -143,7 +144,7 @@ namespace IAGrim.Backup.Cloud.Service {
 
         public void Authenticate() {
             _pollingId = Guid.NewGuid().ToString();
-            Process.Start(Uris.LoginPageUrl + $"?token={_pollingId}");
+            Process.Start(new ProcessStartInfo { FileName = Uris.LoginPageUrl + $"?token={_pollingId}", UseShellExecute = true });
 
             if (_pollingThread != null) {
                 try {

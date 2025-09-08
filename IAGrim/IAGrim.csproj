@@ -14,6 +14,38 @@
     <CleanSQLiteInteropFiles>false</CleanSQLiteInteropFiles>
     <CollectSQLiteInteropFiles>false</CollectSQLiteInteropFiles>
  </PropertyGroup>
+   <ItemGroup>
+     <None Remove="Database\Model\BuddyItem.hbm.xml" />
+     <None Remove="Database\Model\BuddyItemRecord.hbm.xml" />
+     <None Remove="Database\Model\BuddySubscription.hbm.xml" />
+     <None Remove="Database\Model\DatabaseItem.hbm.xml" />
+     <None Remove="Database\Model\DatabaseItemStat.hbm.xml" />
+     <None Remove="Database\Model\DatabaseSetting.hbm.xml" />
+     <None Remove="Database\Model\DeletedPlayerItem.hbm.xml" />
+     <None Remove="Database\Model\ItemSkill.hbm.xml" />
+     <None Remove="Database\Model\ItemSkillMapping.hbm.xml" />
+     <None Remove="Database\Model\ItemTag.hbm.xml" />
+     <None Remove="Database\Model\PlayerItem.hbm.xml" />
+     <None Remove="Database\Model\PlayerItemRecord.hbm.xml" />
+     <None Remove="Database\Model\ReplicaItem.hbm.xml" />
+     <None Remove="Database\Model\ReplicaItemRow.hbm.xml" />
+   </ItemGroup>
+   <ItemGroup>
+     <EmbeddedResource Include="Database\Model\BuddyItem.hbm.xml" />
+     <EmbeddedResource Include="Database\Model\BuddyItemRecord.hbm.xml" />
+     <EmbeddedResource Include="Database\Model\BuddySubscription.hbm.xml" />
+     <EmbeddedResource Include="Database\Model\DatabaseItem.hbm.xml" />
+     <EmbeddedResource Include="Database\Model\DatabaseItemStat.hbm.xml" />
+     <EmbeddedResource Include="Database\Model\DatabaseSetting.hbm.xml" />
+     <EmbeddedResource Include="Database\Model\DeletedPlayerItem.hbm.xml" />
+     <EmbeddedResource Include="Database\Model\ItemSkill.hbm.xml" />
+     <EmbeddedResource Include="Database\Model\ItemSkillMapping.hbm.xml" />
+     <EmbeddedResource Include="Database\Model\ItemTag.hbm.xml" />
+     <EmbeddedResource Include="Database\Model\PlayerItem.hbm.xml" />
+     <EmbeddedResource Include="Database\Model\PlayerItemRecord.hbm.xml" />
+     <EmbeddedResource Include="Database\Model\ReplicaItem.hbm.xml" />
+     <EmbeddedResource Include="Database\Model\ReplicaItemRow.hbm.xml" />
+   </ItemGroup>
  
 
   <ItemGroup>

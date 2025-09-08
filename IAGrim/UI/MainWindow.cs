@@ -209,9 +209,11 @@ namespace IAGrim.UI {
                 _cefBrowserHandler.SetDarkMode(settingsService.GetPersistent().DarkMode);
                 _cefBrowserHandler.SetHideItemSkills(settingsService.GetPersistent().HideSkills);
                 _cefBrowserHandler.SetIsGrimParsed(isGdParsed);
+                _cefBrowserHandler.IsReady = true;
 
 
                 _cefBrowserHandler.SetOnlineBackupsEnabled(!settingsService.GetLocal().OptOutOfBackups);
+                
                 if (_serviceProvider.Get<IPlayerItemDao>().GetNumItems() == 0)
                 {
                     _cefBrowserHandler.SetIsFirstRun();

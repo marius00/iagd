@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
+﻿using System.Text;
 using EvilsoftCommons.Exceptions;
 using IAGrim.Database;
 using IAGrim.Database.Interfaces;
 using IAGrim.Services.ItemReplica;
-using IAGrim.Services.MessageProcessor;
 using IAGrim.Settings;
 using IAGrim.Utilities;
 using log4net;
-using NHibernate.Transform;
 
 namespace IAGrim.Services {
     // TODO: Class does too much, and is somewhat of a mess.
@@ -65,7 +58,7 @@ namespace IAGrim.Services {
                         Process();
                         _cooldown.Reset();
                     }
-                    
+
                     Thread.Sleep(1);
                 }
             });

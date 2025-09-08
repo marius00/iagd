@@ -82,6 +82,11 @@ namespace IAGrim
             SQLitePCL.Batteries.Init();
 
 
+            // To customize application configuration such as set high DPI settings or default font,
+            // see https://aka.ms/applicationconfiguration.
+            ApplicationConfiguration.Initialize();
+
+
             Logger.Info("Starting exception monitor for bug reports..");
             Logger.Debug("Anonymous usage statistics can be seen at https://webstats.evilsoft.net/iagd");
             ExceptionReporter.EnableLogUnhandledOnThread();
@@ -207,10 +212,6 @@ namespace IAGrim
 
 
             StartupService.PerformGrimUpdateCheck(settingsService);
-
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
-            ApplicationConfiguration.Initialize();
             Application.Run(_mw);
 
             Logger.Info("Application ended.");

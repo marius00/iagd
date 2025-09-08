@@ -17,6 +17,7 @@ namespace IAGrim.UI.Misc.CEF {
         void ShowModFilterWarning(int numOtherItems);
 
         void ShowNoMoreInstantSyncWarning();
+        bool IsReady();
 
         void SignalCloudIconChange(IList<long> playerItemIds);
         void SignalReplicaStatChange(long playerItemId, IList<ItemStatInfo> stats);

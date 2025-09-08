@@ -18,6 +18,7 @@ namespace IAGrim.UI.Misc.CEF {
 
         public Microsoft.Web.WebView2.WinForms.WebView2 BrowserControl { get; private set; }
         private readonly object _lockObj = new object();
+        public bool IsReady { get; set; }
 
         private readonly JsonSerializerSettings _serializerSettings = new JsonSerializerSettings {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
@@ -34,7 +35,12 @@ namespace IAGrim.UI.Misc.CEF {
         }
 
         private void SendMessage(IOMessage message) {
-            BrowserControl.ExecuteScriptAsync("window.message(" + JsonConvert.SerializeObject(message, _serializerSettings) + ")");
+            if (IsReady) {
+                BrowserControl.ExecuteScriptAsync("window.message(" + JsonConvert.SerializeObject(message, _serializerSettings) + ")");
+            }
+            else {
+                Logger.Warn("Attempting to interact with webview, but not yet ready.");
+            }
 
         }
 
@@ -67,6 +73,10 @@ namespace IAGrim.UI.Misc.CEF {
 
         public void ShowNoMoreInstantSyncWarning() {
             SendMessage(new IOMessage { Type = IOMessageType.SetState, Data = new IOMessageStateChange { Type = IOMessageStateChangeType.ShowNoMoreInstantSyncWarning, Value = true } });
+        }
+
+        bool IBrowserCallbacks.IsReady() {
+            return IsReady;
         }
 
         /// <summary>

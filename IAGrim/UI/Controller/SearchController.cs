@@ -83,6 +83,9 @@ namespace IAGrim.UI.Controller {
         }
 
         public string Search(ItemSearchRequest query, bool includeBuddyItems, bool orderByLevel) {
+            if (!Browser.IsReady()) {
+                return string.Empty;
+            }
             OnSearch?.Invoke(this, null);
             string message;
 
