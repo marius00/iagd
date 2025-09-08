@@ -25,6 +25,7 @@ namespace IAGrim.UI.Misc.CEF {
         private readonly SettingsService _settings;
 
         public Microsoft.Web.WebView2.WinForms.WebView2 BrowserControl { get; private set; }
+        public bool IsReady { get; set; }
 
         private readonly JsonSerializerSettings _serializerSettings = new JsonSerializerSettings {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
@@ -43,6 +44,7 @@ namespace IAGrim.UI.Misc.CEF {
                 return;
             }
 
+
             if (BrowserControl.Parent.InvokeRequired) {
                 BrowserControl.Parent.Invoke((MethodInvoker)delegate { SendMessage(message); });
                 return;
@@ -50,7 +52,13 @@ namespace IAGrim.UI.Misc.CEF {
 
 
             var script = "window.message(" + JsonConvert.SerializeObject(message, _serializerSettings) + ")";
-            BrowserControl.ExecuteScriptAsync(script);
+
+            if (IsReady) {
+                BrowserControl.ExecuteScriptAsync(script);
+            }
+            else {
+                Logger.Warn("Attempting to interact with webview, but not yet ready.");
+            }
         }
 
         public void ShowCharacterBackups() {
@@ -135,6 +143,10 @@ namespace IAGrim.UI.Misc.CEF {
 
         public void SetEasterEggMode() {
             SendMessage(new IOMessage { Type = IOMessageType.SetState, Data = new IOMessageStateChange { Type = IOMessageStateChangeType.EasterEggMode, Value = true } });
+        }
+
+        bool IBrowserCallbacks.IsReady() {
+            return IsReady;
         }
 
         public void SetGdSeasonMode() {
