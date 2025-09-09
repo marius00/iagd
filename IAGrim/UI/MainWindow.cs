@@ -204,6 +204,7 @@ namespace IAGrim.UI {
                 else {
                     var searchController = _serviceProvider.Get<SearchController>();
                     _cefBrowserHandler.InitializeChromium(browser, searchController.JsIntegration, tabControl1);
+                    _cefBrowserHandler.IsReady = true;
 
                     _searchWindow?.UpdateListViewDelayed();
 

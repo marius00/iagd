@@ -12,13 +12,11 @@ using System.Diagnostics;
 using System.Net;
 
 namespace IAGrim.UI.Misc.CEF {
-    public class CefBrowserHandler : ICefBackupAuthentication, IUserFeedbackHandler, IBrowserCallbacks, IHelpService {
+    public class CefBrowserHandler(SettingsService settings) : ICefBackupAuthentication, IUserFeedbackHandler, IBrowserCallbacks, IHelpService {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(CefBrowserHandler));
-        private TabControl _tabControl; // TODO: UGh.. why?
-        private readonly SettingsService _settings;
+        private TabControl? _tabControl; // TODO: UGh.. why?
 
-        public Microsoft.Web.WebView2.WinForms.WebView2 BrowserControl { get; private set; }
-        private readonly object _lockObj = new object();
+        public WebView2? BrowserControl { get; private set; }
         public bool IsReady { get; set; }
 
         private readonly JsonSerializerSettings _serializerSettings = new JsonSerializerSettings {
@@ -27,11 +25,6 @@ namespace IAGrim.UI.Misc.CEF {
             ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver(),
             NullValueHandling = NullValueHandling.Ignore
         };
-
-        public CefBrowserHandler(SettingsService settings)
-        {
-            _settings = settings;
-        }
 
         private void SendMessage(IOMessage message) {
             if (BrowserControl?.Parent == null) {
@@ -60,6 +53,10 @@ namespace IAGrim.UI.Misc.CEF {
         }
 
         private void SwitchToFrontendTab() {
+            if (_tabControl == null) {
+                return;
+            }
+            
             if (_tabControl.InvokeRequired) {
                 _tabControl.Invoke((MethodInvoker)delegate { _tabControl.SelectedIndex = 0; });
             }
@@ -221,7 +218,7 @@ namespace IAGrim.UI.Misc.CEF {
             string levelLowercased = level.ToString().ToLowerInvariant();
             var m = message.Replace("\n", "\\n").Replace("'", "\\'");
             if (!string.IsNullOrEmpty(message)) {
-                var autoDismissMessage = IsProgramActive.IsActive() || _settings.GetPersistent().AutoDismissNotifications;
+                var autoDismissMessage = IsProgramActive.IsActive() || settings.GetPersistent().AutoDismissNotifications;
                 var ret = new Dictionary<string, string> {
                     {"message", m},
                     {"type", levelLowercased},
@@ -235,6 +232,6 @@ namespace IAGrim.UI.Misc.CEF {
 
 
         [Obsolete("Old login system via redirects")]
-        public event EventHandler OnAuthSuccess;
+        public event EventHandler? OnAuthSuccess;
     }
 }
