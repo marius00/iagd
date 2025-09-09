@@ -200,6 +200,7 @@ namespace IAGrim.UI {
                 else {
                     var searchController = _serviceProvider.Get<SearchController>();
                     _cefBrowserHandler.InitializeChromium(browser, searchController.JsIntegration, tabControl1);
+                    _cefBrowserHandler.IsReady = true;
 
                     _searchWindow?.UpdateListViewDelayed();
 
@@ -653,11 +654,6 @@ namespace IAGrim.UI {
                 this.Text += $" - {titleTag}";
             }
 
-
-            // Popup login diag
-            if (_authService.CheckAuthentication() == AuthService.AccessStatus.Unauthorized && !settingsService.GetLocal().OptOutOfBackups) {
-                _authService.Authenticate();
-            }
 
 
             searchController.JsIntegration.ItemTransferEvent += TransferItem;
