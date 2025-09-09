@@ -1,5 +1,4 @@
-﻿using System.Net;
-using IAGrim.Database.Model;
+﻿using IAGrim.Database.Model;
 using IAGrim.Services;
 using IAGrim.Services.ItemReplica;
 using IAGrim.Settings;
@@ -9,6 +8,8 @@ using IAGrim.Utilities;
 using log4net;
 using Microsoft.Web.WebView2.WinForms;
 using Newtonsoft.Json;
+using System.Diagnostics;
+using System.Net;
 
 namespace IAGrim.UI.Misc.CEF {
     public class CefBrowserHandler : ICefBackupAuthentication, IUserFeedbackHandler, IBrowserCallbacks, IHelpService {
@@ -27,11 +28,9 @@ namespace IAGrim.UI.Misc.CEF {
             NullValueHandling = NullValueHandling.Ignore
         };
 
-        public CefBrowserHandler(SettingsService settings, TabControl tabControl, WebView2 browserControl)
+        public CefBrowserHandler(SettingsService settings)
         {
             _settings = settings;
-            _tabControl = tabControl;
-            BrowserControl = browserControl;
         }
 
         private void SendMessage(IOMessage message) {
@@ -123,6 +122,37 @@ namespace IAGrim.UI.Misc.CEF {
             });
         }
 
+
+
+        public void InitializeChromium(Microsoft.Web.WebView2.WinForms.WebView2 browserControlView2, JavascriptIntegration bindable, TabControl tabControl) {
+            try {
+                _tabControl = tabControl;
+                this.BrowserControl = browserControlView2;
+
+
+                BrowserControl.CoreWebView2.AddHostObjectToScript("core", bindable);
+
+            }
+            catch (System.IO.FileNotFoundException ex) {
+                MessageBox.Show("Error \"File Not Found\" loading Chromium, did you forget to install Visual C++ runtimes?\n\nvc_redist86 in the IA folder.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Logger.Warn(ex.Message);
+                Logger.Warn(ex.StackTrace);
+                throw;
+            }
+            catch (IOException ex) {
+                MessageBox.Show("Error loading Chromium, You may be lacking the proper Visual C++ runtimes.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Process.Start("https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170#visual-studio-2015-2017-2019-and-2022");
+                Logger.Warn(ex.Message);
+                Logger.Warn(ex.StackTrace);
+                throw;
+            }
+            catch (Exception ex) {
+                MessageBox.Show("Unknown error loading Chromium, please see log file for more information.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Logger.Warn(ex.Message);
+                Logger.Warn(ex.StackTrace);
+                throw;
+            }
+        }
         public void SetDarkMode(bool enabled) {
             SendMessage(new IOMessage { Type = IOMessageType.SetState, Data = new IOMessageStateChange { Type = IOMessageStateChangeType.DarkMode, Value = enabled } });
         }
@@ -202,15 +232,9 @@ namespace IAGrim.UI.Misc.CEF {
             }
         }
 
-        #region CefBackupAuthentication
-        public void Open(string url) {
-            Logger.Debug("Opening IAGD login page..:");
-            Logger.Debug($"window.open('{url}');");
-            BrowserControl.ExecuteScriptAsync("window.open('" + url + "')");
-        }
+
 
         [Obsolete("Old login system via redirects")]
         public event EventHandler OnAuthSuccess;
-        #endregion CefBackupAuthentication
     }
 }

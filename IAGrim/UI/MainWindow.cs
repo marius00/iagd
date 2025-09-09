@@ -65,7 +65,7 @@ namespace IAGrim.UI {
         private MinimizeToTrayHandler _minimizeToTrayHandler;
         private ModsDatabaseConfig _modsDatabaseConfigTab;
         public static int NumInstantSyncItemCount = 300;
-        private Microsoft.Web.WebView2.WinForms.WebView2 _webView2;
+        private bool _isBrowserInitialized = false;
 
 
         #region Stash Status
@@ -179,8 +179,7 @@ namespace IAGrim.UI {
         ) {
             this._serviceProvider = serviceProvider;
             var settingsService = _serviceProvider.Get<SettingsService>();
-            _webView2 = new Microsoft.Web.WebView2.WinForms.WebView2();
-            _cefBrowserHandler = new CefBrowserHandler(settingsService, tabControl1, _webView2);
+            _cefBrowserHandler = new CefBrowserHandler(settingsService);
             InitializeComponent();
             FormClosing += MainWindow_FormClosing;
 
@@ -190,44 +189,47 @@ namespace IAGrim.UI {
             _settingsController = new SettingsController(settingsService);
             _parsingService = parsingService;
             _userFeedbackService = new UserFeedbackService(_cefBrowserHandler);
-
-            _webView2.CoreWebView2InitializationCompleted += Edge_CoreWebView2InitializationCompleted;
         }
 
-        private void Edge_CoreWebView2InitializationCompleted(object? sender, Microsoft.Web.WebView2.Core.CoreWebView2InitializationCompletedEventArgs args)
+        private void Browser_CoreWebView2InitializationCompleted(object? sender, Microsoft.Web.WebView2.Core.CoreWebView2InitializationCompletedEventArgs args)
         {
-            if (InvokeRequired)
-            {
-                Invoke((System.Windows.Forms.MethodInvoker)delegate { Edge_CoreWebView2InitializationCompleted(sender, args); });
+            var browser = (sender as Microsoft.Web.WebView2.WinForms.WebView2);
+            if (browser == null) {
+                browser = (sender as CefBrowserHandler).BrowserControl;
             }
-            else
-            {
-                _searchWindow?.UpdateListViewDelayed();
-
-                var isGdParsed = _serviceProvider.Get<IDatabaseItemDao>().GetRowCount() > 0;
-                var settingsService = _serviceProvider.Get<SettingsService>();
-                _cefBrowserHandler.SetDarkMode(settingsService.GetPersistent().DarkMode);
-                _cefBrowserHandler.SetHideItemSkills(settingsService.GetPersistent().HideSkills);
-                _cefBrowserHandler.SetIsGrimParsed(isGdParsed);
-                _cefBrowserHandler.IsReady = true;
-
-
-                _cefBrowserHandler.SetOnlineBackupsEnabled(!settingsService.GetLocal().OptOutOfBackups);
-                
-                if (_serviceProvider.Get<IPlayerItemDao>().GetNumItems() == 0)
-                {
-                    _cefBrowserHandler.SetIsFirstRun();
+            if (args != null) {
+                if (InvokeRequired) {
+                    Invoke((System.Windows.Forms.MethodInvoker)delegate { Browser_CoreWebView2InitializationCompleted(sender, args); });
                 }
+                else {
+                    var searchController = _serviceProvider.Get<SearchController>();
+                    _cefBrowserHandler.InitializeChromium(browser, searchController.JsIntegration, tabControl1);
 
-                else if (DateTime.Now.Month == 4 && DateTime.Now.Day == 1)
-                {
-                    if (!settingsService.GetLocal().EasterPrank) return;
-                    _cefBrowserHandler.SetEasterEggMode();
-                    settingsService.GetLocal().EasterPrank = false;
-                }
-                else
-                {
-                    settingsService.GetLocal().EasterPrank = true;
+                    _searchWindow?.UpdateListViewDelayed();
+
+                    var isGdParsed = _serviceProvider.Get<IDatabaseItemDao>().GetRowCount() > 0;
+                    var settingsService = _serviceProvider.Get<SettingsService>();
+                    _cefBrowserHandler.SetDarkMode(settingsService.GetPersistent().DarkMode);
+                    _cefBrowserHandler.SetHideItemSkills(settingsService.GetPersistent().HideSkills);
+                    _cefBrowserHandler.SetIsGrimParsed(isGdParsed);
+
+
+                    _cefBrowserHandler.SetOnlineBackupsEnabled(!settingsService.GetLocal().OptOutOfBackups);
+                    if (_serviceProvider.Get<IPlayerItemDao>().GetNumItems() == 0) {
+                        _cefBrowserHandler.SetIsFirstRun();
+                    }
+
+                    else if (DateTime.Now.Month == 4 && DateTime.Now.Day == 1) {
+                        if (settingsService.GetLocal().EasterPrank) {
+                            _cefBrowserHandler.SetEasterEggMode();
+                            settingsService.GetLocal().EasterPrank = false;
+                        }
+                    }
+                    else {
+                        settingsService.GetLocal().EasterPrank = true;
+                    }
+
+                    _isBrowserInitialized = true;
                 }
             }
         }
@@ -548,6 +550,10 @@ namespace IAGrim.UI {
 
             _searchWindow = new SplitSearchWindow(_cefBrowserHandler.BrowserControl, SetFeedback, playerItemDao, searchController, itemTagDao, settingsService);
             UIHelper.AddAndShow(_searchWindow, searchPanel);
+
+
+            var browser = _searchWindow.Browser;
+            browser.CoreWebView2InitializationCompleted += Browser_CoreWebView2InitializationCompleted;
 
             searchPanel.Height = searchPanel.Parent.Height;
             searchPanel.Width = searchPanel.Parent.Width;
