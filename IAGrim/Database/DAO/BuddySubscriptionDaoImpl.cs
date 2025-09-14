@@ -9,7 +9,7 @@ namespace IAGrim.Database {
     /// </summary>
     public class BuddySubscriptionDaoImpl : BaseDao<BuddySubscription>, IBuddySubscriptionDao {
 
-        public BuddySubscriptionDaoImpl(ISessionCreator sessionCreator) : base(sessionCreator) {
+        public BuddySubscriptionDaoImpl(SessionFactory sessionCreator) : base(sessionCreator) {
         }
 
 
@@ -19,9 +19,7 @@ namespace IAGrim.Database {
         /// <returns></returns>
         public override IList<BuddySubscription> ListAll() {
             using (ISession session = SessionCreator.OpenSession()) {
-                using (ITransaction transaction = session.BeginTransaction()) {
-                    return session.CreateCriteria<BuddySubscription>().List<BuddySubscription>();
-                }
+                return session.CreateCriteria<BuddySubscription>().List<BuddySubscription>();
             }
         }
     }

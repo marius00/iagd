@@ -6,12 +6,9 @@ using EvilsoftCommons;
 using IAGrim.Database.DAO.Util;
 
 namespace IAGrim.Database {
-    public interface ISessionCreator {
-        ISession OpenSession();
-        IStatelessSession OpenStatelessSession();
-    }
 
-    public class SessionFactory : ISessionCreator {
+
+    public class SessionFactory {
         private static ILog Logger = LogManager.GetLogger(typeof(SessionFactory));
 
 
@@ -32,7 +29,6 @@ namespace IAGrim.Database {
                 _sessionFactory = CreateSession();
                 Logger.Info($"Creating session on thread {Thread.CurrentThread.ManagedThreadId}");
             }
-
             if (Thread.CurrentThread.Name == null) {
                 Thread.CurrentThread.Name = "NH:Session";
                 Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");

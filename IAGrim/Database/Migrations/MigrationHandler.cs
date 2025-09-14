@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace IAGrim.Database.Migrations {
     class MigrationHandler {
-        private readonly ISessionCreator _sessionCreator;
-        public MigrationHandler(ISessionCreator sessionCreator) {
+        private readonly SessionFactory _sessionCreator;
+        public MigrationHandler(SessionFactory sessionCreator) {
             this._sessionCreator = sessionCreator;
         }
         public void Migrate() {

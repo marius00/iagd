@@ -6,7 +6,7 @@ using IAGrim.Database.Synchronizer.Core;
 namespace IAGrim.Database.Synchronizer {
     public class ItemCollectionRepo : BasicSynchronizer<CollectionItem>, IItemCollectionDao {
         private readonly ItemCollectionDaoImpl _repo;
-        public ItemCollectionRepo(ThreadExecuter threadExecuter, ISessionCreator sessionCreator) : base(threadExecuter, sessionCreator) {
+        public ItemCollectionRepo(ThreadExecuter threadExecuter, SessionFactory sessionCreator) : base(threadExecuter, sessionCreator) {
             this._repo = new ItemCollectionDaoImpl(sessionCreator);
             this.BaseRepo = null;
         }

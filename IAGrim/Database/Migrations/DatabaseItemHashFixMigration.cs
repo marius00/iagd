@@ -14,7 +14,7 @@ namespace IAGrim.Database.Migrations {
         /// When the hash field got introduced, some users ended up with a NULL value, causing issues when later on fetching using "record || hash"
         /// </summary>
         /// <param name="sessionCreator"></param>
-        public void Migrate(ISessionCreator sessionCreator) {
+        public void Migrate(SessionFactory sessionCreator) {
             using (ISession session = sessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
                     session.CreateSQLQuery(

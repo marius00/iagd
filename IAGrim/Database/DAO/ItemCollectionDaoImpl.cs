@@ -10,7 +10,7 @@ namespace IAGrim.Database {
     /// List of items in game, and which the player already owns.
     /// </summary>
     public class ItemCollectionDaoImpl : BaseDao<CollectionItem>, IItemCollectionDao {
-        public ItemCollectionDaoImpl(ISessionCreator sessionCreator) : base(sessionCreator) {
+        public ItemCollectionDaoImpl(SessionFactory sessionCreator) : base(sessionCreator) {
         }
 
         public IList<CollectionItem> GetItemCollection(ItemSearchRequest query) {
@@ -74,34 +74,32 @@ namespace IAGrim.Database {
 
             
             using (ISession session = SessionCreator.OpenSession()) {
-                using (session.BeginTransaction()) {
-                    var q = session.CreateSQLQuery(string.Join(" ", sql));
+                var q = session.CreateSQLQuery(string.Join(" ", sql));
 
-                    if (query.Slot?.Length > 0) {
-                        q.SetParameterList("class", query.Slot);
-                    }
-                    if (!string.IsNullOrEmpty(query.Wildcard)) {
-                        q.SetParameter("name", $"%{query.Wildcard.ToLowerInvariant()}%");
-                    }
-                    if (query.MaximumLevel < 120 && query.MaximumLevel > 0) {
-                        q.SetParameter("maxlevel", query.MaximumLevel);
-                    }
-                    if (query.MinimumLevel > 0) {
-                        q.SetParameter("minlevel", query.MinimumLevel);
-                    }
-
-
-
-                    var collectionItems = q.SetResultTransformer(Transformers.AliasToBean<CollectionItem>()).List<CollectionItem>();
-
-                    foreach (var item in collectionItems)
-                    {
-                        string localizedName = RuntimeSettings.Language.TranslateName(item.Name);
-                        item.Name = localizedName;
-                    }
-
-                    return collectionItems;
+                if (query.Slot?.Length > 0) {
+                    q.SetParameterList("class", query.Slot);
                 }
+                if (!string.IsNullOrEmpty(query.Wildcard)) {
+                    q.SetParameter("name", $"%{query.Wildcard.ToLowerInvariant()}%");
+                }
+                if (query.MaximumLevel < 120 && query.MaximumLevel > 0) {
+                    q.SetParameter("maxlevel", query.MaximumLevel);
+                }
+                if (query.MinimumLevel > 0) {
+                    q.SetParameter("minlevel", query.MinimumLevel);
+                }
+
+
+
+                var collectionItems = q.SetResultTransformer(Transformers.AliasToBean<CollectionItem>()).List<CollectionItem>();
+
+                foreach (var item in collectionItems)
+                {
+                    string localizedName = RuntimeSettings.Language.TranslateName(item.Name);
+                    item.Name = localizedName;
+                }
+
+                return collectionItems;
             }
         }
 
@@ -123,11 +121,9 @@ order by textvalue, rarity";
 
 
             using (ISession session = SessionCreator.OpenSession()) {
-                using (session.BeginTransaction()) {
-                    return session.CreateSQLQuery(sql)
-                        .SetResultTransformer(Transformers.AliasToBean<CollectionItemAggregateRow>())
-                        .List<CollectionItemAggregateRow>();
-                }
+                return session.CreateSQLQuery(sql)
+                    .SetResultTransformer(Transformers.AliasToBean<CollectionItemAggregateRow>())
+                    .List<CollectionItemAggregateRow>();
             }
         }
 

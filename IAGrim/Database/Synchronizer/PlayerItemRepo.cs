@@ -8,7 +8,7 @@ namespace IAGrim.Database.Synchronizer {
     class PlayerItemRepo : BasicSynchronizer<PlayerItem>, IPlayerItemDao {
         private readonly IPlayerItemDao _repo;
 
-        public PlayerItemRepo(ThreadExecuter threadExecuter, ISessionCreator sessionCreator) : base(threadExecuter, sessionCreator) {
+        public PlayerItemRepo(ThreadExecuter threadExecuter, SessionFactory sessionCreator) : base(threadExecuter, sessionCreator) {
             this._repo = new PlayerItemDaoImpl(sessionCreator, new DatabaseItemStatDaoImpl(sessionCreator));
             this.BaseRepo = _repo;
         }

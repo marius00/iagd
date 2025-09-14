@@ -8,7 +8,7 @@ namespace IAGrim.Database {
     public class ReplicaItemDaoImpl : BaseDao<ReplicaItem>, IReplicaItemDao {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ReplicaItemDaoImpl));
 
-        public ReplicaItemDaoImpl(ISessionCreator sessionCreator) : base(sessionCreator) {
+        public ReplicaItemDaoImpl(SessionFactory sessionCreator) : base(sessionCreator) {
 
         }
 
@@ -51,25 +51,21 @@ namespace IAGrim.Database {
 
         public IList<long> GetPlayerItemIds() {
             using (var session = SessionCreator.OpenSession()) {
-                using (session.BeginTransaction()) {
-                    return session.CreateCriteria<ReplicaItem>()
-                        .Add(Restrictions.IsNotNull("PlayerItemId"))
-                        .SetProjection(Projections.Property("PlayerItemId"))
-                        .SetResultTransformer(new DistinctRootEntityResultTransformer())
-                        .List<long>();
-                }
+                return session.CreateCriteria<ReplicaItem>()
+                    .Add(Restrictions.IsNotNull("PlayerItemId"))
+                    .SetProjection(Projections.Property("PlayerItemId"))
+                    .SetResultTransformer(new DistinctRootEntityResultTransformer())
+                    .List<long>();
             }
         }
 
         public IList<string> GetBuddyItemIds() {
             using (var session = SessionCreator.OpenSession()) {
-                using (session.BeginTransaction()) {
-                    return session.CreateCriteria<ReplicaItem>()
-                        .SetProjection(Projections.Property("BuddyItemId"))
-                        .Add(Restrictions.IsNotNull("BuddyItemId"))
-                        .SetResultTransformer(new DistinctRootEntityResultTransformer())
-                        .List<string>();
-                }
+                return session.CreateCriteria<ReplicaItem>()
+                    .SetProjection(Projections.Property("BuddyItemId"))
+                    .Add(Restrictions.IsNotNull("BuddyItemId"))
+                    .SetResultTransformer(new DistinctRootEntityResultTransformer())
+                    .List<string>();
             }
         }
 

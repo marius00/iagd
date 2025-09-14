@@ -4,7 +4,7 @@ using IAGrim.Database.Synchronizer.Core;
 namespace IAGrim.Database.Synchronizer {
     class ItemReplicaRepo : BasicSynchronizer<ReplicaItem>, IReplicaItemDao {
         private readonly ReplicaItemDaoImpl repo;
-        public ItemReplicaRepo(ThreadExecuter threadExecuter, ISessionCreator sessionCreator) : base(threadExecuter, sessionCreator) {
+        public ItemReplicaRepo(ThreadExecuter threadExecuter, SessionFactory sessionCreator) : base(threadExecuter, sessionCreator) {
             repo = new ReplicaItemDaoImpl(sessionCreator);
             this.BaseRepo = repo;
         }

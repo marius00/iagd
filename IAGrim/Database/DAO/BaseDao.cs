@@ -10,9 +10,9 @@ namespace IAGrim.Database {
 
 
     public class BaseDao<T> where T : class {
-        protected readonly ISessionCreator SessionCreator;
+        protected readonly SessionFactory SessionCreator;
 
-        protected BaseDao(ISessionCreator sessionCreator) {
+        protected BaseDao(SessionFactory sessionCreator) {
             this.SessionCreator = sessionCreator;
         }
 
@@ -80,9 +80,7 @@ namespace IAGrim.Database {
 
         public virtual IList<T> ListAll() {
             using (ISession session = SessionCreator.OpenSession()) {
-                using (ITransaction transaction = session.BeginTransaction()) {
-                    return session.CreateCriteria<T>().List<T>();
-                }
+                return session.CreateCriteria<T>().List<T>();
             }
         }
 

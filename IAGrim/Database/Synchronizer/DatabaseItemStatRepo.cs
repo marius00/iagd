@@ -8,7 +8,7 @@ using IAGrim.Parsers.GameDataParsing.Model;
 namespace IAGrim.Database.Synchronizer {
     class DatabaseItemStatRepo : BasicSynchronizer<DatabaseItemStat>, IDatabaseItemStatDao {
         private readonly IDatabaseItemStatDao repo;
-        public DatabaseItemStatRepo(ThreadExecuter threadExecuter, ISessionCreator sessionCreator) : base(threadExecuter, sessionCreator) {
+        public DatabaseItemStatRepo(ThreadExecuter threadExecuter, SessionFactory sessionCreator) : base(threadExecuter, sessionCreator) {
             this.repo = new DatabaseItemStatDaoImpl(sessionCreator);
             this.BaseRepo = repo;
         }

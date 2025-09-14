@@ -6,7 +6,7 @@ using IAGrim.Parsers.GameDataParsing.Model;
 namespace IAGrim.Database.Synchronizer {
     class DatabaseItemRepo : BasicSynchronizer<DatabaseItem>, IDatabaseItemDao {
         private readonly IDatabaseItemDao _repo;
-        public DatabaseItemRepo(ThreadExecuter threadExecuter, ISessionCreator sessionCreator) : base(threadExecuter, sessionCreator) {
+        public DatabaseItemRepo(ThreadExecuter threadExecuter, SessionFactory sessionCreator) : base(threadExecuter, sessionCreator) {
             this._repo = new DatabaseItemDaoImpl(sessionCreator);
             this.BaseRepo = _repo;
         }

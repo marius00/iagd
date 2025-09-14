@@ -18,7 +18,7 @@ namespace IAGrim.Database {
     public class DatabaseItemDaoImpl : BaseDao<DatabaseItem>, IDatabaseItemDao {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(DatabaseItemDaoImpl));
 
-        public DatabaseItemDaoImpl(ISessionCreator sessionCreator) : base(sessionCreator) {
+        public DatabaseItemDaoImpl(SessionFactory sessionCreator) : base(sessionCreator) {
         }
 
 
@@ -29,10 +29,8 @@ namespace IAGrim.Database {
         public Dictionary<string, string> GetTagDictionary() {
             Dictionary<string, string> result = new Dictionary<string, string>();
             using (var session = SessionCreator.OpenStatelessSession()) {
-                using (session.BeginTransaction()) {
-                    foreach (ItemTag entry in session.CreateCriteria<ItemTag>().List()) {
-                        result[entry.Tag] = entry.Name;
-                    }
+                foreach (ItemTag entry in session.CreateCriteria<ItemTag>().List()) {
+                    result[entry.Tag] = entry.Name;
                 }
             }
 
@@ -238,9 +236,7 @@ namespace IAGrim.Database {
                     where stat = 'preventEasyDrops' and i.id_databaseitem = s.id_databaseitem";
 
             using (ISession session = SessionCreator.OpenSession()) {
-                using (session.BeginTransaction()) {
-                    return session.CreateSQLQuery(sql).List<string>();
-                }
+                return session.CreateSQLQuery(sql).List<string>();
             }
         }
 
@@ -253,9 +249,7 @@ namespace IAGrim.Database {
                 and i.id_databaseitem = s.id_databaseitem";
 
             using (ISession session = SessionCreator.OpenSession()) {
-                using (session.BeginTransaction()) {
-                    return session.CreateSQLQuery(sql).List<string>();
-                }
+                return session.CreateSQLQuery(sql).List<string>();
             }
         }
 
@@ -276,11 +270,9 @@ namespace IAGrim.Database {
 
 
             using (ISession session = SessionCreator.OpenSession()) {
-                using (session.BeginTransaction()) {
-                    return session.CreateSQLQuery(sql)
-                        .SetResultTransformer(Transformers.AliasToBean<ItemSetAssociation>())
-                        .List<ItemSetAssociation>();
-                }
+                return session.CreateSQLQuery(sql)
+                    .SetResultTransformer(Transformers.AliasToBean<ItemSetAssociation>())
+                    .List<ItemSetAssociation>();
             }
         }
 
@@ -288,21 +280,17 @@ namespace IAGrim.Database {
 
         public IList<string> ListAllRecords() {
             using (ISession session = SessionCreator.OpenSession()) {
-                using (session.BeginTransaction()) {
-                    return session.CreateCriteria<DatabaseItem>()
-                        .SetProjection(Projections.Property("Record"))
-                        .AddOrder(Order.Asc("Record"))
-                        .List<string>();
-                }
+                return session.CreateCriteria<DatabaseItem>()
+                    .SetProjection(Projections.Property("Record"))
+                    .AddOrder(Order.Asc("Record"))
+                    .List<string>();
             }
         }
 
 
         public Int64 GetRowCount() {
             using (ISession session = SessionCreator.OpenSession()) {
-                using (ITransaction transaction = session.BeginTransaction()) {
-                    return session.CreateSQLQuery("SELECT COUNT(*) as N FROM DatabaseItem_V2").UniqueResult<Int64>();
-                }
+                return session.CreateSQLQuery("SELECT COUNT(*) as N FROM DatabaseItem_V2").UniqueResult<Int64>();
             }
         }
 

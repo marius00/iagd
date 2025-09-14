@@ -6,7 +6,7 @@ using IAGrim.Database.Synchronizer.Core;
 namespace IAGrim.Database.Synchronizer {
     class BuddyItemRepo : BasicSynchronizer<BuddyItem>, IBuddyItemDao {
         private readonly IBuddyItemDao _repo;
-        public BuddyItemRepo(ThreadExecuter threadExecuter, ISessionCreator sessionCreator) : base(threadExecuter, sessionCreator) {
+        public BuddyItemRepo(ThreadExecuter threadExecuter, SessionFactory sessionCreator) : base(threadExecuter, sessionCreator) {
             _repo = new BuddyItemDaoImpl(sessionCreator, new DatabaseItemStatDaoImpl(sessionCreator));
             this.BaseRepo = _repo;
         }

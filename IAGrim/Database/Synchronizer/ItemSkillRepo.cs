@@ -10,7 +10,7 @@ namespace IAGrim.Database.Synchronizer {
         private readonly IItemSkillDao _repo;
         private readonly ThreadExecuter _threadExecuter;
 
-        public ItemSkillRepo(ThreadExecuter threadExecuter, ISessionCreator sessionCreator) {
+        public ItemSkillRepo(ThreadExecuter threadExecuter, SessionFactory sessionCreator) {
             _repo = new ItemSkillDaoImpl(sessionCreator);
             _threadExecuter = threadExecuter;
         }

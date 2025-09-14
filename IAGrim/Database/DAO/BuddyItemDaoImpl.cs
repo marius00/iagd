@@ -19,7 +19,7 @@ namespace IAGrim.Database {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(BuddyItemDaoImpl));
         private readonly IDatabaseItemStatDao _databaseItemStatDao;
 
-        public BuddyItemDaoImpl(ISessionCreator sessionCreator, IDatabaseItemStatDao databaseItemStatDao) : base(sessionCreator) {
+        public BuddyItemDaoImpl(SessionFactory sessionCreator, IDatabaseItemStatDao databaseItemStatDao) : base(sessionCreator) {
             _databaseItemStatDao = databaseItemStatDao;
         }
 
@@ -53,26 +53,22 @@ namespace IAGrim.Database {
 
         public long GetNumItems(long subscriptionId) {
             using (ISession session = SessionCreator.OpenSession()) {
-                using (session.BeginTransaction()) {
-                    var numItems = session
-                        .CreateSQLQuery(
-                            $"SELECT COUNT(*) FROM {BuddyItemsTable.Table} WHERE {BuddyItemsTable.SubscriptionId} = :id")
-                        .SetParameter("id", subscriptionId)
-                        .UniqueResult<long>();
+                var numItems = session
+                    .CreateSQLQuery(
+                        $"SELECT COUNT(*) FROM {BuddyItemsTable.Table} WHERE {BuddyItemsTable.SubscriptionId} = :id")
+                    .SetParameter("id", subscriptionId)
+                    .UniqueResult<long>();
 
-                    return numItems;
-                }
+                return numItems;
             }
         }
 
         public IList<string> GetOnlineIds(BuddySubscription subscription) {
             using (ISession session = SessionCreator.OpenSession()) {
-                using (session.BeginTransaction()) {
-                    return session.CreateCriteria<BuddyItem>()
-                        .Add(Restrictions.Eq(nameof(BuddyItem.BuddyId), subscription.Id))
-                        .SetProjection(Projections.Property(nameof(BuddyItem.RemoteItemId)))
-                        .List<string>();
-                }
+                return session.CreateCriteria<BuddyItem>()
+                    .Add(Restrictions.Eq(nameof(BuddyItem.BuddyId), subscription.Id))
+                    .SetProjection(Projections.Property(nameof(BuddyItem.RemoteItemId)))
+                    .List<string>();
             }
         }
 
@@ -238,39 +234,37 @@ namespace IAGrim.Database {
                 ";
 
             using (ISession session = SessionCreator.OpenSession()) {
-                using (session.BeginTransaction()) {
-                    Logger.Debug(string.Join(" ", sql));
-                    var q = session.CreateSQLQuery(string.Join(" ", sql));
-                    q.AddScalar("BaseRecord", NHibernateUtil.String);
-                    q.AddScalar("PrefixRecord", NHibernateUtil.String);
-                    q.AddScalar("SuffixRecord", NHibernateUtil.String);
-                    q.AddScalar("ModifierRecord", NHibernateUtil.String);
-                    q.AddScalar("TransmuteRecord", NHibernateUtil.String);
-                    q.AddScalar("MateriaRecord", NHibernateUtil.String);
-                    q.AddScalar("AscendantAffixNameRecord", NHibernateUtil.String);
-                    q.AddScalar("AscendantAffix2hNameRecord", NHibernateUtil.String);
-                    q.AddScalar("Rarity", NHibernateUtil.String);
-                    q.AddScalar("PrefixRarity", NHibernateUtil.Int64);
-                    q.AddScalar("name", NHibernateUtil.String);
-                    q.AddScalar("Seed", NHibernateUtil.Int64);
-                    q.AddScalar("RelicSeed", NHibernateUtil.Int64);
-                    q.AddScalar("EnchantmentSeed", NHibernateUtil.Int64);
-                    q.AddScalar("MinimumLevel", NHibernateUtil.UInt32);
-                    q.AddScalar("RemoteItemId", NHibernateUtil.String);
-                    q.AddScalar("Count", NHibernateUtil.UInt32);
-                    q.AddScalar("BuddyId", NHibernateUtil.Int64);
-                    q.AddScalar("IsHardcore", NHibernateUtil.Boolean);
-                    q.AddScalar("RerollsUsed", NHibernateUtil.Int64);
-                    q.AddScalar("Stash", NHibernateUtil.String);
+                Logger.Debug(string.Join(" ", sql));
+                var q = session.CreateSQLQuery(string.Join(" ", sql));
+                q.AddScalar("BaseRecord", NHibernateUtil.String);
+                q.AddScalar("PrefixRecord", NHibernateUtil.String);
+                q.AddScalar("SuffixRecord", NHibernateUtil.String);
+                q.AddScalar("ModifierRecord", NHibernateUtil.String);
+                q.AddScalar("TransmuteRecord", NHibernateUtil.String);
+                q.AddScalar("MateriaRecord", NHibernateUtil.String);
+                q.AddScalar("AscendantAffixNameRecord", NHibernateUtil.String);
+                q.AddScalar("AscendantAffix2hNameRecord", NHibernateUtil.String);
+                q.AddScalar("Rarity", NHibernateUtil.String);
+                q.AddScalar("PrefixRarity", NHibernateUtil.Int64);
+                q.AddScalar("name", NHibernateUtil.String);
+                q.AddScalar("Seed", NHibernateUtil.Int64);
+                q.AddScalar("RelicSeed", NHibernateUtil.Int64);
+                q.AddScalar("EnchantmentSeed", NHibernateUtil.Int64);
+                q.AddScalar("MinimumLevel", NHibernateUtil.UInt32);
+                q.AddScalar("RemoteItemId", NHibernateUtil.String);
+                q.AddScalar("Count", NHibernateUtil.UInt32);
+                q.AddScalar("BuddyId", NHibernateUtil.Int64);
+                q.AddScalar("IsHardcore", NHibernateUtil.Boolean);
+                q.AddScalar("RerollsUsed", NHibernateUtil.Int64);
+                q.AddScalar("Stash", NHibernateUtil.String);
 
 
 
-                    Logger.Debug(q.QueryString);
-                    q.SetResultTransformer(Transformers.AliasToBean<BuddyItem>());
-                    var result = q.List<BuddyItem>();
+                Logger.Debug(q.QueryString);
+                q.SetResultTransformer(Transformers.AliasToBean<BuddyItem>());
+                var result = q.List<BuddyItem>();
 
-                    return result;
-                }
+                return result;
             }
 
         }
@@ -320,11 +314,9 @@ namespace IAGrim.Database {
 
             IList<NameRow> rows;
             using (ISession session = SessionCreator.OpenSession()) {
-                using (session.BeginTransaction()) {
-                    rows = session.CreateSQLQuery(sql)
-                        .SetResultTransformer(Transformers.AliasToBean<NameRow>())
-                        .List<NameRow>();
-                }
+                rows = session.CreateSQLQuery(sql)
+                    .SetResultTransformer(Transformers.AliasToBean<NameRow>())
+                    .List<NameRow>();
             }
 
             Logger.Debug("Updating the names for buddy items");
@@ -374,11 +366,9 @@ namespace IAGrim.Database {
 
             IList<LevelRequirementRow> rows;
             using (ISession session = SessionCreator.OpenSession()) {
-                using (session.BeginTransaction()) {
-                    rows = session.CreateSQLQuery(sql)
-                        .SetResultTransformer(Transformers.AliasToBean<LevelRequirementRow>())
-                        .List<LevelRequirementRow>();
-                }
+                rows = session.CreateSQLQuery(sql)
+                    .SetResultTransformer(Transformers.AliasToBean<LevelRequirementRow>())
+                    .List<LevelRequirementRow>();
             }
 
             Logger.Debug("Updating the level requirements for buddy items");
@@ -470,11 +460,9 @@ namespace IAGrim.Database {
 
             IList<RarityRow> rows;
             using (ISession session = SessionCreator.OpenSession()) {
-                using (session.BeginTransaction()) {
-                    rows = session.CreateSQLQuery(sql)
-                        .SetResultTransformer(Transformers.AliasToBean<RarityRow>())
-                        .List<RarityRow>();
-                }
+                rows = session.CreateSQLQuery(sql)
+                    .SetResultTransformer(Transformers.AliasToBean<RarityRow>())
+                    .List<RarityRow>();
             }
 
             Logger.Debug("Updating the rarity for buddy items");
@@ -731,47 +719,45 @@ namespace IAGrim.Database {
 
 
             using (ISession session = SessionCreator.OpenSession()) {
-                using (session.BeginTransaction()) {
-                    Logger.Debug(string.Join(" ", sql));
-                    var q = session.CreateSQLQuery(string.Join(" ", sql));
-                    q.AddScalar("BaseRecord", NHibernateUtil.String);
-                    q.AddScalar("PrefixRecord", NHibernateUtil.String);
-                    q.AddScalar("SuffixRecord", NHibernateUtil.String);
-                    q.AddScalar("ModifierRecord", NHibernateUtil.String);
-                    q.AddScalar("TransmuteRecord", NHibernateUtil.String);
-                    q.AddScalar("MateriaRecord", NHibernateUtil.String);
-                    q.AddScalar("Rarity", NHibernateUtil.String);
-                    q.AddScalar("PrefixRarity", NHibernateUtil.Int64);
-                    q.AddScalar("Name", NHibernateUtil.String);
-                    
-                    q.AddScalar("MinimumLevel", NHibernateUtil.UInt32);
-                    q.AddScalar("RemoteItemId", NHibernateUtil.String);
-                    q.AddScalar("Count", NHibernateUtil.UInt32);
-                    q.AddScalar("BuddyId", NHibernateUtil.Int64);
-                    q.AddScalar("Stash", NHibernateUtil.String);
-                    q.AddScalar("PetRecord", NHibernateUtil.String);
-                    q.AddScalar("ReplicaInfo", NHibernateUtil.String);
+                Logger.Debug(string.Join(" ", sql));
+                var q = session.CreateSQLQuery(string.Join(" ", sql));
+                q.AddScalar("BaseRecord", NHibernateUtil.String);
+                q.AddScalar("PrefixRecord", NHibernateUtil.String);
+                q.AddScalar("SuffixRecord", NHibernateUtil.String);
+                q.AddScalar("ModifierRecord", NHibernateUtil.String);
+                q.AddScalar("TransmuteRecord", NHibernateUtil.String);
+                q.AddScalar("MateriaRecord", NHibernateUtil.String);
+                q.AddScalar("Rarity", NHibernateUtil.String);
+                q.AddScalar("PrefixRarity", NHibernateUtil.Int64);
+                q.AddScalar("Name", NHibernateUtil.String);
+                
+                q.AddScalar("MinimumLevel", NHibernateUtil.UInt32);
+                q.AddScalar("RemoteItemId", NHibernateUtil.String);
+                q.AddScalar("Count", NHibernateUtil.UInt32);
+                q.AddScalar("BuddyId", NHibernateUtil.Int64);
+                q.AddScalar("Stash", NHibernateUtil.String);
+                q.AddScalar("PetRecord", NHibernateUtil.String);
+                q.AddScalar("ReplicaInfo", NHibernateUtil.String);
 
-                    foreach (var key in queryParams.Keys) {
-                        q.SetParameter(key, queryParams[key]);
-                        Logger.Debug($"{key}: " + queryParams[key]);
-                    }
-
-                    if (subquery != null) {
-                        foreach (var key in subquery.Parameters.Keys) {
-                            q.SetParameterList(key, subquery.Parameters[key]);
-                            Logger.Debug($"{key}: " + string.Join(",", subquery.Parameters[key]));
-                        }
-                    }
-
-                    Logger.Debug(q.QueryString);
-                    q.SetResultTransformer(Transformers.AliasToBean<BuddyItem>());
-                    var result = q.List<BuddyItem>();
-
-                    
-                    Logger.Debug($"Search returned {result.Count} items");
-                    return result;
+                foreach (var key in queryParams.Keys) {
+                    q.SetParameter(key, queryParams[key]);
+                    Logger.Debug($"{key}: " + queryParams[key]);
                 }
+
+                if (subquery != null) {
+                    foreach (var key in subquery.Parameters.Keys) {
+                        q.SetParameterList(key, subquery.Parameters[key]);
+                        Logger.Debug($"{key}: " + string.Join(",", subquery.Parameters[key]));
+                    }
+                }
+
+                Logger.Debug(q.QueryString);
+                q.SetResultTransformer(Transformers.AliasToBean<BuddyItem>());
+                var result = q.List<BuddyItem>();
+
+                
+                Logger.Debug($"Search returned {result.Count} items");
+                return result;
             }
         }
 

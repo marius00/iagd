@@ -11,7 +11,7 @@ using NHibernate.Transform;
 namespace IAGrim.Database.DAO {
     internal class ItemSkillDaoImpl : IItemSkillDao {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ItemSkillDaoImpl));
-        private readonly ISessionCreator _sessionCreator;
+        private readonly SessionFactory _sessionCreator;
 
         // TODO: Store this query elsewhere? Unfortunate dependency.
         public static readonly string ListItemsQuery = string.Join(" ",
@@ -28,7 +28,7 @@ namespace IAGrim.Database.DAO {
             $"and db.{DatabaseItemTable.Record} = p.{PlayerItemTable.Record} "
         );
 
-        public ItemSkillDaoImpl(ISessionCreator sessionCreator) {
+        public ItemSkillDaoImpl(SessionFactory sessionCreator) {
             _sessionCreator = sessionCreator;
         }
 
@@ -79,11 +79,9 @@ namespace IAGrim.Database.DAO {
 
         public IList<PlayerItemSkill> List() {
             using (ISession session = _sessionCreator.OpenSession()) {
-                using (session.BeginTransaction()) {
-                    return session.CreateSQLQuery(ListItemsQuery)
-                        .SetResultTransformer(Transformers.AliasToBean<PlayerItemSkill>())
-                        .List<PlayerItemSkill>();
-                }
+                return session.CreateSQLQuery(ListItemsQuery)
+                    .SetResultTransformer(Transformers.AliasToBean<PlayerItemSkill>())
+                    .List<PlayerItemSkill>();
             }
         }
 
