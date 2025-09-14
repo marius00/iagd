@@ -1,12 +1,4 @@
-﻿using IAGrim.Database.Dto;
-using IAGrim.Database.Interfaces;
-using NHibernate;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using IAGrim.Database.DAO.Util;
+﻿using IAGrim.Database.Interfaces;
 using IAGrim.Database.Model;
 using IAGrim.Database.Synchronizer.Core;
 using IAGrim.Parsers.GameDataParsing.Model;
@@ -14,8 +6,8 @@ using IAGrim.Parsers.GameDataParsing.Model;
 namespace IAGrim.Database.Synchronizer {
     class DatabaseItemRepo : BasicSynchronizer<DatabaseItem>, IDatabaseItemDao {
         private readonly IDatabaseItemDao _repo;
-        public DatabaseItemRepo(ThreadExecuter threadExecuter, ISessionCreator sessionCreator, SqlDialect dialect) : base(threadExecuter, sessionCreator) {
-            this._repo = new DatabaseItemDaoImpl(sessionCreator, dialect);
+        public DatabaseItemRepo(ThreadExecuter threadExecuter, ISessionCreator sessionCreator) : base(threadExecuter, sessionCreator) {
+            this._repo = new DatabaseItemDaoImpl(sessionCreator);
             this.BaseRepo = _repo;
         }
 

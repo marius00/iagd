@@ -76,7 +76,7 @@ namespace IAGrim {
         }
 
         // TODO: This creates another session instance, should be executed inside the ThreadExecuter
-        public static void PrintStartupInfo(SessionFactory factory, SettingsService settings, SqlDialect dialect) {
+        public static void PrintStartupInfo(SessionFactory factory, SettingsService settings) {
             try {
                 Logger.Info(settings.GetLocal().StashToLootFrom == 0
                     ? "IA is configured to loot from the last stash page"
@@ -143,7 +143,7 @@ namespace IAGrim {
 
                 Logger.Info("There are items stored for the following mods:");
 
-                foreach (ModSelection entry in new PlayerItemDaoImpl(factory, new DatabaseItemStatDaoImpl(factory, dialect), dialect)
+                foreach (ModSelection entry in new PlayerItemDaoImpl(factory, new DatabaseItemStatDaoImpl(factory))
                              .GetModSelection()) {
                     Logger.Info($"Mod: \"{entry.Mod}\", HC: {entry.IsHardcore}");
                 }

@@ -13,7 +13,27 @@
     <CopySQLiteInteropFiles>false</CopySQLiteInteropFiles>
     <CleanSQLiteInteropFiles>false</CleanSQLiteInteropFiles>
     <CollectSQLiteInteropFiles>false</CollectSQLiteInteropFiles>
+    <StartupObject>IAGrim.Program</StartupObject>
+    <ApplicationIcon>gd.ico</ApplicationIcon>
  </PropertyGroup>
+   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+     <DebugType>portable</DebugType>
+   </PropertyGroup>
+   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+     <DebugType>portable</DebugType>
+   </PropertyGroup>
+       <PropertyGroup>
+        <Company>EvilSoft</Company>
+        <Copyright>Open source, free to use</Copyright>
+        <Description>Item Assistant and Infinite Stash for Grim Dawn</Description>
+        <Product>IAGrim</Product>
+        <AssemblyTitle>GD Item Assistant</AssemblyTitle>
+        <Version>1.5.0-dev01234567</Version>
+        <PackageProjectUrl>https://grimdawn.evilsoft.net</PackageProjectUrl>
+        <PackageIcon>gd.png</PackageIcon>
+        <RepositoryUrl>https://github.com/marius00/iagd/</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+    </PropertyGroup>
    <ItemGroup>
      <None Remove="Database\Model\BuddyItem.hbm.xml" />
      <None Remove="Database\Model\BuddyItemRecord.hbm.xml" />
@@ -29,6 +49,9 @@
      <None Remove="Database\Model\PlayerItemRecord.hbm.xml" />
      <None Remove="Database\Model\ReplicaItem.hbm.xml" />
      <None Remove="Database\Model\ReplicaItemRow.hbm.xml" />
+   </ItemGroup>
+   <ItemGroup>
+     <Content Include="gd.ico" />
    </ItemGroup>
    <ItemGroup>
      <EmbeddedResource Include="Database\Model\BuddyItem.hbm.xml" />
@@ -102,6 +125,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="gd.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Update="hibernate.sqlite.cfg.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -262,5 +289,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy /Y &quot;$(SolutionDir)iagrim\Listdlls.exe&quot; &quot;$(TargetDir)&quot;" />
+  </Target>
 
 </Project>

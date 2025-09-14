@@ -10,12 +10,10 @@ namespace IAGrim.Database {
 
 
     public class BaseDao<T> where T : class {
-        protected readonly SqlDialect Dialect;
         protected readonly ISessionCreator SessionCreator;
 
-        protected BaseDao(ISessionCreator sessionCreator, SqlDialect dialect) {
+        protected BaseDao(ISessionCreator sessionCreator) {
             this.SessionCreator = sessionCreator;
-            Dialect = dialect;
         }
 
 

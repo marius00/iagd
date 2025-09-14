@@ -142,9 +142,8 @@ namespace IAGrim
 
         private static void Run(string[] args, ThreadExecuter threadExecuter)
         {
-            var dialect = SqlDialect.Sqlite;
-            var factory = new SessionFactory(dialect);
-            var serviceProvider = ServiceProvider.Initialize(threadExecuter, dialect);
+            var factory = new SessionFactory();
+            var serviceProvider = ServiceProvider.Initialize(threadExecuter);
 
             var settingsService = serviceProvider.Get<SettingsService>();
             var databaseItemDao = serviceProvider.Get<IDatabaseItemDao>();
@@ -161,7 +160,7 @@ namespace IAGrim
             var databaseItemStatDao = serviceProvider.Get<IDatabaseItemStatDao>();
             var itemSkillDao = serviceProvider.Get<IItemSkillDao>();
             ParsingService parsingService = new ParsingService(itemTagDao, null, databaseItemDao, databaseItemStatDao, itemSkillDao, settingsService.GetLocal().LocalizationFile);
-            StartupService.PrintStartupInfo(factory, settingsService, dialect);
+            StartupService.PrintStartupInfo(factory, settingsService);
 
 
             // TODO: Offload to the new language loader

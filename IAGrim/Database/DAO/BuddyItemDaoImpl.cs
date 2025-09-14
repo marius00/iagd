@@ -6,15 +6,11 @@ using IAGrim.Utilities;
 using log4net;
 using NHibernate;
 using NHibernate.Transform;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using EvilsoftCommons;
 using IAGrim.Backup.Cloud.Dto;
 using IAGrim.Database.DAO;
 using IAGrim.Database.DAO.Dto;
 using IAGrim.Database.DAO.Util;
-using IAGrim.Database.Model;
 using IAGrim.Services.Dto;
 using NHibernate.Criterion;
 
@@ -23,7 +19,7 @@ namespace IAGrim.Database {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(BuddyItemDaoImpl));
         private readonly IDatabaseItemStatDao _databaseItemStatDao;
 
-        public BuddyItemDaoImpl(ISessionCreator sessionCreator, IDatabaseItemStatDao databaseItemStatDao, SqlDialect dialect) : base(sessionCreator, dialect) {
+        public BuddyItemDaoImpl(ISessionCreator sessionCreator, IDatabaseItemStatDao databaseItemStatDao) : base(sessionCreator) {
             _databaseItemStatDao = databaseItemStatDao;
         }
 
@@ -131,7 +127,7 @@ namespace IAGrim.Database {
             var rec = BuddyItemRecordTable.Record;
             foreach (var record in PlayerItemDaoImpl.GetPetBonusRecords(stats, records)) {
                 Logger.Debug($"INSERT OR IGNORE INTO {table} ({id}, {rec}) VALUES ({item.RemoteItemId}, {record})");
-                session.CreateSQLQuery(SqlUtils.EnsureDialect(Dialect, $"INSERT OR IGNORE INTO {table} ({id}, {rec}) VALUES (:id, :record)"))
+                session.CreateSQLQuery($"INSERT OR IGNORE INTO {table} ({id}, {rec}) VALUES (:id, :record)")
                     .SetParameter("id", item.RemoteItemId)
                     .SetParameter("record", record)
                     .ExecuteUpdate();

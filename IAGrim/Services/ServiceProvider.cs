@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using IAGrim.Database;
-using IAGrim.Database.DAO;
-using IAGrim.Database.DAO.Util;
+﻿using IAGrim.Database;
 using IAGrim.Database.Interfaces;
 using IAGrim.Database.Synchronizer;
 using IAGrim.Database.Synchronizer.Core;
 using IAGrim.Parsers.TransferStash;
-using IAGrim.Services.ItemReplica;
-using IAGrim.Services.MessageProcessor;
 using IAGrim.UI.Controller;
 using log4net;
 
@@ -43,9 +36,9 @@ namespace IAGrim.Services {
             _services.Add(o);
         }
 
-        public static ServiceProvider Initialize(ThreadExecuter threadExecuter, SqlDialect dialect) {
+        public static ServiceProvider Initialize(ThreadExecuter threadExecuter) {
             Logger.Debug("Creating services");
-            var factory = new SessionFactory(dialect);
+            var factory = new SessionFactory();
 
             // Settings should be upgraded early, it contains the language pack etc and some services depends on settings.
             var settingsService = StartupService.LoadSettingsService();
@@ -61,28 +54,16 @@ namespace IAGrim.Services {
             IItemCollectionDao itemCollectionRepo;
             IReplicaItemDao replicaItemDao;
 
-            if (dialect == SqlDialect.Sqlite) {
-                playerItemDao = new PlayerItemRepo(threadExecuter, factory, dialect);
-                databaseItemDao = new DatabaseItemRepo(threadExecuter, factory, dialect);
-                databaseItemStatDao = new DatabaseItemStatRepo(threadExecuter, factory, dialect);
-                itemTagDao = new ItemTagRepo(threadExecuter, factory, dialect);
-                buddyItemDao = new BuddyItemRepo(threadExecuter, factory, dialect);
-                buddySubscriptionDao = new BuddySubscriptionRepo(threadExecuter, factory, dialect);
+                playerItemDao = new PlayerItemRepo(threadExecuter, factory);
+                databaseItemDao = new DatabaseItemRepo(threadExecuter, factory);
+                databaseItemStatDao = new DatabaseItemStatRepo(threadExecuter, factory);
+                itemTagDao = new ItemTagRepo(threadExecuter, factory);
+                buddyItemDao = new BuddyItemRepo(threadExecuter, factory);
+                buddySubscriptionDao = new BuddySubscriptionRepo(threadExecuter, factory);
                 itemSkillDao = new ItemSkillRepo(threadExecuter, factory);
-                itemCollectionRepo = new ItemCollectionRepo(threadExecuter, factory, dialect);
-                replicaItemDao = new ItemReplicaRepo(threadExecuter, factory, dialect);
-            }
-            else {
-                databaseItemStatDao = new DatabaseItemStatDaoImpl(factory, dialect);
-                playerItemDao = new PlayerItemDaoImpl(factory, databaseItemStatDao, dialect);
-                databaseItemDao = new DatabaseItemDaoImpl(factory, dialect);
-                itemTagDao = new ItemTagDaoImpl(factory, dialect);
-                buddyItemDao = new BuddyItemDaoImpl(factory, databaseItemStatDao, dialect);
-                buddySubscriptionDao = new BuddySubscriptionDaoImpl(factory, dialect);
-                itemSkillDao = new ItemSkillDaoImpl(factory);
-                itemCollectionRepo = new ItemCollectionDaoImpl(factory, dialect);
-                replicaItemDao = new ReplicaItemDaoImpl(factory, dialect);
-            }
+                itemCollectionRepo = new ItemCollectionRepo(threadExecuter, factory);
+                replicaItemDao = new ItemReplicaRepo(threadExecuter, factory);
+
             
 
             // Chicken and the egg..
@@ -94,23 +75,22 @@ namespace IAGrim.Services {
                 itemCollectionRepo
             );
 
-            List<object> services = new List<object>();
-            services.Add(itemTagDao);
-            services.Add(databaseItemDao);
-            services.Add(databaseItemStatDao);
-            services.Add(playerItemDao);
-            services.Add(buddyItemDao);
-            services.Add(buddySubscriptionDao);
-            services.Add(itemSkillDao);
-            
-            services.Add(settingsService);
-            services.Add(grimDawnDetector);
-            services.Add(itemCollectionRepo);
-            services.Add(searchController);
-            services.Add(new ItemReplicaService(playerItemDao, buddyItemDao, settingsService));
-            services.Add(replicaItemDao);
-
-            services.Add(itemStatService);
+            List<object> services = [
+                itemTagDao,
+                databaseItemDao,
+                databaseItemStatDao,
+                playerItemDao,
+                buddyItemDao,
+                buddySubscriptionDao,
+                itemSkillDao,
+                settingsService,
+                grimDawnDetector,
+                itemCollectionRepo,
+                searchController,
+                new ItemReplicaService(playerItemDao, buddyItemDao, settingsService),
+                replicaItemDao,
+                itemStatService
+            ];
 
             var cacher = new TransferStashServiceCache(databaseItemDao);
             services.Add(cacher);

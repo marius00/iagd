@@ -1,12 +1,7 @@
 ﻿using IAGrim.Database.Dto;
 using IAGrim.Database.Interfaces;
-using log4net;
 using NHibernate;
-using NHibernate.Criterion;
 using NHibernate.Transform;
-using System.Collections.Generic;
-using System.Linq;
-using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Model;
 using IAGrim.Utilities;
 
@@ -15,7 +10,7 @@ namespace IAGrim.Database {
     /// List of items in game, and which the player already owns.
     /// </summary>
     public class ItemCollectionDaoImpl : BaseDao<CollectionItem>, IItemCollectionDao {
-        public ItemCollectionDaoImpl(ISessionCreator sessionCreator, SqlDialect dialect) : base(sessionCreator, dialect) {
+        public ItemCollectionDaoImpl(ISessionCreator sessionCreator) : base(sessionCreator) {
         }
 
         public IList<CollectionItem> GetItemCollection(ItemSearchRequest query) {

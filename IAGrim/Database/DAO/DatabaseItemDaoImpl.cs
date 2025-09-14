@@ -18,7 +18,7 @@ namespace IAGrim.Database {
     public class DatabaseItemDaoImpl : BaseDao<DatabaseItem>, IDatabaseItemDao {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(DatabaseItemDaoImpl));
 
-        public DatabaseItemDaoImpl(ISessionCreator sessionCreator, SqlDialect dialect) : base(sessionCreator, dialect) {
+        public DatabaseItemDaoImpl(ISessionCreator sessionCreator) : base(sessionCreator) {
         }
 
 
@@ -68,25 +68,7 @@ namespace IAGrim.Database {
         }
 
         private void ExecuteTransactionSql(string[] commands, ProgressTracker progressTracker) {
-            if (Dialect == SqlDialect.Sqlite) {
-                ExecuteTransactionSqlSqlite(commands, progressTracker);
-            }
-            else {
-                ExecuteTransactionSqlPostgres(commands, progressTracker);
-            }
-        }
-
-        private void ExecuteTransactionSqlPostgres(string[] commands, ProgressTracker progressTracker) {
-            using (var session = SessionCreator.OpenStatelessSession()) {
-                using (ITransaction transaction = session.BeginTransaction()) {
-                    foreach (var command in commands) {
-                        session.CreateSQLQuery(command);
-                        progressTracker?.Increment();
-                    }
-
-                    transaction.Commit();
-                }
-            }
+            ExecuteTransactionSqlSqlite(commands, progressTracker);
         }
 
         private void ExecuteTransactionSqlSqlite(string[] commands, ProgressTracker progressTracker) {
@@ -199,83 +181,13 @@ namespace IAGrim.Database {
             sq.Start();
             const string sql = "insert into databaseitemstat_v2 (id_databaseitem, stat, textvalue, val1) values (@id, @stat, @tv, @val)";
 
-            int numStats;
-            if (Dialect == SqlDialect.Sqlite) {
-                numStats = InsertStatsSqlite(sql, items);
-            }
-            else {
-                numStats = InsertStatsPostgres(items);
-            }
+            var numStats = InsertStatsSqlite(sql, items);
 
             sq.Stop();
             Logger.Info("Records stored");
             Console.WriteLine($"Storing the records took {sq.ElapsedMilliseconds} milliseconds");
 
             Logger.InfoFormat("Stored {0} items and {1} stats to internal db.", items.Count, numStats);
-        }
-
-        private int InsertStatsPostgres(List<DatabaseItem> items) {
-            int numStats = 0;
-
-            string GetQueryString(int numRows) {
-                if (numRows > 8190)
-                    throw new ArgumentException("Cannot create query, too many rows/args");
-
-                string query = $"INSERT INTO {DatabaseItemStatTable.Table} ({DatabaseItemStatTable.Item}, {DatabaseItemStatTable.Stat}, {DatabaseItemStatTable.Value}, {DatabaseItemStatTable.TextValue}) VALUES ";
-
-                // Batching these into 7500 inserts (~30,000 params, the postgres limit is 32767)
-                List<string> entries = new List<string>(numRows);
-                for (int i = 0; i < numRows; i++) {
-                    entries.Add($"(:i{i}, :s{i}, :v{i}, :tv{i})");
-                }
-
-                
-                return query + string.Join(", ", entries);
-            }
-
-            // Insert stats
-            using (var session = SessionCreator.OpenStatelessSession()) {
-                using (ITransaction transaction = session.BeginTransaction()) {
-
-                    // Batching these into 7500 inserts (~30,000 params, the postgres limit is 32767)
-                    int batchSize = 7500;
-                    List<string> entries = new List<string>(batchSize);
-
-
-                    foreach (var item in items) {
-                        numStats += item.Stats.Count;
-
-                        // Not ideal to not use argumnets, but sending in 30,000 named arguments takes minutes, not seconds.
-                        foreach (DatabaseItemStat stat in item.Stats) {
-                            var v = stat.Value.ToString().Replace(",", ".");
-                            entries.Add($"({item.Id}, '{stat.Stat}', {v}, '{stat.TextValue?.Replace("'", "''")}')");
-
-                            // 1875 items, max args
-                            if (entries.Count >= batchSize) {
-                                var query = session.CreateSQLQuery($"INSERT INTO {DatabaseItemStatTable.Table} ({DatabaseItemStatTable.Item}, {DatabaseItemStatTable.Stat}, {DatabaseItemStatTable.Value}, {DatabaseItemStatTable.TextValue}) VALUES "
-                                                       + string.Join(",", entries));
-                                int affectedRows = query.ExecuteUpdate();
-                                Logger.Info($"Inserted stats with {affectedRows} affected rows");
-
-                                entries.Clear();
-                            }
-                        }
-
-                    }
-
-                    // We got a batch that never hit 7500
-                    if (entries.Count > 0) {
-                        var query = session.CreateSQLQuery($"INSERT INTO {DatabaseItemStatTable.Table} ({DatabaseItemStatTable.Item}, {DatabaseItemStatTable.Stat}, {DatabaseItemStatTable.Value}, {DatabaseItemStatTable.TextValue}) VALUES "
-                                                           + string.Join(",", entries));
-                        int affectedRows = query.ExecuteUpdate();
-                        Logger.Info($"Inserted stats with {affectedRows} affected rows (trailing)");
-                    }
-
-                    transaction.Commit();
-                }
-            }
-
-            return numStats;
         }
 
         private int InsertStatsSqlite(string sql, List<DatabaseItem> items) {
@@ -397,35 +309,20 @@ namespace IAGrim.Database {
 
 
         public void Clean() {
-            if (Dialect == SqlDialect.Sqlite) {
-                // CREATE TABLE DatabaseItemStat_v2 (id_databaseitemstat  integer primary key autoincrement, id_databaseitem BIGINT, Stat TEXT, TextValue TEXT, val1 DOUBLE, constraint FK9663A5FC6B4AFA92 foreign key (id_databaseitem) references DatabaseItem_v2)
-                string[] tables = new[] { "DatabaseItemStat_v2", "DatabaseItem_v2", "ItemTag" };
-                string fetchCreateTableQuery = "SELECT sql FROM sqlite_master WHERE type='table' AND name = :table";
+            // CREATE TABLE DatabaseItemStat_v2 (id_databaseitemstat  integer primary key autoincrement, id_databaseitem BIGINT, Stat TEXT, TextValue TEXT, val1 DOUBLE, constraint FK9663A5FC6B4AFA92 foreign key (id_databaseitem) references DatabaseItem_v2)
+            string[] tables = new[] { "DatabaseItemStat_v2", "DatabaseItem_v2", "ItemTag" };
+            string fetchCreateTableQuery = "SELECT sql FROM sqlite_master WHERE type='table' AND name = :table";
 
 
-                using (ISession session = SessionCreator.OpenSession()) {
-                    using (ITransaction transaction = session.BeginTransaction()) {
-                        foreach (var table in tables) {
-                            string recreateQuery = session.CreateSQLQuery(fetchCreateTableQuery).SetParameter("table", table).UniqueResult<string>();
-                            session.CreateSQLQuery("DROP TABLE IF EXISTS " + table).ExecuteUpdate();
-                            session.CreateSQLQuery(recreateQuery).ExecuteUpdate();
-                        }
-
-                        transaction.Commit();
+            using (ISession session = SessionCreator.OpenSession()) {
+                using (ITransaction transaction = session.BeginTransaction()) {
+                    foreach (var table in tables) {
+                        string recreateQuery = session.CreateSQLQuery(fetchCreateTableQuery).SetParameter("table", table).UniqueResult<string>();
+                        session.CreateSQLQuery("DROP TABLE IF EXISTS " + table).ExecuteUpdate();
+                        session.CreateSQLQuery(recreateQuery).ExecuteUpdate();
                     }
 
-                }
-            }
-            else {
-
-                using (ISession session = SessionCreator.OpenSession()) {
-                    using (ITransaction transaction = session.BeginTransaction()) {
-                        session.CreateSQLQuery("DELETE FROM DatabaseItemStat_v2 cascade").ExecuteUpdate();
-                        session.CreateSQLQuery("DELETE FROM DatabaseItem_v2 cascade").ExecuteUpdate();
-                        session.CreateSQLQuery("DELETE FROM ItemTag cascade").ExecuteUpdate();
-                        transaction.Commit();
-                    }
-
+                    transaction.Commit();
                 }
 
             }

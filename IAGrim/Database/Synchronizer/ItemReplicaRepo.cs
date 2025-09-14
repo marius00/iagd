@@ -1,15 +1,11 @@
 ﻿using IAGrim.Database.Interfaces;
-using IAGrim.Database.DAO.Util;
-using IAGrim.Database.Model;
 using IAGrim.Database.Synchronizer.Core;
-using System.Security.Policy;
-using System.Collections.Generic;
 
 namespace IAGrim.Database.Synchronizer {
     class ItemReplicaRepo : BasicSynchronizer<ReplicaItem>, IReplicaItemDao {
         private readonly ReplicaItemDaoImpl repo;
-        public ItemReplicaRepo(ThreadExecuter threadExecuter, ISessionCreator sessionCreator, SqlDialect dialect) : base(threadExecuter, sessionCreator) {
-            repo = new ReplicaItemDaoImpl(sessionCreator, dialect);
+        public ItemReplicaRepo(ThreadExecuter threadExecuter, ISessionCreator sessionCreator) : base(threadExecuter, sessionCreator) {
+            repo = new ReplicaItemDaoImpl(sessionCreator);
             this.BaseRepo = repo;
         }
 

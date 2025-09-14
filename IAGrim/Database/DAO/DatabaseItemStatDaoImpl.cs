@@ -91,7 +91,7 @@ namespace IAGrim.Database {
             "petBurstSpawn"
         };
 
-        public DatabaseItemStatDaoImpl(ISessionCreator sessionCreator, SqlDialect dialect) : base(sessionCreator, dialect) {
+        public DatabaseItemStatDaoImpl(ISessionCreator sessionCreator) : base(sessionCreator) {
         }
 
 

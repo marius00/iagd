@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using IAGrim.Database.DAO.Util;
+﻿using System.Text.RegularExpressions;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.GameDataParsing.Model;
 using log4net;
@@ -12,7 +9,7 @@ namespace IAGrim.Database.DAO {
     class ItemTagDaoImpl : BaseDao<ItemTag>, IItemTagDao {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ItemTagDaoImpl));
 
-        public ItemTagDaoImpl(ISessionCreator sessionCreator, SqlDialect dialect) : base(sessionCreator, dialect) { }
+        public ItemTagDaoImpl(ISessionCreator sessionCreator) : base(sessionCreator) { }
 
         public void Save(ICollection<ItemTag> items, ProgressTracker tracker) {
             var commitSize = items.Count / 10;

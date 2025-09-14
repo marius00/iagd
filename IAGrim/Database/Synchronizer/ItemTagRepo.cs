@@ -1,22 +1,13 @@
-﻿using IAGrim.Database.Dto;
-using IAGrim.Database.Interfaces;
-using NHibernate;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using IAGrim.Database.Interfaces;
 using IAGrim.Database.DAO;
-using IAGrim.Database.DAO.Util;
-using IAGrim.Database.Model;
 using IAGrim.Database.Synchronizer.Core;
 using IAGrim.Parsers.GameDataParsing.Model;
 
 namespace IAGrim.Database.Synchronizer {
     class ItemTagRepo : BasicSynchronizer<ItemTag>, IItemTagDao {
         private readonly ItemTagDaoImpl repo;
-        public ItemTagRepo(ThreadExecuter threadExecuter, ISessionCreator sessionCreator, SqlDialect dialect) : base(threadExecuter, sessionCreator) {
-            this.repo = new ItemTagDaoImpl(sessionCreator, dialect);
+        public ItemTagRepo(ThreadExecuter threadExecuter, ISessionCreator sessionCreator) : base(threadExecuter, sessionCreator) {
+            this.repo = new ItemTagDaoImpl(sessionCreator);
             this.BaseRepo = repo;
         }
 

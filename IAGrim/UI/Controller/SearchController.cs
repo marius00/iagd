@@ -6,10 +6,6 @@ using IAGrim.UI.Controller.dto;
 using IAGrim.UI.Misc.CEF;
 using IAGrim.Utilities;
 using log4net;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using EvilsoftCommons.Exceptions;
 using IAGrim.Database.DAO.Util;
 

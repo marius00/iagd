@@ -13,19 +13,10 @@ namespace IAGrim.Database {
 
     public class SessionFactory : ISessionCreator {
         private static ILog Logger = LogManager.GetLogger(typeof(SessionFactory));
-        private readonly SqlDialect _dialect;
 
-        public SessionFactory(SqlDialect dialect) {
-            _dialect = dialect;
-        }
 
         private ISessionFactoryWrapper CreateSession() {
-            if (_dialect == SqlDialect.Sqlite) {
-                return new SessionFactoryLoader.SessionFactory();
-            }
-            else {
-                return new PortablePostgres.SessionFactory();
-            }
+            return new SessionFactoryLoader.SessionFactory();
         }
 
         [ThreadStatic]

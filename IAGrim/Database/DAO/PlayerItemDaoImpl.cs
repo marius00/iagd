@@ -1,20 +1,17 @@
-﻿using IAGrim.Database.DAO.Dto;
+﻿using EvilsoftCommons;
+using IAGrim.Backup.Cloud.Dto;
+using IAGrim.Database.DAO;
+using IAGrim.Database.DAO.Dto;
+using IAGrim.Database.DAO.Table;
+using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Dto;
 using IAGrim.Database.Interfaces;
+using IAGrim.Database.Model;
 using IAGrim.Services.Dto;
 using log4net;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Transform;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using EvilsoftCommons;
-using IAGrim.Backup.Cloud.Dto;
-using IAGrim.Database.DAO;
-using IAGrim.Database.DAO.Table;
-using IAGrim.Database.DAO.Util;
-using IAGrim.Database.Model;
 
 namespace IAGrim.Database {
     /// <summary>
@@ -26,8 +23,7 @@ namespace IAGrim.Database {
 
         public PlayerItemDaoImpl(
             ISessionCreator sessionCreator,
-            IDatabaseItemStatDao databaseItemStatDao,
-            SqlDialect dialect) : base(sessionCreator, dialect) {
+            IDatabaseItemStatDao databaseItemStatDao) : base(sessionCreator) {
             _databaseItemStatDao = databaseItemStatDao;
         }
 
@@ -245,12 +241,12 @@ namespace IAGrim.Database {
                     }
 
                     // insert into DeletedPlayerItem(oid) select onlineid from playeritem where onlineid is not null and stackcount <= 0 and id in (1,2,3)
-                    session.CreateSQLQuery(SqlUtils.EnsureDialect(Dialect,
+                    session.CreateSQLQuery(
                             $" INSERT OR IGNORE INTO {DeletedPlayerItemTable.Table} ({DeletedPlayerItemTable.Id}) " +
                             $" SELECT {PlayerItemTable.CloudId} FROM {PlayerItemTable.Table} " +
                             $" WHERE {PlayerItemTable.CloudId} IS NOT NULL " +
                             $" AND {PlayerItemTable.Stackcount} <= 0 " +
-                            $" AND {PlayerItemTable.Id} IN ( :ids )"))
+                            $" AND {PlayerItemTable.Id} IN ( :ids )")
                         .SetParameterList("ids", items.Select(m => m.Id).ToList())
                         .ExecuteUpdate();
 
@@ -291,8 +287,7 @@ namespace IAGrim.Database {
             var records = GetRecordsForItem(item);
 
             foreach (var record in records) {
-                session.CreateSQLQuery(
-                        SqlUtils.EnsureDialect(Dialect, $"INSERT OR IGNORE INTO {table} ({id}, {rec}) VALUES (:id, :record)"))
+                session.CreateSQLQuery($"INSERT OR IGNORE INTO {table} ({id}, {rec}) VALUES (:id, :record)")
                     .SetParameter("id", item.Id)
                     .SetParameter("record", record)
                     .ExecuteUpdate();
@@ -307,8 +302,7 @@ namespace IAGrim.Database {
             var records = GetRecordsForItem(item);
 
             foreach (var record in GetPetBonusRecords(stats, records)) {
-                session.CreateSQLQuery(
-                        SqlUtils.EnsureDialect(Dialect, $"INSERT OR IGNORE INTO {table} ({id}, {rec}) VALUES (:id, :record)"))
+                session.CreateSQLQuery($"INSERT OR IGNORE INTO {table} ({id}, {rec}) VALUES (:id, :record)")
                     .SetParameter("id", item.Id)
                     .SetParameter("record", record)
                     .ExecuteUpdate();
@@ -384,6 +378,7 @@ namespace IAGrim.Database {
 
         public void Delete(List<DeleteItemDto> items) {
             using (var session = SessionCreator.OpenSession()) {
+                
                 using (var transaction = session.BeginTransaction()) {
                     foreach (var item in items) {
                         session.CreateSQLQuery($"DELETE FROM ReplicaItem2 WHERE playeritemid IN (select id from playeritem WHERE {PlayerItemTable.CloudId} = :uuid)")
@@ -406,7 +401,6 @@ namespace IAGrim.Database {
         /// </summary>
         public override void Save(IEnumerable<PlayerItem> items) {
             List<PlayerItem> itemsToStore;
-
             Logger.Debug($"Storing {items.Count()} new items");
 
             var ids = new List<long>();

@@ -1,15 +1,13 @@
 ﻿using IAGrim.Database.Interfaces;
-using System.Collections.Generic;
 using IAGrim.Backup.Cloud.Dto;
-using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Dto;
 using IAGrim.Database.Synchronizer.Core;
 
 namespace IAGrim.Database.Synchronizer {
     class BuddyItemRepo : BasicSynchronizer<BuddyItem>, IBuddyItemDao {
         private readonly IBuddyItemDao _repo;
-        public BuddyItemRepo(ThreadExecuter threadExecuter, ISessionCreator sessionCreator, SqlDialect dialect) : base(threadExecuter, sessionCreator) {
-            _repo = new BuddyItemDaoImpl(sessionCreator, new DatabaseItemStatDaoImpl(sessionCreator, dialect), dialect);
+        public BuddyItemRepo(ThreadExecuter threadExecuter, ISessionCreator sessionCreator) : base(threadExecuter, sessionCreator) {
+            _repo = new BuddyItemDaoImpl(sessionCreator, new DatabaseItemStatDaoImpl(sessionCreator));
             this.BaseRepo = _repo;
         }
 
