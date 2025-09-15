@@ -41,6 +41,6 @@ function Header({activeTab, setActiveTab}: Props) {
       </nav>
     </header>
   );
-};
+}
 
 export default Header;

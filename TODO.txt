@@ -8,4 +8,4 @@ Pending:
 --- Message='IBM437' is not a supported encoding name. For information on defining a custom encoding, see the documentation for the Encoding.RegisterProvider method. (Parameter 'name')
 * Spamming task cancelled:        private static AccessStatus IsTokenValid(string user, string token) {
 * Sqlite does not support nested transactions:         public override void Save(IEnumerable<PlayerItem> items) {
-* Help/discord is in-browser and you lose access to the UI -_-
+* WebUI copy and build scripts has the wrong path
