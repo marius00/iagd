@@ -3,7 +3,7 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="IAGrim" namespace="IAGrim.Database">
 	<class name="PlayerItem" table="PlayerItem" lazy="false">
 		<id name="Id">
-			<generator class="hilo" />
+			<generator class="identity" />
 		</id>
 
 		<property name="BaseRecord" column="baserecord" index="idx_playeritem_baserecord" />

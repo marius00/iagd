@@ -162,6 +162,23 @@ namespace IAGrim
             ParsingService parsingService = new ParsingService(itemTagDao, null, databaseItemDao, databaseItemStatDao, itemSkillDao, settingsService.GetLocal().LocalizationFile);
             StartupService.PrintStartupInfo(factory, settingsService);
 
+            itemTagDao.Save(new ItemTag() {
+                Name = Guid.NewGuid().ToString(),
+                Tag = Guid.NewGuid().ToString(),
+            });
+
+            itemTagDao.Save(new ItemTag() {
+                Name = Guid.NewGuid().ToString(),
+                Tag = Guid.NewGuid().ToString(),
+            });
+
+            var playerItemDao = serviceProvider.Get<IPlayerItemDao>();
+            var item = new PlayerItem() {
+                BaseRecord = "yes"
+            };
+            
+            playerItemDao.Save(item);
+
 
             // TODO: Offload to the new language loader
             if (RuntimeSettings.Language is EnglishLanguage language)
