@@ -6,7 +6,7 @@ AppVerName=Grim Dawn Item Assistant
 AppName=Grim Dawn Item Assistant (c) EvilSoft
 VersionInfoVersion={#ApplicationVersion}
 AppId=gdia
-DefaultDirName={code:DefDirRoot}\GD Item Assistant
+DefaultDirName={code:DefDirRoot}\IAGD
 Uninstallable=Yes
 OutputDir=..\Installer
 SetupIconFile=gd.ico
@@ -18,15 +18,16 @@ Name: starticon; Description: "Create a &startmenu icon"; GroupDescription: "Ico
 
 
 [Icons]
-Name: "{commonprograms}\GD Item Assistant"; Filename: "{app}\\IAGrim.exe"; Tasks: starticon
-Name: "{commondesktop}\GD Item Assistant"; Filename: "{app}\\IAGrim.exe"; Tasks: desktopicon
+Name: "{commonprograms}\IAGD"; Filename: "{app}\\IAGrim.exe"; Tasks: starticon
+Name: "{commondesktop}\IAGD"; Filename: "{app}\\IAGrim.exe"; Tasks: desktopicon
 
 
 [Files]
-Source: "..\IAGrim\bin\Release\*"; Excludes: "*.pdb,ndp472-kb4054531-web.exe,vc2015_redist.x64.exe,vcredist_x86.exe,2010sp1_vcredist_x86.exe,2015rc3_vc_redist.x86.exe"; DestDir: "{app}"; Flags: overwritereadonly replacesameversion recursesubdirs createallsubdirs touch ignoreversion
+Source: "..\IAGrim\bin\Release\net9.0-windows7.0\*"; Excludes: "*.pdb,vcredist_x86.exe,2010sp1_vcredist_x86.exe"; DestDir: "{app}"; Flags: overwritereadonly replacesameversion recursesubdirs createallsubdirs touch ignoreversion
 Source: "readme.txt"; DestDir: "{app}";
 
 [Run]
+Filename: "explorer.exe"; Description: "Download .Net 9"; Parameters: "https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-9.0.9-windows-x64-installer"; Flags: shellexec postinstall nowait
 Filename: "{app}\IAGrim.exe"; Description: "Launch GD Item Assistant"; Flags: postinstall nowait
  
 
@@ -44,10 +45,6 @@ AlwaysShowDirOnReadyPage=Yes
 DisableDirPage=No
 OutputBaseFilename=GDItemAssistantBeta-{#ApplicationVersion}
 InfoAfterFile=readme.txt
-
-[InstallDelete]
-Type: files; Name: "{app}\SQLite.Interop.dll"
-
 
 [UninstallDelete]
 Type: filesandordirs; Name: {app}

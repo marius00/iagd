@@ -47,17 +47,6 @@ namespace IAGrim {
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
-            if (!DependencyChecker.CheckNet472Installed()) {
-                MessageBox.Show("It appears .Net Framework 4.7.2 is not installed.\nIA May not function correctly", "Warning",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-
-            // TODO: Disabled due to false positives.. err negatives?
-            // TODO: Is it enough with x86? The DLL Might need x64..
-            if (!DependencyChecker.CheckVs2015Installed()) {
-                // Required for the injected DLL (MSVCP140.DLL, VCRUNTIME140.DLL)
-                MessageBox.Show("It appears VS 2015 (x86) redistributable may not be installed.\nInstall VS 2015 (x86) runtimes manually if you experience issues running IA", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
 
             if (!DependencyChecker.CheckVs2013Installed()) {
                 MessageBox.Show("It appears VS 2013 (x86) redistributable is not installed.\nPlease install it to continue using IA",
@@ -67,10 +56,6 @@ namespace IAGrim {
             if (!DependencyChecker.CheckVs2010Installed()) {
                 MessageBox.Show("It appears VS 2010 (x86) redistributable is not installed.\nPlease install it to continue using IA",
                     "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-            if (!DependencyChecker.CheckVs2019Installed()) {
-                // TODO: VC 2019 required for CefSharp 96.*
-                MessageBox.Show("It appears VS 2019 (x64) redistributable may not be installed.\nInstall VS 2019 (x64) runtimes manually if you experience issues running IA", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
         }
