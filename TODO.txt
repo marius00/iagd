@@ -1,9 +1,8 @@
 Pending:
 * Version number
-* Remove any excess eqlite libraries
+* Remove any excess sqlite libraries
 * Check what we need in terms of VC++ runtimes (can prolly remove some)
 * Replace .net version for installer
-* Ionic zip - Replace it, right now its hardcoded..
---- Message='IBM437' is not a supported encoding name. For information on defining a custom encoding, see the documentation for the Encoding.RegisterProvider method. (Parameter 'name')
 * Spamming task cancelled:        private static AccessStatus IsTokenValid(string user, string token) {
-* WebUI copy and build scripts has the wrong path
+* Actually support new dark mode?
+

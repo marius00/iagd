@@ -82,7 +82,7 @@ namespace IAGrim
             // Prevent running in RELEASE mode by accident
             // And thus risking the live database
 #if !DEBUG
-            if (Debugger.IsAttached) {
+            if (System.Diagnostics.Debugger.IsAttached) {
                 Logger.Fatal("Debugger attached, please run in DEBUG mode");
                 return;
             }
