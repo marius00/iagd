@@ -13,6 +13,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Windows.Forms;
+using Microsoft.Web.WebView2.Core;
 
 namespace IAGrim.UI.Tabs {
     internal sealed class SplitSearchWindow : Form {
@@ -81,6 +82,8 @@ namespace IAGrim.UI.Tabs {
 
             Activated += SplitSearchWindow_Activated;
             Deactivate += SplitSearchWindow_Deactivate;
+            var conf = CoreWebView2Environment.CreateAsync(null, GlobalPaths.EdgeCacheLocation).Result;
+            webView21.EnsureCoreWebView2Async(conf);
             webView21.Source = new Uri(GetSiteUri());
 
             InitializeFilterPanel();

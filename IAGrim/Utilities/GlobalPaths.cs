@@ -108,6 +108,14 @@ namespace IAGrim.Utilities {
             }
         }
 
+        public static string EdgeCacheLocation{
+            get {
+                string path = Path.Combine(CoreFolder, "edge");
+                Directory.CreateDirectory(path);
+                return path;
+            }
+        }
+
 
         public static bool IsHardcore(string filename) {
             return filename.EndsWith(".gsh") || filename.EndsWith(".csh") || filename.EndsWith(".bsh");
