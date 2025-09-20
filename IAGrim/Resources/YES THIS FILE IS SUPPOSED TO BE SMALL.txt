@@ -5,4 +5,4 @@ The regular userdata.db contains a lot of parsed data from Grim Dawn which the c
 Just copy this userdata.db file into data\, start IA, then go to the "Mods" tab, select vanilla and parse the database.
 
 
-Please check the 'help' tab before asking for help, most likely it answere your question ;)
+Please check the 'help' tab before asking for help, most likely it answers your question ;)

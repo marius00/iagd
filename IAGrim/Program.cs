@@ -21,7 +21,7 @@ namespace IAGrim
     internal static class Program
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(Program));
-        private static MainWindow _mw;
+        private static MainWindow? _mw;
         private static readonly StartupService StartupService = new StartupService();
 
         private static void LoadUuid(SettingsService settings)
@@ -159,7 +159,7 @@ namespace IAGrim
             var itemTagDao = serviceProvider.Get<IItemTagDao>();
             var databaseItemStatDao = serviceProvider.Get<IDatabaseItemStatDao>();
             var itemSkillDao = serviceProvider.Get<IItemSkillDao>();
-            ParsingService parsingService = new ParsingService(itemTagDao, null, databaseItemDao, databaseItemStatDao, itemSkillDao, settingsService.GetLocal().LocalizationFile);
+            ParsingService parsingService = new ParsingService(itemTagDao, string.Empty, databaseItemDao, databaseItemStatDao, itemSkillDao, settingsService.GetLocal().LocalizationFile);
             StartupService.PrintStartupInfo(factory, settingsService);
 
             // TODO: Offload to the new language loader
