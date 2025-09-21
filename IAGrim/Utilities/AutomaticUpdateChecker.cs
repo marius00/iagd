@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using AutoUpdaterDotNET;
+using EvilsoftCommons.Exceptions;
 using IAGrim.Settings;
 using IAGrim.Settings.Dto;
 using Timer = System.Timers.Timer;
@@ -20,8 +21,7 @@ namespace IAGrim.Utilities {
         public const string Url = "https://grimdawn.evilsoft.net/version.php";
 
         private string GetUpdateXml(bool requestLatest) {
-            var v = Assembly.GetExecutingAssembly().GetName().Version;
-            string version = $"{v.Major}.{v.Minor}.{v.Build}.{v.Revision}";
+            var version = ExceptionReporter.VersionString;
 
             var is64Bit = Environment.Is64BitOperatingSystem;
             if (requestLatest) {

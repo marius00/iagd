@@ -1,4 +1,5 @@
-﻿using IAGrim.Database;
+﻿using EvilsoftCommons.Exceptions;
+using IAGrim.Database;
 using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Dto;
 using IAGrim.Database.Interfaces;
@@ -10,27 +11,16 @@ using IAGrim.Utilities;
 using IAGrim.Utilities.HelperClasses;
 using log4net;
 using NHibernate;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Security.Principal;
-using System.Threading;
-using System.Windows.Forms;
 
 namespace IAGrim {
     public class StartupService {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(StartupService));
 
         public void Init() {
-            Version version = Assembly.GetExecutingAssembly().GetName().Version;
-            DateTime buildDate = new DateTime(2000, 1, 1)
-                .AddDays(version.Build)
-                .AddSeconds(version.Revision * 2);
-            Logger.InfoFormat("Running version {0}.{1}.{2}.{3} from {4:dd/MM/yyyy}",
-                version.Major, version.Minor, version.Build, version.Revision, buildDate);
+            DateTime buildDate = ExceptionReporter.BuildDate;
+            Logger.InfoFormat("Running version {0} from {1:dd/MM/yyyy}", ExceptionReporter.VersionString, buildDate);
 
             FileVersionInfo dllVersion = FileVersionInfo.GetVersionInfo(Path.Combine(Directory.GetCurrentDirectory(), "ItemAssistantHook_x64.dll"));
             FileVersionInfo playtestDllVersion = FileVersionInfo.GetVersionInfo(Path.Combine(Directory.GetCurrentDirectory(), "ItemAssistantHook_playtest_x64.dll"));

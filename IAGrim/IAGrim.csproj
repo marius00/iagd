@@ -1,4 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <!-- Use a custom version format including the current date and time -->
+    <MinorVersion>$([System.DateTime]::UtcNow.ToString("yy"))</MinorVersion>
+    <BuildNumber>$([System.DateTime]::UtcNow.ToString("MMdd"))</BuildNumber>
+    <RevisionNumber>$([System.DateTime]::UtcNow.ToString("HHmm"))</RevisionNumber>
+
+    <!-- Set AssemblyVersion and InformationalVersion -->
+    <AssemblyVersion>1.$(MinorVersion).$(BuildNumber).$(RevisionNumber)</AssemblyVersion>
+    <InformationalVersion>1.$(MinorVersion).$(BuildNumber).$(RevisionNumber) - $([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</InformationalVersion>
+  </PropertyGroup>
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -28,12 +39,15 @@
         <Description>Item Assistant and Infinite Stash for Grim Dawn</Description>
         <Product>IAGrim</Product>
         <AssemblyTitle>GD Item Assistant</AssemblyTitle>
-        <Version>1.5.0-dev01234567</Version>
         <PackageProjectUrl>https://grimdawn.evilsoft.net</PackageProjectUrl>
         <PackageIcon>gd.png</PackageIcon>
         <RepositoryUrl>https://github.com/marius00/iagd/</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
     </PropertyGroup>
+	<PropertyGroup>
+    <NoWarn>$(NoWarn);WFO5001</NoWarn>
+</PropertyGroup>
+
    <ItemGroup>
      <None Remove="Database\Model\BuddyItem.hbm.xml" />
      <None Remove="Database\Model\BuddyItemRecord.hbm.xml" />

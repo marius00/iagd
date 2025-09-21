@@ -444,12 +444,9 @@ namespace IAGrim.UI {
 
 
             // Set version number
-            var version = Assembly.GetExecutingAssembly().GetName().Version;
-            DateTime buildDate = new DateTime(2000, 1, 1)
-                .AddDays(version.Build)
-                .AddSeconds(version.Revision * 2);
-            statusLabel.Text = statusLabel.Text + $" - {version.Major}.{version.Minor}.{version.Build}.{version.Revision} from {buildDate.ToString("dd/MM/yyyy")}";
-            tsVersionNumber.Text = $"{version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
+            DateTime buildDate = ExceptionReporter.BuildDate;
+            statusLabel.Text = statusLabel.Text + $" - {ExceptionReporter.VersionString} from {buildDate.ToString("dd/MM/yyyy")}";
+            tsVersionNumber.Text = ExceptionReporter.VersionString;
 
 
             var settingsService = _serviceProvider.Get<SettingsService>();

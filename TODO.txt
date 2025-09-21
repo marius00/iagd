@@ -1,7 +1,4 @@
 Pending:
-* Version number
 * Remove any excess sqlite libraries
 * Check what we need in terms of VC++ runtimes (can prolly remove some, like old cefsharp one?)
-* Replace .net version for installer
 * Spamming task cancelled:        private static AccessStatus IsTokenValid(string user, string token) {
-* Actually support new dark mode?
