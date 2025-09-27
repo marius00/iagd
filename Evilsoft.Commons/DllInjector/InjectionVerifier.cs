@@ -128,10 +128,12 @@ namespace EvilsoftCommons.DllInjector {
                 }
                 catch (Exception ex) {
                     Logger.Warn("Exception while attempting to verify isPlaytest.. " + ex.Message + ex.StackTrace);
+                    System.Environment.Exit(1);
                 }
             }
             else {
                 Logger.Warn("Could not find dumpbin.exe, unable to verify isPlaytest.");
+                System.Environment.Exit(1);
             }
             return false;
         }
