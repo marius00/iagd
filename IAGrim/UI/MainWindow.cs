@@ -569,7 +569,6 @@ namespace IAGrim.UI {
                     ListviewUpdateTrigger,
                     playerItemDao,
                     _searchWindow.ModSelectionHandler.GetAvailableModSelection(),
-                    transferStashService,
                     transferStashService2,
                     languagePackPicker,
                     settingsService,

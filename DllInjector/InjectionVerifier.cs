@@ -132,6 +132,7 @@ namespace EvilsoftCommons.DllInjector {
             }
             else {
                 Logger.Warn("Could not find dumpbin.exe, unable to verify isPlaytest.");
+                throw new Exception("Fatal error, dumpbin.exe is missing");
             }
             return false;
         }

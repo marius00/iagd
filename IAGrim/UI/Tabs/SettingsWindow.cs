@@ -23,7 +23,6 @@ namespace IAGrim.UI.Tabs {
         private readonly Action _itemViewUpdateTrigger;
         private readonly IPlayerItemDao _playerItemDao;
         private readonly GDTransferFile[] _modFilter;
-        private readonly TransferStashService _transferStashService;
         private readonly TransferStashService2 _transferStashService2;
         private readonly CefBrowserHandler _cefBrowserHandler;
         private readonly LanguagePackPicker _languagePackPicker;
@@ -39,7 +38,6 @@ namespace IAGrim.UI.Tabs {
             Action itemViewUpdateTrigger, 
             IPlayerItemDao playerItemDao,
             GDTransferFile[] modFilter,
-            TransferStashService transferStashService,
             TransferStashService2 transferStashService2,
             LanguagePackPicker languagePackPicker, 
             SettingsService settings, GrimDawnDetector grimDawnDetector, DarkMode darkModeToggler, AutomaticUpdateChecker automaticUpdateChecker) {            
@@ -50,7 +48,6 @@ namespace IAGrim.UI.Tabs {
             this._itemViewUpdateTrigger = itemViewUpdateTrigger;
             this._playerItemDao = playerItemDao;
             this._modFilter = modFilter;
-            this._transferStashService = transferStashService;
             this._transferStashService2 = transferStashService2;
             _languagePackPicker = languagePackPicker;
             _settings = settings;

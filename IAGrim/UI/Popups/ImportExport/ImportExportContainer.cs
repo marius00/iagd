@@ -15,23 +15,23 @@ using IAGrim.Parsers.TransferStash;
 
 namespace IAGrim.UI.Popups.ImportExport {
     partial class ImportExportContainer : Form {
-        private readonly GDTransferFile[] modFilter;
-        private readonly IPlayerItemDao playerItemDao;
-        private readonly TransferStashService2 sm;
+        private readonly GDTransferFile[] _modFilter;
+        private readonly IPlayerItemDao _playerItemDao;
+        private readonly TransferStashService2 _sm;
 
         public ImportExportContainer(GDTransferFile[] modFilter, IPlayerItemDao playerItemDao, TransferStashService2 sm) {
             InitializeComponent();
-            this.modFilter = modFilter;
-            this.playerItemDao = playerItemDao;
-            this.sm = sm;
+            this._modFilter = modFilter;
+            this._playerItemDao = playerItemDao;
+            this._sm = sm;
         }
 
         private void ImportExportContainer_Load(object sender, EventArgs e) {
             UIHelper.AddAndShow(new ImportExportModePicker(
-                modFilter, 
-                playerItemDao, 
+                _modFilter, 
+                _playerItemDao, 
                 contentPanel.Controls, 
-                sm,
+                _sm,
                 () => this.Close()
                 ), contentPanel);
         }

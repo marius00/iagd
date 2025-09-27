@@ -2,3 +2,83 @@ Pending:
 * Remove any excess sqlite libraries
 * Check what we need in terms of VC++ runtimes (can prolly remove some, like old cefsharp one?)
 * Spamming task cancelled:        private static AccessStatus IsTokenValid(string user, string token) {
+** Item view seems to render oddly.. 2.5 items
+* Loading arz files crashes IA: "ExecuteTransactionSqlSqlite" System.InvalidOperationException: 'ExecuteNonQuery can only be called when the connection is open.'
+* Make IAGD copy dependencies\, should only be missing the primary iagd DLL File on a regular build. (and maybe not even that?)
+- Do we still need to parse all shit like item skills?
+- Seems GD is parsing in the menu again? Not ideal.. ReplicaItem
+
+
+Exception thrown: 'System.Net.Sockets.SocketException' in System.Net.Sockets.dll
+Exception thrown: 'System.Net.Sockets.SocketException' in System.Net.Sockets.dll
+Exception thrown: 'System.Net.Sockets.SocketException' in System.Private.CoreLib.dll
+Exception thrown: 'System.Net.Sockets.SocketException' in System.Net.Requests.dll
+Exception thrown: 'System.Net.Sockets.SocketException' in System.Private.CoreLib.dll
+Exception thrown: 'System.Net.Http.HttpRequestException' in System.Net.Http.dll
+Exception thrown: 'System.Net.Http.HttpRequestException' in System.Private.CoreLib.dll
+Exception thrown: 'System.Net.Http.HttpRequestException' in System.Private.CoreLib.dll
+Exception thrown: 'System.Net.Http.HttpRequestException' in System.Private.CoreLib.dll
+Exception thrown: 'System.Net.Http.HttpRequestException' in System.Private.CoreLib.dll
+Exception thrown: 'System.Net.Http.HttpRequestException' in System.Private.CoreLib.dll
+Exception thrown: 'System.Net.Http.HttpRequestException' in System.Private.CoreLib.dll
+Exception thrown: 'System.Net.Http.HttpRequestException' in System.Private.CoreLib.dll
+Exception thrown: 'System.Net.Http.HttpRequestException' in System.Net.Http.dll
+Exception thrown: 'System.Net.Http.HttpRequestException' in System.Private.CoreLib.dll
+Exception thrown: 'System.Net.WebException' in System.Net.Requests.dll
+Exception thrown: 'System.Net.WebException' in System.Net.WebClient.dll
+Exception thrown: 'System.Net.WebException' in System.Net.WebClient.dll
+
+
+
+Opening shared stash tab 5:
+STACK_TEXT:  
+000000ef`7e34d980 00007ffe`f2e1132e     : 00350032`00300067 000000ef`7e34f420 00350032`00300067 00000000`00000000 : CrashReport+0x2c0c
+000000ef`7e34e1d0 00007ffe`ff1fc87c     : 00350032`00300067 000000ef`7e34f420 00000000`00000000 00007ffe`38ef0000 : CrashReport+0x132e
+000000ef`7e34e200 00007ffe`15960dff     : 00350032`00300067 00007ffe`15999ec2 ffffffff`fffffffe 00007fff`01b15ba1 : ucrtbase!callnewh+0x1c
+000000ef`7e34e230 00007ffe`153e5f9d     : 00000000`00000000 000002bb`b04f22d0 000002bb`87b2d650 000002bb`b04f22d0 : Game!GAME::WeaponArmor_Offhand::GetLeftHandType+0x4bf5f
+000000ef`7e34e260 00007ffe`153e603c     : 000000ef`7e34e2f0 000002bb`8cda3a00 00000000`0000000f ffffffff`fffffffe : Game!GAME::FilterMountedCharacterAction::operator=+0x79d
+000000ef`7e34e290 00007ffe`153e5ec6     : 000002bb`b04f28d0 00350032`00300032 00000000`00000000 00007fff`01b147b1 : Game!GAME::FilterMountedCharacterAction::operator=+0x83c
+000000ef`7e34e2f0 00007ffe`1540802c     : 000002bb`b04f2790 000002bb`8f3d8250 000002bb`8f3d8250 00007ffe`154d9626 : Game!GAME::FilterMountedCharacterAction::operator=+0x6c6
+000000ef`7e34e320 00007ffe`156bd449     : 000002bb`b04f22d0 000002bb`8f3d8250 ffffffff`fffffffe 00000000`00000000 : Game!GAME::AscendantAltar::ApplyReplicationData+0x145c
+000000ef`7e34e350 00007ffe`156bd113     : 000002bb`b04f22d0 000002bb`00000000 00000000`00000000 00000000`00000000 : Game!GAME::Item::SetItemReplicaInfo+0x19
+000000ef`7e34e380 00007ffe`ac588281     : 000002bb`5f47c450 000002bb`5f47c450 000002bb`5f47c450 000002bb`288799c0 : Game!GAME::Item::CreateItem+0xc3
+000000ef`7e34e3e0 00007ffe`ac57d9b9     : 000002bb`57ca5038 00007ff6`cdd7f2b1 000002bb`36e95ed0 000002bb`288799c0 : ItemAssistantHook_x64!InventorySack_AddItem::Hooked_GameEngine_Update+0x261
+000000ef`7e34e8c0 00007ff6`cdb6ff11     : 00000000`00000000 000002bb`36e97200 000002bb`36e97200 000002bb`288799c0 : ItemAssistantHook_x64!OnDemandSeedInfo::HookedMethod+0x79
+000000ef`7e34f320 00007ff6`cdbe83b9     : 000002bb`000004c2 000003c0`00000500 000002bb`2a27e330 000002bb`3b9aca00 : grim_dawn+0xff11
+000000ef`7e34fca0 00007ff6`cddf416f     : 00000000`0000000a 00000000`00000000 00000000`00000000 00000000`00000000 : grim_dawn+0x883b9
+000000ef`7e34fcf0 00007fff`01247374     : 00000000`00000000 00000000`00000000 00000000`00000000 00007ffe`3d170000 : grim_dawn!LZ4_decompress_fast_usingDict+0x2c8f
+000000ef`7e34fd30 00007fff`01b3cc91     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : kernel32!BaseThreadInitThunk+0x14
+000000ef`7e34fd60 00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x21
+
+Placing item in tab 6:
+
+ERROR_CODE: (NTSTATUS) 0xc0000005 - The instruction at 0x%p referenced memory at 0x%p. The memory could not be %s.
+ExceptionAddress: 00007ffe0b615ef4 (Game!GAME::FilterMountedCharacterAction::operator=+0x00000000000006f4)
+
+0000004c`d89adfe0 00007ffe`0b63802c     : 0000004c`d89ae220 000001c5`b472bf10 000001c5`b4725080 00007ffe`000002b3 : Game!GAME::FilterMountedCharacterAction::operator=+0x6f4
+0000004c`d89ae010 00007ffe`3a5b9794     : 00000000`00000000 00007ffe`0b61603c 000001c5`46bf0000 00007fff`01b15ba1 : Game!GAME::AscendantAltar::ApplyReplicationData+0x145c
+0000004c`d89ae040 00007ffe`3a5babc4     : 000001c5`a18ac770 000001c5`a22f0020 000001c5`b472bf10 000001c5`b4724bc0 : ItemAssistantHook_x64!InventorySack_AddItem::HandleItem+0x154
+0000004c`d89ae380 00007ffe`0b8a82fd     : 00000000`00000000 000001c5`00000000 000001c5`b472bf10 00000000`00000000 : ItemAssistantHook_x64!InventorySack_AddItem::Hooked_InventorySack_AddItem_Drop+0x44
+0000004c`d89ae4d0 00007ffe`0b7620f5     : 000001c5`55081000 0000004c`0003bbd9 00000000`00000005 000001c5`4d78df00 : Game!GAME::GameEngine::AddItemToTransfer+0x1ed
+0000004c`d89ae6d0 00007ff6`550625eb     : 000001c5`0e3b24e8 000001c5`0e3b24e8 000001c5`0e3b2528 0000004c`d89ae7d0 : Game!GAME::CursorHandlerItemMove::QuickDropInTransfer+0x1f5
+0000004c`d89ae760 00007ff6`55136005     : 000001c5`953f37a8 000001c5`0e362ea0 000001c5`0e362ea0 000001c5`953f37a8 : grim_dawn+0x1225eb
+0000004c`d89ae7b0 00007ff6`54f61e23     : 00000000`0002c100 0000004c`d89aefe8 0000004c`d89aefd0 0000000d`00000011 : grim_dawn+0x1f6005
+0000004c`d89ae850 00007ffe`144291cf     : 000001c5`46beccc0 000001c5`46beccc0 00000000`00000000 00000000`00000001 : grim_dawn+0x21e23
+0000004c`d89aefc0 00007ff6`54f4febd     : 000001c5`55082330 000001c5`55082330 0000004c`d89af150 000001c5`46b56a70 : Engine!GAME::Engine::ProcessUserInput+0x14f
+0000004c`d89af050 00007ff6`54fc83b9     : 000001c5`00000a7f 000003c0`00000500 000001c5`48686d60 000001c5`3b9aca00 : grim_dawn+0xfebd
+0000004c`d89af9d0 00007ff6`551d416f     : 00000000`0000000a 00000000`00000000 00000000`00000000 00000000`00000000 : grim_dawn+0x883b9
+0000004c`d89afa20 00007fff`01247374     : 00000000`00000000 00000000`00000000 00000000`00000000 00007ffe`390b0000 : grim_dawn!LZ4_decompress_fast_usingDict+0x2c8f
+0000004c`d89afa60 00007fff`01b3cc91     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : kernel32!BaseThreadInitThunk+0x14
+0000004c`d89afa90 00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x21
+
+
+Patch notes:
+* Now uses WebView2 (edge-chromium) instead of CefSharp Chromium for the items view
+* Replaced the deprecated Ionic.Zip with the native .net zip
+* The version format is now 1.year.monthday.hourminute (1.yy.
+* Now uses .Net 9 instead of .Net Framework 4.7.2 (https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-9.0.9-windows-x64-installer)
+* IAGD is now 64 bit (previously it ran as 32bit despite requiring 64bit Grim Dawn)
+* Installer size is ~90mb smaller than before
+* Lots of updated dependencies
+* A few bug fixes (and probably new bugs introduced)
+* Perhaps marginally better dark mode

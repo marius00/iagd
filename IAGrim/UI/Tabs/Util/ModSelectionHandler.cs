@@ -2,11 +2,7 @@
 using IAGrim.Utilities;
 using IAGrim.Utilities.HelperClasses;
 using log4net;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Windows.Forms;
 using IAGrim.Settings;
 
 namespace IAGrim.UI.Tabs.Util {
