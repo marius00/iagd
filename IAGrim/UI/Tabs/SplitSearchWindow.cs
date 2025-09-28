@@ -2,17 +2,12 @@
 using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.Arz;
 using IAGrim.Settings;
-using IAGrim.Settings.Dto;
 using IAGrim.Theme;
 using IAGrim.UI.Controller;
 using IAGrim.UI.Tabs.Util;
 using IAGrim.Utilities;
 using log4net;
 using Microsoft.Web.WebView2.WinForms;
-using System;
-using System.Linq;
-using System.Net;
-using System.Windows.Forms;
 using Microsoft.Web.WebView2.Core;
 
 namespace IAGrim.UI.Tabs {
@@ -433,7 +428,7 @@ namespace IAGrim.UI.Tabs {
             webView21.Location = new Point(4, 3);
             webView21.Margin = new Padding(4, 3, 4, 3);
             webView21.Name = "webView21";
-            webView21.Size = new Size(2399, 1153);
+            webView21.Size = new Size(1282, 663);
             webView21.TabIndex = 0;
             webView21.ZoomFactor = 1D;
             // 
