@@ -92,6 +92,7 @@ namespace IAGrim.UI.Tabs {
 
         private string GetSiteUri() {
 #if DEBUG
+            /*
             var client = new WebClient();
 
             try {
@@ -102,7 +103,7 @@ namespace IAGrim.UI.Tabs {
             }
             catch (System.Net.WebException) {
                 Logger.Debug("NodeJS not running, defaulting to standard view");
-            }
+            }*/
 #endif
             return GlobalPaths.ItemsHtmlFile;
         }

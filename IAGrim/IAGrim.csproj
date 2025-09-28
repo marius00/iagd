@@ -306,7 +306,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy /Y &quot;$(SolutionDir)iagrim\Listdlls.exe&quot; &quot;$(TargetDir)&quot;" />
+    <Exec Command="xcopy /Y &quot;$(SolutionDir)Dependencies\&quot; &quot;$(TargetDir)&quot;" />
   </Target>
 
 </Project>

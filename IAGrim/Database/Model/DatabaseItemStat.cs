@@ -13,7 +13,7 @@ namespace IAGrim.Database {
         public virtual string Stat { get; set; }
 
         public virtual float Value { get; set; }
-        public virtual string TextValue { get; set; }
+        public virtual string? TextValue { get; set; }
 
         public virtual DatabaseItem Parent { get; set; }
     }

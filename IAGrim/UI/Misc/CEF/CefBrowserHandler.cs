@@ -196,24 +196,6 @@ namespace IAGrim.UI.Misc.CEF {
         }
 
 
-        private string GetSiteUri() {
-#if DEBUG
-            var client = new WebClient();
-
-            try {
-                Logger.Debug("Checking if NodeJS is running...");
-                client.DownloadString("http://localhost:3000/");
-                Logger.Debug("NodeJS running");
-                return "http://localhost:3000/";
-            }
-            catch (System.Net.WebException) {
-                Logger.Debug("NodeJS not running, defaulting to standard view");
-            }
-#endif
-            return GlobalPaths.ItemsHtmlFile;
-        }
-
-
         public void ShowMessage(string message, UserFeedbackLevel level = UserFeedbackLevel.Info, string helpUrl = null) {
             string levelLowercased = level.ToString().ToLowerInvariant();
             var m = message.Replace("\n", "\\n").Replace("'", "\\'");

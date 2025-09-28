@@ -70,21 +70,20 @@ namespace IAGrim.Database {
         }
 
         private void ExecuteTransactionSqlSqlite(string[] commands, ProgressTracker progressTracker) {
-            using (SqliteConnection dbConnection = new SqliteConnection(SessionFactoryLoader.SessionFactory.ConnectionString)) {
-                dbConnection.Open();
+            using SqliteConnection dbConnection = new SqliteConnection(SessionFactoryLoader.SessionFactory.ConnectionString);
+            dbConnection.Open();
 
-                using (var transaction = dbConnection.BeginTransaction()) {
-                    using (SqliteCommand command = new SqliteCommand()) {
-                        foreach (var sql in commands) {
-                            command.CommandText = sql;
-                            command.ExecuteNonQuery();
-                            progressTracker?.Increment();
-                        }
-                    }
+            using var transaction = dbConnection.BeginTransaction();
 
-                    transaction.Commit();
-                }
+
+            foreach (var sql in commands) {
+                using SqliteCommand command = new SqliteCommand(sql, dbConnection);
+                command.Transaction = transaction;
+                command.ExecuteNonQuery();
+                progressTracker?.Increment();
             }
+
+            transaction.Commit();
         }
 
         public void Save(List<DatabaseItem> items, ProgressTracker progressTracker) {
@@ -190,42 +189,29 @@ namespace IAGrim.Database {
 
         private int InsertStatsSqlite(string sql, List<DatabaseItem> items) {
             int numStats = 0;
-            using (Microsoft.Data.Sqlite.SqliteConnection dbConnection = new SqliteConnection(SessionFactoryLoader.SessionFactory.ConnectionString)) {
+            using (SqliteConnection dbConnection = new SqliteConnection(SessionFactoryLoader.SessionFactory.ConnectionString)) {
                 dbConnection.Open();
 
-                using (var transaction = dbConnection.BeginTransaction()) {
-                    using (Microsoft.Data.Sqlite.SqliteCommand command = new Microsoft.Data.Sqlite.SqliteCommand(sql)) {
-                        foreach (DatabaseItem item in items) {
-                            foreach (DatabaseItemStat stat in item.Stats) {
-                                command.Parameters.Add(new Microsoft.Data.Sqlite.SqliteParameter("@id", item.Id));
-                                command.Parameters.Add(new SqliteParameter("@stat", stat.Stat));
-                                command.Parameters.Add(new SqliteParameter("@tv", stat.TextValue));
-                                command.Parameters.Add(new SqliteParameter("@val", stat.Value));
-                                command.ExecuteNonQuery();
-                                numStats++;
-                            }
-                        }
+                using var transaction = dbConnection.BeginTransaction();
+                foreach (DatabaseItem item in items) {
+                    foreach (DatabaseItemStat stat in item.Stats) {
+                        using var command = new SqliteCommand(sql, dbConnection);
+                        command.Transaction = transaction;
+                        command.Parameters.Add(new SqliteParameter("@id", item.Id));
+                        command.Parameters.Add(new SqliteParameter("@stat", stat.Stat));
+                        command.Parameters.Add(new SqliteParameter("@tv", stat.TextValue ?? ""));
+                        command.Parameters.Add(new SqliteParameter("@val", stat.Value));
+                        command.ExecuteNonQuery();
+                        numStats++;
                     }
-
-                    transaction.Commit();
                 }
+
+                transaction.Commit();
             }
 
             return numStats;
         }
 
-
-
-        internal class InteralRowStat {
-            public string Record { get; set; }
-            public string Stat { get; set; }
-            public double Value { get; set; }
-            public string TextValue { get; set; }
-
-            public string Name { get; set; }
-        }
-
-        // 
 
         /// <summary>
         /// Returns "special items" which are stackable, such as Dynamite, Scrap, Blood of Chton, Ancient Brain, etc..

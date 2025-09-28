@@ -3,11 +3,9 @@ Pending:
 * Check what we need in terms of VC++ runtimes (can prolly remove some, like old cefsharp one?)
 * Spamming task cancelled:        private static AccessStatus IsTokenValid(string user, string token) {
 ** Item view seems to render oddly.. 2.5 items
-* Loading arz files crashes IA: "ExecuteTransactionSqlSqlite" System.InvalidOperationException: 'ExecuteNonQuery can only be called when the connection is open.'
 * Make IAGD copy dependencies\, should only be missing the primary iagd DLL File on a regular build. (and maybe not even that?)
 - Do we still need to parse all shit like item skills?
 - Seems GD is parsing in the menu again? Not ideal.. ReplicaItem
-
 
 Exception thrown: 'System.Net.Sockets.SocketException' in System.Net.Sockets.dll
 Exception thrown: 'System.Net.Sockets.SocketException' in System.Net.Sockets.dll
@@ -82,3 +80,5 @@ Patch notes:
 * Lots of updated dependencies
 * A few bug fixes (and probably new bugs introduced)
 * Perhaps marginally better dark mode
+
+- Fixed a crash in menu[]
