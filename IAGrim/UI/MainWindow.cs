@@ -1,31 +1,34 @@
-﻿using EvilsoftCommons;
+﻿using DllInjector;
+using EvilsoftCommons;
 using EvilsoftCommons.Cloud;
 using EvilsoftCommons.DllInjector;
 using EvilsoftCommons.Exceptions;
+using IAGrim.Backup.Cloud.CefSharp.Events;
+using IAGrim.Backup.Cloud.Service;
+using IAGrim.Backup.Cloud.Util;
 using IAGrim.BuddyShare;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.Arz;
 using IAGrim.Parsers.Arz.dto;
 using IAGrim.Parsers.GameDataParsing.Service;
+using IAGrim.Parsers.TransferStash;
 using IAGrim.Services;
+using IAGrim.Services.ItemReplica;
 using IAGrim.Services.MessageProcessor;
+using IAGrim.Settings;
 using IAGrim.UI.Controller;
 using IAGrim.UI.Misc;
 using IAGrim.UI.Misc.CEF;
+using IAGrim.UI.Popups;
 using IAGrim.UI.Tabs;
 using IAGrim.Utilities;
 using IAGrim.Utilities.Cloud;
 using IAGrim.Utilities.HelperClasses;
 using log4net;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
-using DllInjector;
-using IAGrim.Backup.Cloud.Service;
-using IAGrim.Backup.Cloud.Util;
-using IAGrim.Parsers.TransferStash;
-using IAGrim.Settings;
-using IAGrim.Services.ItemReplica;
 
 namespace IAGrim.UI {
     public partial class MainWindow : Form {
@@ -517,13 +520,17 @@ namespace IAGrim.UI {
 
 
 
-            _authService = new AuthService(_cefBrowserHandler, new AuthenticationProvider(settingsService), playerItemDao);
+            _authService = new AuthService(new AuthenticationProvider(settingsService), playerItemDao);
             var backupSettings = new BackupSettings(playerItemDao, settingsService, _cefBrowserHandler);
             UIHelper.AddAndShow(backupSettings, backupPanel);
 
             var onlineSettings = new OnlineSettings(playerItemDao, _authService, settingsService, _cefBrowserHandler, buddyItemDao, buddySubscriptionDao);
             UIHelper.AddAndShow(onlineSettings, onlinePanel);
-            _cefBrowserHandler.OnAuthSuccess += (_, __) => onlineSettings.UpdateUi();
+            _authService.OnAuthCompletion += (args_, __) => {
+                if (((args_ as AuthResultEvent)!).IsAuthorized) {
+                    onlineSettings.UpdateUi();
+                }
+            };
 
 
             _modsDatabaseConfigTab = new ModsDatabaseConfig(DatabaseLoadedTrigger, playerItemDao, _parsingService, grimDawnDetector, settingsService, _cefBrowserHandler, databaseItemDao, replicaItemDao);
@@ -627,6 +634,10 @@ namespace IAGrim.UI {
                 this.Text += $" - {titleTag}";
             }
 
+            if (_authService.CheckAuthentication() == AuthService.AccessStatus.Unauthorized && !settingsService.GetLocal().OptOutOfBackups && playerItemDao.GetNumItems() > 100) {
+                var authService = new AuthService(new AuthenticationProvider(settingsService), _serviceProvider.Get<IPlayerItemDao>());
+                new BackupLoginNagScreen(authService, settingsService).Show();
+            }
 
             searchController.JsIntegration.ItemTransferEvent += TransferItem;
             new WindowSizeManager(this, settingsService);

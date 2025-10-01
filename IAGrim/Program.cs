@@ -1,7 +1,7 @@
-using System.Drawing.Imaging;
 using EvilsoftCommons.Exceptions;
 using EvilsoftCommons.SingleInstance;
 using IAGrim.Backup.Cloud;
+using IAGrim.Backup.Cloud.Service;
 using IAGrim.Database;
 using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Interfaces;
@@ -11,10 +11,12 @@ using IAGrim.Parsers.GameDataParsing.Service;
 using IAGrim.Services;
 using IAGrim.Settings;
 using IAGrim.UI;
+using IAGrim.UI.Popups;
 using IAGrim.Utilities;
 using log4net;
 using log4net.Config;
 using StatTranslator;
+using System.Drawing.Imaging;
 using System.Reflection;
 
 namespace IAGrim
@@ -171,6 +173,7 @@ namespace IAGrim
                     language.SetTagIfMissing(tag.Tag, tag.Name);
                 }
             }
+
 
             _mw = new MainWindow(
                 serviceProvider,

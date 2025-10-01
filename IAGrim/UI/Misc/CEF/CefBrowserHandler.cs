@@ -12,7 +12,7 @@ using System.Diagnostics;
 using System.Net;
 
 namespace IAGrim.UI.Misc.CEF {
-    public class CefBrowserHandler(SettingsService settings) : ICefBackupAuthentication, IUserFeedbackHandler, IBrowserCallbacks, IHelpService {
+    public class CefBrowserHandler(SettingsService settings) : IUserFeedbackHandler, IBrowserCallbacks, IHelpService {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(CefBrowserHandler));
         private TabControl? _tabControl; // TODO: UGh.. why?
 
@@ -210,10 +210,5 @@ namespace IAGrim.UI.Misc.CEF {
                 SendMessage(new IOMessage { Type = IOMessageType.ShowMessage, Data = ret });
             }
         }
-
-
-
-        [Obsolete("Old login system via redirects")]
-        public event EventHandler? OnAuthSuccess;
     }
 }

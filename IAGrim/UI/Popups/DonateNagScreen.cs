@@ -1,17 +1,8 @@
 ﻿using IAGrim.Parsers.Arz;
 using IAGrim.Settings;
-using IAGrim.Settings.Dto;
 using IAGrim.Utilities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Timers;
-using System.Windows.Forms;
 
 namespace IAGrim.UI {
     public partial class DonateNagScreen : Form {
