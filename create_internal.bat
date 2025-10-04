@@ -3,4 +3,6 @@ copy /y %appdata%\..\local\evilsoft\iagd\tags_ia.template.txt installer\tags_ia.
 
 "Inno\iscc" Inno\gdia_beta.iss
 
+Inno\iscc Inno\gdia_beta.iss
+
 pause
