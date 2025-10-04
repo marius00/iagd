@@ -4,6 +4,7 @@ using IAGrim.Database.Interfaces;
 using IAGrim.UI.Misc.CEF;
 using IAGrim.Utilities;
 using log4net;
+using Microsoft.Data.Sqlite;
 using Newtonsoft.Json;
 using NHibernate.Exceptions;
 using System;
@@ -28,7 +29,6 @@ using System.Threading;
  *
  * This update requires re-parsing all item stats
  */
-
 namespace IAGrim.Services.ItemReplica {
     class ItemReplicaParser : IDisposable {
         private readonly ILog _logger = LogManager.GetLogger(typeof(ItemReplicaParser));
@@ -149,7 +149,7 @@ namespace IAGrim.Services.ItemReplica {
                     var playerItemId = long.Parse(template.playerItemId);
                     if (playerItemId > 0 && string.IsNullOrEmpty(template.buddyItemId)) {
                         if (!playerRecordMap.ContainsKey(playerItemId)) {
-                            _logger.Warn($"Could not find playerItemId({playerItemId} in the db");
+                            _logger.Warn($"Could not find playerItemId({playerItemId}) in the db");
                             continue;
                         } else if (playerRecordMap[playerItemId] != template.replica.baseRecord) {
                             _logger.Warn($"Got record '{template.replica.baseRecord}' for PID({playerItemId}), expected record '{playerRecordMap[playerItemId]}'");
@@ -187,7 +187,7 @@ namespace IAGrim.Services.ItemReplica {
                     }
                 }
             }
-            catch (System.Data.SQLite.SQLiteException ex) {
+            catch (SqliteException ex) {
                 _logger.Warn($"Error storing replica item stats for item {latest}: " + ex.Message);
             }
             catch (GenericADOException ex) {

@@ -1,10 +1,6 @@
 ﻿using IAGrim.Database.Interfaces;
 using log4net;
 using NHibernate;
-using IAGrim.Database.DAO.Util;
-using NHibernate.Exceptions;
-using System.Collections.Generic;
-using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 using NHibernate.Criterion;
 using NHibernate.Transform;
 
@@ -12,7 +8,7 @@ namespace IAGrim.Database {
     public class ReplicaItemDaoImpl : BaseDao<ReplicaItem>, IReplicaItemDao {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ReplicaItemDaoImpl));
 
-        public ReplicaItemDaoImpl(ISessionCreator sessionCreator, SqlDialect dialect) : base(sessionCreator, dialect) {
+        public ReplicaItemDaoImpl(SessionFactory sessionCreator) : base(sessionCreator) {
 
         }
 
@@ -55,25 +51,21 @@ namespace IAGrim.Database {
 
         public IList<long> GetPlayerItemIds() {
             using (var session = SessionCreator.OpenSession()) {
-                using (session.BeginTransaction()) {
-                    return session.CreateCriteria<ReplicaItem>()
-                        .Add(Restrictions.IsNotNull("PlayerItemId"))
-                        .SetProjection(Projections.Property("PlayerItemId"))
-                        .SetResultTransformer(new DistinctRootEntityResultTransformer())
-                        .List<long>();
-                }
+                return session.CreateCriteria<ReplicaItem>()
+                    .Add(Restrictions.IsNotNull("PlayerItemId"))
+                    .SetProjection(Projections.Property("PlayerItemId"))
+                    .SetResultTransformer(new DistinctRootEntityResultTransformer())
+                    .List<long>();
             }
         }
 
         public IList<string> GetBuddyItemIds() {
             using (var session = SessionCreator.OpenSession()) {
-                using (session.BeginTransaction()) {
-                    return session.CreateCriteria<ReplicaItem>()
-                        .SetProjection(Projections.Property("BuddyItemId"))
-                        .Add(Restrictions.IsNotNull("BuddyItemId"))
-                        .SetResultTransformer(new DistinctRootEntityResultTransformer())
-                        .List<string>();
-                }
+                return session.CreateCriteria<ReplicaItem>()
+                    .SetProjection(Projections.Property("BuddyItemId"))
+                    .Add(Restrictions.IsNotNull("BuddyItemId"))
+                    .SetResultTransformer(new DistinctRootEntityResultTransformer())
+                    .List<string>();
             }
         }
 

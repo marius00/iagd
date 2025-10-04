@@ -26,6 +26,7 @@ interface IntegrationInterface {
 
     GetBackedUpCharacters(): string;
     GetCharacterDownloadUrl(character: string): string;
+    OpenURL(url: string): void;
 }
 
 
@@ -73,11 +74,7 @@ export function getItemSetAssociations(): string {
 
 
 export function openUrl(url: string) {
-  if (isEmbedded) {
-    document.location.href = url;
-  } else {
-    window.open(url, '_blank');
-  }
+    core.OpenURL(url)
 }
 
 export interface CharacterListDto {

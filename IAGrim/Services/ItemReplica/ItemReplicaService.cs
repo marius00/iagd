@@ -1,8 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
+﻿using System.Text;
 using EvilsoftCommons.Exceptions;
 using IAGrim.Database;
 using IAGrim.Database.Interfaces;
@@ -62,7 +58,7 @@ namespace IAGrim.Services {
                         Process();
                         _cooldown.Reset();
                     }
-                    
+
                     Thread.Sleep(1);
                 }
             });
@@ -104,9 +100,6 @@ namespace IAGrim.Services {
                     }
 
                     Thread.Sleep(1);
-                    if (_isShuttingDown) {
-                        return false;
-                    }
                 }
             }
 

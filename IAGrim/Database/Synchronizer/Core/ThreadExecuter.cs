@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Runtime.ExceptionServices;
-using System.Threading;
-
-using EvilsoftCommons.Exceptions;
+﻿using EvilsoftCommons.Exceptions;
 using log4net;
+using System.Collections.Concurrent;
+using System.Diagnostics;
+using System.Reflection;
+using System.Runtime.ExceptionServices;
 
 namespace IAGrim.Database.Synchronizer.Core {
     /// <summary>
@@ -23,6 +22,7 @@ namespace IAGrim.Database.Synchronizer.Core {
 #else
         public const int ThreadTimeout = 1000 * 60 * 30;
 #endif
+        private Mutex _lockObj = new Mutex();
 
         public ThreadExecuter() {
             _isCancelled = false;
@@ -56,6 +56,7 @@ namespace IAGrim.Database.Synchronizer.Core {
                     }
                     catch (Exception ex) {
                         _results[elem.Trigger] = ex;
+                        Logger.Warn($"Error calling {elem.CallingMethodName}: " + ex.Message, ex);
                     }
 
                     elem.Trigger.Set();
@@ -90,14 +91,35 @@ namespace IAGrim.Database.Synchronizer.Core {
         }
 
         public void Execute(Action func, int timeout = ThreadTimeout, bool expectLongOperation = false) {
+            if (_lockObj.WaitOne(TimeSpan.FromMinutes(20))) {
+                try {
+                    func();
+                }
+                finally {
+                    _lockObj.ReleaseMutex();
+                }
+            }
+
+            return;
+
             if (_thread == null)
                 throw new InvalidOperationException("Object has been disposed");
             AutoResetEvent ev = new AutoResetEvent(false);
 
+#if DEBUG
+            StackTrace stackTrace = new StackTrace();
+            StackFrame callingFrame = stackTrace.GetFrame(1);
+            MethodBase callingMethod = callingFrame.GetMethod();
+            string callingMethodName = callingMethod.Name;
+#else
+string callingMethodName = "";
+#endif
+
             var item = new QueuedExecution {
                 Action = () => func(),
                 Trigger = ev,
-                IsLongRunning = expectLongOperation
+                IsLongRunning = expectLongOperation,
+                CallingMethodName = callingMethodName,
             };
             _queue.Enqueue(item);
 
@@ -115,17 +137,36 @@ namespace IAGrim.Database.Synchronizer.Core {
         }
 
         public T Execute<T>(Func<T> func) {
-            return Execute(func, ThreadTimeout);
+#if DEBUG
+            StackTrace stackTrace = new StackTrace();
+            StackFrame callingFrame = stackTrace.GetFrame(1);
+            MethodBase callingMethod = callingFrame.GetMethod();
+            string callingMethodName = callingMethod.Name;
+#else
+string callingMethodName = "";
+#endif
+            return Execute(func, ThreadTimeout, callingMethodName);
         }
 
-        private T Execute<T>(Func<T> func, int timeout) {
+        private T Execute<T>(Func<T> func, int timeout, string callingMethodName) {
+            if (_lockObj.WaitOne(TimeSpan.FromMinutes(20))) {
+                try {
+                    return func();
+                }
+                finally {
+                    _lockObj.ReleaseMutex();
+                }
+            }
+
+            return func();
+
             if (_thread == null)
                 throw new InvalidOperationException("Object has been disposed");
             AutoResetEvent ev = new AutoResetEvent(false);
-
             var item = new QueuedExecution {
                 Func = () => func(),
-                Trigger = ev
+                Trigger = ev,
+                CallingMethodName = callingMethodName
             };
             _queue.Enqueue(item);
 
@@ -162,6 +203,7 @@ namespace IAGrim.Database.Synchronizer.Core {
             public Func<object> Func { get; set; }
             public Action Action { get; set; }
             public AutoResetEvent Trigger { get; set; }
+            public string CallingMethodName { get; set; }
 
             /// <summary>
             /// Helps track down which operation stalled.

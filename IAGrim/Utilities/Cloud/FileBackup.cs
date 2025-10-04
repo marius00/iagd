@@ -1,14 +1,9 @@
 ﻿using EvilsoftCommons.Cloud;
-using EvilsoftCommons.Exceptions;
 using IAGrim.Backup.FileWriter;
 using IAGrim.Database.Interfaces;
-using Ionic.Zip;
 using log4net;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
+using System.IO.Compression;
 using IAGrim.Settings;
 
 namespace IAGrim.Utilities.Cloud {
@@ -26,7 +21,6 @@ namespace IAGrim.Utilities.Cloud {
             ".fow",
             ".dat",
             ".bin",
-            ".cpn",
             ".gst",
             ".gsh"
         };
@@ -37,7 +31,7 @@ namespace IAGrim.Utilities.Cloud {
         }
 
         private static bool IsAcceptedFileFormat(string s) {
-            return AcceptedFileFormats.Contains(Path.GetExtension(s));
+            return AcceptedFileFormats.Contains(Path.GetExtension(s)) && !s.Contains("(");
         }
 
         public void Update() {
@@ -180,37 +174,32 @@ namespace IAGrim.Utilities.Cloud {
 
             string[] files = Directory.GetFiles(Path.Combine(gameSaves, "main", character), "*.*", SearchOption.AllDirectories);
 
-            using (ZipFile zip = new ZipFile { UseZip64WhenSaving = Zip64Option.AsNecessary }) {
-                Logger.Info($"Backing up character {character}..");
+            using var zip = ZipFile.Open(target, ZipArchiveMode.Create);
+            Logger.Info($"Backing up character {character}..");
 
-                foreach (var f in files) {
-                    if (!IsAcceptedFileFormat(f)) {
-                        Logger.Debug($"Ignoring file {f}, invalid file format.");
-                        continue;
-                    }
-
-                    // Max 1MB
-                    if (new FileInfo(f).Length > 1024 * 1024) {
-                        Logger.Debug($"Ignoring file {f}, size exceeds 1MB");
-                        continue;
-                    }
-
-
-                    var relativePath = f.Replace(gameSaves, "").Replace(Path.GetFileName(f), "");
-                    zip.AddFile(f, relativePath);
+            foreach (var f in files) {
+                if (!IsAcceptedFileFormat(f)) {
+                    Logger.Debug($"Ignoring file {f}, invalid file format.");
+                    continue;
                 }
 
-                zip.Comment = $"This backup of {character} was created at {DateTime.Now:G}.";
+                // Max 1MB
+                if (new FileInfo(f).Length > 1024 * 1024) {
+                    Logger.Debug($"Ignoring file {f}, size exceeds 1MB");
+                    continue;
+                }
 
-                try {
-                    zip.Save(target);
+                var relativePath = f.Replace(gameSaves, "").Replace(Path.GetFileName(f), "");
+
+                if (relativePath.StartsWith("\\")) {
+                    relativePath = relativePath.Substring(1);
                 }
-                catch (UnauthorizedAccessException) {
-                    Logger.WarnFormat("Access denied writing backup to \"{0}\"", target);
-                    throw;
-                }
+                zip.CreateEntryFromFile(f, relativePath +"/"+ f);
             }
+
+            zip.Comment = $"This backup of {character} was created at {DateTime.Now:G}.";
         }
+
         public static void BackupCommon(string target) {
             var destination = Path.GetDirectoryName(target);
             if (!Directory.Exists(destination))
@@ -219,34 +208,26 @@ namespace IAGrim.Utilities.Cloud {
 
             string[] files = Directory.GetFiles(GlobalPaths.SavePath, "*.*", SearchOption.TopDirectoryOnly);
 
-            using (ZipFile zip = new ZipFile { UseZip64WhenSaving = Zip64Option.AsNecessary }) {
-                Logger.Info($"Backing up transfer files etc..");
+            using var zip = ZipFile.Open(target, ZipArchiveMode.Create);
+            Logger.Info($"Backing up transfer files etc..");
 
-                foreach (var f in files) {
-                    if (!IsAcceptedFileFormat(f)) {
-                        Logger.Debug($"Ignoring file {f}, invalid file format.");
-                        continue;
-                    }
-
-                    // Max 1MB
-                    if (new FileInfo(f).Length > 1024 * 1024) {
-                        Logger.Debug($"Ignoring file {f}, size exceeds 1MB");
-                        continue;
-                    }
-
-                    zip.AddFile(f, "");
+            foreach (var f in files) {
+                if (!IsAcceptedFileFormat(f)) {
+                    Logger.Debug($"Ignoring file {f}, invalid file format.");
+                    continue;
                 }
 
-                zip.Comment = $"This backup of your stash files was created at {DateTime.Now:G}.";
+                // Max 1MB
+                if (new FileInfo(f).Length > 1024 * 1024) {
+                    Logger.Debug($"Ignoring file {f}, size exceeds 1MB");
+                    continue;
+                }
 
-                try {
-                    zip.Save(target);
-                }
-                catch (UnauthorizedAccessException) {
-                    Logger.WarnFormat("Access denied writing backup to \"{0}\"", target);
-                    throw;
-                }
+                zip.CreateEntryFromFile(f, Path.GetFileName(f));
             }
+
+            zip.Comment = $"This backup of your stash files was created at {DateTime.Now:G}.";
+
         }
 
         private void Backup(string destination, bool forced) {
@@ -274,55 +255,50 @@ namespace IAGrim.Utilities.Cloud {
                 return;
             }
 
-            using (var file = new TempFile()) {
-                using (ZipFile zip = new ZipFile { UseZip64WhenSaving = Zip64Option.AsNecessary }) {
-                    Logger.Info("Backing up characters..");
-                    
-                    string[] files = Directory.GetFiles(GlobalPaths.SavePath, "*.*", SearchOption.AllDirectories);
-                    foreach (var f in files) {
-                        if (!IsAcceptedFileFormat(f)) {
-                            Logger.Debug($"Ignoring file {f}, invalid file format.");
-                            continue;
-                        }
-
-                        // Max 1MB
-                        if (new FileInfo(f).Length > 1024 * 1024) {
-                            Logger.Debug($"Ignoring file {f}, size exceeds 1MB");
-                            continue;
-                        }
-
-
-                        var relativePath = f.Replace(GlobalPaths.SavePath, "").Replace(Path.GetFileName(f), "");
-                        zip.AddFile(f, relativePath);
-                    }
-
-                    Logger.Info("Backing up items..");
-
-
-                    var exporter = new IAFileExporter(file.filename);
-                    exporter.Write(items);
-
-                    zip.AddFile(file.filename).FileName = "export.ias";
-
-                    string helpfile = Path.Combine("Resources", "YES THIS FILE IS SUPPOSED TO BE SMALL.txt");
-                    if (File.Exists(helpfile))
-                        zip.AddFile(helpfile, "");
-
-                    zip.Comment = string.Format("This backup was created at {0}.", System.DateTime.Now.ToString("G"));
-
-                    try {
-                        zip.Save(target);
-                    }
-                    catch (UnauthorizedAccessException) {
-                        Logger.WarnFormat("Access denied writing backup to \"{0}\"", target);
-                        throw;
-                    }
-
-
-
-                    Logger.Info("Created a new backup of the database");
-                } //
+            if (File.Exists(target)) {
+                File.Delete(target);
             }
+
+            using var file = new TempFile();
+            using var zip = ZipFile.Open(target, ZipArchiveMode.Create);
+            Logger.Info("Backing up characters..");
+                    
+            string[] files = Directory.GetFiles(GlobalPaths.SavePath, "*.*", SearchOption.AllDirectories);
+            foreach (var f in files) {
+                if (!IsAcceptedFileFormat(f)) {
+                    Logger.Debug($"Ignoring file {f}, invalid file format.");
+                    continue;
+                }
+
+                // Max 1MB
+                if (new FileInfo(f).Length > 1024 * 1024) {
+                    Logger.Debug($"Ignoring file {f}, size exceeds 1MB");
+                    continue;
+                }
+
+
+                var relativePath = f.Replace(GlobalPaths.SavePath, "").Replace(Path.GetFileName(f), "");
+                if (relativePath.StartsWith("\\")) {
+                    relativePath = relativePath.Substring(1);
+                }
+                zip.CreateEntryFromFile(f, relativePath + Path.GetFileName(f));
+            }
+
+            Logger.Info("Backing up items..");
+
+
+            var exporter = new IAFileExporter(file.filename);
+            exporter.Write(items);
+
+            zip.CreateEntryFromFile(file.filename, "export.ias");
+
+            string helpfile = Path.Combine("Resources", "YES THIS FILE IS SUPPOSED TO BE SMALL.txt");
+            if (File.Exists(helpfile))
+                zip.CreateEntryFromFile(helpfile, "YES THIS FILE IS SUPPOSED TO BE SMALL.txt");
+
+            zip.Comment = string.Format("This backup was created at {0}.", System.DateTime.Now.ToString("G"));
+
+            Logger.Info("Created a new backup of the database");
         }
     }
 }

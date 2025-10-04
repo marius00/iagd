@@ -316,3 +316,7 @@ dotnet_style_prefer_simplified_interpolation = true:suggestion
 indent_style = space
 indent_size = 2
 tab_width = 2
+
+# Breaking change in the "firefox" input elements
+[*.{cs,vb}]
+dotnet_diagnostic.WFO1000.severity = none

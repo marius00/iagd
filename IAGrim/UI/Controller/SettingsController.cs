@@ -101,7 +101,7 @@ namespace IAGrim.UI.Controller {
         }
 
         public void DonateNow() {
-            System.Diagnostics.Process.Start("https://grimdawn.evilsoft.net/?donate");
+            Process.Start(new ProcessStartInfo { FileName = "https://grimdawn.evilsoft.net/?donate", UseShellExecute = true });
             DateTime dt = DateTime.Now.AddDays(new Random().Next(14, 25));
             _settings.GetLocal().LastNagTimestamp = dt.Ticks;
         }

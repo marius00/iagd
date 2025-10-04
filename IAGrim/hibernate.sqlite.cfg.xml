@@ -2,9 +2,9 @@
 <hibernate-configuration xmlns="urn:nhibernate-configuration-2.2">
   <session-factory>
     <property name="connection.provider">NHibernate.Connection.DriverConnectionProvider</property>
-    <property name="dialect">NHibernate.Dialect.SQLiteDialect</property>
-    <property name="connection.driver_class">NHibernate.Driver.SQLite20Driver</property>
-    <property name="connection.connection_string">Data Source={appdata}userdata{db}.db;Version=3;Compress=True</property>
+    <property name="connection.driver_class">NHibernate.Extensions.Sqlite.SqliteDriver,NHibernate.Extensions.Sqlite</property>
+    <property name="dialect">NHibernate.Extensions.Sqlite.SqliteDialect,NHibernate.Extensions.Sqlite</property>
+    <property name="connection.connection_string">Data Source={appdata}userdata{db}.db</property>
     <property name="connection.isolation">Unspecified</property>
     <property name="query.substitutions">true=1;false=0</property>
     <property name="adonet.batch_size">1</property>

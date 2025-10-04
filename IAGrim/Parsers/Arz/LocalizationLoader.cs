@@ -1,17 +1,8 @@
-﻿using DataAccess;
-using IAGrim.Database;
-using Ionic.Zip;
+﻿using IAGrim.Database;
 using log4net;
 using StatTranslator;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+using System.IO.Compression;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using IAGrim.UI;
-using NHibernate.Linq;
 
 namespace IAGrim.Parsers.Arz {
     public class LocalizationLoader {
@@ -134,13 +125,11 @@ namespace IAGrim.Parsers.Arz {
             return result;
         }
 
-        private Dictionary<string, string> ReadFile(ZipFile zip, string filename) {
-            using (var ms = new MemoryStream()) {
-                zip[filename].Extract(ms);
-                var data = Encoding.UTF8.GetString(ms.GetBuffer(), 0, ms.GetBuffer().Length);
-
-                return Parse(data);
-            }
+        private Dictionary<string, string> ReadFile(ZipArchive zip, string filename) {
+            var f = zip.Entries.FirstOrDefault(m => m.Name == filename);
+            using var handle = f.Open();
+            var data = new StreamReader(handle, Encoding.UTF8).ReadToEnd();
+            return Parse(data);
         }
 
         public bool CheckLanguage(string filename, out string author, out string language) {
@@ -148,17 +137,16 @@ namespace IAGrim.Parsers.Arz {
             language = "Unknown";
             if (!File.Exists(filename))
                 return false;
-
+            
             try {
-                using (ZipFile zip = ZipFile.Read(filename)) {
-                    var parsed = ReadFile(zip, "language.def");
-                    if (parsed.ContainsKey("author"))
-                        author = parsed["author"];
-                    if (parsed.ContainsKey("language"))
-                        language = parsed["language"];
+                using var zip = ZipFile.Open(filename, ZipArchiveMode.Read);
+                var parsed = ReadFile(zip, "language.def");
+                if (parsed.ContainsKey("author"))
+                    author = parsed["author"];
+                if (parsed.ContainsKey("language"))
+                    language = parsed["language"];
 
-                    return true;
-                }
+                return true;
             }
             catch (Exception ex) {
                 Logger.Warn(ex.Message);
@@ -180,26 +168,26 @@ namespace IAGrim.Parsers.Arz {
                 return false;
 
             try {
-                using (ZipFile zip = ZipFile.Read(filename)) {
-                    foreach (var itemsFile in
-                        zip.EntryFileNames
-                            .Where(m =>
-                                m.Contains("items")
-                                    || m.Contains("skills")
-                                    || m.Contains("endlessdungeon"))) // fg dir has tagsgdx2_endlessdungeon.txt file, which also has localization for items
-                    {
-                        var tags = ReadFile(zip, itemsFile);
-                        _tagsItems = Merge(_tagsItems, tags);
-                    }
+                using var zip = ZipFile.Open(filename, ZipArchiveMode.Read);
+                foreach (var itemsFile in zip.Entries.Where(m =>
+                             m.Name.Contains("items")
+                             || m.Name.Contains("skills")
+                             || m.Name.Contains("endlessdungeon"))
+                         ) {
 
-                    var tagsIaFile = zip.Entries.FirstOrDefault(m => m.FileName == "tags_ia.txt");
-                    if (tagsIaFile != null) {
-                        _tagsIa = ReadFile(zip, "tags_ia.txt");
-                    }
-                    else {
-                        Logger.WarnFormat("Could not locate tags_ia.txt in {0}, defaulting to english for missing tags.", filename);
-                        _tagsIa = null;
-                    }
+                    using var handle = itemsFile.Open();
+                    var data = new StreamReader(handle, Encoding.UTF8).ReadToEnd();
+                    var tags = Parse(data);
+                    _tagsItems = Merge(_tagsItems, tags);
+                }
+
+                var tagsIaFile = zip.Entries.FirstOrDefault(m => m.Name == "tags_ia.txt");
+                if (tagsIaFile != null) {
+                    _tagsIa = ReadFile(zip, "tags_ia.txt");
+                }
+                else {
+                    Logger.WarnFormat("Could not locate tags_ia.txt in {0}, defaulting to english for missing tags.", filename);
+                    _tagsIa = null;
                 }
             }
             catch (Exception ex) {
@@ -232,10 +220,8 @@ namespace IAGrim.Parsers.Arz {
             }
 
             try {
-                using (ZipFile zip = ZipFile.Read(filename)) {
-                    var tagsIaFile = zip.Entries.FirstOrDefault(m => m.FileName == "tags_ia.txt");
-                    return tagsIaFile != null;
-                }
+                using var zip = ZipFile.Open(filename, ZipArchiveMode.Read);
+                return zip.Entries.FirstOrDefault(m => m.Name == "tags_ia.txt") != null;
             }
             catch (Exception ex) {
                 Logger.Warn(ex.Message);

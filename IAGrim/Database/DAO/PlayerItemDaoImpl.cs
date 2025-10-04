@@ -1,20 +1,17 @@
-﻿using IAGrim.Database.DAO.Dto;
+﻿using EvilsoftCommons;
+using IAGrim.Backup.Cloud.Dto;
+using IAGrim.Database.DAO;
+using IAGrim.Database.DAO.Dto;
+using IAGrim.Database.DAO.Table;
+using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Dto;
 using IAGrim.Database.Interfaces;
+using IAGrim.Database.Model;
 using IAGrim.Services.Dto;
 using log4net;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Transform;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using EvilsoftCommons;
-using IAGrim.Backup.Cloud.Dto;
-using IAGrim.Database.DAO;
-using IAGrim.Database.DAO.Table;
-using IAGrim.Database.DAO.Util;
-using IAGrim.Database.Model;
 
 namespace IAGrim.Database {
     /// <summary>
@@ -25,9 +22,8 @@ namespace IAGrim.Database {
         private readonly IDatabaseItemStatDao _databaseItemStatDao;
 
         public PlayerItemDaoImpl(
-            ISessionCreator sessionCreator,
-            IDatabaseItemStatDao databaseItemStatDao,
-            SqlDialect dialect) : base(sessionCreator, dialect) {
+            SessionFactory sessionCreator,
+            IDatabaseItemStatDao databaseItemStatDao) : base(sessionCreator) {
             _databaseItemStatDao = databaseItemStatDao;
         }
 
@@ -37,31 +33,29 @@ namespace IAGrim.Database {
         /// <returns></returns>
         public IList<PlayerItem> GetByRecord(string prefixRecord, string baseRecord, string suffixRecord, string materiaRecord, string mod, bool isHardcore) {
             using (var session = SessionCreator.OpenSession()) {
-                using (session.BeginTransaction()) {
-                    // TODO:
-                    var crits = session.CreateCriteria<PlayerItem>()
-                        .Add(Restrictions.Eq("BaseRecord", baseRecord))
-                        .Add(Restrictions.Eq("PrefixRecord", prefixRecord))
-                        .Add(Restrictions.Eq("SuffixRecord", suffixRecord))
-                        .Add(Restrictions.Eq("MateriaRecord", materiaRecord));
+                // TODO:
+                var crits = session.CreateCriteria<PlayerItem>()
+                    .Add(Restrictions.Eq("BaseRecord", baseRecord))
+                    .Add(Restrictions.Eq("PrefixRecord", prefixRecord))
+                    .Add(Restrictions.Eq("SuffixRecord", suffixRecord))
+                    .Add(Restrictions.Eq("MateriaRecord", materiaRecord));
 
-                    if (string.IsNullOrEmpty(mod)) {
-                        crits = crits.Add(Restrictions.Or(Restrictions.Eq("Mod", ""), Restrictions.IsNull("Mod")));
-                    }
-                    else {
-                        crits = crits.Add(Restrictions.Eq("Mod", mod));
-                    }
-
-
-                    if (isHardcore) {
-                        crits = crits.Add(Restrictions.Eq("IsHardcore", true));
-                    }
-                    else {
-                        crits = crits.Add(Restrictions.Not(Restrictions.Eq("IsHardcore", true)));
-                    }
-
-                    return crits.List<PlayerItem>();
+                if (string.IsNullOrEmpty(mod)) {
+                    crits = crits.Add(Restrictions.Or(Restrictions.Eq("Mod", ""), Restrictions.IsNull("Mod")));
                 }
+                else {
+                    crits = crits.Add(Restrictions.Eq("Mod", mod));
+                }
+
+
+                if (isHardcore) {
+                    crits = crits.Add(Restrictions.Eq("IsHardcore", true));
+                }
+                else {
+                    crits = crits.Add(Restrictions.Not(Restrictions.Eq("IsHardcore", true)));
+                }
+
+                return crits.List<PlayerItem>();
             }
         }
 
@@ -173,12 +167,10 @@ namespace IAGrim.Database {
         /// <returns></returns>
         public IList<string> ListAllRecords() {
             using (var session = SessionCreator.OpenSession()) {
-                using (session.BeginTransaction()) {
-                    return session.CreateCriteria<PlayerItem>()
-                        .SetProjection(Projections.Property("BaseRecord"))
-                        .SetResultTransformer(new DistinctRootEntityResultTransformer())
-                        .List<string>();
-                }
+                return session.CreateCriteria<PlayerItem>()
+                    .SetProjection(Projections.Property("BaseRecord"))
+                    .SetResultTransformer(new DistinctRootEntityResultTransformer())
+                    .List<string>();
             }
         }
 
@@ -197,16 +189,14 @@ namespace IAGrim.Database {
 
             // Attempt to exclude any items already owned, only applicable for users with online sync enabled
             using (var session = SessionCreator.OpenSession()) {
-                using (session.BeginTransaction()) {
-                    var existingItems = session.CreateCriteria<PlayerItem>()
-                        .Add(Restrictions.IsNotNull(nameof(PlayerItem.CloudId)))
-                        .List<PlayerItem>();
+                var existingItems = session.CreateCriteria<PlayerItem>()
+                    .Add(Restrictions.IsNotNull(nameof(PlayerItem.CloudId)))
+                    .List<PlayerItem>();
 
-                    filteredItems = items
-                        .Where(m => string.IsNullOrEmpty(m.CloudId) || existingItems.All(existing => existing.CloudId != m.CloudId))
-                        .Where(m => !Exists(session, m)) // May be slow, but should prevent duplicates better than anything
-                        .ToList();
-                }
+                filteredItems = items
+                    .Where(m => string.IsNullOrEmpty(m.CloudId) || existingItems.All(existing => existing.CloudId != m.CloudId))
+                    .Where(m => !Exists(session, m)) // May be slow, but should prevent duplicates better than anything
+                    .ToList();
             }
 
             Save(filteredItems);
@@ -245,12 +235,12 @@ namespace IAGrim.Database {
                     }
 
                     // insert into DeletedPlayerItem(oid) select onlineid from playeritem where onlineid is not null and stackcount <= 0 and id in (1,2,3)
-                    session.CreateSQLQuery(SqlUtils.EnsureDialect(Dialect,
+                    session.CreateSQLQuery(
                             $" INSERT OR IGNORE INTO {DeletedPlayerItemTable.Table} ({DeletedPlayerItemTable.Id}) " +
                             $" SELECT {PlayerItemTable.CloudId} FROM {PlayerItemTable.Table} " +
                             $" WHERE {PlayerItemTable.CloudId} IS NOT NULL " +
                             $" AND {PlayerItemTable.Stackcount} <= 0 " +
-                            $" AND {PlayerItemTable.Id} IN ( :ids )"))
+                            $" AND {PlayerItemTable.Id} IN ( :ids )")
                         .SetParameterList("ids", items.Select(m => m.Id).ToList())
                         .ExecuteUpdate();
 
@@ -291,8 +281,7 @@ namespace IAGrim.Database {
             var records = GetRecordsForItem(item);
 
             foreach (var record in records) {
-                session.CreateSQLQuery(
-                        SqlUtils.EnsureDialect(Dialect, $"INSERT OR IGNORE INTO {table} ({id}, {rec}) VALUES (:id, :record)"))
+                session.CreateSQLQuery($"INSERT OR IGNORE INTO {table} ({id}, {rec}) VALUES (:id, :record)")
                     .SetParameter("id", item.Id)
                     .SetParameter("record", record)
                     .ExecuteUpdate();
@@ -307,8 +296,7 @@ namespace IAGrim.Database {
             var records = GetRecordsForItem(item);
 
             foreach (var record in GetPetBonusRecords(stats, records)) {
-                session.CreateSQLQuery(
-                        SqlUtils.EnsureDialect(Dialect, $"INSERT OR IGNORE INTO {table} ({id}, {rec}) VALUES (:id, :record)"))
+                session.CreateSQLQuery($"INSERT OR IGNORE INTO {table} ({id}, {rec}) VALUES (:id, :record)")
                     .SetParameter("id", item.Id)
                     .SetParameter("record", record)
                     .ExecuteUpdate();
@@ -384,6 +372,7 @@ namespace IAGrim.Database {
 
         public void Delete(List<DeleteItemDto> items) {
             using (var session = SessionCreator.OpenSession()) {
+                
                 using (var transaction = session.BeginTransaction()) {
                     foreach (var item in items) {
                         session.CreateSQLQuery($"DELETE FROM ReplicaItem2 WHERE playeritemid IN (select id from playeritem WHERE {PlayerItemTable.CloudId} = :uuid)")
@@ -406,7 +395,6 @@ namespace IAGrim.Database {
         /// </summary>
         public override void Save(IEnumerable<PlayerItem> items) {
             List<PlayerItem> itemsToStore;
-
             Logger.Debug($"Storing {items.Count()} new items");
 
             var ids = new List<long>();
@@ -474,19 +462,15 @@ namespace IAGrim.Database {
 
         public IList<DeletedPlayerItem> GetItemsMarkedForOnlineDeletion() {
             using (var session = SessionCreator.OpenSession()) {
-                using (session.BeginTransaction()) {
-                    return session.QueryOver<DeletedPlayerItem>().List();
-                }
+                return session.QueryOver<DeletedPlayerItem>().List();
             }
         }
 
         public IList<string> GetOnlineIds() {
             using (var session = SessionCreator.OpenSession()) {
-                using (session.BeginTransaction()) {
-                    return session.CreateCriteria<PlayerItem>()
-                        .SetProjection(Projections.Property(nameof(PlayerItem.CloudId)))
-                        .List<string>();
-                }
+                return session.CreateCriteria<PlayerItem>()
+                    .SetProjection(Projections.Property(nameof(PlayerItem.CloudId)))
+                    .List<string>();
             }
         }
 
@@ -545,41 +529,39 @@ namespace IAGrim.Database {
         /// <returns></returns>
         public bool RequiresStatUpdate() {
             using (var session = SessionCreator.OpenSession()) {
-                using (session.BeginTransaction()) {
-                    var itemsLackingRarity = session.CreateCriteria<PlayerItem>().Add(Restrictions.IsNull("Rarity")).List().Count;
+                var itemsLackingRarity = session.CreateCriteria<PlayerItem>().Add(Restrictions.IsNull("Rarity")).List().Count;
 
-                    if (session.CreateCriteria<PlayerItem>().Add(Restrictions.IsNull("Rarity")).List().Count > 50) {
-                        Logger.Debug($"A stat parse is required, there are {itemsLackingRarity} items lacking rarity");
+                if (session.CreateCriteria<PlayerItem>().Add(Restrictions.IsNull("Rarity")).List().Count > 50) {
+                    Logger.Debug($"A stat parse is required, there are {itemsLackingRarity} items lacking rarity");
 
-                        return true;
-                    }
-
-                    if (session.CreateSQLQuery($"SELECT COUNT(*) as C FROM {SkillTable.Table}").UniqueResult<long>() <= 0) {
-                        Logger.Debug("A stat parse is required, there no entries in the skills table");
-
-                        return true;
-                    }
-
-                    var itemsLackingName = session.CreateCriteria<PlayerItem>().Add(Restrictions.IsNull("Name")).List().Count;
-
-                    if (session.CreateCriteria<PlayerItem>().Add(Restrictions.IsNull("Name")).List().Count > 20) {
-                        Logger.Debug($"A stat parse is required, there are {itemsLackingName} items lacking a name");
-
-                        return true;
-                    }
-
-                    if (session.QueryOver<PlayerItemRecord>()
-                        .ToRowCountInt64Query()
-                        .SingleOrDefault<long>() == 0) {
-                        Logger.Debug("A stat parse is required, there no entries in the item records table");
-
-                        return true;
-                    }
-
-                    Logger.Debug("A stat parse is not required");
-
-                    return false;
+                    return true;
                 }
+
+                if (session.CreateSQLQuery($"SELECT COUNT(*) as C FROM {SkillTable.Table}").UniqueResult<long>() <= 0) {
+                    Logger.Debug("A stat parse is required, there no entries in the skills table");
+
+                    return true;
+                }
+
+                var itemsLackingName = session.CreateCriteria<PlayerItem>().Add(Restrictions.IsNull("Name")).List().Count;
+
+                if (session.CreateCriteria<PlayerItem>().Add(Restrictions.IsNull("Name")).List().Count > 20) {
+                    Logger.Debug($"A stat parse is required, there are {itemsLackingName} items lacking a name");
+
+                    return true;
+                }
+
+                if (session.QueryOver<PlayerItemRecord>()
+                    .ToRowCountInt64Query()
+                    .SingleOrDefault<long>() == 0) {
+                    Logger.Debug("A stat parse is required, there no entries in the item records table");
+
+                    return true;
+                }
+
+                Logger.Debug("A stat parse is not required");
+
+                return false;
             }
         }
 
@@ -799,33 +781,31 @@ namespace IAGrim.Database {
             }
 
             using (var session = SessionCreator.OpenSession()) {
-                using (session.BeginTransaction()) {
-                    ISQLQuery q = session.CreateSQLQuery(string.Join(" ", sql));
+                ISQLQuery q = session.CreateSQLQuery(string.Join(" ", sql));
 
-                    foreach (var key in queryParams.Keys) {
-                        q.SetParameter(key, queryParams[key]);
-                        Logger.Debug($"{key}: " + queryParams[key]);
-                    }
-
-                    if (subQuery != null) {
-                        foreach (var key in subQuery.Parameters.Keys) {
-                            var parameterList = subQuery.Parameters[key];
-                            q.SetParameterList(key, parameterList);
-                            Logger.Debug($"{key}: " + string.Join(",", subQuery.Parameters[key]));
-                        }
-                    }
-
-                    if (query.Slot?.Length > 0) {
-                        q.SetParameterList("class", query.Slot);
-                    }
-
-                    Logger.Debug(q.QueryString);
-
-                    var items = q.List<object>().Select(ToPlayerItem).ToList();
-                    Logger.Debug($"Search returned {items.Count} items");
-
-                    return items;
+                foreach (var key in queryParams.Keys) {
+                    q.SetParameter(key, queryParams[key]);
+                    Logger.Debug($"{key}: " + queryParams[key]);
                 }
+
+                if (subQuery != null) {
+                    foreach (var key in subQuery.Parameters.Keys) {
+                        var parameterList = subQuery.Parameters[key];
+                        q.SetParameterList(key, parameterList);
+                        Logger.Debug($"{key}: " + string.Join(",", subQuery.Parameters[key]));
+                    }
+                }
+
+                if (query.Slot?.Length > 0) {
+                    q.SetParameterList("class", query.Slot);
+                }
+
+                Logger.Debug(q.QueryString);
+
+                var items = q.List<object>().Select(ToPlayerItem).ToList();
+                Logger.Debug($"Search returned {items.Count} items");
+
+                return items;
             }
         }
 
@@ -922,25 +902,23 @@ namespace IAGrim.Database {
             const string query = "select DISTINCT IFNULL(mod, '') as mod, ishardcore from playeritem";
 
             using (var session = SessionCreator.OpenSession()) {
-                using (session.BeginTransaction()) {
-                    var selection = session.CreateSQLQuery(query)
-                        .AddScalar("ishardcore", NHibernateUtil.Boolean)
-                        .AddScalar("mod", NHibernateUtil.String)
-                        .SetResultTransformer(new AliasToBeanResultTransformer(typeof(ModSelection)))
-                        .List<ModSelection>();
+                var selection = session.CreateSQLQuery(query)
+                    .AddScalar("ishardcore", NHibernateUtil.Boolean)
+                    .AddScalar("mod", NHibernateUtil.String)
+                    .SetResultTransformer(new AliasToBeanResultTransformer(typeof(ModSelection)))
+                    .List<ModSelection>();
 
 
-                    // Even if we have no items, at least list vanilla/nomod
-                    if (!selection.Any(m => string.IsNullOrEmpty(m.Mod) && m.IsHardcore) && selection.Any(m => m.IsHardcore)) {
-                        selection.Add(new ModSelection { IsHardcore = true });
-                    }
-
-                    if (!selection.Any(m => string.IsNullOrEmpty(m.Mod) && !m.IsHardcore) && selection.Any(m => !m.IsHardcore)) {
-                        selection.Add(new ModSelection { IsHardcore = false });
-                    }
-
-                    return selection;
+                // Even if we have no items, at least list vanilla/nomod
+                if (!selection.Any(m => string.IsNullOrEmpty(m.Mod) && m.IsHardcore) && selection.Any(m => m.IsHardcore)) {
+                    selection.Add(new ModSelection { IsHardcore = true });
                 }
+
+                if (!selection.Any(m => string.IsNullOrEmpty(m.Mod) && !m.IsHardcore) && selection.Any(m => !m.IsHardcore)) {
+                    selection.Add(new ModSelection { IsHardcore = false });
+                }
+
+                return selection;
             }
         }
 
@@ -970,26 +948,22 @@ namespace IAGrim.Database {
 
         public bool Exists(PlayerItem item) {
             using (var session = SessionCreator.OpenSession()) {
-                using (session.BeginTransaction()) {
-                    return Exists(session, item);
-                }
+                return Exists(session, item);
             }
         }
 
         public Dictionary<long, string> FindRecordsFromIds(IEnumerable<long> ids) {
             Dictionary<long, string> result = new Dictionary<long, string>();
             using (var session = SessionCreator.OpenSession()) {
-                using (session.BeginTransaction()) {
-                    foreach (var pair in session.CreateSQLQuery($"SELECT id,baserecord FROM playeritem WHERE id IN ( :ids )")
-                        .SetParameterList("ids", ids)
-                        .List()) {
+                foreach (var pair in session.CreateSQLQuery($"SELECT id,baserecord FROM playeritem WHERE id IN ( :ids )")
+                    .SetParameterList("ids", ids)
+                    .List()) {
 
-                        var arr = (object[])pair;
+                    var arr = (object[])pair;
 
-                        var baseRecord = Convert<string>(arr[1])?.Trim();
-                        long Id = Convert(arr[0]);
-                        result[Id] = baseRecord;
-                    }
+                    var baseRecord = Convert<string>(arr[1])?.Trim();
+                    long Id = Convert(arr[0]);
+                    result[Id] = baseRecord;
                 }
             }
 
@@ -1073,12 +1047,10 @@ namespace IAGrim.Database {
 
 
             using (var session = SessionCreator.OpenSession()) {
-                using (session.BeginTransaction()) {
-                    return session.CreateSQLQuery(sql).List()
-                        .Cast<object>()
-                        .Select(ToPlayerItem)
-                        .ToList();
-                }
+                return session.CreateSQLQuery(sql).List()
+                    .Cast<object>()
+                    .Select(ToPlayerItem)
+                    .ToList();
             }
         }
 

@@ -1,21 +1,16 @@
-﻿using IAGrim.Backup.FileWriter;
+﻿using EvilsoftCommons.Exceptions;
+using IAGrim.Backup;
+using IAGrim.Backup.FileWriter;
+using IAGrim.Database;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.Arz;
-using IAGrim.Utilities.HelperClasses;
-using System;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Windows.Forms;
-using EvilsoftCommons.Exceptions;
-using IAGrim.Backup;
-using IAGrim.Database;
 using IAGrim.Parsers.TransferStash;
 using IAGrim.Services;
 using IAGrim.Utilities;
-using Ionic.Zip;
+using IAGrim.Utilities.HelperClasses;
 using log4net;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.IO.Compression;
+using System.Text;
 
 namespace IAGrim.UI.Popups.ImportExport.Panels {
     partial class ImportMode : Form {
@@ -108,26 +103,24 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
         private static bool IsValid(string filename) {
             // Attempt to read ias/gds from zip file
             if (filename.ToLowerInvariant().EndsWith(".zip")) {
-                using (ZipFile zip = ZipFile.Read(filename)) {
-                    return zip.EntryFileNames.Any(fn => fn.EndsWith(".ias") || fn.EndsWith(".gds"));
-                }
+                using var zip = ZipFile.Open(filename, ZipArchiveMode.Read);
+                return zip.Entries.Any(fn => fn.Name.EndsWith(".ias") || fn.Name.EndsWith(".gds"));
             }
 
             // Regular ias/gds file
-            return true;
+            return filename.EndsWith(".ias") || filename.EndsWith(".gds");
         }
 
         private static byte[] Read(string filename) {
             // Attempt to read ias/gds from zip file
             if (filename.ToLowerInvariant().EndsWith(".zip")) {
-                using (ZipFile zip = ZipFile.Read(filename)) {
-                    var candidates = zip.EntryFileNames.Where(fn => fn.EndsWith(".ias") || fn.EndsWith(".gds")).ToList();
-                    foreach (var candidate in candidates) {
-                        using (var ms = new MemoryStream()) {
-                            zip[candidate].Extract(ms);
-                            return ms.GetBuffer();
-                        }
-                    }
+                using var zip = ZipFile.Open(filename, ZipArchiveMode.Read);
+                var candidates = zip.Entries.Where(fn => fn.Name.EndsWith(".ias") || fn.Name.EndsWith(".gds")).ToList();
+                foreach (var candidate in candidates) {
+                    using var ms = new MemoryStream();
+                    using var x = candidate.Open();
+                    x.CopyTo(ms);
+                    return ms.GetBuffer();
                 }
             }
 

@@ -2,17 +2,13 @@
 using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.Arz;
 using IAGrim.Settings;
-using IAGrim.Settings.Dto;
 using IAGrim.Theme;
 using IAGrim.UI.Controller;
 using IAGrim.UI.Tabs.Util;
 using IAGrim.Utilities;
 using log4net;
 using Microsoft.Web.WebView2.WinForms;
-using System;
-using System.Linq;
-using System.Net;
-using System.Windows.Forms;
+using Microsoft.Web.WebView2.Core;
 
 namespace IAGrim.UI.Tabs {
     internal sealed class SplitSearchWindow : Form {
@@ -20,7 +16,7 @@ namespace IAGrim.UI.Tabs {
         private readonly Action<string> _setStatus;
         private readonly SearchController _searchController;
         private readonly IItemTagDao _itemTagDao;
-        private Timer _delayedTextChangedTimer;
+        private System.Windows.Forms.Timer _delayedTextChangedTimer;
         private DesiredSkills _filterWindow;
         private TextBox _searchBox;
         private CheckBox _orderByLevel;
@@ -47,8 +43,17 @@ namespace IAGrim.UI.Tabs {
         /// ModSelectionHandler
         /// </summary>
         public ModSelectionHandler ModSelectionHandler { get; }
+        public WebView2 Browser => this.webView21;
 
-        public SplitSearchWindow(
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="browser"></param>
+        /// <param name="setStatus"></param>
+        /// <param name="playerItemDao"></param>
+        /// <param name="searchController"></param>
+        /// <param name="itemTagDao"></param>
+        public SplitSearchWindow(Microsoft.Web.WebView2.WinForms.WebView2 browser,
             Action<string> setStatus,
             IPlayerItemDao playerItemDao,
             SearchController searchController,
@@ -68,16 +73,21 @@ namespace IAGrim.UI.Tabs {
 
             ModSelectionHandler = new ModSelectionHandler(_modFilter, playerItemDao, UpdateListViewDelayed, setStatus, _settings);
 
+            _toolStripContainer.ContentPanel.Controls.Add(browser);
+
             Activated += SplitSearchWindow_Activated;
             Deactivate += SplitSearchWindow_Deactivate;
-
+            var conf = CoreWebView2Environment.CreateAsync(null, GlobalPaths.EdgeCacheLocation).Result;
+            webView21.EnsureCoreWebView2Async(conf);
             webView21.Source = new Uri(GetSiteUri());
+
             InitializeFilterPanel();
         }
 
 
         private string GetSiteUri() {
 #if DEBUG
+            /*
             var client = new WebClient();
 
             try {
@@ -88,12 +98,10 @@ namespace IAGrim.UI.Tabs {
             }
             catch (System.Net.WebException) {
                 Logger.Debug("NodeJS not running, defaulting to standard view");
-            }
+            }*/
 #endif
             return GlobalPaths.ItemsHtmlFile;
         }
-
-        public WebView2 Browser => this.webView21;
 
         public void SelectModFilterIfNotSelected() {
             if (!_hasCheckedModFilterNotEmpty) {
@@ -345,236 +353,243 @@ namespace IAGrim.UI.Tabs {
         private void UpdateListViewDelayed(int delay) {
             _delayedTextChangedTimer?.Stop();
 
-            _delayedTextChangedTimer = new Timer();
+            _delayedTextChangedTimer = new System.Windows.Forms.Timer();
             _delayedTextChangedTimer.Tick += HandleDelayedTextChangedTimerTick;
             _delayedTextChangedTimer.Interval = delay;
             _delayedTextChangedTimer.Start();
         }
 
         private void InitializeComponent() {
-            this.components = new System.ComponentModel.Container();
-            this._mainSplitter = new System.Windows.Forms.SplitContainer();
-            this._toolStripContainer = new System.Windows.Forms.ToolStripContainer();
-            this.webView21 = new Microsoft.Web.WebView2.WinForms.WebView2();
-            this._flowPanelFilter = new System.Windows.Forms.FlowLayoutPanel();
-            this._searchBox = new System.Windows.Forms.TextBox();
-            this._orderByLevel = new System.Windows.Forms.CheckBox();
-            this._itemQuality = new System.Windows.Forms.ComboBox();
-            this._slotFilter = new System.Windows.Forms.ComboBox();
-            this._modFilter = new System.Windows.Forms.ComboBox();
-            this._levelRequirementGroup = new System.Windows.Forms.GroupBox();
-            this._minLevel = new System.Windows.Forms.TextBox();
-            this._maxLevel = new System.Windows.Forms.TextBox();
-            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            ((System.ComponentModel.ISupportInitialize)(this._mainSplitter)).BeginInit();
-            this._mainSplitter.Panel2.SuspendLayout();
-            this._mainSplitter.SuspendLayout();
-            this._toolStripContainer.ContentPanel.SuspendLayout();
-            this._toolStripContainer.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.webView21)).BeginInit();
-            this._flowPanelFilter.SuspendLayout();
-            this._levelRequirementGroup.SuspendLayout();
-            this.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            _mainSplitter = new SplitContainer();
+            _toolStripContainer = new ToolStripContainer();
+            webView21 = new WebView2();
+            _flowPanelFilter = new FlowLayoutPanel();
+            _searchBox = new TextBox();
+            _orderByLevel = new CheckBox();
+            _itemQuality = new ComboBox();
+            _slotFilter = new ComboBox();
+            _modFilter = new ComboBox();
+            _levelRequirementGroup = new GroupBox();
+            _minLevel = new TextBox();
+            _maxLevel = new TextBox();
+            toolTip1 = new ToolTip(components);
+            ((System.ComponentModel.ISupportInitialize)_mainSplitter).BeginInit();
+            _mainSplitter.Panel2.SuspendLayout();
+            _mainSplitter.SuspendLayout();
+            _toolStripContainer.ContentPanel.SuspendLayout();
+            _toolStripContainer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)webView21).BeginInit();
+            _flowPanelFilter.SuspendLayout();
+            _levelRequirementGroup.SuspendLayout();
+            SuspendLayout();
             // 
             // _mainSplitter
             // 
-            this._mainSplitter.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._mainSplitter.Location = new System.Drawing.Point(0, 0);
-            this._mainSplitter.Name = "_mainSplitter";
+            _mainSplitter.Dock = DockStyle.Fill;
+            _mainSplitter.Location = new Point(0, 0);
+            _mainSplitter.Margin = new Padding(4, 3, 4, 3);
+            _mainSplitter.Name = "_mainSplitter";
             // 
             // _mainSplitter.Panel2
             // 
-            this._mainSplitter.Panel2.Controls.Add(this._toolStripContainer);
-            this._mainSplitter.Panel2.Controls.Add(this._flowPanelFilter);
-            this._mainSplitter.Size = new System.Drawing.Size(1313, 650);
-            this._mainSplitter.SplitterDistance = 204;
-            this._mainSplitter.SplitterWidth = 3;
-            this._mainSplitter.TabIndex = 0;
-            this._mainSplitter.TabStop = false;
+            _mainSplitter.Panel2.Controls.Add(_toolStripContainer);
+            _mainSplitter.Panel2.Controls.Add(_flowPanelFilter);
+            _mainSplitter.Size = new Size(1532, 750);
+            _mainSplitter.SplitterDistance = 238;
+            _mainSplitter.TabIndex = 0;
+            _mainSplitter.TabStop = false;
             // 
             // _toolStripContainer
             // 
-            this._toolStripContainer.BottomToolStripPanelVisible = false;
+            _toolStripContainer.BottomToolStripPanelVisible = false;
             // 
             // _toolStripContainer.ContentPanel
             // 
-            this._toolStripContainer.ContentPanel.Controls.Add(this.webView21);
-            this._toolStripContainer.ContentPanel.Size = new System.Drawing.Size(1106, 576);
-            this._toolStripContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._toolStripContainer.LeftToolStripPanelVisible = false;
-            this._toolStripContainer.Location = new System.Drawing.Point(0, 49);
-            this._toolStripContainer.Name = "_toolStripContainer";
-            this._toolStripContainer.RightToolStripPanelVisible = false;
-            this._toolStripContainer.Size = new System.Drawing.Size(1106, 601);
-            this._toolStripContainer.TabIndex = 48;
-            this._toolStripContainer.Text = "toolStripContainer1";
+            _toolStripContainer.ContentPanel.Controls.Add(webView21);
+            _toolStripContainer.ContentPanel.Margin = new Padding(4, 3, 4, 3);
+            _toolStripContainer.ContentPanel.Size = new Size(1290, 669);
+            _toolStripContainer.Dock = DockStyle.Fill;
+            _toolStripContainer.LeftToolStripPanelVisible = false;
+            _toolStripContainer.Location = new Point(0, 56);
+            _toolStripContainer.Margin = new Padding(4, 3, 4, 3);
+            _toolStripContainer.Name = "_toolStripContainer";
+            _toolStripContainer.RightToolStripPanelVisible = false;
+            _toolStripContainer.Size = new Size(1290, 694);
+            _toolStripContainer.TabIndex = 48;
+            _toolStripContainer.Text = "toolStripContainer1";
             // 
             // webView21
             // 
-            this.webView21.AllowExternalDrop = true;
-            this.webView21.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.webView21.CreationProperties = null;
-            this.webView21.DefaultBackgroundColor = System.Drawing.Color.White;
-            this.webView21.Location = new System.Drawing.Point(3, 3);
-            this.webView21.Name = "webView21";
-            this.webView21.Size = new System.Drawing.Size(1100, 570);
-            this.webView21.TabIndex = 0;
-            this.webView21.ZoomFactor = 1D;
+            webView21.AllowExternalDrop = true;
+            webView21.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            webView21.CreationProperties = null;
+            webView21.DefaultBackgroundColor = Color.White;
+            webView21.Location = new Point(4, 3);
+            webView21.Margin = new Padding(4, 3, 4, 3);
+            webView21.Name = "webView21";
+            webView21.Size = new Size(1282, 663);
+            webView21.TabIndex = 0;
+            webView21.ZoomFactor = 1D;
             // 
             // _flowPanelFilter
             // 
-            this._flowPanelFilter.AutoSize = true;
-            this._flowPanelFilter.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this._flowPanelFilter.Controls.Add(this._searchBox);
-            this._flowPanelFilter.Controls.Add(this._orderByLevel);
-            this._flowPanelFilter.Controls.Add(this._itemQuality);
-            this._flowPanelFilter.Controls.Add(this._slotFilter);
-            this._flowPanelFilter.Controls.Add(this._modFilter);
-            this._flowPanelFilter.Controls.Add(this._levelRequirementGroup);
-            this._flowPanelFilter.Dock = System.Windows.Forms.DockStyle.Top;
-            this._flowPanelFilter.Location = new System.Drawing.Point(0, 0);
-            this._flowPanelFilter.Name = "_flowPanelFilter";
-            this._flowPanelFilter.Size = new System.Drawing.Size(1106, 49);
-            this._flowPanelFilter.TabIndex = 52;
+            _flowPanelFilter.AutoSize = true;
+            _flowPanelFilter.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            _flowPanelFilter.Controls.Add(_searchBox);
+            _flowPanelFilter.Controls.Add(_orderByLevel);
+            _flowPanelFilter.Controls.Add(_itemQuality);
+            _flowPanelFilter.Controls.Add(_slotFilter);
+            _flowPanelFilter.Controls.Add(_modFilter);
+            _flowPanelFilter.Controls.Add(_levelRequirementGroup);
+            _flowPanelFilter.Dock = DockStyle.Top;
+            _flowPanelFilter.Location = new Point(0, 0);
+            _flowPanelFilter.Margin = new Padding(4, 3, 4, 3);
+            _flowPanelFilter.Name = "_flowPanelFilter";
+            _flowPanelFilter.Size = new Size(1290, 56);
+            _flowPanelFilter.TabIndex = 52;
             // 
             // _searchBox
             // 
-            this._searchBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this._searchBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
-            this._searchBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.RecentlyUsedList;
-            this._searchBox.Location = new System.Drawing.Point(3, 17);
-            this._searchBox.Margin = new System.Windows.Forms.Padding(3, 17, 3, 3);
-            this._searchBox.MaxLength = 255;
-            this._searchBox.Name = "_searchBox";
-            this._searchBox.Size = new System.Drawing.Size(304, 20);
-            this._searchBox.TabIndex = 41;
-            this._searchBox.Tag = "iatag_ui_searchbox_tooltip";
-            this.toolTip1.SetToolTip(this._searchBox, "The item name, partially works fine.");
+            _searchBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            _searchBox.AutoCompleteMode = AutoCompleteMode.Suggest;
+            _searchBox.AutoCompleteSource = AutoCompleteSource.RecentlyUsedList;
+            _searchBox.Location = new Point(4, 20);
+            _searchBox.Margin = new Padding(4, 20, 4, 3);
+            _searchBox.MaximumSize = new Size(512, 0);
+            _searchBox.MaxLength = 255;
+            _searchBox.Name = "_searchBox";
+            _searchBox.Size = new Size(125, 23);
+            _searchBox.TabIndex = 41;
+            _searchBox.Tag = "iatag_ui_searchbox_tooltip";
+            toolTip1.SetToolTip(_searchBox, "The item name, partially works fine.");
             // 
             // _orderByLevel
             // 
-            this._orderByLevel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._orderByLevel.AutoSize = true;
-            this._orderByLevel.Checked = true;
-            this._orderByLevel.CheckState = System.Windows.Forms.CheckState.Checked;
-            this._orderByLevel.Location = new System.Drawing.Point(313, 19);
-            this._orderByLevel.Margin = new System.Windows.Forms.Padding(3, 19, 3, 3);
-            this._orderByLevel.Name = "_orderByLevel";
-            this._orderByLevel.Size = new System.Drawing.Size(96, 17);
-            this._orderByLevel.TabIndex = 42;
-            this._orderByLevel.Tag = "iatag_ui_orderbylevel";
-            this._orderByLevel.Text = "Order By Level";
-            this.toolTip1.SetToolTip(this._orderByLevel, "If items should be ordered by level, instead of alphabetically.");
-            this._orderByLevel.UseVisualStyleBackColor = true;
+            _orderByLevel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            _orderByLevel.AutoSize = true;
+            _orderByLevel.Checked = true;
+            _orderByLevel.CheckState = CheckState.Checked;
+            _orderByLevel.Location = new Point(137, 22);
+            _orderByLevel.Margin = new Padding(4, 22, 4, 3);
+            _orderByLevel.Name = "_orderByLevel";
+            _orderByLevel.Size = new Size(102, 19);
+            _orderByLevel.TabIndex = 42;
+            _orderByLevel.Tag = "iatag_ui_orderbylevel";
+            _orderByLevel.Text = "Order By Level";
+            toolTip1.SetToolTip(_orderByLevel, "If items should be ordered by level, instead of alphabetically.");
+            _orderByLevel.UseVisualStyleBackColor = true;
             // 
             // _itemQuality
             // 
-            this._itemQuality.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._itemQuality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this._itemQuality.FormattingEnabled = true;
-            this._itemQuality.Location = new System.Drawing.Point(415, 17);
-            this._itemQuality.Margin = new System.Windows.Forms.Padding(3, 17, 3, 3);
-            this._itemQuality.Name = "_itemQuality";
-            this._itemQuality.Size = new System.Drawing.Size(90, 21);
-            this._itemQuality.TabIndex = 43;
-            this._itemQuality.Tag = "iatag_ui_itemquality_tooltip";
-            this.toolTip1.SetToolTip(this._itemQuality, "The minimum item quality");
+            _itemQuality.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            _itemQuality.DropDownStyle = ComboBoxStyle.DropDownList;
+            _itemQuality.FormattingEnabled = true;
+            _itemQuality.Location = new Point(247, 20);
+            _itemQuality.Margin = new Padding(4, 20, 4, 3);
+            _itemQuality.Name = "_itemQuality";
+            _itemQuality.Size = new Size(104, 23);
+            _itemQuality.TabIndex = 43;
+            _itemQuality.Tag = "iatag_ui_itemquality_tooltip";
+            toolTip1.SetToolTip(_itemQuality, "The minimum item quality");
             // 
             // _slotFilter
             // 
-            this._slotFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._slotFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this._slotFilter.FormattingEnabled = true;
-            this._slotFilter.Location = new System.Drawing.Point(511, 17);
-            this._slotFilter.Margin = new System.Windows.Forms.Padding(3, 17, 3, 3);
-            this._slotFilter.Name = "_slotFilter";
-            this._slotFilter.Size = new System.Drawing.Size(120, 21);
-            this._slotFilter.TabIndex = 44;
-            this._slotFilter.Tag = "iatag_ui_slotfilter_tooltip";
-            this.toolTip1.SetToolTip(this._slotFilter, "Slot/Type");
+            _slotFilter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            _slotFilter.DropDownStyle = ComboBoxStyle.DropDownList;
+            _slotFilter.FormattingEnabled = true;
+            _slotFilter.Location = new Point(359, 20);
+            _slotFilter.Margin = new Padding(4, 20, 4, 3);
+            _slotFilter.Name = "_slotFilter";
+            _slotFilter.Size = new Size(139, 23);
+            _slotFilter.TabIndex = 44;
+            _slotFilter.Tag = "iatag_ui_slotfilter_tooltip";
+            toolTip1.SetToolTip(_slotFilter, "Slot/Type");
             // 
             // _modFilter
             // 
-            this._modFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._modFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this._modFilter.FormattingEnabled = true;
-            this._modFilter.Location = new System.Drawing.Point(637, 17);
-            this._modFilter.Margin = new System.Windows.Forms.Padding(3, 17, 3, 3);
-            this._modFilter.Name = "_modFilter";
-            this._modFilter.Size = new System.Drawing.Size(102, 21);
-            this._modFilter.TabIndex = 45;
-            this._modFilter.Tag = "iatag_ui_modfilter_tooltip";
-            this.toolTip1.SetToolTip(this._modFilter, "Mod / Hardcore / Vanilla");
+            _modFilter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            _modFilter.DropDownStyle = ComboBoxStyle.DropDownList;
+            _modFilter.FormattingEnabled = true;
+            _modFilter.Location = new Point(506, 20);
+            _modFilter.Margin = new Padding(4, 20, 4, 3);
+            _modFilter.Name = "_modFilter";
+            _modFilter.Size = new Size(118, 23);
+            _modFilter.TabIndex = 45;
+            _modFilter.Tag = "iatag_ui_modfilter_tooltip";
+            toolTip1.SetToolTip(_modFilter, "Mod / Hardcore / Vanilla");
             // 
             // _levelRequirementGroup
             // 
-            this._levelRequirementGroup.Controls.Add(this._minLevel);
-            this._levelRequirementGroup.Controls.Add(this._maxLevel);
-            this._levelRequirementGroup.Location = new System.Drawing.Point(745, 3);
-            this._levelRequirementGroup.Name = "_levelRequirementGroup";
-            this._levelRequirementGroup.Size = new System.Drawing.Size(78, 43);
-            this._levelRequirementGroup.TabIndex = 50;
-            this._levelRequirementGroup.TabStop = false;
-            this._levelRequirementGroup.Tag = "iatag_ui_level_requirement";
-            this._levelRequirementGroup.Text = "Level";
-            this.toolTip1.SetToolTip(this._levelRequirementGroup, "Level requirements for the item");
+            _levelRequirementGroup.Controls.Add(_minLevel);
+            _levelRequirementGroup.Controls.Add(_maxLevel);
+            _levelRequirementGroup.Location = new Point(632, 3);
+            _levelRequirementGroup.Margin = new Padding(4, 3, 4, 3);
+            _levelRequirementGroup.Name = "_levelRequirementGroup";
+            _levelRequirementGroup.Padding = new Padding(4, 3, 4, 3);
+            _levelRequirementGroup.Size = new Size(91, 50);
+            _levelRequirementGroup.TabIndex = 50;
+            _levelRequirementGroup.TabStop = false;
+            _levelRequirementGroup.Tag = "iatag_ui_level_requirement";
+            _levelRequirementGroup.Text = "Level";
+            toolTip1.SetToolTip(_levelRequirementGroup, "Level requirements for the item");
             // 
             // _minLevel
             // 
-            this._minLevel.Location = new System.Drawing.Point(5, 15);
-            this._minLevel.MaxLength = 3;
-            this._minLevel.Name = "_minLevel";
-            this._minLevel.Size = new System.Drawing.Size(30, 20);
-            this._minLevel.TabIndex = 46;
-            this._minLevel.Tag = "iatag_ui_minlevel_tooltip";
-            this._minLevel.Text = "0";
-            this._minLevel.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.toolTip1.SetToolTip(this._minLevel, "The minimum level required to use this item");
-            this._minLevel.WordWrap = false;
+            _minLevel.Location = new Point(6, 17);
+            _minLevel.Margin = new Padding(4, 3, 4, 3);
+            _minLevel.MaxLength = 3;
+            _minLevel.Name = "_minLevel";
+            _minLevel.Size = new Size(34, 23);
+            _minLevel.TabIndex = 46;
+            _minLevel.Tag = "iatag_ui_minlevel_tooltip";
+            _minLevel.Text = "0";
+            _minLevel.TextAlign = HorizontalAlignment.Center;
+            toolTip1.SetToolTip(_minLevel, "The minimum level required to use this item");
+            _minLevel.WordWrap = false;
             // 
             // _maxLevel
             // 
-            this._maxLevel.Location = new System.Drawing.Point(40, 15);
-            this._maxLevel.MaxLength = 3;
-            this._maxLevel.Name = "_maxLevel";
-            this._maxLevel.Size = new System.Drawing.Size(30, 20);
-            this._maxLevel.TabIndex = 47;
-            this._maxLevel.Tag = "iatag_ui_maxlevel_tooltip";
-            this._maxLevel.Text = "110";
-            this._maxLevel.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.toolTip1.SetToolTip(this._maxLevel, "The maximum level required to use this item");
-            this._maxLevel.WordWrap = false;
+            _maxLevel.Location = new Point(47, 17);
+            _maxLevel.Margin = new Padding(4, 3, 4, 3);
+            _maxLevel.MaxLength = 3;
+            _maxLevel.Name = "_maxLevel";
+            _maxLevel.Size = new Size(34, 23);
+            _maxLevel.TabIndex = 47;
+            _maxLevel.Tag = "iatag_ui_maxlevel_tooltip";
+            _maxLevel.Text = "110";
+            _maxLevel.TextAlign = HorizontalAlignment.Center;
+            toolTip1.SetToolTip(_maxLevel, "The maximum level required to use this item");
+            _maxLevel.WordWrap = false;
             // 
             // toolTip1
             // 
-            this.toolTip1.ToolTipTitle = "This is:";
+            toolTip1.ToolTipTitle = "This is:";
             // 
             // SplitSearchWindow
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1313, 650);
-            this.Controls.Add(this._mainSplitter);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Name = "SplitSearchWindow";
-            this.Text = "SearchWindow";
-            this.Load += new System.EventHandler(this.SplitSearchWindow_Load);
-            this._mainSplitter.Panel2.ResumeLayout(false);
-            this._mainSplitter.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this._mainSplitter)).EndInit();
-            this._mainSplitter.ResumeLayout(false);
-            this._toolStripContainer.ContentPanel.ResumeLayout(false);
-            this._toolStripContainer.ResumeLayout(false);
-            this._toolStripContainer.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.webView21)).EndInit();
-            this._flowPanelFilter.ResumeLayout(false);
-            this._flowPanelFilter.PerformLayout();
-            this._levelRequirementGroup.ResumeLayout(false);
-            this._levelRequirementGroup.PerformLayout();
-            this.ResumeLayout(false);
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(1532, 750);
+            Controls.Add(_mainSplitter);
+            FormBorderStyle = FormBorderStyle.None;
+            Margin = new Padding(4, 3, 4, 3);
+            Name = "SplitSearchWindow";
+            Text = "SearchWindow";
+            Load += SplitSearchWindow_Load;
+            _mainSplitter.Panel2.ResumeLayout(false);
+            _mainSplitter.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)_mainSplitter).EndInit();
+            _mainSplitter.ResumeLayout(false);
+            _toolStripContainer.ContentPanel.ResumeLayout(false);
+            _toolStripContainer.ResumeLayout(false);
+            _toolStripContainer.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)webView21).EndInit();
+            _flowPanelFilter.ResumeLayout(false);
+            _flowPanelFilter.PerformLayout();
+            _levelRequirementGroup.ResumeLayout(false);
+            _levelRequirementGroup.PerformLayout();
+            ResumeLayout(false);
 
         }
 

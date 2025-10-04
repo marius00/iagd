@@ -6,6 +6,6 @@ using System.Threading.Tasks;
 
 namespace IAGrim.Database.Migrations {
     interface IDatabaseMigration {
-        void Migrate(ISessionCreator sessionCreator);
+        void Migrate(SessionFactory sessionCreator);
     }
 }

@@ -1,13 +1,13 @@
 ﻿using IAGrim.Utilities;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 // Methods are called from Javascript, Resharper cannot detect usage.
 // ReSharper disable UnusedMember.Global
 
 namespace IAGrim.UI.Misc.CEF {
+
     [ComVisible(true)]
     public class JavascriptIntegration {
         private readonly JsonSerializerSettings _settings = new JsonSerializerSettings {
@@ -127,6 +127,10 @@ namespace IAGrim.UI.Misc.CEF {
             GetSetItemAssociationsEventArgs args = new GetSetItemAssociationsEventArgs();
             OnRequestSetItemAssociations?.Invoke(this, args);
             return JsonConvert.SerializeObject(args.Elements, _settings);
+        }
+
+        public void OpenURL(string url) {
+            Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
         }
     }
 }

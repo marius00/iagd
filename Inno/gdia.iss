@@ -6,7 +6,7 @@ AppVerName=Grim Dawn Item Assistant
 AppName=Grim Dawn Item Assistant (c) EvilSoft
 VersionInfoVersion={#ApplicationVersion}
 AppId=gdia
-DefaultDirName={code:DefDirRoot}\GD Item Assistant
+DefaultDirName={code:DefDirRoot}\IAGD
 Uninstallable=Yes
 OutputDir=..\Installer
 SetupIconFile=gd.ico
@@ -18,22 +18,19 @@ Name: starticon; Description: "Create a &startmenu icon"; GroupDescription: "Ico
 
 
 [Icons]
-Name: "{commonprograms}\GD Item Assistant"; Filename: "{app}\\IAGrim.exe"; Tasks: starticon
-Name: "{commondesktop}\GD Item Assistant"; Filename: "{app}\\IAGrim.exe"; Tasks: desktopicon
+Name: "{commonprograms}\IAGD"; Filename: "{app}\\IAGrim.exe"; Tasks: starticon
+Name: "{commondesktop}\IAGD"; Filename: "{app}\\IAGrim.exe"; Tasks: desktopicon
 
 
 [Files]
-Source: "..\IAGrim\bin\Release\*"; Excludes: "*.pdb"; DestDir: "{app}"; Flags: overwritereadonly replacesameversion recursesubdirs createallsubdirs touch ignoreversion
+Source: "..\IAGrim\bin\Release\net9.0-windows7.0\*"; Excludes: "*.pdb"; DestDir: "{app}"; Flags: overwritereadonly replacesameversion recursesubdirs createallsubdirs touch ignoreversion
 Source: "readme.txt"; DestDir: "{app}";
 
 [Run]
-Filename: "{app}\ndp472-kb4054531-web.exe"; Parameters: "/passive /showfinalerror"; Description: "Install .NET 4.7.2"; Flags: postinstall runascurrentuser
 Filename: "{app}\vcredist_x86.exe"; Parameters: "/install /quiet /norestart"; Description: "Install VC++ Redistributable 2013 (x86)"; Flags: runhidden runascurrentuser
 Filename: "{app}\2010sp1_vcredist_x86.exe"; Parameters: "/install /quiet /norestart"; Description: "Install VC++ Redistributable 2010 SP1 (x86)"; Flags: runhidden runascurrentuser
-Filename: "{app}\2015rc3_vc_redist.x86.exe"; Parameters: "/install /quiet /norestart"; Description: "Install VC++ Redistributable 2015 RC3 (x86)"; Flags: runhidden runascurrentuser
-Filename: "{app}\vc2015_redist.x64.exe"; Parameters: "/install /quiet /norestart"; Description: "Install VC++ Redistributable 2015 RC3 (x64)"; Flags: runhidden runascurrentuser
+Filename: "explorer.exe"; Description: "Download .Net 9"; Parameters: "https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-9.0.9-windows-x64-installer"; Flags: shellexec postinstall nowait unchecked
 Filename: "{app}\IAGrim.exe"; Description: "Launch GD Item Assistant"; Flags: postinstall nowait
-
 
 
 [Setup]
@@ -49,9 +46,6 @@ AlwaysShowDirOnReadyPage=Yes
 DisableDirPage=No
 OutputBaseFilename=GDItemAssistant
 InfoAfterFile=readme.txt
-
-[InstallDelete]
-Type: files; Name: "{app}\SQLite.Interop.dll"
 
 
 [UninstallDelete]

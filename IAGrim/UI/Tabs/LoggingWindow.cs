@@ -23,7 +23,7 @@ namespace IAGrim.UI.Tabs
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             
-            System.Diagnostics.Process.Start(Path.Combine(GlobalPaths.CoreFolder, "log.txt"));
+            System.Diagnostics.Process.Start("notepad", Path.Combine(GlobalPaths.CoreFolder, "log.txt"));
         }
     }
 }

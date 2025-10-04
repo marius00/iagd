@@ -407,6 +407,7 @@ namespace StatTranslator {
             {"iatag_ui_minlevel_tooltip", "The minimum level required to use this item"},
             {"iatag_ui_maxlevel_tooltip", "The maximum level required to use this item"},
             {"iatag_ui_exportsuccess", "Items exported!"},
+            {"iatag_ui_onlinebackups", "Online backups"},
             {"iatag_ui_cloudsync_mb", "Ooops!\nIt seems you are synchronizing your saves to steam cloud..\nThis tool is unfortunately not compatible.\n"},
             {"iatag_ui_corrupted", "Game installation is corrupted.\nPlease verify the integrity of your Grim Dawn installation and try again.\n\n(Easily done in steam)"},
             {"iatag_ui_gdisrunning", "Grim Dawn is currently running. Please close Grim Dawn before attempting to parse the database" },

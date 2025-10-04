@@ -52,7 +52,6 @@
             this.firefoxButton1 = new FirefoxButton();
             this.buttonAdvancedSettings = new FirefoxButton();
             this.buttonImportExport = new FirefoxButton();
-            this.buttonMigratePostgres = new FirefoxButton();
             this.buttonLanguageSelect = new FirefoxButton();
             this.buttonViewBackups = new FirefoxButton();
             this.buttonViewLogs = new FirefoxButton();
@@ -399,14 +398,12 @@
             this.buttonPaypal.TabIndex = 7;
             this.buttonPaypal.UseVisualStyleBackColor = true;
             this.buttonPaypal.Click += new System.EventHandler(this.button1_Click);
-            // 
             // panelBox1
             // 
             this.panelBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
             this.panelBox1.Controls.Add(this.firefoxButton1);
             this.panelBox1.Controls.Add(this.buttonAdvancedSettings);
             this.panelBox1.Controls.Add(this.buttonImportExport);
-            this.panelBox1.Controls.Add(this.buttonMigratePostgres);
             this.panelBox1.Controls.Add(this.buttonLanguageSelect);
             this.panelBox1.Controls.Add(this.buttonViewBackups);
             this.panelBox1.Controls.Add(this.buttonViewLogs);
@@ -479,22 +476,6 @@
             this.buttonImportExport.Tag = "iatag_ui_importexport";
             this.buttonImportExport.Text = "Import/Export";
             this.buttonImportExport.Click += new System.EventHandler(this.buttonImportExport_Click);
-            // 
-            // buttonMigratePostgres
-            // 
-            this.buttonMigratePostgres.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
-            this.buttonMigratePostgres.BackColorDefault = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
-            this.buttonMigratePostgres.BackColorOverride = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(245)))), ((int)(((byte)(245)))));
-            this.buttonMigratePostgres.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
-            this.buttonMigratePostgres.EnabledCalc = true;
-            this.buttonMigratePostgres.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.buttonMigratePostgres.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
-            this.buttonMigratePostgres.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
-            this.buttonMigratePostgres.HoverForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
-            this.buttonMigratePostgres.Location = new System.Drawing.Point(0, 0);
-            this.buttonMigratePostgres.Name = "buttonMigratePostgres";
-            this.buttonMigratePostgres.Size = new System.Drawing.Size(0, 0);
-            this.buttonMigratePostgres.TabIndex = 0;
             // 
             // buttonLanguageSelect
             // 
@@ -597,7 +578,6 @@
         private FirefoxCheckBox cbMinimizeToTray;
         private PanelBox panelBox4;
         private FirefoxButton buttonLanguageSelect;
-        private FirefoxButton buttonMigratePostgres;
         private FirefoxButton buttonImportExport;
         private FirefoxCheckBox cbHideSkills;
         private FirefoxButton buttonAdvancedSettings;

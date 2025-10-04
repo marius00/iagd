@@ -91,7 +91,7 @@ namespace IAGrim.Database {
             "petBurstSpawn"
         };
 
-        public DatabaseItemStatDaoImpl(ISessionCreator sessionCreator, SqlDialect dialect) : base(sessionCreator, dialect) {
+        public DatabaseItemStatDaoImpl(SessionFactory sessionCreator) : base(sessionCreator) {
         }
 
 
@@ -253,25 +253,23 @@ namespace IAGrim.Database {
 
             // Grab all the possible bitmaps for each record
             using (var session = SessionCreator.OpenSession()) {
-                using (ITransaction transaction = session.BeginTransaction()) {
-                    DatabaseItemStat stat = null;
-                    DatabaseItem P = null;
-                    var stats = session.QueryOver<DatabaseItemStat>(() => stat)
-                        .JoinAlias(() => stat.Parent, () => P)
-                        .Where(m => P.Record.IsIn(records))
-                        .Where(m => m.Stat.IsIn(new string[] { "bitmap", "relicBitmap", "shardBitmap", "artifactBitmap", "noteBitmap", "artifactFormulaBitmapName" }))
-                        .List<DatabaseItemStat>();
+                DatabaseItemStat stat = null;
+                DatabaseItem P = null;
+                var stats = session.QueryOver<DatabaseItemStat>(() => stat)
+                    .JoinAlias(() => stat.Parent, () => P)
+                    .Where(m => P.Record.IsIn(records))
+                    .Where(m => m.Stat.IsIn(new string[] { "bitmap", "relicBitmap", "shardBitmap", "artifactBitmap", "noteBitmap", "artifactFormulaBitmapName" }))
+                    .List<DatabaseItemStat>();
 
-                        
-                    // Find the best bitmap for each record
-                    foreach (string record in records) {
-                        var best = stats.Where(m => m.Parent.Record.Equals(record)).OrderByDescending(m => bitmapScores[m.Stat]);
-                        if (best.Any()) {
-                            recordBitmap[record] = best.First().TextValue;
-                        }
+                    
+                // Find the best bitmap for each record
+                foreach (string record in records) {
+                    var best = stats.Where(m => m.Parent.Record.Equals(record)).OrderByDescending(m => bitmapScores[m.Stat]);
+                    if (best.Any()) {
+                        recordBitmap[record] = best.First().TextValue;
                     }
-
                 }
+
             }
 
             return recordBitmap;

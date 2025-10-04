@@ -9,10 +9,10 @@ using IAGrim.Database.Synchronizer.Core;
 namespace IAGrim.Database.Synchronizer {
     public abstract class BasicSynchronizer<T> : IBaseDao<T> {
         protected readonly ThreadExecuter ThreadExecuter;
-        protected readonly ISessionCreator SessionCreator;
+        protected readonly SessionFactory SessionCreator;
         protected IBaseDao<T> BaseRepo;
 
-        protected BasicSynchronizer(ThreadExecuter threadExecuter, ISessionCreator sessionCreator) {
+        protected BasicSynchronizer(ThreadExecuter threadExecuter, SessionFactory sessionCreator) {
             this.ThreadExecuter = threadExecuter;
             this.SessionCreator = sessionCreator;
         }

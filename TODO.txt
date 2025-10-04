@@ -1,0 +1,18 @@
+Pending:
+* Remove any excess sqlite libraries
+* Check what we need in terms of VC++ runtimes (can prolly remove some, like old cefsharp one?)
+- Seems GD is parsing in the menu again? Not ideal.. ReplicaItem
+
+
+Patch notes:
+* Now uses WebView2 (edge-chromium) instead of CefSharp Chromium for the items view
+* Replaced the deprecated Ionic.Zip with the native .net zip
+* The version format is now 1.year.monthday.hourminute (1.yy.
+* Now uses .Net 9 instead of .Net Framework 4.7.2 (https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-9.0.9-windows-x64-installer)
+* IAGD is now 64 bit (previously it ran as 32bit despite requiring 64bit Grim Dawn)
+* Installer size is ~90mb smaller than before
+* Lots of updated dependencies
+* A few bug fixes (and probably new bugs introduced)
+* Perhaps marginally better dark mode
+
+- Fixed a crash in menu[]

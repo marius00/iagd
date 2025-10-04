@@ -93,9 +93,14 @@
     width: calc(25% - 20px);
   }
 }
+@media only screen and (min-width: 1200px) and (max-width: 1921px) {
+    .items .item {
+        width: calc(31%);
+    }
+}
 @media only screen and (min-width: 1px) and (max-width: 1200px) {
   .items .item {
-    width: calc(33.3334% - 20px);
+    width: calc(31%);
   }
 }
 @media only screen and (min-width: 1px) and (max-width: 900px) {

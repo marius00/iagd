@@ -103,7 +103,7 @@ namespace IAGrim.UI.Tabs {
                 switch (access) {
                     case AuthService.AccessStatus.Unauthorized:
                         Logger.Debug($"Login, state {access}, authenticating..");
-                        _authAuthService.Authenticate();
+                        _authAuthService.Authenticate(false);
                         break;
                     case AuthService.AccessStatus.Unknown:
                         Logger.Debug($"Login, state {access}, displaying error..");

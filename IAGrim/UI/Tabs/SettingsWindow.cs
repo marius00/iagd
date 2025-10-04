@@ -23,7 +23,6 @@ namespace IAGrim.UI.Tabs {
         private readonly Action _itemViewUpdateTrigger;
         private readonly IPlayerItemDao _playerItemDao;
         private readonly GDTransferFile[] _modFilter;
-        private readonly TransferStashService _transferStashService;
         private readonly TransferStashService2 _transferStashService2;
         private readonly CefBrowserHandler _cefBrowserHandler;
         private readonly LanguagePackPicker _languagePackPicker;
@@ -39,7 +38,6 @@ namespace IAGrim.UI.Tabs {
             Action itemViewUpdateTrigger, 
             IPlayerItemDao playerItemDao,
             GDTransferFile[] modFilter,
-            TransferStashService transferStashService,
             TransferStashService2 transferStashService2,
             LanguagePackPicker languagePackPicker, 
             SettingsService settings, GrimDawnDetector grimDawnDetector, DarkMode darkModeToggler, AutomaticUpdateChecker automaticUpdateChecker) {            
@@ -50,7 +48,6 @@ namespace IAGrim.UI.Tabs {
             this._itemViewUpdateTrigger = itemViewUpdateTrigger;
             this._playerItemDao = playerItemDao;
             this._modFilter = modFilter;
-            this._transferStashService = transferStashService;
             this._transferStashService2 = transferStashService2;
             _languagePackPicker = languagePackPicker;
             _settings = settings;
@@ -103,7 +100,7 @@ namespace IAGrim.UI.Tabs {
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
-                System.Diagnostics.Process.Start("https://discord.gg/5wuCPbB");
+                Process.Start(new ProcessStartInfo { FileName = "https://discord.gg/5wuCPbB", UseShellExecute = true });
         }
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -143,7 +140,7 @@ namespace IAGrim.UI.Tabs {
         }
 
         private void linkSourceCode_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            Process.Start("https://github.com/marius00/iagd");
+            Process.Start(new ProcessStartInfo { FileName = "https://github.com/marius00/iagd", UseShellExecute = true });
         }
 
 
@@ -163,7 +160,7 @@ namespace IAGrim.UI.Tabs {
         }
 
         private void buttonPatreon_Click(object sender, EventArgs e) {
-            Process.Start("https://www.patreon.com/itemassistant");
+            Process.Start(new ProcessStartInfo { FileName = "https://www.patreon.com/itemassistant", UseShellExecute = true });
         }
 
         private void helpWhatIsRegularUpdates_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
@@ -174,10 +171,6 @@ namespace IAGrim.UI.Tabs {
             _cefBrowserHandler.ShowHelp(HelpService.HelpType.ExperimentalUpdates);
         }
 
-
-        private void buttonLootManually_Click(object sender, EventArgs e) {
-
-        }
 
         private void cbStartMinimized_CheckedChanged(object sender, EventArgs e) {
             _settings.GetLocal().StartMinimized = (sender as FirefoxCheckBox).Checked;

@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using System.Timers;
-using IAGrim.Parsers.Arz;
+﻿using IAGrim.Parsers.Arz;
 using IAGrim.Settings;
-using IAGrim.Settings.Dto;
 using IAGrim.Utilities;
+using System.Diagnostics;
+using System.Timers;
 
 namespace IAGrim.UI {
     public partial class DonateNagScreen : Form {
@@ -107,7 +99,7 @@ namespace IAGrim.UI {
         }
 
         private void button1_Click(object sender, EventArgs e) {
-            System.Diagnostics.Process.Start("https://grimdawn.evilsoft.net/?donate");
+            Process.Start(new ProcessStartInfo { FileName = "https://grimdawn.evilsoft.net/?donate", UseShellExecute = true });
 
             DateTime dt = DateTime.Now.AddDays(62 + new Random().Next(0, 5));
             _settings.GetLocal().LastNagTimestamp = dt.Ticks;
@@ -115,7 +107,7 @@ namespace IAGrim.UI {
         }
 
         private void buttonPatreon_Click(object sender, EventArgs e) {
-            System.Diagnostics.Process.Start("https://www.patreon.com/itemassistant");
+            Process.Start(new ProcessStartInfo { FileName = "https://www.patreon.com/itemassistant", UseShellExecute = true });
 
             DateTime dt = DateTime.Now.AddDays(150 + new Random().Next(0, 5));
             _settings.GetLocal().LastNagTimestamp = dt.Ticks;

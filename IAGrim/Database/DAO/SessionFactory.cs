@@ -6,26 +6,14 @@ using EvilsoftCommons;
 using IAGrim.Database.DAO.Util;
 
 namespace IAGrim.Database {
-    public interface ISessionCreator {
-        ISession OpenSession();
-        IStatelessSession OpenStatelessSession();
-    }
 
-    public class SessionFactory : ISessionCreator {
+
+    public class SessionFactory {
         private static ILog Logger = LogManager.GetLogger(typeof(SessionFactory));
-        private readonly SqlDialect _dialect;
 
-        public SessionFactory(SqlDialect dialect) {
-            _dialect = dialect;
-        }
 
         private ISessionFactoryWrapper CreateSession() {
-            if (_dialect == SqlDialect.Sqlite) {
-                return new SessionFactoryLoader.SessionFactory();
-            }
-            else {
-                return new PortablePostgres.SessionFactory();
-            }
+            return new SessionFactoryLoader.SessionFactory();
         }
 
         [ThreadStatic]
@@ -41,7 +29,6 @@ namespace IAGrim.Database {
                 _sessionFactory = CreateSession();
                 Logger.Info($"Creating session on thread {Thread.CurrentThread.ManagedThreadId}");
             }
-
             if (Thread.CurrentThread.Name == null) {
                 Thread.CurrentThread.Name = "NH:Session";
                 Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");

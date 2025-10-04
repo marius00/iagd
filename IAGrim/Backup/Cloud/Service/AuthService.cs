@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Net;
-using System.Net.Http;
-using System.Runtime.Caching;
-using System.Threading;
+﻿
 using EvilsoftCommons.Exceptions;
 using IAGrim.Backup.Cloud.CefSharp.Events;
 using IAGrim.Database.Interfaces;
@@ -12,17 +6,21 @@ using IAGrim.UI.Misc.CEF;
 using IAGrim.Utilities.HelperClasses;
 using log4net;
 using Newtonsoft.Json;
+using System;
+using System.Diagnostics;
+using System.Net;
+using System.Runtime.Caching;
 
 namespace IAGrim.Backup.Cloud.Service {
     public class AuthService : IDisposable {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(AuthService));
         private const string CacheKey = "IAGDIsCloudAuthenticated";
-        private readonly ICefBackupAuthentication _authentication;
         private readonly AuthenticationProvider _authenticationProvider;
         private readonly IPlayerItemDao _playerItemDao;
         private Thread _pollingThread = null;
         private volatile bool _isDisposing = false;
         private string _pollingId;
+        public event EventHandler? OnAuthCompletion;
 
         public enum AccessStatus {
             Authorized,
@@ -30,28 +28,13 @@ namespace IAGrim.Backup.Cloud.Service {
             Unknown
         }
 
-        public AuthService(ICefBackupAuthentication authentication, AuthenticationProvider authenticationProvider,
+        public AuthService(AuthenticationProvider authenticationProvider,
             IPlayerItemDao playerItemDao) {
-            _authentication = authentication;
             _authenticationProvider = authenticationProvider;
             _playerItemDao = playerItemDao;
-            _authentication.OnAuthSuccess += AuthenticationOnSuccess;
         }
 
-
-        private void AuthenticationOnSuccess(object sender, EventArgs eventArgs) {
-            var args = eventArgs as AuthResultEvent;
-            if (IsTokenValid(args.User, args.Token) == AccessStatus.Authorized) {
-                Logger.Info($"Token validated for {args.User}");
-                _authenticationProvider.SetToken(args.User, args.Token);
-                MemoryCache.Default.Set(CacheKey, true, DateTimeOffset.Now.AddDays(1));
-            }
-            else {
-                Logger.Warn($"Token for {args.User} failed validation");
-            }
-        }
-
-        private static AccessStatus IsTokenValid(string user, string token) {
+        public static AccessStatus IsTokenValid(string user, string token) {
             try {
                 using (var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(5) }) {
                     httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", token);
@@ -142,9 +125,11 @@ namespace IAGrim.Backup.Cloud.Service {
             return AccessStatus.Unauthorized;
         }
 
-        public void Authenticate() {
+        public string Authenticate(bool embedded) {
             _pollingId = Guid.NewGuid().ToString();
-            Process.Start(Uris.LoginPageUrl + $"?token={_pollingId}");
+            if (!embedded) {
+                Process.Start(new ProcessStartInfo { FileName = Uris.LoginPageUrl + $"?token={_pollingId}", UseShellExecute = true });
+            }
 
             if (_pollingThread != null) {
                 try {
@@ -158,6 +143,7 @@ namespace IAGrim.Backup.Cloud.Service {
 
             _pollingThread = new Thread(PollForAccessTokenStatus);
             _pollingThread.Start();
+            return _pollingId;
         }
 
         private void PollForAccessTokenStatus() {
@@ -170,37 +156,47 @@ namespace IAGrim.Backup.Cloud.Service {
             int numErrors = 0;
             int numRuns = 0;
             using (var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(5) }) {
-                while (!_isDisposing && numRuns++ < 240 /* ~8 minutes */) {
-                    Thread.Sleep(2000);
+                try {
+                    while (!_isDisposing && numRuns++ < 240 /* ~8 minutes */) {
+                        Thread.Sleep(2000);
 
-                    var content = new FormUrlEncodedContent(new[]
-                    {
-                        new KeyValuePair<string, string>("token", _pollingId),
-                    });
+                        var content = new FormUrlEncodedContent(new[] {
+                            new KeyValuePair<string, string>("token", _pollingId),
+                        });
 
-                    var result = httpClient.PostAsync(Uris.TokenPollUri, content).Result;
-                    var status = result.StatusCode;
-                    
-                    string body = result.Content.ReadAsStringAsync().Result;
-                    if (status == HttpStatusCode.OK) {
-                        Logger.Info($"Got Status {result} verifying authentication token");
-                        Dictionary<string, object> dataMap = JsonConvert.DeserializeObject<Dictionary<string, object>>(body);
-                        if (dataMap["status"].ToString() == "COMPLETED") {
-                            Logger.Info("Cloud reports login succeeded");
-                            AuthenticationOnSuccess(this, new AuthResultEvent(dataMap["email"].ToString(), dataMap["token"].ToString()));
-                            return;
+                        var result = httpClient.PostAsync(Uris.TokenPollUri, content).Result;
+                        var status = result.StatusCode;
+
+                        string body = result.Content.ReadAsStringAsync().Result;
+                        if (status == HttpStatusCode.OK) {
+                            Logger.Info($"Got Status {result} verifying authentication token");
+                            Dictionary<string, object> dataMap = JsonConvert.DeserializeObject<Dictionary<string, object>>(body);
+                            if (dataMap["status"].ToString() == "COMPLETED") {
+                                Logger.Info("Cloud reports login succeeded");
+                                OnAuthCompletion?.Invoke(this, new AuthResultEvent(dataMap["email"].ToString(), dataMap["token"].ToString()));
+
+                                _authenticationProvider.SetToken(dataMap["email"].ToString(), dataMap["token"].ToString());
+
+                                // This somewhat needlessly introduces the System.Runtime.Caching package
+                                MemoryCache.Default.Set(CacheKey, true, DateTimeOffset.Now.AddDays(1));
+
+                                return;
+                            }
+                            else {
+                                Logger.Info("Login still pending..");
+                            }
                         }
                         else {
-                            Logger.Info("Login still pending..");
-                        }
-                    }
-                    else {
-                        Logger.Error($"Got Status {result} polling login status");
+                            Logger.Error($"Got Status {result} polling login status");
 
-                        if (numErrors++ > 5) {
-                            return;
+                            if (numErrors++ > 5) {
+                                return;
+                            }
                         }
                     }
+                }
+                catch (Exception ex) {
+                    Logger.Warn(ex.Message, ex);
                 }
             }
         }

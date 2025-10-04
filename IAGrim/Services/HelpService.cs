@@ -1,4 +1,6 @@
-﻿using System;
+﻿using IAGrim.Backup.Cloud;
+using IAGrim.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -6,7 +8,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using IAGrim.Utilities;
 
 namespace IAGrim.Services {
     public class HelpService : IHelpService {
@@ -34,7 +35,7 @@ namespace IAGrim.Services {
         }
 
         public void ShowHelp(HelpType type) {
-            Process.Start($"https://grimdawn.evilsoft.net/help/?q={type.ToString()}&r={DateTime.UtcNow.Ticks}");
+            Process.Start(new ProcessStartInfo { FileName = $"https://grimdawn.evilsoft.net/help/?q={type.ToString()}&r={DateTime.UtcNow.Ticks}", UseShellExecute = true });
         }
 
         public void ShowCharacterBackups() {
