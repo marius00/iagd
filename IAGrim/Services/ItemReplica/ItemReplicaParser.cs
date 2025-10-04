@@ -149,7 +149,7 @@ namespace IAGrim.Services.ItemReplica {
                     var playerItemId = long.Parse(template.playerItemId);
                     if (playerItemId > 0 && string.IsNullOrEmpty(template.buddyItemId)) {
                         if (!playerRecordMap.ContainsKey(playerItemId)) {
-                            _logger.Warn($"Could not find playerItemId({playerItemId} in the db");
+                            _logger.Warn($"Could not find playerItemId({playerItemId}) in the db");
                             continue;
                         } else if (playerRecordMap[playerItemId] != template.replica.baseRecord) {
                             _logger.Warn($"Got record '{template.replica.baseRecord}' for PID({playerItemId}), expected record '{playerRecordMap[playerItemId]}'");

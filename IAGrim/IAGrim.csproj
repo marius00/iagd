@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
-    <!-- Use a custom version format including the current date and time -->
-    <MinorVersion>$([System.DateTime]::UtcNow.ToString("yy"))</MinorVersion>
-    <BuildNumber>$([System.DateTime]::UtcNow.ToString("MMdd"))</BuildNumber>
-    <RevisionNumber>$([System.DateTime]::UtcNow.ToString("HHmm"))</RevisionNumber>
-
-    <!-- Set AssemblyVersion and InformationalVersion -->
-    <AssemblyVersion>1.$(MinorVersion).$(BuildNumber).$(RevisionNumber)</AssemblyVersion>
-    <InformationalVersion>1.$(MinorVersion).$(BuildNumber).$(RevisionNumber) - $([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</InformationalVersion>
+	
+	<BuildDateTimeUtc>$([System.DateTime]::Now.Subtract($([System.DateTime]::new(2000,1,1, 0, 0, 0))).TotalDays.ToString("0"))</BuildDateTimeUtc>
+	<VersionRevision>$([System.Convert]::ToUInt16($([MSBuild]::Divide($([System.DateTime]::Now.TimeOfDay.TotalSeconds),2))))</VersionRevision>
+  
+    
+    <!-- Combine into a version string (e.g., 1.0.20251004.052530) -->
+    <Version>1.5.$(BuildDateTimeUtc).$(VersionRevision)</Version>
+    <AssemblyInformationalVersion>$(Version)</AssemblyInformationalVersion>
   </PropertyGroup>
 
   <PropertyGroup>

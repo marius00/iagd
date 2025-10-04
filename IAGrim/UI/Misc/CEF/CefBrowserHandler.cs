@@ -10,14 +10,32 @@ using Microsoft.Web.WebView2.WinForms;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Net;
+using System.Windows.Forms;
 
 namespace IAGrim.UI.Misc.CEF {
     public class CefBrowserHandler(SettingsService settings) : IUserFeedbackHandler, IBrowserCallbacks, IHelpService {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(CefBrowserHandler));
         private TabControl? _tabControl; // TODO: UGh.. why?
+        private List<IOMessage> _initializationQueue = new List<IOMessage>();
 
         public WebView2? BrowserControl { get; private set; }
-        public bool IsReady { get; set; }
+
+        private bool _isReady { get; set; }
+        public bool IsReady { 
+            get => _isReady; 
+            set { 
+                _isReady = value;
+                if (value) {
+                    Logger.Info($"There are {_initializationQueue.Count} queued messages");
+                    foreach (var item in _initializationQueue) {
+
+                        Logger.Info($"Message: {JsonConvert.SerializeObject(item, _serializerSettings)}");
+                        SendMessage(item);
+                    }
+                    _initializationQueue.Clear();
+                }
+            } 
+        }
 
         private readonly JsonSerializerSettings _serializerSettings = new JsonSerializerSettings {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
@@ -28,7 +46,8 @@ namespace IAGrim.UI.Misc.CEF {
 
         private void SendMessage(IOMessage message) {
             if (BrowserControl?.Parent == null) {
-                Logger.Warn("Attempted to communicate with the frontend, but CEF not yet initialized, discarded: " + JsonConvert.SerializeObject(message, _serializerSettings));
+                Logger.Warn("Attempted to communicate with the frontend, but browser not yet initialized, discarded: " + JsonConvert.SerializeObject(message, _serializerSettings));
+                _initializationQueue.Add(message);
                 return;
             }
 
@@ -43,6 +62,7 @@ namespace IAGrim.UI.Misc.CEF {
             }
             else {
                 Logger.Warn("Attempting to interact with webview, but not yet ready.");
+                _initializationQueue.Add(message);
             }
 
         }
