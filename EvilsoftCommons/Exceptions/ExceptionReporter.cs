@@ -78,7 +78,7 @@ namespace EvilsoftCommons.Exceptions {
             get {
                 try {
                     var version = System.Reflection.Assembly.GetEntryAssembly().GetName().Version;
-                    return $"{version.Major}.20{version.Minor}.{version.Build:D4}.{version.Revision:D4}";
+                    return $"{version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
                 }
                 catch (Exception ex) {
                     Logger.Warn("Error getting assembly version, automatic updates may not function correctly.");
@@ -86,40 +86,16 @@ namespace EvilsoftCommons.Exceptions {
                     Logger.Warn(ex.StackTrace);
 
                     var version = Assembly.GetExecutingAssembly().GetName().Version;
-                    return $"{version.Major}.20{version.Minor}.{version.Build:D4}.{version.Revision:D4}";
+                    return $"{version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
                 }
             }
         }
 
         private static DateTime VersionToDateTime(Version version) {
-            int year = 2000 + version.Minor;
-
-            int month;
-            int day;
-            if (version.Build.ToString().Substring(0, 1) == "1") {
-                month = int.Parse(version.Build.ToString().Substring(0, 2));
-
-                day = int.Parse(version.Build.ToString().Substring(2));
+            return new DateTime(2000, 1, 1)
+                .AddDays(version.Build)
+                .AddSeconds(version.Revision * 2);
             }
-            else {
-
-                month = int.Parse(version.Build.ToString().Substring(0, 1));
-                day = int.Parse(version.Build.ToString().Substring(1));
-            }
-
-            int hour;
-            int minute;
-            if (version.Revision.ToString().Length == 3) {
-                hour = int.Parse(version.Revision.ToString().Substring(0, 1));
-                minute = int.Parse(version.Revision.ToString().Substring(1));
-            }
-            else {
-                hour = int.Parse(version.Revision.ToString().Substring(0, 2));
-                minute = int.Parse(version.Revision.ToString().Substring(2));
-            }
-
-            return new DateTime(year, month, day, hour, minute, 0);
-        }
 
         public static DateTime BuildDate {
             get {
