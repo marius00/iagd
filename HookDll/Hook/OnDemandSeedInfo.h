@@ -5,13 +5,8 @@
 #include "BaseMethodHook.h"
 #include <string>
 #include <thread>
-#include <boost/property_tree/ptree.hpp>                                        
-#include <boost/property_tree/json_parser.hpp>       
-#include <boost/filesystem.hpp>
-#include <boost/range/iterator_range.hpp>
-#include <boost/algorithm/string/predicate.hpp>
-#include <iostream>
-#include <boost/algorithm/string.hpp> 
+#include <boost/property_tree/ptree.hpp>             
+#include <mutex>
 
 #include "GrimTypes.h"
 
@@ -58,10 +53,15 @@ protected:
 
 	// Game hook - To run code inside the game in a safe manner
 	// void GAME::GameEngine::Update(int)
-	typedef void* (__thiscall* OriginalMethodPtr)(void* This, int v);
-	OriginalMethodPtr originalMethod;
-	static void* __fastcall HookedMethod(void* This, int v);
+	typedef void* (__thiscall* OriginalGameUpdateMethodPtr)(void* This, int v);
+	typedef void* (__thiscall* OriginalEngineRenderMethodPtr)(void* This);
+
+	OriginalGameUpdateMethodPtr gameUpdateMethod;
+	OriginalEngineRenderMethodPtr engineRenderMethod;
+	static void* __fastcall HookedEngineRenderMethod(void* This);
+	static void* __fastcall HookedGameUpdateMethod(void* This, int v);
 	static std::wstring GetModName(GAME::GameInfo* gameInfo);
 	ParsedSeedRequest* ReadReplicaInfo(const std::wstring& filename);
 	ParsedSeedRequest* DeserializeReplicaCsv(std::vector<std::string> tokens);
+	static std::mutex _mutex;
 };

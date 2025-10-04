@@ -1,12 +1,16 @@
 #include "stdafx.h"
-#include <set>
 #include <stdio.h>
 #include <random>
 #include <stdlib.h>
 #include "MessageType.h"
 #include "OnDemandSeedInfo.h"
 #include "Exports.h"
-#include <codecvt> // wstring_convert
+#include <codecvt> // wstring_convert                           
+#include <boost/property_tree/json_parser.hpp>       
+#include <boost/filesystem.hpp>
+#include <boost/range/iterator_range.hpp>
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/algorithm/string.hpp> 
 
 #include "Logger.h"
 std::wstring GetIagdFolder();
@@ -14,13 +18,16 @@ std::wstring GetIagdFolder();
 OnDemandSeedInfo::pItemEquipmentGetUIDisplayText OnDemandSeedInfo::fnItemEquipmentGetUIDisplayText;
 OnDemandSeedInfo::pItemEquipmentGetUIDisplayText OnDemandSeedInfo::fnItemRelicGetUIDisplayText;
 OnDemandSeedInfo* OnDemandSeedInfo::g_self;
+std::mutex OnDemandSeedInfo::_mutex;
 OnDemandSeedInfo::OnDemandSeedInfo() {}
 OnDemandSeedInfo::OnDemandSeedInfo(DataQueue* dataQueue, HANDLE hEvent) {
 	m_dataQueue = dataQueue;
 	m_hEvent = hEvent;
 	m_thread = nullptr;
 	m_sleepMilliseconds = 0;
-	originalMethod = nullptr;
+	gameUpdateMethod = nullptr;
+	engineRenderMethod = nullptr;
+	
 
 	auto handle = GetProcAddressOrLogToFile(L"game.dll", "?GetUIDisplayText@ItemEquipment@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@_N@Z");
 	if (handle == nullptr) LogToFile(LogLevel::FATAL, L"Error hooking GetUIDisplayText@ItemEquipment");
@@ -36,21 +43,34 @@ OnDemandSeedInfo::OnDemandSeedInfo(DataQueue* dataQueue, HANDLE hEvent) {
 
 void OnDemandSeedInfo::EnableHook() {
 	g_self = this;
-	originalMethod = (OriginalMethodPtr)HookGame(
-		"?Update@GameEngine@GAME@@QEAAXH@Z",
-		HookedMethod,
+
+	engineRenderMethod = (OriginalEngineRenderMethodPtr)HookEngine(
+		"?Render@Engine@GAME@@QEAAXXZ",
+		HookedEngineRenderMethod,
 		m_dataQueue,
 		m_hEvent,
 		TYPE_GAMEENGINE_UPDATE
 	);
+
+	gameUpdateMethod = (OriginalGameUpdateMethodPtr)HookGame(
+		"?Update@GameEngine@GAME@@QEAAXH@Z",
+		HookedGameUpdateMethod,
+		m_dataQueue,
+		m_hEvent,
+		TYPE_GAMEENGINE_UPDATE
+	);
+
+	LogToFile(LogLevel::INFO, L"Seems we hooked it");
 }
 void OnDemandSeedInfo::DisableHook() {
 	Stop();
-	Unhook((PVOID*)&originalMethod, HookedMethod);
+	Unhook((PVOID*)&engineRenderMethod, HookedEngineRenderMethod);
+	Unhook((PVOID*)&gameUpdateMethod, HookedGameUpdateMethod);
 }
 
 /*
-* Continuously listen for new events on the pipe
+* Continuously look for new files.
+* This queues the data, avoiding IO operations during the game/render loops.
 */
 void OnDemandSeedInfo::ThreadMain(void*) {
 
@@ -422,18 +442,21 @@ std::wstring randomFilename32() {
 	return str.substr(0, 32);    // assumes 32 < number of characters in str         
 }
 
+void* __fastcall OnDemandSeedInfo::HookedEngineRenderMethod(void* This) {
+	g_self->_mutex.lock();
+	auto result = g_self->engineRenderMethod(This);
+	g_self->_mutex.unlock();
+	return result;
+}
 
-void* __fastcall OnDemandSeedInfo::HookedMethod(void* This, int v) {
+void* __fastcall OnDemandSeedInfo::HookedGameUpdateMethod(void* This, int v) {
 	if (This == nullptr) {
 		LogToFile(LogLevel::WARNING, L"Update@GameEngine called with 'This' being null");
 	}
 	if (g_self == nullptr) {
 		LogToFile(LogLevel::FATAL, L"Update@GameEngine called with 'g_self' being null");
 	}
-	void* r = g_self->originalMethod(This, v);
 
-
-	
 	if (g_self->m_sleepMilliseconds <= 0) {
 		try {
 			// Only start processing items if the game is running.
@@ -442,18 +465,23 @@ void* __fastcall OnDemandSeedInfo::HookedMethod(void* This, int v) {
 			bool isGameLoading = IsGameLoading(This);
 			bool isGameEngineOnline = IsGameEngineOnline(This);
 
-			if (!isGameLoading /* && !isGameWaiting*/ && isGameEngineOnline) {
+			if (!IsGameLoading(This) /* && !isGameWaiting*/ && IsGameEngineOnline(This)) {
 
 				// Process the queue
 				int num = 0;
 
 				boost::property_tree::ptree result;
-				
-				while (!g_self->m_itemQueue.empty() && num++ < 100) {
+
+				// No point arguing over a lock. We can parse this later.
+				if (!g_self->_mutex.try_lock()) {
+					return g_self->gameUpdateMethod(This, v);					
+				}
+				while (!g_self->m_itemQueue.empty() && num++ < 100 && !IsGameLoading(This) && IsGameEngineOnline(This)) {
 					LogToFile(LogLevel::INFO, L"Processing..");
 					ParsedSeedRequestPtr ptr = g_self->m_itemQueue.pop();
 					if (ptr == nullptr) {
-						return r;
+						g_self->_mutex.unlock();
+						return g_self->gameUpdateMethod(This, v);
 					}
 					ParsedSeedRequest obj = *ptr.get();
 
@@ -464,6 +492,7 @@ void* __fastcall OnDemandSeedInfo::HookedMethod(void* This, int v) {
 						result.push_back(std::make_pair(id, json));
 					}
 				}
+				g_self->_mutex.unlock();
 
 				if (result.size() > 0) {
 					// Write json array
@@ -506,5 +535,6 @@ void* __fastcall OnDemandSeedInfo::HookedMethod(void* This, int v) {
 
 	}
 
+	void* r = g_self->gameUpdateMethod(This, v);
 	return r;
 }

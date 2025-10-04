@@ -16,7 +16,7 @@ Unless you plan to actively develop the DLL, there is no need to compile it your
 * Boost 1.64 x64
 * Visual Studio
 * Build tools "Visual Studio 2015 (v140)" (Included in the latest VS installers, search for v140)
-* SDK 10.0.22000.0 (Included in the latest VS installers)
+* SDK 10.0.22000.0 (Included in the latest VS installers) (or newer?)
 
 ## Compilation 
 The DLL uses C++ and Assembly.
