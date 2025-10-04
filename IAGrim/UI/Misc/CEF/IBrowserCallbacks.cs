@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using IAGrim.Database.Model;
 using IAGrim.Services.ItemReplica;
 using IAGrim.UI.Controller.dto;
@@ -17,7 +13,6 @@ namespace IAGrim.UI.Misc.CEF {
         void ShowModFilterWarning(int numOtherItems);
 
         void ShowNoMoreInstantSyncWarning();
-
         bool IsReady();
 
         void SignalCloudIconChange(IList<long> playerItemIds);

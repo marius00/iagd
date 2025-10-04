@@ -152,11 +152,6 @@ namespace IAGrim.UI.Tabs {
         }
 
 
-        private void buttonDevTools_Click(object sender, EventArgs e) {
-            _cefBrowserHandler.ShowDevTools();
-        }
-
-
         private void helpWhatIsUsingMultiplePc_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             _cefBrowserHandler.ShowHelp(HelpService.HelpType.MultiplePcs);
         }

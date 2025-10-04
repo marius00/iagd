@@ -1,4 +1,4 @@
-﻿using CefSharp;
+﻿
 using EvilsoftCommons;
 using EvilsoftCommons.Cloud;
 using EvilsoftCommons.DllInjector;
@@ -28,7 +28,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
-using CefSharp.WinForms;
+
 using DllInjector;
 using IAGrim.Backup.Cloud.Service;
 using IAGrim.Backup.Cloud.Util;
@@ -74,6 +74,7 @@ namespace IAGrim.UI {
         private readonly UserFeedbackService _userFeedbackService;
         private MinimizeToTrayHandler _minimizeToTrayHandler;
         private ModsDatabaseConfig _modsDatabaseConfigTab;
+        private bool _isBrowserInitialized = false;
         public static int NumInstantSyncItemCount = 300;
 
 
@@ -183,47 +184,48 @@ namespace IAGrim.UI {
         #endregion Stash Status
 
 
+
         /// <summary>
         /// Perform a search the moment were initialized
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Browser_IsBrowserInitializedChanged(object sender, EventArgs e) {
-            var args = e as FrameLoadEndEventArgs;
-            ChromiumWebBrowser browser = (sender as ChromiumWebBrowser);
+        private void Browser_CoreWebView2InitializationCompleted(object sender, Microsoft.Web.WebView2.Core.CoreWebView2InitializationCompletedEventArgs args) {
+            var browser = (sender as Microsoft.Web.WebView2.WinForms.WebView2);
             if (browser == null) {
                 browser = (sender as CefBrowserHandler).BrowserControl;
             }
-            if (args != null && args.Frame.IsMain) {
-                // https://github.com/cefsharp/CefSharp/issues/3021
-                if (browser?.CanExecuteJavascriptInMainFrame ?? true) {
-                    if (InvokeRequired) {
-                        Invoke((MethodInvoker) delegate { Browser_IsBrowserInitializedChanged(sender, e); });
+            if (args != null) {
+                if (InvokeRequired) {
+                    Invoke((MethodInvoker) delegate { Browser_CoreWebView2InitializationCompleted(sender, args); });
+                }
+                else {
+                    var searchController = _serviceProvider.Get<SearchController>();
+                    _cefBrowserHandler.InitializeChromium(browser, searchController.JsIntegration, tabControl1);
+                    _cefBrowserHandler.IsReady = true;
+
+                    _searchWindow?.UpdateListViewDelayed();
+
+                    var isGdParsed = _serviceProvider.Get<IDatabaseItemDao>().GetRowCount() > 0;
+                    var settingsService = _serviceProvider.Get<SettingsService>();
+                    _cefBrowserHandler.SetDarkMode(settingsService.GetPersistent().DarkMode);
+                    _cefBrowserHandler.SetHideItemSkills(settingsService.GetPersistent().HideSkills);
+                    _cefBrowserHandler.SetIsGrimParsed(isGdParsed);
+                    
+
+                    _cefBrowserHandler.SetOnlineBackupsEnabled(!settingsService.GetLocal().OptOutOfBackups);
+                    if (_serviceProvider.Get<IPlayerItemDao>().GetNumItems() == 0) {
+                        _cefBrowserHandler.SetIsFirstRun();
                     }
-                    else {
-                        _searchWindow?.UpdateListViewDelayed();
 
-                        var isGdParsed = _serviceProvider.Get<IDatabaseItemDao>().GetRowCount() > 0;
-                        var settingsService = _serviceProvider.Get<SettingsService>();
-                        _cefBrowserHandler.SetDarkMode(settingsService.GetPersistent().DarkMode);
-                        _cefBrowserHandler.SetHideItemSkills(settingsService.GetPersistent().HideSkills);
-                        _cefBrowserHandler.SetIsGrimParsed(isGdParsed);
-                        
-
-                        _cefBrowserHandler.SetOnlineBackupsEnabled(!settingsService.GetLocal().OptOutOfBackups);
-                        if (_serviceProvider.Get<IPlayerItemDao>().GetNumItems() == 0) {
-                            _cefBrowserHandler.SetIsFirstRun();
+                    else if (DateTime.Now.Month == 4 && DateTime.Now.Day == 1) {
+                        if (settingsService.GetLocal().EasterPrank) {
+                            _cefBrowserHandler.SetEasterEggMode();
+                            settingsService.GetLocal().EasterPrank = false;
                         }
-
-                        else if (DateTime.Now.Month == 4 && DateTime.Now.Day == 1) {
-                            if (settingsService.GetLocal().EasterPrank) {
-                                _cefBrowserHandler.SetEasterEggMode();
-                                settingsService.GetLocal().EasterPrank = false;
-                            }
-                        } else {
-                            settingsService.GetLocal().EasterPrank = true;
-                        }
+                    } else {
+                        settingsService.GetLocal().EasterPrank = true;
                     }
+
+                    _isBrowserInitialized = true;
                 }
             }
         }
@@ -231,17 +233,16 @@ namespace IAGrim.UI {
 
         public MainWindow(
             ServiceProvider serviceProvider,
-            CefBrowserHandler browser,
             ParsingService parsingService
         ) {
             this._serviceProvider = serviceProvider;
-            _cefBrowserHandler = browser;
+            var settingsService = _serviceProvider.Get<SettingsService>();
+            _cefBrowserHandler = new CefBrowserHandler(settingsService);
             InitializeComponent();
             FormClosing += MainWindow_FormClosing;
 
             _minimizeToTrayHandler = new MinimizeToTrayHandler(this, notifyIcon1, serviceProvider.Get<SettingsService>());
 
-            var settingsService = _serviceProvider.Get<SettingsService>();
             _automaticUpdateChecker = new AutomaticUpdateChecker(settingsService);
             _settingsController = new SettingsController(settingsService);
             _parsingService = parsingService;
@@ -484,9 +485,6 @@ namespace IAGrim.UI {
             var searchController = _serviceProvider.Get<SearchController>();
             searchController.JsIntegration.OnRequestSetItemAssociations += (s, evvv) => { (evvv as GetSetItemAssociationsEventArgs).Elements = databaseItemDao.GetItemSetAssociations(); };
 
-            _cefBrowserHandler.InitializeChromium(searchController.JsIntegration, Browser_IsBrowserInitializedChanged, tabControl1);
-            searchController.Browser = _cefBrowserHandler;
-            searchController.JsIntegration.OnClipboard += SetItemsClipboard;
 
             var playerItemDao = _serviceProvider.Get<IPlayerItemDao>();
             var cacher = _serviceProvider.Get<TransferStashServiceCache>();
@@ -572,8 +570,14 @@ namespace IAGrim.UI {
 
             searchController.OnSearch += (o, args) => backupService.OnSearch();
 
-            _searchWindow = new SplitSearchWindow(_cefBrowserHandler.BrowserControl, SetFeedback, playerItemDao, searchController, itemTagDao, settingsService);
+            _searchWindow = new SplitSearchWindow(SetFeedback, playerItemDao, searchController, itemTagDao, settingsService);
             UIHelper.AddAndShow(_searchWindow, searchPanel);
+            var browser = _searchWindow.Browser;
+            browser.CoreWebView2InitializationCompleted += Browser_CoreWebView2InitializationCompleted;
+
+
+            searchController.Browser = _cefBrowserHandler;
+            searchController.JsIntegration.OnClipboard += SetItemsClipboard;
 
             searchPanel.Height = searchPanel.Parent.Height;
             searchPanel.Width = searchPanel.Parent.Width;
@@ -650,11 +654,6 @@ namespace IAGrim.UI {
                 this.Text += $" - {titleTag}";
             }
 
-
-            // Popup login diag
-            if (_authService.CheckAuthentication() == AuthService.AccessStatus.Unauthorized && !settingsService.GetLocal().OptOutOfBackups) {
-                _authService.Authenticate();
-            }
 
 
             searchController.JsIntegration.ItemTransferEvent += TransferItem;

@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
-using IAGrim.Database.Model;
-using IAGrim.Settings.Dto;
-using IAGrim.Utilities;
+﻿using IAGrim.Utilities;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 // Methods are called from Javascript, Resharper cannot detect usage.
 // ReSharper disable UnusedMember.Global
 
 namespace IAGrim.UI.Misc.CEF {
+    [ComVisible(true)]
     public class JavascriptIntegration {
         private readonly JsonSerializerSettings _settings = new JsonSerializerSettings {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,

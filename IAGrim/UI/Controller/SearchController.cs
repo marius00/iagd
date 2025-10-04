@@ -1,4 +1,6 @@
-﻿using IAGrim.Database;
+﻿using EvilsoftCommons.Exceptions;
+using IAGrim.Database;
+using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Dto;
 using IAGrim.Database.Interfaces;
 using IAGrim.Services;
@@ -10,8 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using EvilsoftCommons.Exceptions;
-using IAGrim.Database.DAO.Util;
+using System.Windows.Forms;
 
 namespace IAGrim.UI.Controller {
     public class SearchController {
@@ -50,6 +51,7 @@ namespace IAGrim.UI.Controller {
         }
 
         private void UpdateCollectionItems(ItemSearchRequest query) {
+            var form = this;
             Thread thread = new Thread(() => {
                 ExceptionReporter.EnableLogUnhandledOnThread();
 
@@ -86,7 +88,6 @@ namespace IAGrim.UI.Controller {
             if (!Browser.IsReady()) {
                 return string.Empty;
             }
-
             OnSearch?.Invoke(this, null);
             string message;
 

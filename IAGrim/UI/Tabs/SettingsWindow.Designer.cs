@@ -48,7 +48,6 @@
             this.panelBox2 = new PanelBox();
             this.buttonPatreon = new System.Windows.Forms.Button();
             this.buttonPaypal = new System.Windows.Forms.Button();
-            this.buttonDevTools = new FirefoxButton();
             this.panelBox1 = new PanelBox();
             this.firefoxButton1 = new FirefoxButton();
             this.buttonAdvancedSettings = new FirefoxButton();
@@ -365,7 +364,6 @@
             this.panelBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
             this.panelBox2.Controls.Add(this.buttonPatreon);
             this.panelBox2.Controls.Add(this.buttonPaypal);
-            this.panelBox2.Controls.Add(this.buttonDevTools);
             this.panelBox2.Font = new System.Drawing.Font("Segoe UI Semibold", 20F);
             this.panelBox2.ForeColor = System.Drawing.Color.Black;
             this.panelBox2.HeaderColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(231)))), ((int)(((byte)(231)))));
@@ -401,25 +399,6 @@
             this.buttonPaypal.TabIndex = 7;
             this.buttonPaypal.UseVisualStyleBackColor = true;
             this.buttonPaypal.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // buttonDevTools
-            // 
-            this.buttonDevTools.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
-            this.buttonDevTools.BackColorDefault = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
-            this.buttonDevTools.BackColorOverride = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(245)))), ((int)(((byte)(245)))));
-            this.buttonDevTools.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
-            this.buttonDevTools.EnabledCalc = true;
-            this.buttonDevTools.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.buttonDevTools.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
-            this.buttonDevTools.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(232)))), ((int)(((byte)(232)))), ((int)(((byte)(232)))));
-            this.buttonDevTools.HoverForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
-            this.buttonDevTools.Location = new System.Drawing.Point(14, 165);
-            this.buttonDevTools.Name = "buttonDevTools";
-            this.buttonDevTools.Size = new System.Drawing.Size(192, 32);
-            this.buttonDevTools.TabIndex = 6;
-            this.buttonDevTools.Tag = "iatag_ui_devtools";
-            this.buttonDevTools.Text = "Devtools";
-            this.buttonDevTools.Click += new System.EventHandler(this.buttonDevTools_Click);
             // 
             // panelBox1
             // 
@@ -624,7 +603,6 @@
         private FirefoxButton buttonAdvancedSettings;
         private System.Windows.Forms.LinkLabel linkSourceCode;
         private FirefoxCheckBox cbDualComputer;
-        private FirefoxButton buttonDevTools;
         private System.Windows.Forms.LinkLabel helpWhatIsUsingMultiplePc;
         private System.Windows.Forms.Button buttonPaypal;
         private System.Windows.Forms.Button buttonPatreon;

@@ -5,7 +5,6 @@ using System.Net;
 using System.Net.Http;
 using System.Runtime.Caching;
 using System.Threading;
-using CefSharp;
 using EvilsoftCommons.Exceptions;
 using IAGrim.Backup.Cloud.CefSharp.Events;
 using IAGrim.Database.Interfaces;
@@ -39,10 +38,9 @@ namespace IAGrim.Backup.Cloud.Service {
             _authentication.OnAuthSuccess += AuthenticationOnSuccess;
         }
 
+
         private void AuthenticationOnSuccess(object sender, EventArgs eventArgs) {
             var args = eventArgs as AuthResultEvent;
-            (sender as IBrowser)?.CloseBrowser(true);
-
             if (IsTokenValid(args.User, args.Token) == AccessStatus.Authorized) {
                 Logger.Info($"Token validated for {args.User}");
                 _authenticationProvider.SetToken(args.User, args.Token);
