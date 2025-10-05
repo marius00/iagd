@@ -174,6 +174,12 @@ namespace IAGrim.Utilities.Cloud {
 
             string[] files = Directory.GetFiles(Path.Combine(gameSaves, "main", character), "*.*", SearchOption.AllDirectories);
 
+
+            if (File.Exists(target)) {
+                Logger.Info($"The file {target} already exists, deleting to create a new backup");
+                File.Delete(target);
+            }
+
             using var zip = ZipFile.Open(target, ZipArchiveMode.Create);
             Logger.Info($"Backing up character {character}..");
 

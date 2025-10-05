@@ -83,6 +83,7 @@ namespace IAGrim.Utilities.Detection {
                 dynamic config = VdfConvert.Deserialize(File.ReadAllText(vdf));
                 var root = config.Value;
 
+#if !DEBUG
                 for (int i = 0; i < 8; i++) {
 
                     try {
@@ -97,6 +98,7 @@ namespace IAGrim.Utilities.Detection {
                         return paths;
                     }
                 }
+#endif
             }
             return paths;
         }
