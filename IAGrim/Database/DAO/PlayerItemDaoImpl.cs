@@ -601,12 +601,12 @@ namespace IAGrim.Database {
                     sql.Add($@"
                         SELECT Playeritemid FROM PlayerItemRecord WHERE record IN (
                             select baserecord from databaseitem_V2 db where db.baserecord in (
-                                select baserecord from playeritem union 
-                                select prefixrecord from playeritem union 
-                                select suffixrecord from playeritem union 
-                                select ascendantaffixnamerecord from playeritem union 
-                                select ascendantaffix2hnamerecord from playeritem union 
-                                select materiarecord from playeritem
+                                select BaseRecord from playeritem union 
+                                select PrefixRecord from playeritem union 
+                                select SuffixRecord from playeritem union 
+                                select AscendantAffixNameRecord from playeritem union 
+                                select AscendantAffix2hNameRecord from playeritem union 
+                                select MateriaRecord from playeritem
                             )
                             AND {fragment}
                         )");

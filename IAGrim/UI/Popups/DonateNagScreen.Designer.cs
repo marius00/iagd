@@ -32,6 +32,8 @@
             panel3 = new Panel();
             button4 = new Button();
             panel4 = new Panel();
+            firefoxH11 = new FirefoxH1();
+            buttonNoThanks = new FirefoxButton();
             panel1.SuspendLayout();
             panel3.SuspendLayout();
             SuspendLayout();
@@ -117,6 +119,37 @@
             panel4.Size = new Size(246, 126);
             panel4.TabIndex = 5;
             // 
+            // firefoxH11
+            // 
+            firefoxH11.AutoSize = true;
+            firefoxH11.Font = new Font("Segoe UI Semibold", 14F);
+            firefoxH11.ForeColor = Color.FromArgb(76, 88, 100);
+            firefoxH11.Location = new Point(12, 9);
+            firefoxH11.Name = "firefoxH11";
+            firefoxH11.Size = new Size(531, 25);
+            firefoxH11.TabIndex = 2;
+            firefoxH11.Tag = "iatag_ui_nagscreen_title";
+            firefoxH11.Text = "Would you like to donate to the developer of Item Assistant?";
+            // 
+            // buttonNoThanks
+            // 
+            buttonNoThanks.BackColorDefault = Color.FromArgb(212, 212, 212);
+            buttonNoThanks.BackColorOverride = Color.FromArgb(245, 245, 245);
+            buttonNoThanks.BorderColor = Color.FromArgb(193, 193, 193);
+            buttonNoThanks.Enabled = false;
+            buttonNoThanks.EnabledCalc = false;
+            buttonNoThanks.Font = new Font("Segoe UI", 10F);
+            buttonNoThanks.ForeColor = Color.FromArgb(56, 68, 80);
+            buttonNoThanks.HoverColor = Color.FromArgb(232, 232, 232);
+            buttonNoThanks.HoverForeColor = Color.FromArgb(193, 193, 193);
+            buttonNoThanks.Location = new Point(218, 257);
+            buttonNoThanks.Name = "buttonNoThanks";
+            buttonNoThanks.Size = new Size(192, 32);
+            buttonNoThanks.TabIndex = 0;
+            buttonNoThanks.Tag = "iatag_ui_nagscreen_button";
+            buttonNoThanks.Text = "Maybe later...";
+            buttonNoThanks.Click += buttonNoThanks_Click;
+            // 
             // DonateNagScreen
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -125,6 +158,7 @@
             Controls.Add(buttonPatreon);
             Controls.Add(panel3);
             Controls.Add(button1);
+            Controls.Add(buttonNoThanks);
             Controls.Add(panel1);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             Icon = (Icon)resources.GetObject("$this.Icon");

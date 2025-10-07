@@ -42,24 +42,17 @@ namespace IAGrim.UI {
         }
 
         private void DonateNagScreen_Load(object sender, EventArgs e) {
-            if (CanNag) {
-                _aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+            _aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
 
-                _aTimer.Interval = 50;
-                _aTimer.Enabled = true;
+            _aTimer.Interval = 50;
+            _aTimer.Enabled = true;
 
-                DateTime dt = DateTime.Now.AddDays(28 + new Random().Next(0, 5));
-                _settings.GetLocal().LastNagTimestamp = dt.Ticks;
+            DateTime dt = DateTime.Now.AddDays(28 + new Random().Next(0, 5));
+            _settings.GetLocal().LastNagTimestamp = dt.Ticks;
 
-                var tags = new []{ "iatag_ui_nagscreen1_button", "iatag_ui_nagscreen2_button", "iatag_ui_nagscreen3_button", "iatag_ui_nagscreen4_button", "iatag_ui_nagscreen5_button" };
-                buttonNoThanks.Tag = tags[new Random().Next(tags.Length)];
-                LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
-            }
-            else {
-                _nagDelay = -1;
-                this.Close();
-            }
-
+            var tags = new []{ "iatag_ui_nagscreen1_button", "iatag_ui_nagscreen2_button", "iatag_ui_nagscreen3_button", "iatag_ui_nagscreen4_button", "iatag_ui_nagscreen5_button" };
+            buttonNoThanks.Tag = tags[new Random().Next(tags.Length)];
+            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
         }
 
         void OnTimedEvent(object source, ElapsedEventArgs e) {
