@@ -2,12 +2,6 @@
 using NHibernate.Cfg;
 using NHibernate.Tool.hbm2ddl;
 using log4net;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading;
 using EvilsoftCommons;
 using IAGrim.Utilities;
 
@@ -34,17 +28,11 @@ namespace SessionFactoryLoader {
             ConnectionString = ConnectionString.Replace("{db}", db);
             configuration.SetProperty("connection.connection_string", ConnectionString);
 
-
             configuration.AddAssembly(System.Reflection.Assembly.GetEntryAssembly());
 
             try {
                 _logger.Debug("Building session factory");
                 var factory = configuration.BuildSessionFactory();
-
-                _logger.Debug("Running schema updates");
-                var updater = new SchemaUpdate(configuration);
-                updater.Execute(true, true);
-
                 _logger.Info("Database connection established.");
                 return factory;
             }

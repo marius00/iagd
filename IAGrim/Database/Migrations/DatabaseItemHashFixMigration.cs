@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using IAGrim.Database.DAO.Table;
-using log4net;
+﻿using IAGrim.Database.DAO.Table;
 using NHibernate;
 
 namespace IAGrim.Database.Migrations {
@@ -14,7 +8,7 @@ namespace IAGrim.Database.Migrations {
         /// When the hash field got introduced, some users ended up with a NULL value, causing issues when later on fetching using "record || hash"
         /// </summary>
         /// <param name="sessionCreator"></param>
-        public void Migrate(SessionFactory sessionCreator) {
+        public override void Migrate(SessionFactory sessionCreator) {
             using (ISession session = sessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
                     session.CreateSQLQuery(

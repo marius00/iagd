@@ -147,15 +147,16 @@ namespace IAGrim
         private static void Run(string[] args, ThreadExecuter threadExecuter)
         {
             var factory = new SessionFactory();
+            Logger.Debug("Executing DB migrations..");
+            threadExecuter.Execute(() => new MigrationHandler(factory).Migrate());
+
             var serviceProvider = ServiceProvider.Initialize(threadExecuter);
 
             var settingsService = serviceProvider.Get<SettingsService>();
             var databaseItemDao = serviceProvider.Get<IDatabaseItemDao>();
             RuntimeSettings.InitializeLanguage(settingsService.GetLocal().LocalizationFile, databaseItemDao.GetTagDictionary());
             DumpTranslationTemplate();
-
-            Logger.Debug("Executing DB migrations..");
-            threadExecuter.Execute(() => new MigrationHandler(factory).Migrate());
+;
 
             Logger.Debug("Loading UUID");
             LoadUuid(settingsService);
