@@ -97,6 +97,11 @@ namespace IAGrim.UI.Tabs {
         }
 
         private void firefoxButton1_Click(object sender, EventArgs e) {
+            // Don't want backups? Don't try to login.
+            if (cbDontWantBackups.Checked) {
+                return;
+            }
+
             if ((sender as FirefoxButton).EnabledCalc) {
                 var access = _authAuthService.CheckAuthentication();
 

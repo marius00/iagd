@@ -138,7 +138,7 @@ namespace IAGrim.Database {
             using (var session = SessionCreator.OpenSession()) {
                 using (var transaction = session.BeginTransaction()) {
                     foreach (var item in items) {
-                        var query = session.CreateQuery($@"UPDATE PlayerItem SET 
+                        var query = session.CreateSQLQuery($@"UPDATE PlayerItem SET 
                                              {PlayerItemTable.IsCloudSynchronized} = 1, 
                                              {PlayerItemTable.CloudId} = :uuid 
                                             WHERE Id = :id")
@@ -210,7 +210,7 @@ namespace IAGrim.Database {
             using (var session = SessionCreator.OpenSession()) {
                 using (var transaction = session.BeginTransaction()) {
                     // TODO: Whoever calls this should also ensure that LastSync is set to 0
-                    session.CreateQuery($"UPDATE PlayerItem SET {PlayerItemTable.IsCloudSynchronized} = false")
+                    session.CreateSQLQuery($"UPDATE PlayerItem SET {PlayerItemTable.IsCloudSynchronized} = false")
                         .ExecuteUpdate();
 
                     transaction.Commit();
@@ -314,7 +314,7 @@ namespace IAGrim.Database {
 
             var itemName = ItemOperationsUtility.GetItemName(session, stats, item);
             var records = GetRecordsForItem(item);
-            session.CreateQuery($@"UPDATE {table} 
+            session.CreateSQLQuery($@"UPDATE {table} 
                     SET {name} = :name, 
                     {nameLowercase} = :namelowercase, 
                     {rarity} = :rarity, 
@@ -379,7 +379,7 @@ namespace IAGrim.Database {
                             .SetParameter("uuid", item.Id)
                             .ExecuteUpdate();
 
-                        session.CreateQuery($"DELETE FROM PlayerItem WHERE {PlayerItemTable.CloudId} = :uuid")
+                        session.CreateSQLQuery($"DELETE FROM PlayerItem WHERE {PlayerItemTable.CloudId} = :uuid")
                             .SetParameter("uuid", item.Id)
                             .ExecuteUpdate();
                     }

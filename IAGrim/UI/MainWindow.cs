@@ -526,7 +526,7 @@ namespace IAGrim.UI {
 
             var onlineSettings = new OnlineSettings(playerItemDao, _authService, settingsService, _cefBrowserHandler, buddyItemDao, buddySubscriptionDao);
             UIHelper.AddAndShow(onlineSettings, onlinePanel);
-            _authService.OnAuthCompletion += (args_, __) => {
+            _authService.OnAuthCompletion += (sender, args_) => {
                 if (((args_ as AuthResultEvent)!).IsAuthorized) {
                     onlineSettings.UpdateUi();
                 }

@@ -12,3 +12,34 @@ Pending:
 Exception thrown: 'NHibernate.QueryException' in NHibernate.dll
 * Steam thingie runs into binder exceptions which are logged.. can we somehow check if it exists?
 
+
+
+2025-10-18 11:31:51,156 [Main] WARN [IAGrim.UI.Tabs.BackupSettings]: Error deleting account
+System.AggregateException: One or more errors occurred. (A task was canceled.)
+ ---> System.Threading.Tasks.TaskCanceledException: A task was canceled.
+   at System.Threading.Tasks.Task.GetExceptions(Boolean includeTaskCanceledExceptions)
+   at System.Threading.Tasks.Task.ThrowIfExceptional(Boolean includeTaskCanceledExceptions)
+   at System.Threading.Tasks.Task`1.GetResultCore(Boolean waitCompletionNotification)
+   at IAGrim.Utilities.HelperClasses.RestService.Delete(String url, String json) in D:\Dev\IAGrim\IAGrim\Utilities\HelperClasses\RestService.cs:line 68
+   at IAGrim.Backup.Cloud.Service.CloudSyncService.DeleteAccount() in D:\Dev\IAGrim\IAGrim\Backup\Cloud\Service\CloudSyncService.cs:line 48
+   at IAGrim.UI.Tabs.OnlineSettings.linkDeleteBackup_LinkClicked(Object sender, LinkLabelLinkClickedEventArgs e) in D:\Dev\IAGrim\IAGrim\UI\Tabs\OnlineSettings.cs:line 154
+   at System.Windows.Forms.LinkLabel.OnMouseUp(MouseEventArgs e)
+   at System.Windows.Forms.Control.WmMouseUp(Message& m, MouseButtons button, Int32 clicks)
+   at System.Windows.Forms.Control.WndProc(Message& m)
+   at System.Windows.Forms.LinkLabel.WndProc(Message& msg)
+   at System.Windows.Forms.NativeWindow.Callback(HWND hWnd, MessageId msg, WPARAM wparam, LPARAM lparam)
+   at Windows.Win32.PInvoke.DispatchMessage(MSG* lpMsg)
+   at System.Windows.Forms.Application.LightThreadContext.FPushMessageLoop(msoloop uReason)
+   at System.Windows.Forms.Application.LightThreadContext.RunMessageLoop(msoloop reason, Boolean fullModal)
+   at System.Windows.Forms.Application.ThreadContext.RunMessageLoopInner(msoloop reason, ApplicationContext context)
+   at System.Windows.Forms.Application.ThreadContext.RunMessageLoop(msoloop reason, ApplicationContext context)
+   at IAGrim.Program.Run(String[] args, ThreadExecuter threadExecuter) in D:\Dev\IAGrim\IAGrim\Program.cs:line 204
+   at IAGrim.Program.Main(String[] args) in D:\Dev\IAGrim\IAGrim\Program.cs:line 110
+--- End of stack trace from previous location ---
+
+   --- End of inner exception stack trace ---
+   at System.Threading.Tasks.Task.ThrowIfExceptional(Boolean includeTaskCanceledExceptions)
+   at System.Threading.Tasks.Task`1.GetResultCore(Boolean waitCompletionNotification)
+   at IAGrim.Utilities.HelperClasses.RestService.Delete(String url, String json) in D:\Dev\IAGrim\IAGrim\Utilities\HelperClasses\RestService.cs:line 68
+   at IAGrim.Backup.Cloud.Service.CloudSyncService.DeleteAccount() in D:\Dev\IAGrim\IAGrim\Backup\Cloud\Service\CloudSyncService.cs:line 48
+   at IAGrim.UI.Tabs.OnlineSettings.linkDeleteBackup_LinkClicked(Object sender, LinkLabelLinkClickedEventArgs e) in D:\Dev\IAGrim\IAGrim\UI\Tabs\OnlineSettings.cs:line 154
