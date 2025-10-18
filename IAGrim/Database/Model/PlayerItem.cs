@@ -16,7 +16,7 @@ namespace IAGrim.Database {
     public class PlayerItem : BaseItem, PlayerHeldItem, IComparable, ICloneable, RecordCollection {
         public virtual long Id { get; set; }
 
-        public virtual string CloudId { get; set; }
+        public virtual string ?CloudId { get; set; }
 
         public virtual bool IsCloudSynchronized {
             get => IsCloudSynchronizedValue != null && IsCloudSynchronizedValue != 0;

@@ -107,12 +107,12 @@ namespace IAGrim.UI.Controller {
         }
 
         public void OpenDataFolder() {
-            Process.Start("file://" + GlobalPaths.BackupLocation);
+            Process.Start(new ProcessStartInfo { FileName = "file://" + GlobalPaths.BackupLocation, UseShellExecute = true });
         }
 
 
         public void OpenLogFolder() {
-            Process.Start("file://" + GlobalPaths.CoreFolder);
+            Process.Start(new ProcessStartInfo { FileName = "file://" + GlobalPaths.CoreFolder, UseShellExecute = true });
         }
     }
 }

@@ -227,7 +227,7 @@ namespace IAGrim.Database {
                 using (var transaction = session.BeginTransaction()) {
                     foreach (var item in items) {
                         // This is if an item has been deleted due to a transfer to stash
-                        session.CreateQuery($"UPDATE {table} SET {stack} = :count, {PlayerItemTable.CloudId} = :uuid WHERE {id} = :id")
+                        session.CreateSQLQuery($"UPDATE {table} SET {stack} = :count, {PlayerItemTable.CloudId} = :uuid WHERE {id} = :id")
                             .SetParameter("count", item.StackCount)
                             .SetParameter("id", item.Id)
                             .SetParameter("uuid", item.CloudId)
@@ -253,7 +253,7 @@ namespace IAGrim.Database {
                         .SetParameterList("ids", items.Select(m => m.Id).ToList())
                         .ExecuteUpdate();
 
-                    session.CreateQuery($"DELETE FROM {table} WHERE {stack} <= 0 AND {id} IN ( :ids )")
+                    session.CreateSQLQuery($"DELETE FROM {table} WHERE {stack} <= 0 AND {id} IN ( :ids )")
                         .SetParameterList("ids", items.Select(m => m.Id).ToList())
                         .ExecuteUpdate();
 
