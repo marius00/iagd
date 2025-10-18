@@ -2,6 +2,8 @@
 using IAGrim.Backup.Cloud.CefSharp.Events;
 using IAGrim.Backup.Cloud.Service;
 using IAGrim.Settings;
+using IAGrim.Utilities;
+using Microsoft.Web.WebView2.Core;
 
 
 namespace IAGrim.UI.Popups {
@@ -19,6 +21,10 @@ namespace IAGrim.UI.Popups {
         private void BackupLoginNagScreen_Load(object sender, EventArgs e) {
             var pollingId = _authAuthService.Authenticate(true);
             _authAuthService.OnAuthCompletion += _authAuthService_OnAuthCompletion;
+
+            var conf = CoreWebView2Environment.CreateAsync(null, GlobalPaths.EdgeCacheLocation).Result;
+            webView21.EnsureCoreWebView2Async(conf);
+
             webView21.NavigationCompleted += WebView21_NavigationCompleted;
             webView21.Source = new Uri(Uris.LoginPageUrl + $"?token={pollingId}&embedded=1");
             FormClosing += BackupLoginNagScreen_FormClosing;

@@ -107,7 +107,7 @@ namespace IAGrim {
                         Logger.Fatal(ex.Message, ex);
                         Logger.Fatal("Error parsing transfer files. This is typically because the file is synced to OneDrive, but not available locally on the PC.");
                         MessageBox.Show("Error parsing transfer files.\nPossibly due to being located in OneDrive, but not synced to this PC.", "Fatal error", MessageBoxButtons.OK);
-                        Process.Start("file://" + GlobalPaths.CoreFolder);
+                        Process.Start(new ProcessStartInfo { FileName = "file://" + GlobalPaths.CoreFolder, UseShellExecute = true });
                         throw;
                     }
                 } else {
