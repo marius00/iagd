@@ -49,7 +49,7 @@ namespace IAGrim.UI.Popups {
         }
 
         private void Timer_Tick(object? sender, EventArgs e) {
-            buttonClose.Text = "Closing (" + _closeTimer + ")";
+            buttonClose.Text = "Closing (" + _closeTimerCounter + ")";
             _closeTimerCounter--;
 
             if (_closeTimerCounter <= 0) {
