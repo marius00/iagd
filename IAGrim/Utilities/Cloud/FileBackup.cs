@@ -11,7 +11,6 @@ namespace IAGrim.Utilities.Cloud {
     internal class FileBackup : ICloudBackup {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(FileBackup));
         private Stopwatch _timer;
-        private readonly CloudWatcher _provider = new CloudWatcher();
         private readonly SettingsService _settingsService;
         private readonly IPlayerItemDao _playerItemDao;
 
@@ -48,16 +47,7 @@ namespace IAGrim.Utilities.Cloud {
         public bool Backup(bool forced) {
             try {
                 List<string> paths = new List<string>();
-                
-                if (_settingsService.GetLocal().BackupDropbox && _provider.Providers.Any(m => m.Provider == CloudProviderEnum.DROPBOX))
-                    paths.Add(_provider.Providers.First(m => m.Provider == CloudProviderEnum.DROPBOX).Location);
-                
-                if (_settingsService.GetLocal().BackupGoogle && _provider.Providers.Any(m => m.Provider == CloudProviderEnum.GOOGLE_DRIVE))
-                    paths.Add(_provider.Providers.First(m => m.Provider == CloudProviderEnum.GOOGLE_DRIVE).Location);
-                
-                if (_settingsService.GetLocal().BackupOnedrive && _provider.Providers.Any(m => m.Provider == CloudProviderEnum.ONEDRIVE))
-                    paths.Add(_provider.Providers.First(m => m.Provider == CloudProviderEnum.ONEDRIVE).Location);
-                
+
                 // God knows what the user has inputted here... lets err on the safe side.
                 try {
                     string customPath = _settingsService.GetLocal().BackupCustomLocation;

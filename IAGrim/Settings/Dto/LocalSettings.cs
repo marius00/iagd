@@ -22,9 +22,6 @@ namespace IAGrim.Settings.Dto {
         private bool _lastSelectedTargetModIsHc;
         private string _localizationFile;
         private WindowSizeManager.WindowSizeProps _windowPositionSettings;
-        private bool _backupDropbox;
-        private bool _backupGoogle;
-        private bool _backupOnedrive;
         private bool _backupCustom;
         private bool _optOutOfBackups;
         private string _backupCustomLocation;
@@ -168,31 +165,6 @@ namespace IAGrim.Settings.Dto {
             get => _windowPositionSettings;
             set {
                 _windowPositionSettings = value;
-                OnMutate?.Invoke(null, null);
-            }
-        }
-
-        // Backup
-        public bool BackupDropbox {
-            get => _backupDropbox;
-            set {
-                _backupDropbox = value;
-                OnMutate?.Invoke(null, null);
-            }
-        }
-
-        public bool BackupGoogle {
-            get => _backupGoogle;
-            set {
-                _backupGoogle = value;
-                OnMutate?.Invoke(null, null);
-            }
-        }
-
-        public bool BackupOnedrive {
-            get => _backupOnedrive;
-            set {
-                _backupOnedrive = value;
                 OnMutate?.Invoke(null, null);
             }
         }

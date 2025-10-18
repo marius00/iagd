@@ -27,7 +27,6 @@ Source: "..\IAGrim\bin\Release\net9.0-windows7.0\*"; Excludes: "*.pdb,vcredist_x
 Source: "readme.txt"; DestDir: "{app}";
 
 [Run]
-Filename: "explorer.exe"; Description: "Download .Net 9"; Parameters: "https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-9.0.9-windows-x64-installer"; Flags: shellexec postinstall nowait unchecked
 Filename: "{app}\IAGrim.exe"; Description: "Launch GD Item Assistant"; Flags: postinstall nowait
  
 

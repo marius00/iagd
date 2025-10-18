@@ -630,7 +630,6 @@ namespace StatTranslator {
             {"iatag_ui_questionmark", " ? "},
             {"iatag_ui_howdoifindgrimdawn", "How can I find the Grim Dawn install?"},
             {"iatag_ui_whatisthis", "What is this?"},
-            {"iatag_ui_backupsdisabled", "Why is this disabled?"},
             {"iatag_ui_missing_stash_tabs", "Why are these disabled?"},
             {"iatag_ui_why_showing_stashpicker", "Why do I need to choose?"},
             {"iatag_no_stash_abort", "No stash chosen. Aborting transfer."},

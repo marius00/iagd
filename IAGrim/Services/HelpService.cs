@@ -19,7 +19,6 @@ namespace IAGrim.Services {
             RestoreBackup,
             DuplicateItem,
             NoStacks,
-            BackupAutodetectDisabled,
             NotLootingUnidentified,
             MultiplePcs,
             RegularUpdates,

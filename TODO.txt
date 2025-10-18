@@ -11,3 +11,4 @@ Pending:
 [05/10 05:53:23] WARN Upload of 87 items unsuccessful
 Exception thrown: 'NHibernate.QueryException' in NHibernate.dll
 * Steam thingie runs into binder exceptions which are logged.. can we somehow check if it exists?
+
