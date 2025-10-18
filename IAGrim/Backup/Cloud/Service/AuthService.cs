@@ -12,12 +12,15 @@ using System.Net;
 using System.Runtime.Caching;
 
 namespace IAGrim.Backup.Cloud.Service {
+    /// <summary>
+    /// Not reuseable. Create a new instance for new attempts.
+    /// </summary>
     public class AuthService : IDisposable {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(AuthService));
         private const string CacheKey = "IAGDIsCloudAuthenticated";
         private readonly AuthenticationProvider _authenticationProvider;
         private readonly IPlayerItemDao _playerItemDao;
-        private Thread _pollingThread = null;
+        private Thread? _pollingThread = null;
         private volatile bool _isDisposing = false;
         private string _pollingId;
         public event EventHandler? OnAuthCompletion;
@@ -131,16 +134,7 @@ namespace IAGrim.Backup.Cloud.Service {
                 Process.Start(new ProcessStartInfo { FileName = Uris.LoginPageUrl + $"?token={_pollingId}", UseShellExecute = true });
             }
 
-            if (_pollingThread != null) {
-                try {
-                    _pollingThread?.Abort();
-                    _pollingThread = null;
-                }
-                catch (Exception ex) {
-                    Logger.Warn(ex.Message, ex);
-                }
-            }
-
+            // If this is called twice.. well.. guess we'll just spam then..
             _pollingThread = new Thread(PollForAccessTokenStatus);
             _pollingThread.Start();
             return _pollingId;
@@ -232,7 +226,6 @@ namespace IAGrim.Backup.Cloud.Service {
         public void Dispose() {
             try {
                 _isDisposing = true;
-                _pollingThread?.Abort();
                 _pollingThread = null;
             }
             catch (Exception ex) {
