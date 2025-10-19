@@ -2,7 +2,7 @@ Pending:
 * Remove any excess sqlite libraries
 * Check what we need in terms of VC++ runtimes (can prolly remove some, like old cefsharp one?)
 - Seems GD is parsing in the menu again? Not ideal.. ReplicaItem
-** search bar disappears with zoom levels..
+** search bar disappears with zoom levels.. [windows 11 only]
 * "No items" but "has parsed GD" needs a better help page.. currently its just a spinner.
 *BackupAutodetectDisabled
 
@@ -43,11 +43,4 @@ System.AggregateException: One or more errors occurred. (A task was canceled.)
    at IAGrim.Utilities.HelperClasses.RestService.Delete(String url, String json) in D:\Dev\IAGrim\IAGrim\Utilities\HelperClasses\RestService.cs:line 68
    at IAGrim.Backup.Cloud.Service.CloudSyncService.DeleteAccount() in D:\Dev\IAGrim\IAGrim\Backup\Cloud\Service\CloudSyncService.cs:line 48
    at IAGrim.UI.Tabs.OnlineSettings.linkDeleteBackup_LinkClicked(Object sender, LinkLabelLinkClickedEventArgs e) in D:\Dev\IAGrim\IAGrim\UI\Tabs\OnlineSettings.cs:line 154
-   
-   
-   
-   
-2025-10-18 11:33:42,214 [Main] WARN [IAGrim.Backup.Cloud.Service.AuthService]: Thread abort is not supported on this platform.
-System.PlatformNotSupportedException: Thread abort is not supported on this platform.
-   at System.Threading.Thread.Abort()
-   at IAGrim.Backup.Cloud.Service.AuthService.Dispose() in D:\Dev\IAGrim\IAGrim\Backup\Cloud\Service\AuthService.cs:line 235
+  

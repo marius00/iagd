@@ -12,6 +12,8 @@ namespace IAGrim.Backup.Cloud {
             switch (env)
             {
                 case EnvLocalDev:
+                    //host = "http://localhost:8080";
+                    //break;
                 case EnvCloud:
                     host = "https://api.iagd.evilsoft.net";
                     break;

@@ -47,7 +47,7 @@
             // 
             linkLabel2.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             linkLabel2.AutoSize = true;
-            linkLabel2.Location = new Point(717, 688);
+            linkLabel2.Location = new Point(1065, 688);
             linkLabel2.Name = "linkLabel2";
             linkLabel2.Size = new Size(97, 15);
             linkLabel2.TabIndex = 5;
@@ -63,7 +63,7 @@
             webView21.DefaultBackgroundColor = Color.White;
             webView21.Location = new Point(2, 3);
             webView21.Name = "webView21";
-            webView21.Size = new Size(824, 682);
+            webView21.Size = new Size(1172, 682);
             webView21.TabIndex = 6;
             webView21.ZoomFactor = 1D;
             // 
@@ -75,7 +75,7 @@
             buttonClose.Location = new Point(13, 663);
             buttonClose.Margin = new Padding(4, 3, 4, 3);
             buttonClose.Name = "buttonClose";
-            buttonClose.Size = new Size(801, 40);
+            buttonClose.Size = new Size(1149, 40);
             buttonClose.TabIndex = 7;
             buttonClose.Tag = "";
             buttonClose.Text = "Close";
@@ -86,7 +86,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(826, 712);
+            ClientSize = new Size(1174, 712);
             Controls.Add(buttonClose);
             Controls.Add(webView21);
             Controls.Add(linkLabel2);

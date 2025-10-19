@@ -167,12 +167,12 @@ namespace IAGrim.Backup.Cloud.Service {
                             Dictionary<string, object> dataMap = JsonConvert.DeserializeObject<Dictionary<string, object>>(body);
                             if (dataMap["status"].ToString() == "COMPLETED") {
                                 Logger.Info("Cloud reports login succeeded");
-                                OnAuthCompletion?.Invoke(this, new AuthResultEvent(dataMap["email"].ToString(), dataMap["token"].ToString()));
 
                                 _authenticationProvider.SetToken(dataMap["email"].ToString(), dataMap["token"].ToString());
 
                                 // This somewhat needlessly introduces the System.Runtime.Caching package
                                 MemoryCache.Default.Set(CacheKey, true, DateTimeOffset.Now.AddDays(1));
+                                OnAuthCompletion?.Invoke(this, new AuthResultEvent(dataMap["email"].ToString(), dataMap["token"].ToString()));
 
                                 return;
                             }
