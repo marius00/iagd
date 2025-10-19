@@ -524,7 +524,7 @@ namespace IAGrim.UI {
             var backupSettings = new BackupSettings(playerItemDao, settingsService, _cefBrowserHandler);
             UIHelper.AddAndShow(backupSettings, backupPanel);
 
-            var onlineSettings = new OnlineSettings(playerItemDao, _authService, settingsService, _cefBrowserHandler, buddyItemDao, buddySubscriptionDao);
+            var onlineSettings = new OnlineSettings(playerItemDao, settingsService, _cefBrowserHandler, buddyItemDao, buddySubscriptionDao);
             UIHelper.AddAndShow(onlineSettings, onlinePanel);
             _authService.OnAuthCompletion += (sender, args_) => {
                 if (((args_ as AuthResultEvent)!).IsAuthorized) {

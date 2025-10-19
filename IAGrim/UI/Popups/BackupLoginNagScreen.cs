@@ -1,9 +1,11 @@
-﻿using IAGrim.Backup.Cloud;
+﻿using EvilsoftCommons.SingleInstance;
+using IAGrim.Backup.Cloud;
 using IAGrim.Backup.Cloud.CefSharp.Events;
 using IAGrim.Backup.Cloud.Service;
 using IAGrim.Settings;
 using IAGrim.Utilities;
 using Microsoft.Web.WebView2.Core;
+using System;
 
 
 namespace IAGrim.UI.Popups {
@@ -19,6 +21,14 @@ namespace IAGrim.UI.Popups {
         }
 
         private void BackupLoginNagScreen_Load(object sender, EventArgs e) {
+            Guid guid = new Guid("{071E8B2B-169A-4BE2-9539-548A1F3F1F1B}");
+            using (SingleInstance singleInstance = new SingleInstance(guid)) {
+                if (!singleInstance.IsFirstInstance) {
+                    this.Close();
+                    return;
+                }
+            }
+
             var pollingId = _authAuthService.Authenticate(true);
             _authAuthService.OnAuthCompletion += _authAuthService_OnAuthCompletion;
 
