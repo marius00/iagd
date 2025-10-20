@@ -4,11 +4,12 @@ using IAGrim.Parsers.Arz;
 using IAGrim.Settings;
 using IAGrim.Theme;
 using IAGrim.UI.Controller;
+using IAGrim.UI.Misc.CEF;
 using IAGrim.UI.Tabs.Util;
 using IAGrim.Utilities;
 using log4net;
-using Microsoft.Web.WebView2.WinForms;
 using Microsoft.Web.WebView2.Core;
+using Microsoft.Web.WebView2.WinForms;
 
 namespace IAGrim.UI.Tabs {
     internal sealed class SplitSearchWindow : Form {
@@ -166,6 +167,7 @@ namespace IAGrim.UI.Tabs {
             var transferFile = ModSelectionHandler.SelectedMod;
 
             if (transferFile == null) {
+                Logger.Warn("Attempting to update item view, but no mod selection has been made");
                 return;
             }
 

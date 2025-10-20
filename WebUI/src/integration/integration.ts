@@ -9,7 +9,7 @@ declare abstract class chrome {
     static webview: any;
 }
 
-export const isEmbedded = typeof chrome.webview.hostObjects.sync.core === 'function';
+export const isEmbedded = typeof chrome !== "undefined" && typeof chrome.webview.hostObjects.sync.core === 'function';
 
 export interface TransferResult {
     success: boolean;
@@ -27,10 +27,11 @@ interface IntegrationInterface {
     GetBackedUpCharacters(): string;
     GetCharacterDownloadUrl(character: string): string;
     OpenURL(url: string): void;
+    SignalReady(): void;
 }
 
 
-let core = chrome.webview.hostObjects.sync.core as IntegrationInterface;
+let core = isEmbedded ? chrome.webview.hostObjects.sync.core as IntegrationInterface : {} as IntegrationInterface;
 
 export function transferItem(url: object[], transferAll: boolean): TransferResult {
   const id = url.join(';');
@@ -73,8 +74,12 @@ export function getItemSetAssociations(): string {
 }
 
 
-export function openUrl(url: string) {
+export function openUrl(url: string): void {
     core.OpenURL(url)
+}
+
+export function signalReady(): void {
+    core.SignalReady()
 }
 
 export interface CharacterListDto {

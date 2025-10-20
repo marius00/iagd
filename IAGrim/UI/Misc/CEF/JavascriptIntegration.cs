@@ -23,6 +23,7 @@ namespace IAGrim.UI.Misc.CEF {
         public event EventHandler OnRequestSetItemAssociations;
         public event EventHandler OnRequestBackedUpCharacterList;
         public event EventHandler OnRequestCharacterDownloadUrl;
+        public event EventHandler OnSignalReadiness;
 
         public string TransferItem(object[] identifier, bool transferAll) {
             var args = new StashTransferEventArgs(identifier, transferAll);
@@ -99,13 +100,16 @@ namespace IAGrim.UI.Misc.CEF {
 
         public void SetClipboard(string data) {
             if (!string.IsNullOrWhiteSpace(data)) {
-                OnClipboard?.Invoke(this, new ClipboardEventArg {Text = data});
+                OnClipboard?.Invoke(this, new ClipboardEventArg { Text = data });
             }
+        }
+        public void SignalReady() {
+            OnSignalReadiness?.Invoke(null, EventArgs.Empty);
         }
 
         // TODO: Weird flow, should just return items.
         public void RequestMoreItems() {
-            OnRequestItems?.Invoke(this, null);
+            OnRequestItems?.Invoke(this, EventArgs.Empty);
         }
 
         public string GetBackedUpCharacters() {

@@ -8,31 +8,48 @@ using IAGrim.Utilities;
 using log4net;
 using Microsoft.Web.WebView2.WinForms;
 using Newtonsoft.Json;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Net;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace IAGrim.UI.Misc.CEF {
     public class CefBrowserHandler(SettingsService settings) : IUserFeedbackHandler, IBrowserCallbacks, IHelpService {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(CefBrowserHandler));
         private TabControl? _tabControl; // TODO: UGh.. why?
-        private List<IOMessage> _initializationQueue = new List<IOMessage>();
+        private ConcurrentBag<IOMessage> _initializationQueue = new ConcurrentBag<IOMessage>();
 
         public WebView2? BrowserControl { get; private set; }
 
         private bool _isReady { get; set; }
+        private bool _isReadyUi { get; set; }
         public bool IsReady { 
             get => _isReady; 
             set { 
-                _isReady = value;
-                if (value) {
-                    Logger.Info($"There are {_initializationQueue.Count} queued messages");
-                    foreach (var item in _initializationQueue) {
-
-                        Logger.Info($"Message: {JsonConvert.SerializeObject(item, _serializerSettings)}");
-                        SendMessage(item);
+                if (value && !_isReady) {
+                    if (_isReadyUi) {
+                        foreach (var item in _initializationQueue) {
+                            Logger.Info($"Message: {JsonConvert.SerializeObject(item, _serializerSettings)}");
+                            SendMessage(item);
+                        }
+                        _initializationQueue.Clear();
                     }
-                    _initializationQueue.Clear();
+                    else {
+                        var t = new Thread(new ThreadStart(() => {
+                            Thread.Sleep(1500);
+                            _isReady = value;
+                            foreach (var item in _initializationQueue) {
+                                Logger.Info($"Message: {JsonConvert.SerializeObject(item, _serializerSettings)}");
+                                SendMessage(item);
+                            }
+
+                            _initializationQueue.Clear();
+                        }));
+                        t.Start();
+                    }
+
+                    Logger.Info($"There are {_initializationQueue.Count} queued messages");
                 }
             } 
         }
@@ -50,7 +67,7 @@ namespace IAGrim.UI.Misc.CEF {
                 _initializationQueue.Add(message);
                 return;
             }
-
+            // window.message({'type':5, 'data':{'items': [], 'replaceExistingItems': true, 'numItemsFound': 0}})
 
             if (BrowserControl.Parent.InvokeRequired) {
                 BrowserControl.Parent.Invoke((MethodInvoker)delegate { SendMessage(message); });
@@ -146,7 +163,17 @@ namespace IAGrim.UI.Misc.CEF {
                 _tabControl = tabControl;
                 this.BrowserControl = browserControlView2;
 
+                bindable.OnSignalReadiness += (sender, args) => {
+                    _isReadyUi = true;
 
+                    if (_isReady) {
+                        foreach (var item in _initializationQueue) {
+                            Logger.Info($"Message: {JsonConvert.SerializeObject(item, _serializerSettings)}");
+                            SendMessage(item);
+                        }
+                        _initializationQueue.Clear();
+                    }
+                };
                 BrowserControl.CoreWebView2.AddHostObjectToScript("core", bindable);
 
             }

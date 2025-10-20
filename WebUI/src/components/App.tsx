@@ -4,7 +4,7 @@ import Help from "../containers/help/Help";
 import IItem from "../interfaces/IItem";
 import ICollectionItem from "../interfaces/ICollectionItem";
 import {PureComponent} from "preact/compat";
-import {isEmbedded, requestMoreItems} from "../integration/integration";
+import {isEmbedded, requestMoreItems, signalReady} from "../integration/integration";
 import MockCollectionItemData from "../mock/MockCollectionItemData";
 import Spinner from "./Spinner";
 import '../style/App.css';
@@ -127,6 +127,8 @@ class App extends PureComponent<object, object> {
       this.setState({collectionItems: MockCollectionItemData});
     }
 
+    signalReady()
+
     // Things such as real item stats and cloud sync status gets aggregated and updated every few seconds.
     // This is not critical to display realtime, and we may have hundreds of events per second during syncs
     if (!this.delayedUpdateTimer) {
@@ -134,11 +136,11 @@ class App extends PureComponent<object, object> {
       this.delayedUpdateTimer = setInterval(function () {
         const messages = [...self.delayedMessageQueue];
         self.delayedMessageQueue = [];
-        console.log("messages:", messages);
         if (messages.length === 0) {
           // Prevent state changes when empty
           return;
         }
+        console.log("Queued messages:", messages);
 
         const items = [...self.state.items];
         for (let i = 0; i < messages.length; i++) {
@@ -227,6 +229,7 @@ class App extends PureComponent<object, object> {
 
     // @ts-ignore: message doesn't exist on window
     window.message = (message: IOMessage) => {
+      console.log(message, 'existing state:', this.state);
       switch (message.type) {
         case IOMessageType.ShowCharacterBackups:
           this.setState({
@@ -343,6 +346,7 @@ class App extends PureComponent<object, object> {
             case IOMessageStateChangeType.FirstRun:
               this.setState({
                 isFirstRun: true,
+                isLoading: false,
               });
               break;
             case IOMessageStateChangeType.HideItemSkills:
