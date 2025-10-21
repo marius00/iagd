@@ -434,7 +434,6 @@ iatag_ui_backup_status_label=Status:
 iatag_ui_backup_statusunknown=Unknown/Error
 iatag_ui_backup_viewcharacters=View Characters
 iatag_ui_backupnow=Backup Now
-iatag_ui_backupsdisabled=Why is this disabled?
 iatag_ui_bleeding=Bleeding
 iatag_ui_block=Block
 iatag_ui_browse=Browse..

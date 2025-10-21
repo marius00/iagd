@@ -34,13 +34,13 @@ namespace IAGrim.UI.Tabs {
 
         public SettingsWindow(
             CefBrowserHandler cefBrowserHandler,
-            TooltipHelper tooltipHelper, 
-            Action itemViewUpdateTrigger, 
+            TooltipHelper tooltipHelper,
+            Action itemViewUpdateTrigger,
             IPlayerItemDao playerItemDao,
             GDTransferFile[] modFilter,
             TransferStashService2 transferStashService2,
-            LanguagePackPicker languagePackPicker, 
-            SettingsService settings, GrimDawnDetector grimDawnDetector, DarkMode darkModeToggler, AutomaticUpdateChecker automaticUpdateChecker) {            
+            LanguagePackPicker languagePackPicker,
+            SettingsService settings, GrimDawnDetector grimDawnDetector, DarkMode darkModeToggler, AutomaticUpdateChecker automaticUpdateChecker) {
             InitializeComponent();
             _controller = new SettingsController(settings);
             this._cefBrowserHandler = cefBrowserHandler;
@@ -68,7 +68,7 @@ namespace IAGrim.UI.Tabs {
 
         private void SettingsWindow_Load(object sender, EventArgs e) {
             this.Dock = DockStyle.Fill;
-            
+
             radioBeta.Checked = _settings.GetPersistent().SubscribeExperimentalUpdates;
             radioRelease.Checked = !_settings.GetPersistent().SubscribeExperimentalUpdates;
             cbDualComputer.Checked = _settings.GetPersistent().UsingDualComputer;
@@ -76,6 +76,8 @@ namespace IAGrim.UI.Tabs {
             cbDarkMode.Checked = _settings.GetPersistent().DarkMode;
             cbAutoDismiss.Checked = _settings.GetPersistent().AutoDismissNotifications;
             cbTransferAnyMod.Checked = _settings.GetPersistent().TransferAnyMod;
+            cbDelaySearch.Checked = _settings.GetLocal().PreferDelayedSearch;
+
         }
 
         private void buttonViewBackups_Click(object sender, EventArgs e) {
@@ -96,7 +98,7 @@ namespace IAGrim.UI.Tabs {
 
         // create bindings and stick these into its own settings class
         // unit testable
-        
+
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
@@ -105,10 +107,10 @@ namespace IAGrim.UI.Tabs {
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e) {
             Clipboard.SetText("https://discord.gg/5wuCPbB");
-            
+
             _tooltipHelper.ShowTooltipForControl(
-                RuntimeSettings.Language.GetTag("iatag_ui_copiedclipboard"), 
-                linkLabel1, 
+                RuntimeSettings.Language.GetTag("iatag_ui_copiedclipboard"),
+                linkLabel1,
                 TooltipHelper.TooltipLocation.TOP
                 );
         }
@@ -187,12 +189,12 @@ namespace IAGrim.UI.Tabs {
 
         private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             _automaticUpdateChecker.CheckForUpdates(true);
-            
+
             MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_update_body"), RuntimeSettings.Language.GetTag("iatag_ui_update_header"));
         }
 
         private void cbAutoDismiss_CheckedChanged(object sender, EventArgs e) {
-            _settings.GetPersistent().AutoDismissNotifications = ((FirefoxCheckBox) sender).Checked;
+            _settings.GetPersistent().AutoDismissNotifications = ((FirefoxCheckBox)sender).Checked;
         }
 
 
@@ -209,6 +211,16 @@ namespace IAGrim.UI.Tabs {
 
         private void firefoxCheckBox1_CheckedChanged(object sender, EventArgs e) {
             _settings.GetPersistent().TransferAnyMod = ((FirefoxCheckBox)sender).Checked;
+        }
+
+        private void helpWhatIsDelayWhenSearching_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+
+            _cefBrowserHandler.ShowHelp(HelpService.HelpType.DelayWhenSearching);
+        }
+
+        private void firefoxCheckBox1_CheckedChanged_1(object sender, EventArgs e) {
+
+            _settings.GetLocal().PreferDelayedSearch = ((FirefoxCheckBox)sender).Checked;
         }
     }
 }

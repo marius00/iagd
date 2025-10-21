@@ -3,7 +3,7 @@ Pending:
 * Check what we need in terms of VC++ runtimes (can prolly remove some, like old cefsharp one?)
 - Seems GD is parsing in the menu again? Not ideal.. ReplicaItem
 ** search bar disappears with zoom levels.. [windows 11 only]
-* "No items" but "has parsed GD" needs a better help page.. currently its just a spinner.
+
 
 [05/10 06:25:09] INFO Failed logging out of cloud backups, status code NotFound (this is OK, client still deletes token and gets logged out)
 [05/10 05:53:23] WARN POST https://api.iagd.evilsoft.net/upload returned BadRequest, System.Net.Http.HttpConnectionResponseContent

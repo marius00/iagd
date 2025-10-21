@@ -21,6 +21,7 @@ namespace IAGrim.Services {
             NoStacks,
             NotLootingUnidentified,
             MultiplePcs,
+            DelayWhenSearching,
             RegularUpdates,
             ExperimentalUpdates,
             WhatIsBuddyId,
@@ -41,7 +42,7 @@ namespace IAGrim.Services {
             MessageBox.Show("Error - Not implemented!");
         }
 
-        public void SetIsFirstRun() {
+        public void SetIsFirstRun(bool v) {
             // shrug..
         }
 
@@ -58,6 +59,6 @@ namespace IAGrim.Services {
         void ShowHelp(HelpService.HelpType type);
         void ShowCharacterBackups(); // TODO: Not strictly the right place for it..
         void SetIsGrimParsed(bool enabled); // TODO: Not strictly the right place for it..
-        void SetIsFirstRun();
+        void SetIsFirstRun(bool value);
     }
 }

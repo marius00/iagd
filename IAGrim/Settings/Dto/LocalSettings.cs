@@ -10,6 +10,7 @@ namespace IAGrim.Settings.Dto {
 
         private List<string> _grimDawnLocation;
         private string _currentGrimdawnLocation;
+        private bool? _preferDelayedSearch;
         private int _backupNumber;
         private long _lastNagTimestamp;
         private bool _easterPrank;
@@ -17,7 +18,7 @@ namespace IAGrim.Settings.Dto {
         private int _stashToDepositTo;
         private bool _pendingInstantSyncWarning;
         private int _stashToLootFrom;
-        private GDTransferFile _lastSelectedMod;
+        private GDTransferFile? _lastSelectedMod;
         private string _lastSelectedTargetMod;
         private bool _lastSelectedTargetModIsHc;
         private string _localizationFile;
@@ -120,7 +121,7 @@ namespace IAGrim.Settings.Dto {
             }
         }
 
-        public GDTransferFile LastSelectedMod {
+        public GDTransferFile? LastSelectedMod {
             get => _lastSelectedMod;
             set {
                 _lastSelectedMod = value;
@@ -159,7 +160,16 @@ namespace IAGrim.Settings.Dto {
                 OnMutate?.Invoke(null, null);
             }
         }
-        
+
+        public bool PreferDelayedSearch {
+            get => _preferDelayedSearch ?? false;
+            set {
+                _preferDelayedSearch = value;
+                OnMutate?.Invoke(null, null);
+            }
+        }
+
+
 
         public WindowSizeManager.WindowSizeProps WindowPositionSettings {
             get => _windowPositionSettings;

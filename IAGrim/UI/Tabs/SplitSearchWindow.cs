@@ -211,14 +211,14 @@ namespace IAGrim.UI.Tabs {
         /// Update view with delay
         /// </summary>
         public void UpdateListViewDelayed() {
-            UpdateListViewDelayed(200);
+            UpdateListViewDelayed(_settings.GetLocal().PreferDelayedSearch ? 200 : 0);
         }
 
         private void BeginSearchOnAutoSearch(object sender, EventArgs e) {
             UpdateListViewDelayed();
         }
 
-        private void HandleDelayedTextChangedTimerTick(object sender, EventArgs e) {
+        private void HandleDelayedTextChangedTimerTick(object? sender, EventArgs e) {
             if (_delayedTextChangedTimer != null) {
                 _delayedTextChangedTimer.Stop();
                 _delayedTextChangedTimer = null;
@@ -355,10 +355,15 @@ namespace IAGrim.UI.Tabs {
         private void UpdateListViewDelayed(int delay) {
             _delayedTextChangedTimer?.Stop();
 
-            _delayedTextChangedTimer = new System.Windows.Forms.Timer();
-            _delayedTextChangedTimer.Tick += HandleDelayedTextChangedTimerTick;
-            _delayedTextChangedTimer.Interval = delay;
-            _delayedTextChangedTimer.Start();
+            if (delay > 0) {
+                _delayedTextChangedTimer = new System.Windows.Forms.Timer();
+                _delayedTextChangedTimer.Tick += HandleDelayedTextChangedTimerTick;
+                _delayedTextChangedTimer.Interval = delay;
+                _delayedTextChangedTimer.Start();
+            }
+            else {
+                HandleDelayedTextChangedTimerTick(this, EventArgs.Empty);
+            }
         }
 
         private void InitializeComponent() {

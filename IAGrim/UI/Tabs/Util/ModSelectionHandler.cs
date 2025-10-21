@@ -14,10 +14,10 @@ namespace IAGrim.UI.Tabs.Util {
         private readonly Action _updateView;
         private readonly Action<string> _setStatus;
         private readonly IPlayerItemDao _playerItemDao;
-        private string _lastMod;
+        private string? _lastMod;
         private bool _lastHardcoreSetting;
 
-        public GDTransferFile SelectedMod { private set; get; }
+        public GDTransferFile? SelectedMod { private set; get; }
 
         public ModSelectionHandler(ComboBox cbModFilter, IPlayerItemDao playerItemDao, Action updateView,
             Action<string> setStatus, SettingsService settings) {

@@ -345,7 +345,7 @@ class App extends PureComponent<object, object> {
 
             case IOMessageStateChangeType.FirstRun:
               this.setState({
-                isFirstRun: true,
+                isFirstRun: data.value,
                 isLoading: false,
               });
               break;

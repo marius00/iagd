@@ -29,6 +29,7 @@ namespace IAGrim.UI.Misc.CEF {
             set { 
                 if (value && !_isReady) {
                     if (_isReadyUi) {
+                        Logger.Info("Both UI and browser are ready, processing queue..");
                         foreach (var item in _initializationQueue) {
                             Logger.Info($"Message: {JsonConvert.SerializeObject(item, _serializerSettings)}");
                             SendMessage(item);
@@ -36,9 +37,11 @@ namespace IAGrim.UI.Misc.CEF {
                         _initializationQueue.Clear();
                     }
                     else {
+                        Logger.Info("Browser signaled readiness, waiting for UI..");
                         var t = new Thread(new ThreadStart(() => {
-                            Thread.Sleep(1500);
+                            Thread.Sleep(3500);
                             _isReady = value;
+                            Logger.Warn("Did not receive any alert from the WebUI, sending messages anyways..");
                             foreach (var item in _initializationQueue) {
                                 Logger.Info($"Message: {JsonConvert.SerializeObject(item, _serializerSettings)}");
                                 SendMessage(item);
@@ -75,6 +78,7 @@ namespace IAGrim.UI.Misc.CEF {
             }
 
             if (IsReady) {
+                // Attempting to read the result or anything in a sync way will just stall.
                 BrowserControl.ExecuteScriptAsync("window.message(" + JsonConvert.SerializeObject(message, _serializerSettings) + ")");
             }
             else {
@@ -163,10 +167,13 @@ namespace IAGrim.UI.Misc.CEF {
                 _tabControl = tabControl;
                 this.BrowserControl = browserControlView2;
 
+                BrowserControl.CoreWebView2.AddHostObjectToScript("core", bindable);
                 bindable.OnSignalReadiness += (sender, args) => {
                     _isReadyUi = true;
+                    Logger.Info("UI signalled readiness");
 
                     if (_isReady) {
+                        Logger.Info("Both UI and browser are ready, processing queue..");
                         foreach (var item in _initializationQueue) {
                             Logger.Info($"Message: {JsonConvert.SerializeObject(item, _serializerSettings)}");
                             SendMessage(item);
@@ -174,7 +181,6 @@ namespace IAGrim.UI.Misc.CEF {
                         _initializationQueue.Clear();
                     }
                 };
-                BrowserControl.CoreWebView2.AddHostObjectToScript("core", bindable);
 
             }
             catch (System.IO.FileNotFoundException ex) {
@@ -209,8 +215,8 @@ namespace IAGrim.UI.Misc.CEF {
             SendMessage(new IOMessage { Type = IOMessageType.SetState, Data = new IOMessageStateChange { Type = IOMessageStateChangeType.GrimDawnIsParsed, Value = enabled } });
         }
 
-        public void SetIsFirstRun() {
-            SendMessage(new IOMessage { Type = IOMessageType.SetState, Data = new IOMessageStateChange { Type = IOMessageStateChangeType.FirstRun, Value = true } });
+        public void SetIsFirstRun(bool val) {
+            SendMessage(new IOMessage { Type = IOMessageType.SetState, Data = new IOMessageStateChange { Type = IOMessageStateChangeType.FirstRun, Value = val } });
         }
 
         public void SetEasterEggMode() {

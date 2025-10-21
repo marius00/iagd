@@ -143,6 +143,15 @@ const helpEntries = [
         type: IHelpEntryType.Informational
     },
     {
+      title: `What is the settings "delay when searching?"`,
+      tag: 'DelayWhenSearching',
+      body: () => <div>
+        The "<i>delay when searching</i>" checkbox in Item Assistant will introduce a small delay when using the left-side checkboxes.<br/>
+        This may help improve performance when you have many (100k) items, or are running on a lower end PC.
+      </div>,
+      type: IHelpEntryType.Informational
+    },
+    {
         title: `I can't find my items!`,
         tag: 'CantFindItemsMod',
         body: () => <div>

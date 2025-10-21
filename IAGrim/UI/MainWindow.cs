@@ -219,11 +219,9 @@ namespace IAGrim.UI {
 
 
                     _cefBrowserHandler.SetOnlineBackupsEnabled(!settingsService.GetLocal().OptOutOfBackups);
+                    _cefBrowserHandler.SetIsFirstRun(_serviceProvider.Get<IPlayerItemDao>().GetNumItems() == 0);
                     if (_serviceProvider.Get<IPlayerItemDao>().GetNumItems() == 0) {
-                        _cefBrowserHandler.SetIsFirstRun();
-                    }
-
-                    else if (DateTime.Now.Month == 4 && DateTime.Now.Day == 1) {
+                    } else if (DateTime.Now.Month == 4 && DateTime.Now.Day == 1) {
                         if (settingsService.GetLocal().EasterPrank) {
                             _cefBrowserHandler.SetEasterEggMode();
                             settingsService.GetLocal().EasterPrank = false;

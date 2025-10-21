@@ -79,6 +79,7 @@ export function openUrl(url: string): void {
 }
 
 export function signalReady(): void {
+    console.log("Notifying IAGD that we're ready")
     core.SignalReady()
 }
 
