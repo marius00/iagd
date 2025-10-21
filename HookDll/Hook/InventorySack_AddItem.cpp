@@ -276,6 +276,8 @@ bool InventorySack_AddItem::IsRelevant(const GAME::ItemReplicaInfo& item) {
 		else if (item.baseRecord.find("records/storyelements/signs/signf.dbr") != std::string::npos) {} // Lokarr's Boots
 		else if (item.baseRecord.find("records/storyelements/signs/signs.dbr") != std::string::npos) {} // Lokarr's Mantle
 		else if (item.baseRecord.find("records/storyelements/signs/signt.dbr") != std::string::npos) {} // Lokarr's Coat
+		else if (item.baseRecord.find("records/storyelements/questassets/q000_torso.dbr") != std::string::npos) {} // Gazer Man
+		else if (item.baseRecord.find("records/endlessdungeon/items/q001_torso.dbr") != std::string::npos) {} // Miss Gazer Man
 		else {
 			DisplayMessage(L"Quest item - IA does not support this specific item", L"Item Assistant");
 			return false;
@@ -304,7 +306,7 @@ bool InventorySack_AddItem::IsRelevant(const GAME::ItemReplicaInfo& item) {
 
 	// Salt bag and lifegivers amulet - Frequently get questions about these
 	if (item.baseRecord.find("gearaccessories/necklaces/a00_necklace.dbr") != std::string::npos 
-		|| item.baseRecord.find("questassets/q000_torso.dbr") != std::string::npos) {
+		|| item.baseRecord.find("gearaccessories/rings/d003_ring.dbr") != std::string::npos) {
 		DisplayMessage(L"Special item - This item is not supported by IA", L"Item Assistant");
 		return false;
 	}
