@@ -1,9 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Drawing;
-using System.Windows.Forms;
-using EvilsoftCommons;
-using IAGrim.Backup.Cloud;
+﻿using EvilsoftCommons;
 using IAGrim.Backup.Cloud.Service;
 using IAGrim.Database;
 using IAGrim.Database.Interfaces;
@@ -15,7 +10,7 @@ using log4net;
 
 namespace IAGrim.UI.Tabs {
     public partial class OnlineSettings : Form {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(BackupSettings));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(OnlineSettings));
         private readonly IPlayerItemDao _playerItemDao;
         private readonly SettingsService _settings;
         private readonly IHelpService _helpService;

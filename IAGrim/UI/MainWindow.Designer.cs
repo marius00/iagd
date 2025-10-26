@@ -24,288 +24,253 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
-			this.statusStrip = new System.Windows.Forms.StatusStrip();
-			this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-			this.tsStashStatus = new System.Windows.Forms.ToolStripStatusLabel();
-			this.tabControl1 = new System.Windows.Forms.TabControl();
-			this.tabPageItems = new System.Windows.Forms.TabPage();
-			this.searchPanel = new System.Windows.Forms.Panel();
-			this.tabPageMods = new System.Windows.Forms.TabPage();
-			this.modsPanel = new System.Windows.Forms.Panel();
-			this.tabPageOnline = new System.Windows.Forms.TabPage();
-			this.onlinePanel = new System.Windows.Forms.Panel();
-			this.tabPageBackups = new System.Windows.Forms.TabPage();
-			this.backupPanel = new System.Windows.Forms.Panel();
-			this.tabPageSettings = new System.Windows.Forms.TabPage();
-			this.settingsPanel = new System.Windows.Forms.Panel();
-			this.tabPageLog = new System.Windows.Forms.TabPage();
-			this.panelLogging = new System.Windows.Forms.Panel();
-			this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
-			this.trayContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-			this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.tsVersionNumber = new System.Windows.Forms.ToolStripStatusLabel();
-			this.statusStrip.SuspendLayout();
-			this.tabControl1.SuspendLayout();
-			this.tabPageItems.SuspendLayout();
-			this.tabPageMods.SuspendLayout();
-			this.tabPageOnline.SuspendLayout();
-			this.tabPageBackups.SuspendLayout();
-			this.tabPageSettings.SuspendLayout();
-			this.tabPageLog.SuspendLayout();
-			this.trayContextMenuStrip.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// statusStrip
-			// 
-			this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.statusLabel,
-            this.tsVersionNumber,
-            this.tsStashStatus});
-			this.statusStrip.Location = new System.Drawing.Point(0, 539);
-			this.statusStrip.Name = "statusStrip";
-			this.statusStrip.Size = new System.Drawing.Size(1037, 22);
-			this.statusStrip.TabIndex = 25;
-			this.statusStrip.Text = "statusStrip1";
-			// 
-			// statusLabel
-			// 
-			this.statusLabel.Name = "statusLabel";
-			this.statusLabel.Size = new System.Drawing.Size(899, 17);
-			this.statusLabel.Spring = true;
-			this.statusLabel.Text = "GD Item Assistant";
-			this.statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// tsStashStatus
-			// 
-			this.tsStashStatus.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.tsStashStatus.Name = "tsStashStatus";
-			this.tsStashStatus.Size = new System.Drawing.Size(92, 17);
-			this.tsStashStatus.Tag = "iatag_stash_unknown";
-			this.tsStashStatus.Text = "Stash: Unknown";
-			this.tsStashStatus.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// tabControl1
-			// 
-			this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.tabControl1.Controls.Add(this.tabPageItems);
-			this.tabControl1.Controls.Add(this.tabPageMods);
-			this.tabControl1.Controls.Add(this.tabPageOnline);
-			this.tabControl1.Controls.Add(this.tabPageBackups);
-			this.tabControl1.Controls.Add(this.tabPageSettings);
-			this.tabControl1.Controls.Add(this.tabPageLog);
-			this.tabControl1.Location = new System.Drawing.Point(0, 0);
-			this.tabControl1.Margin = new System.Windows.Forms.Padding(0);
-			this.tabControl1.Name = "tabControl1";
-			this.tabControl1.SelectedIndex = 0;
-			this.tabControl1.Size = new System.Drawing.Size(1037, 539);
-			this.tabControl1.TabIndex = 34;
-			// 
-			// tabPageItems
-			// 
-			this.tabPageItems.BackColor = System.Drawing.SystemColors.Control;
-			this.tabPageItems.Controls.Add(this.searchPanel);
-			this.tabPageItems.Location = new System.Drawing.Point(4, 22);
-			this.tabPageItems.Margin = new System.Windows.Forms.Padding(0);
-			this.tabPageItems.Name = "tabPageItems";
-			this.tabPageItems.Size = new System.Drawing.Size(1029, 513);
-			this.tabPageItems.TabIndex = 0;
-			this.tabPageItems.Tag = "iatag_ui_tab_items";
-			this.tabPageItems.Text = "Items";
-			// 
-			// searchPanel
-			// 
-			this.searchPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.searchPanel.BackColor = System.Drawing.Color.Transparent;
-			this.searchPanel.Location = new System.Drawing.Point(-7, -3);
-			this.searchPanel.Margin = new System.Windows.Forms.Padding(0);
-			this.searchPanel.Name = "searchPanel";
-			this.searchPanel.Size = new System.Drawing.Size(1043, 519);
-			this.searchPanel.TabIndex = 1;
-			// 
-			// tabPageMods
-			// 
-			this.tabPageMods.Controls.Add(this.modsPanel);
-			this.tabPageMods.Location = new System.Drawing.Point(4, 22);
-			this.tabPageMods.Name = "tabPageMods";
-			this.tabPageMods.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageMods.Size = new System.Drawing.Size(1029, 513);
-			this.tabPageMods.TabIndex = 4;
-			this.tabPageMods.Tag = "iatag_ui_tab_mods";
-			this.tabPageMods.Text = "Grim Dawn";
-			this.tabPageMods.UseVisualStyleBackColor = true;
-			// 
-			// modsPanel
-			// 
-			this.modsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.modsPanel.Location = new System.Drawing.Point(-4, 0);
-			this.modsPanel.Name = "modsPanel";
-			this.modsPanel.Size = new System.Drawing.Size(1102, 557);
-			this.modsPanel.TabIndex = 1;
-			// 
-			// tabPageOnline
-			// 
-			this.tabPageOnline.Controls.Add(this.onlinePanel);
-			this.tabPageOnline.Location = new System.Drawing.Point(4, 22);
-			this.tabPageOnline.Name = "tabPageOnline";
-			this.tabPageOnline.Size = new System.Drawing.Size(1029, 513);
-			this.tabPageOnline.TabIndex = 7;
-			this.tabPageOnline.Tag = "iatag_ui_tab_online";
-			this.tabPageOnline.Text = "Online";
-			this.tabPageOnline.UseVisualStyleBackColor = true;
-			// 
-			// onlinePanel
-			// 
-			this.onlinePanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.onlinePanel.Location = new System.Drawing.Point(-2, 0);
-			this.onlinePanel.Name = "onlinePanel";
-			this.onlinePanel.Size = new System.Drawing.Size(1102, 560);
-			this.onlinePanel.TabIndex = 1;
-			// 
-			// tabPageBackups
-			// 
-			this.tabPageBackups.Controls.Add(this.backupPanel);
-			this.tabPageBackups.Location = new System.Drawing.Point(4, 22);
-			this.tabPageBackups.Name = "tabPageBackups";
-			this.tabPageBackups.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageBackups.Size = new System.Drawing.Size(1029, 513);
-			this.tabPageBackups.TabIndex = 3;
-			this.tabPageBackups.Tag = "iatag_ui_tab_backups";
-			this.tabPageBackups.Text = "Backups";
-			this.tabPageBackups.UseVisualStyleBackColor = true;
-			// 
-			// backupPanel
-			// 
-			this.backupPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.backupPanel.Location = new System.Drawing.Point(-4, 0);
-			this.backupPanel.Name = "backupPanel";
-			this.backupPanel.Size = new System.Drawing.Size(1102, 560);
-			this.backupPanel.TabIndex = 0;
-			// 
-			// tabPageSettings
-			// 
-			this.tabPageSettings.BackColor = System.Drawing.SystemColors.Control;
-			this.tabPageSettings.Controls.Add(this.settingsPanel);
-			this.tabPageSettings.Location = new System.Drawing.Point(4, 22);
-			this.tabPageSettings.Margin = new System.Windows.Forms.Padding(0);
-			this.tabPageSettings.Name = "tabPageSettings";
-			this.tabPageSettings.Size = new System.Drawing.Size(1029, 513);
-			this.tabPageSettings.TabIndex = 1;
-			this.tabPageSettings.Tag = "iatag_ui_tab_settings";
-			this.tabPageSettings.Text = "Settings";
-			// 
-			// settingsPanel
-			// 
-			this.settingsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.settingsPanel.BackColor = System.Drawing.Color.Transparent;
-			this.settingsPanel.Location = new System.Drawing.Point(-7, -3);
-			this.settingsPanel.Name = "settingsPanel";
-			this.settingsPanel.Size = new System.Drawing.Size(1108, 566);
-			this.settingsPanel.TabIndex = 0;
-			// 
-			// tabPageLog
-			// 
-			this.tabPageLog.Controls.Add(this.panelLogging);
-			this.tabPageLog.Location = new System.Drawing.Point(4, 22);
-			this.tabPageLog.Name = "tabPageLog";
-			this.tabPageLog.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageLog.Size = new System.Drawing.Size(1029, 513);
-			this.tabPageLog.TabIndex = 6;
-			this.tabPageLog.Tag = "iatag_ui_tab_log";
-			this.tabPageLog.Text = "Log";
-			this.tabPageLog.UseVisualStyleBackColor = true;
-			// 
-			// panelLogging
-			// 
-			this.panelLogging.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.panelLogging.ForeColor = System.Drawing.SystemColors.Control;
-			this.panelLogging.Location = new System.Drawing.Point(-4, 0);
-			this.panelLogging.Name = "panelLogging";
-			this.panelLogging.Size = new System.Drawing.Size(1102, 564);
-			this.panelLogging.TabIndex = 1;
-			// 
-			// notifyIcon1
-			// 
-			this.notifyIcon1.BalloonTipTitle = "Item Assistant";
-			this.notifyIcon1.ContextMenuStrip = this.trayContextMenuStrip;
-			this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
-			this.notifyIcon1.Text = "GD Item Assistant";
-			this.notifyIcon1.Visible = true;
-			// 
-			// trayContextMenuStrip
-			// 
-			this.trayContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openToolStripMenuItem,
-            this.exitToolStripMenuItem});
-			this.trayContextMenuStrip.Name = "trayContextMenuStrip";
-			this.trayContextMenuStrip.Size = new System.Drawing.Size(104, 48);
-			this.trayContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.trayContextMenuStrip_Opening);
-			// 
-			// openToolStripMenuItem
-			// 
-			this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-			this.openToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
-			this.openToolStripMenuItem.Text = "Open";
-			this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
-			// 
-			// exitToolStripMenuItem
-			// 
-			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-			this.exitToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
-			this.exitToolStripMenuItem.Text = "Exit";
-			this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
-			// 
-			// tsVersionNumber
-			// 
-			this.tsVersionNumber.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.tsVersionNumber.Name = "tsVersionNumber";
-			this.tsVersionNumber.Size = new System.Drawing.Size(69, 17);
-			this.tsVersionNumber.Tag = "";
-			this.tsVersionNumber.Text = "placeholder";
-			this.tsVersionNumber.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// MainWindow
-			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.BackColor = System.Drawing.SystemColors.Control;
-			this.ClientSize = new System.Drawing.Size(1037, 561);
-			this.Controls.Add(this.tabControl1);
-			this.Controls.Add(this.statusStrip);
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-			this.MinimumSize = new System.Drawing.Size(800, 600);
-			this.Name = "MainWindow";
-			this.Tag = "iatag_ui_itemassistant";
-			this.Text = "Grim Dawn Item Assistant";
-			this.Load += new System.EventHandler(this.MainWindow_Load);
-			this.statusStrip.ResumeLayout(false);
-			this.statusStrip.PerformLayout();
-			this.tabControl1.ResumeLayout(false);
-			this.tabPageItems.ResumeLayout(false);
-			this.tabPageMods.ResumeLayout(false);
-			this.tabPageOnline.ResumeLayout(false);
-			this.tabPageBackups.ResumeLayout(false);
-			this.tabPageSettings.ResumeLayout(false);
-			this.tabPageLog.ResumeLayout(false);
-			this.trayContextMenuStrip.ResumeLayout(false);
-			this.ResumeLayout(false);
-			this.PerformLayout();
+            components = new System.ComponentModel.Container();
+            var resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
+            statusStrip = new StatusStrip();
+            statusLabel = new ToolStripStatusLabel();
+            tsVersionNumber = new ToolStripStatusLabel();
+            tsStashStatus = new ToolStripStatusLabel();
+            tabControl1 = new TabControl();
+            tabPageItems = new TabPage();
+            searchPanel = new Panel();
+            tabPageMods = new TabPage();
+            modsPanel = new Panel();
+            tabPageOnline = new TabPage();
+            onlinePanel = new Panel();
+            tabPageSettings = new TabPage();
+            settingsPanel = new Panel();
+            tabPageLog = new TabPage();
+            panelLogging = new Panel();
+            notifyIcon1 = new NotifyIcon(components);
+            trayContextMenuStrip = new ContextMenuStrip(components);
+            openToolStripMenuItem = new ToolStripMenuItem();
+            exitToolStripMenuItem = new ToolStripMenuItem();
+            statusStrip.SuspendLayout();
+            tabControl1.SuspendLayout();
+            tabPageItems.SuspendLayout();
+            tabPageMods.SuspendLayout();
+            tabPageOnline.SuspendLayout();
+            tabPageSettings.SuspendLayout();
+            tabPageLog.SuspendLayout();
+            trayContextMenuStrip.SuspendLayout();
+            SuspendLayout();
+            // 
+            // statusStrip
+            // 
+            statusStrip.Items.AddRange(new ToolStripItem[] { statusLabel, tsVersionNumber, tsStashStatus });
+            statusStrip.Location = new Point(0, 625);
+            statusStrip.Name = "statusStrip";
+            statusStrip.Padding = new Padding(1, 0, 16, 0);
+            statusStrip.Size = new Size(1210, 22);
+            statusStrip.TabIndex = 25;
+            statusStrip.Text = "statusStrip1";
+            // 
+            // statusLabel
+            // 
+            statusLabel.Name = "statusLabel";
+            statusLabel.Size = new Size(1032, 17);
+            statusLabel.Spring = true;
+            statusLabel.Text = "GD Item Assistant";
+            statusLabel.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // tsVersionNumber
+            // 
+            tsVersionNumber.ImageAlign = ContentAlignment.MiddleRight;
+            tsVersionNumber.Name = "tsVersionNumber";
+            tsVersionNumber.Size = new Size(69, 17);
+            tsVersionNumber.Tag = "";
+            tsVersionNumber.Text = "placeholder";
+            tsVersionNumber.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // tsStashStatus
+            // 
+            tsStashStatus.ImageAlign = ContentAlignment.MiddleRight;
+            tsStashStatus.Name = "tsStashStatus";
+            tsStashStatus.Size = new Size(92, 17);
+            tsStashStatus.Tag = "iatag_stash_unknown";
+            tsStashStatus.Text = "Stash: Unknown";
+            tsStashStatus.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // tabControl1
+            // 
+            tabControl1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tabControl1.Controls.Add(tabPageItems);
+            tabControl1.Controls.Add(tabPageOnline);
+            tabControl1.Controls.Add(tabPageSettings);
+            tabControl1.Controls.Add(tabPageMods);
+            tabControl1.Controls.Add(tabPageLog);
+            tabControl1.Location = new Point(0, 0);
+            tabControl1.Margin = new Padding(0);
+            tabControl1.Name = "tabControl1";
+            tabControl1.SelectedIndex = 0;
+            tabControl1.Size = new Size(1210, 622);
+            tabControl1.TabIndex = 34;
+            // 
+            // tabPageItems
+            // 
+            tabPageItems.BackColor = SystemColors.Control;
+            tabPageItems.Controls.Add(searchPanel);
+            tabPageItems.Location = new Point(4, 24);
+            tabPageItems.Margin = new Padding(0);
+            tabPageItems.Name = "tabPageItems";
+            tabPageItems.Size = new Size(1202, 594);
+            tabPageItems.TabIndex = 0;
+            tabPageItems.Tag = "iatag_ui_tab_items";
+            tabPageItems.Text = "Items";
+            // 
+            // searchPanel
+            // 
+            searchPanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            searchPanel.BackColor = Color.Transparent;
+            searchPanel.Location = new Point(-8, -3);
+            searchPanel.Margin = new Padding(0);
+            searchPanel.Name = "searchPanel";
+            searchPanel.Size = new Size(1217, 599);
+            searchPanel.TabIndex = 1;
+            // 
+            // tabPageMods
+            // 
+            tabPageMods.Controls.Add(modsPanel);
+            tabPageMods.Location = new Point(4, 24);
+            tabPageMods.Margin = new Padding(4, 3, 4, 3);
+            tabPageMods.Name = "tabPageMods";
+            tabPageMods.Padding = new Padding(4, 3, 4, 3);
+            tabPageMods.Size = new Size(1202, 594);
+            tabPageMods.TabIndex = 4;
+            tabPageMods.Tag = "iatag_ui_tab_mods";
+            tabPageMods.Text = "Grim Dawn";
+            tabPageMods.UseVisualStyleBackColor = true;
+            // 
+            // modsPanel
+            // 
+            modsPanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            modsPanel.Location = new Point(-5, 0);
+            modsPanel.Margin = new Padding(4, 3, 4, 3);
+            modsPanel.Name = "modsPanel";
+            modsPanel.Size = new Size(1286, 643);
+            modsPanel.TabIndex = 1;
+            // 
+            // tabPageOnline
+            // 
+            tabPageOnline.Controls.Add(onlinePanel);
+            tabPageOnline.Location = new Point(4, 24);
+            tabPageOnline.Margin = new Padding(4, 3, 4, 3);
+            tabPageOnline.Name = "tabPageOnline";
+            tabPageOnline.Size = new Size(1202, 594);
+            tabPageOnline.TabIndex = 7;
+            tabPageOnline.Tag = "iatag_ui_tab_online";
+            tabPageOnline.Text = "Online";
+            tabPageOnline.UseVisualStyleBackColor = true;
+            // 
+            // onlinePanel
+            // 
+            onlinePanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            onlinePanel.Location = new Point(-2, 0);
+            onlinePanel.Margin = new Padding(4, 3, 4, 3);
+            onlinePanel.Name = "onlinePanel";
+            onlinePanel.Size = new Size(1286, 646);
+            onlinePanel.TabIndex = 1;
+            // 
+            // tabPageSettings
+            // 
+            tabPageSettings.BackColor = SystemColors.Control;
+            tabPageSettings.Controls.Add(settingsPanel);
+            tabPageSettings.Location = new Point(4, 24);
+            tabPageSettings.Margin = new Padding(0);
+            tabPageSettings.Name = "tabPageSettings";
+            tabPageSettings.Size = new Size(1202, 594);
+            tabPageSettings.TabIndex = 1;
+            tabPageSettings.Tag = "iatag_ui_tab_settings";
+            tabPageSettings.Text = "Settings";
+            // 
+            // settingsPanel
+            // 
+            settingsPanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            settingsPanel.BackColor = Color.Transparent;
+            settingsPanel.Location = new Point(-8, -3);
+            settingsPanel.Margin = new Padding(4, 3, 4, 3);
+            settingsPanel.Name = "settingsPanel";
+            settingsPanel.Size = new Size(1293, 653);
+            settingsPanel.TabIndex = 0;
+            // 
+            // tabPageLog
+            // 
+            tabPageLog.Controls.Add(panelLogging);
+            tabPageLog.Location = new Point(4, 24);
+            tabPageLog.Margin = new Padding(4, 3, 4, 3);
+            tabPageLog.Name = "tabPageLog";
+            tabPageLog.Padding = new Padding(4, 3, 4, 3);
+            tabPageLog.Size = new Size(1202, 594);
+            tabPageLog.TabIndex = 6;
+            tabPageLog.Tag = "iatag_ui_tab_log";
+            tabPageLog.Text = "Log";
+            tabPageLog.UseVisualStyleBackColor = true;
+            // 
+            // panelLogging
+            // 
+            panelLogging.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            panelLogging.ForeColor = SystemColors.Control;
+            panelLogging.Location = new Point(-5, 0);
+            panelLogging.Margin = new Padding(4, 3, 4, 3);
+            panelLogging.Name = "panelLogging";
+            panelLogging.Size = new Size(1286, 651);
+            panelLogging.TabIndex = 1;
+            // 
+            // notifyIcon1
+            // 
+            notifyIcon1.BalloonTipTitle = "Item Assistant";
+            notifyIcon1.ContextMenuStrip = trayContextMenuStrip;
+            notifyIcon1.Icon = (Icon)resources.GetObject("notifyIcon1.Icon");
+            notifyIcon1.Text = "GD Item Assistant";
+            notifyIcon1.Visible = true;
+            // 
+            // trayContextMenuStrip
+            // 
+            trayContextMenuStrip.Items.AddRange(new ToolStripItem[] { openToolStripMenuItem, exitToolStripMenuItem });
+            trayContextMenuStrip.Name = "trayContextMenuStrip";
+            trayContextMenuStrip.Size = new Size(104, 48);
+            trayContextMenuStrip.Opening += trayContextMenuStrip_Opening;
+            // 
+            // openToolStripMenuItem
+            // 
+            openToolStripMenuItem.Name = "openToolStripMenuItem";
+            openToolStripMenuItem.Size = new Size(103, 22);
+            openToolStripMenuItem.Text = "Open";
+            openToolStripMenuItem.Click += openToolStripMenuItem_Click;
+            // 
+            // exitToolStripMenuItem
+            // 
+            exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            exitToolStripMenuItem.Size = new Size(103, 22);
+            exitToolStripMenuItem.Text = "Exit";
+            exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
+            // 
+            // MainWindow
+            // 
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            BackColor = SystemColors.Control;
+            ClientSize = new Size(1210, 647);
+            Controls.Add(tabControl1);
+            Controls.Add(statusStrip);
+            Icon = (Icon)resources.GetObject("$this.Icon");
+            Margin = new Padding(4, 3, 4, 3);
+            MinimumSize = new Size(931, 686);
+            Name = "MainWindow";
+            Tag = "iatag_ui_itemassistant";
+            Text = "Grim Dawn Item Assistant";
+            Load += MainWindow_Load;
+            statusStrip.ResumeLayout(false);
+            statusStrip.PerformLayout();
+            tabControl1.ResumeLayout(false);
+            tabPageItems.ResumeLayout(false);
+            tabPageMods.ResumeLayout(false);
+            tabPageOnline.ResumeLayout(false);
+            tabPageSettings.ResumeLayout(false);
+            tabPageLog.ResumeLayout(false);
+            trayContextMenuStrip.ResumeLayout(false);
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 
@@ -319,8 +284,6 @@
         private System.Windows.Forms.NotifyIcon notifyIcon1;
         private System.Windows.Forms.ContextMenuStrip trayContextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
-        private System.Windows.Forms.TabPage tabPageBackups;
-        private System.Windows.Forms.Panel backupPanel;
         private System.Windows.Forms.TabPage tabPageMods;
         private System.Windows.Forms.Panel modsPanel;
         private System.Windows.Forms.Panel searchPanel;

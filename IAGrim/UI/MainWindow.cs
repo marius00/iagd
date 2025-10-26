@@ -68,7 +68,6 @@ namespace IAGrim.UI {
         private MinimizeToTrayHandler _minimizeToTrayHandler;
         private ModsDatabaseConfig _modsDatabaseConfigTab;
         public static int NumInstantSyncItemCount = 300;
-        private bool _isBrowserInitialized = false;
 
 
         #region Stash Status
@@ -230,8 +229,6 @@ namespace IAGrim.UI {
                     else {
                         settingsService.GetLocal().EasterPrank = true;
                     }
-
-                    _isBrowserInitialized = true;
                 }
             }
         }
@@ -519,9 +516,6 @@ namespace IAGrim.UI {
 
 
             _authService = new AuthService(new AuthenticationProvider(settingsService), playerItemDao);
-            var backupSettings = new BackupSettings(playerItemDao, settingsService, _cefBrowserHandler);
-            UIHelper.AddAndShow(backupSettings, backupPanel);
-
             var onlineSettings = new OnlineSettings(playerItemDao, settingsService, _cefBrowserHandler, buddyItemDao, buddySubscriptionDao);
             UIHelper.AddAndShow(onlineSettings, onlinePanel);
             _authService.OnAuthCompletion += (sender, args_) => {

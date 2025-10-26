@@ -617,6 +617,7 @@ iatag_ui_saving_items=Saving items
 iatag_ui_saving_special_stats=Saving special stats
 iatag_ui_saving_tags=Saving tags
 iatag_ui_searchbox_tooltip=The item name, partially works fine.
+iatag_ui_searchdelay=Delay when searching
 iatag_ui_setbonus=Set Bonus
 iatag_ui_settings_title=Settings
 iatag_ui_skills_sanity=Skills sanity check
