@@ -80,29 +80,11 @@ namespace IAGrim.UI.Tabs {
             Deactivate += SplitSearchWindow_Deactivate;
             var conf = CoreWebView2Environment.CreateAsync(null, GlobalPaths.EdgeCacheLocation).Result;
             webView21.EnsureCoreWebView2Async(conf);
-            webView21.Source = new Uri(GetSiteUri());
 
             InitializeFilterPanel();
         }
 
 
-        private string GetSiteUri() {
-#if DEBUG
-            /*
-            var client = new WebClient();
-
-            try {
-                Logger.Debug("Checking if NodeJS is running...");
-                client.DownloadString("http://localhost:3000/");
-                Logger.Debug("NodeJS running");
-                return "http://localhost:3000/";
-            }
-            catch (System.Net.WebException) {
-                Logger.Debug("NodeJS not running, defaulting to standard view");
-            }*/
-#endif
-            return GlobalPaths.ItemsHtmlFile;
-        }
 
         public void SelectModFilterIfNotSelected() {
             if (!_hasCheckedModFilterNotEmpty) {
@@ -395,16 +377,15 @@ namespace IAGrim.UI.Tabs {
             // 
             _mainSplitter.Dock = DockStyle.Fill;
             _mainSplitter.Location = new Point(0, 0);
-            _mainSplitter.Margin = new Padding(6, 5, 6, 5);
+            _mainSplitter.Margin = new Padding(4, 3, 4, 3);
             _mainSplitter.Name = "_mainSplitter";
             // 
             // _mainSplitter.Panel2
             // 
             _mainSplitter.Panel2.Controls.Add(_toolStripContainer);
             _mainSplitter.Panel2.Controls.Add(_flowPanelFilter);
-            _mainSplitter.Size = new Size(2189, 1250);
-            _mainSplitter.SplitterDistance = 340;
-            _mainSplitter.SplitterWidth = 6;
+            _mainSplitter.Size = new Size(1532, 750);
+            _mainSplitter.SplitterDistance = 237;
             _mainSplitter.TabIndex = 0;
             _mainSplitter.TabStop = false;
             // 
@@ -415,15 +396,15 @@ namespace IAGrim.UI.Tabs {
             // _toolStripContainer.ContentPanel
             // 
             _toolStripContainer.ContentPanel.Controls.Add(webView21);
-            _toolStripContainer.ContentPanel.Margin = new Padding(6, 5, 6, 5);
-            _toolStripContainer.ContentPanel.Size = new Size(1843, 1132);
+            _toolStripContainer.ContentPanel.Margin = new Padding(4, 3, 4, 3);
+            _toolStripContainer.ContentPanel.Size = new Size(1291, 669);
             _toolStripContainer.Dock = DockStyle.Fill;
             _toolStripContainer.LeftToolStripPanelVisible = false;
-            _toolStripContainer.Location = new Point(0, 93);
-            _toolStripContainer.Margin = new Padding(6, 5, 6, 5);
+            _toolStripContainer.Location = new Point(0, 56);
+            _toolStripContainer.Margin = new Padding(4, 3, 4, 3);
             _toolStripContainer.Name = "_toolStripContainer";
             _toolStripContainer.RightToolStripPanelVisible = false;
-            _toolStripContainer.Size = new Size(1843, 1157);
+            _toolStripContainer.Size = new Size(1291, 694);
             _toolStripContainer.TabIndex = 48;
             _toolStripContainer.Text = "toolStripContainer1";
             // 
@@ -433,10 +414,10 @@ namespace IAGrim.UI.Tabs {
             webView21.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             webView21.CreationProperties = null;
             webView21.DefaultBackgroundColor = Color.White;
-            webView21.Location = new Point(6, 5);
-            webView21.Margin = new Padding(6, 5, 6, 5);
+            webView21.Location = new Point(4, 3);
+            webView21.Margin = new Padding(4, 3, 4, 3);
             webView21.Name = "webView21";
-            webView21.Size = new Size(1831, 1122);
+            webView21.Size = new Size(1283, 663);
             webView21.TabIndex = 0;
             webView21.ZoomFactor = 1D;
             // 
@@ -452,9 +433,9 @@ namespace IAGrim.UI.Tabs {
             _flowPanelFilter.Controls.Add(_levelRequirementGroup);
             _flowPanelFilter.Dock = DockStyle.Top;
             _flowPanelFilter.Location = new Point(0, 0);
-            _flowPanelFilter.Margin = new Padding(6, 5, 6, 5);
+            _flowPanelFilter.Margin = new Padding(4, 3, 4, 3);
             _flowPanelFilter.Name = "_flowPanelFilter";
-            _flowPanelFilter.Size = new Size(1843, 93);
+            _flowPanelFilter.Size = new Size(1291, 56);
             _flowPanelFilter.TabIndex = 52;
             // 
             // _searchBox
@@ -462,13 +443,12 @@ namespace IAGrim.UI.Tabs {
             _searchBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             _searchBox.AutoCompleteMode = AutoCompleteMode.Suggest;
             _searchBox.AutoCompleteSource = AutoCompleteSource.RecentlyUsedList;
-            _searchBox.Location = new Point(6, 33);
-            _searchBox.Margin = new Padding(6, 33, 6, 5);
-            _searchBox.MaximumSize = new Size(730, 0);
+            _searchBox.Location = new Point(4, 20);
+            _searchBox.Margin = new Padding(4, 20, 4, 3);
+            _searchBox.MaximumSize = new Size(512, 0);
             _searchBox.MaxLength = 255;
-            _searchBox.MinimumSize = new Size(0, 8);
             _searchBox.Name = "_searchBox";
-            _searchBox.Size = new Size(177, 31);
+            _searchBox.Size = new Size(125, 23);
             _searchBox.TabIndex = 41;
             _searchBox.Tag = "iatag_ui_searchbox_tooltip";
             toolTip1.SetToolTip(_searchBox, "The item name, partially works fine.");
@@ -479,10 +459,10 @@ namespace IAGrim.UI.Tabs {
             _orderByLevel.AutoSize = true;
             _orderByLevel.Checked = true;
             _orderByLevel.CheckState = CheckState.Checked;
-            _orderByLevel.Location = new Point(195, 37);
-            _orderByLevel.Margin = new Padding(6, 37, 6, 5);
+            _orderByLevel.Location = new Point(137, 22);
+            _orderByLevel.Margin = new Padding(4, 22, 4, 3);
             _orderByLevel.Name = "_orderByLevel";
-            _orderByLevel.Size = new Size(152, 29);
+            _orderByLevel.Size = new Size(102, 19);
             _orderByLevel.TabIndex = 42;
             _orderByLevel.Tag = "iatag_ui_orderbylevel";
             _orderByLevel.Text = "Order By Level";
@@ -494,10 +474,10 @@ namespace IAGrim.UI.Tabs {
             _itemQuality.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             _itemQuality.DropDownStyle = ComboBoxStyle.DropDownList;
             _itemQuality.FormattingEnabled = true;
-            _itemQuality.Location = new Point(359, 33);
-            _itemQuality.Margin = new Padding(6, 33, 6, 5);
+            _itemQuality.Location = new Point(247, 20);
+            _itemQuality.Margin = new Padding(4, 20, 4, 3);
             _itemQuality.Name = "_itemQuality";
-            _itemQuality.Size = new Size(147, 33);
+            _itemQuality.Size = new Size(104, 23);
             _itemQuality.TabIndex = 43;
             _itemQuality.Tag = "iatag_ui_itemquality_tooltip";
             toolTip1.SetToolTip(_itemQuality, "The minimum item quality");
@@ -507,10 +487,10 @@ namespace IAGrim.UI.Tabs {
             _slotFilter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             _slotFilter.DropDownStyle = ComboBoxStyle.DropDownList;
             _slotFilter.FormattingEnabled = true;
-            _slotFilter.Location = new Point(518, 33);
-            _slotFilter.Margin = new Padding(6, 33, 6, 5);
+            _slotFilter.Location = new Point(359, 20);
+            _slotFilter.Margin = new Padding(4, 20, 4, 3);
             _slotFilter.Name = "_slotFilter";
-            _slotFilter.Size = new Size(197, 33);
+            _slotFilter.Size = new Size(139, 23);
             _slotFilter.TabIndex = 44;
             _slotFilter.Tag = "iatag_ui_slotfilter_tooltip";
             toolTip1.SetToolTip(_slotFilter, "Slot/Type");
@@ -520,10 +500,10 @@ namespace IAGrim.UI.Tabs {
             _modFilter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             _modFilter.DropDownStyle = ComboBoxStyle.DropDownList;
             _modFilter.FormattingEnabled = true;
-            _modFilter.Location = new Point(727, 33);
-            _modFilter.Margin = new Padding(6, 33, 6, 5);
+            _modFilter.Location = new Point(506, 20);
+            _modFilter.Margin = new Padding(4, 20, 4, 3);
             _modFilter.Name = "_modFilter";
-            _modFilter.Size = new Size(167, 33);
+            _modFilter.Size = new Size(118, 23);
             _modFilter.TabIndex = 45;
             _modFilter.Tag = "iatag_ui_modfilter_tooltip";
             toolTip1.SetToolTip(_modFilter, "Mod / Hardcore / Vanilla");
@@ -532,11 +512,11 @@ namespace IAGrim.UI.Tabs {
             // 
             _levelRequirementGroup.Controls.Add(_minLevel);
             _levelRequirementGroup.Controls.Add(_maxLevel);
-            _levelRequirementGroup.Location = new Point(906, 5);
-            _levelRequirementGroup.Margin = new Padding(6, 5, 6, 5);
+            _levelRequirementGroup.Location = new Point(632, 3);
+            _levelRequirementGroup.Margin = new Padding(4, 3, 4, 3);
             _levelRequirementGroup.Name = "_levelRequirementGroup";
-            _levelRequirementGroup.Padding = new Padding(6, 5, 6, 5);
-            _levelRequirementGroup.Size = new Size(130, 83);
+            _levelRequirementGroup.Padding = new Padding(4, 3, 4, 3);
+            _levelRequirementGroup.Size = new Size(91, 50);
             _levelRequirementGroup.TabIndex = 50;
             _levelRequirementGroup.TabStop = false;
             _levelRequirementGroup.Tag = "iatag_ui_level_requirement";
@@ -545,11 +525,11 @@ namespace IAGrim.UI.Tabs {
             // 
             // _minLevel
             // 
-            _minLevel.Location = new Point(9, 28);
-            _minLevel.Margin = new Padding(6, 5, 6, 5);
+            _minLevel.Location = new Point(6, 17);
+            _minLevel.Margin = new Padding(4, 3, 4, 3);
             _minLevel.MaxLength = 3;
             _minLevel.Name = "_minLevel";
-            _minLevel.Size = new Size(47, 31);
+            _minLevel.Size = new Size(34, 23);
             _minLevel.TabIndex = 46;
             _minLevel.Tag = "iatag_ui_minlevel_tooltip";
             _minLevel.Text = "0";
@@ -559,11 +539,11 @@ namespace IAGrim.UI.Tabs {
             // 
             // _maxLevel
             // 
-            _maxLevel.Location = new Point(67, 28);
-            _maxLevel.Margin = new Padding(6, 5, 6, 5);
+            _maxLevel.Location = new Point(47, 17);
+            _maxLevel.Margin = new Padding(4, 3, 4, 3);
             _maxLevel.MaxLength = 3;
             _maxLevel.Name = "_maxLevel";
-            _maxLevel.Size = new Size(47, 31);
+            _maxLevel.Size = new Size(34, 23);
             _maxLevel.TabIndex = 47;
             _maxLevel.Tag = "iatag_ui_maxlevel_tooltip";
             _maxLevel.Text = "110";
@@ -577,12 +557,12 @@ namespace IAGrim.UI.Tabs {
             // 
             // SplitSearchWindow
             // 
-            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(2189, 1250);
+            ClientSize = new Size(1532, 750);
             Controls.Add(_mainSplitter);
             FormBorderStyle = FormBorderStyle.None;
-            Margin = new Padding(6, 5, 6, 5);
+            Margin = new Padding(4, 3, 4, 3);
             Name = "SplitSearchWindow";
             Text = "SearchWindow";
             Load += SplitSearchWindow_Load;

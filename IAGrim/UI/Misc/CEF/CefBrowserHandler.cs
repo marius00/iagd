@@ -18,16 +18,18 @@ namespace IAGrim.UI.Misc.CEF {
     public class CefBrowserHandler(SettingsService settings) : IUserFeedbackHandler, IBrowserCallbacks, IHelpService {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(CefBrowserHandler));
         private TabControl? _tabControl; // TODO: UGh.. why?
-        private ConcurrentBag<IOMessage> _initializationQueue = new ConcurrentBag<IOMessage>();
+        private readonly ConcurrentBag<IOMessage> _initializationQueue = new ConcurrentBag<IOMessage>();
 
         public WebView2? BrowserControl { get; private set; }
 
-        private bool _isReady { get; set; }
-        private bool _isReadyUi { get; set; }
+        private volatile bool _isReady;
+        private volatile bool _isReadyUi;
         public bool IsReady { 
             get => _isReady; 
             set { 
-                if (value && !_isReady) {
+                if (value && !_isReady && BrowserControl != null) {
+                    BrowserControl.Source = new Uri(GetSiteUri());
+
                     if (_isReadyUi) {
                         Logger.Info("Both UI and browser are ready, processing queue..");
                         foreach (var item in _initializationQueue) {
@@ -38,7 +40,8 @@ namespace IAGrim.UI.Misc.CEF {
                     }
                     else {
                         Logger.Info("Browser signaled readiness, waiting for UI..");
-                        var t = new Thread(new ThreadStart(() => {
+                        _isReady = value;
+                        /*var t = new Thread(new ThreadStart(() => {
                             Thread.Sleep(3500);
                             _isReady = value;
                             Logger.Warn("Did not receive any alert from the WebUI, sending messages anyways..");
@@ -49,7 +52,7 @@ namespace IAGrim.UI.Misc.CEF {
 
                             _initializationQueue.Clear();
                         }));
-                        t.Start();
+                        t.Start();*/
                     }
 
                     Logger.Info($"There are {_initializationQueue.Count} queued messages");
@@ -65,8 +68,8 @@ namespace IAGrim.UI.Misc.CEF {
         };
 
         private void SendMessage(IOMessage message) {
-            if (BrowserControl?.Parent == null) {
-                Logger.Warn("Attempted to communicate with the frontend, but browser not yet initialized, discarded: " + JsonConvert.SerializeObject(message, _serializerSettings));
+            if (BrowserControl?.Parent == null || !_isReadyUi) {
+                Logger.Warn("Attempted to communicate with the frontend, but browser not yet initialized, queued: " + JsonConvert.SerializeObject(message, _serializerSettings));
                 _initializationQueue.Add(message);
                 return;
             }
@@ -77,8 +80,9 @@ namespace IAGrim.UI.Misc.CEF {
                 return;
             }
 
-            if (IsReady) {
+            if (IsReady && _isReadyUi) {
                 // Attempting to read the result or anything in a sync way will just stall.
+                //Logger.Info("Exec: " + JsonConvert.SerializeObject(message, _serializerSettings));
                 BrowserControl.ExecuteScriptAsync("window.message(" + JsonConvert.SerializeObject(message, _serializerSettings) + ")");
             }
             else {
@@ -161,6 +165,23 @@ namespace IAGrim.UI.Misc.CEF {
         }
 
 
+        private string GetSiteUri() {
+#if DEBUG
+            /*
+            var client = new WebClient();
+
+            try {
+                Logger.Debug("Checking if NodeJS is running...");
+                client.DownloadString("http://localhost:3000/");
+                Logger.Debug("NodeJS running");
+                return "http://localhost:3000/";
+            }
+            catch (System.Net.WebException) {
+                Logger.Debug("NodeJS not running, defaulting to standard view");
+            }*/
+#endif
+            return GlobalPaths.ItemsHtmlFile;
+        }
 
         public void InitializeChromium(Microsoft.Web.WebView2.WinForms.WebView2 browserControlView2, JavascriptIntegration bindable, TabControl tabControl) {
             try {
