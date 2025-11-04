@@ -91,6 +91,9 @@ namespace IAGrim.Database.Synchronizer.Core {
         }
 
         public void Execute(Action func, int timeout = ThreadTimeout, bool expectLongOperation = false) {
+
+            func();
+            return;
             if (_lockObj.WaitOne(TimeSpan.FromMinutes(20))) {
                 try {
                     func();
@@ -149,6 +152,7 @@ string callingMethodName = "";
         }
 
         private T Execute<T>(Func<T> func, int timeout, string callingMethodName) {
+            return func();
             if (_lockObj.WaitOne(TimeSpan.FromMinutes(20))) {
                 try {
                     return func();

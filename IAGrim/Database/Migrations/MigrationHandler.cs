@@ -12,6 +12,7 @@ namespace IAGrim.Database.Migrations {
             this._sessionCreator = sessionCreator;
         }
         public void Migrate() {
+            new EnableWalJournalMode().Migrate(_sessionCreator);
             new AddBaseTables().Migrate(_sessionCreator);
             new AddAsterkarnFieldsToPlayerItem().Migrate(_sessionCreator);
             new DatabaseItemHashFixMigration().Migrate(_sessionCreator);
