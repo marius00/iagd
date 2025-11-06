@@ -9,6 +9,7 @@ using log4net;
 using Microsoft.Web.WebView2.WinForms;
 using Newtonsoft.Json;
 using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Net;
 using System.Threading;
@@ -18,7 +19,7 @@ namespace IAGrim.UI.Misc.CEF {
     public class CefBrowserHandler(SettingsService settings) : IUserFeedbackHandler, IBrowserCallbacks, IHelpService {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(CefBrowserHandler));
         private TabControl? _tabControl; // TODO: UGh.. why?
-        private readonly ConcurrentBag<IOMessage> _initializationQueue = new ConcurrentBag<IOMessage>();
+        private readonly ConcurrentQueue<IOMessage> _initializationQueue = new ConcurrentQueue<IOMessage>();
 
         public WebView2? BrowserControl { get; private set; }
 
@@ -69,8 +70,14 @@ namespace IAGrim.UI.Misc.CEF {
 
         private void SendMessage(IOMessage message) {
             if (BrowserControl?.Parent == null || !_isReadyUi) {
-                Logger.Warn("Attempted to communicate with the frontend, but browser not yet initialized, queued: " + JsonConvert.SerializeObject(message, _serializerSettings));
-                _initializationQueue.Add(message);
+                if (message.IsLogHeavy) {
+                    Logger.Warn("Attempted to communicate with the frontend, but browser not yet initialized, queued: " + message.Type.ToString());
+                }
+                else {
+                    Logger.Warn("Attempted to communicate with the frontend, but browser not yet initialized, queued: " + message.Type.ToString() + " " + JsonConvert.SerializeObject(message, _serializerSettings));
+                }
+
+                _initializationQueue.Enqueue(message);
                 return;
             }
             // window.message({'type':5, 'data':{'items': [], 'replaceExistingItems': true, 'numItemsFound': 0}})
@@ -87,7 +94,7 @@ namespace IAGrim.UI.Misc.CEF {
             }
             else {
                 Logger.Warn("Attempting to interact with webview, but not yet ready.");
-                _initializationQueue.Add(message);
+                _initializationQueue.Enqueue(message);
             }
 
         }
@@ -196,7 +203,7 @@ namespace IAGrim.UI.Misc.CEF {
                     if (_isReady) {
                         Logger.Info("Both UI and browser are ready, processing queue..");
                         foreach (var item in _initializationQueue) {
-                            Logger.Info($"Message: {JsonConvert.SerializeObject(item, _serializerSettings)}");
+                            Logger.Info($"Message: {item.Type.ToString() + (item.IsLogHeavy ? "" : " "+ JsonConvert.SerializeObject(item, _serializerSettings))}");
                             SendMessage(item);
                         }
                         _initializationQueue.Clear();

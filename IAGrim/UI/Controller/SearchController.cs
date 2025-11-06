@@ -87,47 +87,52 @@ namespace IAGrim.UI.Controller {
 
             // Signal that we are loading items
             Browser.ShowLoadingAnimation(true);
+            try {
 
+                Logger.Info("Searching for items..");
 
-            Logger.Info("Searching for items..");
+                var items = new List<PlayerHeldItem>();
 
-            var items = new List<PlayerHeldItem>();
+                items.AddRange(_playerItemDao.SearchForItems(query));
 
-            items.AddRange(_playerItemDao.SearchForItems(query));
+                var personalCount = items.Sum(i => (long)i.Count);
 
-            var personalCount = items.Sum(i => (long) i.Count);
-
-            if (includeBuddyItems && !query.SocketedOnly) {
-                AddBuddyItems(items, query, out message);
-            }
-            else {
-                message = personalCount == 0
-                    ? RuntimeSettings.Language.GetTag("iatag_no_matching_items_found")
-                    : string.Empty;
-            }
-
-
-            var merged = ItemOperationsUtility.MergeStackSize(items);
-            
-
-            if (_itemPaginationService.Update(merged, orderByLevel, items.Count)) {
-                if (!ApplyItems(false)) {
-                    Browser.SetItems(new List<List<JsonItem>>(0), 0);
+                if (includeBuddyItems && !query.SocketedOnly) {
+                    AddBuddyItems(items, query, out message);
                 }
-                UpdateCollectionItems(query);
+                else {
+                    message = personalCount == 0
+                        ? RuntimeSettings.Language.GetTag("iatag_no_matching_items_found")
+                        : string.Empty;
+                }
+
+
+                var merged = ItemOperationsUtility.MergeStackSize(items);
+
+
+                if (_itemPaginationService.Update(merged, orderByLevel, items.Count)) {
+                    if (!ApplyItems(false)) {
+                        Browser.SetItems(new List<List<JsonItem>>(0), 0);
+                    }
+
+                    UpdateCollectionItems(query);
+                }
+                else {
+                    Browser.ShowLoadingAnimation(false);
+                }
+
+                // We have no search filters, yet can barely find any items. Despite there being more than twice as many items as we found.
+                // This might indicate the mod filter dropdown has the wrong setting.
+                var numOtherItems = _playerItemDao.GetNumItems() - personalCount;
+                if (query.IsEmpty && personalCount < 300 && numOtherItems > personalCount) {
+                    Browser.ShowModFilterWarning((int)numOtherItems);
+                }
+
+                return message;
             }
-            else {
+            finally {
                 Browser.ShowLoadingAnimation(false);
             }
-
-            // We have no search filters, yet can barely find any items. Despite there being more than twice as many items as we found.
-            // This might indicate the mod filter dropdown has the wrong setting.
-            var numOtherItems = _playerItemDao.GetNumItems() - personalCount;
-            if (query.IsEmpty && personalCount < 300 && numOtherItems > personalCount) {
-                Browser.ShowModFilterWarning((int)numOtherItems);
-            }
-
-            return message;
         }
 
         private void AddBuddyItems(List<PlayerHeldItem> items, ItemSearchRequest query, out string message) {
