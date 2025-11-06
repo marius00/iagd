@@ -82,15 +82,20 @@ namespace IAGrim.UI.Misc.CEF {
             }
             // window.message({'type':5, 'data':{'items': [], 'replaceExistingItems': true, 'numItemsFound': 0}})
 
-            if (BrowserControl.Parent.InvokeRequired) {
-                BrowserControl.Parent.Invoke((MethodInvoker)delegate { SendMessage(message); });
-                return;
-            }
+
 
             if (IsReady && _isReadyUi) {
                 // Attempting to read the result or anything in a sync way will just stall.
                 //Logger.Info("Exec: " + JsonConvert.SerializeObject(message, _serializerSettings));
-                BrowserControl.ExecuteScriptAsync("window.message(" + JsonConvert.SerializeObject(message, _serializerSettings) + ")");
+                if (BrowserControl.Parent.InvokeRequired) {
+                    BrowserControl.Parent.Invoke((MethodInvoker)delegate {
+                        BrowserControl.ExecuteScriptAsync("window.message(" + JsonConvert.SerializeObject(message, _serializerSettings) + ")");
+                    });
+                }
+                else {
+                    BrowserControl.ExecuteScriptAsync("window.message(" + JsonConvert.SerializeObject(message, _serializerSettings) + ")");
+                }
+
             }
             else {
                 Logger.Warn("Attempting to interact with webview, but not yet ready.");
