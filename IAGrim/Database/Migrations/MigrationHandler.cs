@@ -14,6 +14,8 @@ namespace IAGrim.Database.Migrations {
         public void Migrate() {
             new AddBaseTables().Migrate(_sessionCreator);
             new AddAsterkarnFieldsToPlayerItem().Migrate(_sessionCreator);
+            new AddAsterkarnFieldsToBuddyItems().Migrate(_sessionCreator);
+            
             new DatabaseItemHashFixMigration().Migrate(_sessionCreator);
         }
     }
