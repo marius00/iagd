@@ -62,51 +62,8 @@ namespace EvilsoftCommons.SingleInstance {
         public void ListenForArgumentsFromSuccessiveInstances() {
             if (!IsFirstInstance)
                 throw new InvalidOperationException("This is not the first instance.");
-            ThreadPool.QueueUserWorkItem(new WaitCallback(ListenForArguments));
         }
 
-        /// <summary>
-        /// Listens for arguments on a named pipe.
-        /// </summary>
-        /// <param name="state">State object required by WaitCallback delegate.</param>
-        private void ListenForArguments(Object state) {
-            try {
-                using (NamedPipeServerStream server = new NamedPipeServerStream(identifier.ToString()))
-                using (StreamReader reader = new StreamReader(server)) {
-                    server.WaitForConnection();
-
-                    List<String> arguments = new List<String>();
-                    while (server.IsConnected)
-                        arguments.Add(reader.ReadLine());
-
-                    ThreadPool.QueueUserWorkItem(new WaitCallback(CallOnArgumentsReceived), arguments.ToArray());
-                }
-            }
-            catch (IOException) { } //Pipe was broken
-            finally {
-                ListenForArguments(null);
-            }
-        }
-
-        /// <summary>
-        /// Calls the OnArgumentsReceived method casting the state Object to String[].
-        /// </summary>
-        /// <param name="state">The arguments to pass.</param>
-        private void CallOnArgumentsReceived(Object state) {
-            OnArgumentsReceived((String[])state);
-        }
-        /// <summary>
-        /// Event raised when arguments are received from successive instances.
-        /// </summary>
-        public event EventHandler<ArgumentsReceivedEventArgs> ArgumentsReceived;
-        /// <summary>
-        /// Fires the ArgumentsReceived event.
-        /// </summary>
-        /// <param name="arguments">The arguments to pass with the ArgumentsReceivedEventArgs.</param>
-        private void OnArgumentsReceived(String[] arguments) {
-            if (ArgumentsReceived != null)
-                ArgumentsReceived(this, new ArgumentsReceivedEventArgs() { Args = arguments });
-        }
 
         #region IDisposable
         private Boolean disposed = false;

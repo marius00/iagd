@@ -21,18 +21,15 @@ using System.Reflection;
 
 namespace IAGrim
 {
-    internal static class Program
-    {
+    internal static class Program {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(Program));
         private static MainWindow? _mw;
         private static readonly StartupService StartupService = new StartupService();
 
-        private static void LoadUuid(SettingsService settings)
-        {
+        private static void LoadUuid(SettingsService settings) {
             var uuid = settings.GetPersistent().UUID;
 
-            if (string.IsNullOrEmpty(uuid))
-            {
+            if (string.IsNullOrEmpty(uuid)) {
                 uuid = Guid.NewGuid().ToString().Replace("-", "");
                 settings.GetPersistent().UUID = uuid;
             }
@@ -48,10 +45,8 @@ namespace IAGrim
         ///  The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main(string[] args)
-        {
-            if (Thread.CurrentThread.Name == null)
-            {
+        static void Main(string[] args) {
+            if (Thread.CurrentThread.Name == null) {
                 Thread.CurrentThread.Name = "Main";
                 Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
             }
@@ -95,29 +90,22 @@ namespace IAGrim
             ItemHtmlWriter.CopyMissingFiles();
 
             Guid guid = new Guid("{F3693953-C090-4F93-86A2-B98AB96A9368}");
-            using (SingleInstance singleInstance = new SingleInstance(guid))
-            {
-                if (singleInstance.IsFirstInstance)
-                {
+            using (SingleInstance singleInstance = new SingleInstance(guid)) {
+                if (singleInstance.IsFirstInstance) {
                     Logger.Info("Calling run..");
-                    singleInstance.ArgumentsReceived += singleInstance_ArgumentsReceived;
                     singleInstance.ListenForArgumentsFromSuccessiveInstances();
-                    using (ThreadExecuter threadExecuter = new ThreadExecuter())
-                    {
+                    using (ThreadExecuter threadExecuter = new ThreadExecuter()) {
                         Application.EnableVisualStyles();
                         Application.SetCompatibleTextRenderingDefault(false);
                         Logger.Info("Visual styles enabled..");
                         Run(args, threadExecuter);
                     }
                 }
-                else
-                {
-                    if (args != null && args.Length > 0)
-                    {
+                else {
+                    if (args != null && args.Length > 0) {
                         singleInstance.PassArgumentsToFirstInstance(args);
                     }
-                    else
-                    {
+                    else {
                         singleInstance.PassArgumentsToFirstInstance(new string[] { "--ignore" });
                     }
 
@@ -132,20 +120,16 @@ namespace IAGrim
 
         }
 
-        private static void DumpTranslationTemplate()
-        {
-            try
-            {
+        private static void DumpTranslationTemplate() {
+            try {
                 File.WriteAllText(Path.Combine(GlobalPaths.CoreFolder, "tags_ia.template.txt"), new EnglishLanguage(new Dictionary<string, string>()).Export());
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 Logger.Debug("Error dumping translation template", ex);
             }
         }
 
-        private static void Run(string[] args, ThreadExecuter threadExecuter)
-        {
+        private static void Run(string[] args, ThreadExecuter threadExecuter) {
             var factory = new SessionFactory();
             Logger.Debug("Executing DB migrations..");
             threadExecuter.Execute(() => new MigrationHandler(factory).Migrate());
@@ -156,7 +140,7 @@ namespace IAGrim
             var databaseItemDao = serviceProvider.Get<IDatabaseItemDao>();
             RuntimeSettings.InitializeLanguage(settingsService.GetLocal().LocalizationFile, databaseItemDao.GetTagDictionary());
             DumpTranslationTemplate();
-;
+            ;
 
             Logger.Debug("Loading UUID");
             LoadUuid(settingsService);
@@ -168,10 +152,8 @@ namespace IAGrim
             StartupService.PrintStartupInfo(factory, settingsService);
 
             // TODO: Offload to the new language loader
-            if (RuntimeSettings.Language is EnglishLanguage language)
-            {
-                foreach (var tag in itemTagDao.GetClassItemTags())
-                {
+            if (RuntimeSettings.Language is EnglishLanguage language) {
+                foreach (var tag in itemTagDao.GetClassItemTags()) {
                     language.SetTagIfMissing(tag.Tag, tag.Name);
                 }
             }
@@ -205,23 +187,5 @@ namespace IAGrim
 
             Logger.Info("Application ended.");
         }
-
-    /// <summary>
-    /// Attempting to run a second copy of the program
-    /// </summary>
-    private static void singleInstance_ArgumentsReceived(object _, ArgumentsReceivedEventArgs e)
-        {
-            try {
-                if (_mw != null)
-                {
-                    _mw.Invoke((System.Windows.Forms.MethodInvoker)delegate { _mw.Activate(); });
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Warn(ex.Message, ex);
-            }
-        }
-
     }
 }
