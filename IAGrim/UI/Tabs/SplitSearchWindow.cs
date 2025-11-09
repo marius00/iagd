@@ -67,6 +67,9 @@ namespace IAGrim.UI.Tabs {
 
             Dock = DockStyle.Fill;
 
+            // Weird hack to not have the searcbox be height=4 on windows 11. 
+            _searchBox.MaximumSize = new Size(_searchBox.MaximumSize.Width, 0);
+
             _mainSplitter.SplitterDistance = FilterPanelMinSize;
             _mainSplitter.SplitterWidth = 5;
             _mainSplitter.BorderStyle = BorderStyle.None;

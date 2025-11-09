@@ -27,14 +27,15 @@ namespace IAGrim.Database.Migrations {
 
             return false;
         }
-        public static bool TableExists(SessionFactory sessionCreator, string table) {
-            using (ISession session = sessionCreator.OpenSession()) {
-                foreach (var row in session.CreateSQLQuery($"SELECT * FROM sqlite_master WHERE type='table' and name = :name").SetParameter("name", table).List()) {
-                    return true;
-                }
-            }
 
-            return false;
+        public static bool TableExists(SessionFactory sessionCreator, string table) {
+            using ISession session = sessionCreator.OpenSession();
+            return session.CreateSQLQuery($"SELECT * FROM sqlite_master WHERE type='table' and name = :name").SetParameter("name", table).List().Cast<object?>().Any();
+        }
+
+        public static bool IndexExists(SessionFactory sessionCreator, string index) {
+            using ISession session = sessionCreator.OpenSession();
+            return session.CreateSQLQuery($"SELECT * FROM sqlite_master WHERE type='index' and name = :name").SetParameter("name", index).List().Cast<object?>().Any();
         }
     }
 }
