@@ -106,7 +106,7 @@ class App extends PureComponent<object, object> {
     activeTab: 0,
     collectionItems: [],
     itemAggregate: [],
-    isDarkMode: false,
+    isDarkMode: true,
     helpSearchFilter: '',
     numItems: 0,
     showBackupCloudIcon: true,
