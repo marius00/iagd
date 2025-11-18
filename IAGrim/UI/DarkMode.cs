@@ -17,14 +17,18 @@ namespace IAGrim.UI {
             public Color? HoverForeColor;
         };
 
-        readonly Color _darkBackgroundColor = Color.FromArgb(27, 40, 56);
+        readonly Color _darkBackgroundColor = Color.FromArgb(0x20, 0x20, 0x20);
         readonly Color _darkForeColor = Color.FromArgb(238, 238, 238);
+        readonly Color _semiDarkColor = Color.FromArgb(0x33, 0x33, 0x33); // Background in headers etc
+
+
 
         private readonly Dictionary<Type, ColorSet> _darkColors = new Dictionary<Type, ColorSet>();
         private Dictionary<Type, ColorSet> _regularColors = null;
         private bool _isLightMode = true;
 
         public DarkMode(Control root) {
+            
             _root = root;
             _darkColors[typeof(TextBox)] = new ColorSet {
                 BackColor = _darkBackgroundColor,
@@ -50,16 +54,16 @@ namespace IAGrim.UI {
             };
 
             _darkColors[typeof(FirefoxButton)] = new ColorSet {
-                BackColor = Color.FromArgb(29, 55, 75),
-                ForeColor = Color.FromArgb(102, 192, 239),
-                HoverColor = Color.FromArgb(111, 171, 200),
-                HoverForeColor = Color.FromArgb(52, 11, 139)
+                BackColor = _semiDarkColor,
+                ForeColor = _darkForeColor,
+                HoverColor = _darkBackgroundColor,
+                HoverForeColor = _darkForeColor,
             };
 
             _darkColors[typeof(PanelBox)] = new ColorSet {
                 BackColor = _darkBackgroundColor,
                 ForeColor = _darkForeColor,
-                HeaderColor = Color.FromArgb(38, 64, 84)
+                HeaderColor = _semiDarkColor,
             };
             _darkColors[typeof(CollapseablePanelBox)] = _darkColors[typeof(PanelBox)];
 

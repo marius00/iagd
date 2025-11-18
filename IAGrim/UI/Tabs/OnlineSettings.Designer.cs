@@ -290,7 +290,7 @@
             lbWhatIsCloudBackup.AutoSize = true;
             lbWhatIsCloudBackup.BackColor = Color.Transparent;
             lbWhatIsCloudBackup.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lbWhatIsCloudBackup.Location = new Point(800, 0);
+            lbWhatIsCloudBackup.Location = new Point(807, 11);
             lbWhatIsCloudBackup.Margin = new Padding(4, 0, 4, 0);
             lbWhatIsCloudBackup.Name = "lbWhatIsCloudBackup";
             lbWhatIsCloudBackup.Size = new Size(73, 13);
