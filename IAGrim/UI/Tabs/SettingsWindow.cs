@@ -180,11 +180,14 @@ namespace IAGrim.UI.Tabs {
 
         private void cbDarkMode_CheckedChanged(object sender, EventArgs e) {
             if (_settings.GetPersistent().DarkMode != (sender as FirefoxCheckBox).Checked) {
-                _darkModeToggler.Activate();
-                _cefBrowserHandler.SetDarkMode((sender as FirefoxCheckBox).Checked);
+                MessageBox.Show("IAGD is restarting to toggle dark mode", "Restarting");
+                _settings.GetPersistent().DarkMode = (sender as FirefoxCheckBox).Checked;
+                Application.Restart();
+                Environment.Exit(0);
             }
 
             _settings.GetPersistent().DarkMode = (sender as FirefoxCheckBox).Checked;
+
         }
 
         private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {

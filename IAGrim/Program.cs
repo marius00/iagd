@@ -173,7 +173,6 @@ namespace IAGrim
             if (settingsService.GetPersistent().DarkMode) {
                 Application.SetColorMode(SystemColorMode.Dark);
             }
-            Application.SetColorMode(SystemColorMode.Dark);
             _mw.Visible = false;
             if (new DonateNagScreen(settingsService).CanNag)
                 Application.Run(new DonateNagScreen(settingsService));

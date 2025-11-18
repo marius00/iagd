@@ -93,6 +93,8 @@ namespace IAGrim.UI {
             var colorSet = _isLightMode ? _regularColors : _darkColors;
             HandleControl(_root, colorSet);
             It(_root.Controls, colorSet);
+
+            Application.SetColorMode(_isLightMode ? SystemColorMode.System : SystemColorMode.Dark);
         }
 
         private void HandleControl(Control control, Dictionary<Type, ColorSet> colorSet) {
@@ -138,8 +140,8 @@ namespace IAGrim.UI {
                 cb.IsDarkMode = !_isLightMode;
             }
 
-            control.Invalidate();
-            control.Update();
+            control.Refresh();
+            
         }
 
         private void It(Control.ControlCollection collection, Dictionary<Type, ColorSet> colorSet) {
