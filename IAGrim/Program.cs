@@ -170,11 +170,10 @@ namespace IAGrim
             StartupService.PerformIconCheck(grimDawnDetector, settingsService);
 
 
-#pragma warning disable WFO5001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
             if (settingsService.GetPersistent().DarkMode) {
                 Application.SetColorMode(SystemColorMode.Dark);
             }
-#pragma warning restore WFO5001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+            Application.SetColorMode(SystemColorMode.Dark);
             _mw.Visible = false;
             if (new DonateNagScreen(settingsService).CanNag)
                 Application.Run(new DonateNagScreen(settingsService));
