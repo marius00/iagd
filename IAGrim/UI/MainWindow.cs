@@ -583,10 +583,12 @@ namespace IAGrim.UI {
             
             _itemReplicaService = _serviceProvider.Get<ItemReplicaService>();
             _itemReplicaService.Start();
-            
+
 
 #if !DEBUG
-            _automaticUpdateChecker.CheckForUpdates();
+            if (_automaticUpdateChecker.ShouldCheckForUpdates()) {
+                _automaticUpdateChecker.CheckForUpdates();
+            }
 #endif
 
             Shown += (_, __) => { StartInjector(); };

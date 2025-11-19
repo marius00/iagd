@@ -1,9 +1,7 @@
 using EvilsoftCommons.Exceptions;
 using EvilsoftCommons.SingleInstance;
 using IAGrim.Backup.Cloud;
-using IAGrim.Backup.Cloud.Service;
 using IAGrim.Database;
-using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Interfaces;
 using IAGrim.Database.Migrations;
 using IAGrim.Database.Synchronizer.Core;
@@ -11,12 +9,10 @@ using IAGrim.Parsers.GameDataParsing.Service;
 using IAGrim.Services;
 using IAGrim.Settings;
 using IAGrim.UI;
-using IAGrim.UI.Popups;
 using IAGrim.Utilities;
 using log4net;
 using log4net.Config;
 using StatTranslator;
-using System.Drawing.Imaging;
 using System.Reflection;
 
 namespace IAGrim
@@ -73,6 +69,7 @@ namespace IAGrim
             StartupService.Init();
 
 
+
 #if DEBUG
             Uris.Initialize(Uris.EnvLocalDev);
 #endif
@@ -85,7 +82,6 @@ namespace IAGrim
                 return;
             }
 #endif
-            //ParsingUIBackgroundWorker tmp = new ParsingUIBackgroundWorker();
 
             ItemHtmlWriter.CopyMissingFiles();
 
@@ -137,10 +133,10 @@ namespace IAGrim
             var serviceProvider = ServiceProvider.Initialize(threadExecuter);
 
             var settingsService = serviceProvider.Get<SettingsService>();
+
             var databaseItemDao = serviceProvider.Get<IDatabaseItemDao>();
             RuntimeSettings.InitializeLanguage(settingsService.GetLocal().LocalizationFile, databaseItemDao.GetTagDictionary());
             DumpTranslationTemplate();
-            ;
 
             Logger.Debug("Loading UUID");
             LoadUuid(settingsService);

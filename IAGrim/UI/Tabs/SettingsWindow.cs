@@ -1,11 +1,7 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Diagnostics;
-using System.Windows.Forms;
-using AutoUpdaterDotNET;
 using EvilsoftCommons;
 using IAGrim.Database.Interfaces;
-using IAGrim.Parsers.Arz;
 using IAGrim.Parsers.TransferStash;
 using IAGrim.Services;
 using IAGrim.Settings;
@@ -192,8 +188,6 @@ namespace IAGrim.UI.Tabs {
 
         private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             _automaticUpdateChecker.CheckForUpdates(true);
-
-            MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_update_body"), RuntimeSettings.Language.GetTag("iatag_ui_update_header"));
         }
 
         private void cbAutoDismiss_CheckedChanged(object sender, EventArgs e) {
@@ -202,10 +196,7 @@ namespace IAGrim.UI.Tabs {
 
 
         private void linkDowngrade_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            AutoUpdater.LetUserSelectRemindLater = false;
-            AutoUpdater.RemindLaterTimeSpan = RemindLaterFormat.Days;
-            AutoUpdater.RemindLaterAt = 7;
-            AutoUpdater.Start($"{AutomaticUpdateChecker.Url}?downgrade");
+            _automaticUpdateChecker.Downgrade();
         }
 
         private void firefoxButton1_Click(object sender, EventArgs e) {
