@@ -28,6 +28,8 @@ interface IntegrationInterface {
     GetCharacterDownloadUrl(character: string): string;
     OpenURL(url: string): void;
     SignalReady(): void;
+
+    GetTranslationStrings(): { [index: string]: string };
 }
 
 
@@ -108,4 +110,12 @@ export function getCharacterDownloadUrl(character: string): CharacterUrlRequest 
     return JSON.parse(core.GetCharacterDownloadUrl(character));
   }
   return {'url': undefined};
+}
+
+export function getTranslationStrings(): ReturnType<IntegrationInterface['GetTranslationStrings']> {
+  if (isEmbedded) {
+    const d = core.GetTranslationStrings();
+    return typeof d === 'string' ? JSON.parse(d) : d;
+  }
+  return {};
 }

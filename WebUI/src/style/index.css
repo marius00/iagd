@@ -23,6 +23,10 @@ body {
 	--background-color: rgb(85,68,96); /*Legacy*/
 	background: var(--background-color);
 
+    --header-color: #FFFFFF;
+    --copy-clipboard-link: #FFFFFF;
+    --copy-clipboard-bg: #f3f3f387;
+    --collection-items: #FFFFFF;
 
 	--item-background: #e8d5b6;
 	--item-background-hover: #e8d5b6;
@@ -68,6 +72,10 @@ body {
 	--background-color: rgb(0, 0, 0);
 	background: var(--background-color);
 
+    --header-color: #eeeeeee6;
+    --copy-clipboard-link: #eeeeeec4;
+    --copy-clipboard-bg: #120529;
+    --collection-items: #eeeeeec4;
 
 	--item-background: #171614;
 	--item-background-hover: #232220;
@@ -75,9 +83,9 @@ body {
 	--item-stat-modifier: #dbb284;
 	--item-golden-header: #e3ba6b;
 	--item-border: #211e1c;
-	--item-transfer: #ffffff;
+	--item-transfer: #eeeeeec4;
 	--item-misc-info: #999999;
-	--item-header-info: #ffffff;
+	--item-header-info: #eeeeeec4;
 	--item-grantskill-label: #e3ba6b;
 	--item-grantskill-content: #6699ff;
 	--item-skill: #338cce;
@@ -107,4 +115,15 @@ body {
 
 	--notification-background-color: #171614;
 	--notification-text-color: #acaaaa;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #888; /* Thumb color */
+    border-radius: 5px; /* Rounded corners for the thumb */
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+}
+:root {
+    color-scheme: dark; /* or light */
 }

@@ -1,9 +1,9 @@
 
-@powershell "(Get-Item -path "..\iagrim\bin\release\iagrim.exe").VersionInfo.ProductVersion" > ver.txt
+@powershell "(Get-Item -path "..\iagrim\bin\release\net10.0-windows\iagrim.exe").VersionInfo.ProductVersion" > ver.txt
 @set /p IA_RELEASE_VERSION=<ver.txt
 @del ver.txt
 
-@powershell "(Get-Item -path "..\iagrim\bin\debug\iagrim.exe").VersionInfo.ProductVersion" > ver.txt
+@powershell "(Get-Item -path "..\iagrim\bin\debug\net10.0-windows\iagrim.exe").VersionInfo.ProductVersion" > ver.txt
 @set /p IA_DEBUG_VERSION=<ver.txt
 @del ver.txt
 

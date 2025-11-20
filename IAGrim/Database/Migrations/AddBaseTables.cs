@@ -50,6 +50,34 @@ namespace IAGrim.Database.Migrations {
                 """},
         };
 
+        private readonly List<string> _indices = new List<string>() {
+            "CREATE INDEX idx_databaseitemstatv2_parent_stat on DatabaseItemStat_v2 (id_databaseitem)",
+            "CREATE INDEX idx_databaseitemstatv2_stat on DatabaseItemStat_v2 (Stat)",
+            "CREATE INDEX idx_databaseitemv2_record on DatabaseItem_v2 (baserecord)",
+            "CREATE INDEX idx_playeritem_baserecord on PlayerItem (baserecord)",
+            "CREATE INDEX idx_playeritem_levelreq on PlayerItem (LevelRequirement)",
+            "CREATE INDEX idx_playeritem_lowercasename on PlayerItem (namelowercase)",
+            "CREATE INDEX idx_playeritem_prefix on PlayerItem (PrefixRecord)",
+            "CREATE INDEX idx_playeritem_rarity on PlayerItem (Rarity)",
+            "CREATE INDEX idx_playeritem_suffix on PlayerItem (SuffixRecord)",
+            "CREATE INDEX idx_replicaitem_buddyitemid on ReplicaItem2 (buddyitemid)",
+            "CREATE INDEX idx_replicaitem_playeritemid on ReplicaItem2 (playeritemid)",
+            "CREATE INDEX idx_replicaitemstat_replicaitemid on ReplicaItemRow (replicaitemid)",
+            "CREATE INDEX idx_databaseitemv2_baserecord on DatabaseItem_v2 (baserecord)",
+        };
+
+        private readonly List<string> _oldTables = new List<string>() {
+            "AugmentationItem",
+            "BuddyItemRecord",
+            "azurepartition_v2",
+            "buddyitems_v5",
+            "deletedplayeritem_v2",
+            "ReplicaItem",
+            "BuddyReplicaItem",
+            "BuddyStash",
+            "RecipeItem_v2",
+        };
+
         public override void Migrate(SessionFactory sessionCreator) {
             foreach (var table in _tables) {
 
@@ -57,15 +85,35 @@ namespace IAGrim.Database.Migrations {
                     continue;
                 }
 
-                using (ISession session = sessionCreator.OpenSession()) {
-                    using (ITransaction transaction = session.BeginTransaction()) {
-                        session.CreateSQLQuery(table.Value).ExecuteUpdate();
-                        transaction.Commit();
-                    }
-                }
+                using ISession session = sessionCreator.OpenSession();
+                using ITransaction transaction = session.BeginTransaction();
+                session.CreateSQLQuery(table.Value).ExecuteUpdate();
+                transaction.Commit();
             }
 
+            foreach (var index in _indices) {
+                var name = index.Split(" ")[2];
 
+                if (IndexExists(sessionCreator, name)) {
+                    continue;
+                }
+
+                using ISession session = sessionCreator.OpenSession();
+                using ITransaction transaction = session.BeginTransaction();
+                session.CreateSQLQuery(index).ExecuteUpdate();
+                transaction.Commit();
+            }
+
+            foreach (var table in _oldTables) {
+                if (!TableExists(sessionCreator, table)) {
+                    continue;
+                }
+
+                using ISession session = sessionCreator.OpenSession();
+                using ITransaction transaction = session.BeginTransaction();
+                session.CreateSQLQuery($"DROP TABLE {table}").ExecuteUpdate();
+                transaction.Commit();
+            }
         }
     }
 }

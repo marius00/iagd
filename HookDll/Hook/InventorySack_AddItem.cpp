@@ -304,9 +304,8 @@ bool InventorySack_AddItem::IsRelevant(const GAME::ItemReplicaInfo& item) {
 		return false;
 	}
 
-	// Salt bag and lifegivers amulet - Frequently get questions about these
-	if (item.baseRecord.find("gearaccessories/necklaces/a00_necklace.dbr") != std::string::npos 
-		|| item.baseRecord.find("gearaccessories/rings/d003_ring.dbr") != std::string::npos) {
+	// Salt bag - Frequently get questions about these (Lifegiver is OK, both regular and mystical)
+	if (item.baseRecord.find("gearaccessories/necklaces/a00_necklace.dbr") != std::string::npos ) {
 		DisplayMessage(L"Special item - This item is not supported by IA", L"Item Assistant");
 		return false;
 	}

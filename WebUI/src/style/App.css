@@ -8,7 +8,7 @@
     top: 7px;
     z-index: 100000;
 
-    background-color: #f3f3f387;
+    background-color: var(--copy-clipboard-bg);
     border: 1px solid;
     border-radius: 5px;
     padding: 7px;
@@ -20,7 +20,7 @@
 }
 
 .App-dark .clipboard-link {
-    color: white;
+    color: var(--copy-clipboard-link);
 }
 
 

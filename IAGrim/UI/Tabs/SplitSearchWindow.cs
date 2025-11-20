@@ -67,6 +67,9 @@ namespace IAGrim.UI.Tabs {
 
             Dock = DockStyle.Fill;
 
+            // Weird hack to not have the searcbox be height=4 on windows 11. 
+            _searchBox.MaximumSize = new Size(_searchBox.MaximumSize.Width, 0);
+
             _mainSplitter.SplitterDistance = FilterPanelMinSize;
             _mainSplitter.SplitterWidth = 5;
             _mainSplitter.BorderStyle = BorderStyle.None;
@@ -327,11 +330,16 @@ namespace IAGrim.UI.Tabs {
         }
 
         private void SplitSearchWindow_FormClosing(object sender, FormClosingEventArgs e) {
-            _filterWindow.OnChanged -= BeginSearchOnAutoSearch;
-            Activated -= SplitSearchWindow_Activated;
-            Deactivate -= SplitSearchWindow_Deactivate;
+            if (InvokeRequired) {
+                Invoke((System.Windows.Forms.MethodInvoker)delegate { SplitSearchWindow_FormClosing(sender, e); });
+            }
+            else {
+                _filterWindow.OnChanged -= BeginSearchOnAutoSearch;
+                Activated -= SplitSearchWindow_Activated;
+                Deactivate -= SplitSearchWindow_Deactivate;
 
-            _toolStripContainer.ContentPanel.Controls.Clear();
+                _toolStripContainer.ContentPanel.Controls.Clear();
+            }
         }
 
         private void UpdateListViewDelayed(int delay) {

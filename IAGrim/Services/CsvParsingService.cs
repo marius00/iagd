@@ -175,8 +175,8 @@ namespace IAGrim.Services {
                 EnchantmentRecord = pieces[n++]?.Trim(),
                 EnchantmentSeed = ToInt(pieces[n++]),
                 TransmuteRecord = pieces[n++]?.Trim(),
-                AscendantAffixNameRecord = isNewDlc ? pieces[n++] : null,
-                AscendantAffix2hNameRecord = isNewDlc ? pieces[n++] : null,
+                AscendantAffixNameRecord = isNewDlc ? pieces[n++]?.Trim() : null,
+                AscendantAffix2hNameRecord = isNewDlc ? pieces[n++]?.Trim() : null,
                 Tags = new HashSet<DBStatRow>(0)
             };
         }

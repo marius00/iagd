@@ -44,6 +44,10 @@ class CharacterListContainer extends PureComponent<{}, object> {
       <ul>
         {characters.map(this.renderCharacter)}
       </ul>
+
+      <footer>
+        Characters are only backed up by IAGD when playing with GOG or Steam with cloud sync deactivated. <br/>
+      </footer>
     </div>;
   }
 }

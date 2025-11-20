@@ -1,12 +1,13 @@
 ﻿using IAGrim.Parsers.Arz;
 using IAGrim.Utilities.HelperClasses;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using log4net;
 using static IAGrim.Utilities.HelperClasses.GDTransferFile;
 
 namespace IAGrim.Utilities {
@@ -113,6 +114,28 @@ namespace IAGrim.Utilities {
                 string path = Path.Combine(CoreFolder, "edge");
                 Directory.CreateDirectory(path);
                 return path;
+            }
+        }
+
+
+
+        [DllImport("shell32.dll", CharSet = CharSet.Unicode, ExactSpelling = true, PreserveSig = false)]
+        private static extern string SHGetKnownFolderPath(
+            [MarshalAs(UnmanagedType.LPStruct)] Guid rfid,
+            uint dwFlags,
+            IntPtr hToken
+        );
+
+        public static string? DownloadsFolder {
+            get {
+                Guid DownloadsFolderGuid = new Guid("{374DE290-123F-4565-9164-39C4925E467B}");
+                try {
+                    return SHGetKnownFolderPath(DownloadsFolderGuid, 0, IntPtr.Zero);
+                }
+                catch (Exception ex) {
+                    Logger.Warn(ex);
+                    return null;
+                }
             }
         }
 

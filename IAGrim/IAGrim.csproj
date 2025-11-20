@@ -13,7 +13,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net9.0-windows7.0</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -44,9 +44,7 @@
         <RepositoryUrl>https://github.com/marius00/iagd/</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
     </PropertyGroup>
-	<PropertyGroup>
-    <NoWarn>$(NoWarn);WFO5001</NoWarn>
-</PropertyGroup>
+
 
    <ItemGroup>
      <None Remove="Database\Model\BuddyItem.hbm.xml" />
@@ -116,12 +114,6 @@
     <ProjectReference Include="..\EvilsoftCommons\EvilsoftCommons.csproj" />
     <ProjectReference Include="..\Parser\Parser.csproj" />
     <ProjectReference Include="..\StatTranslator\StatTranslator.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="AutoUpdater.NET">
-      <HintPath>AutoUpdater.NET.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
   <ItemGroup>
