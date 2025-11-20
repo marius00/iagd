@@ -1,12 +1,6 @@
-import { isEmbedded } from '../integration/integration';
+import { isEmbedded, getTranslationStrings } from '../integration/integration';
 
-interface IntegrationInterface {
-  GetTranslationStrings(): { [index: string]: string };
-}
-declare let core: IntegrationInterface;
-
-
-// Applies translations provided by the parent application
+/** Applies translations provided by the parent application. */
 class EmbeddedTranslator {
   static defaults: { [index: string]: string } = {
     'app.tab.items': 'Items',
@@ -58,14 +52,15 @@ class EmbeddedTranslator {
   };
 
 
+  static isInitialized = false;
   static translation = {} as { [index: string]: string };
 
   public translate(id: string): string {
     // Fetch data from host
-    if (Object.getOwnPropertyNames(EmbeddedTranslator.translation).length === 0 && typeof core !== 'undefined') {
+    if (isEmbedded && !EmbeddedTranslator.isInitialized && Object.getOwnPropertyNames(EmbeddedTranslator.translation).length === 0) {
       console.debug("Fetching translation strings");
-      const d = core.GetTranslationStrings();
-      EmbeddedTranslator.translation = typeof d === 'string' ? JSON.parse(d) : d;
+      EmbeddedTranslator.translation = getTranslationStrings();
+      EmbeddedTranslator.isInitialized = true;
     }
 
     if (isEmbedded && EmbeddedTranslator.translation.hasOwnProperty(id) && EmbeddedTranslator.translation[id] !== '') {
