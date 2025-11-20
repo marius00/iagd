@@ -4,7 +4,6 @@ using IAGrim.Backup.Cloud;
 using IAGrim.Database;
 using IAGrim.Database.Interfaces;
 using IAGrim.Database.Migrations;
-using IAGrim.Database.Synchronizer.Core;
 using IAGrim.Parsers.GameDataParsing.Service;
 using IAGrim.Services;
 using IAGrim.Settings;
@@ -90,12 +89,10 @@ namespace IAGrim
                 if (singleInstance.IsFirstInstance) {
                     Logger.Info("Calling run..");
                     singleInstance.ListenForArgumentsFromSuccessiveInstances();
-                    using (ThreadExecuter threadExecuter = new ThreadExecuter()) {
-                        Application.EnableVisualStyles();
-                        Application.SetCompatibleTextRenderingDefault(false);
-                        Logger.Info("Visual styles enabled..");
-                        Run(args, threadExecuter);
-                    }
+                    Application.EnableVisualStyles();
+                    Application.SetCompatibleTextRenderingDefault(false);
+                    Logger.Info("Visual styles enabled..");
+                    Run(args);
                 }
                 else {
                     if (args != null && args.Length > 0) {
@@ -125,12 +122,12 @@ namespace IAGrim
             }
         }
 
-        private static void Run(string[] args, ThreadExecuter threadExecuter) {
+        private static void Run(string[] args) {
             var factory = new SessionFactory();
             Logger.Debug("Executing DB migrations..");
-            threadExecuter.Execute(() => new MigrationHandler(factory).Migrate());
+            new MigrationHandler(factory).Migrate();
 
-            var serviceProvider = ServiceProvider.Initialize(threadExecuter);
+            var serviceProvider = ServiceProvider.Initialize();
 
             var settingsService = serviceProvider.Get<SettingsService>();
 
