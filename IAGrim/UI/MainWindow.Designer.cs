@@ -108,7 +108,7 @@
             // 
             // tabPageItems
             // 
-            tabPageItems.BackColor = SystemColors.Control;
+            tabPageItems.BackColor = Color.Transparent;
             tabPageItems.Controls.Add(searchPanel);
             tabPageItems.Location = new Point(4, 24);
             tabPageItems.Margin = new Padding(0);
@@ -173,7 +173,7 @@
             // 
             // tabPageSettings
             // 
-            tabPageSettings.BackColor = SystemColors.Control;
+            tabPageSettings.BackColor = Color.Transparent;
             tabPageSettings.Controls.Add(settingsPanel);
             tabPageSettings.Location = new Point(4, 24);
             tabPageSettings.Margin = new Padding(0);
