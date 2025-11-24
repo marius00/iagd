@@ -626,11 +626,6 @@ namespace IAGrim.UI {
             Application.AddMessageFilter(new MousewheelMessageFilter());
 
 
-            var titleTag = RuntimeSettings.Language.GetTag("iatag_ui_itemassistant");
-            if (!string.IsNullOrEmpty(titleTag)) {
-                this.Text += $" - {titleTag}";
-            }
-
             if (_authService.CheckAuthentication() == AuthService.AccessStatus.Unauthorized && !settingsService.GetLocal().OptOutOfBackups && playerItemDao.GetNumItems() > 100) {
                 var authService = new AuthService(new AuthenticationProvider(settingsService), _serviceProvider.Get<IPlayerItemDao>());
                 new BackupLoginNagScreen(authService, settingsService).Show();

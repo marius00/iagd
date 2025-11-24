@@ -414,7 +414,6 @@ namespace StatTranslator {
             {"iatag_ui_update_header", "Check for updates"},
             {"iatag_ui_checkforupdates", "Check for updates"},
             {"iatag_ui_downgrade_ia", "Downgrade"},
-            {"iatag_ui_itemassistant", "Item Assistant"},
             {"iatag_ui_howtorestore", "How do I restore backups?"},
             {"iatag_ui_updatingstats_title", "Updating stats for owned items.."},
             {"iatag_ui_updatingstats", "Updating stats for your items..."},

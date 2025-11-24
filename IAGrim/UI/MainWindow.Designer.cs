@@ -33,12 +33,12 @@
             tabControl1 = new TabControl();
             tabPageItems = new TabPage();
             searchPanel = new Panel();
-            tabPageMods = new TabPage();
-            modsPanel = new Panel();
             tabPageOnline = new TabPage();
             onlinePanel = new Panel();
             tabPageSettings = new TabPage();
             settingsPanel = new Panel();
+            tabPageMods = new TabPage();
+            modsPanel = new Panel();
             tabPageLog = new TabPage();
             panelLogging = new Panel();
             notifyIcon1 = new NotifyIcon(components);
@@ -48,9 +48,9 @@
             statusStrip.SuspendLayout();
             tabControl1.SuspendLayout();
             tabPageItems.SuspendLayout();
-            tabPageMods.SuspendLayout();
             tabPageOnline.SuspendLayout();
             tabPageSettings.SuspendLayout();
+            tabPageMods.SuspendLayout();
             tabPageLog.SuspendLayout();
             trayContextMenuStrip.SuspendLayout();
             SuspendLayout();
@@ -128,28 +128,6 @@
             searchPanel.Size = new Size(1217, 599);
             searchPanel.TabIndex = 1;
             // 
-            // tabPageMods
-            // 
-            tabPageMods.Controls.Add(modsPanel);
-            tabPageMods.Location = new Point(4, 24);
-            tabPageMods.Margin = new Padding(4, 3, 4, 3);
-            tabPageMods.Name = "tabPageMods";
-            tabPageMods.Padding = new Padding(4, 3, 4, 3);
-            tabPageMods.Size = new Size(1202, 594);
-            tabPageMods.TabIndex = 4;
-            tabPageMods.Tag = "iatag_ui_tab_mods";
-            tabPageMods.Text = "Grim Dawn";
-            tabPageMods.UseVisualStyleBackColor = true;
-            // 
-            // modsPanel
-            // 
-            modsPanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            modsPanel.Location = new Point(-5, 0);
-            modsPanel.Margin = new Padding(4, 3, 4, 3);
-            modsPanel.Name = "modsPanel";
-            modsPanel.Size = new Size(1286, 643);
-            modsPanel.TabIndex = 1;
-            // 
             // tabPageOnline
             // 
             tabPageOnline.Controls.Add(onlinePanel);
@@ -192,6 +170,28 @@
             settingsPanel.Name = "settingsPanel";
             settingsPanel.Size = new Size(1293, 653);
             settingsPanel.TabIndex = 0;
+            // 
+            // tabPageMods
+            // 
+            tabPageMods.Controls.Add(modsPanel);
+            tabPageMods.Location = new Point(4, 24);
+            tabPageMods.Margin = new Padding(4, 3, 4, 3);
+            tabPageMods.Name = "tabPageMods";
+            tabPageMods.Padding = new Padding(4, 3, 4, 3);
+            tabPageMods.Size = new Size(1202, 594);
+            tabPageMods.TabIndex = 4;
+            tabPageMods.Tag = "iatag_ui_tab_mods";
+            tabPageMods.Text = "Grim Dawn";
+            tabPageMods.UseVisualStyleBackColor = true;
+            // 
+            // modsPanel
+            // 
+            modsPanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            modsPanel.Location = new Point(-5, 0);
+            modsPanel.Margin = new Padding(4, 3, 4, 3);
+            modsPanel.Name = "modsPanel";
+            modsPanel.Size = new Size(1286, 643);
+            modsPanel.TabIndex = 1;
             // 
             // tabPageLog
             // 
@@ -257,16 +257,15 @@
             Margin = new Padding(4, 3, 4, 3);
             MinimumSize = new Size(931, 686);
             Name = "MainWindow";
-            Tag = "iatag_ui_itemassistant";
             Text = "Grim Dawn Item Assistant";
             Load += MainWindow_Load;
             statusStrip.ResumeLayout(false);
             statusStrip.PerformLayout();
             tabControl1.ResumeLayout(false);
             tabPageItems.ResumeLayout(false);
-            tabPageMods.ResumeLayout(false);
             tabPageOnline.ResumeLayout(false);
             tabPageSettings.ResumeLayout(false);
+            tabPageMods.ResumeLayout(false);
             tabPageLog.ResumeLayout(false);
             trayContextMenuStrip.ResumeLayout(false);
             ResumeLayout(false);
