@@ -23,7 +23,7 @@ Name: "{commondesktop}\IAGD"; Filename: "{app}\\IAGrim.exe"; Tasks: desktopicon
 
 
 [Files]
-Source: "..\IAGrim\bin\Release\net9.0-windows7.0\*"; Excludes: "*.pdb,vcredist_x86.exe,2010sp1_vcredist_x86.exe"; DestDir: "{app}"; Flags: overwritereadonly replacesameversion recursesubdirs createallsubdirs touch ignoreversion
+Source: "..\IAGrim\bin\Release\net10.0-windows\*"; Excludes: "*.pdb,vcredist_x86.exe,2010sp1_vcredist_x86.exe"; DestDir: "{app}"; Flags: overwritereadonly replacesameversion recursesubdirs createallsubdirs touch ignoreversion
 Source: "readme.txt"; DestDir: "{app}";
 
 [Run]
