@@ -17,8 +17,8 @@ namespace IAGrim.UI {
             public Color? HoverForeColor;
         };
 
-        readonly Color _darkBackgroundColor = Color.FromArgb(0x20, 0x20, 0x20);
-        readonly Color _darkForeColor = Color.FromArgb(238, 238, 238);
+        readonly Color _darkBackgroundColor = Color.FromArgb(0x23, 0x22, 0x20); // Background (sidebar etc)
+        readonly Color _darkForeColor = Color.FromArgb(0xb0, 0xb0, 0xb0); // Text color
         readonly Color _semiDarkColor = Color.FromArgb(0x33, 0x33, 0x33); // Background in headers etc
 
 

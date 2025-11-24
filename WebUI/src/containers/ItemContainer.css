@@ -69,7 +69,7 @@
 .items {
   display: flex;
   flex-wrap: wrap;
-  color: #000;
+  color: var(--color-items);
 }
 
 .items .item {
