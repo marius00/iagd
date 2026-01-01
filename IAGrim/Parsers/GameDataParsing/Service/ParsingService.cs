@@ -93,11 +93,8 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
                 tagfiles.Add(modTags);
             }
 
-            List<Action> actions = new List<Action>();
 
 
-            actions.Add(() => parser.LoadTags(tagfiles, _localizationFile, new WinformsProgressBar(form.LoadingTags).Tracker));
-            actions.Add(() => _itemTagDao.Save(parser.Tags, new WinformsProgressBar(form.SavingTags).Tracker));
 
             List<string> arzFiles = new List<string> {
                 GrimFolderUtility.FindArzFile(_grimdawnLocation)
@@ -115,33 +112,33 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
                 arzFiles.Add(GrimFolderUtility.FindArzFile(_modLocation));
             }
 
-            actions.Add(() => parser.LoadItems(arzFiles, new WinformsProgressBar(form.LoadingItems).Tracker));
-            actions.Add(() => parser.MapItemNames(new WinformsProgressBar(form.MappingItemNames).Tracker));
-            actions.Add(() => parser.RenamePetStats(new WinformsProgressBar(form.MappingPetStats).Tracker));
-            actions.Add(() => _databaseItemDao.Save(parser.Items, new WinformsProgressBar(form.SavingItems).Tracker));
-            actions.Add(() => _databaseItemDao.CreateItemIndexes(new WinformsProgressBar(form.IndexingItems).Tracker));
-
-            // TODO: This depends on the DB item name.. which is in english, not localized
-            actions.Add(() => {
-                var records = parser.GenerateSpecialRecords(new WinformsProgressBar(form.GeneratingSpecialStats).Tracker);
-                _databaseItemStatDao.Save(records, new WinformsProgressBar(form.SavingSpecialStats).Tracker);
-            });
-
-
-            actions.Add(() => parser.ParseComplexItems(_itemSkillDao, new WinformsProgressBar(form.GeneratingSkills).Tracker));
-            actions.Add(() => {
-                var tracker = new WinformsProgressBar(form.SkillCorrectnessCheck).Tracker;
-                tracker.MaxValue = 1;
-                _itemSkillDao.EnsureCorrectSkillRecords();
-                tracker.MaxProgress();
-            });
 
             // Invoke the background thread & show progress UI
             Thread t = new Thread(() => {
                 ExceptionReporter.EnableLogUnhandledOnThread();
-                foreach (var action in actions) {
-                    action.Invoke();
-                }
+                parser.LoadTags(tagfiles, _localizationFile, new WinformsProgressBar(form.LoadingTags).Tracker);
+                _itemTagDao.Save(parser.Tags, new WinformsProgressBar(form.SavingTags).Tracker);
+                parser.LoadItems(arzFiles, new WinformsProgressBar(form.LoadingItems).Tracker);
+                parser.MapItemNames(new WinformsProgressBar(form.MappingItemNames).Tracker);
+                parser.RenamePetStats(new WinformsProgressBar(form.MappingPetStats).Tracker);
+                _databaseItemDao.Save(parser.Items, new WinformsProgressBar(form.SavingItems).Tracker);
+                _databaseItemDao.CreateItemIndexes(new WinformsProgressBar(form.IndexingItems).Tracker);
+
+                // TODO: This depends on the DB item name.. which is in english, not localized
+                {
+                    var records = parser.GenerateSpecialRecords(new WinformsProgressBar(form.GeneratingSpecialStats).Tracker);
+                    _databaseItemStatDao.Save(records, new WinformsProgressBar(form.SavingSpecialStats).Tracker);
+                };
+
+
+                parser.ParseComplexItems(_itemSkillDao, new WinformsProgressBar(form.GeneratingSkills).Tracker);
+                {
+                    var tracker = new WinformsProgressBar(form.SkillCorrectnessCheck).Tracker;
+                    tracker.MaxValue = 1;
+                    _itemSkillDao.EnsureCorrectSkillRecords();
+                    tracker.MaxProgress();
+                };
+
 
                 Action close = () => form.OverrideClose();
                 form.Invoke(close);

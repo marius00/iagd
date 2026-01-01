@@ -48,7 +48,6 @@ namespace IAGrim {
 
         }
 
-        // TODO: This creates another session instance, should be executed inside the ThreadExecuter
         public static void PrintStartupInfo(SessionFactory factory, SettingsService settings) {
             try {
                 Logger.Info(settings.GetLocal().StashToLootFrom == 0

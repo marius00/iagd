@@ -1,7 +1,6 @@
 ﻿using IAGrim.Database;
+using IAGrim.Database.DAO;
 using IAGrim.Database.Interfaces;
-using IAGrim.Database.Synchronizer;
-using IAGrim.Database.Synchronizer.Core;
 using IAGrim.Parsers.TransferStash;
 using IAGrim.UI.Controller;
 using log4net;
@@ -36,7 +35,7 @@ namespace IAGrim.Services {
             _services.Add(o);
         }
 
-        public static ServiceProvider Initialize(ThreadExecuter threadExecuter) {
+        public static ServiceProvider Initialize() {
             Logger.Debug("Creating services");
             var factory = new SessionFactory();
 
@@ -54,15 +53,15 @@ namespace IAGrim.Services {
             IItemCollectionDao itemCollectionRepo;
             IReplicaItemDao replicaItemDao;
 
-                playerItemDao = new PlayerItemRepo(threadExecuter, factory);
-                databaseItemDao = new DatabaseItemRepo(threadExecuter, factory);
-                databaseItemStatDao = new DatabaseItemStatRepo(threadExecuter, factory);
-                itemTagDao = new ItemTagRepo(threadExecuter, factory);
-                buddyItemDao = new BuddyItemRepo(threadExecuter, factory);
-                buddySubscriptionDao = new BuddySubscriptionRepo(threadExecuter, factory);
-                itemSkillDao = new ItemSkillRepo(threadExecuter, factory);
-                itemCollectionRepo = new ItemCollectionRepo(threadExecuter, factory);
-                replicaItemDao = new ItemReplicaRepo(threadExecuter, factory);
+            databaseItemStatDao = new DatabaseItemStatDaoImpl(factory);
+            playerItemDao = new PlayerItemDaoImpl(factory, databaseItemStatDao);
+            databaseItemDao = new DatabaseItemDaoImpl(factory);
+            itemTagDao = new ItemTagDaoImpl(factory);
+            buddyItemDao = new BuddyItemDaoImpl(factory, databaseItemStatDao);
+            buddySubscriptionDao = new BuddySubscriptionDaoImpl(factory);
+            itemSkillDao = new ItemSkillDaoImpl(factory);
+            itemCollectionRepo = new ItemCollectionDaoImpl(factory);
+            replicaItemDao = new ReplicaItemDaoImpl(factory);
 
             
 
