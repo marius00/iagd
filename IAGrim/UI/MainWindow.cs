@@ -531,8 +531,6 @@ namespace IAGrim.UI {
             _modsDatabaseConfigTab = new ModsDatabaseConfig(DatabaseLoadedTrigger, playerItemDao, _parsingService, grimDawnDetector, settingsService, _cefBrowserHandler, databaseItemDao, replicaItemDao);
             UIHelper.AddAndShow(_modsDatabaseConfigTab, modsPanel);
 
-            UIHelper.AddAndShow(new LoggingWindow(), panelLogging);
-
             var itemTagDao = _serviceProvider.Get<IItemTagDao>();
             var backupService = new BackupService(_authService, playerItemDao, settingsService, _cefBrowserHandler);
             _charBackupService = new CharacterBackupService(settingsService, _authService);
