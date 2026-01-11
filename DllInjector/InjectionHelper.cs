@@ -245,7 +245,8 @@ namespace DllInjector {
                     // Figure out the filename
                     try {
                         dll64Bit = GetFilenameForPid(pid, arguments.DllName);
-                    } catch (Exception) {
+                    } catch (Exception ex) {
+                        Logger.Warn("Something went wrong figuring out the filename for process", ex);
                         worker.ReportProgress(INJECTION_ERROR_POSSIBLE_ACCESS_DENIED, null);
                         continue;
                     }
