@@ -24,6 +24,16 @@ namespace IAGrim.Database.Migrations {
             }
 
 
+            if (!ColumnExists(sessionCreator, "BuddySubscription", "IsHidden")) {
+                using ISession session = sessionCreator.OpenSession();
+                using ITransaction transaction = session.BeginTransaction();
+
+                session.CreateSQLQuery($"ALTER TABLE BuddySubscription ADD COLUMN IsHidden INTEGER").ExecuteUpdate();
+                transaction.Commit();
+            }
+
+
+
             if (!ColumnExists(sessionCreator, DatabaseItemTable.Table, DatabaseItemTable.NameLowercase)) {
                 using ISession session = sessionCreator.OpenSession();
                 using ITransaction transaction = session.BeginTransaction();
