@@ -238,9 +238,11 @@ namespace IAGrim.UI {
         /// </summary>
         public void UpdateLanguage() {
             LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
-            Text = RuntimeSettings.Language.GetTag(Tag.ToString());
-            if (tsStashStatus.Tag is string) {
-                tsStashStatus.Text = RuntimeSettings.Language.GetTag(tsStashStatus.Tag.ToString());
+            if (Tag != null) {
+                Text = RuntimeSettings.Language.GetTag(Tag.ToString());
+                if (tsStashStatus.Tag is string) {
+                    tsStashStatus.Text = RuntimeSettings.Language.GetTag(tsStashStatus.Tag.ToString());
+                }
             }
 
             Refresh();
