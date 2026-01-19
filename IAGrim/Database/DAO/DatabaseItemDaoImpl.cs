@@ -104,6 +104,7 @@ namespace IAGrim.Database {
             DropItemIndexes();
 
             progressTracker.MaxValue = updated.Count;
+            Logger.Info($"There are {updated.Count} updated items to store");
             while (idx < updated.Count) {
                 var numItems = Math.Min(updated.Count - idx, range);
                 var batch = updated.GetRange(idx, numItems);
@@ -111,6 +112,7 @@ namespace IAGrim.Database {
 
                 idx += range;
             }
+            Logger.Info($"Batch complete");
         }
 
         private void DropItemIndexes() {

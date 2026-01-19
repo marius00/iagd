@@ -6,16 +6,33 @@ namespace IAGrim.Database.Migrations {
     class AddAsterkarnFieldsToBuddyItems : IDatabaseMigration {
 
         public override void Migrate(SessionFactory sessionCreator) {
-            if (!ColumnExists(sessionCreator, BuddyItemsTable.Table, "AscendantAffixNameRecord")) {
+            var buddyItemColumns = new Dictionary<string, string> {
+                {"AscendantAffixNameRecord", "TEXT"},
+                {"AscendantAffix2hNameRecord", "TEXT"},
+                {"RerollsUsed", "INT"},
+                {"seed", "INTEGER"},
+                {"relicseed", "INTEGER"},
+                {"enchantmentseed", "INTEGER"},
+            };
+            foreach (var column in buddyItemColumns) {
+                using ISession session = sessionCreator.OpenSession();
+                using ITransaction transaction = session.BeginTransaction();
+                if (!ColumnExists(sessionCreator, BuddyItemsTable.Table, column.Key)) {
+                    session.CreateSQLQuery($"ALTER TABLE {BuddyItemsTable.Table} ADD COLUMN {column.Key} {column.Value}").ExecuteUpdate();
+                }
+                transaction.Commit();
+            }
+
+
+            if (!ColumnExists(sessionCreator, "BuddySubscription", "IsHidden")) {
                 using ISession session = sessionCreator.OpenSession();
                 using ITransaction transaction = session.BeginTransaction();
 
-                session.CreateSQLQuery($"ALTER TABLE {BuddyItemsTable.Table} ADD COLUMN AscendantAffixNameRecord TEXT").ExecuteUpdate();
-                session.CreateSQLQuery($"ALTER TABLE {BuddyItemsTable.Table} ADD COLUMN AscendantAffix2hNameRecord TEXT").ExecuteUpdate();
-                session.CreateSQLQuery($"ALTER TABLE {BuddyItemsTable.Table} ADD COLUMN RerollsUsed INT").ExecuteUpdate();
-
+                session.CreateSQLQuery($"ALTER TABLE BuddySubscription ADD COLUMN IsHidden INTEGER").ExecuteUpdate();
                 transaction.Commit();
             }
+
+
 
             if (!ColumnExists(sessionCreator, DatabaseItemTable.Table, DatabaseItemTable.NameLowercase)) {
                 using ISession session = sessionCreator.OpenSession();

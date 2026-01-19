@@ -71,6 +71,7 @@
             button1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             button1.BackgroundImage = Properties.Resources.donate;
             button1.BackgroundImageLayout = ImageLayout.Stretch;
+            button1.Image = Properties.Resources.donate1;
             button1.Location = new Point(382, 76);
             button1.Margin = new Padding(4, 3, 4, 3);
             button1.Name = "button1";
@@ -83,6 +84,7 @@
             // 
             buttonPatreon.BackgroundImage = Properties.Resources.Patreon_Navy;
             buttonPatreon.BackgroundImageLayout = ImageLayout.Stretch;
+            buttonPatreon.Image = (Image)resources.GetObject("buttonPatreon.Image");
             buttonPatreon.Location = new Point(42, 76);
             buttonPatreon.Margin = new Padding(4, 3, 4, 3);
             buttonPatreon.Name = "buttonPatreon";

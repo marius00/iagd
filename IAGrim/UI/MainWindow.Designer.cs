@@ -39,8 +39,6 @@
             settingsPanel = new Panel();
             tabPageMods = new TabPage();
             modsPanel = new Panel();
-            tabPageLog = new TabPage();
-            panelLogging = new Panel();
             notifyIcon1 = new NotifyIcon(components);
             trayContextMenuStrip = new ContextMenuStrip(components);
             openToolStripMenuItem = new ToolStripMenuItem();
@@ -51,7 +49,6 @@
             tabPageOnline.SuspendLayout();
             tabPageSettings.SuspendLayout();
             tabPageMods.SuspendLayout();
-            tabPageLog.SuspendLayout();
             trayContextMenuStrip.SuspendLayout();
             SuspendLayout();
             // 
@@ -98,7 +95,6 @@
             tabControl1.Controls.Add(tabPageOnline);
             tabControl1.Controls.Add(tabPageSettings);
             tabControl1.Controls.Add(tabPageMods);
-            tabControl1.Controls.Add(tabPageLog);
             tabControl1.Location = new Point(0, 0);
             tabControl1.Margin = new Padding(0);
             tabControl1.Name = "tabControl1";
@@ -108,7 +104,7 @@
             // 
             // tabPageItems
             // 
-            tabPageItems.BackColor = Color.Transparent;
+            tabPageItems.BackColor = SystemColors.Control;
             tabPageItems.Controls.Add(searchPanel);
             tabPageItems.Location = new Point(4, 24);
             tabPageItems.Margin = new Padding(0);
@@ -151,7 +147,7 @@
             // 
             // tabPageSettings
             // 
-            tabPageSettings.BackColor = Color.Transparent;
+            tabPageSettings.BackColor = SystemColors.Control;
             tabPageSettings.Controls.Add(settingsPanel);
             tabPageSettings.Location = new Point(4, 24);
             tabPageSettings.Margin = new Padding(0);
@@ -192,29 +188,6 @@
             modsPanel.Name = "modsPanel";
             modsPanel.Size = new Size(1286, 643);
             modsPanel.TabIndex = 1;
-            // 
-            // tabPageLog
-            // 
-            tabPageLog.Controls.Add(panelLogging);
-            tabPageLog.Location = new Point(4, 24);
-            tabPageLog.Margin = new Padding(4, 3, 4, 3);
-            tabPageLog.Name = "tabPageLog";
-            tabPageLog.Padding = new Padding(4, 3, 4, 3);
-            tabPageLog.Size = new Size(1202, 594);
-            tabPageLog.TabIndex = 6;
-            tabPageLog.Tag = "iatag_ui_tab_log";
-            tabPageLog.Text = "Log";
-            tabPageLog.UseVisualStyleBackColor = true;
-            // 
-            // panelLogging
-            // 
-            panelLogging.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            panelLogging.ForeColor = SystemColors.Control;
-            panelLogging.Location = new Point(-5, 0);
-            panelLogging.Margin = new Padding(4, 3, 4, 3);
-            panelLogging.Name = "panelLogging";
-            panelLogging.Size = new Size(1286, 651);
-            panelLogging.TabIndex = 1;
             // 
             // notifyIcon1
             // 
@@ -266,7 +239,6 @@
             tabPageOnline.ResumeLayout(false);
             tabPageSettings.ResumeLayout(false);
             tabPageMods.ResumeLayout(false);
-            tabPageLog.ResumeLayout(false);
             trayContextMenuStrip.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
@@ -286,8 +258,6 @@
         private System.Windows.Forms.TabPage tabPageMods;
         private System.Windows.Forms.Panel modsPanel;
         private System.Windows.Forms.Panel searchPanel;
-        private System.Windows.Forms.TabPage tabPageLog;
-        private System.Windows.Forms.Panel panelLogging;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.TabPage tabPageOnline;
         private System.Windows.Forms.Panel onlinePanel;

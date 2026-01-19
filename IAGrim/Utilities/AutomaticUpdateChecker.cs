@@ -116,13 +116,15 @@ namespace IAGrim.Utilities {
                     } else {
                         Logger.Info("User was made aware of a new update, chose not to update.");
                     }
-                } else {
+                } else if(userInitiated) {
                     MessageBox.Show("You are on the latest version", "No new updates");
                 }
             }
             catch (Exception ex) {
                 Logger.Warn(ex);
-                MessageBox.Show("Something went wrong checking for updates", "Something went wrong");
+                if (userInitiated) {
+                    MessageBox.Show("Something went wrong checking for updates", "Something went wrong");
+                }
             }
         }
 

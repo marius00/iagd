@@ -39,34 +39,34 @@ namespace IAGrim.UI {
         private readonly TooltipHelper _tooltipHelper = new TooltipHelper();
         private readonly UsageStatisticsReporter _usageStatisticsReporter = new UsageStatisticsReporter();
         private readonly AutomaticUpdateChecker _automaticUpdateChecker;
-        private CharacterBackupService _charBackupService;
+        private CharacterBackupService? _charBackupService;
 
         private readonly List<IMessageProcessor> _messageProcessors = new List<IMessageProcessor>();
 
-        private SplitSearchWindow _searchWindow;
-        private TransferStashWorker _transferStashWorker;
+        private SplitSearchWindow? _searchWindow;
+        private TransferStashWorker? _transferStashWorker;
 
-        private StashFileMonitor _stashFileMonitor = new StashFileMonitor();
-        private CsvFileMonitor _csvFileMonitor = new CsvFileMonitor();
-        private CsvFileMonitor _replicaCsvFileMonitor = new CsvFileMonitor();
-        private ItemReplicaService _itemReplicaService;
+        private StashFileMonitor? _stashFileMonitor = new StashFileMonitor();
+        private CsvFileMonitor? _csvFileMonitor = new CsvFileMonitor();
+        private CsvFileMonitor? _replicaCsvFileMonitor = new CsvFileMonitor();
+        private ItemReplicaService? _itemReplicaService;
 
-        private Action<RegisterWindow.DataAndType> _registerWindowDelegate;
-        private RegisterWindow _window;
-        private InjectionHelper _injector;
-        private ProgressChangedEventHandler _injectorCallbackDelegate;
-        private CsvParsingService _csvParsingService;
-        private ItemReplicaParser _itemReplicaParser;
+        private Action<RegisterWindow.DataAndType>? _registerWindowDelegate;
+        private RegisterWindow? _window;
+        private InjectionHelper? _injector;
+        private ProgressChangedEventHandler? _injectorCallbackDelegate;
+        private CsvParsingService? _csvParsingService;
+        private ItemReplicaParser? _itemReplicaParser;
 
-        private BuddyItemsService _buddyItemsService;
-        private BackgroundTask _backupBackgroundTask;
-        private ItemTransferController _transferController;
+        private BuddyItemsService? _buddyItemsService;
+        private BackgroundTask? _backupBackgroundTask;
+        private ItemTransferController? _transferController;
         private readonly ParsingService _parsingService;
-        private AuthService _authService;
-        private BackupServiceWorker _backupServiceWorker;
+        private AuthService? _authService;
+        private BackupServiceWorker? _backupServiceWorker;
         private readonly UserFeedbackService _userFeedbackService;
-        private MinimizeToTrayHandler _minimizeToTrayHandler;
-        private ModsDatabaseConfig _modsDatabaseConfigTab;
+        private MinimizeToTrayHandler? _minimizeToTrayHandler;
+        private ModsDatabaseConfig? _modsDatabaseConfigTab;
         public static int NumInstantSyncItemCount = 300;
 
 
@@ -238,9 +238,11 @@ namespace IAGrim.UI {
         /// </summary>
         public void UpdateLanguage() {
             LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
-            Text = RuntimeSettings.Language.GetTag(Tag.ToString());
-            if (tsStashStatus.Tag is string) {
-                tsStashStatus.Text = RuntimeSettings.Language.GetTag(tsStashStatus.Tag.ToString());
+            if (Tag != null) {
+                Text = RuntimeSettings.Language.GetTag(Tag.ToString());
+                if (tsStashStatus.Tag is string) {
+                    tsStashStatus.Text = RuntimeSettings.Language.GetTag(tsStashStatus.Tag.ToString());
+                }
             }
 
             Refresh();
@@ -530,8 +532,6 @@ namespace IAGrim.UI {
 
             _modsDatabaseConfigTab = new ModsDatabaseConfig(DatabaseLoadedTrigger, playerItemDao, _parsingService, grimDawnDetector, settingsService, _cefBrowserHandler, databaseItemDao, replicaItemDao);
             UIHelper.AddAndShow(_modsDatabaseConfigTab, modsPanel);
-
-            UIHelper.AddAndShow(new LoggingWindow(), panelLogging);
 
             var itemTagDao = _serviceProvider.Get<IItemTagDao>();
             var backupService = new BackupService(_authService, playerItemDao, settingsService, _cefBrowserHandler);
