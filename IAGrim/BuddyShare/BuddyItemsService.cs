@@ -137,10 +137,10 @@ namespace IAGrim.BuddyShare {
                 var sync = Get(subscription);
 
                 // Skip items we've already have
-                var items = sync.Items
+                var items = sync.Items?
                     .Where(item => !knownItems.Contains(item.Id))
                     .Select(item => ToBuddyItem(subscription, item))
-                    .ToList();
+                    .ToList() ?? [];
                 
 
                 // Store items in batches, to prevent IA just freezing up if we happen to get 10-20,000 items.
@@ -152,7 +152,10 @@ namespace IAGrim.BuddyShare {
                 _buddyItemDao.UpdateNames(items);
 
                 // Delete items that no longer exist
-                _buddyItemDao.Delete(subscription, sync.Removed);
+                Logger.Info($"There are {sync.Removed?.Count ?? 0} buddy items items to remove");
+                if (sync.Removed != null) {
+                    _buddyItemDao.Delete(subscription, sync.Removed);
+                }
 
                 // Store timestamp to db
                 subscription.LastSyncTimestamp = sync.Timestamp;
