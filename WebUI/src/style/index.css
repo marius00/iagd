@@ -23,9 +23,9 @@ body {
 	--background-color: rgb(85,68,96); /*Legacy*/
 	background: var(--background-color);
 
-    --header-color: #FFFFFF;
-    --copy-clipboard-link: #FFFFFF;
-    --copy-clipboard-bg: #f3f3f387;
+    --header-color: #bfbdbd;
+    --copy-clipboard-link: #bfbdbd;
+    --copy-clipboard-bg: #313131;
     --collection-items: #FFFFFF;
 
 	--item-background: #e8d5b6;

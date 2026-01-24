@@ -12,15 +12,12 @@
     border: 1px solid;
     border-radius: 5px;
     padding: 7px;
+    color: var(--copy-clipboard-link);
 }
 
 .clipboard-link {
     text-decoration: underline;
     cursor: pointer;
-}
-
-.App-dark .clipboard-link {
-    color: var(--copy-clipboard-link);
 }
 
 
