@@ -29,6 +29,7 @@
             contextMenuStrip1 = new ContextMenuStrip(components);
             copyToolStripMenuItem = new ToolStripMenuItem();
             panelBox4 = new PanelBox();
+            cbZipBackups = new FirefoxCheckBox();
             helpWhatIsDelayWhenSearching = new LinkLabel();
             cbDelaySearch = new FirefoxCheckBox();
             cbTransferAnyMod = new FirefoxCheckBox();
@@ -57,6 +58,7 @@
             buttonLanguageSelect = new FirefoxButton();
             buttonViewBackups = new FirefoxButton();
             buttonViewLogs = new FirefoxButton();
+            lbDefineBackupLocation = new LinkLabel();
             contextMenuStrip1.SuspendLayout();
             panelBox4.SuspendLayout();
             pbAutomaticUpdates.SuspendLayout();
@@ -97,6 +99,8 @@
             // panelBox4
             // 
             panelBox4.BackColor = Color.FromArgb(240, 240, 240);
+            panelBox4.Controls.Add(lbDefineBackupLocation);
+            panelBox4.Controls.Add(cbZipBackups);
             panelBox4.Controls.Add(helpWhatIsDelayWhenSearching);
             panelBox4.Controls.Add(cbDelaySearch);
             panelBox4.Controls.Add(cbTransferAnyMod);
@@ -121,6 +125,22 @@
             panelBox4.Tag = "iatag_ui_settings_title";
             panelBox4.Text = "Settings";
             panelBox4.TextLocation = "8; 5";
+            // 
+            // cbZipBackups
+            // 
+            cbZipBackups.Bold = false;
+            cbZipBackups.EnabledCalc = true;
+            cbZipBackups.Font = new Font("Segoe UI", 10F);
+            cbZipBackups.ForeColor = Color.FromArgb(66, 78, 90);
+            cbZipBackups.IsDarkMode = false;
+            cbZipBackups.Location = new Point(4, 361);
+            cbZipBackups.Margin = new Padding(4, 3, 4, 3);
+            cbZipBackups.Name = "cbZipBackups";
+            cbZipBackups.Size = new Size(313, 31);
+            cbZipBackups.TabIndex = 35;
+            cbZipBackups.Tag = "iatag_ui_zipbackup";
+            cbZipBackups.Text = "Zip backups";
+            cbZipBackups.CheckedChanged += cbZipBackups_CheckedChanged;
             // 
             // helpWhatIsDelayWhenSearching
             // 
@@ -426,8 +446,8 @@
             panelBox2.NoRounding = false;
             panelBox2.Size = new Size(268, 346);
             panelBox2.TabIndex = 2;
-            panelBox2.Tag = "iatag_ui_misc_title";
-            panelBox2.Text = "Misc";
+            panelBox2.Tag = "iatag_ui_donate_title";
+            panelBox2.Text = "Donate";
             panelBox2.TextLocation = "8; 5";
             // 
             // buttonPatreon
@@ -598,6 +618,22 @@
             buttonViewLogs.Text = "View Logs";
             buttonViewLogs.Click += buttonViewLogs_Click;
             // 
+            // lbDefineBackupLocation
+            // 
+            lbDefineBackupLocation.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            lbDefineBackupLocation.AutoSize = true;
+            lbDefineBackupLocation.BackColor = Color.Transparent;
+            lbDefineBackupLocation.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lbDefineBackupLocation.Location = new Point(279, 370);
+            lbDefineBackupLocation.Margin = new Padding(4, 0, 4, 0);
+            lbDefineBackupLocation.Name = "lbDefineBackupLocation";
+            lbDefineBackupLocation.Size = new Size(41, 13);
+            lbDefineBackupLocation.TabIndex = 36;
+            lbDefineBackupLocation.TabStop = true;
+            lbDefineBackupLocation.Tag = "iatag_ui_zipbackup_define";
+            lbDefineBackupLocation.Text = "Define";
+            lbDefineBackupLocation.LinkClicked += lbDefineBackupLocation_LinkClicked;
+            // 
             // SettingsWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -662,5 +698,7 @@
         private FirefoxCheckBox cbTransferAnyMod;
         private FirefoxCheckBox cbDelaySearch;
         private LinkLabel helpWhatIsDelayWhenSearching;
+        private FirefoxCheckBox cbZipBackups;
+        private LinkLabel lbDefineBackupLocation;
     }
 }

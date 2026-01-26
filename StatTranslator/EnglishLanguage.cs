@@ -555,7 +555,7 @@ namespace StatTranslator {
             {"iatag_ui_update_title", "Automatic Updates"},
             {"iatag_ui_experimentalupdates", "Frequent Features"},
             {"iatag_ui_regularupdates", "Regular Updates"},
-            {"iatag_ui_misc_title", "Misc"},
+            {"iatag_ui_donate_title", "Donate"},
             {"iatag_ui_donatenow", "Donate Now!"},
             {"iatag_ui_openforum", "Open Forum"},
             {"iatag_ui_contactdev", "Contact Developer"},

@@ -36,7 +36,8 @@ namespace IAGrim.UI.Tabs {
             GDTransferFile[] modFilter,
             TransferStashService2 transferStashService2,
             LanguagePackPicker languagePackPicker,
-            SettingsService settings, GrimDawnDetector grimDawnDetector, DarkMode darkModeToggler, AutomaticUpdateChecker automaticUpdateChecker) {
+            SettingsService settings, GrimDawnDetector grimDawnDetector, DarkMode darkModeToggler,
+            AutomaticUpdateChecker automaticUpdateChecker) {
             InitializeComponent();
             _controller = new SettingsController(settings);
             this._cefBrowserHandler = cefBrowserHandler;
@@ -73,6 +74,7 @@ namespace IAGrim.UI.Tabs {
             cbAutoDismiss.Checked = _settings.GetPersistent().AutoDismissNotifications;
             cbTransferAnyMod.Checked = _settings.GetPersistent().TransferAnyMod;
             cbDelaySearch.Checked = _settings.GetLocal().PreferDelayedSearch;
+            cbZipBackups.Checked = _settings.GetLocal().BackupCustom;
 
         }
 
@@ -108,7 +110,7 @@ namespace IAGrim.UI.Tabs {
                 RuntimeSettings.Language.GetTag("iatag_ui_copiedclipboard"),
                 linkLabel1,
                 TooltipHelper.TooltipLocation.TOP
-                );
+            );
         }
 
         private void contextMenuStrip1_Opening(object sender, CancelEventArgs e) {
@@ -126,7 +128,8 @@ namespace IAGrim.UI.Tabs {
 
 
         private void buttonImportExport_Click(object sender, EventArgs e) {
-            new Popups.ImportExport.ImportExportContainer(_modFilter, _playerItemDao, _transferStashService2).ShowDialog();
+            new Popups.ImportExport.ImportExportContainer(_modFilter, _playerItemDao, _transferStashService2)
+                .ShowDialog();
         }
 
         private void cbDisplaySkills_CheckedChanged(object sender, EventArgs e) {
@@ -138,7 +141,8 @@ namespace IAGrim.UI.Tabs {
         }
 
         private void linkSourceCode_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            Process.Start(new ProcessStartInfo { FileName = "https://github.com/marius00/iagd", UseShellExecute = true });
+            Process.Start(
+                new ProcessStartInfo { FileName = "https://github.com/marius00/iagd", UseShellExecute = true });
         }
 
 
@@ -158,7 +162,8 @@ namespace IAGrim.UI.Tabs {
         }
 
         private void buttonPatreon_Click(object sender, EventArgs e) {
-            Process.Start(new ProcessStartInfo { FileName = "https://www.patreon.com/itemassistant", UseShellExecute = true });
+            Process.Start(new ProcessStartInfo
+                { FileName = "https://www.patreon.com/itemassistant", UseShellExecute = true });
         }
 
         private void helpWhatIsRegularUpdates_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
@@ -213,8 +218,19 @@ namespace IAGrim.UI.Tabs {
         }
 
         private void firefoxCheckBox1_CheckedChanged_1(object sender, EventArgs e) {
-
             _settings.GetLocal().PreferDelayedSearch = ((FirefoxCheckBox)sender).Checked;
+        }
+
+        private void cbZipBackups_CheckedChanged(object sender, EventArgs e) {
+            _settings.GetLocal().BackupCustom = ((FirefoxCheckBox)sender).Checked;
+        }
+
+        private void lbDefineBackupLocation_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            using var folderBrowserDialog = new FolderBrowserDialog();
+            if (folderBrowserDialog.ShowDialog() != DialogResult.OK) return;
+
+            DialogResult = DialogResult.None;
+            _settings.GetLocal().BackupCustomLocation = folderBrowserDialog.SelectedPath;
         }
     }
 }
