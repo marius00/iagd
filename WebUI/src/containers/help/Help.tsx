@@ -111,7 +111,9 @@ const helpEntries = [
         title: `When will IA be updated for the latest GD patch?`,
         tag: 'GrimDawnUpdated',
         body: () => <div>
-            Item Assistant rarely requires any update, though you may need to parse the database again. <br/><br/>
+            Item Assistant rarely requires any update, though you may need to parse the database again.<br/>
+            IA is fully compatible with Fangs of Asterkarn
+          <br/><br/>
             {typicalParseDbMessage}
         </div>,
         type: IHelpEntryType.Help
@@ -187,8 +189,7 @@ const helpEntries = [
             This folder contains both daily backups from Item Assistant, as well as all your previous shared stash
             files.<br/>
             It is <span className="attention">highly recommended</span> that you enable additional backups. <br/>
-            Harddrive failures happens. Viruses happens. Reinstalling windows and forgetting to copy IA
-            happens. <br/><br/>
+            Hardware failures happens. Malware happens. Reinstalling windows and forgetting to copy IA happens. <br/><br/>
             <span className="attention">Use additional backup methods!</span>
         </div>,
         type: IHelpEntryType.Informational
@@ -216,33 +217,6 @@ const helpEntries = [
             Another cause can be outdated TLS on Windows 7. If you are running windows 7, <a href={"https://stackoverflow.com/questions/70674832/windows-7-could-not-create-ssl-tls-secure-channel-system-net-webexception"}>see this link</a>
         </div>,
         type: IHelpEntryType.Help
-    },
-    {
-        title: `How do I backup my items?`,
-        tag: 'HowDoIBackup',
-        body: () => <div>
-            <b>IA can automatically backup your items to your favorite cloud provider, or to a custom folder (for
-                example on your desktop or a USB stick)</b><br/>
-            <br/>
-            To backup your items to a custom folder:<br/>
-
-            <ol>
-                <li>Click the checkbox next to the "Custom" button</li>
-                <li>Click "Custom" button to select the folder</li>
-                <li>Click "Backup Now" to create the backup immediately</li>
-            </ol>
-            The backup will also include your Grim Dawn characters and stash files.
-
-            <br/><br/><br/>
-            <b>If you just want to quickly move your items to another computer:</b>
-            <ol>
-                <li>Click the "Settings" tab</li>
-                <li>Click "View Logs"</li>
-                <li>Go into "data"</li>
-                <li>Copy "userdata.db"</li>
-            </ol>
-        </div>,
-        type: IHelpEntryType.Informational
     },
     {
         title: `How do I restore from a backup?`,
@@ -321,7 +295,9 @@ const helpEntries = [
         tag: 'SupportsHardcore',
         body: () => <div>
             Yes! Your items are separated by mod and hardcore/softcore. <br/>
-            In the upper right corner of IA you can select which items you which to display.
+            In the upper right corner of IA you can select which items you which to display. <br/>
+          <br/>
+          The selection is only available after you have items for each game mode.
         </div>,
         type: IHelpEntryType.Informational
     },
@@ -358,7 +334,7 @@ const helpEntries = [
         title: `Settings: What is th e difference between regular and experimental updates?`,
         tag: 'RegularUpdates',
         body: () => <div>
-            With regular updates you'll occationally be notified of a new version of IA. <br/>
+            With regular updates you'll occasionally be notified of a new version of IA. <br/>
             You'll always get the latest version, but it may take a couple of weeks before you're notified. <br/>
             <b>Recommended for those who don't wish to be bothered with frequent updates.</b>
 			<br/><br/>
@@ -432,7 +408,9 @@ const helpEntries = [
                 <li>If everything works fine, delete the "IAGD-backup" folder.</li>
             </ol>
             This creates a type of shortcut that is transparant to IA. The items/etc will be on "D:\mystuff" but IA can
-            keep reading it from "%appdata%\..\local\evilsoft"
+            keep reading it from "%appdata%\..\local\evilsoft" <br/>
+
+          Remember to remove the symlink if you change harddrives later on!
         </div>
     },
     {
