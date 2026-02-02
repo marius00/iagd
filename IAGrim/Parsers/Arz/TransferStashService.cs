@@ -80,7 +80,7 @@ namespace IAGrim.Parsers.Arz {
 
                     var csvFilename = Path.Combine(path, Guid.NewGuid().ToString() + ".csv");
                     File.WriteAllText(csvFilename, csv);
-                    Logger.Info($"Wrote item {item.Id} to {csvFilename}");
+                    Logger.Info($"Wrote item {item.BaseRecord} to {csvFilename}");
                     item.StackCount = 0;
                 } catch (IOException e) {
                     Logger.Warn(e.Message, e);

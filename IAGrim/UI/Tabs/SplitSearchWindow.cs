@@ -38,6 +38,7 @@ namespace IAGrim.UI.Tabs {
         private System.ComponentModel.IContainer components;
         private const int FilterPanelMinSize = 250;
         private Microsoft.Web.WebView2.WinForms.WebView2 webView21;
+        private Label label1;
         private bool _hasCheckedModFilterNotEmpty = false;
 
         /// <summary>
@@ -371,6 +372,7 @@ namespace IAGrim.UI.Tabs {
             _minLevel = new TextBox();
             _maxLevel = new TextBox();
             toolTip1 = new ToolTip(components);
+            label1 = new Label();
             ((System.ComponentModel.ISupportInitialize)_mainSplitter).BeginInit();
             _mainSplitter.Panel2.SuspendLayout();
             _mainSplitter.SuspendLayout();
@@ -404,6 +406,7 @@ namespace IAGrim.UI.Tabs {
             // _toolStripContainer.ContentPanel
             // 
             _toolStripContainer.ContentPanel.Controls.Add(webView21);
+            _toolStripContainer.ContentPanel.Controls.Add(label1);
             _toolStripContainer.ContentPanel.Margin = new Padding(4, 3, 4, 3);
             _toolStripContainer.ContentPanel.Size = new Size(1291, 669);
             _toolStripContainer.Dock = DockStyle.Fill;
@@ -562,6 +565,16 @@ namespace IAGrim.UI.Tabs {
             // toolTip1
             // 
             toolTip1.ToolTipTitle = "This is:";
+            // 
+            // label1
+            // 
+            label1.Font = new Font("Segoe UI", 27.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label1.ForeColor = Color.Red;
+            label1.Location = new Point(282, 159);
+            label1.Name = "label1";
+            label1.Size = new Size(820, 305);
+            label1.TabIndex = 1;
+            label1.Text = "Unable to load the WebView2 control. Are you perhaps running on Linux? Follow the linux setup guide.";
             // 
             // SplitSearchWindow
             // 
