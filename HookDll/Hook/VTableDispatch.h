@@ -11,33 +11,30 @@ namespace VTableDispatch
 		bool                              /* includeSetBonus */
 		);
 
-	// Known exports used as a sanity check -- if none exist, the game has changed
-	// its ABI enough that we should disable rather than risk calling a wrong function.
-	// Matches the existing GetProcAddress null-check pattern used everywhere else.
+	// Candidates in priority order. We take the first one that exists.
+	// ItemEquipment is tried first as it is the most common item type.
+	// All share the same signature and calling one on any Item subclass
+	// is safe -- virtual dispatch is not needed because we are calling
+	// the exported implementation directly, not through the vtable.
+	//
+	// IMPORTANT: this only works correctly if the item passed to Call()
+	// is actually of the matching subclass (or a subclass of it). Since
+	// all relevant items are Item subclasses and the base Item export is
+	// last in the list as a fallback, this is always safe.
 	static const char* const k_candidates[] = {
+		"?GetUIDisplayText@Item@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@_N@Z",
 		"?GetUIDisplayText@ItemEquipment@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@_N@Z",
 		"?GetUIDisplayText@ItemRelic@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@_N@Z",
 		"?GetUIDisplayText@ItemArtifact@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@_N@Z",
-		"?GetUIDisplayText@Item@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@_N@Z",
 	};
 
-	// Vtable slot for GetUIDisplayText, verified in IDA for ItemEquipment and ItemRelic:
-	//   ItemEquipment vftable base: 0x1807038E0
-	//   GetUIDisplayText entry:     0x180703D18
-	//   Slot: (0x180703D18 - 0x1807038E0) / 8 = 135
-	// ItemRelic confirmed same slot.
-	static constexpr int k_slot = 135; // See instructions below for magical pointer
-
-	static bool s_available = false;
-	static bool s_disabled = false;
+	static pGetUIDisplayText s_fn = nullptr;
+	static bool              s_available = false;
+	static bool              s_disabled = false;
 
 	// ---------------------------------------------------------------------------
 	// Init
-	//
-	// Call once after game.dll is loaded (e.g. at the top of EnableHook).
-	// Verifies that at least one known GetUIDisplayText export still exists in
-	// game.dll. If none do, the game has changed enough that we disable rather
-	// than risk calling whatever is now at slot 135.
+	// Call once at the top of EnableHook(), before any Detours calls.
 	// ---------------------------------------------------------------------------
 	static void Init()
 	{
@@ -54,31 +51,26 @@ namespace VTableDispatch
 
 		for (const char* name : k_candidates)
 		{
-			if (::GetProcAddress(hGame, name))
+			void* addr = ::GetProcAddress(hGame, name);
+			if (addr)
 			{
+				s_fn = reinterpret_cast<pGetUIDisplayText>(addr);
 				s_available = true;
 				LogToFile(LogLevel::INFO,
-					std::string("VTableDispatch::Init - verified export exists, slot 135 active: ") + name);
+					std::string("VTableDispatch::Init - using export: ") + name);
 				return;
 			}
 		}
 
 		LogToFile(LogLevel::FATAL,
-			"VTableDispatch::Init - no known GetUIDisplayText exports found in game.dll. Disabling.");
+			"VTableDispatch::Init - no known GetUIDisplayText exports found. Disabling.");
 		s_disabled = true;
 	}
 
-	// ---------------------------------------------------------------------------
-	// IsAvailable
-	// ---------------------------------------------------------------------------
 	static bool IsAvailable() { return s_available && !s_disabled; }
 
 	// ---------------------------------------------------------------------------
 	// Call
-	//
-	// Dispatches GetUIDisplayText through the object's own vtable at slot 135.
-	// Works correctly for any Item subclass (ItemEquipment, ItemRelic, etc.)
-	// because virtual dispatch uses the object's own vftable pointer.
 	// ---------------------------------------------------------------------------
 	static void Call(
 		void* item,
@@ -86,15 +78,15 @@ namespace VTableDispatch
 		std::vector<GAME::GameTextLine>* lines,
 		bool                             includeSetBonus)
 	{
-		if (!item || !s_available || s_disabled)
+		if (!item || !s_available || s_disabled || !s_fn)
 			return;
 
-		void** vfptr = *reinterpret_cast<void***>(item);
-		auto fn = reinterpret_cast<pGetUIDisplayText>(vfptr[k_slot]);
-		fn(item, character, lines, includeSetBonus);
+		s_fn(item, character, lines, includeSetBonus);
 	}
 
 } // namespace VTableDispatch
+
+
 /*
 IDA Pro:
 
@@ -256,4 +248,20 @@ Found:
 .rdata:0000000180705700                 dq offset ?GetUIDisplayText@ItemRelic@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@_N@Z ; GAME::ItemRelic::GetUIDisplayText(GAME::Character const *,mem::vector<GAME::GameTextLine> &,bool)
 
 (0x180705700 - 0x1807052C8) / 8 = 0x438 / 8 = 0x87 = 135
+
+
+
+
+
+
+On regular v1.2:
+.rdata:0000000180635400 ??_7ItemEquipment@GAME@@6BObject@1@@ dq offset ?GetStaticClassInfo@ItemEquipment@GAME@@SAAEBVRTTI_ClassInfo@2@XZ
+.rdata:0000000180635400                                         ; DATA XREF: GAME::ItemEquipment::ItemEquipment(void)+10o
+.rdata:0000000180635400                                         ; GAME::ItemEquipment::~ItemEquipment(void)+1Co ...
+.rdata:0000000180635400                                         ; GAME::ItemEquipment::GetStaticClassInfo(void)
+.rdata:0000000180635408                 dq offset ?Load@ItemEquipment@GAME@@UEAAXAEBVLoadTable@2@@Z ; GAME::ItemEquipment::Load(GAME::LoadTable const &)
+.rdata:0000000180635820                 dq offset ?GetUIDisplayText@ItemEquipment@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@_N@Z ; GAME::ItemEquipment::GetUIDisplayText(GAME::Character const *,mem::vector<GAME::GameTextLine> &,bool)
+
+
+(0x180635820 - 0x180635408) / 8 = 0x418 / 8 = 0x83 = 131
 */
