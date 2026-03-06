@@ -125,6 +125,7 @@ namespace IAGrim.Services {
                     target = Path.Combine(GlobalPaths.CsvLocationIngoingDeleted, Guid.NewGuid().ToString() + "-conflict.csv");
                 }
                 File.Move(filename, target);
+                return true;
             }
             else {
                 // Transfer back in-game, should never have been looted.
@@ -135,36 +136,44 @@ namespace IAGrim.Services {
                     Logger.Info("Deposited item back in-game, did not pass item classification.");
                     Logger.Info("New GD patch? Go to the Grim Dawn tab and parse the game files again.");
                     File.Delete(filename);
+                    return true;
                 }
                 else {
                     return false;
                 }
             }
 
-            var stats = csvLines
-                .Skip(1) // skip header
-                .Select(line => line.Split(';', 2)) // split into key/value
-                .Where(parts => parts.Length == 2)
-                .Select(parts => {
-                    var text = Regex.Replace(
-                        Regex.Replace(parts[1].Trim(), @"(\^.?)", ""),
-                        @" (\[|\().+(\]|\))$", ""
-                    );
+            if (item.Id != null) {
+                var stats = csvLines
+                    .Skip(1) // skip header
+                    .Select(line => line.Split(';', 2)) // split into key/value
+                    .Where(parts => parts.Length == 2)
+                    .Select(parts => {
+                        var text = Regex.Replace(
+                            Regex.Replace(parts[1].Trim(), @"(\^.?)", ""),
+                            @" (\[|\().+(\]|\))$", ""
+                        );
 
-                    return new ReplicaItemRow {
-                        Text = text,
-                        TextLowercase = text.ToLowerInvariant(),
-                        Type = Int32.Parse(parts[0])
-                    };
-                })
-                .ToList();
+                        return new ReplicaItemRow {
+                            Text = text,
+                            TextLowercase = text.ToLowerInvariant(),
+                            Type = Int32.Parse(parts[0])
+                        };
+                    })
+                    .ToList();
 
-            var replicaItem = new ReplicaItem {
-                PlayerItemId = item.Id,
-                BuddyItemId = null,
-            };
-            Logger.Debug("Storing replica item stats for item " + item.Id);
-            _replicaItemDao.Save(replicaItem, stats);
+                var replicaItem = new ReplicaItem {
+                    PlayerItemId = item.Id,
+                    BuddyItemId = null,
+                };
+                Logger.Debug("Storing replica item stats for item " + item.Id);
+                try {
+                    _replicaItemDao.Save(replicaItem, stats);
+                }
+                catch (Exception ex) {
+                    Logger.Warn("Error storing replica stats", ex);
+                }
+            }
 
             return true;
         }

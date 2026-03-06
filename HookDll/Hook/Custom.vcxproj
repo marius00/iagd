@@ -40,6 +40,7 @@
     <ClInclude Include="GrimTypes.h" />
     <ClInclude Include="HookLog.h" />
     <ClInclude Include="Logger.h" />
+    <ClInclude Include="NpcDetectionHook13.h" />
     <ClInclude Include="OnDemandSeedInfo.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SetHardcore.h" />
@@ -63,6 +64,7 @@
     <ClCompile Include="CanUseDismantle.cpp" />
     <ClCompile Include="GrimTypes.cpp" />
     <ClCompile Include="HookLog.cpp" />
+    <ClCompile Include="NpcDetectionHook13.cpp" />
     <ClCompile Include="OnDemandSeedInfo.cpp" />
     <ClCompile Include="SetHardcore.cpp" />
     <ClCompile Include="SettingsReader.cpp" />

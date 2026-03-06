@@ -81,6 +81,9 @@
     <ClInclude Include="VTableDispatch.h">
       <Filter>CoreHooks</Filter>
     </ClInclude>
+    <ClInclude Include="NpcDetectionHook13.h">
+      <Filter>CoreHooks\Stash</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -132,6 +135,9 @@
       <Filter>CoreHooks\Stash</Filter>
     </ClCompile>
     <ClCompile Include="SettingsReader.cpp" />
+    <ClCompile Include="NpcDetectionHook13.cpp">
+      <Filter>CoreHooks\Stash</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
