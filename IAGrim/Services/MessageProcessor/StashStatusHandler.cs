@@ -56,6 +56,7 @@ namespace IAGrim.Services.MessageProcessor {
                         //logger.Debug("Private Stash opened");
                         break;
 
+                    case MessageType.TYPE_DISPLAY_CRAFTER13:
                     case MessageType.TYPE_DISPLAY_CRAFTER:
                         if (PrivateStashStatus != InternalStashStatus.Open) {
                             PrivateStashStatus = InternalStashStatus.Crafting;

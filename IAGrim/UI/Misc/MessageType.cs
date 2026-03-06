@@ -32,6 +32,7 @@ namespace IAGrim.UI.Misc {
 
 
         TYPE_DISPLAY_CRAFTER = 41,
+        TYPE_DISPLAY_CRAFTER13 = 42,
 
         TYPE_ERROR_HOOKING_GENERIC = 44,
         TYPE_GameInfo_IsHardcore_via_init = 47,

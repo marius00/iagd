@@ -9,6 +9,7 @@
 #include "StateRequestMoveAction.h"
 #include "InventorySack_AddItem.h"
 #include "NpcDetectionHook.h"
+#include "NpcDetectionHook13.h"
 #include "SaveTransferStash.h"
 #include "Exports.h"
 #include "CanUseDismantle.h"
@@ -257,6 +258,7 @@ static void ConfigureStashDetectionHooks(std::vector<BaseMethodHook*>& hooks) {
 	// Stash detection hooks
 	LogToFile(LogLevel::INFO, L"Configuring stash detection hooks..");
 	hooks.push_back(new NpcDetectionHook(&g_dataQueue, g_hEvent));
+	hooks.push_back(new NpcDetectionHook13(&g_dataQueue, g_hEvent));
 	hooks.push_back(new CanUseDismantle(&g_dataQueue, g_hEvent));
 	hooks.push_back(new SaveTransferStash(&g_dataQueue, g_hEvent));
 	hooks.push_back(new SetTransferOpen(&g_dataQueue, g_hEvent));
