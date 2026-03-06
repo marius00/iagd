@@ -11,6 +11,7 @@
 #include <boost/range/iterator_range.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string.hpp> 
+#include "VTableDispatch.h"
 
 #include "Logger.h"
 std::wstring GetIagdFolder();

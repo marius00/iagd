@@ -16,20 +16,14 @@ using System.Text.RegularExpressions;
 using System.Threading;
 
 
-// Release notes:
-/*
- * No longer supports migration from the Azure online backup service over to the existing one.
- * Now supports real item stats for items from mods
- * Rewrote how IA communicates real stat generation with GD
- * Should now allow for free text search on items from mods
- * Should no longer show all items as craftable when comparing items
- * Should now display which items have dummy-stats when comparing items with a mix of real and dummy stats
- * Can now use the free text search on buddy items
- * IA now stores real item stats as .json files during generation (can potentially be useful for others)
- *
- * This update requires re-parsing all item stats
- */
 namespace IAGrim.Services.ItemReplica {
+    /// <summary>
+    /// Responsible for parsing JSON files from the game.
+    /// The ItemReplicaRequesterService requests from the game, which produces JSON files.
+    ///
+    /// This only matters for items synced via cloud (buddyitems/co-op or backup restore).
+    /// Items looted on-the-fly already comes with replica stats.
+    /// </summary>
     class ItemReplicaParser : IDisposable {
         private readonly ILog _logger = LogManager.GetLogger(typeof(ItemReplicaParser));
         private readonly IReplicaItemDao _replicaItemDao;

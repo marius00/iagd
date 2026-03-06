@@ -49,7 +49,7 @@ namespace IAGrim.UI {
         private StashFileMonitor? _stashFileMonitor = new StashFileMonitor();
         private CsvFileMonitor? _csvFileMonitor = new CsvFileMonitor();
         private CsvFileMonitor? _replicaCsvFileMonitor = new CsvFileMonitor();
-        private ItemReplicaService? _itemReplicaService;
+        private ItemReplicaRequesterService? _itemReplicaService;
 
         private Action<RegisterWindow.DataAndType>? _registerWindowDelegate;
         private RegisterWindow? _window;
@@ -581,7 +581,7 @@ namespace IAGrim.UI {
                 settingsPanel);
 
             
-            _itemReplicaService = _serviceProvider.Get<ItemReplicaService>();
+            _itemReplicaService = _serviceProvider.Get<ItemReplicaRequesterService>();
             _itemReplicaService.Start();
 
 
@@ -654,7 +654,7 @@ namespace IAGrim.UI {
             settingsService.GetLocal().OnMutate += delegate(object o, EventArgs args) { _cefBrowserHandler.SetOnlineBackupsEnabled(!settingsService.GetLocal().OptOutOfBackups); };
 
 
-            _csvParsingService = new CsvParsingService(playerItemDao, _userFeedbackService, cacher, transferStashService);
+            _csvParsingService = new CsvParsingService(playerItemDao, _userFeedbackService, cacher, transferStashService, replicaItemDao);
             _csvFileMonitor.OnModified += (_, arg) => {
                 var csvEvent = arg as CsvFileMonitor.CsvEvent;
                 _csvParsingService.Queue(csvEvent.Filename, csvEvent.Cooldown);

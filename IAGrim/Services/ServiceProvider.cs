@@ -86,7 +86,7 @@ namespace IAGrim.Services {
                 grimDawnDetector,
                 itemCollectionRepo,
                 searchController,
-                new ItemReplicaService(playerItemDao, buddyItemDao, settingsService),
+                new ItemReplicaRequesterService(playerItemDao, buddyItemDao, settingsService),
                 replicaItemDao,
                 itemStatService
             ];

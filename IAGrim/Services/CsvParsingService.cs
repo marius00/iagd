@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading;
-using EvilsoftCommons;
+﻿using EvilsoftCommons;
 using EvilsoftCommons.Exceptions;
 using IAGrim.Database;
 using IAGrim.Database.Interfaces;
@@ -14,6 +9,13 @@ using IAGrim.UI.Misc.CEF;
 using IAGrim.Utilities;
 using IAGrim.Utilities.HelperClasses;
 using log4net;
+using NHibernate.SqlCommand;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace IAGrim.Services {
     class CsvParsingService : IDisposable {
@@ -24,13 +26,15 @@ namespace IAGrim.Services {
         private readonly UserFeedbackService _userFeedbackService;
         private readonly TransferStashServiceCache _cache;
         private readonly TransferStashService _transferStashService;
+        private readonly IReplicaItemDao _replicaItemDao;
         public event EventHandler OnItemLooted;
 
-        public CsvParsingService(IPlayerItemDao playerItemDao, UserFeedbackService userFeedbackService, TransferStashServiceCache cache, TransferStashService transferStashService) {
+        public CsvParsingService(IPlayerItemDao playerItemDao, UserFeedbackService userFeedbackService, TransferStashServiceCache cache, TransferStashService transferStashService, IReplicaItemDao replicaItemDao) {
             _playerItemDao = playerItemDao;
             _userFeedbackService = userFeedbackService;
             _cache = cache;
             _transferStashService = transferStashService;
+            _replicaItemDao = replicaItemDao;
         }
 
         private class QueuedCsv {
@@ -74,45 +78,8 @@ namespace IAGrim.Services {
                     if (!_queue.TryDequeue(out var entry)) continue;
                     try {
                         if (entry.Cooldown.IsReady) {
-                            PlayerItem item = Deserialize(File.ReadAllText(entry.Filename));
-                            if (item == null)
-                                continue;
-
-                            // CSV probably wont have stackcount
-                            item.StackCount = Math.Max(item.StackCount, 1);
-                            item.CreationDate = DateTime.UtcNow.ToTimestamp();
-
-                            var classificationService = new ItemClassificationService(_cache, _playerItemDao);
-                            classificationService.Add(item);
-
-                            // Items to loot
-                            if (classificationService.Remaining.Count > 0) {
-                                _playerItemDao.Save(item);
-                                File.Delete(entry.Filename);
-                                OnItemLooted?.Invoke(this, null);
-                            }
-                            else if (classificationService.Duplicates.Count > 0) {
-                                Logger.Info("Deleting duplicate item file");
-                                var target = Path.Combine(GlobalPaths.CsvLocationIngoingDeleted, Path.GetFileName(entry.Filename));
-                                if (File.Exists(target)) {
-                                    target = Path.Combine(GlobalPaths.CsvLocationIngoingDeleted, Guid.NewGuid().ToString() + "-conflict.csv");
-                                }
-                                File.Move(entry.Filename, target);
-                            }
-                            else {
-                                // Transfer back in-game, should never have been looted.
-                                // TODO: Separate transfer logic.. no delete-from-db etc..
-                                if (RuntimeSettings.StashStatus == StashAvailability.CLOSED) {
-                                    // TODO: Could just MOVE it.. same CSV format..
-                                    _transferStashService.Deposit(new List<PlayerItem> { item }, null);
-                                    Logger.Info("Deposited item back in-game, did not pass item classification.");
-                                    Logger.Info("New GD patch? Go to the Grim Dawn tab and parse the game files again.");
-                                    File.Delete(entry.Filename);
-                                }
-                                else {
-                                    _queue.Enqueue(entry);
-                                }
-
+                            if (!Handle(entry.Filename)) {
+                                _queue.Enqueue(entry);
                             }
                         }
                         else {
@@ -128,6 +95,78 @@ namespace IAGrim.Services {
             t.Start();
 
 
+        }
+
+        private bool Handle(string filename) {
+            // So we get the entire CSV here..
+            var csvLines = File.ReadAllText(filename).Split("\n");
+            PlayerItem? item = Deserialize(csvLines[0]);
+            if (item == null) {
+                return true;
+            }
+
+            // CSV probably wont have stackcount
+            item.StackCount = Math.Max(item.StackCount, 1);
+            item.CreationDate = DateTime.UtcNow.ToTimestamp();
+
+            var classificationService = new ItemClassificationService(_cache, _playerItemDao);
+            classificationService.Add(item);
+
+            // Items to loot
+            if (classificationService.Remaining.Count > 0) {
+                _playerItemDao.Save(item);
+                File.Delete(filename);
+                OnItemLooted?.Invoke(this, null);
+            }
+            else if (classificationService.Duplicates.Count > 0) {
+                Logger.Info("Deleting duplicate item file");
+                var target = Path.Combine(GlobalPaths.CsvLocationIngoingDeleted, Path.GetFileName(filename));
+                if (File.Exists(target)) {
+                    target = Path.Combine(GlobalPaths.CsvLocationIngoingDeleted, Guid.NewGuid().ToString() + "-conflict.csv");
+                }
+                File.Move(filename, target);
+            }
+            else {
+                // Transfer back in-game, should never have been looted.
+                // TODO: Separate transfer logic.. no delete-from-db etc..
+                if (RuntimeSettings.StashStatus == StashAvailability.CLOSED) {
+                    // TODO: Could just MOVE it.. same CSV format..
+                    _transferStashService.Deposit(new List<PlayerItem> { item }, null);
+                    Logger.Info("Deposited item back in-game, did not pass item classification.");
+                    Logger.Info("New GD patch? Go to the Grim Dawn tab and parse the game files again.");
+                    File.Delete(filename);
+                }
+                else {
+                    return false;
+                }
+            }
+
+            var stats = csvLines
+                .Skip(1) // skip header
+                .Select(line => line.Split(';', 2)) // split into key/value
+                .Where(parts => parts.Length == 2)
+                .Select(parts => {
+                    var text = Regex.Replace(
+                        Regex.Replace(parts[1].Trim(), @"(\^.?)", ""),
+                        @" (\[|\().+(\]|\))$", ""
+                    );
+
+                    return new ReplicaItemRow {
+                        Text = text,
+                        TextLowercase = text.ToLowerInvariant(),
+                        Type = Int32.Parse(parts[0])
+                    };
+                })
+                .ToList();
+
+            var replicaItem = new ReplicaItem {
+                PlayerItemId = item.Id,
+                BuddyItemId = null,
+            };
+            Logger.Debug("Storing replica item stats for item " + item.Id);
+            _replicaItemDao.Save(replicaItem, stats);
+
+            return true;
         }
 
 
@@ -149,7 +188,7 @@ namespace IAGrim.Services {
             return i;
         }
 
-        private PlayerItem Deserialize(string csv) {
+        private PlayerItem? Deserialize(string csv) {
             var pieces = csv.Split(';');
 
             if (pieces.Length != 13 && pieces.Length != 16) {

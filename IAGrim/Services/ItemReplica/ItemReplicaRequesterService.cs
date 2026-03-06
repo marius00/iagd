@@ -9,22 +9,17 @@ using log4net;
 
 namespace IAGrim.Services {
     // TODO: Class does too much, and is somewhat of a mess.
-    class ItemReplicaService : IDisposable {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(ItemReplicaService));
-        private readonly IPlayerItemDao _playerItemDao;
-        private readonly IBuddyItemDao _buddyItemDao;
-        private readonly SettingsService _settingsService;
+    /// <summary>
+    /// Responsible for serializing item records and sending them TO the game.
+    /// The result is then picked up by the ItemReplicaParser
+    /// </summary>
+    class ItemReplicaRequesterService(IPlayerItemDao playerItemDao, IBuddyItemDao buddyItemDao, SettingsService settingsService) : IDisposable {
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(ItemReplicaRequesterService));
 
         private volatile bool _isShuttingDown = false;
-        private Thread _t = null;
-        private readonly ActionCooldown _cooldown = new ActionCooldown(2500);
-        private ReplicaCache _cache = new ReplicaCache();
-
-        public ItemReplicaService(IPlayerItemDao playerItemDao, IBuddyItemDao buddyItemDao, SettingsService settingsService) {
-            _playerItemDao = playerItemDao;
-            _buddyItemDao = buddyItemDao;
-            _settingsService = settingsService;
-        }
+        private Thread? _t = null;
+        private readonly ActionCooldown _cooldown = new(2500);
+        private ReplicaCache _cache = new();
 
         public void Reset() {
             _cache = new ReplicaCache();
@@ -71,7 +66,7 @@ namespace IAGrim.Services {
 
 
             {
-                var items = _playerItemDao.ListMissingReplica();
+                var items = playerItemDao.ListMissingReplica();
                 count += items.Count;
                 foreach (var item in items) {
                     var hash = item.Id + ".csv";
@@ -105,8 +100,8 @@ namespace IAGrim.Services {
 
             
 
-            if (!_settingsService.GetLocal().OptOutOfBackups) {
-                var items = _buddyItemDao.ListMissingReplica();
+            if (!settingsService.GetLocal().OptOutOfBackups) {
+                var items = buddyItemDao.ListMissingReplica();
                 count += items.Count;
 
                 foreach (var item in items) {

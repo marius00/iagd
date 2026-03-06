@@ -78,6 +78,9 @@
     <ClInclude Include="SettingsReader.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="VTableDispatch.h">
+      <Filter>CoreHooks</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">

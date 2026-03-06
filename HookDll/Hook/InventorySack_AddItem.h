@@ -87,7 +87,7 @@ private:
 	static std::wstring GetModName(GAME::GameInfo* gameInfo);
 
 	static bool HandleItem(void* stash, GAME::Item* item);
-	static bool Persist(GAME::ItemReplicaInfo replicaInfo, bool isHardcore, std::wstring mod);
+	static bool Persist(GAME::ItemReplicaInfo replicaInfo, bool isHardcore, std::wstring mod, const std::vector<GAME::GameTextLine>& gameTextLines);
 	static void DisplayMessage(std::wstring, std::wstring);
 	static bool IsRelevant(const GAME::ItemReplicaInfo& item);
 	static bool IsSackToLootFrom(void* stash, GAME::GameEngine* gameEngine);

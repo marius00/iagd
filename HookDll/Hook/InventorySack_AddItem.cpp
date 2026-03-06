@@ -15,6 +15,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <iostream>
 #include "Logger.h"
+#include "VTableDispatch.h"
 
 
 #define STASH_1 0
@@ -53,6 +54,8 @@ std::set<std::wstring> InventorySack_AddItem::m_depositQueue;
 boost::mutex InventorySack_AddItem::m_mutex;
 
 void InventorySack_AddItem::EnableHook() {
+	VTableDispatch::Init();
+
 	// GameInfo::
 	dll_GameInfo_GameInfo_Param = (GameInfo_GameInfo_Param)GetProcAddressOrLogToFile(L"Engine.dll", GAMEINFO_CONSTRUCTOR_ARGS);
 	DetourTransactionBegin();
@@ -328,15 +331,30 @@ std::wstring randomFilename() {
 
 
 
-bool InventorySack_AddItem::Persist(GAME::ItemReplicaInfo replicaInfo, bool isHardcore, std::wstring mod) {
+bool InventorySack_AddItem::Persist(
+	GAME::ItemReplicaInfo replicaInfo,
+	bool isHardcore,
+	std::wstring mod,
+	const std::vector<GAME::GameTextLine>& gameTextLines)
+{
 	std::wstring fullPath = m_storageFolder + randomFilename();
 	std::wofstream stream;
 	stream.open(fullPath);
-	stream << mod.c_str() << ";" << (isHardcore ? 1 : 0)  << ";" << GAME::Serialize(replicaInfo) << "\n";
+	// Existing replica CSV line -- unchanged, IA client reads this format already.
+	stream << mod.c_str() << ";" << (isHardcore ? 1 : 0) << ";" << GAME::Serialize(replicaInfo) << "\n";
+
+	// Append stats, one per line: textClass;text
+	// The IA client can read these after the first line, ignoring them if it doesn't
+	// understand them yet (backwards compatible, since it only reads line 1 today).
+	for (const auto& line : gameTextLines) {
+		stream << line.textClass << ";" << line.text.c_str() << "\n";
+	}
+
 	stream.flush();
 	stream.close();
 
-	LogToFile(LogLevel::INFO, L"Storing to " + fullPath);
+	LogToFile(LogLevel::INFO, L"Storing to " + fullPath + L" (" +
+		std::to_wstring(gameTextLines.size()) + L" stat lines)");
 
 	std::ifstream verification;
 	verification.open(fullPath);
@@ -345,8 +363,6 @@ bool InventorySack_AddItem::Persist(GAME::ItemReplicaInfo replicaInfo, bool isHa
 	}
 
 	LogToFile(LogLevel::WARNING, L"Error: written CSV file does not exist");
-
-
 	return false;
 }
 
@@ -455,15 +471,14 @@ bool InventorySack_AddItem::HandleItem(void* stash, GAME::Item* item) {
 	if (!m_instalootEnabled || !m_isActive || stash == nullptr || item == nullptr)
 		return false;
 
-	if (!IsSackToLootFrom(stash, fnGetGameEngine())) {
+	auto gameEngine = fnGetGameEngine();
+	if (!IsSackToLootFrom(stash, gameEngine))
 		return false;
-	}
 
 	GAME::ItemReplicaInfo replica;
 	fnItemGetItemReplicaInfo(item, replica);
-	if (!IsRelevant(replica)) {
+	if (!IsRelevant(replica))
 		return false;
-	}
 
 	GAME::Engine* engine = fnGetEngine();
 	if (engine == nullptr) {
@@ -476,16 +491,25 @@ bool InventorySack_AddItem::HandleItem(void* stash, GAME::Item* item) {
 		return false;
 	}
 
+	std::vector<GAME::GameTextLine> gameTextLines = {};
+	GAME::Character* character = (GAME::Character*)fnGetMainPlayer(gameEngine);
+	if (character != nullptr) {
+		VTableDispatch::Call(item, character, &gameTextLines, true);
+		LogToFile(LogLevel::INFO, L"VTableDispatch returned " +
+			std::to_wstring(gameTextLines.size()) + L" text lines");
+	}
+	else {
+		LogToFile(LogLevel::WARNING, L"HandleItem: no character, persisting without stats");
+	}
+
 	std::wstring modName = GetModName(gameInfo);
-	
-	if (Persist(replica, fnGetHardcore(gameInfo), modName)) {
+	if (Persist(replica, fnGetHardcore(gameInfo), modName, gameTextLines)) {
 		DisplayMessage(L"Item looted", L"By Item Assistant");
 		fnPlayDropSound(item);
 		return true;
 	}
 
 	return false;
-
 }
 
 /// <summary>

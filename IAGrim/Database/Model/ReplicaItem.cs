@@ -14,6 +14,6 @@ namespace IAGrim.Database {
     public class ReplicaItem {
         public virtual long Id { get; set; }
         public virtual long? PlayerItemId { get; set; }
-        public virtual string BuddyItemId { get; set; }
+        public virtual string? BuddyItemId { get; set; }
     }
 }
