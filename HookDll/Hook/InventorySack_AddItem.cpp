@@ -729,7 +729,7 @@ void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int
 							DisplayMessage(L"An item was deposited", L"By Item Assistant");
 						}
 						else {
-							DisplayMessage(m_depositQueue.size() + L" items were deposited", L"By Item Assistant");
+							DisplayMessage(std::to_wstring(m_depositQueue.size()) + L" items were deposited", L"By Item Assistant");
 						}
 
 						// Sort the items, as we've deposited them all in position 1,1
