@@ -2,7 +2,6 @@
 ** crafting stuff is broken
 ** Embed linux stuff?
 ** When in wine => scan folder instead of file watcher (mac for example)
-** no search refresh.. should base it not on owned items, but number of items currently displayed.. add new item if displaying <100 and it actually matches the filter.
 
 Pending:
 * Remove any excess sqlite libraries
