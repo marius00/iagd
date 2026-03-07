@@ -54,11 +54,11 @@ protected:
 	// Game hook - To run code inside the game in a safe manner
 	// void GAME::GameEngine::Update(int)
 	typedef void* (__thiscall* OriginalGameUpdateMethodPtr)(void* This, int v);
-	typedef void* (__thiscall* OriginalEngineRenderMethodPtr)(void* This);
+	typedef void* (__thiscall* OriginalEngineRenderMethodPtr)(void* This, int v);
 
 	OriginalGameUpdateMethodPtr gameUpdateMethod;
-	OriginalEngineRenderMethodPtr engineRenderMethod;
-	static void* __fastcall HookedEngineRenderMethod(void* This);
+	OriginalEngineRenderMethodPtr gameSetDifficultyRampMethod;
+	static void* __fastcall HookedGameSetDifficultyRampMethod(void* This, int v);
 	static void* __fastcall HookedGameUpdateMethod(void* This, int v);
 	static std::wstring GetModName(GAME::GameInfo* gameInfo);
 	ParsedSeedRequest* ReadReplicaInfo(const std::wstring& filename);

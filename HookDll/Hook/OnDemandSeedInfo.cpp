@@ -27,7 +27,7 @@ OnDemandSeedInfo::OnDemandSeedInfo(DataQueue* dataQueue, HANDLE hEvent) {
 	m_thread = nullptr;
 	m_sleepMilliseconds = 0;
 	gameUpdateMethod = nullptr;
-	engineRenderMethod = nullptr;
+	gameSetDifficultyRampMethod = nullptr;
 	
 
 	auto handle = GetProcAddressOrLogToFile(L"game.dll", "?GetUIDisplayText@ItemEquipment@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@_N@Z");
@@ -45,9 +45,9 @@ OnDemandSeedInfo::OnDemandSeedInfo(DataQueue* dataQueue, HANDLE hEvent) {
 void OnDemandSeedInfo::EnableHook() {
 	g_self = this;
 
-	engineRenderMethod = (OriginalEngineRenderMethodPtr)HookEngine(
-		"?Render@Engine@GAME@@QEAAXXZ",
-		HookedEngineRenderMethod,
+	gameSetDifficultyRampMethod = (OriginalEngineRenderMethodPtr)HookGame(
+		"?SetDifficultyRamp@GameEngine@GAME@@QEAAXH@Z",
+		HookedGameSetDifficultyRampMethod,
 		m_dataQueue,
 		m_hEvent,
 		TYPE_GAMEENGINE_UPDATE
@@ -65,7 +65,7 @@ void OnDemandSeedInfo::EnableHook() {
 }
 void OnDemandSeedInfo::DisableHook() {
 	Stop();
-	Unhook((PVOID*)&engineRenderMethod, HookedEngineRenderMethod);
+	Unhook((PVOID*)&gameSetDifficultyRampMethod, HookedGameSetDifficultyRampMethod);
 	Unhook((PVOID*)&gameUpdateMethod, HookedGameUpdateMethod);
 }
 
@@ -443,9 +443,11 @@ std::wstring randomFilename32() {
 	return str.substr(0, 32);    // assumes 32 < number of characters in str         
 }
 
-void* __fastcall OnDemandSeedInfo::HookedEngineRenderMethod(void* This) {
+void* __fastcall OnDemandSeedInfo::HookedGameSetDifficultyRampMethod(void* This, int v) {
 	std::lock_guard<std::mutex> guard(g_self->_mutex);
-	auto result = g_self->engineRenderMethod(This);
+
+	LogToFile(LogLevel::INFO, L"The pesky SetDifficultyRamp@GameEngine is being called");
+	auto result = g_self->gameSetDifficultyRampMethod(This, v);
 	return result;
 }
 
