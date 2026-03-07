@@ -33,7 +33,7 @@ public:
 protected:
 	// Pipe&thread stuff
 	HANDLE m_thread;
-	volatile bool m_isActive;
+	std::atomic<bool> m_isActive;
 	void Process();
 	static void ThreadMain(void*);
 	BaseDataQueue<ParsedSeedRequestPtr> m_itemQueue;
@@ -41,7 +41,7 @@ protected:
 	// Feedback for IA
 	DataQueue* m_dataQueue;
 	HANDLE m_hEvent;
-	volatile int m_sleepMilliseconds;
+	std::atomic<int> m_sleepMilliseconds;
 
 	// Game interaction
 	boost::property_tree::ptree GetItemInfo(ParsedSeedRequest obj);

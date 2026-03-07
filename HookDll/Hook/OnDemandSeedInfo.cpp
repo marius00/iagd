@@ -444,9 +444,8 @@ std::wstring randomFilename32() {
 }
 
 void* __fastcall OnDemandSeedInfo::HookedEngineRenderMethod(void* This) {
-	g_self->_mutex.lock();
+	std::lock_guard<std::mutex> guard(g_self->_mutex);
 	auto result = g_self->engineRenderMethod(This);
-	g_self->_mutex.unlock();
 	return result;
 }
 
@@ -463,8 +462,6 @@ void* __fastcall OnDemandSeedInfo::HookedGameUpdateMethod(void* This, int v) {
 			// Only start processing items if the game is running.
 			// Attempting to create items with a set bonus from the main menu may crash the game.
 			// Items with skills may also end up with missing info if created from the main menu.
-			bool isGameLoading = IsGameLoading(This);
-			bool isGameEngineOnline = IsGameEngineOnline(This);
 
 			if (!IsGameLoading(This) /* && !isGameWaiting*/ && IsGameEngineOnline(This)) {
 
@@ -473,15 +470,15 @@ void* __fastcall OnDemandSeedInfo::HookedGameUpdateMethod(void* This, int v) {
 
 				boost::property_tree::ptree result;
 
+				std::unique_lock<std::mutex> lock(g_self->_mutex, std::try_to_lock);
 				// No point arguing over a lock. We can parse this later.
-				if (!g_self->_mutex.try_lock()) {
+				if (!lock.owns_lock()) {
 					return g_self->gameUpdateMethod(This, v);					
 				}
 				while (!g_self->m_itemQueue.empty() && num++ < 100 && !IsGameLoading(This) && IsGameEngineOnline(This)) {
 					LogToFile(LogLevel::INFO, L"Processing..");
 					ParsedSeedRequestPtr ptr = g_self->m_itemQueue.pop();
 					if (ptr == nullptr) {
-						g_self->_mutex.unlock();
 						return g_self->gameUpdateMethod(This, v);
 					}
 					ParsedSeedRequest obj = *ptr.get();
@@ -493,9 +490,8 @@ void* __fastcall OnDemandSeedInfo::HookedGameUpdateMethod(void* This, int v) {
 						result.push_back(std::make_pair(id, json));
 					}
 				}
-				g_self->_mutex.unlock();
 
-				if (result.size() > 0) {
+				if (!result.empty()) {
 					// Write json array
 					std::wstring fullPath = GetIagdFolder() + L"replica\\to_ia\\" + randomFilename32();
 
@@ -516,10 +512,10 @@ void* __fastcall OnDemandSeedInfo::HookedGameUpdateMethod(void* This, int v) {
 				}
 			}
 			else {
-				if (isGameLoading) {
+				if (IsGameLoading(This)) {
 					LogToFile(LogLevel::INFO, "Game is loading, real stat generation not available.");
 				}
-				if (!isGameEngineOnline) {
+				if (!IsGameEngineOnline(This)) {
 					LogToFile(LogLevel::INFO, "///Game engine is not online, real stat generation not available.");
 				}
 				g_self->m_sleepMilliseconds = 12000;
