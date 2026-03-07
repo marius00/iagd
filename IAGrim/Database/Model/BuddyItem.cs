@@ -25,7 +25,7 @@ namespace IAGrim.Database {
         
         public virtual long PrefixRarity { get; set; }
         public virtual string Stash { get; set; }
-        public virtual string Name { get; set; }
+        public virtual string? Name { get; set; }
         public virtual string NameLowercase { get; set; } // To help with case insensitive search on non-ascii characters
         public virtual long StackCount { get; set; }
         public virtual long CreationDate { get; set; }
@@ -41,9 +41,7 @@ namespace IAGrim.Database {
         }
 
         public virtual int CompareTo(object obj) {
-            PlayerHeldItem item = obj as PlayerHeldItem;
-
-            if (item != null) {
+            if (obj is PlayerHeldItem item) {
                 if (Name != null && item.Name != null) {
                     return Name.CompareTo(item.Name);
                 }

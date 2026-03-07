@@ -65,11 +65,11 @@ namespace IAGrim.Database {
             }
         }
 
-        private void ExecuteTransactionSql(string[] commands, ProgressTracker progressTracker) {
+        private void ExecuteTransactionSql(string[] commands, ProgressTracker? progressTracker) {
             ExecuteTransactionSqlSqlite(commands, progressTracker);
         }
 
-        private void ExecuteTransactionSqlSqlite(string[] commands, ProgressTracker progressTracker) {
+        private void ExecuteTransactionSqlSqlite(string[] commands, ProgressTracker? progressTracker) {
             using SqliteConnection dbConnection = new SqliteConnection(SessionFactoryLoader.SessionFactory.ConnectionString);
             dbConnection.Open();
 

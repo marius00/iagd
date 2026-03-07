@@ -624,10 +624,15 @@ namespace IAGrim.Database {
 
 
 
-        public List<PlayerItem> SearchForItems(ItemSearchRequest query) {
+        public List<PlayerItem> SearchForItems(ItemSearchRequest query, PlayerItem? item = null) {
             Logger.Debug($"Searching for items with query {query}");
             var queryFragments = new List<string>();
             var queryParams = new Dictionary<string, object>();
+
+            if (item != null) {
+                queryFragments.Add("(PI.id = :playerItemId)");
+                queryParams.Add("playerItemId", item.Id);
+            }
 
             if (!string.IsNullOrEmpty(query.Wildcard)) {
                 // queryFragments.Add("(PI.namelowercase LIKE :name OR R.text LIKE :wildcard)");

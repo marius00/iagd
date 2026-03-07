@@ -145,7 +145,7 @@ namespace IAGrim.Parsers.TransferStash {
 
                     // The items we can actually loot (or delete duplicates)
                     if (classifiedItems.Remaining.Count > 0) {
-                        OnUpdate?.Invoke(this, null);
+                        OnUpdate?.Invoke(this, EventArgs.Empty);
 
                         stash.Tabs[lootFromStashIdx].Items.RemoveAll(e => classifiedItems.Remaining.Any(m => m.Equals(e)));
 

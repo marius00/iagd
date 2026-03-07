@@ -76,7 +76,7 @@ namespace IAGrim.UI.Controller {
         }
 
 
-        private TransferStatus TransferItems(List<PlayerItem> items, StashPickerResult modOverride) {
+        private TransferStatus TransferItems(List<PlayerItem> items, StashPickerResult? modOverride) {
             int numItemsReceived = (int)items.Sum(item => Math.Max(1, item.StackCount));
             _transferStashService.Deposit(items, modOverride);
             _dao.Update(items, true);
@@ -96,7 +96,7 @@ namespace IAGrim.UI.Controller {
 
             List<PlayerItem> items = GetItemsForTransfer(args);
 
-            StashPickerResult modOverride = null;
+            StashPickerResult? modOverride = null;
             if (items?.Count > 0) {
                 if (_settingsService.GetPersistent().TransferAnyMod) {
                     StashPicker picker = new StashPicker(_browser, _dao, _settingsService);

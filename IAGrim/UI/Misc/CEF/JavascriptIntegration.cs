@@ -17,13 +17,13 @@ namespace IAGrim.UI.Misc.CEF {
             NullValueHandling = NullValueHandling.Ignore
         };
 
-        public event EventHandler ItemTransferEvent;
-        public event EventHandler OnClipboard;
-        public event EventHandler OnRequestItems;
-        public event EventHandler OnRequestSetItemAssociations;
-        public event EventHandler OnRequestBackedUpCharacterList;
-        public event EventHandler OnRequestCharacterDownloadUrl;
-        public event EventHandler OnSignalReadiness;
+        public event EventHandler<StashTransferEventArgs>? ItemTransferEvent;
+        public event EventHandler<ClipboardEventArg>? OnClipboard;
+        public event EventHandler? OnRequestItems;
+        public event EventHandler<GetSetItemAssociationsEventArgs>? OnRequestSetItemAssociations;
+        public event EventHandler<RequestCharacterListEventArg>? OnRequestBackedUpCharacterList;
+        public event EventHandler<RequestCharacterDownloadUrlEventArg>? OnRequestCharacterDownloadUrl;
+        public event EventHandler? OnSignalReadiness;
 
         public string TransferItem(object[] identifier, bool transferAll) {
             var args = new StashTransferEventArgs(identifier, transferAll);

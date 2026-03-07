@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using IAGrim.Backup.Cloud.Dto;
 
 namespace IAGrim.UI.Misc {
-    class RequestCharacterListEventArg : EventArgs {
-        public List<CharacterListDto> Characters { get; set; }
+    public class RequestCharacterListEventArg : EventArgs {
+        public List<CharacterListDto>? Characters { get; set; }
     }
 }

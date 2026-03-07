@@ -9,14 +9,14 @@ using System.Threading;
 
 namespace EvilsoftCommons.Cloud {
     public class BackgroundTask : IDisposable {
-        private static ILog logger = LogManager.GetLogger(typeof(BackgroundTask));
-        private BackgroundWorker bw = new BackgroundWorker();
-        private bool disposed = false;
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(BackgroundTask));
+        private BackgroundWorker? _bw = new BackgroundWorker();
+        private bool _disposed = false;
 
         public BackgroundTask(ICloudBackup handler) {
-            bw.DoWork += new DoWorkEventHandler(bw_DoWork);
-            bw.WorkerSupportsCancellation = true;
-            bw.RunWorkerAsync(handler);
+            _bw.DoWork += new DoWorkEventHandler(bw_DoWork);
+            _bw.WorkerSupportsCancellation = true;
+            _bw.RunWorkerAsync(handler);
         }
 
 
@@ -37,21 +37,21 @@ namespace EvilsoftCommons.Cloud {
                 }
             }
             catch (Exception ex) {
-                logger.Fatal(ex.Message);
-                logger.Fatal(ex.StackTrace);
+                Logger.Fatal(ex.Message);
+                Logger.Fatal(ex.StackTrace);
                 throw;
             }
         }
 
         protected virtual void Dispose(bool disposing) {
-            if (!disposed && disposing) {
+            if (!_disposed && disposing) {
 
-                if (bw != null) {
-                    bw.CancelAsync();
-                    bw = null;
+                if (_bw != null) {
+                    _bw.CancelAsync();
+                    _bw = null;
                 }
             }
-            disposed = true;
+            _disposed = true;
         }
 
 

@@ -3,7 +3,7 @@ using System;
 using static IAGrim.Backup.Cloud.Service.AuthService;
 
 namespace IAGrim.Backup.Cloud.CefSharp.Events {
-    class AuthResultEvent : EventArgs {
+    public class AuthResultEvent : EventArgs {
         public AuthResultEvent(string user, string token) {
             User = user;
             Token = token;

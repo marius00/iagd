@@ -135,10 +135,6 @@ namespace IAGrim.UI.Misc.CEF {
             SendMessage(new IOMessage { Type = IOMessageType.SetState, Data = new IOMessageStateChange { Type = IOMessageStateChangeType.IsLoading, Value = visible } });
         }
 
-        public void ShowNoMoreInstantSyncWarning() {
-            SendMessage(new IOMessage { Type = IOMessageType.SetState, Data = new IOMessageStateChange { Type = IOMessageStateChangeType.ShowNoMoreInstantSyncWarning, Value = true } });
-        }
-
         bool IBrowserCallbacks.IsReady() {
             return IsReady;
         }
@@ -282,7 +278,7 @@ namespace IAGrim.UI.Misc.CEF {
         }
 
 
-        public void ShowMessage(string message, UserFeedbackLevel level = UserFeedbackLevel.Info, string helpUrl = null) {
+        public void ShowMessage(string message, UserFeedbackLevel level = UserFeedbackLevel.Info, string? helpUrl = null) {
             string levelLowercased = level.ToString().ToLowerInvariant();
             var m = message.Replace("\n", "\\n").Replace("'", "\\'");
             if (!string.IsNullOrEmpty(message)) {

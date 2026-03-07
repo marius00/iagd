@@ -10,7 +10,7 @@ namespace IAGrim.UI.Tabs.Util {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ModSelectionHandler));
         private readonly SettingsService _settings;
         private long _numAvailableModFiltersLastUpdate = -1;
-        private ComboBox _cbModFilter;
+        private ComboBox? _cbModFilter;
         private readonly Action _updateView;
         private readonly Action<string> _setStatus;
         private readonly IPlayerItemDao _playerItemDao;

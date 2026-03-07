@@ -43,7 +43,7 @@ namespace IAGrim.Utilities {
                 PreviousStashStatus = _stashStatus;
                 _stashStatus = value;
 
-                StashStatusChanged?.Invoke(null, null);
+                StashStatusChanged?.Invoke(null, EventArgs.Empty);
             }
         }
 

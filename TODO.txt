@@ -1,3 +1,9 @@
+** make sure we don't do shit when GD is in the menu
+** crafting stuff is broken
+** Embed linux stuff?
+** When in wine => scan folder instead of file watcher (mac for example)
+** no search refresh.. should base it not on owned items, but number of items currently displayed.. add new item if displaying <100 and it actually matches the filter.
+
 Pending:
 * Remove any excess sqlite libraries
 * Check what we need in terms of VC++ runtimes (can prolly remove some, like old cefsharp one?)
@@ -8,7 +14,7 @@ Pending:
 [05/10 05:53:23] WARN Upload of 87 items unsuccessful
 Exception thrown: 'NHibernate.QueryException' in NHibernate.dll
 * Steam thingie runs into binder exceptions which are logged.. can we somehow check if it exists?
-
+** https://github.com/marius00/iagd/issues/278
 
 
 2025-10-18 11:31:51,156 [Main] WARN [IAGrim.UI.Tabs.BackupSettings]: Error deleting account

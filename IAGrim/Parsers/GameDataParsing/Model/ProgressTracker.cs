@@ -28,7 +28,7 @@ namespace IAGrim.Parsers.GameDataParsing.Model {
             }
             set {
                 _maxValue = value;
-                OnMaxValueChanged?.Invoke(this, null);
+                OnMaxValueChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -38,7 +38,7 @@ namespace IAGrim.Parsers.GameDataParsing.Model {
         public void Increment() {
             if (_currentValue + 1 <= _maxValue) {
                 Interlocked.Increment(ref _currentValue);
-                OnProgressChanged?.Invoke(this, null);
+                OnProgressChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 

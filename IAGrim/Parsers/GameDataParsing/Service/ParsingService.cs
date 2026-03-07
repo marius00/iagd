@@ -147,7 +147,7 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
             t.Start();
             form.ShowDialog();
 
-            OnParseComplete?.Invoke(this, null);
+            OnParseComplete?.Invoke(this, EventArgs.Empty);
         }
     }
 }

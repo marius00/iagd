@@ -8,14 +8,13 @@ namespace IAGrim.Services {
     // Monitors a folder (typically My Documents) for modified files named "transfer.???"
     class StashFileMonitor : IDisposable {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(StashFileMonitor));
-        private FileSystemWatcher _watcher = new FileSystemWatcher();
-        public event EventHandler OnStashModified;
+        private FileSystemWatcher _watcher = new();
+        public event EventHandler<StashEventArg>? OnStashModified;
 
         ~StashFileMonitor() {
             Dispose();
         }
 
-        [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public bool StartMonitoring(string path) {
             Logger.Debug($"Activating monitor for save path \"{path}\"");
             if (!string.IsNullOrEmpty(path) && Directory.Exists(path)) {

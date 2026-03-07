@@ -47,7 +47,7 @@ namespace IAGrim.UI {
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
             if (keyData == Keys.Enter) {
-                buttonTransfer_Click(null, null);
+                buttonTransfer_Click(this, EventArgs.Empty);
 
                 return true;
             }
@@ -58,9 +58,9 @@ namespace IAGrim.UI {
         private void buttonTransfer_Click(object sender, EventArgs e) {
 
             foreach (Control c in groupBox1.Controls) {
-                FirefoxRadioButton cb = c as FirefoxRadioButton;
-                if (cb != null && cb.Checked) {
-                    ModSelection mod = c.Tag as ModSelection;
+                FirefoxRadioButton? cb = c as FirefoxRadioButton;
+                if (cb is { Checked: true }) {
+                    ModSelection? mod = c.Tag as ModSelection;
                     if (mod != null) {
                         Result = new StashPickerResult {
                             Mod = mod.Mod,

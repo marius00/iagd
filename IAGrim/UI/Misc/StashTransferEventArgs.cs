@@ -5,8 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace IAGrim.UI.Misc {
-
-    internal class StashTransferEventArgs : EventArgs {
+    public class StashTransferEventArgs : EventArgs {
         public StashTransferEventArgs(object[] identifier, bool transferAll) {
             this.InternalId = identifier;
             this.TransferAll = transferAll;

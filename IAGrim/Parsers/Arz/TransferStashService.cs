@@ -66,7 +66,7 @@ namespace IAGrim.Parsers.Arz {
         }
 
 
-        public void Deposit(IList<PlayerItem> playerItems, StashPickerResult modOverride) {
+        public void Deposit(IList<PlayerItem> playerItems, StashPickerResult? modOverride) {
             foreach (var item in playerItems) {
                 var csv = CsvParsingService.Serialize(item);
                 try {

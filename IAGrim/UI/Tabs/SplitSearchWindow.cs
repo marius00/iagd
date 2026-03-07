@@ -1,4 +1,5 @@
-﻿using IAGrim.Database.Dto;
+﻿using IAGrim.Database;
+using IAGrim.Database.Dto;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.Arz;
 using IAGrim.Settings;
@@ -18,7 +19,7 @@ namespace IAGrim.UI.Tabs {
         private readonly SearchController _searchController;
         private readonly IItemTagDao _itemTagDao;
         private System.Windows.Forms.Timer _delayedTextChangedTimer;
-        private DesiredSkills _filterWindow;
+        private DesiredSkills? _filterWindow;
         private TextBox _searchBox;
         private CheckBox _orderByLevel;
         private ComboBox _modFilter;
@@ -30,7 +31,7 @@ namespace IAGrim.UI.Tabs {
         private TextBox _maxLevel;
         private FlowLayoutPanel _flowPanelFilter;
         private GroupBox _levelRequirementGroup;
-        private ComboBoxItemQuality _selectedItemQuality;
+        private ComboBoxItemQuality? _selectedItemQuality;
         private ScrollPanelMessageFilter _scrollableFilterView;
         private ToolStripContainer _toolStripContainer;
         private readonly SettingsService _settings;
@@ -136,20 +137,19 @@ namespace IAGrim.UI.Tabs {
         /// <summary>
         /// Update view
         /// </summary>
-        public void UpdateListView() {
+        public void UpdateListView(PlayerItem? item = null) {
             if (InvokeRequired) {
-                Invoke((MethodInvoker)delegate { UpdateListView(_filterWindow.Filters); });
+                Invoke((MethodInvoker)delegate { UpdateListView(_filterWindow.Filters, item); });
             }
             else {
-                UpdateListView(_filterWindow.Filters);
+                UpdateListView(_filterWindow.Filters, item);
             }
         }
 
         /// <summary>
         /// Update view
         /// </summary>
-        /// <param name="filters">Filters</param>
-        public void UpdateListView(FilterEventArgs filters) {
+        public void UpdateListView(FilterEventArgs filters, PlayerItem? item = null) {
             var transferFile = ModSelectionHandler.SelectedMod;
 
             if (transferFile == null) {
@@ -180,17 +180,21 @@ namespace IAGrim.UI.Tabs {
                 WithSummonerSkillOnly = filters.WithSummonerSkillOnly
             };
 
-
-            bool includeBuddyItems = !filters.DuplicatesOnly; // If we're looking for duplicates, we're probably doing a cleanup, not caring about buddyitems
-            var message = _searchController.Search(query, includeBuddyItems, _orderByLevel.Checked);
-
-            Logger.Info("Updating UI...");
-
-            if (!string.IsNullOrEmpty(message)) {
-                _setStatus(message);
+            if (item != null) {
+                _searchController.Search(query, item);
             }
+            else {
+                bool includeBuddyItems = !filters.DuplicatesOnly; // If we're looking for duplicates, we're probably doing a cleanup, not caring about buddyitems
+                var message = _searchController.Search(query, includeBuddyItems, _orderByLevel.Checked);
 
-            Logger.Info("Done");
+                Logger.Info("Updating UI...");
+
+                if (!string.IsNullOrEmpty(message)) {
+                    _setStatus(message);
+                }
+
+                Logger.Info("Done");
+            }
         }
 
         /// <summary>

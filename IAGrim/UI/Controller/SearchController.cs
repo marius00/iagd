@@ -23,7 +23,7 @@ namespace IAGrim.UI.Controller {
 
         public IBrowserCallbacks Browser;
         public readonly JavascriptIntegration JsIntegration = new JavascriptIntegration();
-        public event EventHandler OnSearch;
+        public event EventHandler? OnSearch;
 
         public SearchController(
             IPlayerItemDao playerItemDao,
@@ -42,7 +42,7 @@ namespace IAGrim.UI.Controller {
         // TODO: Redo! Infiscroll
         private void JsBind_OnRequestItems(object sender, EventArgs e) {
             ApplyItems(true);
-            OnSearch?.Invoke(this, null);
+            OnSearch?.Invoke(this, EventArgs.Empty);
         }
 
         private void UpdateCollectionItems(ItemSearchRequest query) {
@@ -78,11 +78,24 @@ namespace IAGrim.UI.Controller {
             return true;
         }
 
+        public void Search(ItemSearchRequest query, PlayerItem item) {
+            if (!Browser.IsReady()) {
+                return;
+            }
+            Logger.Info("Checking if newly looted item matches filter..");
+
+            var items = _playerItemDao.SearchForItems(query, item);
+            var merged = ItemOperationsUtility.MergeStackSize(items);
+            _itemStatService.ApplyStats(merged.SelectMany(m => m));
+            var convertedItems = ItemHtmlWriter.ToJsonSerializable(merged);
+            Browser.AddItems(convertedItems);
+        }
+
         public string Search(ItemSearchRequest query, bool includeBuddyItems, bool orderByLevel) {
             if (!Browser.IsReady()) {
                 return string.Empty;
             }
-            OnSearch?.Invoke(this, null);
+            OnSearch?.Invoke(this, EventArgs.Empty);
             string message;
 
             // Signal that we are loading items

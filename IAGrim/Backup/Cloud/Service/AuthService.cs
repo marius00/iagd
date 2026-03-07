@@ -23,7 +23,7 @@ namespace IAGrim.Backup.Cloud.Service {
         private Thread? _pollingThread = null;
         private volatile bool _isDisposing = false;
         private string _pollingId;
-        public event EventHandler? OnAuthCompletion;
+        public event EventHandler<AuthResultEvent>? OnAuthCompletion;
 
         public enum AccessStatus {
             Authorized,

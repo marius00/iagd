@@ -29,7 +29,7 @@ namespace IAGrim.Database.Interfaces {
 
         bool RequiresStatUpdate();
         IList<string> ListAllRecords();
-        List<PlayerItem> SearchForItems(ItemSearchRequest query);
+        List<PlayerItem> SearchForItems(ItemSearchRequest query, PlayerItem? item = null);
 
         IList<ModSelection> GetModSelection();
         Dictionary<long, string> FindRecordsFromIds(IEnumerable<long> ids);

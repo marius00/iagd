@@ -16,7 +16,6 @@ namespace IAGrim.Settings.Dto {
         private bool _easterPrank;
         private bool _hasSuggestedLanguageChange;
         private int _stashToDepositTo;
-        private bool _pendingInstantSyncWarning;
         private int _stashToLootFrom;
         private GDTransferFile? _lastSelectedMod;
         private string _lastSelectedTargetMod;
@@ -44,14 +43,14 @@ namespace IAGrim.Settings.Dto {
                 _grimDawnLocation.Add(location);
             }
 
-            OnMutate?.Invoke(null, null);
+            OnMutate?.Invoke(null, EventArgs.Empty);
         }
 
         public List<string> GrimDawnLocation {
             get => _grimDawnLocation;
             set {
                 _grimDawnLocation = value;
-                OnMutate?.Invoke(null, null);
+                OnMutate?.Invoke(null, EventArgs.Empty);
             }
         }
 
@@ -60,7 +59,7 @@ namespace IAGrim.Settings.Dto {
             get => _backupNumber;
             set {
                 _backupNumber = value;
-                OnMutate?.Invoke(null, null);
+                OnMutate?.Invoke(null, EventArgs.Empty);
             }
         }
 
@@ -68,7 +67,7 @@ namespace IAGrim.Settings.Dto {
             get => _lastNagTimestamp;
             set {
                 _lastNagTimestamp = value;
-                OnMutate?.Invoke(null, null);
+                OnMutate?.Invoke(null, EventArgs.Empty);
             }
         }
 
@@ -76,7 +75,7 @@ namespace IAGrim.Settings.Dto {
             get => _easterPrank;
             set {
                 _easterPrank = value;
-                OnMutate?.Invoke(null, null);
+                OnMutate?.Invoke(null, EventArgs.Empty);
             }
         }
 
@@ -84,7 +83,7 @@ namespace IAGrim.Settings.Dto {
             get => _startMinimized;
             set {
                 _startMinimized = value;
-                OnMutate?.Invoke(null, null);
+                OnMutate?.Invoke(null, EventArgs.Empty);
             }
         }
 
@@ -92,7 +91,7 @@ namespace IAGrim.Settings.Dto {
             get => _hasSuggestedLanguageChange;
             set {
                 _hasSuggestedLanguageChange = value;
-                OnMutate?.Invoke(null, null);
+                OnMutate?.Invoke(null, EventArgs.Empty);
             }
         }
 
@@ -101,15 +100,7 @@ namespace IAGrim.Settings.Dto {
             get => _stashToDepositTo;
             set {
                 _stashToDepositTo = value;
-                OnMutate?.Invoke(null, null);
-            }
-        }
-
-        public bool PendingInstantSyncWarning {
-            get => _pendingInstantSyncWarning;
-            set {
-                _pendingInstantSyncWarning = value;
-                OnMutate?.Invoke(null, null);
+                OnMutate?.Invoke(null, EventArgs.Empty);
             }
         }
 
@@ -117,7 +108,7 @@ namespace IAGrim.Settings.Dto {
             get => _stashToLootFrom;
             set {
                 _stashToLootFrom = value;
-                OnMutate?.Invoke(null, null);
+                OnMutate?.Invoke(null, EventArgs.Empty);
             }
         }
 
@@ -125,7 +116,7 @@ namespace IAGrim.Settings.Dto {
             get => _lastSelectedMod;
             set {
                 _lastSelectedMod = value;
-                OnMutate?.Invoke(null, null);
+                OnMutate?.Invoke(null, EventArgs.Empty);
             }
         }
 
@@ -133,7 +124,7 @@ namespace IAGrim.Settings.Dto {
             get => _lastSelectedTargetMod;
             set {
                 _lastSelectedTargetMod = value;
-                OnMutate?.Invoke(null, null);
+                OnMutate?.Invoke(null, EventArgs.Empty);
             }
         }
 
@@ -141,7 +132,7 @@ namespace IAGrim.Settings.Dto {
             get => _lastSelectedTargetModIsHc;
             set {
                 _lastSelectedTargetModIsHc = value;
-                OnMutate?.Invoke(null, null);
+                OnMutate?.Invoke(null, EventArgs.Empty);
             }
         }
 
@@ -149,7 +140,7 @@ namespace IAGrim.Settings.Dto {
             get => _localizationFile;
             set {
                 _localizationFile = value;
-                OnMutate?.Invoke(null, null);
+                OnMutate?.Invoke(null, EventArgs.Empty);
             }
         }
 
@@ -157,7 +148,7 @@ namespace IAGrim.Settings.Dto {
             get => _currentGrimdawnLocation;
             set {
                 _currentGrimdawnLocation = value;
-                OnMutate?.Invoke(null, null);
+                OnMutate?.Invoke(null, EventArgs.Empty);
             }
         }
 
@@ -165,7 +156,7 @@ namespace IAGrim.Settings.Dto {
             get => _preferDelayedSearch ?? false;
             set {
                 _preferDelayedSearch = value;
-                OnMutate?.Invoke(null, null);
+                OnMutate?.Invoke(null, EventArgs.Empty);
             }
         }
 
@@ -175,7 +166,7 @@ namespace IAGrim.Settings.Dto {
             get => _windowPositionSettings;
             set {
                 _windowPositionSettings = value;
-                OnMutate?.Invoke(null, null);
+                OnMutate?.Invoke(null, EventArgs.Empty);
             }
         }
 
@@ -183,7 +174,7 @@ namespace IAGrim.Settings.Dto {
             get => _backupCustom;
             set {
                 _backupCustom = value;
-                OnMutate?.Invoke(null, null);
+                OnMutate?.Invoke(null, EventArgs.Empty);
             }
         }
 
@@ -191,7 +182,7 @@ namespace IAGrim.Settings.Dto {
             get => _backupCustomLocation;
             set {
                 _backupCustomLocation = value;
-                OnMutate?.Invoke(null, null);
+                OnMutate?.Invoke(null, EventArgs.Empty);
             }
         }
 
@@ -199,7 +190,7 @@ namespace IAGrim.Settings.Dto {
             get => _optOutOfBackups;
             set {
                 _optOutOfBackups = value;
-                OnMutate?.Invoke(null, null);
+                OnMutate?.Invoke(null, EventArgs.Empty);
             }
         }
 
@@ -207,7 +198,7 @@ namespace IAGrim.Settings.Dto {
             get => _grimDawnLocationLastModified ?? 0;
             set {
                 _grimDawnLocationLastModified = value;
-                OnMutate?.Invoke(null, null);
+                OnMutate?.Invoke(null, EventArgs.Empty);
             }
         }
 
@@ -215,7 +206,7 @@ namespace IAGrim.Settings.Dto {
             get => _hasWarnedGrimDawnUpdate;
             set {
                 _hasWarnedGrimDawnUpdate = value;
-                OnMutate?.Invoke(null, null);
+                OnMutate?.Invoke(null, EventArgs.Empty);
             }
         }
 
@@ -223,7 +214,7 @@ namespace IAGrim.Settings.Dto {
             get => _isGrimDawnParsed;
             set {
                 _isGrimDawnParsed = value;
-                OnMutate?.Invoke(null, null);
+                OnMutate?.Invoke(null, EventArgs.Empty);
             }
         }
 
@@ -231,7 +222,7 @@ namespace IAGrim.Settings.Dto {
             get => _lastCharSyncUtc;
             set {
                 _lastCharSyncUtc = value;
-                OnMutate?.Invoke(null, null);
+                OnMutate?.Invoke(null, EventArgs.Empty);
             }
         }
 
@@ -242,7 +233,7 @@ namespace IAGrim.Settings.Dto {
             get => _preferLegacyMode;
             set {
                 _preferLegacyMode = value;
-                OnMutate?.Invoke(null, null);
+                OnMutate?.Invoke(null, EventArgs.Empty);
             }
         }
 

@@ -11,8 +11,6 @@ namespace IAGrim.UI.Misc.CEF {
         void SetCollectionAggregateData(IList<CollectionItemAggregateRow> rows);
         void ShowLoadingAnimation(bool visible);
         void ShowModFilterWarning(int numOtherItems);
-
-        void ShowNoMoreInstantSyncWarning();
         bool IsReady();
 
         void SignalCloudIconChange(IList<long> playerItemIds);

@@ -7,7 +7,6 @@
         FirstRun,
         EasterEggMode,
         IsLoading,
-        ShowNoMoreInstantSyncWarning,
         GdSeasonError,
     }
 }

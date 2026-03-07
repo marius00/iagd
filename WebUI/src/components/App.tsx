@@ -18,7 +18,6 @@ import EasterEgg from "./EasterEgg";
 import ModFilterWarning from "./ModFilterWarning";
 import FirstRunHelpThingie from "./FirstRunHelpThingie";
 import IItemAggregateRow from "../interfaces/IItemAggregateRow";
-import NoMoreInstantSyncWarning from "./NoMoreInstantSyncWarning/NoMoreInstantSyncWarning";
 import {IReplicaRow} from "../interfaces/IReplicaRow";
 import GdSeasonError from "./GdSeasonError";
 
@@ -41,7 +40,6 @@ interface ApplicationState {
   hasShownModFilterWarning: boolean;
   easterEggMode: boolean;
   gdSeasonError: boolean;
-  showNoMoreInstantSyncWarning: boolean;
 }
 
 interface IOMessage {
@@ -84,7 +82,6 @@ enum IOMessageStateChangeType {
   FirstRun,
   EasterEggMode,
   IsLoading,
-  ShowNoMoreInstantSyncWarning,
   GdSeasonError,
 }
 
@@ -118,7 +115,6 @@ class App extends PureComponent<object, object> {
     hasShownModFilterWarning: false,
     easterEggMode: false,
     gdSeasonError: false,
-    showNoMoreInstantSyncWarning: false,
   } as ApplicationState;
 
   componentDidMount() {
@@ -337,12 +333,6 @@ class App extends PureComponent<object, object> {
               break;
 
 
-            case IOMessageStateChangeType.ShowNoMoreInstantSyncWarning:
-              this.setState({
-                showNoMoreInstantSyncWarning: true,
-              });
-              break;
-
             case IOMessageStateChangeType.FirstRun:
               this.setState({
                 isFirstRun: data.value,
@@ -476,10 +466,6 @@ class App extends PureComponent<object, object> {
       return <GdSeasonError close={() => this.setState({gdSeasonError: false})}/>;
     }
 
-
-    if (this.state.showNoMoreInstantSyncWarning) {
-      return <NoMoreInstantSyncWarning close={() => this.setState({showNoMoreInstantSyncWarning: false})}/>;
-    }
 
     return (
       <div className={'App ' + (this.state.isDarkMode ? 'App-dark' : 'App-Light')}>

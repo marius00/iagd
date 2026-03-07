@@ -18,28 +18,20 @@ using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace IAGrim.Services {
-    class CsvParsingService : IDisposable {
+    class CsvParsingService(IPlayerItemDao playerItemDao, UserFeedbackService userFeedbackService, TransferStashServiceCache cache, TransferStashService transferStashService, IReplicaItemDao replicaItemDao)
+        : IDisposable {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(CsvParsingService));
-        private readonly ConcurrentQueue<QueuedCsv> _queue = new ConcurrentQueue<QueuedCsv>();
+        private readonly ConcurrentQueue<QueuedCsv> _queue = new();
         private volatile bool _isCancelled;
-        private readonly IPlayerItemDao _playerItemDao;
-        private readonly UserFeedbackService _userFeedbackService;
-        private readonly TransferStashServiceCache _cache;
-        private readonly TransferStashService _transferStashService;
-        private readonly IReplicaItemDao _replicaItemDao;
-        public event EventHandler OnItemLooted;
+        public event EventHandler<ItemLootedEventArg>? OnItemLooted;
 
-        public CsvParsingService(IPlayerItemDao playerItemDao, UserFeedbackService userFeedbackService, TransferStashServiceCache cache, TransferStashService transferStashService, IReplicaItemDao replicaItemDao) {
-            _playerItemDao = playerItemDao;
-            _userFeedbackService = userFeedbackService;
-            _cache = cache;
-            _transferStashService = transferStashService;
-            _replicaItemDao = replicaItemDao;
+        public class ItemLootedEventArg(PlayerItem item) : EventArgs {
+            public PlayerItem Item { get; } = item;
         }
 
         private class QueuedCsv {
-            public string Filename { get; set; }
-            public ActionCooldown Cooldown { get; set; }
+            public required string Filename { get; init; }
+            public required ActionCooldown Cooldown { get; init; }
         }
 
 
@@ -78,8 +70,12 @@ namespace IAGrim.Services {
                     if (!_queue.TryDequeue(out var entry)) continue;
                     try {
                         if (entry.Cooldown.IsReady) {
-                            if (!Handle(entry.Filename)) {
+                            if (!Handle(entry.Filename, out var item)) {
                                 _queue.Enqueue(entry);
+                            }
+                            else {
+                                // After we've stored the replica stats etc.
+                                OnItemLooted?.Invoke(this, new ItemLootedEventArg(item!));
                             }
                         }
                         else {
@@ -97,7 +93,9 @@ namespace IAGrim.Services {
 
         }
 
-        private bool Handle(string filename) {
+        private bool Handle(string filename, out PlayerItem? outItem) {
+            outItem = null;
+            
             // So we get the entire CSV here..
             var csvLines = File.ReadAllText(filename).Split("\n");
             PlayerItem? item = Deserialize(csvLines[0]);
@@ -109,14 +107,14 @@ namespace IAGrim.Services {
             item.StackCount = Math.Max(item.StackCount, 1);
             item.CreationDate = DateTime.UtcNow.ToTimestamp();
 
-            var classificationService = new ItemClassificationService(_cache, _playerItemDao);
+            var classificationService = new ItemClassificationService(cache, playerItemDao);
             classificationService.Add(item);
 
             // Items to loot
             if (classificationService.Remaining.Count > 0) {
-                _playerItemDao.Save(item);
+                playerItemDao.Save(item);
+                outItem = item;
                 File.Delete(filename);
-                OnItemLooted?.Invoke(this, null);
             }
             else if (classificationService.Duplicates.Count > 0) {
                 Logger.Info("Deleting duplicate item file");
@@ -131,8 +129,7 @@ namespace IAGrim.Services {
                 // Transfer back in-game, should never have been looted.
                 // TODO: Separate transfer logic.. no delete-from-db etc..
                 if (RuntimeSettings.StashStatus == StashAvailability.CLOSED) {
-                    // TODO: Could just MOVE it.. same CSV format..
-                    _transferStashService.Deposit(new List<PlayerItem> { item }, null);
+                    transferStashService.Deposit(new List<PlayerItem> { item }, null);
                     Logger.Info("Deposited item back in-game, did not pass item classification.");
                     Logger.Info("New GD patch? Go to the Grim Dawn tab and parse the game files again.");
                     File.Delete(filename);
@@ -168,7 +165,7 @@ namespace IAGrim.Services {
                 };
                 Logger.Debug("Storing replica item stats for item " + item.Id);
                 try {
-                    _replicaItemDao.Save(replicaItem, stats);
+                    replicaItemDao.Save(replicaItem, stats);
                 }
                 catch (Exception ex) {
                     Logger.Warn("Error storing replica stats", ex);
@@ -184,7 +181,7 @@ namespace IAGrim.Services {
                 Filename = filename,
                 Cooldown = cooldown
             });
-            _userFeedbackService.SetFeedback(UserFeedback.FromTagSingleton("iatag_feedback_instalooted"));
+            userFeedbackService.SetFeedback(UserFeedback.FromTagSingleton("iatag_feedback_instalooted"));
         }
 
         public void Dispose() {

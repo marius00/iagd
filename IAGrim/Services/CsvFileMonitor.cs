@@ -8,7 +8,7 @@ namespace IAGrim.Services {
     class CsvFileMonitor : IDisposable {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(CsvFileMonitor));
         private FileSystemWatcher _watcher = new FileSystemWatcher();
-        public event EventHandler OnModified;
+        public event EventHandler<CsvEvent> OnModified;
 
         public class CsvEvent : EventArgs {
             public CsvEvent(string filename) {
@@ -24,7 +24,6 @@ namespace IAGrim.Services {
             Dispose();
         }
 
-        [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public bool StartMonitoring(string path, string filter) {
             _watcher = new FileSystemWatcher();
             _watcher.Path = path;
