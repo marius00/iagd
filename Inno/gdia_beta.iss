@@ -28,7 +28,6 @@ Source: "readme.txt"; DestDir: "{app}";
 
 [Run]
 Filename: "{app}\IAGrim.exe"; Description: "Launch GD Item Assistant"; Flags: postinstall nowait
- 
 
 
 [Setup]

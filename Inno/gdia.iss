@@ -27,8 +27,6 @@ Source: "..\IAGrim\bin\Release\net10.0-windows\*"; Excludes: "*.pdb"; DestDir: "
 Source: "readme.txt"; DestDir: "{app}";
 
 [Run]
-Filename: "{app}\vcredist_x86.exe"; Parameters: "/install /quiet /norestart"; Description: "Install VC++ Redistributable 2013 (x86)"; Flags: runhidden runascurrentuser
-Filename: "{app}\2010sp1_vcredist_x86.exe"; Parameters: "/install /quiet /norestart"; Description: "Install VC++ Redistributable 2010 SP1 (x86)"; Flags: runhidden runascurrentuser
 Filename: "{app}\IAGrim.exe"; Description: "Launch GD Item Assistant"; Flags: postinstall nowait
 
 
@@ -45,7 +43,6 @@ AlwaysShowDirOnReadyPage=Yes
 DisableDirPage=No
 OutputBaseFilename=GDItemAssistant
 InfoAfterFile=readme.txt
-
 
 [UninstallDelete]
 Type: filesandordirs; Name: {app}
