@@ -173,7 +173,6 @@
             tabPageMods.Location = new Point(4, 24);
             tabPageMods.Margin = new Padding(4, 3, 4, 3);
             tabPageMods.Name = "tabPageMods";
-            tabPageMods.Padding = new Padding(4, 3, 4, 3);
             tabPageMods.Size = new Size(1202, 594);
             tabPageMods.TabIndex = 4;
             tabPageMods.Tag = "iatag_ui_tab_mods";
