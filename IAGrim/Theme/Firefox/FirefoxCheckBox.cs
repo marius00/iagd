@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IAGrim.Theme;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -94,6 +95,11 @@ class FirefoxCheckBox : CheckBox {
 
         G.Clear(Parent.BackColor);
 
+        DpiHelper dpiHelper = new DpiHelper(G);
+        Rectangle checkboxRect = dpiHelper.ScaleRectangle(new Rectangle(3, 3, 20, 20));
+        Point checkmarkPosition = dpiHelper.ScalePoint(new Point(4, 5));
+        Point textPosition = dpiHelper.ScalePoint(new Point(32, 4));
+
         if (Enabled) {
             ETC = ForeColor;
 
@@ -101,11 +107,11 @@ class FirefoxCheckBox : CheckBox {
 
                 case Helpers.MouseState.Over:
                 case Helpers.MouseState.Down:
-                    Helpers.DrawRoundRect(G, new Rectangle(3, 3, 20, 20), 3, Color.FromArgb(44, 156, 218));
+                    Helpers.DrawRoundRect(G, checkboxRect, 3, Color.FromArgb(44, 156, 218));
 
                     break;
                 default:
-                    Helpers.DrawRoundRect(G, new Rectangle(3, 3, 20, 20), 3, Helpers.GreyColor(200));
+                    Helpers.DrawRoundRect(G, checkboxRect, 3, Helpers.GreyColor(200));
 
                     break;
             }
@@ -113,7 +119,7 @@ class FirefoxCheckBox : CheckBox {
 
             if (Checked) {
                 using (Image I = Image.FromStream(new System.IO.MemoryStream(checkMarkBytes))) {
-                    G.DrawImage(I, new Point(4, 5));
+                    G.DrawImage(I, checkmarkPosition);
                 }
 
             }
@@ -122,12 +128,12 @@ class FirefoxCheckBox : CheckBox {
         }
         else {
             ETC = Helpers.GreyColor(170);
-            Helpers.DrawRoundRect(G, new Rectangle(3, 3, 20, 20), 3, Helpers.GreyColor(220));
+            Helpers.DrawRoundRect(G, checkboxRect, 3, Helpers.GreyColor(220));
 
 
             if (Checked) {
                 using (Image I = Image.FromStream(new System.IO.MemoryStream(checkMarkBytes))) {
-                    G.DrawImage(I, new Point(4, 5));
+                    G.DrawImage(I, checkmarkPosition);
                 }
 
             }
@@ -138,10 +144,10 @@ class FirefoxCheckBox : CheckBox {
         using (SolidBrush B = new SolidBrush(ETC)) {
 
             if (Bold) {
-                G.DrawString(Text, Theme.GlobalFont(FontStyle.Bold, 10), B, new Point(32, 4));
+                G.DrawString(Text, Theme.GlobalFont(FontStyle.Bold, 10), B, textPosition);
             }
             else {
-                G.DrawString(Text, Theme.GlobalFont(FontStyle.Regular, 10), B, new Point(32, 4));
+                G.DrawString(Text, Theme.GlobalFont(FontStyle.Regular, 10), B, textPosition);
             }
 
         }
