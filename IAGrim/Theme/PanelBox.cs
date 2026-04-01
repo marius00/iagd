@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IAGrim.Theme;
+using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
@@ -53,9 +54,11 @@ internal class PanelBox : ScrollableControl {
         Brush colorContent = new SolidBrush(BackColor);
         Pen colorBorder = new Pen(Color.FromArgb(214, 214, 214));
         SolidBrush brush = new SolidBrush(ForeColor);
-        try {
+        DpiHelper dpiHelper = new DpiHelper(G);
 
-            int headerHeight = Math.Min(HeaderHeight, this.Height);
+        try {
+            int headerHeight = Math.Min(dpiHelper.ScaleY(HeaderHeight), this.Height);
+            PointF textLocation = dpiHelper.ScalePoint(_textLocation);
             Rectangle rect;
 
             checked {
@@ -77,7 +80,7 @@ internal class PanelBox : ScrollableControl {
                     G.SmoothingMode = SmoothingMode.HighQuality;
                     //G.TextRenderingHint = TextRenderingHint.SingleBitPerPixelGridFit;
                     G.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
-                    G.DrawString(this.Text, this.Font, brush, _textLocation);
+                    G.DrawString(this.Text, this.Font, brush, textLocation);
                 }
 
             }
