@@ -33,7 +33,7 @@ interface IntegrationInterface {
 }
 
 
-let core = isEmbedded ? chrome.webview.hostObjects.sync.core as IntegrationInterface : {} as IntegrationInterface;
+const core = isEmbedded ? chrome.webview.hostObjects.sync.core as IntegrationInterface : {} as IntegrationInterface;
 
 export function transferItem(url: object[], transferAll: boolean): TransferResult {
   const id = url.join(';');

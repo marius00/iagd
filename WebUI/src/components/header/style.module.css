@@ -31,6 +31,11 @@
 	font-size: inherit;
 }
 
+.navIcon {
+	display: inline-block;
+	transform: translateY(7px);
+}
+
 .header nav a:hover,
 .header nav a:active {
 	background: rgba(0,0,0,0.2);

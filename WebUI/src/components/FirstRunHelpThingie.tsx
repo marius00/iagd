@@ -1,9 +1,9 @@
 import {h} from "preact";
 import {PureComponent} from "preact/compat";
 import translate from "../translations/EmbeddedTranslator";
-import styles from "./FirstRunHelpThingie.css";
+import styles from "./FirstRunHelpThingie.module.css";
 
-class FirstRunHelpThingie extends PureComponent<{}, {}> {
+class FirstRunHelpThingie extends PureComponent<object, object> {
   render() {
     return (
       <div className={styles.center}>

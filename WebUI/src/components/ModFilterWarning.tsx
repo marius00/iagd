@@ -1,7 +1,7 @@
 import {h} from "preact";
 import {PureComponent} from "preact/compat";
 import translate from "../translations/EmbeddedTranslator";
-import styles from "./ModFilterWarning.css";
+import styles from "./ModFilterWarning.module.css";
 
 interface Props {
   numOtherItems: number;

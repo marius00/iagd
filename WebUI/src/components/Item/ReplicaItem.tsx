@@ -12,7 +12,7 @@ import { IStat, statToString } from '../../interfaces/IStat';
 import { v4 as uuidv4 } from 'uuid';
 import {PureComponent} from "preact/compat";
 import ReplicaStatContainer from "./ReplicaStatContainer";
-import styles from './ReplicaItem.css';
+import styles from './ReplicaItem.module.css';
 
 interface Props {
   item: IItem;
@@ -104,7 +104,7 @@ class ReplicaItem extends PureComponent<Props, object> {
     );
 
     const setName = GetSetName(item.baseRecord);
-    let setItemsList = this.getSetItemTooltip(setName, item.isHardcore);
+    const setItemsList = this.getSetItemTooltip(setName, item.isHardcore);
     const showGenericStatIcon = item.type === IItemType.Player && !item.replicaStats;
     const showRecipeIcon = item.hasRecipe && item.type === IItemType.Recipe;
 

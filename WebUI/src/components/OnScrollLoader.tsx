@@ -5,7 +5,7 @@ interface Props {
   onTrigger: () => void;
 }
 
-class OnScrollLoader extends PureComponent<Props, {}> {
+class OnScrollLoader extends PureComponent<Props, object> {
 
   constructor(props: Props) {
     super(props);

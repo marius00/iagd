@@ -1,12 +1,12 @@
 import {h} from "preact";
 import {PureComponent} from "preact/compat";
-import styles from "./GdSeasonError.css";
+import styles from "./GdSeasonError.module.css";
 
 interface Props {
   close: () => void;
 }
 
-class GdSeasonError extends PureComponent<Props, {}> {
+class GdSeasonError extends PureComponent<Props, object> {
   render() {
     return (
       <div className={styles.center + " " + styles.yellowmodal}>

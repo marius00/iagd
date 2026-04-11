@@ -1,13 +1,13 @@
 {
     "compilerOptions": {
         /* Basic Options */
-        "target": "ES5",                          /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', or 'ESNEXT'. */
+        "target": "ES2020",                       /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', or 'ESNEXT'. */
         "module": "ESNext",                       /* Specify module code generation: 'none', commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */
         // "lib": [],                             /* Specify library files to be included in the compilation:  */
         "allowJs": true,                          /* Allow javascript files to be compiled. */
         // "checkJs": true,                       /* Report errors in .js files. */
-        "jsx": "react",                           /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */
-        "jsxFactory": "h",                        /* Specify the JSX factory function to use when targeting react JSX emit, e.g. React.createElement or h. */
+        "jsx": "react-jsx",                       /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */
+        "jsxImportSource": "preact",              /* Specify the module that provides the JSX factory function. */
         // "declaration": true,                   /* Generates corresponding '.d.ts' file. */
         // "sourceMap": true,                     /* Generates corresponding '.map' file. */
         // "outFile": "./",                       /* Concatenate and emit output to single file. */
@@ -56,5 +56,5 @@
         /* Advanced Options */
         "skipLibCheck": true                      /* Skip type checking of declaration files. */
     },
-    "include": ["src/**/*", "tests/**/*"]
+    "include": ["src/**/*"]
 }

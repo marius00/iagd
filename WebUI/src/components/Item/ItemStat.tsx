@@ -23,9 +23,9 @@ class ItemStat extends PureComponent<IStat, object> {
     }
 
     if (this.props.extras) {
-      let text = statToString(this.props.text.replace('{3}', ' '), this.props);
-      let modifier = text.substr(0, text.indexOf(' '));
-      let label = text.substr(text.indexOf(' ') + 1);
+      const text = statToString(this.props.text.replace('{3}', ' '), this.props);
+      const modifier = text.substr(0, text.indexOf(' '));
+      const label = text.substr(text.indexOf(' ') + 1);
 
       // TODO: We have a tooltip.. that means we got a skill in {3}
       return (

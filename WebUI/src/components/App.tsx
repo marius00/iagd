@@ -128,17 +128,16 @@ class App extends PureComponent<object, object> {
     // Things such as real item stats and cloud sync status gets aggregated and updated every few seconds.
     // This is not critical to display realtime, and we may have hundreds of events per second during syncs
     if (!this.delayedUpdateTimer) {
-      const self = this;
-      this.delayedUpdateTimer = setInterval(function () {
-        const messages = [...self.delayedMessageQueue];
-        self.delayedMessageQueue = [];
+      this.delayedUpdateTimer = setInterval(() => {
+        const messages = [...this.delayedMessageQueue];
+        this.delayedMessageQueue = [];
         if (messages.length === 0) {
           // Prevent state changes when empty
           return;
         }
         console.log("Queued messages:", messages);
 
-        const items = [...self.state.items];
+        const items = [...this.state.items];
         for (let i = 0; i < messages.length; i++) {
           const message = messages[i];
           switch (message.type) {
@@ -146,11 +145,11 @@ class App extends PureComponent<object, object> {
               const playerItemIds = (message.data as IOMessageCloudIconStateChange).ids;
               for (let pidIdx = 0; pidIdx < playerItemIds.length; pidIdx++) {
                 const playerItemId = playerItemIds[pidIdx];
-                if (self.state.itemLookupMap.has(playerItemId)) {
-                  const loc = self.state.itemLookupMap.get(playerItemId) as number;
+                if (this.state.itemLookupMap.has(playerItemId)) {
+                  const loc = this.state.itemLookupMap.get(playerItemId) as number;
 
-                  for (let idx = 0; idx < self.state.items[loc].length; idx++) {
-                    if (self.state.items[loc][idx].uniqueIdentifier.startsWith("PI/" + playerItemId)) {
+                  for (let idx = 0; idx < this.state.items[loc].length; idx++) {
+                    if (this.state.items[loc][idx].uniqueIdentifier.startsWith("PI/" + playerItemId)) {
 
                       // console.log("Successfully(?) marked PI " + playerItemId + " as having a cloud backup");
                       const subItems = [...items[loc]] as IItem[];
@@ -168,11 +167,11 @@ class App extends PureComponent<object, object> {
               // Gotta test if the comparison window will work if we don't re-render on a subindex change. -- Will require a 'isDirty' state to see if we call setState or not..
               const payload = message.data as IOMessageSetReplicaStats;
               const playerItemId = payload.id;
-              if (self.state.itemLookupMap.has(playerItemId)) {
-                const loc = self.state.itemLookupMap.get(playerItemId) as number;
+              if (this.state.itemLookupMap.has(playerItemId)) {
+                const loc = this.state.itemLookupMap.get(playerItemId) as number;
 
-                for (let idx = 0; idx < self.state.items[loc].length; idx++) {
-                  if (self.state.items[loc][idx].uniqueIdentifier.startsWith("PI/" + playerItemId)) {
+                for (let idx = 0; idx < this.state.items[loc].length; idx++) {
+                  if (this.state.items[loc][idx].uniqueIdentifier.startsWith("PI/" + playerItemId)) {
 
                     const subItems = [...items[loc]] as IItem[];
                     subItems[idx].replicaStats = payload.replicaStats;
@@ -188,19 +187,19 @@ class App extends PureComponent<object, object> {
           } // switch
         } // for
 
-        self.setState({items: items});
+        this.setState({items: items});
       }, 6 * 1000);
     }
 
     // Show a notification message such as "Item transferred" or "Too close to stash"
     // @ts-ignore: showMessage doesn't exist on window
     const showMessage = (s: any) => {
-      let notifications = [...this.state.notifications]
+      const notifications = [...this.state.notifications]
       while (notifications.length >= 8) {
         notifications.shift();
       }
 
-      let id = "" + Math.random();
+      const id = "" + Math.random();
       notifications.push({
         message: s.message,
         type: s.type,
@@ -210,7 +209,7 @@ class App extends PureComponent<object, object> {
       // If IA has focus, we don't need to keep these messages
       if (s.fade === "true") {
         setTimeout(() => {
-          let notifications = [...this.state.notifications].filter(n => n.id !== id);
+          const notifications = [...this.state.notifications].filter(n => n.id !== id);
           this.setState({
             notifications: notifications
           });
@@ -261,11 +260,11 @@ class App extends PureComponent<object, object> {
           break;
 
         case IOMessageType.SetItems: {
-          let data = message.data as IOMessageSetItems;
+          const data = message.data as IOMessageSetItems;
 
           if (data.replaceExistingItems) {
             window.scrollTo(0, 0);
-            let isFirstRun = this.state.isFirstRun && data.numItemsFound === 0;
+            const isFirstRun = this.state.isFirstRun && data.numItemsFound === 0;
 
             const lookupMap = this.calculateItemLocations(data.items, 0, undefined);
             this.setState({
@@ -295,7 +294,7 @@ class App extends PureComponent<object, object> {
           break;
 
         case IOMessageType.SetAggregateItemData: {
-          let data = message.data;
+          const data = message.data;
           const itemAggregate = typeof data === 'string' ? JSON.parse(data) : data;
           console.log('Item Aggregate:', itemAggregate);
           this.setState({
@@ -305,7 +304,7 @@ class App extends PureComponent<object, object> {
           break;
 
         case IOMessageType.SetState: {
-          let data = message.data as IOMessageStateChange;
+          const data = message.data as IOMessageStateChange;
           switch (data.type) {
             // TODO: This could be a lookup map.. enum => state value..
             case IOMessageStateChangeType.ShowCloudIcon:
@@ -443,7 +442,7 @@ class App extends PureComponent<object, object> {
   }
 
   closeNotification = (id?: string) => {
-    let notifications = [...this.state.notifications];
+    const notifications = [...this.state.notifications];
 
     if (id) {
       this.setState({

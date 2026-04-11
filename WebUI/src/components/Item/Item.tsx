@@ -13,7 +13,6 @@ import ItemCornerContainer from './ItemCornerContainer';
 import { v4 as uuidv4 } from 'uuid';
 import {PureComponent} from "preact/compat";
 import ReplicaStatContainer from "./ReplicaStatContainer";
-import styles from "./ReplicaItem.css";
 
 
 interface Props {
@@ -130,7 +129,7 @@ class Item extends PureComponent<Props, object> {
     );
 
     const setName = GetSetName(item.baseRecord);
-    let setItemsList = this.getSetItemTooltip(setName, item.isHardcore);
+    const setItemsList = this.getSetItemTooltip(setName, item.isHardcore);
 
     const numItems = this.props.items.filter(m => m.type === IItemType.Player).length;
 

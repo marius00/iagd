@@ -1,13 +1,13 @@
 import {h} from "preact";
 import {PureComponent} from "preact/compat";
 import translate from "../translations/EmbeddedTranslator";
-import styles from "./EasterEgg.css";
+import styles from "./EasterEgg.module.css";
 
 interface Props {
   close: () => void;
 }
 
-class EasterEgg extends PureComponent<Props, {}> {
+class EasterEgg extends PureComponent<Props, object> {
   render() {
     return Math.random() < 0.5 ? this.render2() : this.render3();
   }

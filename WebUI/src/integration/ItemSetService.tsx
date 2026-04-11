@@ -7,14 +7,14 @@ interface ItemSetAssociation {
 
 
 let dataset = [] as Array<ItemSetAssociation>;
-let reverseLookup: { [index: string]: string[] } = {};
+const reverseLookup: { [index: string]: string[] } = {};
 
 // Returns the set name or undefined
 export default function GetSetName(baseRecord: string): string | undefined {
   if (dataset.length === 0) {
     dataset = JSON.parse(getItemSetAssociations());
 
-    for (let idx in dataset) {
+    for (const idx in dataset) {
       const entry = dataset[idx];
       if (reverseLookup.hasOwnProperty(entry.setName)) {
         reverseLookup[entry.setName] = reverseLookup[entry.setName].concat(entry.baseRecord);

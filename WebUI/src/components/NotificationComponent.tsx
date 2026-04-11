@@ -1,10 +1,7 @@
 import {h} from "preact";
 import {PureComponent} from "preact/compat";
-import styles from './NotificationContainer.css';
-import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
-import WarningIcon from '@material-ui/icons/Warning';
-import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
-import CloseIcon from '@material-ui/icons/Close';
+import styles from './NotificationContainer.module.css';
+import { CircleCheck, TriangleAlert, CircleAlert, X } from 'lucide-preact';
 import translate from "../translations/EmbeddedTranslator";
 
 type NotificationTypes = 'success' | 'danger' | 'info' | 'default' | 'warning';
@@ -24,15 +21,15 @@ export interface NotificationProps {
 class NotificationContainer extends PureComponent<NotificationProps, object> {
   renderIcon = (type: NotificationTypes) => {
     if (type === 'success')
-      return <CheckCircleOutlineIcon className={styles.icon +  " " +  styles.success}/>;
+      return <CircleCheck className={styles.icon + " " + styles.success}/>;
     if (type === 'info')
-      return <CheckCircleOutlineIcon className={styles.icon +  " " +  styles.success} />;
+      return <CircleCheck className={styles.icon + " " + styles.success} />;
     if (type === 'default')
-      return <CheckCircleOutlineIcon className={styles.icon +  " " +  styles.success}/>;
+      return <CircleCheck className={styles.icon + " " + styles.success}/>;
     if (type === 'warning')
-      return <WarningIcon color={"secondary"} className={styles.icon}/>;
+      return <TriangleAlert className={styles.icon}/>;
     if (type === 'danger')
-      return <ErrorOutlineIcon color={"secondary"} className={styles.icon}/>;
+      return <CircleAlert className={styles.icon}/>;
     return "Bug!";
   }
 
@@ -43,7 +40,7 @@ class NotificationContainer extends PureComponent<NotificationProps, object> {
         {this.renderIcon(notification.type)}
         {notification.message}
         <span class={styles.close} onClick={() => this.props.onClose(notification.id)}>
-          <CloseIcon/>
+          <X/>
         </span>
         {isLastElement && <span class={styles.closeAll} onClick={() => this.props.onClose()}>{translate('notification.clearall')}</span>}
       </div>

@@ -1,15 +1,9 @@
 import {h} from 'preact';
-import {Link} from 'preact-router/match';
-import style from './style.css';
+import style from './style.module.css';
 import translate from "../../translations/EmbeddedTranslator";
 import Patreon from "./Patreon";
-import {openUrl} from "../../integration/integration";
-import OpenInNew from '@material-ui/icons/OpenInNew'; //https://material.io/resources/icons/?style=baseline
-import LiveHelp from '@material-ui/icons/LiveHelp';
-import Help from '@material-ui/icons/Help';
-
-import Web from '@material-ui/icons/Web';
-import Home from '@material-ui/icons/Home';
+import { openUrl } from "../../integration/integration";
+import { ExternalLink, MessageCircleQuestion, CircleHelp, Globe, House } from 'lucide-preact';
 
 export interface Props {
   activeTab: number;
@@ -20,24 +14,24 @@ function Header({activeTab, setActiveTab}: Props) {
   return (
     <header class={style.header}>
       <nav>
-        <Link activeClassName={style.active} className={activeTab===0 ? style.active : ''} href="#" onClick={() => setActiveTab(0)}>
-          <Home/> {translate('app.tab.items')}
-        </Link>
-        <Link activeClassName={style.active} className={activeTab===1 ? style.active : ''} href="#" onClick={() => setActiveTab(1)}>
-          <Web/> {translate('app.tab.collections')}
-        </Link>
-        <Link activeClassName={style.active} className={activeTab===2 ? style.active : ''} href="#" onClick={() => setActiveTab(2)}>
-          <Help/> {translate('app.tab.help')}
-        </Link>
-        <Link activeClassName={style.active} href="#" onClick={() => openUrl("https://grimdawn.evilsoft.net/enchantments/")}>
-          <OpenInNew/> {translate('app.tab.components')}
-        </Link>
-        <Link activeClassName={style.active} href="#" onClick={() => openUrl("https://discord.gg/5wuCPbB")}>
-          <LiveHelp/> {translate('app.tab.discord')}
-        </Link>
-        <Link activeClassName={style.active} href="#" onClick={() => openUrl("https://www.patreon.com/itemassistant")}>
-          <Patreon/> Patreon
-        </Link>
+        <a className={activeTab===0 ? style.active : ''} href="#" onClick={() => setActiveTab(0)}>
+          <span class={style.navIcon}><House /></span> {translate('app.tab.items')}
+        </a>
+        <a className={activeTab===1 ? style.active : ''} href="#" onClick={() => setActiveTab(1)}>
+          <span class={style.navIcon}><Globe /></span> {translate('app.tab.collections')}
+        </a>
+        <a className={activeTab===2 ? style.active : ''} href="#" onClick={() => setActiveTab(2)}>
+          <span class={style.navIcon}><CircleHelp /></span> {translate('app.tab.help')}
+        </a>
+        <a href="#" onClick={() => openUrl("https://grimdawn.evilsoft.net/enchantments/")}>
+          <span class={style.navIcon}><ExternalLink /></span> {translate('app.tab.components')}
+        </a>
+        <a href="#" onClick={() => openUrl("https://discord.gg/5wuCPbB")}>
+          <span class={style.navIcon}><MessageCircleQuestion /></span> {translate('app.tab.discord')}
+        </a>
+        <a href="#" onClick={() => openUrl("https://www.patreon.com/itemassistant")}>
+          <span><Patreon /></span> Patreon
+        </a>
       </nav>
     </header>
   );

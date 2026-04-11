@@ -29,13 +29,13 @@ class CollectionItemContainer extends PureComponent<Props, object> {
   }
 
   openItemSite(item: ICollectionItem) {
-    let url = `https://grimdawn.evilsoft.net/search/?query=${this.stripColorCodes(item.name)}`;
+    const url = `https://grimdawn.evilsoft.net/search/?query=${this.stripColorCodes(item.name)}`;
     openUrl(url);
   }
 
   renderItemAggregate() {
 
-    let sum = {
+    const sum = {
       blue: 0,
         green: 0,
         green2: 0,
@@ -45,7 +45,7 @@ class CollectionItemContainer extends PureComponent<Props, object> {
     const table = {} as any;
     for (let i = 0; i < this.props.aggregate.length; i++) {
       const obj = this.props.aggregate[i];
-      let key = obj.translatedSlot;
+      const key = obj.translatedSlot;
       if (!table.hasOwnProperty(key)) {
         table[key] = {
           blue: 0,

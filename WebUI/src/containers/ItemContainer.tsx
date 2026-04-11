@@ -88,7 +88,7 @@ class ItemContainer extends PureComponent<Props, object> {
 
   // TODO: A O(1) lookup would be preferable
   findByRecord(baseRecord: string): ICollectionItem {
-    for (let idx in this.props.collectionItems) {
+    for (const idx in this.props.collectionItems) {
       const entry = this.props.collectionItems[idx];
       if (entry.baseRecord === baseRecord) {
         return entry;

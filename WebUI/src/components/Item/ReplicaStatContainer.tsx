@@ -41,7 +41,7 @@ class ReplicaStatContainer extends PureComponent<Props, object> {
     );
 
     // "Hack" to skip all the rows for a skill
-    let numWhitespaces = 0;
+    const numWhitespaces = 0;
     let isSkipping = false;
     const shouldSkip = (row: IReplicaRow) => {
       // Set bonus -- Maybe replace "20" with "Set bonus hidden" or similar?

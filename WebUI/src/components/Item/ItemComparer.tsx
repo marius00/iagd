@@ -1,7 +1,7 @@
 import {h} from "preact";
 import {PureComponent} from "preact/compat";
 import IItem from "../../interfaces/IItem";
-import styles from "./ItemComparer.css";
+import styles from "./ItemComparer.module.css";
 import Item, {getUniqueId} from "./Item";
 import ReplicaItem from "./ReplicaItem";
 import ICollectionItem from "../../interfaces/ICollectionItem";

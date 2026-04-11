@@ -1,9 +1,9 @@
 import {h} from "preact";
 import {PureComponent} from "preact/compat";
 import translate from "../translations/EmbeddedTranslator";
-import styles from "./GrimNotParsed.css";
+import styles from "./GrimNotParsed.module.css";
 
-class GrimNotParsed extends PureComponent<{}, {}> {
+class GrimNotParsed extends PureComponent<object, object> {
   render() {
     return (
       <div className={styles.center}>

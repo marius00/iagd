@@ -1,11 +1,11 @@
 import {h} from "preact";
 import { CharacterListDto, getBackedUpCharacters, getCharacterDownloadUrl, openUrl } from '../integration/integration';
-import Icon from '@material-ui/icons/CloudDownload';
+import { CloudDownload } from 'lucide-preact';
 import './CharacterListContainer.css';
 import {PureComponent} from "preact/compat";
 
 
-class CharacterListContainer extends PureComponent<{}, object> {
+class CharacterListContainer extends PureComponent<object, object> {
 
 
   renderCharacter(c: CharacterListDto) {
@@ -26,7 +26,7 @@ class CharacterListContainer extends PureComponent<{}, object> {
       <table key={c.name} onClick={() => download(c.name)}>
         <tr>
           <td>
-            <Icon/>
+          <CloudDownload/>
           </td>
           <td>
             <h2>{clean(c.name)}</h2>
@@ -38,7 +38,7 @@ class CharacterListContainer extends PureComponent<{}, object> {
   }
 
   render() {
-    let characters = getBackedUpCharacters();
+    const characters = getBackedUpCharacters();
     return <div className="characters">
       <h1>Backed up characters</h1>
       <ul>
