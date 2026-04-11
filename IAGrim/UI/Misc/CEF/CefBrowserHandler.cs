@@ -188,7 +188,7 @@ namespace IAGrim.UI.Misc.CEF {
                 Logger.Debug("NodeJS not running, defaulting to standard view");
             }*/
 #endif
-            return GlobalPaths.ItemsHtmlFile;
+            return "https://app/index.html";
         }
 
         public void InitializeChromium(Microsoft.Web.WebView2.WinForms.WebView2 browserControlView2, JavascriptIntegration bindable, TabControl tabControl) {

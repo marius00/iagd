@@ -25,6 +25,7 @@ using IAGrim.Utilities;
 using IAGrim.Utilities.Cloud;
 using IAGrim.Utilities.HelperClasses;
 using log4net;
+using Microsoft.Web.WebView2.Core;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -199,11 +200,21 @@ namespace IAGrim.UI {
             if (browser == null) {
                 browser = (sender as CefBrowserHandler).BrowserControl;
             }
-            if (args != null) {
+            if (args != null && browser != null) {
                 if (InvokeRequired) {
                     Invoke((System.Windows.Forms.MethodInvoker)delegate { Browser_CoreWebView2InitializationCompleted(sender, args); });
                 }
                 else {
+
+                    browser.CoreWebView2.SetVirtualHostNameToFolderMapping(
+                        "app",
+                        GlobalPaths.StorageFolder,
+                        CoreWebView2HostResourceAccessKind.Allow
+                    );
+                    browser.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
+
+
+
                     var searchController = _serviceProvider.Get<SearchController>();
                     _cefBrowserHandler.InitializeChromium(browser, searchController.JsIntegration, tabControl1);
                     _cefBrowserHandler.IsReady = true;

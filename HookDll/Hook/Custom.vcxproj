@@ -180,8 +180,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Program Files (x86)\Windows Kits\10\Include\10.0.20348.0\um;D:\local\boost_1_61_0;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.30.30705\atlmfc\include;C:\Program Files (x86)\Windows Kits\10\Include\10.0.20348.0\ucrt;$(IncludePath)</IncludePath>
-    <LibraryPath>n:\boost_1_61_0\lib32-msvc-14.0;D:\local\boost_1_61_0\lib64-msvc-14.0;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.30.30705\atlmfc\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Program Files (x86)\Windows Kits\10\Include\10.0.20348.0\um;D:\Programs\boost_1_78_0;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.30.30705\atlmfc\include;C:\Program Files (x86)\Windows Kits\10\Include\10.0.20348.0\ucrt;C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt;C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\atlmfc\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Programs\boost_1_78_0\lib64-msvc-14.0;C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\atlmfc\lib\amd64;C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.30.30705\atlmfc\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
@@ -202,14 +202,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>
     </LinkIncremental>
-    <IncludePath>C:\Program Files (x86)\Windows Kits\10\Include\10.0.20348.0\um;..\Detours-master\src;..\;C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.30.30705\atlmfc\include;C:\Program Files (x86)\Windows Kits\10\Include\10.0.20348.0\ucrt;$(BOOST);D:\Dev\boost_1_78_0;$(IncludePath)</IncludePath>
-    <LibraryPath>..\Detours-master\x64;$(BOOST)\lib64-msvc-14.0;C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.30.30705\atlmfc\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\Programs\boost_1_78_0;C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\atlmfc\include;C:\Program Files (x86)\Windows Kits\10\Include\10.0.20348.0\um;C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt;..\Detours-master\src;..\;C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.30.30705\atlmfc\include;C:\Program Files (x86)\Windows Kits\10\Include\10.0.20348.0\ucrt;$(BOOST);D:\Dev\boost_1_78_0;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Programs\boost_1_78_0\lib64-msvc-14.0;..\Detours-master\x64;$(BOOST)\lib64-msvc-14.0;C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.30.30705\atlmfc\lib\x64;$(LibraryPath)</LibraryPath>
     <TargetName>ItemAssistantHook_x64</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-playtest|x64'">
     <LinkIncremental />
-    <IncludePath>C:\Program Files (x86)\Windows Kits\10\Include\10.0.20348.0\um;..\Detours-master\src;..\;C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.30.30705\atlmfc\include;C:\Program Files (x86)\Windows Kits\10\Include\10.0.20348.0\ucrt;$(BOOST);$(IncludePath)</IncludePath>
-    <LibraryPath>..\Detours-master\x64;$(BOOST)\lib64-msvc-14.0;C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.30.30705\atlmfc\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt;C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\atlmfc\include;C:\Program Files (x86)\Windows Kits\10\Include\10.0.20348.0\um;..\Detours-master\src;..\;C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.30.30705\atlmfc\include;C:\Program Files (x86)\Windows Kits\10\Include\10.0.20348.0\ucrt;$(BOOST);D:\Programs\boost_1_78_0;$(IncludePath)</IncludePath>
+    <LibraryPath>..\Detours-master\x64;$(BOOST)\lib64-msvc-14.0;C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.30.30705\atlmfc\lib\x64;D:\Programs\boost_1_78_0\lib64-msvc-14.0;$(LibraryPath)</LibraryPath>
     <TargetName>ItemAssistantHook_x64</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-Instaloot|Win32'">
@@ -222,7 +222,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-Instaloot|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>N:\boost_1_61_0;C:\Users\STAT\Documents\Visual Studio 2012\Projects\IAGrim\IA\Detours;C:\Users\STAT\Documents\Visual Studio 2012\Projects\IAGrim\IA;$(IncludePath)</IncludePath>
+    <IncludePath>N:\boost_1_61_0;C:\Users\STAT\Documents\Visual Studio 2012\Projects\IAGrim\IA\Detours;C:\Users\STAT\Documents\Visual Studio 2012\Projects\IAGrim\IA;$(IncludePath);C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt</IncludePath>
     <LibraryPath>N:\boost_1_61_0\lib32-msvc-14.0;C:\Users\STAT\Documents\Visual Studio 2012\Projects\IAGrim\IA\Detours\Release;$(LibraryPath)</LibraryPath>
     <TargetName>$(ProjectName)-exp</TargetName>
   </PropertyGroup>
@@ -263,7 +263,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>Detours.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\Detours\Debug;D:\Program Files (x86)\boost\boost_1_47\lib\;D:\boost_1_58_0\lib32-msvc-11.0;..\Detours-master\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\Detours\Debug;D:\Programs\boost_1_78_0\lib64-msvc-14.0;..\Detours-master\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
     </Link>
