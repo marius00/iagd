@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IAGrim.Theme;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -185,6 +186,11 @@ class FirefoxRadioButton : Control {
 
         G.Clear(Parent.BackColor);
 
+        DpiHelper dpiHelper = new DpiHelper(G);
+        Rectangle radioCircleRect = dpiHelper.ScaleRectangle(new Rectangle(2, 2, 22, 22));
+        Rectangle checkedCircleRect = dpiHelper.ScaleRectangle(new Rectangle(7, 7, 12, 12));
+        Point textLocation = dpiHelper.ScalePoint(new Point(32, 4));
+
         if (Enabled) {
             ETC = Color.FromArgb(66, 78, 90);
 
@@ -193,7 +199,7 @@ class FirefoxRadioButton : Control {
                 case Helpers.MouseState.Down:
 
                     using (Pen P = new Pen(Color.FromArgb(34, 146, 208))) {
-                        G.DrawEllipse(P, new Rectangle(2, 2, 22, 22));
+                        G.DrawEllipse(P, radioCircleRect);
                     }
 
 
@@ -201,7 +207,7 @@ class FirefoxRadioButton : Control {
                 default:
 
                     using (Pen P = new Pen(Helpers.GreyColor(190))) {
-                        G.DrawEllipse(P, new Rectangle(2, 2, 22, 22));
+                        G.DrawEllipse(P, radioCircleRect);
                     }
 
 
@@ -211,7 +217,7 @@ class FirefoxRadioButton : Control {
 
             if (Checked) {
                 using (SolidBrush B = new SolidBrush(Color.FromArgb(34, 146, 208))) {
-                    G.FillEllipse(B, new Rectangle(7, 7, 12, 12));
+                    G.FillEllipse(B, checkedCircleRect);
                 }
             }
         }
@@ -219,23 +225,23 @@ class FirefoxRadioButton : Control {
             ETC = Helpers.GreyColor(170);
 
             using (Pen P = new Pen(Helpers.GreyColor(210))) {
-                G.DrawEllipse(P, new Rectangle(2, 2, 22, 22));
+                G.DrawEllipse(P, radioCircleRect);
             }
 
 
             if (Checked) {
                 using (SolidBrush B = new SolidBrush(Color.FromArgb(34, 146, 208))) {
-                    G.FillEllipse(B, new Rectangle(7, 7, 12, 12));
+                    G.FillEllipse(B, checkedCircleRect);
                 }
             }
         }
 
         using (SolidBrush B = new SolidBrush(ETC)) {
             if (Bold) {
-                G.DrawString(Text, Theme.GlobalFont(FontStyle.Bold, 10), B, new Point(32, 4));
+                G.DrawString(Text, Theme.GlobalFont(FontStyle.Bold, 10), B, textLocation);
             }
             else {
-                G.DrawString(Text, Theme.GlobalFont(FontStyle.Regular, 10), B, new Point(32, 4));
+                G.DrawString(Text, Theme.GlobalFont(FontStyle.Regular, 10), B, textLocation);
             }
         }
     }

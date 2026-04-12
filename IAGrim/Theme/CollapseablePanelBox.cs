@@ -9,8 +9,8 @@ using System.Windows.Forms;
 
 namespace IAGrim.Theme {
     class CollapseablePanelBox : PanelBox {
-        private const int margin = 3;
-        private const int size = 24;
+        private readonly Size margin;
+        private readonly Size imageSize;
         private Image _arrow;
         private readonly Image _arrowImageUp = global::IAGrim.Properties.Resources.arrow;
         private readonly Image _arrowImageDown = global::IAGrim.Properties.Resources.arrow;
@@ -26,13 +26,17 @@ namespace IAGrim.Theme {
 
             // Position the arrow correctly in the top right corner
             _arrow = _arrowImageDown;
+
+            DpiHelper dpiHelper = new DpiHelper(CreateGraphics());
+            margin = dpiHelper.ScaleSize(new Size(3, 3));
+            imageSize = dpiHelper.ScaleSize(new Size(24, 24));
         }
 
 
         protected override void OnPaint(PaintEventArgs e) {
             base.OnPaint(e);
             if (this.Width != 0 && this.Height != 0) {
-                e.Graphics.DrawImage(this._arrow, Width - margin - size, margin, size, size);
+                e.Graphics.DrawImage(this._arrow, Width - margin.Width - imageSize.Width, margin.Height, imageSize.Width, imageSize.Height);
             }
         }
 
@@ -42,7 +46,7 @@ namespace IAGrim.Theme {
 
             if (_panelState == PanelState.Collapsed) {
                 _originalHeight = Height;
-                Height = 32;
+                Height = new DpiHelper(CreateGraphics()).ScaleY(32);
             }
             else {
                 Height = _originalHeight;
@@ -59,7 +63,7 @@ namespace IAGrim.Theme {
             base.OnMouseUp(e);
 
             if (Enabled) {
-                if (e.Y < size) {
+                if (e.Y < (imageSize.Height + margin.Height * 2)) {
                     ToggleState();
                 }
             }
@@ -68,7 +72,7 @@ namespace IAGrim.Theme {
         }
 
         protected override void OnMouseMove(MouseEventArgs e) {
-            if (e.Y < size) {
+            if (e.Y < (imageSize.Height + margin.Height * 2)) {
                 Cursor.Current = Cursors.Hand;
             }
         }

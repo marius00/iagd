@@ -37,7 +37,7 @@ namespace IAGrim.UI.Tabs {
         private readonly SettingsService _settings;
         private ToolTip toolTip1;
         private System.ComponentModel.IContainer components;
-        private const int FilterPanelMinSize = 250;
+        private readonly int FilterPanelMinSize;
         private Microsoft.Web.WebView2.WinForms.WebView2 webView21;
         private Label label1;
         private bool _hasCheckedModFilterNotEmpty = false;
@@ -68,6 +68,8 @@ namespace IAGrim.UI.Tabs {
             InitializeComponent();
 
             Dock = DockStyle.Fill;
+
+            FilterPanelMinSize = new DpiHelper(CreateGraphics()).ScaleX(250);
 
             // Weird hack to not have the searcbox be height=4 on windows 11. 
             _searchBox.MaximumSize = new Size(_searchBox.MaximumSize.Width, 0);

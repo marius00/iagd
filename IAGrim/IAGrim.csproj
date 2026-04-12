@@ -18,6 +18,8 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <PlatformTarget>x64</PlatformTarget>
+
+	<ForceDesignerDPIUnaware>true</ForceDesignerDPIUnaware>
   </PropertyGroup>
    <PropertyGroup> 
     <ContentSQLiteInteropFiles>true</ContentSQLiteInteropFiles>
