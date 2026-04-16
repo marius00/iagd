@@ -156,6 +156,7 @@ namespace IAGrim.UI.Tabs {
 
             if (transferFile == null) {
                 Logger.Warn("Attempting to update item view, but no mod selection has been made");
+                ModSelectionHandler.SetDefaultModIfAvailable();
                 return;
             }
 

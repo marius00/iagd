@@ -42,6 +42,12 @@ namespace IAGrim.UI.Tabs.Util {
             _settings.GetLocal().LastSelectedMod = SelectedMod;
         }
 
+        public void SetDefaultModIfAvailable() {
+            if (_cbModFilter?.Items.Count > 0) {
+                _cbModFilter.SelectedItem = _cbModFilter.Items[0];
+            }
+        }
+
         private void UpdateModSelection(string mod, bool isHardcore) {
             if (mod != _lastMod || isHardcore != _lastHardcoreSetting) {
                 var options = GetAvailableModSelection();

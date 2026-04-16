@@ -92,6 +92,15 @@ namespace IAGrim.Utilities {
                 return path;
             }
         }
+        
+
+        public static string DebugLocation{
+            get {
+                string path = Path.Combine(CoreFolder, "debug");
+                Directory.CreateDirectory(path);
+                return path;
+            }
+        }
 
         public static string CsvLocationOutgoingDeleted {
             get {

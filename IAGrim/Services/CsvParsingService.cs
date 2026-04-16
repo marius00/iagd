@@ -114,7 +114,11 @@ namespace IAGrim.Services {
             if (classificationService.Remaining.Count > 0) {
                 playerItemDao.Save(item);
                 outItem = item;
-                File.Delete(filename);
+#if !DEBUG
+                    File.Delete(filename);
+#else
+                File.Move(filename, Path.Combine(GlobalPaths.DebugLocation, Path.GetFileName(filename)));
+#endif
             }
             else if (classificationService.Duplicates.Count > 0) {
                 Logger.Info("Deleting duplicate item file");
@@ -132,7 +136,11 @@ namespace IAGrim.Services {
                     transferStashService.Deposit(new List<PlayerItem> { item }, null);
                     Logger.Info("Deposited item back in-game, did not pass item classification.");
                     Logger.Info("New GD patch? Go to the Grim Dawn tab and parse the game files again.");
+#if !DEBUG
                     File.Delete(filename);
+#else
+                    File.Move(filename, Path.Combine(GlobalPaths.DebugLocation, Path.GetFileName(filename)));
+#endif
                     return true;
                 }
                 else {
