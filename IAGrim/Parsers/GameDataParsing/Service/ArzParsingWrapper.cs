@@ -50,7 +50,7 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
             catch (ArgumentException ex) {
                 Logger.Warn(ex.Message, ex);
                 MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_corrupted"));
-                throw ex;
+                throw;
             }
 
             Items = accumulator.Items;

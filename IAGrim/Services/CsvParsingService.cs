@@ -14,6 +14,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 
@@ -97,7 +98,7 @@ namespace IAGrim.Services {
             outItem = null;
             
             // So we get the entire CSV here..
-            var csvLines = File.ReadAllText(filename).Split("\n");
+            var csvLines = File.ReadAllText(filename, Encoding.UTF8).Split("\n");
             PlayerItem? item = Deserialize(csvLines[0]);
             if (item == null) {
                 return true;

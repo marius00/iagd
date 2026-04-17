@@ -12,5 +12,5 @@
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
-#define IAGD_VER "1.4.9241.9437" 
-#define IAGD_VER "1.5.9597.16842" 
+
+#define IAGD_VER "1.5.9603.7748" 

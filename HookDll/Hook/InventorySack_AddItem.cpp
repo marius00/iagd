@@ -338,16 +338,27 @@ bool InventorySack_AddItem::Persist(
 	const std::vector<GAME::GameTextLine>& gameTextLines)
 {
 	std::wstring fullPath = m_storageFolder + randomFilename();
-	std::wofstream stream;
-	stream.open(fullPath);
+
+	// Use std::ofstream (narrow) and convert all wide strings to UTF-8 explicitly.
+	// std::wofstream converts through the system ANSI codepage, which destroys
+	// characters outside that codepage (e.g. Polish, Portuguese).
+	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> utf8conv;
+
+	std::ofstream stream;
+	stream.open(fullPath, std::ios::binary);
+
+	// Write UTF-8 BOM so readers can detect encoding
+	stream << "\xEF\xBB\xBF";
+
 	// Existing replica CSV line -- unchanged, IA client reads this format already.
-	stream << mod.c_str() << ";" << (isHardcore ? 1 : 0) << ";" << GAME::Serialize(replicaInfo) << "\n";
+	// mod and Serialize output are ASCII-safe, but convert them properly anyway.
+	stream << utf8conv.to_bytes(mod) << ";" << (isHardcore ? 1 : 0) << ";" << utf8conv.to_bytes(GAME::Serialize(replicaInfo)) << "\n";
 
 	// Append stats, one per line: textClass;text
 	// The IA client can read these after the first line, ignoring them if it doesn't
 	// understand them yet (backwards compatible, since it only reads line 1 today).
 	for (const auto& line : gameTextLines) {
-		stream << line.textClass << ";" << line.text.c_str() << "\n";
+		stream << line.textClass << ";" << utf8conv.to_bytes(line.text) << "\n";
 	}
 
 	stream.flush();
