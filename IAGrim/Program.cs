@@ -115,10 +115,50 @@ namespace IAGrim
 
         private static void DumpTranslationTemplate() {
             try {
-                File.WriteAllText(Path.Combine(GlobalPaths.CoreFolder, "tags_ia.template.txt"), new EnglishLanguage(new Dictionary<string, string>()).Export());
+                var translationsDir = Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\IAGrim\Resources\translations");
+                translationsDir = Path.GetFullPath(translationsDir);
+                if (!Directory.Exists(translationsDir)) {
+                    Logger.Debug($"Translations directory not found: {translationsDir}");
+                    return;
+                }
+
+                var english = new EnglishLanguage(new Dictionary<string, string>());
+                var englishEntries = english.Stats;
+
+                foreach (var filePath in Directory.GetFiles(translationsDir, "*.txt")) {
+                    var lines = File.ReadAllLines(filePath).ToList();
+                    var existingKeys = new HashSet<string>();
+
+                    foreach (var line in lines) {
+                        var trimmed = line.Trim();
+                        if (string.IsNullOrEmpty(trimmed) || trimmed.StartsWith("#"))
+                            continue;
+
+                        var eqIndex = trimmed.IndexOf('=');
+                        if (eqIndex > 0) {
+                            existingKeys.Add(trimmed.Substring(0, eqIndex));
+                        }
+                    }
+
+                    var missingKeys = englishEntries.Keys
+                        .Where(k => !existingKeys.Contains(k))
+                        .OrderBy(k => k)
+                        .ToList();
+
+                    if (missingKeys.Count > 0) {
+                        lines.Add("");
+                        lines.Add("# Missing translations (English defaults)");
+                        foreach (var key in missingKeys) {
+                            lines.Add($"{key}={englishEntries[key].Replace("\n", "\\n")}");
+                        }
+
+                        File.WriteAllLines(filePath, lines);
+                        Logger.Debug($"Added {missingKeys.Count} missing keys to {Path.GetFileName(filePath)}");
+                    }
+                }
             }
             catch (Exception ex) {
-                Logger.Debug("Error dumping translation template", ex);
+                Logger.Debug("Error syncing translation files", ex);
             }
         }
 
@@ -133,7 +173,9 @@ namespace IAGrim
 
             var databaseItemDao = serviceProvider.Get<IDatabaseItemDao>();
             RuntimeSettings.InitializeLanguage(settingsService.GetLocal().LanguageCode, databaseItemDao.GetTagDictionary());
+#if DEBUG
             DumpTranslationTemplate();
+#endif
 
             Logger.Debug("Loading UUID");
             LoadUuid(settingsService);

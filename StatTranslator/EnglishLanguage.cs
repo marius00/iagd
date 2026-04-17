@@ -44,6 +44,8 @@ namespace StatTranslator {
                 _stats[tag] = value;
         }
 
+        public IReadOnlyDictionary<string, string> Stats => _stats;
+
         public string Export() {
             return string.Join("\r\n",
                 _stats
