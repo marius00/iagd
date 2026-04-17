@@ -29,6 +29,7 @@ using Microsoft.Web.WebView2.Core;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 
 namespace IAGrim.UI {
@@ -68,6 +69,7 @@ namespace IAGrim.UI {
         private readonly UserFeedbackService _userFeedbackService;
         private MinimizeToTrayHandler? _minimizeToTrayHandler;
         private ModsDatabaseConfig? _modsDatabaseConfigTab;
+        private System.Windows.Forms.Timer? _wineMessageTimer;
         public static int NumInstantSyncItemCount = 300;
 
 
@@ -307,6 +309,10 @@ namespace IAGrim.UI {
 
             _injector?.Dispose();
             _injector = null;
+
+            _wineMessageTimer?.Stop();
+            _wineMessageTimer?.Dispose();
+            _wineMessageTimer = null;
 
             _backupServiceWorker?.Dispose();
             _backupServiceWorker = null;
@@ -712,9 +718,89 @@ namespace IAGrim.UI {
             // Same happens when shutting down, fix unknown
             _injectorCallbackDelegate = InjectorCallback;
 
+            bool isWine = WineDetector.IsRunningInWine();
+            string? linuxHackPath = isWine ? GlobalPaths.LinuxHack : null;
 
             string dllname = "ItemAssistantHook_x64.dll";
-            _injector = new InjectionHelper(_injectorCallbackDelegate, false, "Grim Dawn", string.Empty, dllname);
+            _injector = new InjectionHelper(_injectorCallbackDelegate, false, "Grim Dawn", string.Empty, dllname, linuxHackPath);
+
+            // Under Wine, WM_COPYDATA messages don't work, so poll for .msg files instead
+            if (isWine) {
+                Logger.Info("Wine detected, starting file-based message polling");
+                _wineMessageTimer = new System.Windows.Forms.Timer();
+                _wineMessageTimer.Interval = 500;
+                _wineMessageTimer.Tick += WineMessagePollTick;
+                _wineMessageTimer.Start();
+            }
+        }
+
+        /// <summary>
+        /// Poll the LinuxHack folder for .msg files written by the injected DLL.
+        /// File format (binary, matching COPYDATASTRUCT layout):
+        ///   bytes 0-3:  cbData (int32, message type)
+        ///   bytes 4-7:  dwData (int32, data length)
+        ///   bytes 8+:   lpData (raw data bytes)
+        /// Files older than 30 seconds are deleted without reading.
+        /// Files younger than 2 seconds are skipped (may still be written).
+        /// </summary>
+        private void WineMessagePollTick(object sender, EventArgs e) {
+            try {
+                var linuxHackPath = GlobalPaths.LinuxHack;
+                if (!Directory.Exists(linuxHackPath)) return;
+
+                foreach (var file in Directory.GetFiles(linuxHackPath, "*.msg")) {
+                    try {
+                        var fileAge = DateTime.Now - File.GetLastWriteTime(file);
+
+                        // Stale message, just delete
+                        if (fileAge.TotalSeconds > 30) {
+                            File.Delete(file);
+                            continue;
+                        }
+
+                        var bytes = File.ReadAllBytes(file);
+                        File.Delete(file);
+
+                        if (bytes.Length < 8) {
+                            Logger.Warn($"Wine message file too small: {file} ({bytes.Length} bytes)");
+                            continue;
+                        }
+
+                        int type = BitConverter.ToInt32(bytes, 0);
+                        int dataLength = BitConverter.ToInt32(bytes, 4);
+
+                        byte[] data;
+                        string stringData = string.Empty;
+
+                        if (dataLength > 0 && bytes.Length >= 8 + dataLength) {
+                            data = new byte[dataLength];
+                            Array.Copy(bytes, 8, data, 0, dataLength);
+                            // Try to read as unicode string
+                            try {
+                                stringData = System.Text.Encoding.Unicode.GetString(data).TrimEnd('\0');
+                            }
+                            catch {
+                                // Not a valid string, that's fine
+                            }
+                        }
+                        else {
+                            data = Array.Empty<byte>();
+                        }
+
+                        var msg = new RegisterWindow.DataAndType(type, data, stringData);
+                        CustomWndProc(msg);
+                    }
+                    catch (IOException) {
+                        // File may be locked, skip and retry next poll
+                    }
+                    catch (Exception ex) {
+                        Logger.Warn($"Error processing wine message file: {ex.Message}");
+                    }
+                }
+            }
+            catch (Exception ex) {
+                Logger.Warn($"Error polling wine message files: {ex.Message}");
+            }
         }
 
 

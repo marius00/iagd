@@ -6,5 +6,6 @@ public:
 	bool GetPreferLegacyMode();
 	bool GetIsGrimDawnParsed();
 	int GetStashTabToDepositTo();
+	bool GetIsRunningInWine();
 };
 

@@ -138,6 +138,11 @@ namespace IAGrim
             Logger.Debug("Loading UUID");
             LoadUuid(settingsService);
 
+            // Persist Wine detection so the injected DLL can read it from the settings file
+            settingsService.GetPersistent().IsRunningInWine = WineDetector.IsRunningInWine();
+            Logger.Info($"Wine detection: {settingsService.GetPersistent().IsRunningInWine}");
+
+
             var itemTagDao = serviceProvider.Get<IItemTagDao>();
             var databaseItemStatDao = serviceProvider.Get<IDatabaseItemStatDao>();
             var itemSkillDao = serviceProvider.Get<IItemSkillDao>();

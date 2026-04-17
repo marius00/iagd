@@ -126,6 +126,14 @@ namespace IAGrim.Utilities {
             }
         }
 
+        public static string LinuxHack {
+            get {
+                string path = Path.Combine(CoreFolder, "linuxhack");
+                Directory.CreateDirectory(path);
+                return path;
+            }
+        }
+
 
 
         [DllImport("shell32.dll", CharSet = CharSet.Unicode, ExactSpelling = true, PreserveSig = false)]

@@ -106,3 +106,23 @@ bool SettingsReader::GetIsGrimDawnParsed() {
 
 	return isGdParsed;
 }
+
+bool SettingsReader::GetIsRunningInWine() {
+	boost::property_tree::wptree loadPtreeRoot;
+
+	const auto settingsJson = GetIagdFolder() + L"settings.json";
+	std::wifstream json(settingsJson);
+
+	boost::property_tree::read_json(json, loadPtreeRoot);
+	auto child = loadPtreeRoot.get_child_optional(L"persistent.isRunningInWine");
+	if (!child)
+	{
+		LogToFile(LogLevel::WARNING, L"RunningInWine: No configuration found, defaulting to false");
+		return false;
+	}
+
+	const bool isWine = loadPtreeRoot.get<bool>(L"persistent.isRunningInWine");
+	LogToFile(LogLevel::INFO, std::wstring(L"Running in Wine: ") + (isWine ? L"True" : L"False"));
+
+	return isWine;
+}

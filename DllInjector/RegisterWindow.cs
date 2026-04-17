@@ -102,6 +102,15 @@ namespace EvilsoftCommons.DllInjector {
                 }
             }
 
+            /// <summary>
+            /// Constructor for file-based messages (Wine/Proton hack)
+            /// </summary>
+            public DataAndType(int type, byte[] data, string stringData) {
+                Type = type;
+                Data = data;
+                StringData = stringData;
+            }
+
             [HandleProcessCorruptedStateExceptions]
             private string GetDataString(IntPtr ptr, int type) {
                 try {

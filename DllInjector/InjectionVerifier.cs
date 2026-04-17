@@ -41,6 +41,47 @@ namespace EvilsoftCommons.DllInjector {
             }
         }
 
+        /// <summary>
+        /// Wine/Proton alternative: checks for a PID file written by the injected DLL.
+        /// Also cleans up stale PID files (wrong pid or older than 1 day).
+        /// </summary>
+        public static bool VerifyInjectionViaFile(long pid, string linuxHackPath) {
+            try {
+                Directory.CreateDirectory(linuxHackPath);
+                foreach (var file in Directory.GetFiles(linuxHackPath, "*.PID")) {
+                    var fileName = Path.GetFileNameWithoutExtension(file);
+                    var fileAge = DateTime.Now - File.GetLastWriteTime(file);
+
+                    bool isCurrentPid = long.TryParse(fileName, out long filePid) && filePid == pid;
+                    bool isStale = fileAge.TotalDays > 1;
+
+                    if (!isCurrentPid || isStale) {
+                        try {
+                            File.Delete(file);
+                            Logger.Info($"Deleted stale PID file: {file}");
+                        }
+                        catch (IOException ex) {
+                            Logger.Warn($"Could not delete stale PID file {file}: {ex.Message}");
+                        }
+                    }
+                }
+
+                var pidFile = Path.Combine(linuxHackPath, $"{pid}.PID");
+                if (File.Exists(pidFile)) {
+                    var age = DateTime.Now - File.GetLastWriteTime(pidFile);
+                    if (age.TotalDays <= 1) {
+                        Logger.Info($"Verified injection via PID file for process {pid}");
+                        return true;
+                    }
+                }
+            }
+            catch (Exception ex) {
+                Logger.Warn($"Error verifying injection via PID file: {ex.Message}");
+            }
+
+            return false;
+        }
+
         public static bool VerifyInjection(long pid, string dll) {
             FixRegistryNagOnListDlls();
 

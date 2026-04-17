@@ -31,6 +31,7 @@ namespace DllInjector {
         public const int ABORTED = 7;
         public const int GD_SEASON = 8;
         private readonly ProgressChangedEventHandler _registeredProgressCallback;
+        private readonly string? _linuxHackPath;
 
         class RunArguments {
             public string WindowName;
@@ -47,7 +48,8 @@ namespace DllInjector {
         /// <param name="windowName">Name of the window you wish to inject to</param>
         /// <param name="className">Name of the class you wish to inject to (IFF window name is empty/null)</param>
         /// <param name="dll">Name of the DLL you wish to inject</param>
-        public InjectionHelper(ProgressChangedEventHandler progressChanged, bool unloadOnExit, string windowName, string className, string dll) {
+        /// <param name="linuxHackPath">When non-null, use file-based injection verification (Wine/Proton)</param>
+        public InjectionHelper(ProgressChangedEventHandler progressChanged, bool unloadOnExit, string windowName, string className, string dll, string? linuxHackPath = null) {
             if (string.IsNullOrEmpty(windowName) && string.IsNullOrEmpty(className)) {
                 throw new ArgumentException("Either window or class name must be specified");
             }
@@ -56,6 +58,7 @@ namespace DllInjector {
             }
 
             this._registeredProgressCallback = progressChanged;
+            this._linuxHackPath = linuxHackPath;
             _bw = new BackgroundWorker();
             _bw.DoWork += new DoWorkEventHandler(bw_DoWork);
             _bw.WorkerSupportsCancellation = true;
@@ -272,7 +275,11 @@ namespace DllInjector {
                     }
 
                     // Actual injection
-                    if (InjectionVerifier.VerifyInjection(pid, dll64Bit)) {
+                    bool alreadyInjected = _linuxHackPath != null
+                        ? InjectionVerifier.VerifyInjectionViaFile(pid, _linuxHackPath)
+                        : InjectionVerifier.VerifyInjection(pid, dll64Bit);
+
+                    if (alreadyInjected) {
                         Logger.Info($"DLL already injected into target process, skipping injection into {pid}");
                         _dontLog.Add(pid);
                         _previouslyInjected.Add(pid);
@@ -280,7 +287,11 @@ namespace DllInjector {
                     else  {
                         Inject64Bit("Grim Dawn.exe", dll64Bit, 1);
 
-                        if (!InjectionVerifier.VerifyInjection(pid, dll64Bit)) {
+                        bool verifiedAfterInject = _linuxHackPath != null
+                            ? InjectionVerifier.VerifyInjectionViaFile(pid, _linuxHackPath)
+                            : InjectionVerifier.VerifyInjection(pid, dll64Bit);
+
+                        if (!verifiedAfterInject) {
                             Logger.Error($"Error injecting DLL into Grim Dawn.");
 
                             worker.ReportProgress(INJECTION_ERROR, null);
