@@ -47,6 +47,7 @@
             Name = "DownloadingUpdateModal";
             ShowIcon = false;
             ShowInTaskbar = false;
+            Tag = "iatag_ui_downloading";
             Text = "Downloading..";
             Load += DownloadingUpdateModal_Load;
             ResumeLayout(false);

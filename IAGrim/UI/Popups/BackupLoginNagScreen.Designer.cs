@@ -40,6 +40,7 @@
             linkLabel1.Size = new Size(79, 15);
             linkLabel1.TabIndex = 4;
             linkLabel1.TabStop = true;
+            linkLabel1.Tag = "iatag_ui_skipfornow";
             linkLabel1.Text = "Skip for now..";
             linkLabel1.LinkClicked += linkLabel1_LinkClicked;
             // 
@@ -52,6 +53,7 @@
             linkLabel2.Size = new Size(97, 15);
             linkLabel2.TabIndex = 5;
             linkLabel2.TabStop = true;
+            linkLabel2.Tag = "iatag_ui_dontremindme";
             linkLabel2.Text = "Don't remind me";
             linkLabel2.LinkClicked += linkLabel2_LinkClicked;
             // 
@@ -77,7 +79,7 @@
             buttonClose.Name = "buttonClose";
             buttonClose.Size = new Size(1149, 40);
             buttonClose.TabIndex = 7;
-            buttonClose.Tag = "";
+            buttonClose.Tag = "iatag_ui_button_close";
             buttonClose.Text = "Close";
             buttonClose.Visible = false;
             buttonClose.Click += buttonClose_Click;

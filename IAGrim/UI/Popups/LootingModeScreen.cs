@@ -1,4 +1,5 @@
-﻿using IAGrim.Settings;
+﻿using IAGrim.Parsers.Arz;
+using IAGrim.Settings;
 using IAGrim.Utilities;
 using System;
 using System.Windows.Forms;
@@ -25,6 +26,7 @@ namespace IAGrim.UI.Popups {
         }
 
         private void LootingModeScreen_Load(object sender, EventArgs e) {
+            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
             rbInstant.Checked = !_settings.GetLocal().PreferLegacyMode;
             rbClassic.Checked = _settings.GetLocal().PreferLegacyMode;
         }

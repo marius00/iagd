@@ -132,7 +132,7 @@ namespace IAGrim
             var settingsService = serviceProvider.Get<SettingsService>();
 
             var databaseItemDao = serviceProvider.Get<IDatabaseItemDao>();
-            RuntimeSettings.InitializeLanguage(settingsService.GetLocal().LocalizationFile, databaseItemDao.GetTagDictionary());
+            RuntimeSettings.InitializeLanguage(settingsService.GetLocal().LanguageCode, databaseItemDao.GetTagDictionary());
             DumpTranslationTemplate();
 
             Logger.Debug("Loading UUID");
@@ -141,7 +141,7 @@ namespace IAGrim
             var itemTagDao = serviceProvider.Get<IItemTagDao>();
             var databaseItemStatDao = serviceProvider.Get<IDatabaseItemStatDao>();
             var itemSkillDao = serviceProvider.Get<IItemSkillDao>();
-            ParsingService parsingService = new ParsingService(itemTagDao, string.Empty, databaseItemDao, databaseItemStatDao, itemSkillDao, settingsService.GetLocal().LocalizationFile);
+            ParsingService parsingService = new ParsingService(itemTagDao, string.Empty, databaseItemDao, databaseItemStatDao, itemSkillDao, settingsService.GetLocal().LanguageCode);
             StartupService.PrintStartupInfo(factory, settingsService);
 
             // TODO: Offload to the new language loader

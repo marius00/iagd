@@ -8,6 +8,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using IAGrim.Parsers.Arz;
+using IAGrim.Utilities;
 
 namespace IAGrim.UI.Popups {
     public partial class UpdateModal : Form {
@@ -15,6 +17,7 @@ namespace IAGrim.UI.Popups {
         private readonly SettingsService _settingsService;
         public UpdateModal(SettingsService settingsService, string version, bool forceUpdate) {
             InitializeComponent();
+            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
             _settingsService = settingsService;
             _version = version;
             this.DialogResult = DialogResult.None;

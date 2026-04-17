@@ -46,7 +46,6 @@ namespace IAGrim.UI {
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
             if (keyData == Keys.Enter) {
                 buttonSelect_Click(null, null);
-
                 return true;
             }
 
@@ -60,41 +59,15 @@ namespace IAGrim.UI {
         private void buttonSelect_Click(object sender, EventArgs e) {
             var cb = _checkboxes.FirstOrDefault(m => m.Checked);
             if (cb != null) {
-                var package = cb.Tag.ToString();
+                var selectedCode = cb.Tag.ToString();
 
-                if (package != _settings.GetLocal().LocalizationFile) {
-                    Logger.Info($"Loading localization file at {package}");
-                    _settings.GetLocal().LocalizationFile = package;
+                if (selectedCode != _settings.GetLocal().LanguageCode) {
+                    Logger.Info($"Switching language to {selectedCode}");
+                    _settings.GetLocal().LanguageCode = selectedCode;
 
-                    if (!string.IsNullOrEmpty(_settings.GetLocal().LocalizationFile)) {
-                        var loader = new LocalizationLoader();
-                        RuntimeSettings.Language = loader.LoadLanguage(package, new EnglishLanguage(new Dictionary<string, string>()));
-
-                        // TODO: Grab tags from loader and save to sql
-                        _itemTagDao.Save(loader.GetItemTags(), new ProgressTracker());
-
-                        var x = new UpdatingPlayerItemsScreen(_playerItemDao);
-                        x.ShowDialog();
-                    }
-                    // Load the GD one
-                    else {
-                        // Override timestamp to force an update
-                        RuntimeSettings.InitializeLanguage(string.Empty, new Dictionary<string, string>()); // TODO: Not ideal, will need a restart
-
-                        foreach (var location in _paths) {
-                            if (!string.IsNullOrEmpty(location) && Directory.Exists(location)) {
-                                _parsingService.Update(location, string.Empty);
-                                _parsingService.Execute();
-                                break;
-                            }
-
-                            Logger.Warn("Could not find the Grim Dawn install location");
-                        }
-
-                        // Update item stats as well
-                        var x = new UpdatingPlayerItemsScreen(_playerItemDao);
-                        x.ShowDialog();
-                    }
+                    MessageBox.Show("IAGD is restarting to apply language change", "Restarting");
+                    Application.Restart();
+                    Environment.Exit(0);
                 }
             }
 
@@ -103,17 +76,28 @@ namespace IAGrim.UI {
 
         private void LanguagePackPicker_Load(object sender, EventArgs e) {
             LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
-            var loc = new LocalizationLoader();
 
             var n = 0;
+            var currentCode = _settings.GetLocal().LanguageCode;
+            var availableCodes = LanguageMapping.GetAvailableLanguages(_paths).ToList();
 
-            // Default language: English
-            {
+            // Always show English first
+            if (!availableCodes.Contains("EN")) {
+                availableCodes.Insert(0, "EN");
+            }
+
+            foreach (var code in availableCodes) {
+                var displayName = LanguageMapping.GetDisplayName(code);
+                var isFullySupported = code.Equals("EN", StringComparison.OrdinalIgnoreCase) || LanguageMapping.IsFullySupported(code);
+                var prefix = isFullySupported ? "" : "[Partial] ";
+
                 var cb = new FirefoxRadioButton {
                     Location = new Point(10, 25 + n * 33),
-                    Text = "English (Official)",
-                    Tag = string.Empty,
-                    Checked = string.IsNullOrEmpty(_settings.GetLocal().LocalizationFile),
+                    Text = prefix + displayName,
+                    Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top,
+                    Width = groupBox1.Width - pictureBox1.Width,
+                    Tag = code,
+                    Checked = code.Equals(currentCode, StringComparison.OrdinalIgnoreCase),
                     TabIndex = n,
                     TabStop = true
                 };
@@ -123,32 +107,7 @@ namespace IAGrim.UI {
                 n++;
             }
 
-            foreach (var path in _paths) {
-                if (Directory.Exists(Path.Combine(path, "localization"))) {
-                    foreach (var file in Directory.EnumerateFiles(Path.Combine(path, "localization"), "*.zip")) {
-                        loc.CheckLanguage(file, out var author, out var language);
-
-                        var isFullyTranslatedTag = LocalizationLoader.IsFullySupportedTranslation(file) ? "" : "[Partial] ";
-                        var cb = new FirefoxRadioButton {
-                            Location = new Point(10, 25 + n * 33),
-                            Text = isFullyTranslatedTag + RuntimeSettings.Language.GetTag("iatag_ui_language_by_author", language, author),
-                            Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top,
-                            Width = groupBox1.Width - pictureBox1.Width,
-                            Tag = file,
-                            Checked = file == _settings.GetLocal().LocalizationFile,
-                            TabIndex = n,
-                            TabStop = true
-                        };
-
-                        groupBox1.Controls.Add(cb);
-                        _checkboxes.Add(cb);
-                        n++;
-                    }
-                }
-            }
-
-
-            var delta = Math.Min(Math.Max(0, n - 5), 15) * 33; // We already have space for 5, only expand if we exceed this.
+            var delta = Math.Min(Math.Max(0, n - 5), 15) * 33;
             if (delta > 0) {
                 var newHeight = Height + delta;
                 MaximumSize = new Size(MaximumSize.Width, newHeight);

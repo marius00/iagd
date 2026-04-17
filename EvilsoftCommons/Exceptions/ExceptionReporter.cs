@@ -19,9 +19,9 @@ namespace EvilsoftCommons.Exceptions {
     public class ExceptionReporter {
         static readonly ILog Logger = LogManager.GetLogger(typeof(ExceptionReporter));
 
-        public static string Uuid { protected get; set; }
+        public static string? Uuid { protected get; set; }
 
-        public static string UrlStats {
+        public static string? UrlStats {
             get;
             set;
         }
@@ -77,8 +77,8 @@ namespace EvilsoftCommons.Exceptions {
         public static string VersionString {
             get {
                 try {
-                    var version = System.Reflection.Assembly.GetEntryAssembly().GetName().Version;
-                    return $"{version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
+                    var version = System.Reflection.Assembly.GetEntryAssembly()?.GetName().Version;
+                    return $"{version?.Major}.{version?.Minor}.{version?.Build}.{version?.Revision}";
                 }
                 catch (Exception ex) {
                     Logger.Warn("Error getting assembly version, automatic updates may not function correctly.");
@@ -86,7 +86,7 @@ namespace EvilsoftCommons.Exceptions {
                     Logger.Warn(ex.StackTrace);
 
                     var version = Assembly.GetExecutingAssembly().GetName().Version;
-                    return $"{version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
+                    return $"{version?.Major}.{version?.Minor}.{version?.Build}.{version?.Revision}";
                 }
             }
         }
@@ -100,14 +100,14 @@ namespace EvilsoftCommons.Exceptions {
         public static DateTime BuildDate {
             get {
                 try {
-                    return VersionToDateTime(System.Reflection.Assembly.GetEntryAssembly().GetName().Version);
+                    return VersionToDateTime(System.Reflection.Assembly.GetEntryAssembly()!.GetName().Version!);
                 }
                 catch (Exception ex) {
                     Logger.Warn("Error getting assembly version, automatic updates may not function correctly.");
                     Logger.Warn(ex.Message);
                     Logger.Warn(ex.StackTrace);
 
-                    return VersionToDateTime(Assembly.GetExecutingAssembly().GetName().Version);
+                    return VersionToDateTime(Assembly.GetExecutingAssembly().GetName().Version!);
                 }
             }
         }

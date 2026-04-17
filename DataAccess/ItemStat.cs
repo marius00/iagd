@@ -18,10 +18,10 @@ namespace DataAccess {
 
     public class ItemStat : IItemStat {
         public virtual long Id { get; set; }
-        public string Record { get; set; }
-        public string Stat { get; set; }
+        public string? Record { get; set; }
+        public string? Stat { get; set; }
         public float Value { get; set; }
-        public string TextValue { get; set; }
+        public string? TextValue { get; set; }
 
     }
 }

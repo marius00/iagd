@@ -70,6 +70,7 @@
             // 
             showToolStripMenuItem.Name = "showToolStripMenuItem";
             showToolStripMenuItem.Size = new Size(107, 22);
+            showToolStripMenuItem.Tag = "iatag_ui_ctxmenu_show";
             showToolStripMenuItem.Text = "Show";
             showToolStripMenuItem.Click += showToolStripMenuItem_Click;
             // 
@@ -77,6 +78,7 @@
             // 
             hideToolStripMenuItem.Name = "hideToolStripMenuItem";
             hideToolStripMenuItem.Size = new Size(107, 22);
+            hideToolStripMenuItem.Tag = "iatag_ui_ctxmenu_hide";
             hideToolStripMenuItem.Text = "Hide";
             hideToolStripMenuItem.Click += hideToolStripMenuItem_Click;
             // 
@@ -84,6 +86,7 @@
             // 
             editToolStripMenuItem.Name = "editToolStripMenuItem";
             editToolStripMenuItem.Size = new Size(107, 22);
+            editToolStripMenuItem.Tag = "iatag_ui_ctxmenu_edit";
             editToolStripMenuItem.Text = "Edit";
             editToolStripMenuItem.Click += editToolStripMenuItem_Click;
             // 
@@ -91,6 +94,7 @@
             // 
             deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
             deleteToolStripMenuItem.Size = new Size(107, 22);
+            deleteToolStripMenuItem.Tag = "iatag_ui_ctxmenu_delete";
             deleteToolStripMenuItem.Text = "Delete";
             deleteToolStripMenuItem.Click += deleteToolStripMenuItem_Click;
             // 

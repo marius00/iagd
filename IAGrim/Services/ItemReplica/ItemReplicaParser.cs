@@ -131,6 +131,7 @@ namespace IAGrim.Services.ItemReplica {
                 foreach (var itemTemplate in arr) {
                     var template = itemTemplate.Value;
                     var stats = template.stats
+                        .Where(m => !m.text.TrimStart().StartsWith("Tag not found"))
                         .Select(m => new ReplicaItemRow {
                             // Strip out [0-9] damage suffixes introduced in the Asterkarn DLC
                             // Strip out ^K ^W color codes

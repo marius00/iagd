@@ -23,112 +23,99 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LanguagePackPicker));
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.lblWarning = new System.Windows.Forms.Label();
-            this.buttonSelect = new FirefoxButton();
-            this.label1 = new System.Windows.Forms.Label();
-            this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            this.SuspendLayout();
+            var resources = new System.ComponentModel.ComponentResourceManager(typeof(LanguagePackPicker));
+            groupBox1 = new GroupBox();
+            pictureBox1 = new PictureBox();
+            lblWarning = new Label();
+            buttonSelect = new FirefoxButton();
+            groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            SuspendLayout();
             // 
             // groupBox1
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.pictureBox1);
-            this.groupBox1.Location = new System.Drawing.Point(8, 9);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(802, 191);
-            this.groupBox1.TabIndex = 3;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Tag = "iatag_ui_language_selection";
-            this.groupBox1.Text = "Language Selection";
+            groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox1.Controls.Add(pictureBox1);
+            groupBox1.Location = new Point(9, 10);
+            groupBox1.Margin = new Padding(4, 3, 4, 3);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Padding = new Padding(4, 3, 4, 3);
+            groupBox1.Size = new Size(936, 307);
+            groupBox1.TabIndex = 3;
+            groupBox1.TabStop = false;
+            groupBox1.Tag = "iatag_ui_language_selection";
+            groupBox1.Text = "Language Selection";
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox1.BackgroundImage = global::IAGrim.Properties.Resources.languages;
-            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pictureBox1.Location = new System.Drawing.Point(699, 6);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(103, 103);
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
+            pictureBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            pictureBox1.BackgroundImage = Properties.Resources.languages;
+            pictureBox1.BackgroundImageLayout = ImageLayout.Stretch;
+            pictureBox1.Location = new Point(816, 7);
+            pictureBox1.Margin = new Padding(4, 3, 4, 3);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(120, 119);
+            pictureBox1.TabIndex = 0;
+            pictureBox1.TabStop = false;
             // 
             // lblWarning
             // 
-            this.lblWarning.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblWarning.AutoSize = true;
-            this.lblWarning.Location = new System.Drawing.Point(5, 203);
-            this.lblWarning.Name = "lblWarning";
-            this.lblWarning.Size = new System.Drawing.Size(179, 13);
-            this.lblWarning.TabIndex = 4;
-            this.lblWarning.Tag = "iatag_ui_language_change_warning";
-            this.lblWarning.Text = "iatag_ui_language_change_warning";
+            lblWarning.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            lblWarning.AutoSize = true;
+            lblWarning.Location = new Point(9, 520);
+            lblWarning.Margin = new Padding(4, 0, 4, 0);
+            lblWarning.Name = "lblWarning";
+            lblWarning.Size = new Size(194, 15);
+            lblWarning.TabIndex = 4;
+            lblWarning.Tag = "iatag_ui_language_change_warning";
+            lblWarning.Text = "iatag_ui_language_change_warning";
             // 
             // buttonSelect
             // 
-            this.buttonSelect.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonSelect.BackColorDefault = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
-            this.buttonSelect.BackColorOverride = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(245)))), ((int)(((byte)(245)))));
-            this.buttonSelect.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
-            this.buttonSelect.EnabledCalc = true;
-            this.buttonSelect.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.buttonSelect.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
-            this.buttonSelect.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(232)))), ((int)(((byte)(232)))), ((int)(((byte)(232)))));
-            this.buttonSelect.HoverForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
-            this.buttonSelect.Location = new System.Drawing.Point(5, 234);
-            this.buttonSelect.Name = "buttonSelect";
-            this.buttonSelect.Size = new System.Drawing.Size(805, 35);
-            this.buttonSelect.TabIndex = 2;
-            this.buttonSelect.Tag = "iatag_ui_change_language";
-            this.buttonSelect.Text = "Change Language";
-            this.buttonSelect.Click += new System.EventHandler(this.buttonSelect_Click);
-            // 
-            // label1
-            // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(4, 175);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(675, 13);
-            this.label1.TabIndex = 5;
-            this.label1.Tag = "";
-            this.label1.Text = "As of Grim Dawn v1.2, loading language packs in GD has changed. See the IAGD help" +
-    " page for more information on loading language packs.";
+            buttonSelect.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            buttonSelect.BackColorDefault = Color.FromArgb(212, 212, 212);
+            buttonSelect.BackColorOverride = Color.FromArgb(245, 245, 245);
+            buttonSelect.BorderColor = Color.FromArgb(193, 193, 193);
+            buttonSelect.EnabledCalc = true;
+            buttonSelect.Font = new Font("Segoe UI", 10F);
+            buttonSelect.ForeColor = Color.FromArgb(56, 68, 80);
+            buttonSelect.HoverColor = Color.FromArgb(232, 232, 232);
+            buttonSelect.HoverForeColor = Color.FromArgb(193, 193, 193);
+            buttonSelect.Location = new Point(6, 357);
+            buttonSelect.Margin = new Padding(4, 3, 4, 3);
+            buttonSelect.Name = "buttonSelect";
+            buttonSelect.Size = new Size(939, 40);
+            buttonSelect.TabIndex = 2;
+            buttonSelect.Tag = "iatag_ui_change_language";
+            buttonSelect.Text = "Change Language";
+            buttonSelect.Click += buttonSelect_Click;
             // 
             // LanguagePackPicker
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(822, 281);
-            this.Controls.Add(this.lblWarning);
-            this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.buttonSelect);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(838, 320);
-            this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(838, 320);
-            this.Name = "LanguagePackPicker";
-            this.Opacity = 0.95D;
-            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-            this.Text = "Change Language";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LanguagePackPicker_FormClosing);
-            this.Load += new System.EventHandler(this.LanguagePackPicker_Load);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(959, 411);
+            Controls.Add(lblWarning);
+            Controls.Add(groupBox1);
+            Controls.Add(buttonSelect);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            Icon = (Icon)resources.GetObject("$this.Icon");
+            Margin = new Padding(4, 3, 4, 3);
+            MaximizeBox = false;
+            MaximumSize = new Size(975, 450);
+            MinimizeBox = false;
+            MinimumSize = new Size(975, 450);
+            Name = "LanguagePackPicker";
+            Opacity = 0.95D;
+            SizeGripStyle = SizeGripStyle.Hide;
+            Tag = "iatag_ui_change_language";
+            Text = "Change Language";
+            FormClosing += LanguagePackPicker_FormClosing;
+            Load += LanguagePackPicker_Load;
+            groupBox1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 
@@ -138,6 +125,5 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label lblWarning;
-        private System.Windows.Forms.Label label1;
     }
 }

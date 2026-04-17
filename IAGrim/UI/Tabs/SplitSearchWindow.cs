@@ -295,9 +295,11 @@ namespace IAGrim.UI.Tabs {
             ModSelectionHandler.ConfigureModFilter();
 
             _minLevel.KeyPress += MinLevel_KeyPress;
+            _minLevel.Leave += (s, ev) => { if (!int.TryParse(_minLevel.Text, out _)) _minLevel.Text = "0"; };
             _minLevel.MouseWheel += MinLevel_MouseWheel;
 
             _maxLevel.KeyPress += MinLevel_KeyPress;
+            _maxLevel.Leave += (s, ev) => { if (!int.TryParse(_maxLevel.Text, out _)) _maxLevel.Text = "200"; };
             _maxLevel.MouseWheel += MaxLevel_MouseWheel;
 
             _itemQuality.Items.AddRange(UIHelper.QualityFilter.ToArray<object>());
