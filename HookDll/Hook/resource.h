@@ -13,5 +13,5 @@
 #endif
 #endif
 
-#define IAGD_VER "1.5.9603.7745" 
 
+#define IAGD_VER "1.5.9604.23555" 

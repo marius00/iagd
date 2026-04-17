@@ -73,24 +73,6 @@ namespace IAGrim.Parsers.Arz {
             }
         }
 
-        private static void ApplyLanguage(ColumnHeader control, ILocalizedLanguage lang) {
-            var tag = control.Tag?.ToString();
-            bool hasTag = tag?.StartsWith("iatag_") ?? false;
-            if (hasTag) {
-                var localizedTag = lang.GetTag(tag);
-                if (!string.IsNullOrEmpty(localizedTag)) {
-                    control.Text = localizedTag;
-                }
-                else if (lang.WarnIfMissing && _missingTagWarningCount < MaxMissingTagWarnings) {
-                    _missingTagWarningCount++;
-                    Logger.WarnFormat("Could not find tag {0} in localization, defaulting to {0}={1}", tag,
-                        control.Text);
-                    if (_missingTagWarningCount == MaxMissingTagWarnings) {
-                        Logger.Warn("Suppressing further missing localization tag warnings...");
-                    }
-                }
-            }
-        }
 
         /// <summary>
         /// Load language using a language code and English fallback.
