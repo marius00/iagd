@@ -20,7 +20,7 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
         private readonly IDatabaseItemDao _databaseItemDao;
         private readonly IDatabaseItemStatDao _databaseItemStatDao;
         private readonly IItemSkillDao _itemSkillDao;
-        private readonly string _localizationFile;
+        private readonly string _languageCode;
         public event EventHandler OnParseComplete;
 
 
@@ -30,14 +30,14 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
             IDatabaseItemDao databaseItemDao,
             IDatabaseItemStatDao databaseItemStatDao,
             IItemSkillDao itemSkillDao,
-            string localizationFile
+            string languageCode
         ) {
             _itemTagDao = itemTagDao;
             _grimdawnLocation = grimdawnLocation;
             _databaseItemDao = databaseItemDao;
             _databaseItemStatDao = databaseItemStatDao;
             _itemSkillDao = itemSkillDao;
-            _localizationFile = localizationFile;
+            _languageCode = languageCode;
         }
 
         public static long GetHighestTimestamp(string install) {
@@ -74,23 +74,47 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
             var form = new ParsingDatabaseProgressView();
             var parser = new ArzParsingWrapper();
 
+            string arcFileName = $"text_{_languageCode.ToLowerInvariant()}.arc";
 
+            // Always load English first as fallback, then overlay selected language
             List<string> tagfiles = new List<string>();
-            string vanillaTags = GrimFolderUtility.FindArcFile(_grimdawnLocation, "text_en.arc");
-            if (!string.IsNullOrEmpty(vanillaTags)) {
-                tagfiles.Add(vanillaTags);
+
+            // English tags first (fallback)
+            string vanillaEnTags = GrimFolderUtility.FindArcFile(_grimdawnLocation, "text_en.arc");
+            if (!string.IsNullOrEmpty(vanillaEnTags)) {
+                tagfiles.Add(vanillaEnTags);
             }
 
             foreach (string path in GrimFolderUtility.GetGrimExpansionFolders(_grimdawnLocation)) {
-                string expansionTags = GrimFolderUtility.FindArcFile(path, "text_en.arc");
-                if (!string.IsNullOrEmpty(expansionTags)) {
-                    tagfiles.Add(expansionTags);
+                string expansionEnTags = GrimFolderUtility.FindArcFile(path, "text_en.arc");
+                if (!string.IsNullOrEmpty(expansionEnTags)) {
+                    tagfiles.Add(expansionEnTags);
                 }
             }
 
-            string modTags = string.IsNullOrEmpty(_modLocation) ? "" : GrimFolderUtility.FindArcFile(_modLocation, "text_en.arc");
-            if (!string.IsNullOrEmpty(modTags)) {
-                tagfiles.Add(modTags);
+            string modEnTags = string.IsNullOrEmpty(_modLocation) ? "" : GrimFolderUtility.FindArcFile(_modLocation, "text_en.arc");
+            if (!string.IsNullOrEmpty(modEnTags)) {
+                tagfiles.Add(modEnTags);
+            }
+
+            // Selected language overlay (if not English)
+            if (!_languageCode.Equals("EN", StringComparison.OrdinalIgnoreCase)) {
+                string vanillaLangTags = GrimFolderUtility.FindArcFile(_grimdawnLocation, arcFileName);
+                if (!string.IsNullOrEmpty(vanillaLangTags)) {
+                    tagfiles.Add(vanillaLangTags);
+                }
+
+                foreach (string path in GrimFolderUtility.GetGrimExpansionFolders(_grimdawnLocation)) {
+                    string expansionLangTags = GrimFolderUtility.FindArcFile(path, arcFileName);
+                    if (!string.IsNullOrEmpty(expansionLangTags)) {
+                        tagfiles.Add(expansionLangTags);
+                    }
+                }
+
+                string modLangTags = string.IsNullOrEmpty(_modLocation) ? "" : GrimFolderUtility.FindArcFile(_modLocation, arcFileName);
+                if (!string.IsNullOrEmpty(modLangTags)) {
+                    tagfiles.Add(modLangTags);
+                }
             }
 
 
@@ -116,7 +140,7 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
             // Invoke the background thread & show progress UI
             Thread t = new Thread(() => {
                 ExceptionReporter.EnableLogUnhandledOnThread();
-                parser.LoadTags(tagfiles, _localizationFile, new WinformsProgressBar(form.LoadingTags).Tracker);
+                parser.LoadTags(tagfiles, _languageCode, new WinformsProgressBar(form.LoadingTags).Tracker);
                 _itemTagDao.Save(parser.Tags, new WinformsProgressBar(form.SavingTags).Tracker);
                 parser.LoadItems(arzFiles, new WinformsProgressBar(form.LoadingItems).Tracker);
                 parser.MapItemNames(new WinformsProgressBar(form.MappingItemNames).Tracker);

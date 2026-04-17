@@ -21,7 +21,7 @@ namespace EvilsoftCommons.Cloud {
 
 
 
-        private void bw_DoWork(object sender, DoWorkEventArgs e) {
+        private void bw_DoWork(object? sender, DoWorkEventArgs e) {
             try {
                 if (Thread.CurrentThread.Name == null) {
                     Thread.CurrentThread.Name = "Backup";
@@ -29,11 +29,11 @@ namespace EvilsoftCommons.Cloud {
                 }
                 ExceptionReporter.EnableLogUnhandledOnThread();
 
-                BackgroundWorker worker = sender as BackgroundWorker;
-                ICloudBackup b = e.Argument as ICloudBackup;
-                while (!worker.CancellationPending) {
+                BackgroundWorker? worker = sender as BackgroundWorker;
+                ICloudBackup? b = e.Argument as ICloudBackup;
+                while (!worker!.CancellationPending) {
                     Thread.Sleep(10);
-                    b.Update();
+                    b!.Update();
                 }
             }
             catch (Exception ex) {

@@ -21,6 +21,7 @@ namespace IAGrim.Settings.Dto {
         private string _lastSelectedTargetMod;
         private bool _lastSelectedTargetModIsHc;
         private string _localizationFile;
+        private string _languageCode;
         private WindowSizeManager.WindowSizeProps _windowPositionSettings;
         private bool _backupCustom;
         private bool _optOutOfBackups;
@@ -136,10 +137,19 @@ namespace IAGrim.Settings.Dto {
             }
         }
 
+        [Obsolete("Use LanguageCode instead. Kept for settings migration.")]
         public string LocalizationFile {
             get => _localizationFile;
             set {
                 _localizationFile = value;
+                OnMutate?.Invoke(null, EventArgs.Empty);
+            }
+        }
+
+        public string LanguageCode {
+            get => string.IsNullOrEmpty(_languageCode) ? "EN" : _languageCode;
+            set {
+                _languageCode = value;
                 OnMutate?.Invoke(null, EventArgs.Empty);
             }
         }

@@ -13,7 +13,7 @@ namespace EvilsoftCommons.SingleInstance {
     /// Running multiple instances could result in item duplication </summary>
     public class SingleInstance : IDisposable {
         static ILog logger = LogManager.GetLogger("SingleInstance");
-        private Mutex mutex = null;
+        private Mutex? mutex = null;
         private Boolean ownsMutex = false;
         private Guid identifier = Guid.Empty;
 

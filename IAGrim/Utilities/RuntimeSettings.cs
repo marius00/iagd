@@ -13,16 +13,13 @@ namespace IAGrim.Utilities {
     static class RuntimeSettings {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(RuntimeSettings));
 
-        public static void InitializeLanguage(string localizationFile, Dictionary<string, string> dbTags) {
+        public static void InitializeLanguage(string languageCode, Dictionary<string, string> dbTags) {
             var english = new EnglishLanguage(dbTags);
-            if (string.IsNullOrEmpty(localizationFile)) {
+            if (string.IsNullOrEmpty(languageCode) || languageCode.Equals("EN", System.StringComparison.OrdinalIgnoreCase)) {
                 Language = english;
-            } else if (!File.Exists(localizationFile)) {
-                Language = english;
-                Logger.Warn($"Could not locate {localizationFile}, defaulting to English.");
             }
             else {
-                Language = new LocalizationLoader().LoadLanguage(localizationFile, english);
+                Language = new LocalizationLoader().LoadLanguage(languageCode, english);
             }
         }
 

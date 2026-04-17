@@ -70,13 +70,17 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
 
         public void LoadTags(
             List<string> tagfiles,
-            string localizationFile,
+            string languageCode,
             ProgressTracker tracker
         ) {
-            int numFiles = tagfiles.Count - tagfiles.Where(string.IsNullOrEmpty).Count() + (string.IsNullOrEmpty(localizationFile) ? 0 : 1);
+            bool hasIaOverride = !string.IsNullOrEmpty(languageCode) 
+                                 && !languageCode.Equals("EN", StringComparison.OrdinalIgnoreCase)
+                                 && LanguageMapping.GetIaTranslationFile(languageCode) != null;
+
+            int numFiles = tagfiles.Count - tagfiles.Where(string.IsNullOrEmpty).Count() + (hasIaOverride ? 1 : 0);
             tracker.MaxValue = numFiles;
 
-            // Load tags in a prioritized order
+            // Load tags in a prioritized order (EN first, then selected language arc — already ordered by caller)
             foreach (var tagfile in tagfiles) {
                 if (File.Exists(tagfile)) {
                     Logger.Debug($"Loading tags from {tagfile}");
@@ -89,17 +93,18 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
                 tracker.Increment();
             }
 
-            // User override for some tags
-            var localizationLoader = new LocalizationLoader();
-            if (!string.IsNullOrEmpty(localizationFile) && localizationLoader.Load(localizationFile)) {
-                Logger.Debug($"Loading tags from {localizationFile}");
+            // Load IA translation override file for the selected language
+            if (hasIaOverride) {
+                var iaFile = LanguageMapping.GetIaTranslationFile(languageCode);
+                var localizationLoader = new LocalizationLoader();
+                localizationLoader.LoadIaTranslationFile(iaFile);
 
                 var tags = localizationLoader.GetItemTags();
                 foreach (var tag in tags) {
                     _tagAccumulator.Add(tag.Tag, tag.Name);
                 }
 
-                Logger.Debug($"Loaded {tags.Count} tags from {localizationFile}");
+                Logger.Debug($"Loaded {tags.Count} IA override tags for language {languageCode}");
                 tracker.Increment();
             }
 
