@@ -89,7 +89,7 @@
             this.rbClassic.Size = new System.Drawing.Size(282, 17);
             this.rbClassic.TabIndex = 1;
             this.rbClassic.TabStop = true;
-            this.rbClassic.Tag = "itag_ui_lootclassic";
+            this.rbClassic.Tag = "iatag_ui_lootclassic";
             this.rbClassic.Text = "I want my items to be looted when i leave the smuggler";
             this.rbClassic.UseVisualStyleBackColor = true;
             // 
@@ -131,7 +131,7 @@
             this.rbInstant.Size = new System.Drawing.Size(213, 17);
             this.rbInstant.TabIndex = 0;
             this.rbInstant.TabStop = true;
-            this.rbInstant.Tag = "itag_ui_lootinstant";
+            this.rbInstant.Tag = "iatag_ui_lootinstant";
             this.rbInstant.Text = "I want my items to be looted immediately";
             this.rbInstant.UseVisualStyleBackColor = true;
             // 
@@ -170,7 +170,7 @@
             this.Controls.Add(this.gpInstant);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "LootingModeScreen";
-            this.Tag = "itag_ui_title_lootingmode";
+            this.Tag = "iatag_ui_title_lootingmode";
             this.Text = "Select your preferred looting mode";
             this.Load += new System.EventHandler(this.LootingModeScreen_Load);
             this.gpInstant.ResumeLayout(false);

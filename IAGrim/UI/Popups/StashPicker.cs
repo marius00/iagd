@@ -1,4 +1,5 @@
 ﻿using IAGrim.Utilities;
+using IAGrim.Parsers.Arz;
 using IAGrim.Utilities.HelperClasses;
 using System;
 using System.Drawing;
@@ -22,6 +23,7 @@ namespace IAGrim.UI {
 
 
         private void StashPicker_Load(object sender, EventArgs e) {
+            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
             int n = 0;
 
             var target = _settings.GetLocal().LastSelectedTargetMod;

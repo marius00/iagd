@@ -12,7 +12,8 @@ using StatTranslator;
 namespace IAGrim.Parsers.Arz {
     public class LocalizationLoader {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(LocalizationLoader));
-        private IDictionary<string, string> _tagsItems = new Dictionary<string, string>();
+        private const int MaxMissingTagWarnings = 30;
+        private static int _missingTagWarningCount = 0;        private IDictionary<string, string> _tagsItems = new Dictionary<string, string>();
         private IDictionary<string, string> _tagsIa = new Dictionary<string, string>();
 
         public ISet<ItemTag> GetItemTags() {
@@ -49,6 +50,9 @@ namespace IAGrim.Parsers.Arz {
             var tag = control.Tag?.ToString();
             bool hasTag = tag?.StartsWith("iatag_") ?? false;
             if (hasTag) {
+                // TextBox and ComboBox tags are tooltip-only; skip them when not applying tooltips
+                if (toolTip == null && (control is TextBox || control is ComboBox)) return;
+
                 var localizedTag = lang.GetTag(tag);
                 if (!string.IsNullOrEmpty(localizedTag)) {
                     if (toolTip != null) {
@@ -58,9 +62,13 @@ namespace IAGrim.Parsers.Arz {
                         control.Text = localizedTag;
                     }
                 }
-                else if (lang.WarnIfMissing) {
+                else if (lang.WarnIfMissing && _missingTagWarningCount < MaxMissingTagWarnings) {
+                    _missingTagWarningCount++;
                     Logger.WarnFormat("Could not find tag {0} in localization, defaulting to {0}={1}", tag,
                         control.Text);
+                    if (_missingTagWarningCount == MaxMissingTagWarnings) {
+                        Logger.Warn("Suppressing further missing localization tag warnings...");
+                    }
                 }
             }
         }
@@ -73,9 +81,13 @@ namespace IAGrim.Parsers.Arz {
                 if (!string.IsNullOrEmpty(localizedTag)) {
                     control.Text = localizedTag;
                 }
-                else if (lang.WarnIfMissing) {
+                else if (lang.WarnIfMissing && _missingTagWarningCount < MaxMissingTagWarnings) {
+                    _missingTagWarningCount++;
                     Logger.WarnFormat("Could not find tag {0} in localization, defaulting to {0}={1}", tag,
                         control.Text);
+                    if (_missingTagWarningCount == MaxMissingTagWarnings) {
+                        Logger.Warn("Suppressing further missing localization tag warnings...");
+                    }
                 }
             }
         }

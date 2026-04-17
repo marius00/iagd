@@ -43,6 +43,7 @@
             this.groupBox1.Size = new System.Drawing.Size(549, 129);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
+            this.groupBox1.Tag = "iatag_ui_modselection";
             this.groupBox1.Text = "Mod selection";
             // 
             // pictureBox1
@@ -72,6 +73,7 @@
             this.buttonTransfer.Name = "buttonTransfer";
             this.buttonTransfer.Size = new System.Drawing.Size(549, 35);
             this.buttonTransfer.TabIndex = 1;
+            this.buttonTransfer.Tag = "iatag_ui_transfer";
             this.buttonTransfer.Text = "Transfer";
             this.buttonTransfer.Click += new System.EventHandler(this.buttonTransfer_Click);
             // 
@@ -98,6 +100,7 @@
             this.Name = "StashPicker";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
+            this.Tag = "iatag_ui_stashpicker";
             this.Text = "StashPicker";
             this.Load += new System.EventHandler(this.StashPicker_Load);
             this.groupBox1.ResumeLayout(false);

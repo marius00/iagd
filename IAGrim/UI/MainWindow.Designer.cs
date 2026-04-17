@@ -207,6 +207,7 @@
             // 
             openToolStripMenuItem.Name = "openToolStripMenuItem";
             openToolStripMenuItem.Size = new Size(103, 22);
+            openToolStripMenuItem.Tag = "iatag_ui_tray_open";
             openToolStripMenuItem.Text = "Open";
             openToolStripMenuItem.Click += openToolStripMenuItem_Click;
             // 
@@ -214,6 +215,7 @@
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             exitToolStripMenuItem.Size = new Size(103, 22);
+            exitToolStripMenuItem.Tag = "iatag_ui_tray_exit";
             exitToolStripMenuItem.Text = "Exit";
             exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
             // 

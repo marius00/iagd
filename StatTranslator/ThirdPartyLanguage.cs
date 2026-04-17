@@ -5,6 +5,7 @@ using System.Linq;
 namespace StatTranslator {
     public class ThirdPartyLanguage : ILocalizedLanguage {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ThirdPartyLanguage));
+        private const int MaxMissingTagWarnings = 30;
         private readonly Dictionary<string, string> _stats;
         private readonly ItemNameCombinator _itemCombinator;
 
@@ -14,9 +15,15 @@ namespace StatTranslator {
             _stats = dataset;
 
             // Make sure the loaded language has all the necessary keys
+            int missingCount = 0;
             foreach (var key in fallback.Serialize()) {
                 if (!_stats.ContainsKey(key)) {
-                    Logger.WarnFormat("Could not find tag {0}, using default {0}={1}", key, fallback.GetTag(key));
+                    missingCount++;
+                    if (missingCount <= MaxMissingTagWarnings) {
+                        Logger.WarnFormat("Could not find tag {0}, using default {0}={1}", key, fallback.GetTag(key));
+                    } else if (missingCount == MaxMissingTagWarnings + 1) {
+                        Logger.WarnFormat("Suppressing further missing tag warnings ({0} so far)...", missingCount);
+                    }
                     _stats[key] = fallback.GetTag(key);
                 }
             }
