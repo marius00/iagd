@@ -3,6 +3,8 @@
 #include <codecvt> // wstring_convert
 #include <windows.h>
 #include <stdlib.h>
+#include <objbase.h>
+#include <fstream>
 #include "DataQueue.h"
 #include "MessageType.h"
 #include "StateRequestNpcAction.h"
@@ -19,6 +21,7 @@
 #include "SetTransferOpen.h"
 #include "Logger.h"
 #include "SetHardcore.h"
+#include "SettingsReader.h"
 HookLog g_log;
 
 #pragma region Variables
@@ -47,6 +50,9 @@ DataQueue g_dataQueue;
 InventorySack_AddItem* g_InventorySack_AddItemInstance = NULL;
 
 HWND g_targetWnd = NULL;
+
+bool g_isRunningInWine = false;
+std::wstring g_linuxHackFolder;
 
 #pragma endregion
 
@@ -126,50 +132,104 @@ void LogToFile(LogLevel level, std::wstringstream message) {
 }
 
 
+// Wine/Proton file-based IPC: write message as binary file to linuxhack folder
+// Format: [int32 type][int32 dataLength][raw data bytes]
+// Write as .tmp then rename to .msg for atomic visibility
+void WriteMessageToFile(DWORD dwData, void* lpData, DWORD cbData) {
+	GUID guid;
+	if (CoCreateGuid(&guid) != S_OK) {
+		LogToFile(LogLevel::FATAL, L"Failed to create GUID for message file");
+		return;
+	}
+
+	wchar_t guidStr[64];
+	swprintf_s(guidStr, L"%08lX-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
+		guid.Data1, guid.Data2, guid.Data3,
+		guid.Data4[0], guid.Data4[1], guid.Data4[2], guid.Data4[3],
+		guid.Data4[4], guid.Data4[5], guid.Data4[6], guid.Data4[7]);
+
+	std::wstring tmpPath = g_linuxHackFolder + guidStr + L".tmp";
+	std::wstring msgPath = g_linuxHackFolder + guidStr + L".msg";
+
+	HANDLE hFile = CreateFile(tmpPath.c_str(), GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (hFile == INVALID_HANDLE_VALUE) {
+		LogToFile(LogLevel::FATAL, L"Failed to create temp message file: " + tmpPath);
+		return;
+	}
+
+	DWORD written;
+	int32_t type = static_cast<int32_t>(dwData);
+	int32_t dataLength = static_cast<int32_t>(cbData);
+
+	WriteFile(hFile, &type, sizeof(type), &written, NULL);
+	WriteFile(hFile, &dataLength, sizeof(dataLength), &written, NULL);
+	if (cbData > 0 && lpData != nullptr) {
+		WriteFile(hFile, lpData, cbData, &written, NULL);
+	}
+	CloseHandle(hFile);
+
+	if (!MoveFile(tmpPath.c_str(), msgPath.c_str())) {
+		LogToFile(LogLevel::FATAL, L"Failed to move message file to: " + msgPath);
+		DeleteFile(tmpPath.c_str());
+	}
+}
+
+
 /// Thread function that dispatches queued message blocks to the IA application.
 void WorkerThreadMethod() {
 	try {
+		bool wineSetActiveDone = false;
 		while ((g_hEvent != NULL) && (WaitForSingleObject(g_hEvent, INFINITE) == WAIT_OBJECT_0)) {
 			if (g_hEvent == NULL) {
 				break;
 			}
 
-			DWORD tick = GetTickCount();
-			if (tick < g_lastThreadTick) {
-				// Overflow
-				g_lastThreadTick = tick;
+			if (g_isRunningInWine) {
+				// In Wine mode, keep InventorySack_AddItem permanently active (no FindWindow)
+				if (!wineSetActiveDone && g_InventorySack_AddItemInstance != NULL) {
+					g_InventorySack_AddItemInstance->SetActive(true);
+					wineSetActiveDone = true;
+				}
 			}
+			else {
+				DWORD tick = GetTickCount();
+				if (tick < g_lastThreadTick) {
+					// Overflow
+					g_lastThreadTick = tick;
+				}
 
-			if ((tick - g_lastThreadTick > 1000) || (g_targetWnd == NULL)) {
-				// We either don't have a valid window target OR it has been more than 1 sec since we last update the target.
-				g_targetWnd = FindWindow(L"GDIAWindowClass", NULL);
-				g_lastThreadTick = GetTickCount();
-				// LOG(L"FindWindow returned: " << g_targetWnd);
+				if ((tick - g_lastThreadTick > 1000) || (g_targetWnd == NULL)) {
+					g_targetWnd = FindWindow(L"GDIAWindowClass", NULL);
+					g_lastThreadTick = GetTickCount();
 
-				if (g_InventorySack_AddItemInstance != NULL) {
-					g_InventorySack_AddItemInstance->SetActive(g_targetWnd != NULL);
-					// TODO: Need to add OnDemandSeedInfo here as well as long as it uses messages
+					if (g_InventorySack_AddItemInstance != NULL) {
+						g_InventorySack_AddItemInstance->SetActive(g_targetWnd != NULL);
+					}
 				}
 			}
 
 			while (!g_dataQueue.empty()) {
 				DataItemPtr item = g_dataQueue.pop();
 
-				if (g_targetWnd == NULL) {
-					// We have data, but no target window, so just delete the message
-					continue;
+				if (g_isRunningInWine) {
+					WriteMessageToFile(item->type(), item->data(), item->size());
 				}
+				else {
+					if (g_targetWnd == NULL) {
+						// We have data, but no target window, so just delete the message
+						continue;
+					}
 
-				COPYDATASTRUCT data;
-				data.dwData = item->type();
-				data.lpData = item->data();
-				data.cbData = item->size();
+					COPYDATASTRUCT data;
+					data.dwData = item->type();
+					data.lpData = item->data();
+					data.cbData = item->size();
 
-				// To avoid blocking the main thread, we should not have a lock on the queue while we process the message.
-				SendMessage(g_targetWnd, WM_COPYDATA, 0, (LPARAM)&data);
-				auto lastErrorCode = GetLastError();
-				if (lastErrorCode != 0)
-					LOG(L"After SendMessage error code is " << lastErrorCode);
+					SendMessage(g_targetWnd, WM_COPYDATA, 0, (LPARAM)&data);
+					auto lastErrorCode = GetLastError();
+					if (lastErrorCode != 0)
+						LOG(L"After SendMessage error code is " << lastErrorCode);
+				}
 			}
 
 		}
@@ -268,6 +328,11 @@ static void ConfigureStashDetectionHooks(std::vector<BaseMethodHook*>& hooks) {
 		LogToFile(LogLevel::INFO, L"Configuring instaloot hook..");
 		g_InventorySack_AddItemInstance = new InventorySack_AddItem(&g_dataQueue, g_hEvent);
 		hooks.push_back(g_InventorySack_AddItemInstance); // Includes GetPrivateStash internally
+
+		// In Wine mode, set active immediately since there's no FindWindow
+		if (g_isRunningInWine && g_InventorySack_AddItemInstance != NULL) {
+			g_InventorySack_AddItemInstance->SetActive(true);
+		}
 	}
 	catch (std::exception& ex) {
 		// For now just let it be. Known issue inside InventorySack_AddItem
@@ -338,6 +403,11 @@ bool GetProductAndVersion()
 */
 
 void ReportCancelledInjection() {
+	if (g_isRunningInWine) {
+		WriteMessageToFile(TYPE_INJECTION_CANCELLED, nullptr, 0);
+		return;
+	}
+
 	auto hwnd = FindWindow(L"GDIAWindowClass", NULL);
 	if (hwnd == nullptr) {
 		return;
@@ -356,10 +426,39 @@ void ReportCancelledInjection() {
 }
 
 std::vector<BaseMethodHook*> hooks;
+std::wstring GetIagdFolder();
 int ProcessAttach(HINSTANCE _hModule) {
 	//GetProductAndVersion();
 	LogToFile(LogLevel::INFO, std::string("DLL Compiled: ") + std::string(__DATE__) + std::string(" ") + std::string(__TIME__));
 	LogToFile(LogLevel::INFO, L"Attatching to process..");
+
+	// Check if running in Wine/Proton
+	try {
+		SettingsReader settingsReader;
+		g_isRunningInWine = settingsReader.GetIsRunningInWine();
+	}
+	catch (...) {
+		LogToFile(LogLevel::WARNING, L"Failed to read Wine setting, defaulting to false");
+		g_isRunningInWine = false;
+	}
+
+	if (g_isRunningInWine) {
+		g_linuxHackFolder = GetIagdFolder() + L"linuxhack\\";
+		CreateDirectory(g_linuxHackFolder.c_str(), NULL);
+		LogToFile(LogLevel::INFO, L"Wine mode enabled, linuxhack folder: " + g_linuxHackFolder);
+
+		// Write PID file to signal successful injection
+		DWORD pid = GetCurrentProcessId();
+		std::wstring pidFile = g_linuxHackFolder + std::to_wstring(pid) + L".PID";
+		HANDLE hPid = CreateFile(pidFile.c_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		if (hPid != INVALID_HANDLE_VALUE) {
+			CloseHandle(hPid);
+			LogToFile(LogLevel::INFO, L"Wrote PID file: " + pidFile);
+		}
+		else {
+			LogToFile(LogLevel::WARNING, L"Failed to write PID file: " + pidFile);
+		}
+	}
 
 
 	GAME::GameEngine* gameEngine = fnGetGameEngine();
@@ -465,6 +564,13 @@ int ProcessDetach(HINSTANCE _hModule) {
 	}
 
 	EndWorkerThread();
+
+	// Best-effort cleanup of PID file in Wine mode
+	if (g_isRunningInWine && !g_linuxHackFolder.empty()) {
+		DWORD pid = GetCurrentProcessId();
+		std::wstring pidFile = g_linuxHackFolder + std::to_wstring(pid) + L".PID";
+		DeleteFile(pidFile.c_str());
+	}
 
 	LOG(L"DLL detached..");
 	return TRUE;

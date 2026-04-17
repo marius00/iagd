@@ -14,6 +14,7 @@
         private bool? _autoUpdateModSettings;
         private bool? _hideSkills;
         private bool? _autoDismissNotifications;
+        private bool? _isRunningInWine;
 
         private long? _cloudUploadTimestamp;
 
@@ -125,6 +126,14 @@
             get => _cloudUploadTimestamp ?? 0;
             set {
                 _cloudUploadTimestamp = value;
+                OnMutate?.Invoke(null, EventArgs.Empty);
+            }
+        }
+
+        public bool IsRunningInWine {
+            get => _isRunningInWine ?? false;
+            set {
+                _isRunningInWine = value;
                 OnMutate?.Invoke(null, EventArgs.Empty);
             }
         }
