@@ -148,6 +148,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "StashTabPicker";
             this.ShowInTaskbar = false;
+            this.Tag = "iatag_ui_stashtabpicker";
             this.Text = "Advanced Settings - Stash Configuration";
             this.Load += new System.EventHandler(this.StashTabPicker_Load);
             this.gbMoveTo.ResumeLayout(false);

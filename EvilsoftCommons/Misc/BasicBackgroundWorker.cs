@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 
 namespace EvilsoftCommons.Misc {
-
     public class BasicBackgroundWorker : IDisposable {
         private BackgroundWorker bw;
         Action<BackgroundWorker, DoWorkEventArgs> Execute;
@@ -46,10 +45,8 @@ namespace EvilsoftCommons.Misc {
             bw.WorkerSupportsCancellation = true;
             bw.RunWorkerAsync(args);
         }
-
-
-        private void bw_DoWork(object sender, DoWorkEventArgs e) {
-            this.Execute(sender as BackgroundWorker, e);
+        private void bw_DoWork(object? sender, DoWorkEventArgs e) {
+            this.Execute((sender as BackgroundWorker)!, e);
         }
 
         public void Dispose() {

@@ -11,7 +11,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using IAGrim.Parsers.Arz;
 using IAGrim.Parsers.TransferStash;
+using IAGrim.Utilities;
 
 namespace IAGrim.UI.Popups.ImportExport {
     partial class ImportExportContainer : Form {
@@ -27,6 +29,7 @@ namespace IAGrim.UI.Popups.ImportExport {
         }
 
         private void ImportExportContainer_Load(object sender, EventArgs e) {
+            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
             UIHelper.AddAndShow(new ImportExportModePicker(
                 _modFilter, 
                 _playerItemDao, 

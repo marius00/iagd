@@ -36,6 +36,7 @@
             btnUpdateNow.Name = "btnUpdateNow";
             btnUpdateNow.Size = new Size(210, 48);
             btnUpdateNow.TabIndex = 1;
+            btnUpdateNow.Tag = "iatag_ui_updatenow";
             btnUpdateNow.Text = "Update now";
             btnUpdateNow.UseVisualStyleBackColor = true;
             btnUpdateNow.Click += btnUpdateNow_Click;
@@ -49,6 +50,7 @@
             lnkRemindMeLater.Size = new Size(100, 15);
             lnkRemindMeLater.TabIndex = 3;
             lnkRemindMeLater.TabStop = true;
+            lnkRemindMeLater.Tag = "iatag_ui_remindmelater";
             lnkRemindMeLater.Text = "Remind me later..";
             lnkRemindMeLater.LinkClicked += lnkRemindMeLater_LinkClicked;
             // 
@@ -60,6 +62,7 @@
             label1.Name = "label1";
             label1.Size = new Size(417, 32);
             label1.TabIndex = 4;
+            label1.Tag = "iatag_ui_newversion_available";
             label1.Text = "A new version is available is available!";
             // 
             // lnkWhatHasChanged
@@ -70,6 +73,7 @@
             lnkWhatHasChanged.Size = new Size(124, 15);
             lnkWhatHasChanged.TabIndex = 5;
             lnkWhatHasChanged.TabStop = true;
+            lnkWhatHasChanged.Tag = "iatag_ui_seewhatchanged";
             lnkWhatHasChanged.Text = "See what has changed";
             lnkWhatHasChanged.LinkClicked += lnkWhatHasChanged_LinkClicked;
             // 
@@ -87,6 +91,7 @@
             MaximumSize = new Size(472, 299);
             MinimumSize = new Size(472, 299);
             Name = "UpdateModal";
+            Tag = "iatag_ui_updateavailable";
             Text = "Update available";
             ResumeLayout(false);
             PerformLayout();

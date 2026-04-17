@@ -13,11 +13,11 @@ namespace DataAccess {
     }*/
 
     public class Item : IItem {
-        public string Record {
+        public string? Record {
             get; set;
         }
 
-        public ICollection<IItemStat> Stats {
+        public ICollection<IItemStat>? Stats {
             get; set;
         }
     }

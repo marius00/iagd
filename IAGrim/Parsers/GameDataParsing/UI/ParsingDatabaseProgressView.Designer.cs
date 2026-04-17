@@ -379,6 +379,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "ParsingDatabaseProgressView";
+            this.Tag = "iatag_ui_parsingdb";
             this.Text = "Parsing database..";
             this.Load += new System.EventHandler(this.ParsingDatabaseProgressView_Load);
             this.groupBox1.ResumeLayout(false);

@@ -1,13 +1,19 @@
-﻿using IAGrim.Database;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using IAGrim.Database;
+using IAGrim.Parsers.GameDataParsing.Model;
 using log4net;
 using StatTranslator;
-using System.IO.Compression;
-using System.Text;
 
 namespace IAGrim.Parsers.Arz {
     public class LocalizationLoader {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(LocalizationLoader));
-        private IDictionary<string, string> _tagsItems = new Dictionary<string, string>();
+        private const int MaxMissingTagWarnings = 30;
+        private static int _missingTagWarningCount = 0;        private IDictionary<string, string> _tagsItems = new Dictionary<string, string>();
         private IDictionary<string, string> _tagsIa = new Dictionary<string, string>();
 
         public ISet<ItemTag> GetItemTags() {
@@ -26,8 +32,6 @@ namespace IAGrim.Parsers.Arz {
         /// Recursively check each control for .Tag == "iatag_*"
         /// If the tag is located and also found in the provided language pack, the controls text is updated
         /// </summary>
-        /// <param name="c"></param>
-        /// <param name="lang"></param>
         public static void ApplyLanguage(Control.ControlCollection c, ILocalizedLanguage lang) {
             foreach (Control control in c) {
                 ApplyLanguage(control, lang);
@@ -45,38 +49,25 @@ namespace IAGrim.Parsers.Arz {
         private static void ApplyLanguage(Control control, ILocalizedLanguage lang, ToolTip toolTip = null) {
             var tag = control.Tag?.ToString();
             bool hasTag = tag?.StartsWith("iatag_") ?? false;
-
             if (hasTag) {
-                // Some controls like TextBox will only have a _tooltip tag, don't insert the text into them.
-                if (!tag.EndsWith("_tooltip")) {
+                // TextBox and ComboBox tags are tooltip-only; skip them when not applying tooltips
+                if (toolTip == null && (control is TextBox || control is ComboBox)) return;
 
-                    var localizedTag = lang.GetTag(tag);
-                    if (!string.IsNullOrEmpty(localizedTag)) {
+                var localizedTag = lang.GetTag(tag);
+                if (!string.IsNullOrEmpty(localizedTag)) {
+                    if (toolTip != null) {
+                        toolTip.SetToolTip(control, localizedTag);
+                    }
+                    else {
                         control.Text = localizedTag;
-                    } else if (lang.WarnIfMissing) {
-                        Logger.WarnFormat("Could not find tag {0} in localization, defaulting to {0}={1}", tag, control.Text);
                     }
                 }
-
-                // Most controls only has a regular tag, but may contain a _tooltip tag too.
-                if (toolTip != null && !string.IsNullOrEmpty(toolTip.GetToolTip(control))) {
-                    var tooltipTagName = (tag + "_tooltip").Replace("_tooltip_tooltip", "_tooltip");
-
-                    var localizedTooltipTag = lang.GetTag(tooltipTagName);
-                    if (!string.IsNullOrEmpty(localizedTooltipTag)) {
-                        toolTip.SetToolTip(control, localizedTooltipTag);
-                    }
-                    else if (lang.WarnIfMissing) {
-                        Logger.WarnFormat("Could not find tag {0} in localization, defaulting to {0}={1}", tooltipTagName, toolTip.GetToolTip(control));
-                    }
-                }
-            }
-            else {
-                // Listview column headers
-                ListView lv = control as ListView;
-                if (lv != null) {
-                    foreach (ColumnHeader header in lv.Columns) {
-                        ApplyLanguage(header, lang);
+                else if (lang.WarnIfMissing && _missingTagWarningCount < MaxMissingTagWarnings) {
+                    _missingTagWarningCount++;
+                    Logger.WarnFormat("Could not find tag {0} in localization, defaulting to {0}={1}", tag,
+                        control.Text);
+                    if (_missingTagWarningCount == MaxMissingTagWarnings) {
+                        Logger.Warn("Suppressing further missing localization tag warnings...");
                     }
                 }
             }
@@ -90,16 +81,27 @@ namespace IAGrim.Parsers.Arz {
                 if (!string.IsNullOrEmpty(localizedTag)) {
                     control.Text = localizedTag;
                 }
-                else if (lang.WarnIfMissing) {
+                else if (lang.WarnIfMissing && _missingTagWarningCount < MaxMissingTagWarnings) {
+                    _missingTagWarningCount++;
                     Logger.WarnFormat("Could not find tag {0} in localization, defaulting to {0}={1}", tag,
                         control.Text);
+                    if (_missingTagWarningCount == MaxMissingTagWarnings) {
+                        Logger.Warn("Suppressing further missing localization tag warnings...");
+                    }
                 }
             }
         }
 
-        public ILocalizedLanguage LoadLanguage(string filename, EnglishLanguage fallback) {
-            if (_tagsItems == null || _tagsItems.Count == 0) {
-                Load(filename);
+        /// <summary>
+        /// Load language using a language code and English fallback.
+        /// Reads the bundled IA translation override file for the given language code.
+        /// </summary>
+        public ILocalizedLanguage LoadLanguage(string languageCode, EnglishLanguage fallback) {
+            var iaTranslationFile = LanguageMapping.GetIaTranslationFile(languageCode);
+            if (iaTranslationFile != null) {
+                LoadIaTranslationFile(iaTranslationFile);
+            } else {
+                Logger.Info($"No bundled IA translation file found for language code '{languageCode}'");
             }
 
             var dataset = new Dictionary<string, string>(_tagsItems);
@@ -111,6 +113,27 @@ namespace IAGrim.Parsers.Arz {
 
             var language = new ThirdPartyLanguage(dataset, fallback);
             return language;
+        }
+
+        /// <summary>
+        /// Load a plain .txt translation override file (replaces the old tags_ia.txt from zip).
+        /// Format: key=value per line.
+        /// </summary>
+        public void LoadIaTranslationFile(string filePath) {
+            if (!File.Exists(filePath)) {
+                Logger.Warn($"IA translation file not found: {filePath}");
+                return;
+            }
+
+            try {
+                var data = File.ReadAllText(filePath, Encoding.UTF8);
+                _tagsIa = Parse(data);
+                Logger.Info($"Loaded {_tagsIa.Count} IA override tags from {filePath}");
+            }
+            catch (Exception ex) {
+                Logger.Warn($"Error loading IA translation file {filePath}: {ex.Message}");
+                _tagsIa = null;
+            }
         }
 
         private Dictionary<string, string> Parse(string data) {
@@ -125,109 +148,20 @@ namespace IAGrim.Parsers.Arz {
             return result;
         }
 
-        private Dictionary<string, string> ReadFile(ZipArchive zip, string filename) {
-            var f = zip.Entries.FirstOrDefault(m => m.Name == filename);
-            using var handle = f.Open();
-            var data = new StreamReader(handle, Encoding.UTF8).ReadToEnd();
-            return Parse(data);
-        }
-
-        public bool CheckLanguage(string filename, out string author, out string language) {
-            author = "Unknown";
-            language = "Unknown";
-            if (!File.Exists(filename))
-                return false;
-            
-            try {
-                using var zip = ZipFile.Open(filename, ZipArchiveMode.Read);
-                var parsed = ReadFile(zip, "language.def");
-                if (parsed.ContainsKey("author"))
-                    author = parsed["author"];
-                if (parsed.ContainsKey("language"))
-                    language = parsed["language"];
-
-                return true;
-            }
-            catch (Exception ex) {
-                Logger.Warn(ex.Message);
-                Logger.Warn(ex.StackTrace);
-                return false;
-            }
-        }
-
         static IDictionary<TKey, TValue> Merge<TKey, TValue>(IDictionary<TKey, TValue> x, IDictionary<TKey, TValue> y) {
-            return x
-                .Except(x.Join(y, z => z.Key, z => z.Key, (a, b) => a))
-                .Concat(y)
-                .ToDictionary(z => z.Key, z => z.Value);
-        }
-
-
-        public bool Load(string filename) {
-            if (!File.Exists(filename))
-                return false;
-
-            try {
-                using var zip = ZipFile.Open(filename, ZipArchiveMode.Read);
-                foreach (var itemsFile in zip.Entries.Where(m =>
-                             m.Name.Contains("items")
-                             || m.Name.Contains("skills")
-                             || m.Name.Contains("endlessdungeon"))
-                         ) {
-
-                    using var handle = itemsFile.Open();
-                    var data = new StreamReader(handle, Encoding.UTF8).ReadToEnd();
-                    var tags = Parse(data);
-                    _tagsItems = Merge(_tagsItems, tags);
-                }
-
-                var tagsIaFile = zip.Entries.FirstOrDefault(m => m.Name == "tags_ia.txt");
-                if (tagsIaFile != null) {
-                    _tagsIa = ReadFile(zip, "tags_ia.txt");
-                }
-                else {
-                    Logger.WarnFormat("Could not locate tags_ia.txt in {0}, defaulting to english for missing tags.", filename);
-                    _tagsIa = null;
-                }
-            }
-            catch (Exception ex) {
-                Logger.Warn(ex.Message);
-                Logger.Warn(ex.StackTrace);
-                return false;
+            foreach (var entry in y) {
+                x[entry.Key] = entry.Value;
             }
 
-            return true;
+            return x;
         }
 
-
+        /// <summary>
+        /// Check if any GD install path has non-EN Text_XX.arc files available.
+        /// </summary>
         public static bool HasSupportedTranslations(IEnumerable<string> grimDawnInstallPaths) {
-            foreach (var path in grimDawnInstallPaths) {
-                if (Directory.Exists(Path.Combine(path, "localization"))) {
-                    foreach (var file in Directory.EnumerateFiles(Path.Combine(path, "localization"), "*.zip")) {
-                        if (IsFullySupportedTranslation(file)) {
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        public static bool IsFullySupportedTranslation(string filename) {
-            if (!File.Exists(filename)) {
-                return false;
-            }
-
-            try {
-                using var zip = ZipFile.Open(filename, ZipArchiveMode.Read);
-                return zip.Entries.FirstOrDefault(m => m.Name == "tags_ia.txt") != null;
-            }
-            catch (Exception ex) {
-                Logger.Warn(ex.Message);
-                Logger.Warn(ex.StackTrace);
-                return false;
-            }
+            return LanguageMapping.GetAvailableLanguages(grimDawnInstallPaths)
+                .Any(code => !code.Equals("EN", StringComparison.OrdinalIgnoreCase));
         }
     }
 }

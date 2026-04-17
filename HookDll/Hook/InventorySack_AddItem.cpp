@@ -47,7 +47,7 @@ bool InventorySack_AddItem::m_isGrimDawnParsed;
 SettingsReader InventorySack_AddItem::m_settingsReader;
 bool InventorySack_AddItem::m_isActive;
 int InventorySack_AddItem::m_gameUpdateIterationsRun;
-InventorySack_AddItem::GameEngine_Update InventorySack_AddItem::dll_GameEngine_Update;
+InventorySack_AddItem::Engine_Render InventorySack_AddItem::dll_Engine_Render;
 bool InventorySack_AddItem::m_isTransferStashOpen;
 
 std::set<std::wstring> InventorySack_AddItem::m_depositQueue;
@@ -87,9 +87,9 @@ void InventorySack_AddItem::EnableHook() {
 
 	m_isTransferStashOpen = false;
 
-	dll_GameEngine_Update = (GameEngine_Update)HookGame(
-		"?Update@GameEngine@GAME@@QEAAXH@Z",
-		Hooked_GameEngine_Update,
+	dll_Engine_Render = (Engine_Render)HookEngine(
+		"?Render@Engine@GAME@@QEAAXXZ",
+		Hooked_Engine_Render,
 		m_dataQueue,
 		m_hEvent,
 		TYPE_GAMEENGINE_UPDATE
@@ -338,16 +338,27 @@ bool InventorySack_AddItem::Persist(
 	const std::vector<GAME::GameTextLine>& gameTextLines)
 {
 	std::wstring fullPath = m_storageFolder + randomFilename();
-	std::wofstream stream;
-	stream.open(fullPath);
+
+	// Use std::ofstream (narrow) and convert all wide strings to UTF-8 explicitly.
+	// std::wofstream converts through the system ANSI codepage, which destroys
+	// characters outside that codepage (e.g. Polish, Portuguese).
+	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> utf8conv;
+
+	std::ofstream stream;
+	stream.open(fullPath, std::ios::binary);
+
+	// Write UTF-8 BOM so readers can detect encoding
+	stream << "\xEF\xBB\xBF";
+
 	// Existing replica CSV line -- unchanged, IA client reads this format already.
-	stream << mod.c_str() << ";" << (isHardcore ? 1 : 0) << ";" << GAME::Serialize(replicaInfo) << "\n";
+	// mod and Serialize output are ASCII-safe, but convert them properly anyway.
+	stream << utf8conv.to_bytes(mod) << ";" << (isHardcore ? 1 : 0) << ";" << utf8conv.to_bytes(GAME::Serialize(replicaInfo)) << "\n";
 
 	// Append stats, one per line: textClass;text
 	// The IA client can read these after the first line, ignoring them if it doesn't
 	// understand them yet (backwards compatible, since it only reads line 1 today).
 	for (const auto& line : gameTextLines) {
-		stream << line.textClass << ";" << line.text.c_str() << "\n";
+		stream << line.textClass << ";" << utf8conv.to_bytes(line.text) << "\n";
 	}
 
 	stream.flush();
@@ -625,53 +636,52 @@ GAME::InventorySack* InventorySack_AddItem::GetSackToDepositTo(GAME::GameEngine*
 
 
 /// <summary>
-/// GameEngine::Update() hook
+/// Engine::Render() hook
 /// Responsible for moving items from .csv and back into the game.
 /// </summary>
-/// <param name="This"></param>
-/// <param name="notUsed"></param>
-/// <param name="s"></param>
-/// <param name="f"></param>
-/// <param name="b"></param>
-/// <param name="f2"></param>
-/// <returns></returns>
-void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int v) {
+/// <param name="This">GAME::Engine*</param>
+void __fastcall InventorySack_AddItem::Hooked_Engine_Render(void* This) {
 	try {
 		// IA not running? Continue
 		if (!m_isActive) {
-			//LogToFile(L"Debug: NotActive");
-			return dll_GameEngine_Update(This, v);
+			dll_Engine_Render(This);
+			return;
 		}
 
+		auto gameEngine = fnGetGameEngine();
+
 		// If the game is not in a a "ready state", just continue.
-		if (IsGameLoading(This) || IsGameWaiting(This, true) || !IsGameEngineOnline(This)) {
-			//LogToFile(L"Debug: NotReady");
+		if (gameEngine == nullptr || IsGameLoading(gameEngine) || IsGameWaiting(gameEngine, true) || !IsGameEngineOnline(gameEngine)) {
 			m_isTransferStashOpen = false; // Just to be on the safe side
-			return dll_GameEngine_Update(This, v);
+			dll_Engine_Render(This);
+			return;
 		}
 
 		// No need to check *constantly* (at least not until we get a thread here)
 		if (++m_gameUpdateIterationsRun < 30) {
-			//LogToFile(L"Debug: NotIteration");
-			return dll_GameEngine_Update(This, v);
+			dll_Engine_Render(This);
+			return;
 		}
 
 		m_gameUpdateIterationsRun = 0;
 
-		auto engine = fnGetEngine();
+		// This is already the Engine*, so use it directly
+		auto engine = (GAME::Engine*)This;
 		if (engine == nullptr) {
 			LogToFile(LogLevel::INFO, L"Debug: NoEngine");
-			return dll_GameEngine_Update(This, v);
+			dll_Engine_Render(This);
+			return;
 		}
 
 		GAME::GameInfo* gameInfo = fnGetGameInfo(engine);
 		if (gameInfo == nullptr) {
 			LogToFile(LogLevel::WARNING, L"GameInfo is null, aborting..");
-			return false;
+			dll_Engine_Render(This);
+			return;
 		}
 
 		if (m_isTransferStashOpen) {
-			void* sackPtr = GetSackToDepositTo((GAME::GameEngine*)This);
+			void* sackPtr = GetSackToDepositTo(gameEngine);
 			if (sackPtr != nullptr) {
 				GAME::Rect itemPosition;
 				boost::lock_guard<boost::mutex> guard(m_mutex);
@@ -752,13 +762,13 @@ void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int
 	catch (std::exception& ex) {
 		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 		std::wstring wide = converter.from_bytes(ex.what());
-		LogToFile(LogLevel::FATAL, L"Error parsing in InventorySack_AddItem::Hooked_GameEngine_Update.. " + wide);
+		LogToFile(LogLevel::FATAL, L"Error parsing in InventorySack_AddItem::Hooked_Engine_Render.. " + wide);
 	}
 	catch (...) {
-		LogToFile(LogLevel::FATAL, L"Error parsing in InventorySack_AddItem::Hooked_GameEngine_Update.. (triple-dot)");
+		LogToFile(LogLevel::FATAL, L"Error parsing in InventorySack_AddItem::Hooked_Engine_Render.. (triple-dot)");
 	}
 
-	return dll_GameEngine_Update(This, v);
+	dll_Engine_Render(This);
 }
 
 /// <summary>

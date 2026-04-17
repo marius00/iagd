@@ -782,7 +782,40 @@ namespace StatTranslator {
             {"iatag_ui_importexport_import_success", "Items imported!"},
             {"iatag_ui_importexport_import_success_body", "Items imported\nIf you already had items, you may have gotten duplicates."},
             {"iatag_ui_importexport_selectfile", "Select the file to import"},
-            {"iatag_ui_opencustombackup", "Open folder"}
+            {"iatag_ui_opencustombackup", "Open folder"},
+
+            // Popup and form tags
+            {"iatag_ui_updatenow", "Update now"},
+            {"iatag_ui_remindmelater", "Remind me later.."},
+            {"iatag_ui_newversion_available", "A new version is available!"},
+            {"iatag_ui_seewhatchanged", "See what has changed"},
+            {"iatag_ui_updateavailable", "Update available"},
+            {"iatag_ui_skipfornow", "Skip for now.."},
+            {"iatag_ui_dontremindme", "Don't remind me"},
+            {"iatag_ui_downloading", "Downloading.."},
+            {"iatag_ui_modselection", "Mod selection"},
+            {"iatag_ui_transfer", "Transfer"},
+            {"iatag_ui_stashpicker", "StashPicker"},
+            {"iatag_ui_stashtabpicker", "Advanced Settings - Stash Configuration"},
+            {"iatag_ui_parsingdb", "Parsing database.."},
+            {"iatag_ui_title_lootingmode", "Select your preferred looting mode"},
+            {"iatag_ui_lootinstant", "I want my items to be looted immediately"},
+            {"iatag_ui_lootclassic", "I want my items to be looted when i leave the smuggler"},
+            {"iatag_ui_instantlooting", "Loot items immediately (recommended)"},
+            {"iatag_ui_delayedlooting", "Loot items when I've left the smuggler (classic)"},
+            {"iatag_ui_explain_classiclooting", "This is the old behavior of Item Assistant, and does NOT supports Steam Cloud Sync. Items will not be looted immediately, instead they will be removed when you walk away from the smuggler."},
+            {"iatag_ui_explain_instantlooting", "This is the default behavior, and supports Steam Cloud Sync. Items will be looted as soon as they are placed in your shared transfer tab in the game."},
+            {"iatag_ui_btn_save", "Save && Close"},
+
+            // Context menu tags
+            {"iatag_ui_ctxmenu_show", "Show"},
+            {"iatag_ui_ctxmenu_hide", "Hide"},
+            {"iatag_ui_ctxmenu_edit", "Edit"},
+            {"iatag_ui_ctxmenu_delete", "Delete"},
+            {"iatag_ui_tray_open", "Open"},
+            {"iatag_ui_tray_exit", "Exit"},
+            {"iatag_ui_nagscreen_button", "Maybe later..."},
+            {"iatag_ui_title_importexport", "Import / Export"}
         };
 
         private const string English = "{%_s0}{%_s1}{%_s2}{%_s3}{%_s4}";
