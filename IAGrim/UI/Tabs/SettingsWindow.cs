@@ -171,7 +171,7 @@ namespace IAGrim.UI.Tabs {
         }
 
         private void helpWhatIsExperimentalUpdates_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            _cefBrowserHandler.ShowHelp(HelpService.HelpType.ExperimentalUpdates);
+            _cefBrowserHandler.ShowHelp(HelpService.HelpType.RegularUpdates);
         }
 
 

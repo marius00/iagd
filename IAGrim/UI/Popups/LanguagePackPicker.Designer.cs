@@ -86,8 +86,8 @@
             buttonSelect.Name = "buttonSelect";
             buttonSelect.Size = new Size(939, 40);
             buttonSelect.TabIndex = 2;
-            buttonSelect.Tag = "iatag_ui_change_language";
-            buttonSelect.Text = "Change Language";
+            buttonSelect.Tag = "iatag_ui_select_language";
+            buttonSelect.Text = "Select Language";
             buttonSelect.Click += buttonSelect_Click;
             // 
             // LanguagePackPicker
@@ -108,8 +108,8 @@
             Name = "LanguagePackPicker";
             SizeGripStyle = SizeGripStyle.Hide;
             StartPosition = FormStartPosition.CenterParent;
-            Tag = "iatag_ui_change_language";
-            Text = "Change Language";
+            Tag = "iatag_ui_select_language";
+            Text = "Select Language";
             FormClosing += LanguagePackPicker_FormClosing;
             Load += LanguagePackPicker_Load;
             groupBox1.ResumeLayout(false);

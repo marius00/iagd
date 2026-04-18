@@ -488,7 +488,7 @@ namespace StatTranslator {
             {"iatag_ui_online_backup", "Cloud Backup"},
             {"iatag_ui_language_select", "Language Select"},
             {"iatag_ui_backup_viewcharacters", "View Characters"},
-            {"iatag_ui_change_language", "Change Language"},
+            {"iatag_ui_select_language", "Select Language"},
             {"iatag_ui_language_selection", "Language Selection"},
             {"iatag_ui_language_by_author", "{0} by {1}"},
             {"iatag_ui_classes", "Classes"},

@@ -331,7 +331,7 @@ const helpEntries = [
         type: IHelpEntryType.Informational
     },
     {
-        title: `Settings: What is th e difference between regular and experimental updates?`,
+        title: `Settings: What is the difference between regular and experimental updates?`,
         tag: 'RegularUpdates',
         body: () => <div>
             With regular updates you'll occasionally be notified of a new version of IA. <br/>

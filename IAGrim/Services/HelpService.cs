@@ -23,7 +23,6 @@ namespace IAGrim.Services {
             MultiplePcs,
             DelayWhenSearching,
             RegularUpdates,
-            ExperimentalUpdates,
             WhatIsBuddyId,
             WhatIsBuddyNickname,
             OnlineBackups,
