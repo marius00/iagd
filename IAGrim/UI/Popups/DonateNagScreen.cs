@@ -37,7 +37,7 @@ namespace IAGrim.UI {
                     return false;
                 }
 
-                return lastNag < DateTime.Now.Ticks;
+                return lastNag < DateTime.Now.Ticks && _settings.GetLocal().IsGrimDawnParsed;
             }
         }
 
