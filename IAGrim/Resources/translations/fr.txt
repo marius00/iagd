@@ -794,3 +794,7 @@ defensiveTotalDamageMaxResist={0}% to Maximum to All Resistance
 defensiveTotalDamageResistance={0}% to All Resistance
 iatag_ui_buddy_toggle=Toggle visibility
 iatag_ui_explain_classiclooting_restartia=Changing this setting requires you to restart Item Assistant
+
+# Missing translations (English defaults)
+iatag_ui_zipbackup=Zip backups
+iatag_ui_zipbackup_define=Define

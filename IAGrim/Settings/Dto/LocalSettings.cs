@@ -12,7 +12,7 @@ namespace IAGrim.Settings.Dto {
         private string _currentGrimdawnLocation;
         private bool? _preferDelayedSearch;
         private int _backupNumber;
-        private long _lastNagTimestamp;
+        private long? _lastNagTimestamp;
         private bool _easterPrank;
         private bool _hasSuggestedLanguageChange;
         private int _stashToDepositTo;
@@ -64,7 +64,7 @@ namespace IAGrim.Settings.Dto {
             }
         }
 
-        public long LastNagTimestamp {
+        public long? LastNagTimestamp {
             get => _lastNagTimestamp;
             set {
                 _lastNagTimestamp = value;

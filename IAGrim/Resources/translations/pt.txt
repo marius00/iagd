@@ -811,3 +811,7 @@ iatag_ui_updatingstats=Atualizando estatísticas de seus itens...
 iatag_ui_updatingstats_title=Atualizando estatísticas de itens possuídos..
 iatag_ui_why_showing_stashpicker=Por que preciso escolher?
 petBurstSpawn=+{0} Invocações para {3}
+
+# Missing translations (English defaults)
+iatag_ui_zipbackup=Zip backups
+iatag_ui_zipbackup_define=Define

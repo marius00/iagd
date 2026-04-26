@@ -1,4 +1,4 @@
-﻿#Translated by D3Z1R3
+#Translated by D3Z1R3
 #Traducido por D3Z1R3
 Aether=de éter
 Aetherials=Etéreos
@@ -810,3 +810,7 @@ iatag_ui_updateavailable=Actualización disponible
 iatag_ui_updatenow=Actualizar ahora
 Resistance=Resistencia
 ResistanceMaxResist=al máximo de
+
+# Missing translations (English defaults)
+iatag_ui_zipbackup=Zip backups
+iatag_ui_zipbackup_define=Define

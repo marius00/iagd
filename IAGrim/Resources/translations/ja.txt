@@ -801,3 +801,7 @@ iatag_ui_tray_exit=終了
 iatag_ui_tray_open=開く
 iatag_ui_updateavailable=アップデートが利用可能です
 iatag_ui_updatenow=今すぐアップデート
+
+# Missing translations (English defaults)
+iatag_ui_zipbackup=Zip backups
+iatag_ui_zipbackup_define=Define

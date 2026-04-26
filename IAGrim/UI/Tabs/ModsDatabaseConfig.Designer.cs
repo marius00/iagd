@@ -23,191 +23,212 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            this.panelBox5 = new PanelBox();
-            this.buttonClean = new FirefoxButton();
-            this.helpFindGrimdawnInstall = new System.Windows.Forms.LinkLabel();
-            this.listViewMods = new System.Windows.Forms.ListView();
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.buttonUpdateItemStats = new FirefoxButton();
-            this.listViewInstalls = new System.Windows.Forms.ListView();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.buttonForceUpdate = new FirefoxButton();
-            this.buttonConfigure = new FirefoxButton();
-            this.panelBox5.SuspendLayout();
-            this.SuspendLayout();
+            panelBox5 = new PanelBox();
+            buttonConfigure = new FirefoxButton();
+            buttonClean = new FirefoxButton();
+            helpFindGrimdawnInstall = new LinkLabel();
+            listViewMods = new ListView();
+            columnHeader2 = new ColumnHeader();
+            columnHeader4 = new ColumnHeader();
+            buttonUpdateItemStats = new FirefoxButton();
+            listViewInstalls = new ListView();
+            columnHeader1 = new ColumnHeader();
+            columnHeader3 = new ColumnHeader();
+            buttonForceUpdate = new FirefoxButton();
+            panelBox5.SuspendLayout();
+            SuspendLayout();
             // 
             // panelBox5
             // 
-            this.panelBox5.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelBox5.Controls.Add(this.buttonConfigure);
-            this.panelBox5.Controls.Add(this.buttonClean);
-            this.panelBox5.Controls.Add(this.helpFindGrimdawnInstall);
-            this.panelBox5.Controls.Add(this.listViewMods);
-            this.panelBox5.Controls.Add(this.buttonUpdateItemStats);
-            this.panelBox5.Controls.Add(this.listViewInstalls);
-            this.panelBox5.Controls.Add(this.buttonForceUpdate);
-            this.panelBox5.Font = new System.Drawing.Font("Segoe UI Semibold", 20F);
-            this.panelBox5.HeaderHeight = 40;
-            this.panelBox5.Location = new System.Drawing.Point(12, 12);
-            this.panelBox5.Name = "panelBox5";
-            this.panelBox5.NoRounding = false;
-            this.panelBox5.Size = new System.Drawing.Size(768, 404);
-            this.panelBox5.TabIndex = 10;
-            this.panelBox5.Tag = "iatag_ui_mods_header";
-            this.panelBox5.Text = "Grim Dawn Database";
-            this.panelBox5.TextLocation = "8; 5";
-            // 
-            // buttonClean
-            // 
-            this.buttonClean.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonClean.EnabledCalc = true;
-            this.buttonClean.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.buttonClean.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
-            this.buttonClean.Location = new System.Drawing.Point(362, 358);
-            this.buttonClean.Name = "buttonClean";
-            this.buttonClean.Size = new System.Drawing.Size(192, 32);
-            this.buttonClean.TabIndex = 8;
-            this.buttonClean.Tag = "iatag_ui_clean";
-            this.buttonClean.Text = "Clean Database";
-            this.buttonClean.Click += new System.EventHandler(this.buttonClean_Click);
-            // 
-            // helpFindGrimdawnInstall
-            // 
-            this.helpFindGrimdawnInstall.AutoSize = true;
-            this.helpFindGrimdawnInstall.BackColor = System.Drawing.Color.Transparent;
-            this.helpFindGrimdawnInstall.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.helpFindGrimdawnInstall.Location = new System.Drawing.Point(284, 20);
-            this.helpFindGrimdawnInstall.Name = "helpFindGrimdawnInstall";
-            this.helpFindGrimdawnInstall.Size = new System.Drawing.Size(201, 13);
-            this.helpFindGrimdawnInstall.TabIndex = 7;
-            this.helpFindGrimdawnInstall.TabStop = true;
-            this.helpFindGrimdawnInstall.Tag = "iatag_ui_howdoifindgrimdawn";
-            this.helpFindGrimdawnInstall.Text = "How can I find the Grim Dawn install?";
-            this.helpFindGrimdawnInstall.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpFindGrimdawnInstall_LinkClicked);
-            // 
-            // listViewMods
-            // 
-            this.listViewMods.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.listViewMods.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader2,
-            this.columnHeader4});
-            this.listViewMods.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.listViewMods.FullRowSelect = true;
-            this.listViewMods.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.listViewMods.HideSelection = false;
-            this.listViewMods.Location = new System.Drawing.Point(431, 55);
-            this.listViewMods.MultiSelect = false;
-            this.listViewMods.Name = "listViewMods";
-            this.listViewMods.Size = new System.Drawing.Size(321, 291);
-            this.listViewMods.TabIndex = 6;
-            this.listViewMods.UseCompatibleStateImageBehavior = false;
-            this.listViewMods.View = System.Windows.Forms.View.Details;
-            // 
-            // columnHeader2
-            // 
-            this.columnHeader2.Tag = "iatag_ui_mod_database_mods_header";
-            this.columnHeader2.Text = "Mod";
-            this.columnHeader2.Width = 203;
-            // 
-            // columnHeader4
-            // 
-            this.columnHeader4.Tag = "iatag_ui_mod_path";
-            this.columnHeader4.Text = "Path";
-            this.columnHeader4.Width = 200;
-            // 
-            // buttonUpdateItemStats
-            // 
-            this.buttonUpdateItemStats.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonUpdateItemStats.EnabledCalc = true;
-            this.buttonUpdateItemStats.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.buttonUpdateItemStats.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
-            this.buttonUpdateItemStats.Location = new System.Drawing.Point(560, 358);
-            this.buttonUpdateItemStats.Name = "buttonUpdateItemStats";
-            this.buttonUpdateItemStats.Size = new System.Drawing.Size(192, 32);
-            this.buttonUpdateItemStats.TabIndex = 5;
-            this.buttonUpdateItemStats.Tag = "iatag_ui_update_item_stats";
-            this.buttonUpdateItemStats.Text = "Clear cache";
-            this.buttonUpdateItemStats.Click += new System.EventHandler(this.buttonUpdateItemStats_Click);
-            // 
-            // listViewInstalls
-            // 
-            this.listViewInstalls.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left))));
-            this.listViewInstalls.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader3});
-            this.listViewInstalls.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.listViewInstalls.FullRowSelect = true;
-            this.listViewInstalls.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.listViewInstalls.HideSelection = false;
-            this.listViewInstalls.Location = new System.Drawing.Point(9, 55);
-            this.listViewInstalls.MultiSelect = false;
-            this.listViewInstalls.Name = "listViewInstalls";
-            this.listViewInstalls.Size = new System.Drawing.Size(416, 291);
-            this.listViewInstalls.TabIndex = 0;
-            this.listViewInstalls.UseCompatibleStateImageBehavior = false;
-            this.listViewInstalls.View = System.Windows.Forms.View.Details;
-            this.listViewInstalls.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
-            // 
-            // columnHeader1
-            // 
-            this.columnHeader1.Tag = "iatag_ui_mod_database_mods_header";
-            this.columnHeader1.Text = "Install";
-            this.columnHeader1.Width = 203;
-            // 
-            // columnHeader3
-            // 
-            this.columnHeader3.Tag = "iatag_ui_mod_path";
-            this.columnHeader3.Text = "Path";
-            this.columnHeader3.Width = 200;
-            // 
-            // buttonForceUpdate
-            // 
-            this.buttonForceUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonForceUpdate.EnabledCalc = true;
-            this.buttonForceUpdate.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.buttonForceUpdate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
-            this.buttonForceUpdate.Location = new System.Drawing.Point(9, 358);
-            this.buttonForceUpdate.Name = "buttonForceUpdate";
-            this.buttonForceUpdate.Size = new System.Drawing.Size(192, 32);
-            this.buttonForceUpdate.TabIndex = 4;
-            this.buttonForceUpdate.Tag = "iatag_ui_load_database";
-            this.buttonForceUpdate.Text = "Load Database";
-            this.buttonForceUpdate.Click += new System.EventHandler(this.buttonForceUpdate_Click);
+            panelBox5.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            panelBox5.BackColor = Color.FromArgb(240, 240, 240);
+            panelBox5.Controls.Add(buttonConfigure);
+            panelBox5.Controls.Add(buttonClean);
+            panelBox5.Controls.Add(helpFindGrimdawnInstall);
+            panelBox5.Controls.Add(listViewMods);
+            panelBox5.Controls.Add(buttonUpdateItemStats);
+            panelBox5.Controls.Add(listViewInstalls);
+            panelBox5.Controls.Add(buttonForceUpdate);
+            panelBox5.Font = new Font("Segoe UI Semibold", 20F);
+            panelBox5.ForeColor = Color.Black;
+            panelBox5.HeaderColor = Color.FromArgb(231, 231, 231);
+            panelBox5.HeaderHeight = 40;
+            panelBox5.Location = new Point(14, 14);
+            panelBox5.Margin = new Padding(4, 3, 4, 3);
+            panelBox5.Name = "panelBox5";
+            panelBox5.NoRounding = false;
+            panelBox5.Size = new Size(896, 465);
+            panelBox5.TabIndex = 10;
+            panelBox5.Tag = "iatag_ui_mods_header";
+            panelBox5.Text = "Grim Dawn Database";
+            panelBox5.TextLocation = "8; 5";
             // 
             // buttonConfigure
             // 
-            this.buttonConfigure.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonConfigure.EnabledCalc = true;
-            this.buttonConfigure.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.buttonConfigure.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
-            this.buttonConfigure.Location = new System.Drawing.Point(207, 358);
-            this.buttonConfigure.Name = "buttonConfigure";
-            this.buttonConfigure.Size = new System.Drawing.Size(149, 32);
-            this.buttonConfigure.TabIndex = 9;
-            this.buttonConfigure.Tag = "iatag_ui_manual_db";
-            this.buttonConfigure.Text = "Configure";
-            this.buttonConfigure.Click += new System.EventHandler(this.buttonConfigure_Click);
+            buttonConfigure.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            buttonConfigure.BackColorDefault = Color.FromArgb(212, 212, 212);
+            buttonConfigure.BackColorOverride = Color.FromArgb(245, 245, 245);
+            buttonConfigure.BorderColor = Color.FromArgb(193, 193, 193);
+            buttonConfigure.EnabledCalc = true;
+            buttonConfigure.Font = new Font("Segoe UI", 10F);
+            buttonConfigure.ForeColor = Color.FromArgb(56, 68, 80);
+            buttonConfigure.HoverColor = Color.FromArgb(232, 232, 232);
+            buttonConfigure.HoverForeColor = Color.FromArgb(193, 193, 193);
+            buttonConfigure.Location = new Point(241, 412);
+            buttonConfigure.Margin = new Padding(4, 3, 4, 3);
+            buttonConfigure.Name = "buttonConfigure";
+            buttonConfigure.Size = new Size(174, 37);
+            buttonConfigure.TabIndex = 9;
+            buttonConfigure.Tag = "iatag_ui_manual_db";
+            buttonConfigure.Text = "Configure";
+            buttonConfigure.Click += buttonConfigure_Click;
+            // 
+            // buttonClean
+            // 
+            buttonClean.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            buttonClean.BackColorDefault = Color.FromArgb(212, 212, 212);
+            buttonClean.BackColorOverride = Color.FromArgb(245, 245, 245);
+            buttonClean.BorderColor = Color.FromArgb(193, 193, 193);
+            buttonClean.EnabledCalc = true;
+            buttonClean.Font = new Font("Segoe UI", 10F);
+            buttonClean.ForeColor = Color.FromArgb(56, 68, 80);
+            buttonClean.HoverColor = Color.FromArgb(232, 232, 232);
+            buttonClean.HoverForeColor = Color.FromArgb(193, 193, 193);
+            buttonClean.Location = new Point(422, 412);
+            buttonClean.Margin = new Padding(4, 3, 4, 3);
+            buttonClean.Name = "buttonClean";
+            buttonClean.Size = new Size(224, 37);
+            buttonClean.TabIndex = 8;
+            buttonClean.Tag = "iatag_ui_clean";
+            buttonClean.Text = "Clean Database";
+            buttonClean.Click += buttonClean_Click;
+            // 
+            // helpFindGrimdawnInstall
+            // 
+            helpFindGrimdawnInstall.AutoSize = true;
+            helpFindGrimdawnInstall.BackColor = Color.Transparent;
+            helpFindGrimdawnInstall.Font = new Font("Segoe UI", 8.25F);
+            helpFindGrimdawnInstall.Location = new Point(331, 23);
+            helpFindGrimdawnInstall.Margin = new Padding(4, 0, 4, 0);
+            helpFindGrimdawnInstall.Name = "helpFindGrimdawnInstall";
+            helpFindGrimdawnInstall.Size = new Size(201, 13);
+            helpFindGrimdawnInstall.TabIndex = 7;
+            helpFindGrimdawnInstall.TabStop = true;
+            helpFindGrimdawnInstall.Tag = "iatag_ui_howdoifindgrimdawn";
+            helpFindGrimdawnInstall.Text = "How can I find the Grim Dawn install?";
+            helpFindGrimdawnInstall.LinkClicked += helpFindGrimdawnInstall_LinkClicked;
+            // 
+            // listViewMods
+            // 
+            listViewMods.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            listViewMods.Columns.AddRange(new ColumnHeader[] { columnHeader2, columnHeader4 });
+            listViewMods.Font = new Font("Microsoft Sans Serif", 8.25F);
+            listViewMods.FullRowSelect = true;
+            listViewMods.HeaderStyle = ColumnHeaderStyle.Nonclickable;
+            listViewMods.Location = new Point(503, 63);
+            listViewMods.Margin = new Padding(4, 3, 4, 3);
+            listViewMods.MultiSelect = false;
+            listViewMods.Name = "listViewMods";
+            listViewMods.Size = new Size(374, 334);
+            listViewMods.TabIndex = 6;
+            listViewMods.UseCompatibleStateImageBehavior = false;
+            listViewMods.View = View.Details;
+            // 
+            // columnHeader2
+            // 
+            columnHeader2.Tag = "iatag_ui_mod_database_mods_header";
+            columnHeader2.Text = "Mod";
+            columnHeader2.Width = 203;
+            // 
+            // columnHeader4
+            // 
+            columnHeader4.Tag = "iatag_ui_mod_path";
+            columnHeader4.Text = "Path";
+            columnHeader4.Width = 200;
+            // 
+            // buttonUpdateItemStats
+            // 
+            buttonUpdateItemStats.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            buttonUpdateItemStats.BackColorDefault = Color.FromArgb(212, 212, 212);
+            buttonUpdateItemStats.BackColorOverride = Color.FromArgb(245, 245, 245);
+            buttonUpdateItemStats.BorderColor = Color.FromArgb(193, 193, 193);
+            buttonUpdateItemStats.EnabledCalc = true;
+            buttonUpdateItemStats.Font = new Font("Segoe UI", 10F);
+            buttonUpdateItemStats.ForeColor = Color.FromArgb(56, 68, 80);
+            buttonUpdateItemStats.HoverColor = Color.FromArgb(232, 232, 232);
+            buttonUpdateItemStats.HoverForeColor = Color.FromArgb(193, 193, 193);
+            buttonUpdateItemStats.Location = new Point(653, 412);
+            buttonUpdateItemStats.Margin = new Padding(4, 3, 4, 3);
+            buttonUpdateItemStats.Name = "buttonUpdateItemStats";
+            buttonUpdateItemStats.Size = new Size(224, 37);
+            buttonUpdateItemStats.TabIndex = 5;
+            buttonUpdateItemStats.Tag = "iatag_ui_update_item_stats";
+            buttonUpdateItemStats.Text = "Clear cache";
+            buttonUpdateItemStats.Click += buttonUpdateItemStats_Click;
+            // 
+            // listViewInstalls
+            // 
+            listViewInstalls.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            listViewInstalls.Columns.AddRange(new ColumnHeader[] { columnHeader1, columnHeader3 });
+            listViewInstalls.Font = new Font("Microsoft Sans Serif", 8.25F);
+            listViewInstalls.FullRowSelect = true;
+            listViewInstalls.HeaderStyle = ColumnHeaderStyle.Nonclickable;
+            listViewInstalls.Location = new Point(10, 63);
+            listViewInstalls.Margin = new Padding(4, 3, 4, 3);
+            listViewInstalls.MultiSelect = false;
+            listViewInstalls.Name = "listViewInstalls";
+            listViewInstalls.Size = new Size(485, 334);
+            listViewInstalls.TabIndex = 0;
+            listViewInstalls.UseCompatibleStateImageBehavior = false;
+            listViewInstalls.View = View.Details;
+            listViewInstalls.SelectedIndexChanged += listView1_SelectedIndexChanged;
+            // 
+            // columnHeader1
+            // 
+            columnHeader1.Tag = "iatag_ui_mod_database_mods_header";
+            columnHeader1.Text = "Install";
+            columnHeader1.Width = 203;
+            // 
+            // columnHeader3
+            // 
+            columnHeader3.Tag = "iatag_ui_mod_path";
+            columnHeader3.Text = "Path";
+            columnHeader3.Width = 200;
+            // 
+            // buttonForceUpdate
+            // 
+            buttonForceUpdate.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            buttonForceUpdate.BackColorDefault = Color.FromArgb(212, 212, 212);
+            buttonForceUpdate.BackColorOverride = Color.FromArgb(245, 245, 245);
+            buttonForceUpdate.BorderColor = Color.FromArgb(193, 193, 193);
+            buttonForceUpdate.EnabledCalc = true;
+            buttonForceUpdate.Font = new Font("Segoe UI", 10F);
+            buttonForceUpdate.ForeColor = Color.FromArgb(56, 68, 80);
+            buttonForceUpdate.HoverColor = Color.FromArgb(232, 232, 232);
+            buttonForceUpdate.HoverForeColor = Color.FromArgb(193, 193, 193);
+            buttonForceUpdate.Location = new Point(10, 412);
+            buttonForceUpdate.Margin = new Padding(4, 3, 4, 3);
+            buttonForceUpdate.Name = "buttonForceUpdate";
+            buttonForceUpdate.Size = new Size(224, 37);
+            buttonForceUpdate.TabIndex = 4;
+            buttonForceUpdate.Tag = "iatag_ui_load_database";
+            buttonForceUpdate.Text = "Load Database";
+            buttonForceUpdate.Click += buttonForceUpdate_Click;
             // 
             // ModsDatabaseConfig
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(792, 428);
-            this.Controls.Add(this.panelBox5);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Name = "ModsDatabaseConfig";
-            this.Text = "ModsDatabaseConfig";
-            this.Load += new System.EventHandler(this.ModsDatabaseConfig_Load);
-            this.panelBox5.ResumeLayout(false);
-            this.panelBox5.PerformLayout();
-            this.ResumeLayout(false);
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(924, 493);
+            Controls.Add(panelBox5);
+            FormBorderStyle = FormBorderStyle.None;
+            Margin = new Padding(4, 3, 4, 3);
+            Name = "ModsDatabaseConfig";
+            Text = "ModsDatabaseConfig";
+            Load += ModsDatabaseConfig_Load;
+            panelBox5.ResumeLayout(false);
+            panelBox5.PerformLayout();
+            ResumeLayout(false);
 
         }
 

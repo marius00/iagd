@@ -30,7 +30,7 @@ namespace IAGrim.UI {
 
         public bool CanNag {
             get {
-                long lastNag = _settings.GetLocal().LastNagTimestamp;
+                long lastNag = _settings.GetLocal().LastNagTimestamp ?? 0;
                 if (lastNag == 0) {
                     DateTime dt = DateTime.Now.AddDays(new Random().Next(5, 14));
                     _settings.GetLocal().LastNagTimestamp = dt.Ticks;
