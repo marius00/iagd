@@ -26,7 +26,7 @@ OnDemandSeedInfo::OnDemandSeedInfo(DataQueue* dataQueue, HANDLE hEvent) {
 	m_hEvent = hEvent;
 	m_thread = nullptr;
 	m_sleepMilliseconds = 0;
-	gameUpdateMethod = nullptr;
+	dll_Engine_Render = nullptr;
 	gameSetDifficultyRampMethod = nullptr;
 	
 
@@ -53,9 +53,9 @@ void OnDemandSeedInfo::EnableHook() {
 		TYPE_GAMEENGINE_UPDATE
 	);
 
-	gameUpdateMethod = (OriginalGameUpdateMethodPtr)HookGame(
-		"?Update@GameEngine@GAME@@QEAAXH@Z",
-		HookedGameUpdateMethod,
+	dll_Engine_Render = (Engine_Render)HookEngine(
+		"?Render@Engine@GAME@@QEAAXXZ",
+		Hooked_Engine_Render,
 		m_dataQueue,
 		m_hEvent,
 		TYPE_GAMEENGINE_UPDATE
@@ -66,7 +66,7 @@ void OnDemandSeedInfo::EnableHook() {
 void OnDemandSeedInfo::DisableHook() {
 	Stop();
 	Unhook((PVOID*)&gameSetDifficultyRampMethod, HookedGameSetDifficultyRampMethod);
-	Unhook((PVOID*)&gameUpdateMethod, HookedGameUpdateMethod);
+	Unhook((PVOID*)&dll_Engine_Render, Hooked_Engine_Render);
 }
 
 /*
@@ -451,12 +451,12 @@ void* __fastcall OnDemandSeedInfo::HookedGameSetDifficultyRampMethod(void* This,
 	return result;
 }
 
-void* __fastcall OnDemandSeedInfo::HookedGameUpdateMethod(void* This, int v) {
+void* __fastcall OnDemandSeedInfo::Hooked_Engine_Render(void* This) {
 	if (This == nullptr) {
-		LogToFile(LogLevel::WARNING, L"Update@GameEngine called with 'This' being null");
+		LogToFile(LogLevel::WARNING, L"Render@Engine called with 'This' being null");
 	}
 	if (g_self == nullptr) {
-		LogToFile(LogLevel::FATAL, L"Update@GameEngine called with 'g_self' being null");
+		LogToFile(LogLevel::FATAL, L"Render@Engine called with 'g_self' being null");
 	}
 
 	if (g_self->m_sleepMilliseconds <= 0) {
@@ -465,7 +465,8 @@ void* __fastcall OnDemandSeedInfo::HookedGameUpdateMethod(void* This, int v) {
 			// Attempting to create items with a set bonus from the main menu may crash the game.
 			// Items with skills may also end up with missing info if created from the main menu.
 
-			if (!IsGameLoading(This) /* && !isGameWaiting*/ && IsGameEngineOnline(This)) {
+			auto gameEngine = fnGetGameEngine();
+			if (gameEngine != nullptr && !IsGameLoading(gameEngine) && IsGameEngineOnline(gameEngine)) {
 
 				// Process the queue
 				int num = 0;
@@ -475,13 +476,13 @@ void* __fastcall OnDemandSeedInfo::HookedGameUpdateMethod(void* This, int v) {
 				std::unique_lock<std::mutex> lock(g_self->_mutex, std::try_to_lock);
 				// No point arguing over a lock. We can parse this later.
 				if (!lock.owns_lock()) {
-					return g_self->gameUpdateMethod(This, v);					
+					return g_self->dll_Engine_Render(This);
 				}
-				while (!g_self->m_itemQueue.empty() && num++ < 100 && !IsGameLoading(This) && IsGameEngineOnline(This)) {
+				while (!g_self->m_itemQueue.empty() && num++ < 100 && !IsGameLoading(gameEngine) && IsGameEngineOnline(gameEngine)) {
 					LogToFile(LogLevel::INFO, L"Processing..");
 					ParsedSeedRequestPtr ptr = g_self->m_itemQueue.pop();
 					if (ptr == nullptr) {
-						return g_self->gameUpdateMethod(This, v);
+						return g_self->dll_Engine_Render(This);
 					}
 					ParsedSeedRequest obj = *ptr.get();
 
@@ -514,10 +515,10 @@ void* __fastcall OnDemandSeedInfo::HookedGameUpdateMethod(void* This, int v) {
 				}
 			}
 			else {
-				if (IsGameLoading(This)) {
+				if (gameEngine != nullptr && IsGameLoading(gameEngine)) {
 					LogToFile(LogLevel::INFO, "Game is loading, real stat generation not available.");
 				}
-				if (!IsGameEngineOnline(This)) {
+				if (gameEngine == nullptr || !IsGameEngineOnline(gameEngine)) {
 					LogToFile(LogLevel::INFO, "///Game engine is not online, real stat generation not available.");
 				}
 				g_self->m_sleepMilliseconds = 12000;
@@ -534,6 +535,6 @@ void* __fastcall OnDemandSeedInfo::HookedGameUpdateMethod(void* This, int v) {
 
 	}
 
-	void* r = g_self->gameUpdateMethod(This, v);
+	void* r = g_self->dll_Engine_Render(This);
 	return r;
 }

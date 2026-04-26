@@ -52,14 +52,13 @@ protected:
 	static OnDemandSeedInfo* g_self;
 
 	// Game hook - To run code inside the game in a safe manner
-	// void GAME::GameEngine::Update(int)
-	typedef void* (__thiscall* OriginalGameUpdateMethodPtr)(void* This, int v);
 	typedef void* (__thiscall* OriginalEngineRenderMethodPtr)(void* This, int v);
+	typedef void* (__thiscall* Engine_Render)(void* This);
 
-	OriginalGameUpdateMethodPtr gameUpdateMethod;
 	OriginalEngineRenderMethodPtr gameSetDifficultyRampMethod;
+	Engine_Render dll_Engine_Render;
 	static void* __fastcall HookedGameSetDifficultyRampMethod(void* This, int v);
-	static void* __fastcall HookedGameUpdateMethod(void* This, int v);
+	static void* __fastcall Hooked_Engine_Render(void* This);
 	static std::wstring GetModName(GAME::GameInfo* gameInfo);
 	ParsedSeedRequest* ReadReplicaInfo(const std::wstring& filename);
 	ParsedSeedRequest* DeserializeReplicaCsv(std::vector<std::string> tokens);

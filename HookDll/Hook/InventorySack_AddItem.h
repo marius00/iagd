@@ -57,14 +57,14 @@ private:
 
 	typedef bool(__thiscall* InventorySack_FindNextPosition)(void*, GAME::Item* item, GAME::Rect*, bool unknown);
 	typedef bool(__thiscall* GameInfo_GetHardcore)(void*);
-	typedef void (__thiscall* Engine_Render)(void* This);
+	typedef int* (__thiscall* GameEngine_Update)(void* This, int v);
 	typedef char* (__thiscall* GameEngine_GetGameInfo)(void* This);
 
 
 	// Hook variable defs
 	static GameInfo_GetHardcore dll_GameInfo_GetHardcore;
 
-	static Engine_Render dll_Engine_Render;
+	static GameEngine_Update dll_GameEngine_Update;
 	static GameInfo_GameInfo_Param dll_GameInfo_GameInfo_Param;
 	static GameInfo_GameInfo dll_GameInfo_GameInfo;
 	static InventorySack_AddItem_Drop dll_InventorySack_AddItem_Drop;
@@ -80,7 +80,7 @@ private:
 	static void* __fastcall Hooked_InventorySack_AddItem_Drop(void* This, GAME::Item* item, bool findPosition, bool SkipPlaySound);
 	static void* __fastcall Hooked_InventorySack_AddItem_Vec2(void* This, void*, GAME::Item* item, bool SkipPlaySound);
 	static void* __fastcall Hooked_InventorySack_SetTransferOpen(void* This, bool isOpen);
-	static void __fastcall Hooked_Engine_Render(void* This);
+	static void* __fastcall Hooked_GameEngine_Update(void* This, int v);
 
 
 	// Helper/internal methods

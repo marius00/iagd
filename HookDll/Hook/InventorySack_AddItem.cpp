@@ -47,7 +47,7 @@ bool InventorySack_AddItem::m_isGrimDawnParsed;
 SettingsReader InventorySack_AddItem::m_settingsReader;
 bool InventorySack_AddItem::m_isActive;
 int InventorySack_AddItem::m_gameUpdateIterationsRun;
-InventorySack_AddItem::Engine_Render InventorySack_AddItem::dll_Engine_Render;
+InventorySack_AddItem::GameEngine_Update InventorySack_AddItem::dll_GameEngine_Update;
 bool InventorySack_AddItem::m_isTransferStashOpen;
 
 std::set<std::wstring> InventorySack_AddItem::m_depositQueue;
@@ -87,9 +87,9 @@ void InventorySack_AddItem::EnableHook() {
 
 	m_isTransferStashOpen = false;
 
-	dll_Engine_Render = (Engine_Render)HookEngine(
-		"?Render@Engine@GAME@@QEAAXXZ",
-		Hooked_Engine_Render,
+	dll_GameEngine_Update = (GameEngine_Update)HookGame(
+		"?Update@GameEngine@GAME@@QEAAXH@Z",
+		Hooked_GameEngine_Update,
 		m_dataQueue,
 		m_hEvent,
 		TYPE_GAMEENGINE_UPDATE
@@ -636,52 +636,53 @@ GAME::InventorySack* InventorySack_AddItem::GetSackToDepositTo(GAME::GameEngine*
 
 
 /// <summary>
-/// Engine::Render() hook
+/// GameEngine::Update() hook
 /// Responsible for moving items from .csv and back into the game.
 /// </summary>
-/// <param name="This">GAME::Engine*</param>
-void __fastcall InventorySack_AddItem::Hooked_Engine_Render(void* This) {
+/// <param name="This"></param>
+/// <param name="notUsed"></param>
+/// <param name="s"></param>
+/// <param name="f"></param>
+/// <param name="b"></param>
+/// <param name="f2"></param>
+/// <returns></returns>
+void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int v) {
 	try {
 		// IA not running? Continue
 		if (!m_isActive) {
-			dll_Engine_Render(This);
-			return;
+			//LogToFile(L"Debug: NotActive");
+			return dll_GameEngine_Update(This, v);
 		}
 
-		auto gameEngine = fnGetGameEngine();
-
 		// If the game is not in a a "ready state", just continue.
-		if (gameEngine == nullptr || IsGameLoading(gameEngine) || IsGameWaiting(gameEngine, true) || !IsGameEngineOnline(gameEngine)) {
+		if (IsGameLoading(This) || IsGameWaiting(This, true) || !IsGameEngineOnline(This)) {
+			//LogToFile(L"Debug: NotReady");
 			m_isTransferStashOpen = false; // Just to be on the safe side
-			dll_Engine_Render(This);
-			return;
+			return dll_GameEngine_Update(This, v);
 		}
 
 		// No need to check *constantly* (at least not until we get a thread here)
 		if (++m_gameUpdateIterationsRun < 30) {
-			dll_Engine_Render(This);
-			return;
+			//LogToFile(L"Debug: NotIteration");
+			return dll_GameEngine_Update(This, v);
 		}
 
 		m_gameUpdateIterationsRun = 0;
 
-		// This is already the Engine*, so use it directly
-		auto engine = (GAME::Engine*)This;
+		auto engine = fnGetEngine();
 		if (engine == nullptr) {
 			LogToFile(LogLevel::INFO, L"Debug: NoEngine");
-			dll_Engine_Render(This);
-			return;
+			return dll_GameEngine_Update(This, v);
 		}
 
 		GAME::GameInfo* gameInfo = fnGetGameInfo(engine);
 		if (gameInfo == nullptr) {
 			LogToFile(LogLevel::WARNING, L"GameInfo is null, aborting..");
-			dll_Engine_Render(This);
-			return;
+			return false;
 		}
 
 		if (m_isTransferStashOpen) {
-			void* sackPtr = GetSackToDepositTo(gameEngine);
+			void* sackPtr = GetSackToDepositTo((GAME::GameEngine*)This);
 			if (sackPtr != nullptr) {
 				GAME::Rect itemPosition;
 				boost::lock_guard<boost::mutex> guard(m_mutex);
@@ -762,13 +763,13 @@ void __fastcall InventorySack_AddItem::Hooked_Engine_Render(void* This) {
 	catch (std::exception& ex) {
 		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 		std::wstring wide = converter.from_bytes(ex.what());
-		LogToFile(LogLevel::FATAL, L"Error parsing in InventorySack_AddItem::Hooked_Engine_Render.. " + wide);
+		LogToFile(LogLevel::FATAL, L"Error parsing in InventorySack_AddItem::Hooked_GameEngine_Update.. " + wide);
 	}
 	catch (...) {
-		LogToFile(LogLevel::FATAL, L"Error parsing in InventorySack_AddItem::Hooked_Engine_Render.. (triple-dot)");
+		LogToFile(LogLevel::FATAL, L"Error parsing in InventorySack_AddItem::Hooked_GameEngine_Update.. (triple-dot)");
 	}
 
-	dll_Engine_Render(This);
+	return dll_GameEngine_Update(This, v);
 }
 
 /// <summary>
