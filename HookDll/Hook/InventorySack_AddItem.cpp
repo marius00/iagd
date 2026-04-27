@@ -45,13 +45,15 @@ int InventorySack_AddItem::m_stashTabDepositTo;
 ULONGLONG InventorySack_AddItem::m_lastNotificationTickTime;
 bool InventorySack_AddItem::m_isGrimDawnParsed;
 SettingsReader InventorySack_AddItem::m_settingsReader;
-bool InventorySack_AddItem::m_isActive;
+std::atomic<bool> InventorySack_AddItem::m_isActive;
 int InventorySack_AddItem::m_gameUpdateIterationsRun;
 InventorySack_AddItem::GameEngine_Update InventorySack_AddItem::dll_GameEngine_Update;
 bool InventorySack_AddItem::m_isTransferStashOpen;
 
 std::set<std::wstring> InventorySack_AddItem::m_depositQueue;
 boost::mutex InventorySack_AddItem::m_mutex;
+HANDLE InventorySack_AddItem::m_threadHandle = NULL;
+HANDLE InventorySack_AddItem::m_threadStoppedEvent = NULL;
 
 void InventorySack_AddItem::EnableHook() {
 	VTableDispatch::Init();
@@ -139,15 +141,23 @@ InventorySack_AddItem::InventorySack_AddItem() {
 }
 
 void InventorySack_AddItem::DisableHook() {
+	// Stop the background thread first, before we detach any hooks
+	SetActive(false);
+
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
-
 
 	DetourDetach((PVOID*)&dll_GameInfo_GameInfo_Param, Hooked_GameInfo_GameInfo_Param);
 	
 	DetourTransactionCommit();
 
 	privateStashHook.DisableHook();
+
+	// Clean up the event
+	if (m_threadStoppedEvent != NULL) {
+		CloseHandle(m_threadStoppedEvent);
+		m_threadStoppedEvent = NULL;
+	}
 }
 
 /// <summary>
@@ -157,12 +167,38 @@ void InventorySack_AddItem::DisableHook() {
 /// <param name="isActive"></param>
 void InventorySack_AddItem::SetActive(bool isActive)
 {
-	bool isActivating = isActive && !m_isActive;
-	m_isActive = isActive;
+	bool wasActive = m_isActive.load();
+	bool isActivating = isActive && !wasActive;
+	bool isDeactivating = !isActive && wasActive;
 
-	// IA has been shut down, start the thread now
+	m_isActive.store(isActive);
+
+	if (isDeactivating) {
+		// Wait for the background thread to finish (up to 3s)
+		if (m_threadHandle != NULL) {
+			LogToFile(LogLevel::INFO, L"Waiting for deposit listener thread to stop..");
+			if (m_threadStoppedEvent != NULL) {
+				WaitForSingleObject(m_threadStoppedEvent, 3000);
+			}
+			CloseHandle(m_threadHandle);
+			m_threadHandle = NULL;
+		}
+	}
+
 	if (isActivating) {
-		(HANDLE)_beginthread(ThreadMain, NULL, 0);
+		// Ensure any previous thread is cleaned up
+		if (m_threadHandle != NULL) {
+			if (m_threadStoppedEvent != NULL) {
+				WaitForSingleObject(m_threadStoppedEvent, 3000);
+			}
+			CloseHandle(m_threadHandle);
+			m_threadHandle = NULL;
+		}
+		if (m_threadStoppedEvent != NULL) {
+			CloseHandle(m_threadStoppedEvent);
+		}
+		m_threadStoppedEvent = CreateEvent(NULL, TRUE, FALSE, NULL); // manual-reset, initially non-signaled
+		m_threadHandle = (HANDLE)_beginthread(ThreadMain, 0, 0);
 	}
 }
 
@@ -474,6 +510,13 @@ void InventorySack_AddItem::DisplayMessage(std::wstring text, std::wstring body)
 				return;
 			}
 
+			// Don't display text if the game is loading/shutting down — can deadlock
+			auto gameEngine = fnGetGameEngine();
+			if (gameEngine == nullptr || IsGameLoading(gameEngine) || !IsGameEngineOnline(gameEngine)) {
+				LogToFile(LogLevel::INFO, L"Skipping display, game not in ready state: " + text);
+				return;
+			}
+
 
 			LogToFile(LogLevel::INFO, L"Display: " + text + L" - " + body);
 
@@ -554,10 +597,18 @@ bool InventorySack_AddItem::IsSackToLootFrom(void* stashTab, GAME::GameEngine* g
 /// <param name="item"></param>
 /// <returns></returns>
 bool InventorySack_AddItem::HandleItem(void* stash, GAME::Item* item) {
-	if (!m_isActive || stash == nullptr || item == nullptr)
+	if (!m_isActive.load() || stash == nullptr || item == nullptr)
 		return false;
 
 	auto gameEngine = fnGetGameEngine();
+	if (gameEngine == nullptr)
+		return false;
+
+	// Guard: if the game is loading/shutting down, do NOT touch any game objects.
+	// This prevents accessing stale pointers when the player exits to menu.
+	if (IsGameLoading(gameEngine) || !IsGameEngineOnline(gameEngine))
+		return false;
+
 	if (!fnIsWorldAlive(gameEngine))
 		return false;
 
@@ -732,8 +783,7 @@ void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int
 		fnLogWorldStateTransition((GAME::GameEngine*)This, L"GameEngine::Update");
 
 		// IA not running? Continue
-		if (!m_isActive) {
-			//LogToFile(L"Debug: NotActive");
+		if (!m_isActive.load()) {
 			return dll_GameEngine_Update(This, v);
 		}
 
@@ -871,8 +921,12 @@ void InventorySack_AddItem::ThreadMain(void*) {
 		std::set<std::wstring> knownFiles = std::set<std::wstring>();
 		GAME::GameInfo* lastGameInfo = nullptr;
 
-		while (m_isActive) {
+		while (m_isActive.load()) {
 			Sleep(500);
+
+			// Re-check after sleep — game may have started shutting down
+			if (!m_isActive.load())
+				break;
 
 			auto engine = fnGetEngine(true);
 			if (engine == nullptr) {
@@ -929,4 +983,9 @@ void InventorySack_AddItem::ThreadMain(void*) {
 		LogToFile(LogLevel::FATAL, L"Error parsing in InventorySack_AddItem::ThreadMain.. (triple-dot)");
 	}
 	LogToFile(LogLevel::INFO, L"Stopping deposit listener..");
+
+	// Signal that the thread has exited so SetActive(false) can proceed
+	if (m_threadStoppedEvent != NULL) {
+		SetEvent(m_threadStoppedEvent);
+	}
 }
