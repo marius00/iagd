@@ -1,5 +1,6 @@
 #pragma once
 #include <set>
+#include <atomic>
 
 #include "DataQueue.h"
 #include "BaseMethodHook.h"
@@ -34,12 +35,15 @@ private:
 	static bool m_instalootEnabled;
 	static bool m_isGrimDawnParsed;
 	static SettingsReader m_settingsReader;
-	static bool m_isActive;
+	static std::atomic<bool> m_isActive;
 	static int m_gameUpdateIterationsRun;
 
 	static bool m_isTransferStashOpen;
 	static std::set<std::wstring> m_depositQueue;
 	static boost::mutex m_mutex;
+
+	static HANDLE m_threadHandle;
+	static HANDLE m_threadStoppedEvent;
 
 
 	// Hook typedefs
