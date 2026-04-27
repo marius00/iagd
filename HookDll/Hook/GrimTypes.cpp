@@ -1,30 +1,39 @@
 #include "GrimTypes.h"
 #include "Logger.h"
 #include <boost/lexical_cast.hpp>
+#include <algorithm>
 
 namespace GAME {
+	// Helper: strip \r, \n from a narrow string (defensive against game struct issues)
+	static std::string sanitizeCsvField(const char* s) {
+		std::string result(s);
+		result.erase(std::remove(result.begin(), result.end(), '\r'), result.end());
+		result.erase(std::remove(result.begin(), result.end(), '\n'), result.end());
+		return result;
+	}
+
 	std::wstring Serialize(GAME::ItemReplicaInfo replica) {
 		std::wstringstream stream;
-		stream << replica.baseRecord.c_str() << ";";
-		stream << replica.prefixRecord.c_str() << ";";
-		stream << replica.suffixRecord.c_str() << ";";
+		stream << sanitizeCsvField(replica.baseRecord.c_str()).c_str() << ";";
+		stream << sanitizeCsvField(replica.prefixRecord.c_str()).c_str() << ";";
+		stream << sanitizeCsvField(replica.suffixRecord.c_str()).c_str() << ";";
 		stream << replica.seed << ";";
 #ifdef PLAYTEST
 		stream << replica.maybeRerolls << ";";
 #else
 		stream << 0 << ";";
 #endif
-		stream << replica.modifierRecord.c_str() << ";";
-		stream << replica.materiaRecord.c_str() << ";";
-		stream << replica.relicBonus.c_str() << ";";
+		stream << sanitizeCsvField(replica.modifierRecord.c_str()).c_str() << ";";
+		stream << sanitizeCsvField(replica.materiaRecord.c_str()).c_str() << ";";
+		stream << sanitizeCsvField(replica.relicBonus.c_str()).c_str() << ";";
 		stream << replica.relicSeed << ";";
-		stream << replica.enchantmentRecord.c_str() << ";";
+		stream << sanitizeCsvField(replica.enchantmentRecord.c_str()).c_str() << ";";
 		stream << replica.enchantmentSeed << ";";
-		stream << replica.transmuteRecord.c_str() << ";";
+		stream << sanitizeCsvField(replica.transmuteRecord.c_str()).c_str() << ";";
 
 #ifdef PLAYTEST
-		stream << replica.ascendant1.c_str() << ";";
-		stream << replica.ascendant2.c_str();
+		stream << sanitizeCsvField(replica.ascendant1.c_str()).c_str() << ";";
+		stream << sanitizeCsvField(replica.ascendant2.c_str()).c_str();
 #else
 		stream << "" << ";";
 		stream << "";
@@ -55,12 +64,15 @@ namespace GAME {
 	}
 
 	GAME::ItemReplicaInfo* Deserialize(std::vector<std::string> tokens) {
-		if (tokens.size() != 13 && tokens.size() != 16) {
-			LogToFile(LogLevel::WARNING, L"Error parsing CSV file, expected 13 or 16 tokens, got " + std::to_wstring(tokens.size()));
+		// 13 = legacy (no rerolls, no ascendants)
+		// 14 = bugfix compat (rerolls present, ascendants split to next line)
+		// 16 = current format (rerolls + ascendants)
+		if (tokens.size() != 13 && tokens.size() != 14 && tokens.size() != 16) {
+			LogToFile(LogLevel::WARNING, L"Error parsing CSV file, expected 13, 14, or 16 tokens, got " + std::to_wstring(tokens.size()));
 			return nullptr;
 		}
 
-		bool isNewDlc = tokens.size() == 16;
+		bool isNewDlc = tokens.size() >= 14;
 
 		GAME::ItemReplicaInfo* item = new GAME::ItemReplicaInfo();
 		int idx = 2; // 0: is the mod name, 1: is "isHardcore"
@@ -82,7 +94,7 @@ namespace GAME {
 		item->enchantmentRecord = tokens.at(idx++);
 		item->enchantmentSeed = (unsigned int)stoul(tokens.at(idx++));
 		item->transmuteRecord = tokens.at(idx++);
-		if (isNewDlc) {
+		if (tokens.size() == 16) {
 #ifdef PLAYTEST
 			item->ascendant1 = tokens.at(idx++);
 			item->ascendant2 = tokens.at(idx++);
