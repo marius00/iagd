@@ -99,8 +99,9 @@ namespace IAGrim.Services {
             
             // So we get the entire CSV here..
             var csvLines = File.ReadAllText(filename, Encoding.UTF8).Split("\n");
-            PlayerItem? item = Deserialize(csvLines[0]);
+            PlayerItem? item = Deserialize(csvLines[0].TrimEnd('\r'));
             if (item == null) {
+                Logger.Warn("Could not deserialize CSV: " + filename);
                 return true;
             }
 
@@ -118,7 +119,11 @@ namespace IAGrim.Services {
 #if !DEBUG
                     File.Delete(filename);
 #else
-                File.Move(filename, Path.Combine(GlobalPaths.DebugLocation, Path.GetFileName(filename)));
+                try {
+                    File.Move(filename, Path.Combine(GlobalPaths.DebugLocation, Path.GetFileName(filename)));
+                } catch (IOException) {
+                    File.Delete(filename);
+                }
 #endif
             }
             else if (classificationService.Duplicates.Count > 0) {
@@ -140,7 +145,11 @@ namespace IAGrim.Services {
 #if !DEBUG
                     File.Delete(filename);
 #else
-                    File.Move(filename, Path.Combine(GlobalPaths.DebugLocation, Path.GetFileName(filename)));
+                    try {
+                        File.Move(filename, Path.Combine(GlobalPaths.DebugLocation, Path.GetFileName(filename)));
+                    } catch (IOException) {
+                        File.Delete(filename);
+                    }
 #endif
                     return true;
                 }
@@ -153,7 +162,7 @@ namespace IAGrim.Services {
                 var stats = csvLines
                     .Skip(1) // skip header
                     .Select(line => line.Split(';', 2)) // split into key/value
-                    .Where(parts => parts.Length == 2)
+                    .Where(parts => parts.Length == 2 && Int32.TryParse(parts[0].Trim(), out _))
                     .Select(parts => {
                         var text = Regex.Replace(
                             Regex.Replace(parts[1].Trim(), @"(\^.?)", ""),
@@ -163,7 +172,7 @@ namespace IAGrim.Services {
                         return new ReplicaItemRow {
                             Text = text,
                             TextLowercase = text.ToLowerInvariant(),
-                            Type = Int32.Parse(parts[0])
+                            Type = Int32.Parse(parts[0].Trim())
                         };
                     })
                     .ToList();
@@ -206,12 +215,16 @@ namespace IAGrim.Services {
         private PlayerItem? Deserialize(string csv) {
             var pieces = csv.Split(';');
 
-            if (pieces.Length != 13 && pieces.Length != 16) {
-                Logger.Warn($"Expected 13 columns in row, got {pieces.Length}");
+            // 13 = legacy (no rerolls, no ascendants)
+            // 14 = bugfix compat (rerolls present, ascendants were split to next line)
+            // 16 = current format (rerolls + ascendants)
+            if (pieces.Length != 13 && pieces.Length != 14 && pieces.Length != 16) {
+                Logger.Warn($"Expected 13, 14, or 16 columns in row, got {pieces.Length}");
                 return null;
             }
 
-            var isNewDlc = pieces.Length == 16;
+            var hasRerolls = pieces.Length >= 14;
+            var hasAscendants = pieces.Length == 16;
 
             int n = 0;
             return new PlayerItem {
@@ -221,7 +234,7 @@ namespace IAGrim.Services {
                 PrefixRecord = pieces[n++]?.Trim(),
                 SuffixRecord = pieces[n++]?.Trim(),
                 Seed = ToInt(pieces[n++]),
-                RerollsUsed = isNewDlc ? ToInt(pieces[n++]) : 0,
+                RerollsUsed = hasRerolls ? ToInt(pieces[n++]) : 0,
                 ModifierRecord = pieces[n++]?.Trim(),
                 MateriaRecord = pieces[n++]?.Trim(),
                 RelicCompletionBonusRecord = pieces[n++]?.Trim(),
@@ -229,8 +242,8 @@ namespace IAGrim.Services {
                 EnchantmentRecord = pieces[n++]?.Trim(),
                 EnchantmentSeed = ToInt(pieces[n++]),
                 TransmuteRecord = pieces[n++]?.Trim(),
-                AscendantAffixNameRecord = isNewDlc ? pieces[n++]?.Trim() : null,
-                AscendantAffix2hNameRecord = isNewDlc ? pieces[n++]?.Trim() : null,
+                AscendantAffixNameRecord = hasAscendants ? pieces[n++]?.Trim() : null,
+                AscendantAffix2hNameRecord = hasAscendants ? pieces[n++]?.Trim() : null,
                 Tags = new HashSet<DBStatRow>(0)
             };
         }

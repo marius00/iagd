@@ -358,7 +358,11 @@ bool InventorySack_AddItem::Persist(
 	// The IA client can read these after the first line, ignoring them if it doesn't
 	// understand them yet (backwards compatible, since it only reads line 1 today).
 	for (const auto& line : gameTextLines) {
-		stream << line.textClass << ";" << utf8conv.to_bytes(line.text) << "\n";
+		// Sanitize: strip \r\n from text to prevent multi-line corruption
+		std::string textUtf8 = utf8conv.to_bytes(line.text);
+		textUtf8.erase(std::remove(textUtf8.begin(), textUtf8.end(), '\r'), textUtf8.end());
+		textUtf8.erase(std::remove(textUtf8.begin(), textUtf8.end(), '\n'), textUtf8.end());
+		stream << line.textClass << ";" << textUtf8 << "\n";
 	}
 
 	stream.flush();

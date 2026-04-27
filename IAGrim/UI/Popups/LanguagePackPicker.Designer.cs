@@ -106,8 +106,9 @@
             MinimizeBox = false;
             MinimumSize = new Size(975, 450);
             Name = "LanguagePackPicker";
-            SizeGripStyle = SizeGripStyle.Hide;
+            Opacity = 0.95D;
             StartPosition = FormStartPosition.CenterParent;
+            SizeGripStyle = SizeGripStyle.Hide;
             Tag = "iatag_ui_change_language";
             Text = "Change Language";
             FormClosing += LanguagePackPicker_FormClosing;
