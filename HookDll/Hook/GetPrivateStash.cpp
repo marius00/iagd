@@ -51,6 +51,9 @@ void* GetPrivateStash::GetPrivateStashInventorySack() {
 
 void* __stdcall GetPrivateStash::HookedMethod64(void* This) {
 	void* v = originalMethod(This);
+	if (g_isDetaching.load(std::memory_order_relaxed)) {
+		return v;
+	}
 	try {
 		// Capture the private stash inventory sack pointer for instaloot; stash open/close status is no longer reported.
 		privateStashSack = v;
