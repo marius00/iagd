@@ -88,6 +88,9 @@ namespace IAGrim.UI {
 
             foreach (var code in availableCodes) {
                 var displayName = LanguageMapping.GetDisplayName(code);
+#if DEBUG
+                displayName += $" ({code})";
+#endif
                 var isFullySupported = code.Equals("EN", StringComparison.OrdinalIgnoreCase) || LanguageMapping.IsFullySupported(code);
                 var prefix = isFullySupported ? "" : "[Partial] ";
 

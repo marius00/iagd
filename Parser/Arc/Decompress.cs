@@ -416,51 +416,23 @@ namespace IAGrim.Parser.Arc {
                 if (!strings[i].Equals(filename)) continue;
 
                 if (tocs[i].text == null) {
-                    int j = 0;
                     var data = extractFiles(fs, parts, tocs[i]);
 
-                    // Most of the tag section's content will not be removed as control chars, so its final length won't be too far away from its original length.
-                    // This means that initializing the whole-section StringBuilder with the tag section's original length eliminates all future resizes while not wasting much memory.
-                    // The per-line StringBuilder's initial length is semi-arbitrary, but there is no urgent reason to make it shorter and it should almost never need to be resized as-is.
-                    var sb = new StringBuilder(data.Length);
-                    var sbLine = new StringBuilder(data.Length >> 3);
-                    while (j < data.Length) {
-                        var nextIsEOF = j >= data.Length - 1;
-                        var currentChar = (char)data[j];
-                        var nextChar = nextIsEOF ? '\0' : (char)data[j + 1];
-                        switch (currentChar) {
-                            case '\r':
-                            case '\n':
-                                if (sbLine.Length > 0) {
-                                    sb.Append(sbLine.ToString());
-                                    sbLine.Clear();
-                                }
+                    // Decode raw bytes as UTF-8 to correctly handle multi-byte characters (Chinese, Japanese, Korean, etc.)
+                    var decoded = Encoding.UTF8.GetString(data);
 
-                                sbLine.Append('\n');
-
-                                if (currentChar == '\r' && nextChar == '\n') {
-                                    j += 1;
-                                }
-                                break;
-
-                            case '^':
-                                j += 1;
-                                break;
-
-                            default:
-                                sbLine.Append(currentChar);
-                                break;
-                        }
-
-                        j += 1;
+                    // Strip UTF-8 BOM if present
+                    if (decoded.Length > 0 && decoded[0] == '\uFEFF') {
+                        decoded = decoded.Substring(1);
                     }
 
-                    if (sbLine.Length > 0) {
-                        sb.Append(sbLine.ToString());
-                        sbLine.Clear();
-                    }
+                    // Remove control character sequences like ^k, ^K etc. (caret + following char)
+                    decoded = RemoveControlChars(decoded);
 
-                    tocs[i].text = sb.ToString();
+                    // Normalize line endings to \n
+                    decoded = decoded.Replace("\r\n", "\n").Replace("\r", "\n");
+
+                    tocs[i].text = decoded;
                 }
 
                 return tocs[i].text;
