@@ -33,9 +33,10 @@ public:
 protected:
 	// Pipe&thread stuff
 	HANDLE m_thread;
+	HANDLE m_threadStoppedEvent;
 	std::atomic<bool> m_isActive;
 	void Process();
-	static void ThreadMain(void*);
+	static unsigned __stdcall ThreadMain(void*);
 	BaseDataQueue<ParsedSeedRequestPtr> m_itemQueue;
 
 	// Feedback for IA

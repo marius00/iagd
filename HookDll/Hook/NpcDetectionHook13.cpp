@@ -45,6 +45,9 @@ void* __fastcall NpcDetectionHook13::HookedMethod(
 	bool b,
 	bool c
 ) {
+	if (g_isDetaching.load(std::memory_order_relaxed)) {
+		return originalMethod(This, uk0, uk1, uk2, uk3, a, b, c);
+	}
 	try {
 		DataItemPtr item(new DataItem(TYPE_DISPLAY_CRAFTER, 0, 0));
 		m_dataQueue->push(item);

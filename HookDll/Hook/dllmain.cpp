@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <objbase.h>
 #include <fstream>
+#include <TlHelp32.h>
+#include <detours.h>
 #include "DataQueue.h"
 #include "MessageType.h"
 #include "StateRequestNpcAction.h"
@@ -23,6 +25,16 @@
 #include "SetHardcore.h"
 #include "SettingsReader.h"
 HookLog g_log;
+
+// Global detaching flag — checked by all hook proxies
+std::atomic<bool> g_isDetaching{ false };
+
+// Kill switch: set to false to disable on-demand detach and keep the DLL
+// loaded forever (old behavior). Set to true to enable self-unload when IA closes.
+static bool g_enableOnDemandDetach = true;
+
+// Store module handle for FreeLibrary-based on-demand detach
+static HINSTANCE g_hModule = NULL;
 
 #pragma region Variables
 // Switches hook logging on/off
@@ -53,6 +65,7 @@ HWND g_targetWnd = NULL;
 
 bool g_isRunningInWine = false;
 std::wstring g_linuxHackFolder;
+std::vector<BaseMethodHook*> hooks;
 
 #pragma endregion
 
@@ -175,12 +188,29 @@ void WriteMessageToFile(DWORD dwData, void* lpData, DWORD cbData) {
 }
 
 
+// Forward declarations for on-demand detach
+static unsigned __stdcall OnDemandDetachThread(void*);
+static void PerformSafeDetach(bool isProcessTerminating);
+static void DetourUpdateAllThreads();
+
 /// Thread function that dispatches queued message blocks to the IA application.
 void WorkerThreadMethod() {
 	try {
 		bool wineSetActiveDone = false;
-		while ((g_hEvent != NULL) && (WaitForSingleObject(g_hEvent, INFINITE) == WAIT_OBJECT_0)) {
+		bool iaWasRunning = false;
+		while (g_hEvent != NULL) {
+			// Use a 2-second timeout so we periodically wake up to check
+			// if IA has disappeared, even when no hooks are firing.
+			DWORD waitResult = WaitForSingleObject(g_hEvent, 2000);
+			if (waitResult != WAIT_OBJECT_0 && waitResult != WAIT_TIMEOUT) {
+				break; // Event handle became invalid
+			}
 			if (g_hEvent == NULL) {
+				break;
+			}
+
+			// If we're detaching, stop processing
+			if (g_isDetaching.load(std::memory_order_relaxed)) {
 				break;
 			}
 
@@ -198,17 +228,42 @@ void WorkerThreadMethod() {
 					g_lastThreadTick = tick;
 				}
 
-				if ((tick - g_lastThreadTick > 1000) || (g_targetWnd == NULL)) {
+				// Check IA window state on every wake-up (timeout or signaled)
+				if ((tick - g_lastThreadTick > 1000) || (g_targetWnd == NULL) || waitResult == WAIT_TIMEOUT) {
+					HWND prevWnd = g_targetWnd;
 					g_targetWnd = FindWindow(L"GDIAWindowClass", NULL);
 					g_lastThreadTick = GetTickCount();
 
 					if (g_InventorySack_AddItemInstance != NULL) {
 						g_InventorySack_AddItemInstance->SetActive(g_targetWnd != NULL);
 					}
+
+					// On-demand detach: IA was running but its window is now gone
+					if (g_enableOnDemandDetach && iaWasRunning && g_targetWnd == NULL && prevWnd != NULL) {
+						LogToFile(LogLevel::INFO, L"IA window disappeared, triggering on-demand detach..");
+						unsigned int tid;
+						HANDLE hDetach = (HANDLE)_beginthreadex(NULL, 0, &OnDemandDetachThread, NULL, 0, &tid);
+						if (hDetach != NULL) {
+							CloseHandle(hDetach);
+						}
+						return; // Exit the worker thread — detach thread takes over
+					}
+
+					if (g_targetWnd != NULL) {
+						iaWasRunning = true;
+					}
 				}
 			}
 
+			// Only process queued data when the event was actually signaled
+			if (waitResult == WAIT_TIMEOUT) {
+				continue;
+			}
+
 			while (!g_dataQueue.empty()) {
+				if (g_isDetaching.load(std::memory_order_relaxed)) {
+					break;
+				}
 				DataItemPtr item = g_dataQueue.pop();
 
 				if (g_isRunningInWine) {
@@ -283,6 +338,119 @@ void EndWorkerThread() {
 		//WaitForSingleObject(g_thread, INFINITE);
 		CloseHandle(g_thread);
 	}
+}
+
+/// Enumerate all threads in the process and call DetourUpdateThread on each
+/// (except the calling thread). This ensures Detours can safely rewrite
+/// any thread that might be sitting inside a trampoline.
+static void DetourUpdateAllThreads() {
+	DWORD currentThreadId = GetCurrentThreadId();
+	DWORD currentProcessId = GetCurrentProcessId();
+
+	HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
+	if (hSnapshot == INVALID_HANDLE_VALUE) {
+		// Fallback: at least freeze our own thread
+		DetourUpdateThread(GetCurrentThread());
+		return;
+	}
+
+	THREADENTRY32 te;
+	te.dwSize = sizeof(te);
+
+	if (Thread32First(hSnapshot, &te)) {
+		do {
+			if (te.th32OwnerProcessID == currentProcessId && te.th32ThreadID != currentThreadId) {
+				HANDLE hThread = OpenThread(THREAD_GET_CONTEXT | THREAD_SET_CONTEXT | THREAD_SUSPEND_RESUME, FALSE, te.th32ThreadID);
+				if (hThread != NULL) {
+					DetourUpdateThread(hThread);
+					CloseHandle(hThread);
+				}
+			}
+		} while (Thread32Next(hSnapshot, &te));
+	}
+
+	CloseHandle(hSnapshot);
+}
+
+/// Performs the full safe detach sequence. Can be called from ProcessDetach
+/// (DLL_PROCESS_DETACH) or from the on-demand detach thread.
+static void PerformSafeDetach(bool isProcessTerminating) {
+	// Prevent re-entrance
+	bool expected = false;
+	if (!g_isDetaching.compare_exchange_strong(expected, true)) {
+		return; // Already detaching
+	}
+
+	LogToFile(LogLevel::INFO, L"PerformSafeDetach starting..");
+
+	// 1. Stop background threads first (they use game pointers + data queue)
+	//    OnDemandSeedInfo::DisableHook calls Stop() internally,
+	//    but we also call it explicitly since listener is in the hooks vector.
+	if (g_InventorySack_AddItemInstance != NULL) {
+		g_InventorySack_AddItemInstance->SetActive(false);
+	}
+
+	if (!isProcessTerminating) {
+		EndWorkerThread();
+	}
+
+	// 2. Small delay to let any in-flight hook calls that passed the g_isDetaching
+	//    check finish executing before we remove the hooks.
+	if (!isProcessTerminating) {
+		Sleep(100);
+	}
+
+	// 3. Disable all hooks — each hook's DisableHook does its own DetourTransaction.
+	//    The g_isDetaching flag ensures any hook that fires during this window
+	//    just calls the original and returns.
+	//    OnDemandSeedInfo::DisableHook calls Stop() which waits for the thread to exit
+	//    via m_threadStoppedEvent (up to 10s).
+	LogToFile(LogLevel::INFO, L"Disabling " + std::to_wstring(hooks.size()) + L" hooks..");
+	for (unsigned int i = 0; i < hooks.size(); i++) {
+		hooks[i]->DisableHook();
+	}
+	LogToFile(LogLevel::INFO, L"All hooks disabled.");
+
+	// 4. Post-disable safety margin: all our threads should be stopped by now
+	//    (OnDemandSeedInfo::Stop waited for its thread, InventorySack_AddItem::SetActive(false)
+	//    waited for its thread, EndWorkerThread waited for the worker).
+	//    Give a final grace period for any last trampoline returns.
+	if (!isProcessTerminating) {
+		Sleep(200);
+	}
+
+	// 5. Now safe to delete hook objects
+	for (unsigned int i = 0; i < hooks.size(); i++) {
+		delete hooks[i];
+	}
+	hooks.clear();
+
+	// listener was in the hooks vector, so it's already deleted above.
+	// Just null out the pointer.
+	listener = nullptr;
+	g_InventorySack_AddItemInstance = NULL;
+
+	// 6. Best-effort cleanup of PID file in Wine mode
+	if (g_isRunningInWine && !g_linuxHackFolder.empty()) {
+		DWORD pid = GetCurrentProcessId();
+		std::wstring pidFile = g_linuxHackFolder + std::to_wstring(pid) + L".PID";
+		DeleteFile(pidFile.c_str());
+	}
+
+	LogToFile(LogLevel::INFO, L"PerformSafeDetach complete.");
+}
+
+/// Thread procedure for on-demand detach (when IA window disappears).
+/// Performs safe detach: stops all threads, disables all hooks, cleans up.
+/// The DLL remains loaded but fully dormant — all hook proxies are passthrough
+/// via g_isDetaching. This avoids crashes from FreeLibraryAndExitThread where
+/// Detours trampolines reference unloaded code.
+static unsigned __stdcall OnDemandDetachThread(void*) {
+	LogToFile(LogLevel::INFO, L"On-demand detach thread started, performing safe detach..");
+	PerformSafeDetach(false);
+	LogToFile(LogLevel::INFO, L"DLL is now dormant. All hooks disabled, all threads stopped.");
+	// DLL stays loaded but inactive. IA will re-inject on next startup.
+	return 0;
 }
 
 #pragma endregion
@@ -425,7 +593,6 @@ void ReportCancelledInjection() {
 		LOG(L"After SendMessage error code is " << lastErrorCode);
 }
 
-std::vector<BaseMethodHook*> hooks;
 std::wstring GetIagdFolder();
 int ProcessAttach(HINSTANCE _hModule) {
 	//GetProductAndVersion();
@@ -543,33 +710,27 @@ int ProcessAttach(HINSTANCE _hModule) {
 
 
 #pragma region Attach_Detatch
-int ProcessDetach(HINSTANCE _hModule) {
-	// Signal that we are shutting down
-	// This message is not at all guaranteed to get sent.
-
+int ProcessDetach(HINSTANCE _hModule, bool isProcessTerminating) {
 	LOG(L"Detatching DLL..");
 	OutputDebugString(L"ProcessDetach");
 
+	PerformSafeDetach(isProcessTerminating);
 
-	for (unsigned int i = 0; i < hooks.size(); i++) {
-		hooks[i]->DisableHook();
-		delete hooks[i];
+	if (!isProcessTerminating) {
+		// If this is a FreeLibrary-initiated detach (not process exit),
+		// EndWorkerThread was already called inside PerformSafeDetach.
 	}
-	hooks.clear();
-
-	if (listener != nullptr) {
-		listener->Stop();
-		delete listener;
-		listener = nullptr;
-	}
-
-	EndWorkerThread();
-
-	// Best-effort cleanup of PID file in Wine mode
-	if (g_isRunningInWine && !g_linuxHackFolder.empty()) {
-		DWORD pid = GetCurrentProcessId();
-		std::wstring pidFile = g_linuxHackFolder + std::to_wstring(pid) + L".PID";
-		DeleteFile(pidFile.c_str());
+	else {
+		// Process is terminating — other threads are already dead.
+		// Just close handles without waiting.
+		if (g_hEvent != NULL) {
+			CloseHandle(g_hEvent);
+			g_hEvent = NULL;
+		}
+		if (g_thread != NULL) {
+			CloseHandle(g_thread);
+			g_thread = NULL;
+		}
 	}
 
 	LOG(L"DLL detached..");
@@ -580,10 +741,13 @@ int ProcessDetach(HINSTANCE _hModule) {
 BOOL APIENTRY DllMain(HINSTANCE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved) {
 	switch (ul_reason_for_call) {
 	case DLL_PROCESS_ATTACH:
+		g_hModule = hModule;
 		return ProcessAttach(hModule);
 
 	case DLL_PROCESS_DETACH:
-		return ProcessDetach(hModule);
+		// lpReserved != NULL means the process is terminating (not FreeLibrary).
+		// In that case, other threads are already killed by the OS — don't wait on them.
+		return ProcessDetach(hModule, lpReserved != NULL);
 	}
 	return TRUE;
 }

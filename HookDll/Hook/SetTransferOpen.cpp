@@ -34,6 +34,9 @@ void SetTransferOpen::DisableHook() {
 }
 
 void* __fastcall SetTransferOpen::HookedMethod(void* This, bool isOpen) {
+	if (g_isDetaching.load(std::memory_order_relaxed)) {
+		return g_self->originalMethod(This, isOpen);
+	}
 	try {
 		char b[1];
 		b[0] = (isOpen ? 1 : 0);

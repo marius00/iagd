@@ -25,6 +25,7 @@ OnDemandSeedInfo::OnDemandSeedInfo(DataQueue* dataQueue, HANDLE hEvent) {
 	m_dataQueue = dataQueue;
 	m_hEvent = hEvent;
 	m_thread = nullptr;
+	m_threadStoppedEvent = nullptr;
 	m_sleepMilliseconds = 0;
 	dll_Engine_Render = nullptr;
 	gameSetDifficultyRampMethod = nullptr;
@@ -73,7 +74,7 @@ void OnDemandSeedInfo::DisableHook() {
 * Continuously look for new files.
 * This queues the data, avoiding IO operations during the game/render loops.
 */
-void OnDemandSeedInfo::ThreadMain(void*) {
+unsigned __stdcall OnDemandSeedInfo::ThreadMain(void*) {
 
 	LogToFile(LogLevel::INFO, L"Seed info thread started, sleeping for 6s..");
 	try {
@@ -83,17 +84,16 @@ void OnDemandSeedInfo::ThreadMain(void*) {
 		g_self->m_sleepMilliseconds = 6000;
 
 		LogToFile(LogLevel::INFO, L"Seed info thread ready, starting loop");
-		while (g_self->m_isActive) {
+		while (g_self->m_isActive && !g_isDetaching.load(std::memory_order_relaxed)) {
 
 			// The "m_sleepMilliseconds" is actually a counter read in the Update() method on a different thread. Letting us back off from doing too much in the update thread.
 			while (g_self->m_sleepMilliseconds > 0) {
-				//LogToFile(LogLevel::INFO, L"Sleeping for 100ms.. " + std::to_wstring(g_self->m_sleepMilliseconds) + L"ms remaining");
 				Sleep(100);
 				g_self->m_sleepMilliseconds -= 100;
 
-				if (!g_self->m_isActive) {
+				if (!g_self->m_isActive || g_isDetaching.load(std::memory_order_relaxed)) {
 					LogToFile(LogLevel::INFO, L"No longer running, cancelling sleep");
-					return;
+					goto thread_exit;
 				}
 			}
 
@@ -108,6 +108,14 @@ void OnDemandSeedInfo::ThreadMain(void*) {
 	catch (...) {
 		LogToFile(LogLevel::FATAL, L"Error parsing in OndemandSeedInfo::ThreadMain.. (triple-dot)");
 	}
+
+thread_exit:
+	LogToFile(LogLevel::INFO, L"OnDemandSeedInfo thread exiting.");
+	// Signal that we have fully exited
+	if (g_self != nullptr && g_self->m_threadStoppedEvent != NULL) {
+		SetEvent(g_self->m_threadStoppedEvent);
+	}
+	return 0;
 }
 
 /*
@@ -116,8 +124,21 @@ void OnDemandSeedInfo::ThreadMain(void*) {
 void OnDemandSeedInfo::Stop() {
 	m_isActive = false;
 	if (m_thread != NULL) {
+		// Wait for the thread-stopped event (reliable, not affected by _beginthread handle issues)
+		if (m_threadStoppedEvent != NULL) {
+			DWORD waitResult = WaitForSingleObject(m_threadStoppedEvent, 10000); // 10s generous timeout
+			if (waitResult == WAIT_TIMEOUT) {
+				LogToFile(LogLevel::WARNING, L"OnDemandSeedInfo thread did not stop within 10s!");
+			}
+		}
+		// Also wait on the thread handle as a fallback
+		WaitForSingleObject(m_thread, 3000);
 		CloseHandle(m_thread);
 		m_thread = NULL;
+	}
+	if (m_threadStoppedEvent != NULL) {
+		CloseHandle(m_threadStoppedEvent);
+		m_threadStoppedEvent = NULL;
 	}
 }
 
@@ -130,7 +151,16 @@ void OnDemandSeedInfo::Start() {
 
 	LogToFile(LogLevel::INFO, L"Queuing thread start for seed info..");
 	m_isActive = true;
-	m_thread = (HANDLE)_beginthread(ThreadMain, NULL, 0);
+
+	// Create a manual-reset event, initially non-signaled.
+	// The thread will signal this when it exits.
+	if (m_threadStoppedEvent != NULL) {
+		CloseHandle(m_threadStoppedEvent);
+	}
+	m_threadStoppedEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+
+	unsigned int threadId;
+	m_thread = (HANDLE)_beginthreadex(NULL, 0, ThreadMain, NULL, 0, &threadId);
 }
 
 
@@ -271,8 +301,12 @@ void OnDemandSeedInfo::Process() {
 	try {
 		boost::filesystem::create_directories(GetIagdFolder() + L"replica\\to_ia\\");
 
-		while (m_isActive) {
+		while (m_isActive && !g_isDetaching.load(std::memory_order_relaxed)) {
 			Sleep(500);
+
+			// Re-check after sleep
+			if (!m_isActive || g_isDetaching.load(std::memory_order_relaxed))
+				break;
 
 			auto engine = fnGetEngine(true);
 			if (engine == nullptr) {
@@ -289,6 +323,12 @@ void OnDemandSeedInfo::Process() {
 			std::wstring folder = GetFolderToReadFrom(GetModName(gameInfo), fnGetHardcore(gameInfo, true));
 
 			for (auto& entry : boost::make_iterator_range(boost::filesystem::directory_iterator(folder), {})) {
+				// Bail out immediately if we're shutting down
+				if (!m_isActive || g_isDetaching.load(std::memory_order_relaxed)) {
+					LogToFile(LogLevel::INFO, L"Detach requested, aborting file scan.");
+					break;
+				}
+
 				auto filename = std::wstring(entry.path().c_str());
 
 				if (boost::algorithm::ends_with(filename, ".csv")) {
@@ -444,6 +484,9 @@ std::wstring randomFilename32() {
 }
 
 void* __fastcall OnDemandSeedInfo::HookedGameSetDifficultyRampMethod(void* This, int v) {
+	if (g_isDetaching.load(std::memory_order_relaxed)) {
+		return g_self->gameSetDifficultyRampMethod(This, v);
+	}
 	std::lock_guard<std::mutex> guard(g_self->_mutex);
 
 	LogToFile(LogLevel::INFO, L"The pesky SetDifficultyRamp@GameEngine is being called");
@@ -452,6 +495,9 @@ void* __fastcall OnDemandSeedInfo::HookedGameSetDifficultyRampMethod(void* This,
 }
 
 void* __fastcall OnDemandSeedInfo::Hooked_Engine_Render(void* This) {
+	if (g_isDetaching.load(std::memory_order_relaxed)) {
+		return g_self->dll_Engine_Render(This);
+	}
 	if (This == nullptr) {
 		LogToFile(LogLevel::WARNING, L"Render@Engine called with 'This' being null");
 	}

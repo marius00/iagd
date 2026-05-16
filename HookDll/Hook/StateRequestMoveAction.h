@@ -19,7 +19,9 @@ private:
 	static HANDLE m_hEvent;
 	static DataQueue* m_dataQueue;
 	char* m_procAddress;
+	int m_myIndex; // which slot this instance occupies
 	static std::vector<OriginalMethodPtr> originalMethods;
+	static std::vector<void*> hookMethods;
 
 
 	static void* __fastcall HookedMethod(void* This, bool a, bool b, Vec3f const& xyz, OriginalMethodPtr original);

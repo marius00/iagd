@@ -20,7 +20,9 @@ private:
 	static HANDLE m_hEvent;
 	static DataQueue* m_dataQueue;
 	char* m_procAddress;
+	int m_myIndex;
 	static std::vector<OriginalMethodPtr> originalMethods;
+	static std::vector<void*> hookMethods;
 
 	static void* __fastcall HookedMethod(void* This, bool, bool, Vec3f const& xyz, void* npc, OriginalMethodPtr original);
 	// TODO: Ideally this should be possible to write with generics.. but the x64 "some arguments are in registers" complicates that.

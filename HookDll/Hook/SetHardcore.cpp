@@ -35,6 +35,9 @@ void SetHardcore::DisableHook() {
 }
 
 void* __fastcall SetHardcore::HookedMethod(void* This, bool isHardcore) {
+	if (g_isDetaching.load(std::memory_order_relaxed)) {
+		return g_self->originalMethod(This, isHardcore);
+	}
 	try {
 		g_self->TransferData(sizeof(isHardcore), (char*)&isHardcore);
 	}

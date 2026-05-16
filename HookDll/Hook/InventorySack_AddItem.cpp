@@ -149,7 +149,11 @@ void InventorySack_AddItem::DisableHook() {
 	DetourUpdateThread(GetCurrentThread());
 
 	DetourDetach((PVOID*)&dll_GameInfo_GameInfo_Param, Hooked_GameInfo_GameInfo_Param);
-	
+	DetourDetach((PVOID*)&dll_InventorySack_AddItem_Drop, Hooked_InventorySack_AddItem_Drop);
+	DetourDetach((PVOID*)&dll_InventorySack_AddItem_Vec2, Hooked_InventorySack_AddItem_Vec2);
+	DetourDetach((PVOID*)&dll_InventorySack_SetTransferOpen, Hooked_InventorySack_SetTransferOpen);
+	DetourDetach((PVOID*)&dll_GameEngine_Update, Hooked_GameEngine_Update);
+
 	DetourTransactionCommit();
 
 	privateStashHook.DisableHook();
@@ -208,6 +212,9 @@ void InventorySack_AddItem::SetActive(bool isActive)
 // Since were creating from an existing object we'll need to call Get() on isHardcore and ModLabel
 void* __fastcall InventorySack_AddItem::Hooked_GameInfo_GameInfo_Param(void* This , void* info) {
 	void* result = dll_GameInfo_GameInfo_Param(This, info);
+	if (g_isDetaching.load(std::memory_order_relaxed)) {
+		return result;
+	}
 	try {
 		bool isHardcore = dll_GameInfo_GetHardcore(This);
 		DataItemPtr dataEvent(new DataItem(TYPE_GameInfo_IsHardcore_via_init, sizeof(isHardcore), (char*)&isHardcore));
@@ -237,6 +244,9 @@ void* __fastcall InventorySack_AddItem::Hooked_GameInfo_GameInfo_Param(void* Thi
 /// <param name="SkipPlaySound"></param>
 /// <returns></returns>
 void* __fastcall InventorySack_AddItem::Hooked_InventorySack_AddItem_Drop(void* This, GAME::Item *item, bool findPosition, bool SkipPlaySound) {
+	if (g_isDetaching.load(std::memory_order_relaxed)) {
+		return dll_InventorySack_AddItem_Drop(This, item, findPosition, SkipPlaySound);
+	}
 	try {
 		if (HandleItem(This, item)) {
 			return (void*)1;
@@ -264,6 +274,9 @@ void* __fastcall InventorySack_AddItem::Hooked_InventorySack_AddItem_Drop(void* 
 /// <param name="SkipPlaySound"></param>
 /// <returns></returns>
 void* __fastcall InventorySack_AddItem::Hooked_InventorySack_AddItem_Vec2(void* This, void* position, GAME::Item* item, bool SkipPlaySound) {
+	if (g_isDetaching.load(std::memory_order_relaxed)) {
+		return dll_InventorySack_AddItem_Vec2(This, position, item, SkipPlaySound);
+	}
 	try {
 		if (HandleItem(This, item)) {
 			return (void*)1;
@@ -282,6 +295,9 @@ void* __fastcall InventorySack_AddItem::Hooked_InventorySack_AddItem_Vec2(void* 
 }
 
 void* __fastcall InventorySack_AddItem::Hooked_InventorySack_SetTransferOpen(void* This, bool isOpen) {
+	if (g_isDetaching.load(std::memory_order_relaxed)) {
+		return dll_InventorySack_SetTransferOpen(This, isOpen);
+	}
 	m_isTransferStashOpen = isOpen;
 	return dll_InventorySack_SetTransferOpen(This, isOpen);
 }
@@ -702,6 +718,9 @@ GAME::InventorySack* InventorySack_AddItem::GetSackToDepositTo(GAME::GameEngine*
 /// <param name="f2"></param>
 /// <returns></returns>
 void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int v) {
+	if (g_isDetaching.load(std::memory_order_relaxed)) {
+		return dll_GameEngine_Update(This, v);
+	}
 	try {
 		// IA not running? Continue
 		if (!m_isActive.load()) {
@@ -835,11 +854,11 @@ void InventorySack_AddItem::ThreadMain(void*) {
 	LogToFile(LogLevel::INFO, L"IA is running, starting deposit listener..");
 	try {
 		std::set<std::wstring> knownFiles = std::set<std::wstring>();
-		while (m_isActive.load()) {
+		while (m_isActive.load() && !g_isDetaching.load(std::memory_order_relaxed)) {
 			Sleep(500);
 
 			// Re-check after sleep — game may have started shutting down
-			if (!m_isActive.load())
+			if (!m_isActive.load() || g_isDetaching.load(std::memory_order_relaxed))
 				break;
 
 			auto engine = fnGetEngine(true);
@@ -858,6 +877,8 @@ void InventorySack_AddItem::ThreadMain(void*) {
 			// LogToFile(std::wstring(L"Looking for files in dir: ") + folder);
 
 			for (auto& entry : boost::make_iterator_range(boost::filesystem::directory_iterator(folder), {})) {
+				if (!m_isActive.load() || g_isDetaching.load(std::memory_order_relaxed))
+					break;
 				auto filename = std::wstring(entry.path().c_str());
 				if (knownFiles.find(filename) == knownFiles.end()) {
 					boost::lock_guard<boost::mutex> guard(m_mutex);

@@ -35,6 +35,9 @@ void CanUseDismantle::DisableHook() {
 }
 
 void* __fastcall CanUseDismantle::HookedMethod(void* This) {
+	if (g_isDetaching.load(std::memory_order_relaxed)) {
+		return g_self->originalMethod(This);
+	}
 	try {
 		g_self->TransferData(0, nullptr);
 	}
