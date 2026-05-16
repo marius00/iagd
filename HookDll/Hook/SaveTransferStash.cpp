@@ -55,6 +55,9 @@ void* SaveTransferStash::GetTransferStashInventorySack() {
 // This is spammed non stop when the private stash is open(not transfer)
 void* __fastcall SaveTransferStash::HookedMethod(void* This) {
 	void* v = originalMethod(This);
+	if (g_isDetaching.load(std::memory_order_relaxed)) {
+		return v;
+	}
 	try {
 
 		m_transferStashSack = v;

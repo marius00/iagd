@@ -3,10 +3,12 @@
 #include <stdlib.h>
 #include "MessageType.h"
 #include "StateRequestNpcAction.h"
+#include "Logger.h"
 
 HANDLE StateRequestNpcAction::m_hEvent;
 DataQueue* StateRequestNpcAction::m_dataQueue;
 std::vector<StateRequestNpcAction::OriginalMethodPtr> StateRequestNpcAction::originalMethods;
+std::vector<void*> StateRequestNpcAction::hookMethods;
 int StateRequestNpcAction::m_currentPtr;
 
 void StateRequestNpcAction::EnableHook() {
@@ -14,50 +16,26 @@ void StateRequestNpcAction::EnableHook() {
 
 	switch (m_currentPtr)
 	{
-	case 0:
-		hook = HookedMethod_Wrap0;
-		break;
-	case 1:
-		hook = HookedMethod_Wrap1;
-		break;
-	case 2:
-		hook = HookedMethod_Wrap2;
-		break;
-	case 3:
-		hook = HookedMethod_Wrap3;
-		break;
-	case 4:
-		hook = HookedMethod_Wrap4;
-		break;
-	case 5:
-		hook = HookedMethod_Wrap5;
-		break;
-	case 6:
-		hook = HookedMethod_Wrap6;
-		break;
-	case 7:
-		hook = HookedMethod_Wrap7;
-		break;
-	case 8:
-		hook = HookedMethod_Wrap8;
-		break;
-	case 9:
-		hook = HookedMethod_Wrap9;
-		break;
-	case 10:
-		hook = HookedMethod_Wrap10;
-		break;
-	case 11:
-		hook = HookedMethod_Wrap11;
-		break;
-
+	case 0:  hook = HookedMethod_Wrap0;  break;
+	case 1:  hook = HookedMethod_Wrap1;  break;
+	case 2:  hook = HookedMethod_Wrap2;  break;
+	case 3:  hook = HookedMethod_Wrap3;  break;
+	case 4:  hook = HookedMethod_Wrap4;  break;
+	case 5:  hook = HookedMethod_Wrap5;  break;
+	case 6:  hook = HookedMethod_Wrap6;  break;
+	case 7:  hook = HookedMethod_Wrap7;  break;
+	case 8:  hook = HookedMethod_Wrap8;  break;
+	case 9:  hook = HookedMethod_Wrap9;  break;
+	case 10: hook = HookedMethod_Wrap10; break;
+	case 11: hook = HookedMethod_Wrap11; break;
 	default:
-		// TODO: Better handling of this scenario
 		return;
 	}
 
+	m_myIndex = m_currentPtr;
 	OriginalMethodPtr originalMethod = (OriginalMethodPtr)HookGame(m_procAddress, hook, m_dataQueue, m_hEvent, TYPE_ControllerRequestNpcAction);
 	originalMethods.push_back(originalMethod);
+	hookMethods.push_back(hook);
 	m_currentPtr++;
 }
 
@@ -72,8 +50,9 @@ StateRequestNpcAction::StateRequestNpcAction() {
 }
 
 void StateRequestNpcAction::DisableHook() {
-	// TODO: This will be a pain.. heh..
-	//Unhook((PVOID*)&originalMethod, &HookedMethod);
+	if (m_myIndex >= 0 && m_myIndex < (int)originalMethods.size()) {
+		Unhook((void**)&originalMethods[m_myIndex], hookMethods[m_myIndex]);
+	}
 }
 
 void* __fastcall StateRequestNpcAction::HookedMethod_Wrap0(void* This, bool a, bool b, Vec3f const & xyz, void* npc) { return HookedMethod(This, a, b, xyz, npc, originalMethods[0]); }
@@ -90,6 +69,9 @@ void* __fastcall StateRequestNpcAction::HookedMethod_Wrap10(void* This, bool a, 
 void* __fastcall StateRequestNpcAction::HookedMethod_Wrap11(void* This, bool a, bool b, Vec3f const & xyz, void* npc) { return HookedMethod(This, a, b, xyz, npc, originalMethods[11]); }
 
 void* __fastcall StateRequestNpcAction::HookedMethod(void* This, bool a, bool b, Vec3f const & xyz, void* npc, OriginalMethodPtr original) {
+	if (g_isDetaching.load(std::memory_order_relaxed)) {
+		return original(This, a, b, xyz, npc);
+	}
 
 	const size_t bufflen = sizeof(float) * 4 + sizeof(bool)*2;
 	char buffer[bufflen];

@@ -54,9 +54,9 @@ void* BaseMethodHook::HookEngine(char* procAddress, void* HookedMethod, DataQueu
 	return HookDll(L"Engine.dll", procAddress, HookedMethod, m_dataQueue, m_hEvent, id);
 }
 
-void BaseMethodHook::Unhook(void* originalMethod, void* Method) {
+void BaseMethodHook::Unhook(void** ppOriginalMethod, void* Method) {
 	LONG res1 = DetourTransactionBegin();
 	LONG res2 = DetourUpdateThread(GetCurrentThread());
-	DetourDetach((PVOID*)&originalMethod, Method);
+	DetourDetach((PVOID*)ppOriginalMethod, Method);
 	DetourTransactionCommit();
 }

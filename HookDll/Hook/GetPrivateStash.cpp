@@ -52,6 +52,9 @@ void* GetPrivateStash::GetPrivateStashInventorySack() {
 
 void* __stdcall GetPrivateStash::HookedMethod64(void* This) {
 	void* v = originalMethod(This);
+	if (g_isDetaching.load(std::memory_order_relaxed)) {
+		return v;
+	}
 	try {
 
 		char b[1];
