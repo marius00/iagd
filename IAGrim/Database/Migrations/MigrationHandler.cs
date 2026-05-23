@@ -18,6 +18,8 @@ namespace IAGrim.Database.Migrations {
             new AddAsterkarnFieldsToBuddyItems().Migrate(_sessionCreator);
             
             new DatabaseItemHashFixMigration().Migrate(_sessionCreator);
+            new FixPlayerItemIdTypeMigration().Migrate(_sessionCreator);
+            new FixDatabaseItemIdTypeMigration().Migrate(_sessionCreator);
             new HbmSchemaMigration().Migrate(_sessionCreator);
         }
     }
