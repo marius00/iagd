@@ -196,6 +196,20 @@ namespace IAGrim.UI {
             _userFeedbackService = new UserFeedbackService(_cefBrowserHandler);
         }
 
+        private void Browser_NavigationCompleted(object? sender, CoreWebView2NavigationCompletedEventArgs e) {
+            var browser = (sender as Microsoft.Web.WebView2.WinForms.WebView2);
+            if (browser == null) {
+                browser = (sender as CefBrowserHandler).BrowserControl;
+            }
+
+            // Some users reports the webview is missing. This may or may not help..
+            if (browser != null) {
+                browser.Hide();
+                browser.Show();
+                browser.BringToFront();
+            }
+        }
+
         private void Browser_CoreWebView2InitializationCompleted(object? sender, Microsoft.Web.WebView2.Core.CoreWebView2InitializationCompletedEventArgs args)
         {
             var browser = (sender as Microsoft.Web.WebView2.WinForms.WebView2);
@@ -571,6 +585,7 @@ namespace IAGrim.UI {
 
             var browser = _searchWindow.Browser;
             browser.CoreWebView2InitializationCompleted += Browser_CoreWebView2InitializationCompleted;
+            browser.NavigationCompleted += Browser_NavigationCompleted;
 
             searchPanel.Height = searchPanel.Parent.Height;
             searchPanel.Width = searchPanel.Parent.Width;
