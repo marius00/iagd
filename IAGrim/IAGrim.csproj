@@ -19,7 +19,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <PlatformTarget>x64</PlatformTarget>
 
-	<ForceDesignerDPIUnaware>true</ForceDesignerDPIUnaware>
+    <ForceDesignerDPIUnaware>true</ForceDesignerDPIUnaware>
+    <MSBuildWarningsAsMessages>MSB3277</MSBuildWarningsAsMessages>
   </PropertyGroup>
    <PropertyGroup> 
     <ContentSQLiteInteropFiles>true</ContentSQLiteInteropFiles>
@@ -93,12 +94,10 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="NHibernate" Version="5.6.1" />
     <PackageReference Include="NHibernate.Extensions.Sqlite" Version="10.0.1" />
-    <PackageReference Include="SQLite" Version="3.13.0" />
+
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="3.0.3" />
     <PackageReference Include="System.Management" Version="10.0.2" />
-    <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="System.Runtime.Caching" Version="10.0.2" />
-    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
   </ItemGroup>
   
 
