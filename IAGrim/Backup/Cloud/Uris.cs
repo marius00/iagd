@@ -36,7 +36,7 @@ namespace IAGrim.Backup.Cloud {
             ListCharacterUrl = $"{host}/character";
             DownloadCharacterUrl = $"{host}/character/download";
 
-            LoginPageUrl = "https://iagd.evilsoft.net/login";
+            LoginPageUrl = "https://iagd.evilsoft.net/login/";
         }
         public static string LoginPageUrl { get; private set; }
         public static string DownloadUrl { get; private set; }

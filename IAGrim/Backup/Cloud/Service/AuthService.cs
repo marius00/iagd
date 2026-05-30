@@ -2,11 +2,9 @@
 using EvilsoftCommons.Exceptions;
 using IAGrim.Backup.Cloud.CefSharp.Events;
 using IAGrim.Database.Interfaces;
-using IAGrim.UI.Misc.CEF;
 using IAGrim.Utilities.HelperClasses;
 using log4net;
 using Newtonsoft.Json;
-using System;
 using System.Diagnostics;
 using System.Net;
 using System.Runtime.Caching;
