@@ -492,7 +492,6 @@ iatag_ui_db_invalidlocation_body=このフォルダには､ Grim Dawn はイン
 iatag_ui_db_invalidlocation_title=無効なフォルダです
 iatag_ui_decay=生命力減衰
 iatag_ui_defensive=防御
-iatag_ui_deleteduplicates=バグのある複製を削除
 iatag_ui_devtools=開発ツール
 iatag_ui_disableinstaloot=インスタルートを無効にする
 iatag_ui_donatenow=寄付する！

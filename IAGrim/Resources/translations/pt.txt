@@ -282,7 +282,6 @@ iatag_ui_yes=Sim
 iatag_ui_no=Não
 iatag_ui_survivalmode=O Crisol (DLC)
 iatag_ui_dualcomputer=Usando IA em vários PCs
-iatag_ui_deleteduplicates=Excluir duplicatas com bug
 iatag_ui_backup_service_error=O serviço de backup está passando por dificuldades técnicas. \ Por favor, tente novamente mais tarde.
 iatag_ui_backup_status=Status de backup
 iatag_ui_backup_complete=Backup completo!

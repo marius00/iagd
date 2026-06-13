@@ -270,7 +270,6 @@ iatag_ui_yes=Yes
 iatag_ui_no=No
 iatag_ui_survivalmode=竞技场 (DLC)
 iatag_ui_dualcomputer=在多台PC上使用IA
-iatag_ui_deleteduplicates=刪除错误的重复项
 iatag_ui_backup_service_error=备份服务当前遇到技术困难，请稍后再试.
 iatag_ui_backup_status=备份状态
 iatag_ui_backup_complete=备份完成！

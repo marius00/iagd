@@ -104,10 +104,21 @@ namespace IAGrim.Parser.Stash {
             pBuffer.WriteString(this.RelicCompletionBonusRecord);
             pBuffer.WriteUInt(this.RelicSeed);
             pBuffer.WriteString(this.EnchantmentRecord);
+            if (this.Version >= 8u)
+            {
+                pBuffer.WriteString(this.AscendantRecord);
+                pBuffer.WriteString(this.AscendantRecord2H);
+            }
+            
             pBuffer.WriteUInt(this.UNKNOWN);
             pBuffer.WriteUInt(this.EnchantmentSeed);
             pBuffer.WriteUInt(this.MateriaCombines);
             pBuffer.WriteUInt(this.StackCount);
+
+            if (this.Version >= 8u)
+            {
+                pBuffer.WriteUInt(this.Rerolls);
+            }
             pBuffer.WriteUInt(this.XOffset);
             pBuffer.WriteUInt(this.YOffset);
         }

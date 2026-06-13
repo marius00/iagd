@@ -1,7 +1,7 @@
+using IAGrim.StashFile;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using IAGrim.StashFile;
 
 namespace IAGrim.Parser.Stash {
     public class StashTab {
@@ -64,6 +64,12 @@ namespace IAGrim.Parser.Stash {
         public uint Width = 10u;
 
         public uint Height = 18u;
+        
+        private uint borderIndex;
+        private uint borderColorindex;
+        private uint symbolIndex;
+        private uint symbolColorIndex;
+        private string buttonName;
 
         public List<Item> Items { get; private set; }
 
@@ -76,24 +82,35 @@ namespace IAGrim.Parser.Stash {
             return StackableSlots.Contains(slot);
         }
 
-        public bool Read(GDCryptoDataBuffer pCrypto) {
-            uint num = 0;
-            bool flag = !Block.ReadStart(out this._block, pCrypto) || !pCrypto.ReadCryptoUInt(out this.Width) || !pCrypto.ReadCryptoUInt(out this.Height) || !pCrypto.ReadCryptoUInt(out num);
+        public bool Read(GDCryptoDataBuffer pCrypto, uint containerVersion) {
+            uint numItems = 0;
+            bool failed = !Block.ReadStart(out this._block, pCrypto) || !pCrypto.ReadCryptoUInt(out this.Width) || !pCrypto.ReadCryptoUInt(out this.Height) || !pCrypto.ReadCryptoUInt(out numItems);
+
+
             bool result;
-            if (flag) {
-                result = false;
+            if (failed) {
+                return false;
             }
             else {
                 this.Items = new List<Item>();
-                for (uint num2 = 0u; num2 < num; num2 += 1u) {
+                for (uint i = 0u; i < numItems; i += 1u) {
                     Item item = new Item(this.Version);
                     bool flag2 = !item.Read(pCrypto);
                     if (flag2) {
-                        result = false;
-                        return result;
+                        return false;
                     }
                     this.Items.Add(item);
                 }
+
+                if (containerVersion >= 9) {
+                    pCrypto.ReadCryptoUInt(out borderIndex);
+                    pCrypto.ReadCryptoUInt(out borderColorindex);
+                    pCrypto.ReadCryptoUInt(out symbolIndex);
+                    pCrypto.ReadCryptoUInt(out symbolColorIndex);
+                    pCrypto.ReadCryptoWString(out buttonName);
+                }
+
+
                 bool flag3 = !this._block.ReadEnd(pCrypto);
                 result = !flag3;
             }
@@ -112,6 +129,13 @@ namespace IAGrim.Parser.Stash {
                 foreach (var item in this.Items) {
                     item.Write(pBuffer);
                 }
+            }
+            if (this.Version >= 9) {
+                pBuffer.WriteUInt(borderIndex);
+                pBuffer.WriteUInt(borderColorindex);
+                pBuffer.WriteUInt(symbolIndex);
+                pBuffer.WriteUInt(symbolColorIndex);
+                pBuffer.WriteWString(buttonName);
             }
             this._block.WriteEnd(pBuffer);
         }

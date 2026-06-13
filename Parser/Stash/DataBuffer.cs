@@ -94,6 +94,18 @@ namespace IAGrim.StashFile {
                 this.WriteRawBytes(bytes, 0, bytes.Length);
             }
         }
+        public void WriteWString(string value) {
+            if (value == null) {
+                WriteInt(0);
+                return;
+            }
+
+            WriteInt(value.Length);
+
+            byte[] bytes = Encoding.Unicode.GetBytes(value);
+            WriteRawBytes(bytes, 0, bytes.Length);
+        }
+
         public void WriteInt(int pValue) {
             this.Prepare(4);
             int mWriteCursor = this.mWriteCursor;
