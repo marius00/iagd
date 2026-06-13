@@ -1,7 +1,7 @@
+using IAGrim.StashFile;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using IAGrim.StashFile;
 
 namespace IAGrim.Parser.Stash {
     public class StashTab {
@@ -79,6 +79,8 @@ namespace IAGrim.Parser.Stash {
         public bool Read(GDCryptoDataBuffer pCrypto) {
             uint num = 0;
             bool flag = !Block.ReadStart(out this._block, pCrypto) || !pCrypto.ReadCryptoUInt(out this.Width) || !pCrypto.ReadCryptoUInt(out this.Height) || !pCrypto.ReadCryptoUInt(out num);
+
+
             bool result;
             if (flag) {
                 result = false;
@@ -94,6 +96,16 @@ namespace IAGrim.Parser.Stash {
                     }
                     this.Items.Add(item);
                 }
+
+                if (this.Version >= 9) {
+                    pCrypto.ReadCryptoUInt(out var borderIndex);
+                    pCrypto.ReadCryptoUInt(out var borderColorindex);
+                    pCrypto.ReadCryptoUInt(out var symbolIndex);
+                    pCrypto.ReadCryptoUInt(out var symbolColorIndex);
+                    pCrypto.ReadCryptoWString(out var buttonName);
+                }
+
+
                 bool flag3 = !this._block.ReadEnd(pCrypto);
                 result = !flag3;
             }

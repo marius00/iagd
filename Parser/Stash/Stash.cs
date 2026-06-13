@@ -80,8 +80,8 @@ namespace IAGrim.StashFile {
                 return false;
             }
 
-            if (!pCrypto.ReadCryptoUInt(out this.Version) || (this.Version != 5u && this.Version != 4u && this.Version != 8u)) {
-                logger.Warn($"Detected stash file version {this.Version}, only version 4, 5 and 8 are supported");
+            if (!pCrypto.ReadCryptoUInt(out this.Version) || (this.Version != 5u && this.Version != 4u && this.Version != 8u && this.Version != 9u)) {
+                logger.Warn($"Detected stash file version {this.Version}, only version 4, 5, 8 and 9 are supported");
                 return false;
             }
 

@@ -20,6 +20,8 @@ namespace IAGrim.UI.Popups {
 
             if (_settings.GetLocal().PreferLegacyMode != _initialValue) {
                 MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_explain_classiclooting_restartia"));
+                Application.Restart();
+                Environment.Exit(0);
             }
 
             this.Close();
