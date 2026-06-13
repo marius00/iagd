@@ -19,13 +19,11 @@ namespace IAGrim.UI.Popups.ImportExport {
     partial class ImportExportContainer : Form {
         private readonly GDTransferFile[] _modFilter;
         private readonly IPlayerItemDao _playerItemDao;
-        private readonly TransferStashService2 _sm;
 
-        public ImportExportContainer(GDTransferFile[] modFilter, IPlayerItemDao playerItemDao, TransferStashService2 sm) {
+        public ImportExportContainer(GDTransferFile[] modFilter, IPlayerItemDao playerItemDao) {
             InitializeComponent();
             this._modFilter = modFilter;
             this._playerItemDao = playerItemDao;
-            this._sm = sm;
         }
 
         private void ImportExportContainer_Load(object sender, EventArgs e) {
@@ -34,7 +32,6 @@ namespace IAGrim.UI.Popups.ImportExport {
                 _modFilter, 
                 _playerItemDao, 
                 contentPanel.Controls, 
-                _sm,
                 () => this.Close()
                 ), contentPanel);
         }

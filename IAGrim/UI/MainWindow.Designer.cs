@@ -29,7 +29,6 @@
             statusStrip = new StatusStrip();
             statusLabel = new ToolStripStatusLabel();
             tsVersionNumber = new ToolStripStatusLabel();
-            tsStashStatus = new ToolStripStatusLabel();
             tabControl1 = new TabControl();
             tabPageItems = new TabPage();
             searchPanel = new Panel();
@@ -54,7 +53,7 @@
             // 
             // statusStrip
             // 
-            statusStrip.Items.AddRange(new ToolStripItem[] { statusLabel, tsVersionNumber, tsStashStatus });
+            statusStrip.Items.AddRange(new ToolStripItem[] { statusLabel, tsVersionNumber });
             statusStrip.Location = new Point(0, 625);
             statusStrip.Name = "statusStrip";
             statusStrip.Padding = new Padding(1, 0, 16, 0);
@@ -78,15 +77,6 @@
             tsVersionNumber.Tag = "";
             tsVersionNumber.Text = "placeholder";
             tsVersionNumber.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // tsStashStatus
-            // 
-            tsStashStatus.ImageAlign = ContentAlignment.MiddleRight;
-            tsStashStatus.Name = "tsStashStatus";
-            tsStashStatus.Size = new Size(92, 17);
-            tsStashStatus.Tag = "iatag_stash_unknown";
-            tsStashStatus.Text = "Stash: Unknown";
-            tsStashStatus.TextAlign = ContentAlignment.MiddleRight;
             // 
             // tabControl1
             // 
@@ -262,7 +252,6 @@
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.TabPage tabPageOnline;
         private System.Windows.Forms.Panel onlinePanel;
-        private System.Windows.Forms.ToolStripStatusLabel tsStashStatus;
         private System.Windows.Forms.ToolStripStatusLabel tsVersionNumber;
     }
 }

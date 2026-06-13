@@ -19,12 +19,10 @@ namespace IAGrim.UI.Tabs {
         private readonly Action _itemViewUpdateTrigger;
         private readonly IPlayerItemDao _playerItemDao;
         private readonly GDTransferFile[] _modFilter;
-        private readonly TransferStashService2 _transferStashService2;
         private readonly CefBrowserHandler _cefBrowserHandler;
         private readonly LanguagePackPicker _languagePackPicker;
         private readonly SettingsService _settings;
         private readonly GrimDawnDetector _grimDawnDetector;
-        private readonly DarkMode _darkModeToggler;
         private readonly AutomaticUpdateChecker _automaticUpdateChecker;
 
 
@@ -34,7 +32,6 @@ namespace IAGrim.UI.Tabs {
             Action itemViewUpdateTrigger,
             IPlayerItemDao playerItemDao,
             GDTransferFile[] modFilter,
-            TransferStashService2 transferStashService2,
             LanguagePackPicker languagePackPicker,
             SettingsService settings, GrimDawnDetector grimDawnDetector, DarkMode darkModeToggler,
             AutomaticUpdateChecker automaticUpdateChecker) {
@@ -45,11 +42,9 @@ namespace IAGrim.UI.Tabs {
             this._itemViewUpdateTrigger = itemViewUpdateTrigger;
             this._playerItemDao = playerItemDao;
             this._modFilter = modFilter;
-            this._transferStashService2 = transferStashService2;
             _languagePackPicker = languagePackPicker;
             _settings = settings;
             _grimDawnDetector = grimDawnDetector;
-            _darkModeToggler = darkModeToggler;
             _automaticUpdateChecker = automaticUpdateChecker;
 
             _controller.BindCheckbox(cbMinimizeToTray);
@@ -128,7 +123,7 @@ namespace IAGrim.UI.Tabs {
 
 
         private void buttonImportExport_Click(object sender, EventArgs e) {
-            new Popups.ImportExport.ImportExportContainer(_modFilter, _playerItemDao, _transferStashService2)
+            new Popups.ImportExport.ImportExportContainer(_modFilter, _playerItemDao)
                 .ShowDialog();
         }
 
@@ -202,10 +197,6 @@ namespace IAGrim.UI.Tabs {
 
         private void linkDowngrade_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             _automaticUpdateChecker.Downgrade();
-        }
-
-        private void firefoxButton1_Click(object sender, EventArgs e) {
-            new LootingModeScreen(_settings).ShowDialog();
         }
 
         private void firefoxCheckBox1_CheckedChanged(object sender, EventArgs e) {

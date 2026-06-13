@@ -75,10 +75,6 @@ namespace IAGrim.UI.Tabs.Util {
                     _setStatus(RuntimeSettings.Language.GetTag("iatag_no_items_stored"));
 
                 }
-                else if (_settings.GetLocal().PreferLegacyMode) {
-                    _setStatus(RuntimeSettings.Language.GetTag("iatag_stash_not_found"));
-                    Logger.Warn("Could not locate any stash files");
-                }
                 else {
                     _setStatus(RuntimeSettings.Language.GetTag("iatag_error_modfilter"));
                     Logger.Warn("Error loading mod filter");

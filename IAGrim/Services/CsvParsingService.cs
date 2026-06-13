@@ -133,24 +133,20 @@ namespace IAGrim.Services {
             else {
                 // Transfer back in-game, should never have been looted.
                 // TODO: Separate transfer logic.. no delete-from-db etc..
-                if (RuntimeSettings.StashStatus == StashAvailability.CLOSED) {
-                    transferStashService.Deposit(new List<PlayerItem> { item }, null);
-                    Logger.Info("Deposited item back in-game, did not pass item classification.");
-                    Logger.Info("New GD patch? Go to the Grim Dawn tab and parse the game files again.");
+                transferStashService.Deposit(new List<PlayerItem> { item }, null);
+                Logger.Info("Deposited item back in-game, did not pass item classification.");
+                Logger.Info("New GD patch? Go to the Grim Dawn tab and parse the game files again.");
 #if !DEBUG
-                    File.Delete(filename);
+                File.Delete(filename);
 #else
-                    try {
-                        File.Move(filename, Path.Combine(GlobalPaths.DebugLocation, Path.GetFileName(filename)));
-                    } catch (IOException) {
-                        File.Delete(filename);
-                    }
+                try {
+                    File.Move(filename, Path.Combine(GlobalPaths.DebugLocation, Path.GetFileName(filename)));
+                } catch (IOException) {
+                    File.Delete(filename);
+                }
 #endif
-                    return true;
-                }
-                else {
-                    return false;
-                }
+                return true;
+              
             }
 
             if (item.Id != null) {

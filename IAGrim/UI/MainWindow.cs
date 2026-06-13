@@ -9,7 +9,6 @@ using IAGrim.Backup.Cloud.Util;
 using IAGrim.BuddyShare;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.Arz;
-using IAGrim.Parsers.Arz.dto;
 using IAGrim.Parsers.GameDataParsing.Service;
 using IAGrim.Parsers.TransferStash;
 using IAGrim.Services;
@@ -26,11 +25,7 @@ using IAGrim.Utilities.Cloud;
 using IAGrim.Utilities.HelperClasses;
 using log4net;
 using Microsoft.Web.WebView2.Core;
-using System;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
-using System.Reflection;
 
 namespace IAGrim.UI {
     public partial class MainWindow : Form {
@@ -46,9 +41,7 @@ namespace IAGrim.UI {
         private readonly List<IMessageProcessor> _messageProcessors = new List<IMessageProcessor>();
 
         private SplitSearchWindow? _searchWindow;
-        private TransferStashWorker? _transferStashWorker;
 
-        private StashFileMonitor? _stashFileMonitor = new StashFileMonitor();
         private CsvFileMonitor? _csvFileMonitor = new CsvFileMonitor();
         private CsvFileMonitor? _replicaCsvFileMonitor = new CsvFileMonitor();
         private ItemReplicaRequesterService? _itemReplicaService;
@@ -144,14 +137,6 @@ namespace IAGrim.UI {
                         break;
                     }
 
-                    // No grim dawn client, so stash is closed!
-                    case InjectionHelper.NO_PROCESS_FOUND_ON_STARTUP: {
-                            if (RuntimeSettings.StashStatus == StashAvailability.UNKNOWN) {
-                            RuntimeSettings.StashStatus = StashAvailability.CLOSED;
-                        }
-
-                        break;
-                    }
 
                     // No grim dawn client, so stash is closed!
                     case InjectionHelper.NO_PROCESS_FOUND:
@@ -265,13 +250,6 @@ namespace IAGrim.UI {
         /// </summary>
         public void UpdateLanguage() {
             LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
-            if (Tag != null) {
-                Text = RuntimeSettings.Language.GetTag(Tag.ToString());
-                if (tsStashStatus.Tag is string) {
-                    tsStashStatus.Text = RuntimeSettings.Language.GetTag(tsStashStatus.Tag.ToString());
-                }
-            }
-
             Refresh();
         }
 
@@ -293,9 +271,6 @@ namespace IAGrim.UI {
 
             _authService?.Dispose();
             _authService = null;
-
-            _stashFileMonitor?.Dispose();
-            _stashFileMonitor = null;
 
             _csvFileMonitor?.Dispose();
             _csvFileMonitor = null;
@@ -499,35 +474,7 @@ namespace IAGrim.UI {
 
 
             var replicaItemDao = _serviceProvider.Get<IReplicaItemDao>();
-            var stashWriter = new SafeTransferStashWriter(settingsService, _cefBrowserHandler);
-            var transferStashService = new TransferStashService(settingsService);
-            var transferStashService2 = new TransferStashService2(playerItemDao, cacher, transferStashService, stashWriter, _cefBrowserHandler);
-            _serviceProvider.Add(transferStashService2);
-
-            _transferStashWorker = new TransferStashWorker(transferStashService2, _userFeedbackService);
-
-            if (settingsService.GetLocal().PreferLegacyMode) {
-                _stashFileMonitor.OnStashModified += (_, __) => {
-                    StashEventArg args = __ as StashEventArg;
-                    _transferStashWorker.Queue(args?.Filename);
-
-                    // May not minimize, but 
-                    _usageStatisticsReporter.ResetLastMinimized();
-                    _automaticUpdateChecker.ResetLastMinimized();
-                };
-
-                if (!_stashFileMonitor.StartMonitoring(GlobalPaths.SavePath)) {
-
-                    MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_cloudsync_mb"));
-                    _cefBrowserHandler.ShowHelp(HelpService.HelpType.CloudSavesEnabled);
-
-                    Logger.Warn("Shutting down IA, unable to monitor stash files.");
-
-                    if (!Debugger.IsAttached)
-                        Close();
-                }
-            }
-
+            var transferStashService = new TransferStashService();
                 
 
             // Load the grim database
@@ -590,8 +537,6 @@ namespace IAGrim.UI {
             searchPanel.Height = searchPanel.Parent.Height;
             searchPanel.Width = searchPanel.Parent.Width;
 
-            transferStashService2.OnUpdate += (_, __) => { _searchWindow.UpdateListView(); };
-
             var languagePackPicker = new LanguagePackPicker(itemTagDao, playerItemDao, _parsingService, settingsService);
 
 
@@ -603,7 +548,6 @@ namespace IAGrim.UI {
                     ListviewUpdateTrigger,
                     playerItemDao,
                     _searchWindow.ModSelectionHandler.GetAvailableModSelection(),
-                    transferStashService2,
                     languagePackPicker,
                     settingsService,
                     grimDawnDetector,
@@ -637,16 +581,9 @@ namespace IAGrim.UI {
 
             LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
 
-            if (settingsService.GetLocal().PreferLegacyMode) {
-                _messageProcessors.Add(new PlayerPositionTracker(Debugger.IsAttached && false));
-                _messageProcessors.Add(new StashStatusHandler());
-                _messageProcessors.Add(new CloudDetectorProcessor(SetFeedback, _serviceProvider.Get<SettingsService>()));
-            }
             _messageProcessors.Add(new GenericErrorHandler());
             _messageProcessors.Add(new InjectionAbortedProcessor(SetInjectionAbortedStatus));
 
-
-            RuntimeSettings.StashStatusChanged += GlobalSettings_StashStatusChanged;
 
             _transferController = new ItemTransferController(
                 _cefBrowserHandler,
@@ -713,8 +650,6 @@ namespace IAGrim.UI {
 
             var preloadThread= new Thread(_itemReplicaParser.Preload);
             preloadThread.Start();
-
-            tsStashStatus.Visible = settingsService.GetLocal().PreferLegacyMode;
 
             Logger.Debug("UI initialization complete");
         }
@@ -818,59 +753,6 @@ namespace IAGrim.UI {
             }
         }
 
-
-        private void GlobalSettings_StashStatusChanged(object sender, EventArgs e) {
-            if (InvokeRequired) {
-                Invoke((System.Windows.Forms.MethodInvoker) delegate { GlobalSettings_StashStatusChanged(sender, e); });
-                return;
-            }
-
-            var settingsService = _serviceProvider.Get<SettingsService>();
-            tsStashStatus.Visible = settingsService.GetLocal().PreferLegacyMode;
-
-            switch (RuntimeSettings.StashStatus) {
-                case StashAvailability.OPEN:
-                    tsStashStatus.ForeColor = Color.FromArgb(255, 192, 0, 0);
-                    tsStashStatus.Tag = "iatag_stash_open";
-                    tsStashStatus.Text = RuntimeSettings.Language.GetTag(tsStashStatus.Tag.ToString());
-                    break;
-                case StashAvailability.CRAFTING:
-                    tsStashStatus.ForeColor = Color.FromArgb(255, 192, 0, 0);
-                    tsStashStatus.Tag = "iatag_stash_crafting";
-                    tsStashStatus.Text = RuntimeSettings.Language.GetTag(tsStashStatus.Tag.ToString());
-                    break;
-                case StashAvailability.CLOSED:
-                    tsStashStatus.ForeColor = Color.FromArgb(255, 0, 142, 0);
-                    tsStashStatus.Tag = "iatag_stash_closed";
-                    tsStashStatus.Text = RuntimeSettings.Language.GetTag(tsStashStatus.Tag.ToString());
-                    break;
-                case StashAvailability.ERROR:
-                    tsStashStatus.ForeColor = Color.FromArgb(255, 192, 0, 0);
-                    tsStashStatus.Tag = "iatag_stash_error";
-                    tsStashStatus.Text = RuntimeSettings.Language.GetTag(tsStashStatus.Tag.ToString());
-                    tsStashStatus.Visible = true;
-                    break;
-                case StashAvailability.UNKNOWN:
-                    tsStashStatus.ForeColor = Color.FromArgb(255, 192, 0, 0);
-                    tsStashStatus.Tag = "iatag_stash_unknown";
-                    tsStashStatus.Text = RuntimeSettings.Language.GetTag(tsStashStatus.Tag.ToString());
-                    break;
-                case StashAvailability.NOT64BIT:
-                    tsStashStatus.ForeColor = Color.FromArgb(255, 192, 0, 0);
-                    tsStashStatus.Tag = "iatag_stash_not64bit";
-                    tsStashStatus.Text = RuntimeSettings.Language.GetTag(tsStashStatus.Tag.ToString());
-                    tsStashStatus.Visible = true;
-                    break;
-                case StashAvailability.MENU:
-                    tsStashStatus.Visible = settingsService.GetLocal().PreferLegacyMode;
-                    break;
-                default:
-                    tsStashStatus.ForeColor = Color.FromArgb(255, 192, 0, 0);
-                    tsStashStatus.Tag = null;
-                    tsStashStatus.Text = RuntimeSettings.Language.GetTag("iatag_stash_") + RuntimeSettings.StashStatus.ToString().ToLowerInvariant();
-                    break;
-            }
-        }
 
         #region Tray and Menu
 

@@ -15,20 +15,6 @@ namespace IAGrim.Parsers.Arz {
     internal class TransferStashService {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(TransferStashService));
 
-        private readonly SettingsService _settings;
-
-
-        public TransferStashService(SettingsService settings) {
-            _settings = settings;
-        }
-
-        public int GetStashToLootFrom(Stash stash) {
-            if (_settings.GetLocal().StashToLootFrom == 0) {
-                return stash.Tabs.Count - 1;
-            }
-
-            return (int) _settings.GetLocal().StashToLootFrom - 1;
-        }
 
 
         /// <summary>
@@ -54,15 +40,6 @@ namespace IAGrim.Parsers.Arz {
 
             result = string.Empty;
             return false;
-        }
-
-
-
-        public static Stash GetStash(string filename) {
-            var pCrypto = new GDCryptoDataBuffer(DataBuffer.ReadBytesFromDisk(filename));
-            var stash = new Stash();
-
-            return stash.Read(pCrypto) ? stash : null;
         }
 
 

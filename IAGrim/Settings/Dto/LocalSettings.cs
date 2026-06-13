@@ -31,7 +31,6 @@ namespace IAGrim.Settings.Dto {
         private long? _grimDawnLocationLastModified;
         private bool _startMinimized;
         private DateTime _lastCharSyncUtc;
-        private bool _preferLegacyMode;
 
         public string MachineName { get; set; }
 
@@ -232,17 +231,6 @@ namespace IAGrim.Settings.Dto {
             get => _lastCharSyncUtc;
             set {
                 _lastCharSyncUtc = value;
-                OnMutate?.Invoke(null, EventArgs.Empty);
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public bool PreferLegacyMode {
-            get => _preferLegacyMode;
-            set {
-                _preferLegacyMode = value;
                 OnMutate?.Invoke(null, EventArgs.Empty);
             }
         }

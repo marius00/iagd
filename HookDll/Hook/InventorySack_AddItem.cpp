@@ -42,7 +42,6 @@ std::wstring InventorySack_AddItem::m_storageFolder;
 int InventorySack_AddItem::m_stashTabLootFrom;
 int InventorySack_AddItem::m_stashTabDepositTo;
 ULONGLONG InventorySack_AddItem::m_lastNotificationTickTime;
-bool InventorySack_AddItem::m_instalootEnabled;
 bool InventorySack_AddItem::m_isGrimDawnParsed;
 SettingsReader InventorySack_AddItem::m_settingsReader;
 bool InventorySack_AddItem::m_isActive;
@@ -128,7 +127,6 @@ InventorySack_AddItem::InventorySack_AddItem(DataQueue* dataQueue, HANDLE hEvent
 	m_settingsReader = SettingsReader();
 	m_stashTabLootFrom = m_settingsReader.GetStashTabToLootFrom();
 	m_stashTabDepositTo = m_settingsReader.GetStashTabToDepositTo();
-	m_instalootEnabled = m_settingsReader.GetPreferLegacyMode();
 	m_isGrimDawnParsed = m_settingsReader.GetIsGrimDawnParsed();
 	m_lastNotificationTickTime = 0;
 	m_isActive = false;
@@ -483,7 +481,7 @@ bool InventorySack_AddItem::IsSackToLootFrom(void* stashTab, GAME::GameEngine* g
 /// <param name="item"></param>
 /// <returns></returns>
 bool InventorySack_AddItem::HandleItem(void* stash, GAME::Item* item) {
-	if (!m_instalootEnabled || !m_isActive || stash == nullptr || item == nullptr)
+	if (!m_isActive || stash == nullptr || item == nullptr)
 		return false;
 
 	auto gameEngine = fnGetGameEngine();

@@ -64,26 +64,7 @@ int SettingsReader::GetStashTabToDepositTo() {
 	return stashToDepositTo;
 }
 
-bool SettingsReader::GetPreferLegacyMode() {
-	boost::property_tree::wptree loadPtreeRoot;
 
-	const auto settingsJson = GetIagdFolder() + L"settings.json";
-	std::wifstream json(settingsJson);
-
-
-	boost::property_tree::read_json(json, loadPtreeRoot);
-	auto child = loadPtreeRoot.get_child_optional(L"local.preferLegacyMode");
-	if (!child)
-	{
-		LogToFile(LogLevel::WARNING, L"Legacy mode: No configuration found, defaulting to standard mode");
-		return true;
-	}
-
-	const bool isLegacyMode = loadPtreeRoot.get<bool>(L"local.preferLegacyMode");
-	LogToFile(LogLevel::INFO, std::wstring(L"Legacy mode: ") + (isLegacyMode ? L"True" : L"False"));
-
-	return isLegacyMode != 1;
-}
 
 
 bool SettingsReader::GetIsGrimDawnParsed() {

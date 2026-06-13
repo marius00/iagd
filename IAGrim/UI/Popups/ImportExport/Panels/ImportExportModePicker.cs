@@ -12,26 +12,23 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
         private readonly Control.ControlCollection parentContainer;
         private readonly IPlayerItemDao playerItemDao;
         private readonly GDTransferFile[] modFilter;
-        private readonly TransferStashService2 sm;
         private readonly Action onClose;
 
         public ImportExportModePicker(
             GDTransferFile[] modFilter, 
             IPlayerItemDao playerItemDao, 
             Control.ControlCollection parentContainer, 
-            TransferStashService2 sm,
             Action onClose
             ) {
             InitializeComponent();
             this.modFilter = modFilter;
             this.playerItemDao = playerItemDao;
             this.parentContainer = parentContainer;
-            this.sm = sm;
             this.onClose = onClose;
         }
 
         private void buttonImport_Click(object sender, EventArgs e) {
-            var form = new ImportMode(modFilter, playerItemDao, sm) { TopLevel = false };            
+            var form = new ImportMode(modFilter, playerItemDao) { TopLevel = false };            
             parentContainer.Add(form);
             parentContainer.Remove(this);
             form.Show();

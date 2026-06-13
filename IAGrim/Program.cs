@@ -7,10 +7,14 @@ using IAGrim.Database.Migrations;
 using IAGrim.Parsers.GameDataParsing.Service;
 using IAGrim.Services;
 using IAGrim.Settings;
+using IAGrim.StashFile;
 using IAGrim.UI;
+using IAGrim.UI.Misc.CEF;
 using IAGrim.Utilities;
+using IAGrim.Utilities.HelperClasses;
 using log4net;
 using log4net.Config;
+using NHibernate.SqlCommand;
 using StatTranslator;
 using System.Reflection;
 

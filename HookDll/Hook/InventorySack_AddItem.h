@@ -31,7 +31,6 @@ private:
 	static GetPrivateStash privateStashHook;
 	static int m_stashTabLootFrom;
 	static int m_stashTabDepositTo;
-	static bool m_instalootEnabled;
 	static bool m_isGrimDawnParsed;
 	static SettingsReader m_settingsReader;
 	static bool m_isActive;

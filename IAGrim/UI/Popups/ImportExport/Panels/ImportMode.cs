@@ -18,14 +18,12 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
         private readonly GDTransferFile[] _modSelection;
         private readonly IPlayerItemDao _playerItemDao;
         private string _filename;
-        private readonly TransferStashService2 _sm;
         private volatile bool isLocked = false;
 
-        public ImportMode(GDTransferFile[] modSelection, IPlayerItemDao playerItemDao, TransferStashService2 sm) {
+        public ImportMode(GDTransferFile[] modSelection, IPlayerItemDao playerItemDao) {
             InitializeComponent();
             this._modSelection = modSelection;
             this._playerItemDao = playerItemDao;
-            this._sm = sm;
         }
 
         private void ImportMode_Load(object sender, EventArgs e) {
@@ -69,14 +67,9 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
                         diag.DefaultExt = "gds";
                         diag.Filter = "GD Stash exports (*.gds)|*.gds";
                     }
-                    else if (radioIAStash.Checked) {
+                    else {
                         diag.DefaultExt = "ias";
                         diag.Filter = "IA Stash exports (*.ias)|*.ias;*.zip";
-                    }
-                    else {
-                        diag.DefaultExt = "gst";
-                        diag.Filter = "Grim Dawn Stash files (*.gst)|*.gst|HD Hardcore Stash files (*.gsh)|*.gsh";
-                        diag.FileName = "transfer.gst";
                     }
 
                     if (diag.ShowDialog() == DialogResult.OK) {
@@ -135,20 +128,9 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
                 if (radioIAStash.Checked) {
                     io = new IAFileExporter(_filename);
                 }
-                else if (radioGDStash.Checked) {
+                else{
                     GDTransferFile settings = cbItemSelection.SelectedItem as GDTransferFile;
                     io = new GDFileExporter(_filename, settings?.Mod ?? string.Empty);
-                }
-                else {
-                    _playerItemDao.Save(_sm.EmptyStash(_filename));
-
-                    MessageBox.Show(
-                        RuntimeSettings.Language.GetTag("iatag_ui_importexport_import_success"),
-                        RuntimeSettings.Language.GetTag("iatag_ui_importexport_import_success"),
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information
-                    );
-                    return;
                 }
 
                 var items = io.Read(Read(_filename));

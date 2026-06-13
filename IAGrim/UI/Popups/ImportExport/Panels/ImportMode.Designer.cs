@@ -23,211 +23,204 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.panelBox3 = new PanelBox();
-            this.cbItemSelection = new System.Windows.Forms.ComboBox();
-            this.buttonImport = new FirefoxButton();
-            this.panelBox1 = new PanelBox();
-            this.buttonBrowse = new FirefoxButton();
-            this.panelBox2 = new PanelBox();
-            this.helpRestoreBackup = new System.Windows.Forms.LinkLabel();
-            this.radioGameStash = new FirefoxRadioButton();
-            this.radioGDStash = new FirefoxRadioButton();
-            this.radioIAStash = new FirefoxRadioButton();
-            this.panelBox3.SuspendLayout();
-            this.panelBox1.SuspendLayout();
-            this.panelBox2.SuspendLayout();
-            this.SuspendLayout();
+            progressBar1 = new ProgressBar();
+            panelBox3 = new PanelBox();
+            cbItemSelection = new ComboBox();
+            buttonImport = new FirefoxButton();
+            panelBox1 = new PanelBox();
+            buttonBrowse = new FirefoxButton();
+            panelBox2 = new PanelBox();
+            helpRestoreBackup = new LinkLabel();
+            radioGDStash = new FirefoxRadioButton();
+            radioIAStash = new FirefoxRadioButton();
+            panelBox3.SuspendLayout();
+            panelBox1.SuspendLayout();
+            panelBox2.SuspendLayout();
+            SuspendLayout();
             // 
             // progressBar1
             // 
-            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar1.Location = new System.Drawing.Point(15, 123);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(194, 23);
-            this.progressBar1.TabIndex = 8;
-            this.progressBar1.Click += new System.EventHandler(this.progressBar1_Click);
+            progressBar1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            progressBar1.Location = new Point(18, 142);
+            progressBar1.Margin = new Padding(4, 3, 4, 3);
+            progressBar1.Name = "progressBar1";
+            progressBar1.Size = new Size(226, 27);
+            progressBar1.TabIndex = 8;
+            progressBar1.Click += progressBar1_Click;
             // 
             // panelBox3
             // 
-            this.panelBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
-            this.panelBox3.Controls.Add(this.progressBar1);
-            this.panelBox3.Controls.Add(this.cbItemSelection);
-            this.panelBox3.Controls.Add(this.buttonImport);
-            this.panelBox3.Font = new System.Drawing.Font("Segoe UI Semibold", 20F);
-            this.panelBox3.ForeColor = System.Drawing.Color.Black;
-            this.panelBox3.HeaderColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(231)))), ((int)(((byte)(231)))));
-            this.panelBox3.HeaderHeight = 40;
-            this.panelBox3.Location = new System.Drawing.Point(406, 12);
-            this.panelBox3.Name = "panelBox3";
-            this.panelBox3.NoRounding = false;
-            this.panelBox3.Size = new System.Drawing.Size(228, 164);
-            this.panelBox3.TabIndex = 7;
-            this.panelBox3.Tag = "iatag_ui_import_import";
-            this.panelBox3.Text = "Import";
-            this.panelBox3.TextLocation = "8; 5";
+            panelBox3.BackColor = Color.FromArgb(240, 240, 240);
+            panelBox3.Controls.Add(progressBar1);
+            panelBox3.Controls.Add(cbItemSelection);
+            panelBox3.Controls.Add(buttonImport);
+            panelBox3.Font = new Font("Segoe UI Semibold", 20F);
+            panelBox3.ForeColor = Color.Black;
+            panelBox3.HeaderColor = Color.FromArgb(231, 231, 231);
+            panelBox3.HeaderHeight = 40;
+            panelBox3.Location = new Point(474, 14);
+            panelBox3.Margin = new Padding(4, 3, 4, 3);
+            panelBox3.Name = "panelBox3";
+            panelBox3.NoRounding = false;
+            panelBox3.Size = new Size(266, 189);
+            panelBox3.TabIndex = 7;
+            panelBox3.Tag = "iatag_ui_import_import";
+            panelBox3.Text = "Import";
+            panelBox3.TextLocation = "8; 5";
             // 
             // cbItemSelection
             // 
-            this.cbItemSelection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbItemSelection.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cbItemSelection.FormattingEnabled = true;
-            this.cbItemSelection.Location = new System.Drawing.Point(15, 52);
-            this.cbItemSelection.Name = "cbItemSelection";
-            this.cbItemSelection.Size = new System.Drawing.Size(192, 25);
-            this.cbItemSelection.TabIndex = 8;
+            cbItemSelection.DropDownStyle = ComboBoxStyle.DropDownList;
+            cbItemSelection.Font = new Font("Segoe UI", 10F);
+            cbItemSelection.FormattingEnabled = true;
+            cbItemSelection.Location = new Point(18, 60);
+            cbItemSelection.Margin = new Padding(4, 3, 4, 3);
+            cbItemSelection.Name = "cbItemSelection";
+            cbItemSelection.Size = new Size(223, 25);
+            cbItemSelection.TabIndex = 8;
             // 
             // buttonImport
             // 
-            this.buttonImport.BackColorDefault = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
-            this.buttonImport.BackColorOverride = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(245)))), ((int)(((byte)(245)))));
-            this.buttonImport.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
-            this.buttonImport.EnabledCalc = true;
-            this.buttonImport.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.buttonImport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
-            this.buttonImport.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(232)))), ((int)(((byte)(232)))), ((int)(((byte)(232)))));
-            this.buttonImport.HoverForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
-            this.buttonImport.Location = new System.Drawing.Point(15, 85);
-            this.buttonImport.Name = "buttonImport";
-            this.buttonImport.Size = new System.Drawing.Size(192, 32);
-            this.buttonImport.TabIndex = 6;
-            this.buttonImport.Tag = "iatag_ui_import";
-            this.buttonImport.Text = "Import";
-            this.buttonImport.Click += new System.EventHandler(this.buttonImport_Click);
+            buttonImport.BackColorDefault = Color.FromArgb(212, 212, 212);
+            buttonImport.BackColorOverride = Color.FromArgb(245, 245, 245);
+            buttonImport.BorderColor = Color.FromArgb(193, 193, 193);
+            buttonImport.EnabledCalc = true;
+            buttonImport.Font = new Font("Segoe UI", 10F);
+            buttonImport.ForeColor = Color.FromArgb(56, 68, 80);
+            buttonImport.HoverColor = Color.FromArgb(232, 232, 232);
+            buttonImport.HoverForeColor = Color.FromArgb(193, 193, 193);
+            buttonImport.Location = new Point(18, 98);
+            buttonImport.Margin = new Padding(4, 3, 4, 3);
+            buttonImport.Name = "buttonImport";
+            buttonImport.Size = new Size(224, 37);
+            buttonImport.TabIndex = 6;
+            buttonImport.Tag = "iatag_ui_import";
+            buttonImport.Text = "Import";
+            buttonImport.Click += buttonImport_Click;
             // 
             // panelBox1
             // 
-            this.panelBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
-            this.panelBox1.Controls.Add(this.buttonBrowse);
-            this.panelBox1.Font = new System.Drawing.Font("Segoe UI Semibold", 20F);
-            this.panelBox1.ForeColor = System.Drawing.Color.Black;
-            this.panelBox1.HeaderColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(231)))), ((int)(((byte)(231)))));
-            this.panelBox1.HeaderHeight = 40;
-            this.panelBox1.Location = new System.Drawing.Point(172, 12);
-            this.panelBox1.Name = "panelBox1";
-            this.panelBox1.NoRounding = false;
-            this.panelBox1.Size = new System.Drawing.Size(228, 164);
-            this.panelBox1.TabIndex = 4;
-            this.panelBox1.Tag = "iatag_ui_import_stashfile";
-            this.panelBox1.Text = "Stash File";
-            this.panelBox1.TextLocation = "8; 5";
+            panelBox1.BackColor = Color.FromArgb(240, 240, 240);
+            panelBox1.Controls.Add(buttonBrowse);
+            panelBox1.Font = new Font("Segoe UI Semibold", 20F);
+            panelBox1.ForeColor = Color.Black;
+            panelBox1.HeaderColor = Color.FromArgb(231, 231, 231);
+            panelBox1.HeaderHeight = 40;
+            panelBox1.Location = new Point(201, 14);
+            panelBox1.Margin = new Padding(4, 3, 4, 3);
+            panelBox1.Name = "panelBox1";
+            panelBox1.NoRounding = false;
+            panelBox1.Size = new Size(266, 189);
+            panelBox1.TabIndex = 4;
+            panelBox1.Tag = "iatag_ui_import_stashfile";
+            panelBox1.Text = "Stash File";
+            panelBox1.TextLocation = "8; 5";
             // 
             // buttonBrowse
             // 
-            this.buttonBrowse.BackColorDefault = System.Drawing.Color.FromArgb(((int)(((byte)(212)))), ((int)(((byte)(212)))), ((int)(((byte)(212)))));
-            this.buttonBrowse.BackColorOverride = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(245)))), ((int)(((byte)(245)))));
-            this.buttonBrowse.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
-            this.buttonBrowse.EnabledCalc = true;
-            this.buttonBrowse.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.buttonBrowse.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(68)))), ((int)(((byte)(80)))));
-            this.buttonBrowse.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(232)))), ((int)(((byte)(232)))), ((int)(((byte)(232)))));
-            this.buttonBrowse.HoverForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(193)))), ((int)(((byte)(193)))), ((int)(((byte)(193)))));
-            this.buttonBrowse.Location = new System.Drawing.Point(17, 52);
-            this.buttonBrowse.Name = "buttonBrowse";
-            this.buttonBrowse.Size = new System.Drawing.Size(192, 32);
-            this.buttonBrowse.TabIndex = 6;
-            this.buttonBrowse.Tag = "iatag_ui_browse";
-            this.buttonBrowse.Text = "Browse..";
-            this.buttonBrowse.Click += new System.EventHandler(this.buttonBrowse_Click);
+            buttonBrowse.BackColorDefault = Color.FromArgb(212, 212, 212);
+            buttonBrowse.BackColorOverride = Color.FromArgb(245, 245, 245);
+            buttonBrowse.BorderColor = Color.FromArgb(193, 193, 193);
+            buttonBrowse.EnabledCalc = true;
+            buttonBrowse.Font = new Font("Segoe UI", 10F);
+            buttonBrowse.ForeColor = Color.FromArgb(56, 68, 80);
+            buttonBrowse.HoverColor = Color.FromArgb(232, 232, 232);
+            buttonBrowse.HoverForeColor = Color.FromArgb(193, 193, 193);
+            buttonBrowse.Location = new Point(20, 60);
+            buttonBrowse.Margin = new Padding(4, 3, 4, 3);
+            buttonBrowse.Name = "buttonBrowse";
+            buttonBrowse.Size = new Size(224, 37);
+            buttonBrowse.TabIndex = 6;
+            buttonBrowse.Tag = "iatag_ui_browse";
+            buttonBrowse.Text = "Browse..";
+            buttonBrowse.Click += buttonBrowse_Click;
             // 
             // panelBox2
             // 
-            this.panelBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
-            this.panelBox2.Controls.Add(this.helpRestoreBackup);
-            this.panelBox2.Controls.Add(this.radioGameStash);
-            this.panelBox2.Controls.Add(this.radioGDStash);
-            this.panelBox2.Controls.Add(this.radioIAStash);
-            this.panelBox2.Font = new System.Drawing.Font("Segoe UI Semibold", 20F);
-            this.panelBox2.ForeColor = System.Drawing.Color.Black;
-            this.panelBox2.HeaderColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(231)))), ((int)(((byte)(231)))));
-            this.panelBox2.HeaderHeight = 40;
-            this.panelBox2.Location = new System.Drawing.Point(12, 12);
-            this.panelBox2.Name = "panelBox2";
-            this.panelBox2.NoRounding = false;
-            this.panelBox2.Size = new System.Drawing.Size(154, 164);
-            this.panelBox2.TabIndex = 3;
-            this.panelBox2.Tag = "iatag_ui_import_filetype";
-            this.panelBox2.Text = "File Type";
-            this.panelBox2.TextLocation = "8; 5";
+            panelBox2.BackColor = Color.FromArgb(240, 240, 240);
+            panelBox2.Controls.Add(helpRestoreBackup);
+            panelBox2.Controls.Add(radioGDStash);
+            panelBox2.Controls.Add(radioIAStash);
+            panelBox2.Font = new Font("Segoe UI Semibold", 20F);
+            panelBox2.ForeColor = Color.Black;
+            panelBox2.HeaderColor = Color.FromArgb(231, 231, 231);
+            panelBox2.HeaderHeight = 40;
+            panelBox2.Location = new Point(14, 14);
+            panelBox2.Margin = new Padding(4, 3, 4, 3);
+            panelBox2.Name = "panelBox2";
+            panelBox2.NoRounding = false;
+            panelBox2.Size = new Size(180, 189);
+            panelBox2.TabIndex = 3;
+            panelBox2.Tag = "iatag_ui_import_filetype";
+            panelBox2.Text = "File Type";
+            panelBox2.TextLocation = "8; 5";
             // 
             // helpRestoreBackup
             // 
-            this.helpRestoreBackup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.helpRestoreBackup.AutoSize = true;
-            this.helpRestoreBackup.BackColor = System.Drawing.Color.Transparent;
-            this.helpRestoreBackup.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.helpRestoreBackup.Location = new System.Drawing.Point(122, 60);
-            this.helpRestoreBackup.Name = "helpRestoreBackup";
-            this.helpRestoreBackup.Size = new System.Drawing.Size(18, 13);
-            this.helpRestoreBackup.TabIndex = 22;
-            this.helpRestoreBackup.TabStop = true;
-            this.helpRestoreBackup.Tag = "iatag_ui_questionmark";
-            this.helpRestoreBackup.Text = " ? ";
-            this.helpRestoreBackup.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.helpRestoreBackup_LinkClicked);
-            // 
-            // radioGameStash
-            // 
-            this.radioGameStash.Bold = false;
-            this.radioGameStash.Checked = false;
-            this.radioGameStash.EnabledCalc = true;
-            this.radioGameStash.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.radioGameStash.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.radioGameStash.Location = new System.Drawing.Point(3, 112);
-            this.radioGameStash.Name = "radioGameStash";
-            this.radioGameStash.Size = new System.Drawing.Size(137, 27);
-            this.radioGameStash.TabIndex = 2;
-            this.radioGameStash.Tag = "iatag_ui_gamestash";
-            this.radioGameStash.Text = "Game Stash";
-            this.radioGameStash.CheckedChanged += new FirefoxRadioButton.CheckedChangedEventHandler(this.radioGameStash_CheckedChanged);
+            helpRestoreBackup.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            helpRestoreBackup.AutoSize = true;
+            helpRestoreBackup.BackColor = Color.Transparent;
+            helpRestoreBackup.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            helpRestoreBackup.Location = new Point(142, 69);
+            helpRestoreBackup.Margin = new Padding(4, 0, 4, 0);
+            helpRestoreBackup.Name = "helpRestoreBackup";
+            helpRestoreBackup.Size = new Size(18, 13);
+            helpRestoreBackup.TabIndex = 22;
+            helpRestoreBackup.TabStop = true;
+            helpRestoreBackup.Tag = "iatag_ui_questionmark";
+            helpRestoreBackup.Text = " ? ";
+            helpRestoreBackup.LinkClicked += helpRestoreBackup_LinkClicked;
             // 
             // radioGDStash
             // 
-            this.radioGDStash.Bold = false;
-            this.radioGDStash.Checked = false;
-            this.radioGDStash.EnabledCalc = true;
-            this.radioGDStash.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.radioGDStash.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.radioGDStash.Location = new System.Drawing.Point(3, 82);
-            this.radioGDStash.Name = "radioGDStash";
-            this.radioGDStash.Size = new System.Drawing.Size(137, 27);
-            this.radioGDStash.TabIndex = 0;
-            this.radioGDStash.Tag = "iatag_ui_gdstash";
-            this.radioGDStash.Text = "GD Stash";
-            this.radioGDStash.CheckedChanged += new FirefoxRadioButton.CheckedChangedEventHandler(this.radioGDStash_CheckedChanged);
+            radioGDStash.Bold = false;
+            radioGDStash.Checked = false;
+            radioGDStash.EnabledCalc = true;
+            radioGDStash.Font = new Font("Segoe UI", 10F);
+            radioGDStash.ForeColor = Color.FromArgb(66, 78, 90);
+            radioGDStash.Location = new Point(4, 95);
+            radioGDStash.Margin = new Padding(4, 3, 4, 3);
+            radioGDStash.Name = "radioGDStash";
+            radioGDStash.Size = new Size(160, 31);
+            radioGDStash.TabIndex = 0;
+            radioGDStash.Tag = "iatag_ui_gdstash";
+            radioGDStash.Text = "GD Stash";
+            radioGDStash.CheckedChanged += radioGDStash_CheckedChanged;
             // 
             // radioIAStash
             // 
-            this.radioIAStash.Bold = false;
-            this.radioIAStash.Checked = true;
-            this.radioIAStash.EnabledCalc = true;
-            this.radioIAStash.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.radioIAStash.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
-            this.radioIAStash.Location = new System.Drawing.Point(3, 52);
-            this.radioIAStash.Name = "radioIAStash";
-            this.radioIAStash.Size = new System.Drawing.Size(137, 27);
-            this.radioIAStash.TabIndex = 1;
-            this.radioIAStash.Tag = "iatag_ui_iastash";
-            this.radioIAStash.Text = "IA Stash";
-            this.radioIAStash.CheckedChanged += new FirefoxRadioButton.CheckedChangedEventHandler(this.radioIAStash_CheckedChanged);
+            radioIAStash.Bold = false;
+            radioIAStash.Checked = true;
+            radioIAStash.EnabledCalc = true;
+            radioIAStash.Font = new Font("Segoe UI", 10F);
+            radioIAStash.ForeColor = Color.FromArgb(66, 78, 90);
+            radioIAStash.Location = new Point(4, 60);
+            radioIAStash.Margin = new Padding(4, 3, 4, 3);
+            radioIAStash.Name = "radioIAStash";
+            radioIAStash.Size = new Size(160, 31);
+            radioIAStash.TabIndex = 1;
+            radioIAStash.Tag = "iatag_ui_iastash";
+            radioIAStash.Text = "IA Stash";
+            radioIAStash.CheckedChanged += radioIAStash_CheckedChanged;
             // 
             // ImportMode
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(643, 188);
-            this.Controls.Add(this.panelBox3);
-            this.Controls.Add(this.panelBox1);
-            this.Controls.Add(this.panelBox2);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Name = "ImportMode";
-            this.Text = "ImportMode";
-            this.Load += new System.EventHandler(this.ImportMode_Load);
-            this.panelBox3.ResumeLayout(false);
-            this.panelBox1.ResumeLayout(false);
-            this.panelBox2.ResumeLayout(false);
-            this.panelBox2.PerformLayout();
-            this.ResumeLayout(false);
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(750, 217);
+            Controls.Add(panelBox3);
+            Controls.Add(panelBox1);
+            Controls.Add(panelBox2);
+            FormBorderStyle = FormBorderStyle.None;
+            Margin = new Padding(4, 3, 4, 3);
+            Name = "ImportMode";
+            Text = "ImportMode";
+            Load += ImportMode_Load;
+            panelBox3.ResumeLayout(false);
+            panelBox1.ResumeLayout(false);
+            panelBox2.ResumeLayout(false);
+            panelBox2.PerformLayout();
+            ResumeLayout(false);
 
         }
 
@@ -241,7 +234,6 @@
         private PanelBox panelBox3;
         private FirefoxButton buttonImport;
         private System.Windows.Forms.ComboBox cbItemSelection;
-        private FirefoxRadioButton radioGameStash;
         private System.Windows.Forms.LinkLabel helpRestoreBackup;
         private System.Windows.Forms.ProgressBar progressBar1;
     }

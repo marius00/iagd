@@ -29,6 +29,7 @@
             contextMenuStrip1 = new ContextMenuStrip(components);
             copyToolStripMenuItem = new ToolStripMenuItem();
             panelBox4 = new PanelBox();
+            lbDefineBackupLocation = new LinkLabel();
             cbZipBackups = new FirefoxCheckBox();
             helpWhatIsDelayWhenSearching = new LinkLabel();
             cbDelaySearch = new FirefoxCheckBox();
@@ -52,13 +53,11 @@
             buttonPatreon = new Button();
             buttonPaypal = new Button();
             panelBox1 = new PanelBox();
-            firefoxButton1 = new FirefoxButton();
             buttonAdvancedSettings = new FirefoxButton();
             buttonImportExport = new FirefoxButton();
             buttonLanguageSelect = new FirefoxButton();
             buttonViewBackups = new FirefoxButton();
             buttonViewLogs = new FirefoxButton();
-            lbDefineBackupLocation = new LinkLabel();
             contextMenuStrip1.SuspendLayout();
             panelBox4.SuspendLayout();
             pbAutomaticUpdates.SuspendLayout();
@@ -125,6 +124,22 @@
             panelBox4.Tag = "iatag_ui_settings_title";
             panelBox4.Text = "Settings";
             panelBox4.TextLocation = "8; 5";
+            // 
+            // lbDefineBackupLocation
+            // 
+            lbDefineBackupLocation.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            lbDefineBackupLocation.AutoSize = true;
+            lbDefineBackupLocation.BackColor = Color.Transparent;
+            lbDefineBackupLocation.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lbDefineBackupLocation.Location = new Point(279, 370);
+            lbDefineBackupLocation.Margin = new Padding(4, 0, 4, 0);
+            lbDefineBackupLocation.Name = "lbDefineBackupLocation";
+            lbDefineBackupLocation.Size = new Size(41, 13);
+            lbDefineBackupLocation.TabIndex = 36;
+            lbDefineBackupLocation.TabStop = true;
+            lbDefineBackupLocation.Tag = "iatag_ui_zipbackup_define";
+            lbDefineBackupLocation.Text = "Define";
+            lbDefineBackupLocation.LinkClicked += lbDefineBackupLocation_LinkClicked;
             // 
             // cbZipBackups
             // 
@@ -478,7 +493,6 @@
             // panelBox1
             // 
             panelBox1.BackColor = Color.FromArgb(240, 240, 240);
-            panelBox1.Controls.Add(firefoxButton1);
             panelBox1.Controls.Add(buttonAdvancedSettings);
             panelBox1.Controls.Add(buttonImportExport);
             panelBox1.Controls.Add(buttonLanguageSelect);
@@ -497,26 +511,6 @@
             panelBox1.Tag = "iatag_ui_actions_title";
             panelBox1.Text = "Actions";
             panelBox1.TextLocation = "8; 5";
-            // 
-            // firefoxButton1
-            // 
-            firefoxButton1.BackColor = Color.FromArgb(240, 240, 240);
-            firefoxButton1.BackColorDefault = Color.FromArgb(212, 212, 212);
-            firefoxButton1.BackColorOverride = Color.FromArgb(245, 245, 245);
-            firefoxButton1.BorderColor = Color.FromArgb(193, 193, 193);
-            firefoxButton1.EnabledCalc = true;
-            firefoxButton1.Font = new Font("Segoe UI", 10F);
-            firefoxButton1.ForeColor = Color.FromArgb(56, 68, 80);
-            firefoxButton1.HoverColor = Color.FromArgb(232, 232, 232);
-            firefoxButton1.HoverForeColor = Color.FromArgb(193, 193, 193);
-            firefoxButton1.Location = new Point(22, 278);
-            firefoxButton1.Margin = new Padding(4, 3, 4, 3);
-            firefoxButton1.Name = "firefoxButton1";
-            firefoxButton1.Size = new Size(224, 37);
-            firefoxButton1.TabIndex = 9;
-            firefoxButton1.Tag = "iatag_ui_configmode";
-            firefoxButton1.Text = "Switch to modes";
-            firefoxButton1.Click += firefoxButton1_Click;
             // 
             // buttonAdvancedSettings
             // 
@@ -618,22 +612,6 @@
             buttonViewLogs.Text = "View Logs";
             buttonViewLogs.Click += buttonViewLogs_Click;
             // 
-            // lbDefineBackupLocation
-            // 
-            lbDefineBackupLocation.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            lbDefineBackupLocation.AutoSize = true;
-            lbDefineBackupLocation.BackColor = Color.Transparent;
-            lbDefineBackupLocation.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lbDefineBackupLocation.Location = new Point(279, 370);
-            lbDefineBackupLocation.Margin = new Padding(4, 0, 4, 0);
-            lbDefineBackupLocation.Name = "lbDefineBackupLocation";
-            lbDefineBackupLocation.Size = new Size(41, 13);
-            lbDefineBackupLocation.TabIndex = 36;
-            lbDefineBackupLocation.TabStop = true;
-            lbDefineBackupLocation.Tag = "iatag_ui_zipbackup_define";
-            lbDefineBackupLocation.Text = "Define";
-            lbDefineBackupLocation.LinkClicked += lbDefineBackupLocation_LinkClicked;
-            // 
             // SettingsWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -694,7 +672,6 @@
         private System.Windows.Forms.LinkLabel linkCheckForUpdates;
         private FirefoxCheckBox cbAutoDismiss;
         private System.Windows.Forms.LinkLabel linkDowngrade;
-        private FirefoxButton firefoxButton1;
         private FirefoxCheckBox cbTransferAnyMod;
         private FirefoxCheckBox cbDelaySearch;
         private LinkLabel helpWhatIsDelayWhenSearching;
