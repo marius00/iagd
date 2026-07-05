@@ -99,7 +99,6 @@ namespace IAGrim.Backup.Cloud.Service {
             }
         }
 
-
         private bool Post(string url, string filename) {
             var authProvider = _authService.GetAuthProvider();
             if (authProvider == null) {

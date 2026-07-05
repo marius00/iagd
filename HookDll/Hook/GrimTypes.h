@@ -59,18 +59,23 @@ namespace GAME
 		unsigned int var1;
 		Vec3 velocity;
 		unsigned int owner;
-		unsigned int stackSize;
 
 #ifdef PLAYTEST
-		/**
-		 New string at +288 
-		 New string at +320
-
-		 new number at end?
-		 */
-		unsigned int maybeRerolls;
+		// The playtest build inserts an extra dword here before stackSize.
+		// It carries drop/session state (e.g. 335232 on a world-dropped item,
+		// 0 otherwise) and is NOT the stack size. Verified via raw dumps:
+		// an 8-potion stack put the value 8 in stackSize below (offset 0x178),
+		// while this field held drop noise. Reading stackSize without this
+		// field caused single items to be mis-detected as stackable.
+		unsigned int unknownDropData;   // playtest offset 0x174
 #endif
-		unsigned int visiblePlayerId;
+		unsigned int stackSize;         // live: 0x134, playtest: 0x178
+
+		// Playtest 1.3 reroll counter. Confirmed at playtest offset 0x17c via a
+		// full CSV round-trip: an item set to rerolls=9 in the DB was injected
+		// through C#->CSV->fnCreateItem and re-read here with 0x17c == 9, cleanly
+		// separated from stackSize (0x178). Only meaningful on playtest; 0 on live.
+		unsigned int rerolls;           // playtest offset 0x17c (was visiblePlayerId)
 		unsigned int droppedPlayerId;
 	};
 	struct Object { void* dummy; };

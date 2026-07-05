@@ -19,7 +19,10 @@ namespace GAME {
 		stream << sanitizeCsvField(replica.suffixRecord.c_str()).c_str() << ";";
 		stream << replica.seed << ";";
 #ifdef PLAYTEST
-		stream << replica.maybeRerolls << ";";
+		// Rerolls column (playtest offset 0x17c). Previously this serialized the
+		// field at 0x178 by mistake, which is actually stackSize - so rerolls has
+		// never round-tripped correctly until now.
+		stream << replica.rerolls << ";";
 #else
 		stream << 0 << ";";
 #endif
@@ -82,9 +85,10 @@ namespace GAME {
 		item->seed = (unsigned int)stoul(tokens.at(idx++));
 		if (isNewDlc) {
 #ifdef PLAYTEST
-			item->maybeRerolls = (unsigned int)stoul(tokens.at(idx++));
+			// See Serialize(): this column carries the reroll count (offset 0x17c).
+			item->rerolls = (unsigned int)stoul(tokens.at(idx++));
 #else
-			auto maybeRerolls = (unsigned int)stoul(tokens.at(idx++));
+			auto unused = (unsigned int)stoul(tokens.at(idx++));
 #endif
 		}
 		item->modifierRecord = tokens.at(idx++);

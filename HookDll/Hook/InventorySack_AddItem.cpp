@@ -254,7 +254,77 @@ void* __fastcall InventorySack_AddItem::Hooked_InventorySack_SetTransferOpen(voi
 /// </summary>
 /// <param name="item"></param>
 /// <returns></returns>
+/// Dump the full contents of an ItemReplicaInfo for diagnostics.
+/// Logs every field via the C++ struct mapping, plus a raw hex dump of the
+/// object so we can locate where the real fields land if the struct layout
+/// has drifted from the game binary.
+static void DumpReplicaInfo(const GAME::ItemReplicaInfo& item) {
+	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> conv;
+	auto w = [&](const std::string& s) -> std::wstring {
+		try { return conv.from_bytes(s); }
+		catch (...) { return L"<non-utf8>"; }
+	};
+
+	std::wstring msg = L"=== ItemReplicaInfo dump ===";
+	msg += L"\n  id                = " + std::to_wstring(item.id);
+	msg += L"\n  baseRecord        = " + w(item.baseRecord);
+	msg += L"\n  prefixRecord      = " + w(item.prefixRecord);
+	msg += L"\n  suffixRecord      = " + w(item.suffixRecord);
+	msg += L"\n  seed              = " + std::to_wstring(item.seed);
+	msg += L"\n  modifierRecord    = " + w(item.modifierRecord);
+	msg += L"\n  materiaRecord     = " + w(item.materiaRecord);
+	msg += L"\n  relicBonus        = " + w(item.relicBonus);
+	msg += L"\n  relicSeed         = " + std::to_wstring(item.relicSeed);
+	msg += L"\n  enchantmentRecord = " + w(item.enchantmentRecord);
+	msg += L"\n  enchantmentLevel  = " + std::to_wstring(item.enchantmentLevel);
+	msg += L"\n  enchantmentSeed   = " + std::to_wstring(item.enchantmentSeed);
+	msg += L"\n  transmuteRecord   = " + w(item.transmuteRecord);
+#ifdef PLAYTEST
+	msg += L"\n  ascendant1        = " + w(item.ascendant1);
+	msg += L"\n  ascendant2        = " + w(item.ascendant2);
+#endif
+	msg += L"\n  var1              = " + std::to_wstring(item.var1);
+	msg += L"\n  velocity          = (" + std::to_wstring(item.velocity.x) + L", "
+		+ std::to_wstring(item.velocity.y) + L", " + std::to_wstring(item.velocity.z) + L")";
+	msg += L"\n  owner             = " + std::to_wstring(item.owner);
+	msg += L"\n  stackSize         = " + std::to_wstring(item.stackSize);
+	msg += L"\n  rerolls           = " + std::to_wstring(item.rerolls);
+	msg += L"\n  droppedPlayerId   = " + std::to_wstring(item.droppedPlayerId);
+
+	// Raw hex dump of the object. sizeof gives us the struct our DLL believes
+	// in; the game may write more, but this shows how our fields overlay memory.
+	const unsigned char* raw = reinterpret_cast<const unsigned char*>(&item);
+	const size_t rawLen = sizeof(GAME::ItemReplicaInfo);
+	msg += L"\n  sizeof            = " + std::to_wstring(rawLen);
+
+	wchar_t buf[64];
+	std::wstring hex;
+	for (size_t i = 0; i < rawLen; ++i) {
+		if (i % 16 == 0) {
+			swprintf(buf, 64, L"\n    %04zX:", i);
+			hex += buf;
+		}
+		swprintf(buf, 64, L" %02X", raw[i]);
+		hex += buf;
+	}
+	msg += L"\n  raw bytes:" + hex;
+
+	// Dword view with absolute offsets. The tail is where the layout is drifting,
+	// so this makes it trivial to spot which offset actually holds stackSize (==1).
+	std::wstring dwords;
+	for (size_t i = 0; i + 4 <= rawLen; i += 4) {
+		unsigned int v;
+		memcpy(&v, raw + i, sizeof(v));
+		swprintf(buf, 64, L"\n    +0x%03zX (%3zu) = %u", i, i, v);
+		dwords += buf;
+	}
+	msg += L"\n  dwords:" + dwords;
+
+	LogToFile(LogLevel::INFO, msg);
+}
+
 bool InventorySack_AddItem::IsRelevant(const GAME::ItemReplicaInfo& item) {
+
 	if (!m_isGrimDawnParsed) {
 		m_isGrimDawnParsed = m_settingsReader.GetIsGrimDawnParsed();
 		if (!m_isGrimDawnParsed) {
@@ -267,7 +337,9 @@ bool InventorySack_AddItem::IsRelevant(const GAME::ItemReplicaInfo& item) {
 	
 
 	if (item.stackSize > 1) {
+		LogToFile(LogLevel::WARNING, (L"Stackable item - IA does not loot stackable items, got " + std::to_wstring(item.stackSize) + L" in stacksize"));
 		DisplayMessage(L"Stackable item - IA does not loot stackable items", L"Item Assistant");
+		// DumpReplicaInfo(item);
 		return false;
 	}
 	
