@@ -78,6 +78,16 @@ namespace GAME {
 		bool isNewDlc = tokens.size() >= 14;
 
 		GAME::ItemReplicaInfo* item = new GAME::ItemReplicaInfo();
+
+		// The game's own ItemReplicaInfo constructor defaults stackSize to 1 (verified
+		// in the playtest 1.3 binary). Our zero-initialized struct left it at 0, which
+		// creates items whose Item::GetStackSize() returns 0. The 1.3 crafting rework
+		// counts owned recipe ingredients by summing GetStackSize() over the inventory,
+		// so a stackSize=0 item is never recognized as a crafting ingredient (until an
+		// inventor reroll re-creates it with a game-built replica). IA never loots
+		// stackable items, so 1 is always the correct count for deposited items.
+		item->stackSize = 1;
+
 		int idx = 2; // 0: is the mod name, 1: is "isHardcore"
 		item->baseRecord = tokens.at(idx++);
 		item->prefixRecord = tokens.at(idx++);

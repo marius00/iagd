@@ -56,19 +56,34 @@ namespace GAME
 		std::basic_string<char, std::char_traits<char>, std::allocator<char> > ascendant2;
 #endif
 
-		unsigned int var1;
-		Vec3 velocity;
-		unsigned int owner;
+		// NOTE (playtest 1.3, verified against the game's ItemReplicaInfo
+		// constructor in Ghidra): the real layout of this window is
+		//   0x160 var1 (uint)
+		//   0x164 bool (defaults to TRUE; world-drop code branches on it for
+		//         floor placement vs velocity), padded to 0x168
+		//   0x168 velocity (Vec3, 0x168-0x174)
+		//   0x174 owner (uint)
+		// Our member names below are shifted 4 bytes within that window:
+		// "velocity" starts at the 0x164 bool, "owner" reads velocity.z, and
+		// "unknownDropData" reads the real owner field. Harmless for deposits
+		// (we zero all of them; the ctor-default bool at 0x164 ends up 0, which
+		// only matters for world drops we never do), but do NOT trust these
+		// member names when reading loot dumps.
+		unsigned int var1;              // playtest offset 0x160
+		Vec3 velocity;                  // playtest offset 0x164 (actually bool+pad, velocity.x/y)
+		unsigned int owner;             // playtest offset 0x170 (actually velocity.z)
 
 #ifdef PLAYTEST
-		// The playtest build inserts an extra dword here before stackSize.
-		// It carries drop/session state (e.g. 335232 on a world-dropped item,
-		// 0 otherwise) and is NOT the stack size. Verified via raw dumps:
-		// an 8-potion stack put the value 8 in stackSize below (offset 0x178),
-		// while this field held drop noise. Reading stackSize without this
-		// field caused single items to be mis-detected as stackable.
-		unsigned int unknownDropData;   // playtest offset 0x174
+		// Actually the game's "owner" field (uint, offset 0x174) - the value
+		// 335232 seen on world-dropped items is the owning entity's object id,
+		// not drop noise. Kept under its old name to avoid churn; the important
+		// part is that it pads stackSize to the correct 0x178.
+		unsigned int unknownDropData;   // playtest offset 0x174 (real name: owner)
 #endif
+		// The game's ItemReplicaInfo constructor defaults stackSize to 1.
+		// Deserialize() must do the same: a 0 here creates items whose
+		// GetStackSize() returns 0, which the 1.3 crafting rework counts as
+		// "you own zero of this ingredient".
 		unsigned int stackSize;         // live: 0x134, playtest: 0x178
 
 		// Playtest 1.3 reroll counter. Confirmed at playtest offset 0x17c via a

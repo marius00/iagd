@@ -143,7 +143,15 @@ ParsedSeedRequest* OnDemandSeedInfo::DeserializeReplicaCsv(std::vector<std::stri
 
 	bool isNewDlc = tokens.size() == 15;
 
-	GAME::ItemReplicaInfo item;
+	// Value-initialize: without {} the scalar members (stackSize, id, owner, ...)
+	// are left indeterminate, and this replica is fed straight into fnCreateItem.
+	GAME::ItemReplicaInfo item{};
+
+	// Match the game's own ItemReplicaInfo constructor, which defaults stackSize
+	// to 1. A stackSize of 0 creates items whose GetStackSize() returns 0 (see
+	// GAME::Deserialize in GrimTypes.cpp for the full story).
+	item.stackSize = 1;
+
 	ParsedSeedRequest* result = new ParsedSeedRequest();
 
 	
