@@ -1,4 +1,63 @@
-## Session update (July 6 2026, newest — single-affix "class mastery" residual investigated: found a real one-extra-RNG-draw pattern on 5 samples, but it does NOT generalize; reverted, no net code change)
+## Session update (July 6 2026, NEWEST — AFFIX CORPUS 100%: every remaining affix mismatch solved in one session; Python AND C# both updated; 6 commits landed)
+
+Continued directly from the session below (which found the b_class* shift-by-one but couldn't find
+its trigger). This session found the trigger immediately via a data diff, then solved EVERY other
+residual family by raw-draw alignment. **Final validator state: base-only 1055/1055, single-affix
+951/951 (100%), both-affix 352/352 (100%), per-stat BAD=0.** `dotnet test`: 47 pass / 1 skip.
+All committed to the GrimDawnSeedStats repo (own git repo, branch `more-work`, 6 commits).
+
+The six mechanisms discovered/fixed (each confirmed by exact draw alignment on real seeds, then
+corpus-validated with zero regressions; all in `gdvalidate.py` AND ported to `ItemStatEngine.cs`):
+
+1. **Affix skill-store early draw** — the b_class* mystery's real trigger was
+   `skillCooldownReduction` presence on the affix record (perfect 5/5-vs-0/12 discriminator; NOT
+   augmentSkill1 — proc/aura affixes carry identical augmentSkill fields and don't shift).
+   An affix's skill-store fields (skillCooldownReduction/skillManaCostReduction) draw EARLY, at
+   the START of the Damage store (before the item's first flat/dmg entry; pinned by b202d_head+
+   b_ar001_he_d+a031e seed 57211 where the extra draw precedes base-only dmg fields), prefix
+   before suffix, using sjit with the affix's own pct; that early value IS the affix's
+   contribution and the deferred end-position SKILL draw covers only the base record's part.
+2. **Focus (Class=WeaponArmor_Offhand) discards affix flat added-damage entirely** — 0 draws, no
+   tooltip line (a08_focus01+b_sh027_e seed 297944: consecutive draws OA,coldMod,lifeMod,
+   slowColdMod,slowColdDurMod,SCR with no flat draw). NOT a general Min-only rule — generalizing
+   regressed the corpus 1249→1150; it's off-hand-specific.
+3. **Affix-sourced retaldur/retalreflex pairs draw** at their normal ORDER position with the
+   affix's own pct (b_ar003_ar family, 3 seeds exact) — previously only base-sourced ones drew,
+   silently desyncing every draw after.
+4. **Conversions**: each source's conversionPercentage is convjit'd SEPARATELY (base with default
+   20%, affix with its own lootRandomizerJitter), drawing base→prefix→suffix; same In/Out type
+   pairs SUM for display (b006c_axe: 14.87+14.84→"30%"; b013c_sword2h: 34.10+31.65→"66%";
+   one-draw-on-sum and per-source-with-wrong-pct both explicitly refuted by the alignment).
+   Affix-only conversions (base has none) also now draw+display.
+5. **Flat pairs sum-then-scale**: raw jittered mins sum across sources, scale applied ONCE to the
+   total (matches merge-then-ScaleAttributes; b006c_axe scale(15+15)=41 vs per-source 20+20=40).
+   Spread still never scaled.
+6. **Defense store draws base FIRST** (like Damage; b007c_shoulder+b_ar006_ar_d seed 623217:
+   base@5+suffix@6=42 exact vs suffix-first 39) — switching def to base-first alone took
+   single-affix 945→951/951. The old "Char/Skill/Def/RetalMod are prefix→suffix→base" note is
+   WRONG for Def; only Char/Skill/RetalMod keep affix-first order.
+7. **Slow{X}Modifier + Slow{X}DurationModifier interleave per source** — one DurMod object per
+   source draws its (value, duration) pair consecutively: base(v,d), prefix(v,d), suffix(v,d)
+   (b202d_focus+aa017a+b_sh010_e seed 789691: interleaved 119/95 exact vs field-by-field 124/90).
+
+Method note for future sessions: every one of these fell to the same playbook — dump the exact
+base/prefix/suffix DB rows, generate the raw MINSTD draw stream for the seed, and compute each
+candidate field/pct at every position until the real tooltip values snap into a consecutive
+assignment. No Ghidra needed this session; draw alignment against one good seed was always enough
+to pin both position and formula, and the corpus rerun then proved generality.
+
+C# parity: all of the above ported into `ItemStatEngine.Compute` (plus doc-comment updates); the
+CLI's two-affix warning is REMOVED (no longer true); `AffixFlatPairField_SumsComponentWiseWithBase`
+expectation re-derived from the oracle for sum-then-scale (8/22→9/23). The corpus `[Skip]` marker
+now says the pipeline is complete and only a C# tooltip-text formatter is missing to turn the
+affixed fixtures into per-item Theory assertions.
+
+Remaining open (unchanged, all pre-existing): the per-record quirk tables
+(`BASE_OVERRIDE_QUIRKS`/`NODRAW_QUIRKS`/`SINGLE_SIDED_QUIRKS`) still lack a Ghidra-confirmed root
+cause; Modifier/Materia/Enchantment/RelicCompletion/Transmute rows are still excluded from the
+affix pass entirely (never modeled); the C# affixed-fixture Theory needs a tooltip formatter.
+
+## Session update (July 6 2026 — single-affix "class mastery" residual investigated: found a real one-extra-RNG-draw pattern on 5 samples, but it does NOT generalize; reverted, no net code change) [SUPERSEDED — the trigger was found next session: it's skillCooldownReduction on the affix, not b_class/augmentSkill; see session above]
 
 Picked up the single-affix residual (46/951) per the "class mastery-affix prefixes with
 inconsistent per-stat DB-value drift" open item. Traced `a06_necklace03`+`b_class015_arcanist19_je_b`
