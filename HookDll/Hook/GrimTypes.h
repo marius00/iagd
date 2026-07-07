@@ -86,12 +86,21 @@ namespace GAME
 		// "you own zero of this ingredient".
 		unsigned int stackSize;         // live: 0x134, playtest: 0x178
 
-		// Playtest 1.3 reroll counter. Confirmed at playtest offset 0x17c via a
-		// full CSV round-trip: an item set to rerolls=9 in the DB was injected
+#ifdef PLAYTEST
+		// Playtest 1.3 reroll counters. seedRerolls confirmed at offset 0x17c via
+		// a full CSV round-trip: an item set to rerolls=9 in the DB was injected
 		// through C#->CSV->fnCreateItem and re-read here with 0x17c == 9, cleanly
-		// separated from stackSize (0x178). Only meaningful on playtest; 0 on live.
-		unsigned int rerolls;           // playtest offset 0x17c (was visiblePlayerId)
+		// separated from stackSize (0x178). affixRerolls (0x180) per dev-confirmed
+		// save format ordering (seedRerolls immediately followed by affixRerolls);
+		// not yet independently verified via round-trip.
+		unsigned int seedRerolls;    // playtest offset 0x17c
+		unsigned int affixRerolls;   // playtest offset 0x180
+#else
+		// Same two dwords as above, but on live these predate rerolls entirely
+		// and are unrelated fields - keep their original names here.
+		unsigned int visiblePlayerId;
 		unsigned int droppedPlayerId;
+#endif
 	};
 	struct Object { void* dummy; };
 	struct Item { void* dummy; };

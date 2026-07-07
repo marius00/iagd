@@ -31,6 +31,7 @@ namespace IAGrim.Backup.Cloud.Util {
                 PrefixRarity = pi.PrefixRarity,
                 AscendantAffix2hNameRecord = pi.AscendantAffix2hNameRecord,
                 RerollsUsed = pi.RerollsUsed,
+                AffixRerollsUsed = pi.AffixRerollsUsed,
                 AscendantAffixNameRecord = pi.AscendantAffixNameRecord,
             };
         }
@@ -62,6 +63,7 @@ namespace IAGrim.Backup.Cloud.Util {
                 AscendantAffix2hNameRecord = itemDto.AscendantAffix2hNameRecord,
                 AscendantAffixNameRecord = itemDto.AscendantAffixNameRecord,
                 RerollsUsed = itemDto.RerollsUsed,
+                AffixRerollsUsed = itemDto.AffixRerollsUsed,
             };
         }
     }

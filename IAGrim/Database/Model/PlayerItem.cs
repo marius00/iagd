@@ -79,6 +79,7 @@ namespace IAGrim.Database {
         public virtual long MateriaCombines { get; set; }
         public virtual long StackCount { get; set; }
         public virtual long RerollsUsed { get; set; }
+        public virtual long AffixRerollsUsed { get; set; }
         public virtual string Name { get; set; }
         public virtual string NameLowercase { get; set; } // To help with case insensitive search on non-ascii characters
         public virtual long PrefixRarity { get; set; }

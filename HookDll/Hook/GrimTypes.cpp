@@ -22,7 +22,7 @@ namespace GAME {
 		// Rerolls column (playtest offset 0x17c). Previously this serialized the
 		// field at 0x178 by mistake, which is actually stackSize - so rerolls has
 		// never round-tripped correctly until now.
-		stream << replica.rerolls << ";";
+		stream << replica.seedRerolls << ";";
 #else
 		stream << 0 << ";";
 #endif
@@ -36,10 +36,19 @@ namespace GAME {
 
 #ifdef PLAYTEST
 		stream << sanitizeCsvField(replica.ascendant1.c_str()).c_str() << ";";
-		stream << sanitizeCsvField(replica.ascendant2.c_str()).c_str();
+		stream << sanitizeCsvField(replica.ascendant2.c_str()).c_str() << ";";
 #else
 		stream << "" << ";";
-		stream << "";
+		stream << "" << ";";
+#endif
+
+#ifdef PLAYTEST
+		// Affix rerolls column (playtest offset 0x180). See seedRerolls above for
+		// the equivalent seed-reroll counter; this is the separate affix-reroll
+		// count confirmed by the game devs' upcoming save format.
+		stream << replica.affixRerolls;
+#else
+		stream << 0;
 #endif
 
 		return stream.str();
@@ -69,9 +78,10 @@ namespace GAME {
 	GAME::ItemReplicaInfo* Deserialize(std::vector<std::string> tokens) {
 		// 13 = legacy (no rerolls, no ascendants)
 		// 14 = bugfix compat (rerolls present, ascendants split to next line)
-		// 16 = current format (rerolls + ascendants)
-		if (tokens.size() != 13 && tokens.size() != 14 && tokens.size() != 16) {
-			LogToFile(LogLevel::WARNING, L"Error parsing CSV file, expected 13, 14, or 16 tokens, got " + std::to_wstring(tokens.size()));
+		// 16 = rerolls + ascendants
+		// 17 = current format (rerolls + ascendants + affixRerolls)
+		if (tokens.size() != 13 && tokens.size() != 14 && tokens.size() != 16 && tokens.size() != 17) {
+			LogToFile(LogLevel::WARNING, L"Error parsing CSV file, expected 13, 14, 16, or 17 tokens, got " + std::to_wstring(tokens.size()));
 			return nullptr;
 		}
 
@@ -96,7 +106,7 @@ namespace GAME {
 		if (isNewDlc) {
 #ifdef PLAYTEST
 			// See Serialize(): this column carries the reroll count (offset 0x17c).
-			item->rerolls = (unsigned int)stoul(tokens.at(idx++));
+			item->seedRerolls = (unsigned int)stoul(tokens.at(idx++));
 #else
 			auto unused = (unsigned int)stoul(tokens.at(idx++));
 #endif
@@ -108,13 +118,21 @@ namespace GAME {
 		item->enchantmentRecord = tokens.at(idx++);
 		item->enchantmentSeed = (unsigned int)stoul(tokens.at(idx++));
 		item->transmuteRecord = tokens.at(idx++);
-		if (tokens.size() == 16) {
+		if (tokens.size() >= 16) {
 #ifdef PLAYTEST
 			item->ascendant1 = tokens.at(idx++);
 			item->ascendant2 = tokens.at(idx++);
 #else
 			auto ascendant1 = tokens.at(idx++);
 			auto ascendant2 = tokens.at(idx++);
+#endif
+		}
+		if (tokens.size() == 17) {
+#ifdef PLAYTEST
+			// See Serialize(): this column carries the affix reroll count (offset 0x180).
+			item->affixRerolls = (unsigned int)stoul(tokens.at(idx++));
+#else
+			auto unused = (unsigned int)stoul(tokens.at(idx++));
 #endif
 		}
 

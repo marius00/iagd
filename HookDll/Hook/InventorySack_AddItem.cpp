@@ -288,8 +288,13 @@ static void DumpReplicaInfo(const GAME::ItemReplicaInfo& item) {
 		+ std::to_wstring(item.velocity.y) + L", " + std::to_wstring(item.velocity.z) + L")";
 	msg += L"\n  owner             = " + std::to_wstring(item.owner);
 	msg += L"\n  stackSize         = " + std::to_wstring(item.stackSize);
-	msg += L"\n  rerolls           = " + std::to_wstring(item.rerolls);
+#ifdef PLAYTEST
+	msg += L"\n  seedRerolls       = " + std::to_wstring(item.seedRerolls);
+	msg += L"\n  affixRerolls      = " + std::to_wstring(item.affixRerolls);
+#else
+	msg += L"\n  visiblePlayerId   = " + std::to_wstring(item.visiblePlayerId);
 	msg += L"\n  droppedPlayerId   = " + std::to_wstring(item.droppedPlayerId);
+#endif
 
 	// Raw hex dump of the object. sizeof gives us the struct our DLL believes
 	// in; the game may write more, but this shows how our fields overlay memory.

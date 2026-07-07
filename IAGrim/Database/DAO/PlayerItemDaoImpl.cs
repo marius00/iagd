@@ -742,6 +742,7 @@ namespace IAGrim.Database {
                 PI.{PlayerItemTable.Mod} as Mod,
                 CAST({PlayerItemTable.IsHardcore} as bit) as IsHardcore,
                 IFNULL(RerollsUsed, 0) as RerollsUsed,
+                IFNULL(AffixRerollsUsed, 0) as AffixRerollsUsed,
                 coalesce((SELECT group_concat(Record, '|') FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord, PI.AscendantAffixNameRecord, PI.AscendantAffix2hNameRecord)), '') AS PetRecord,
                 IFNULL((select json_group_array(json_object('text', text, 'type', type)) from ReplicaItemRow where replicaitemid = R.id), '[]') AS ReplicaInfo,
                 PI.{PlayerItemTable.Seed} as Seed
@@ -872,6 +873,7 @@ namespace IAGrim.Database {
             string Mod = Convert<string>(arr[idx++]);
             bool IsHardcore = ConvertToBoolean(arr[idx++]);
             long RerollsUsed = Convert(arr[idx++]);
+            long AffixRerollsUsed = Convert(arr[idx++]);
             string PetRecord = Convert<string>(arr[idx++])?.Trim();
             string replicaInfo = Convert<string>(arr[idx++]);
             long seed = Convert<long>(arr[idx++]);
@@ -897,6 +899,7 @@ namespace IAGrim.Database {
                 Mod = Mod,
                 IsHardcore = IsHardcore,
                 RerollsUsed = RerollsUsed,
+                AffixRerollsUsed = AffixRerollsUsed,
                 ReplicaInfo = replicaInfo,
                 Seed = seed
             };
@@ -1038,6 +1041,7 @@ namespace IAGrim.Database {
                 PI.{PlayerItemTable.Mod} as Mod,
                 CAST({PlayerItemTable.IsHardcore} as bit) as IsHardcore,
                 IFNULL(RerollsUsed, 0) as RerollsUsed,
+                IFNULL(AffixRerollsUsed, 0) as AffixRerollsUsed,
                 '' AS PetRecord,
                 '[]' AS ReplicaInfo,
                 PI.{PlayerItemTable.Seed} as Seed
