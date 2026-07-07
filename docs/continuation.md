@@ -1,4 +1,44 @@
-## Session update (July 7 2026, NEWEST #6 — defensiveProtectionModifier ("Increases Armor by N%") field modeled and validated: draws first in the Defense store, right after defensiveBlockModifier/AmountModifier; standard cjit pct=20, unscaled; ported Python+C#; corpus base-only 1153/1169->1199/1216, single-affix 1022->1061/1063, both-affix 358->388/388; outlaw-murderer-cowl KnownGapItem removed, 61/61 dotnet test still green)
+## Session update (July 7 2026, NEWEST #7 — affix-sourced offensiveSlow{Type}Min/Max flat DoT pair modeled: same per-source sum-then-scale mechanism as plain Flat; both remaining KnownGapItems (plaguebearer-blunderbuss, salazars-blade-dagger) now pass; single-affix 1061/1063->1154/1156, both-affix 388/388->405/405, 61/61 dotnet test green, KnownGapItems set now EMPTY)
+
+Picked up the standing "affix-sourced Slow flat, not modeled" gap flagged by session "#6"'s
+predecessor. Draw-aligned exactly on the two fixture items that carry it:
+`plaguebearer-blunderbuss` (prefix `b_wpn004_melee2h_c` carries `offensiveSlowPoisonMin=14` +
+`DurationMin=5`, no base/suffix Min; pfx pct=18, item sp=52 — `scale(cjit(14,pct=18))*5=105`
+matches the real "105 Poison Damage over 5 Seconds" exactly) and `salazars-blade-dagger` (prefix
+`b_wpn102...` carries `offensiveSlowLightningMin=10`+`DurationMin=3`; pfx pct=15, sp=38 —
+`scale(cjit(10,pct=15))*3=36` matches "36 Electrocute Damage over 3 Seconds" exactly). Both confirm
+the field uses the **identical per-source sum-then-scale mechanism already proven for the plain
+`Flat` kind** (each present source's own (Min,Max) pair jittered independently with that source's
+own pct, raw mins/spreads summed across sources, scale applied ONCE to the total) — no new formula
+needed, just wiring it up. `DurationMin` stays FIXED (0 draws, echoed base-first), unchanged.
+
+**Change**: removed the affix-loop's skip-guard for `offensiveSlow{Type}Min/Max` in
+`gdvalidate.py` (previously always `a_skipped+=1; continue`d), added `'slowflat'` to the
+Min/Max-presence entries-builder alongside `'flat'`/`'retalflat'`, and added a `kind=='slowflat'`
+dispatch mirroring `'flat'`'s per-source accumulate-then-scale-once logic (spread never scaled,
+duration taken from whichever source has it, base first) plus rendering via the existing
+`slowflat_line()`. **Result**: single-affix **1061/1063 → 1154/1156** (+93, previously-skipped
+items unlocked for free by the shared `concerning()` check), both-affix **388/388 → 405/405**
+(+17), both still ~100% (2 residual single-affix mismatches, both the pre-existing unrelated
+`offensivePhysicalModifier` gap on `b_wpn102_melee1h_a`-prefixed items, off by ~2, untouched by
+this change). Base-only corpus unaffected (this was purely an affix-loop gap).
+
+**C# parity**: `ItemStatEngine.cs`'s `Kind.SlowFlat` case (previously: if an affix touched the
+field, flag `"(affix-sourced Slow flat, not modeled)"` and desync every later draw) replaced with
+the same per-source accumulate/sum/scale-once logic as `Kind.Flat` (a local `AccumulateSlowFlat`
+closure, base→prefix→suffix order). `ItemCorpusTests.cs`'s `KnownGapItems` set — which held exactly
+these two items — is now **empty** (kept as an empty `HashSet` rather than removed outright, since
+the test's `Assert.True(failures.Count>0, ...)` "flip when it starts passing" scaffolding is cheap
+insurance for a future regression). **`dotnet test`: 61/61 pass, 0 skipped**, zero regressions.
+Committed to the GrimDawnSeedStats repo (branch `more-work`, 1 commit).
+
+**Remaining open** (unchanged, both minor pre-existing residuals, not chased this session): 2-3
+items around `d206_ring` (multi-field desync, same shape as `d008_necklace`/`c027_focus`/
+`c024_waist`) and the `b_wpn102_melee1h_a` prefix's `offensivePhysicalModifier` off-by-~2 pair
+(`a05_gun1h001`, `a02_blunt002`). Both need more DB samples to isolate, same playbook as every
+other field family solved this project (draw-align on the raw seed stream, not guess-and-check).
+
+## Session update (July 7 2026, #6 — defensiveProtectionModifier ("Increases Armor by N%") field modeled and validated: draws first in the Defense store, right after defensiveBlockModifier/AmountModifier; standard cjit pct=20, unscaled; ported Python+C#; corpus base-only 1153/1169->1199/1216, single-affix 1022->1061/1063, both-affix 358->388/388; outlaw-murderer-cowl KnownGapItem removed, 61/61 dotnet test still green)
 
 Picked up the last of the 3 `KnownGapItems` from session "#5" below: `defensiveProtectionModifier`
 was completely absent from every field table in both `gdvalidate.py` and `ItemStatEngine.cs`. User
