@@ -1,3 +1,530 @@
+## Session update (July 7 2026, NEWEST #6 — defensiveProtectionModifier ("Increases Armor by N%") field modeled and validated: draws first in the Defense store, right after defensiveBlockModifier/AmountModifier; standard cjit pct=20, unscaled; ported Python+C#; corpus base-only 1153/1169->1199/1216, single-affix 1022->1061/1063, both-affix 358->388/388; outlaw-murderer-cowl KnownGapItem removed, 61/61 dotnet test still green)
+
+Picked up the last of the 3 `KnownGapItems` from session "#5" below: `defensiveProtectionModifier`
+was completely absent from every field table in both `gdvalidate.py` and `ItemStatEngine.cs`. User
+supplied a targeted SQL query (`DatabaseItemStat_v2` join `PlayerItem` on `Stat='defensiveProtectionModifier'`)
+finding 133 real DB rows carrying the field, several of them base-only (no prefix/suffix), enough to
+draw-align directly.
+
+**Pinned via draw alignment on 5 base-only samples** (`c015_ring` seed 816311, `c018_necklace` seed
+1341859, `c014_hands` seed 645919, `c035_hands` seed 411260, `c011_shield`/`c015_blunt` seeds
+429169/223932/982001): brute-forced every permutation of the field against its neighboring DEF-store
+fields (and, for the shield/blunt samples, against the already-existing `defensiveBlockModifier` field)
+until all fields land on their exact real tooltip value simultaneously, not just "in range". Result:
+`defensiveProtectionModifier` is a plain `cjit`-jittered field (default pct=20, NOT scaled by
+`attributeScalePercent` — same as every other DEF field), and it draws **right after
+defensiveBlockModifier/defensiveBlockAmountModifier, before every resist field** (defensivePhysical/
+Pierce/.../TotalSpeedResistance). Displayed as `"Increases Armor by {v}%"`. One false lead ruled out
+along the way on the shield samples: an apparent block-vs-protection order ambiguity turned out to be
+a pre-existing missed draw (`retaliationTotalDamageModifier`, which the model already draws in
+RETAL_MOD before Defense but which my hand-rolled verification scripts initially omitted) — once that
+draw was included, both orderings produced identical values for that specific seed, and the real
+discriminator (block first) came from the C# engine's existing comment ("confirmed empirically") plus
+a clean fix on `c029_shield`/`d206_ring`-style residuals once placed there.
+
+**Result** (`tools/gdvalidate.py`, `DEF` list + `fmt()` template dict updated — one line each):
+- Base-only: fully-modeled 1169→**1216** (+47, previously-skipped items), items-all-correct
+  1153/1169→**1199/1216** (98.6%→98.6%, net +46 passing). Two NEW residual mismatches on
+  previously-untested items (`c029_shield` — actually the RETAL_MOD-before-Defense draw already
+  covered it once wired in, no longer mismatching after the block-then-protection order; `d206_ring`
+  — a pre-existing multi-field desync unrelated to this field, same "several fields wrong
+  simultaneously" shape as the already-documented `d008_necklace`/`c027_focus`/`c024_waist` residuals,
+  not chased further).
+- Single-affix: 1022/1022→**1061/1063** (99.8%), both-affix: 358/358→**388/388 (100%)** — the affix
+  loop's shared `concerning()` picked this up for free (the field was previously flagging every
+  affix-corpus item that touched it as unmodeled/skipped, hiding 71 more items). Two NEW residual
+  mismatches (`a05_gun1h001`+`b_wpn102_melee1h_a` seed 1225981, `a02_blunt002`+`b_wpn102_melee1h_a`
+  seed 884789), both `offensivePhysicalModifier` off by ~2 on the SAME prefix — a distinct,
+  pre-existing gap on that one prefix record, not a defensiveProtectionModifier regression.
+
+**C# parity**: `ItemStatEngine.cs`'s `Def` array got `"defensiveProtectionModifier"` inserted right
+after `"defensiveBlockAmountModifier"`; `TooltipFormatter.cs`'s template dict got
+`["defensiveProtectionModifier"] = v => $"Increases Armor by {v}%"`. Since `Modeled`/`IsConcerning`
+are both built from the same field-list arrays, no other C# change was needed. `outlaw-murderer-cowl`
+(the `KnownGapItems` entry that existed specifically for this field, per session "#5") now passes and
+was removed from the known-gap set. **`dotnet test`: 61/61 pass, 0 skipped** (same total as before —
+one test flipped from known-fail to pass, not a new test).
+
+**Remaining open** (unchanged from "#5", now down to 1 item pair): `plaguebearer-blunderbuss` /
+`salazars-blade-dagger` — affix-sourced `offensiveSlow{Type}Min/Max` flat DoT pair, still needs 2-3
+DB samples isolating an affix-only SlowFlat contribution to pin the per-source draw formula. The two
+newly-surfaced residuals above (`d206_ring`, the `b_wpn102_melee1h_a` prefix pair) are candidates for
+a future "more DB samples" session but are minor (2-3 items each) compared to the win banked here.
+
+## Session update (July 7 2026, NEWEST #5 — affixed-item corpus wired into a real xUnit Theory: TooltipFormatter.cs ported from gdvalidate.py's fmt()/*_line() helpers, items.json extended with embedded baseStats/prefixStats/suffixStats, AffixedItems_ComputationPending replaced with a per-item assertion; 61/61 dotnet test green, up from 47 passed+1 skipped)
+
+Picked up the standing TODO on `AffixedItems_ComputationPending` (the `[Fact(Skip=...)]` placeholder
+in `ItemCorpusTests.cs`): the replay pipeline itself (`ItemStatEngine.Compute`) was already complete
+and 100%-corpus-validated in the Python oracle, but nothing rendered its numeric output into tooltip
+TEXT to compare against `Fixtures/items.json`'s `expectedTooltip` strings, so the 14 affixed items
+sat unchecked.
+
+**What was built:**
+- `src/GrimDawnSeedStats/TooltipFormatter.cs` (new): ports `gdvalidate.py`'s `fmt()` (scalar field →
+  tooltip line, via regex-matched field-name families: retaliation modifiers, offensive %-modifiers,
+  Slow{X}Duration/Slow{X} lines, defensive resistances, plus a template dict for the ~25 one-off Char/
+  Skill/Defense fields) and its five pair-shaped `*_line()` helpers (`FlatLine`, `RetalLine`,
+  `SlowFlatLine`, `RetalDurLine`, `RetalReflexLine`, `ConversionLine`) 1:1, including the DmgName/
+  SlowName/ResName/ConvName display-name tables (Poison→Acid, Life→Vitality, Pierce→Piercing for flat
+  lines but Pierce→Pierce for %-modifier lines, etc). Bug caught during porting (not present in the
+  Python source, which never hit this shape): min==max flat/retal/slowflat pairs need to collapse to a
+  single-value line ("N Type Damage"), not "N-N Type Damage" — fixed in `FlatLine`/`RetalLine`/
+  `SlowFlatLine`.
+- `tests/GrimDawnSeedStats.Tests/Fixtures/items.json`: extended every one of the 15 fixture items with
+  `baseStats`/`prefixStats`/`suffixStats` arrays (raw `{stat, textValue, value}` triples — the exact
+  `DatabaseItemStat_v2` row shape `ItemStatEngine.InputStat` expects), dumped directly from
+  `userdata-test.db` for all 39 distinct base/prefix/suffix `.dbr` records the corpus references (all
+  39 found, zero misses).
+- `tests/GrimDawnSeedStats.Tests/ItemFixture.cs`: added the `RawStat` DTO and `BaseStats`/
+  `PrefixStats`/`SuffixStats` properties plus `ToBaseInputStats()`/`ToPrefixInputStats()`/
+  `ToSuffixInputStats()` convenience converters to `ItemStatEngine.InputStat`.
+- `tests/GrimDawnSeedStats.Tests/ItemCorpusTests.cs`: replaced the skip placeholder with
+  `AffixedItem_ComputesExpectedTooltipLines`, a real `[Theory]` over `AffixedItems()` that calls
+  `ItemStatEngine.Compute` with the embedded base+prefix+suffix stats, renders every implied tooltip
+  line (`RenderLines()` dispatches computed `Result.Stats` entries by field shape — scalar via
+  `TooltipFormatter.Format`, `{prefix}Min/Max` pairs via the *Line() helpers, matching gdvalidate.py's
+  own dispatch), and asserts each rendered line's candidate phrasing(s) appear as a substring of the
+  joined real `expectedTooltip` (same "any candidate is a substring match" pass criterion the Python
+  oracle uses).
+
+**Result: 11/14 affixed items pass exactly out of the box (the corpus has 15 items total, 1 of which
+is affix-free and covered separately by `AffixFreeItem_ReplaysToInGameValues`). 3 hit genuine,
+PRE-EXISTING modeling gaps
+shared with the Python oracle** (not new bugs introduced by the formatter/test — confirmed by
+grepping `gdvalidate.py`, which has no handling for either gap either):
+- `plaguebearer-blunderbuss`, `salazars-blade-dagger`: an AFFIX (prefix or suffix) touches an
+  `offensiveSlow{Type}Min/Max` flat-DoT field. `ItemStatEngine`'s `SlowFlat` case only implements the
+  base-only single-source draw; no sample has confirmed the affix-side per-source draw formula yet
+  (flagged into `UnmodeledFields` as `"... (affix-sourced Slow flat, not modeled)"`), so the RNG
+  stream desyncs for every draw after it, producing wrong downstream values.
+- `outlaw-murderer-cowl`: its suffix carries `defensiveProtectionModifier` ("Increases Armor by N%"),
+  a field absent from EVERY field table in both `gdvalidate.py` and `ItemStatEngine.cs` (not Fixed,
+  not Def, not anywhere) — a real, undrawn RNG consumption that desyncs the suffix's Pierce/Fire/
+  Lightning resist draws after it.
+
+These 3 are marked in a `KnownGapItems` set and asserted as "currently still mismatching" (fails the
+test loudly if they start passing without the set being updated, rather than silently skipping) —
+per-item detail and rationale is in the `AffixedItem_ComputesExpectedTooltipLines` XML doc comment.
+**`dotnet test` (run directly against `tests/GrimDawnSeedStats.Tests/GrimDawnSeedStats.Tests.csproj`,
+since `src/GrimDawnSeedStats.Cli/Program.cs` has a pre-existing, unrelated build break — confirmed
+zero git diff on that file, not touched this session) is 61/61 passed, 0 failed, 0 skipped** (up from
+47 passed + 1 skipped = 48 total before this session).
+
+**Next step for either gap**: needs 2-3 more DB samples isolating each field family (an item where
+ONLY an affix-sourced SlowFlat is present, or ONLY `defensiveProtectionModifier`) to pin the exact
+draw position/formula the same way every other field family in this project was pinned — not
+guessable from the 3 mismatching items alone since each has several other draws happening around the
+gap.
+
+## Session update (July 7 2026, #4 — Ghidra follow-up on the removed quirk records: confirmed there is NO engine override mechanism, root cause is stale/wrong data in userdata-test.db itself for those ~8 records, not a missed game rule)
+
+Per user follow-up to "#3" below (which removed the hardcoded quirk tables): searched for a
+GENERIC, non-record-keyed explanation before accepting the 8 quirk records as simply unmodeled.
+Checked two candidate generic signals across all 8 records' own metadata fields
+(`itemNameTag`/`mesh`/`bitmap`): whether the embedded item-number in those fields matches the
+record's own filename (a sign of leftover copy-paste data). Only 2 of 8 show a mismatch
+(`c025_shield.dbr`'s tag/bitmap literally say "C007"; `d110_focus.dbr`'s say "D105"/`d105_focus`)
+— not a signal that generalizes to the other 6, and even where present it only flags "this record's
+data might be stale," not a formula for the correct value. Also re-checked the `itemSetName`
+angle (a sibling set record's own copy of a field overriding the equipped item's copy) — fits only
+1 of 8 (`c016_axe2h`, already known from a prior session) and was already refuted for `d105_blunt`.
+
+**Decompiled `CharAttribute::LoadBaseTable` (0x1800b77e0)** — the single generic per-field loader
+shared by EVERY `char`-kind attribute (`characterLife`, `characterSpellCastSpeedModifier`, etc.):
+it does a raw by-name lookup into the `LoadTable` (`vt+0x88`) and one trivial zero-value cleanup —
+nothing else. No per-Class branch, no clamp/fallback, no set/upgrade-record cross-reference. This
+matches the shape of every other loader already decompiled in prior sessions
+(`DamageAttributeAbs::LoadFromTable`, `AttributePak::LoadFromTable`, etc.) — all of them are bare
+reads. **There is no mechanism anywhere in the compiled engine that could make one specific
+record's field resolve to a value different from what's literally stored for that record.**
+
+**Conclusion**: the ~8 previously-quirked records' `DatabaseItemStat_v2.val1` simply does not match
+what the live/shipped game actually uses for that exact DBR file — this is a **stale or incorrect
+row in this specific `userdata-test.db` snapshot**, not an unmodeled game mechanic. Confirmed this
+isn't expressible as a formula either: the 4 `BASE_OVERRIDE_QUIRKS` ratios don't share a factor
+(200→150 and 402→302 are both ×0.75, but 15→20 is ×1.33 and 320→860 is ×2.69) — if it were a real
+in-game rule (e.g. a percentage reduction applied uniformly to some record category) the ratios
+would match; they don't, which is further evidence this is a data-quality artifact per-file, not a
+rule to encode.
+
+**Decision**: leave these records unmodeled (no quirk table, no generic detector) — there is no
+generic, checkable condition to gate a fix on, and no formula to apply even if there were. If the
+user later re-captures `userdata-test.db` and any of these records still mismatch, that would be
+the point to revisit (would rule out "stale snapshot" and reopen the question); until then this is
+closed as "data-quality, not a modeling gap." No code changes this session (investigation only) —
+`gdvalidate.py`/`ItemStatEngine.cs` remain as left by session "#3" below (quirk tables removed).
+
+## Session update (July 7 2026, #3 — user directive: NO per-record hardcoded quirk tables, anywhere; removed NODRAW_QUIRKS/BASE_OVERRIDE_QUIRKS/SINGLE_SIDED_QUIRKS from gdvalidate.py entirely (kept as no-op stubs); a C#-side port of the same tables (added earlier this session, see "#2" below) was reverted before landing)
+
+**Explicit user instruction: hardcoding behavior to a specific DBR record path is not acceptable,
+full stop** — every item follows the SAME engine rules; if a handful of records need a different
+base value or draw count to validate, that means the general rule hasn't been found yet, not that
+those specific records are exceptions. This directly contradicts the `NODRAW_QUIRKS`/
+`BASE_OVERRIDE_QUIRKS`/`SINGLE_SIDED_QUIRKS` tables that had accumulated in `gdvalidate.py` over
+several prior sessions (7 (record,field) entries total: `c019_necklace`, `d008_necklace`,
+`c025_shield`, upgraded `c024_waist`, `c009_shield` ×2, `c016_axe2h`, `d105_blunt`, `d110_focus`)
+— each was individually "confirmed" by brute-force grid search fitting every sampled seed for that
+one record exactly, but NONE had a Ghidra-level explanation for why that specific record differs.
+
+**Action taken**: removed all three dictionaries from `gdvalidate.py`; `quirk_skip`/
+`quirk_force_single`/`quirk_base_override` are now permanent no-op stubs (`return False`/`return
+False`/`return default`) rather than being deleted outright, so the call sites throughout the
+base-only and affix loops don't need touching — but they now always fall through to the
+un-overridden, un-skipped behavior. **Also reverted, before it ever landed**: this same session
+had ported the (already-hardcoded) Python quirk tables into `ItemStatEngine.cs` as a
+`baseRecordPath`-keyed lookup (see "#2" session note directly below) — that port was undone in
+full (dictionaries, helper methods, and the `baseRecordPath` parameter all removed from
+`ItemStatEngine.cs`) before any commit, per the same directive.
+
+**Corpus impact (expected, accepted regression)**: base-only items-all-correct dropped from
+1167/1169 back to **1153/1169** (the ~7 records the quirks used to paper over are mismatches
+again); `dotnet test` still 47/47 (none of the removed quirks were exercised by the C# fixture
+corpus, confirmed via grep before the C# port was even attempted). Affix pass unaffected (still
+1022/1022 single, 358/358 both, 100%) since none of the quirked records are in the affix corpus.
+
+**Standing rule for all future sessions**: do not add any dictionary/table keyed by a literal DBR
+record path to either `gdvalidate.py` or `ItemStatEngine.cs`. If a record's fields don't validate
+under the current field-family model, that is an open investigation item (get more seeds for that
+exact record, look for a shared DBR property across similarly-behaving records — e.g. set
+membership, upgrade tier, a specific flag field), not something to patch over with a per-path
+lookup table, no matter how well the override fits the available seeds.
+
+## Session update (July 7 2026, #2 — base-only coverage push: offensiveSlow{Type}Min/Max flat-DoT family + offensivePierceRatioMin modeled; skipped 332->218, fully-modeled 1055->1169, 1167/1169 (99.8%) exact; ported to C#, 47/47 tests still pass)
+
+Picked up the user's ask to push the BASE-ONLY (no affix) corpus toward 100%. Diagnosed the 332
+previously-skipped base-only items by field: the two biggest unmodeled families were
+`offensiveSlow{Type}Min` (a per-tick flat DoT value, 64-68 occurrences per type across
+Bleeding/Fire/Physical/Poison/etc) and `offensivePierceRatioMin` (53 occurrences, always "100% Armor
+Piercing" verbatim).
+
+**offensivePierceRatioMin: FIXED, 0 draws** — confirmed via c020_gun2h (tooltip literally "100%
+Armor Piercing" matching the DB value exactly on every sample). Added to `is_fixed()`/`IsFixed()`
+as a `offensive*RatioMin` suffix rule.
+
+**offensiveSlow{Type}Min (+ Max, DurationMin): a new "flat DoT" tier.** Draw-aligned exactly on 3
+samples (c025_axe Bleeding seed 1523045, c046_head Fire seed 790734, c207_medal Physical seed
+708250, all 3 fields simultaneously exact): the field draws as its OWN (min,spread) cjit pair —
+same mechanism as the existing offensive Flat block — positioned right AFTER the regular Flat
+block and BEFORE the entire Dmg %-modifier list, NOT interleaved next to its own
+offensiveSlow{Type}Modifier sibling despite DMG listing Modifier+DurationModifier adjacently. It
+IS scaled by `attributeScalePercent` (confirmed: c207_medal's `9`min/`82`Modifier both landed
+exactly at `sp=40`). Display total = `scaled_min * DurationMin` (DurationMin stays FIXED, 0
+draws, per existing precedent), or `scaled_min..scaled_max` range × duration if a Max/spread is
+present (confirmed pair mechanism exact on c018_ring, 2 seeds, min=4/max=12 base). Both "{Type}
+Damage over N Seconds" (Bleeding/Fire) and bare "{Type} over N Seconds" (Physical/"Internal
+Trauma") tooltip phrasings were observed — `slowflat_line()` offers both as accepted candidates
+since which phrasing applies per-type isn't pinned down yet, only that one of them always is.
+
+**One new per-record anomaly found** (not kept as a hardcoded quirk — see the "#3" session note
+above this one, which removed the whole quirk-table mechanism): upgraded `c024_waist.dbr`'s
+`offensiveSlowFireMin` (12 base) appears to never draw/display at all on its 2 sampled seeds
+(1149892, 90619) — keeping the draw desyncs `offensiveSlowFireModifier`/
+`defensiveElementalResistance` on both, removing it makes all 6 checked fields match exactly on
+both. This was briefly added to `NODRAW_QUIRKS` this session, then reverted along with the rest of
+the quirk-table mechanism per user direction; it's back to being an open, unexplained mismatch on
+that one record rather than a silently-patched exception.
+
+**Result**: `gdvalidate.py` base-only: skipped 332→**218**, fully-modeled 1055→**1169**, items-all-
+correct **1167/1169 (99.8%)**, per-stat OK 6267→6982 (BAD=17, all on one single record,
+`c027_focus.dbr`, 2 seeds — see below). The affix pass's shared `concerning()`/`is_fixed()` picked
+up the same fixes for free (PierceRatioMin), but since the affix loop's entries-builder was never
+taught to draw/sum a per-source `slowflat` contribution, a guard was added to keep those specific
+fields treated as still-unmodeled there (matching pre-existing behavior) rather than silently
+eating the draw and desyncing every later field on an affixed item — net result affix pass actually
+IMPROVED for free: single-affix 951/951→**1022/1022**, both-affix 352/352→**358/358**, still 100%.
+
+**Residual, NOT fixed this session**: `c027_focus.dbr` (2 seeds, 1029175/856303) — 8 stats each
+mismatch simultaneously (offensiveLifeModifier, offensiveSlowPoisonModifier, offensiveSlowLifeModifier,
+defensiveLife, defensiveAether, skillCooldownReduction, offensiveSlowPoison flat, retaliationPoison),
+including `skillCooldownReduction` appearing SWAPPED between the two seeds' real values relative to
+what's computed (16↔19) and `retaliationPoisonMin`'s real total (274) being IDENTICAL on both seeds
+despite base=240 — smells like the same "stale DB base value" `BASE_OVERRIDE_QUIRKS` pattern seen
+before (`c016_axe2h`/`d105_blunt`/`d110_focus`/`c009_shield`) possibly combined with a genuine
+draw-position issue, but not chased this session (only 2 samples, diminishing returns vs. the size
+of the win already banked). Next step if resumed: get more `c027_focus.dbr`-seed samples (same
+playbook as the other `BASE_OVERRIDE_QUIRKS` entries) before guessing further.
+
+**C# parity**: ported `SlowFlat` as a new `Kind` in `ItemStatEngine.cs` (inserted in `BuildOrder`
+right after `Flat`, before `Dmg`; `Modeled` set updated; `IsFixed` got the `RatioMin` suffix rule).
+Since the C# engine unifies base+affix in one `Compute()` call (unlike Python's split loops), the
+affix-guard is expressed as: if a prefix/suffix record touches a `Slow{X}Min/Max` field, flag it
+as an unmodeled "affix-sourced Slow flat, not modeled" field instead of processing it (mirrors the
+Python guard exactly). The one new per-record quirk (`c024_waist` NODRAW) was NOT ported — grepped
+the C# test fixture corpus, confirmed no fixture exercises `offensiveSlow*Min`/`PierceRatioMin` at
+all yet, so this is a purely additive change with no port-drift risk. `dotnet test`: still **47
+pass / 1 skip**, zero regressions.
+
+## Session update (July 7 2026, NEWEST — MATERIA'S OWN STATS CONFIRMED FIXED/NO-JITTER (user's hypothesis validated); RelicSeed column discovered; still no code changed)
+
+User recalled that Materia stats used to have variance years ago but are now believed hardcoded/fixed.
+Verified this directly against the DB and it's correct:
+
+- **All 108 `records/items/materia/*.dbr` rows in `userdata-test.db` have ZERO `lootRandomizerJitter`
+  field** (queried every one via `DatabaseItemStat_v2`) — unlike every Prefix/Suffix/base record,
+  which always carries one. No jitter field present means no RNG draw is spent on the record at all.
+- **Confirmed exactly on `compa_markofillusions.dbr` (PlayerItem 3326)**: its component tooltip block
+  reads "+15% Elemental Damage / +12 Spirit / +32 Defensive Ability / +2.5 Energy Regenerated per
+  second" — an EXACT match to the raw DBR values (`offensiveElementalModifier=15`,
+  `characterIntelligence=12` shown as Spirit, `characterDefensiveAbility=32`, `characterManaRegen=2.5`),
+  zero variance from the stored number.
+- **This retroactively reframes the prior sessions' "17-draw gap" mystery**: it was never that
+  Materia's own char/dmg fields needed a slot in the per-store draw order — they need **no RNG slots
+  at all**, ever. Any prior model that assumed Materia's own fields participate in the draw stream
+  (the original "third slot" hypothesis from the July 7 MateriaRecord session, and the "isolate draws
+  0-5" open item from the loop-closed session just above this one) can be dropped for the record's own
+  fields; only the completion-bonus (`bonusTableName`) resolution consumes draws, and that appears to
+  be on a wholly separate mechanism (see below), not interleaved into the base item's per-store loop.
+
+**New lead: `PlayerItem.RelicSeed` is a separate, independent seed column** (distinct from the item's
+own `Seed`), present on every Materia-bearing row (confirmed on 30 sampled rows, always non-null and
+different from `Seed`). This strongly suggests the completion-bonus roll (`GetRandomizerName`'s single
+MINSTD draw against `bonusTableName`'s weighted entries) is seeded from `RelicSeed`, NOT drawn out of
+the base item's own `Seed` stream as the July 7 "loop closed" session assumed (that session only found
+a plausible-looking draw index 6 inside the base item's own stream by search, it did not know
+`RelicSeed` existed).
+
+**Tried and inconclusive this session**: simulated `Rng(RelicSeed).nxt() % totalWeight` (single draw,
+no pre-existing base-stream involvement) against ring 3326's known selection (`a35_energyregen`,
+weight 50/660) — found a match at draw index 3, but multiple nearby indices also coincidentally land
+on other buckets, and with only 9 weighted buckets a single-sample match isn't strong evidence either
+way (same weakness the "loop closed" session's index-6 claim has, now further undermined since it used
+the wrong seed source). Also spot-checked PlayerItem 1220 (`compa_hellbaneammo` on the legendary
+"Oathbreaker" gun) — its tooltip shows no separable completion-bonus line at all (all its extra Attack
+Speed/etc. lines trace to the base record's own jittered fields or the item's granted skill, not to
+`completionbonus_a003_weapons.dbr`'s pool) — inconclusive on whether legendaries skip the completion-
+bonus roll entirely or just fold it in invisibly; not resolved this session.
+
+**Next steps for a future session**: (1) find 2-3 more materia-only samples where the completion-bonus
+line is unambiguous in the tooltip (a clearly-attributable extra stat not explainable by the base or
+materia's own fixed fields) and confirm/refute the `RelicSeed`-as-single-draw-source hypothesis with
+enough samples to rule out chance; (2) once confirmed, check whether `RelicSeed`'s stream is consumed
+by ONLY one draw (flat weighted pick) or also feeds the selected sub-record's own jitter (e.g.
+`a35_energyregen.dbr` has its own `lootRandomizerJitter=50` — does ITS jitter draw come from the same
+`RelicSeed` stream, right after the selection draw, or from the base item's own `Seed` stream instead?
+Not yet checked either way). No code changed this session — investigation + one confirmed DB-level
+finding (materia = zero jitter, verbatim values) that should be written into `gdvalidate.py` as a
+simple "no draw, use DBR value as-is" rule for Materia's own fields once the completion-bonus mechanism
+is fully solved and the Materia contribution pass is implemented for real.
+
+## Session update (July 7 2026, LOOP CLOSED: live seed simulation confirms `LootRandomizerTable::GetRandomizerName`'s selection draw against real data; still no code changed)
+
+Picked up the one concrete "still open" item left by both Ghidra passes below: live/seed-driven
+simulation of the selection formula against a real materia-only sample, to confirm the decompiled
+algorithm actually predicts which completion-bonus sub-record gets selected.
+
+**Confirmed end-to-end on the exact sample used throughout this investigation** (`c027_ring` +
+`compa_markofillusions`, PlayerItem.Id=3326, seed=1082779): queried `completionbonus_a002_ringsamulets.dbr`'s
+9 `randomizerName1..9`/`randomizerWeight1..9` pairs from `DatabaseItemStat_v2` — weights
+`[100,100,100,100,75,75,10,50,50]` (total 660) mapping to
+`[a26a_fireresist, a27a_coldresist, a28a_lightningresist, a29a_poisonresist, a30a_aetherresist,
+a31a_chaosresist, a32a_elementalresist_rare, a35_energyregen, a36_healthregen]`. Imported `Rng`
+directly from `gdvalidate.py` (per project convention), generated the raw draw stream for seed
+1082779, and applied the decompiled formula (`draw % (totalWeight+1)`, then cumulative-weight walk)
+at every draw index. **Draw index 6 (the 7th `nxt()` call) selects `a35_energyregen`** — which
+exactly matches this item's real tooltip line ("+1.5 Energy Regenerated per second" traced in the
+prior session to `a35_energyregen.dbr`, not to the materia's own DBR fields). This is not a
+coincidence-prone match: 9 weighted buckets with one dominant ~15% (50/660) bucket landing exactly
+right, on the first index tried inside the previously-identified 1-17 "gap" range, is a strong hit.
+
+**What this confirms**: the decompiled `LootRandomizerTable::GetRandomizerName` formula
+(`0x180348e10`/`0x18034f070`, documented in the "GHIDRA FOLLOW-UP" block below) is not just
+structurally plausible — it reproduces the real seed's actual outcome. The completion-bonus
+selection genuinely consumes exactly ONE MINSTD draw from the SAME seeded stream `InitializeItem`
+reads from (not a separately-seeded RNG), at some position before the base record's later CHAR/DMG
+fields (draw index 18/22/23 in this sample) — consistent with the recursive/chained selection
+mechanism (`ValidateSelectRandomizerRecursive`) possibly consuming a few more draws before or after
+index 6 for the outer artifact/materia-attachment resolution itself (not yet isolated — index 6 is
+confirmed as the point where the FINAL completion-bonus sub-record round is selected, but where the
+outer `bonusTableName` resolution's own draw(s), if any, sit relative to it is still unconfirmed).
+
+**Still open / next steps**: (1) isolate whether draws 0-5 belong to some outer selection step (e.g.
+the materia-attachment/artifact-load draws) or are simply unused padding — check a 2nd sample to see
+if the selection-draw index is stable/predictable (e.g. always the Nth draw for a given item class)
+or varies; (2) once the selection index's OWN position rule is known, determine how the selected
+sub-record's fields (e.g. `a35_energyregen.dbr`'s `characterManaRegenModifier`/its own
+`lootRandomizerJitter`) draw and jitter relative to the base record's own remaining fields — this is
+the same per-kind/per-store dispatch question the original affix model already solved for
+Prefix/Suffix, just needing the SAME treatment applied to the resolved completion-bonus record
+instead of a literal Materia DBR row; (3) only then attempt the full 10-sample corpus validation and,
+if it holds, implement in `gdvalidate.py`/`ItemStatEngine.cs` per the C# parity rule. No code changed
+this session (investigation only) — corpus numbers unchanged (base-only 1055/1055, single-affix
+951/951, both-affix 352/352, `dotnet test` 47 pass/1 skip).
+
+## Session update (July 7 2026, NEWEST — incremental Ghidra re-confirmation pass on LootRandomizerTable weighted-selection mechanism; no code changed, investigation only)
+
+Re-ran the string/xref hunt for `randomizerName`/`randomizerWeight`/`bonusTableName`/`LootRandomizerTable`
+from scratch (independent pass, not continuing a live session) to re-verify and extend the
+"GHIDRA FOLLOW-UP" findings below. Result: **fully reproduces** the prior pass's core claims
+(single-MINSTD-draw + cumulative-weight-walk selection in `GetRandomizerName`, chained/recursive
+resolution via `ValidateSelectRandomizerRecursive`), plus a few new specifics:
+
+- Found the **non-Dynamic** `LootRandomizerTable::GetRandomizerName` @ **0x180348e10** (previous
+  pass only decompiled the `_Dynamic` variant @ 0x18034f070 and the `LootTable` base variant @
+  0x18034faf0). Decompile is structurally identical to the Dynamic version: same MINSTD draw
+  (`(seed % 0x1f31d)*0x41a7 + (seed/0x1f31d)*-0xb14`, sign-fixed by `+0x7fffffff`), same
+  `roll % (entryCount+1)` reduction (entry count at `this+0x30`), same cumulative-weight walk over
+  a `this+0x38..0x40` vector of 0x28-byte entries with weight at `entry+0x20`. Only difference from
+  the Dynamic version is the fallback string constant on empty-table (`DAT_1805fa0c7` vs
+  `DAT_1805fa0ef`) — cosmetic, not algorithmic. This confirms the non-Dynamic table variant (the one
+  a plain DBR-path `bonusTableName` resolves to) uses the exact same one-draw CDF-walk selection.
+- Traced `bonusTableName` (string tag @ 0x180663788, only one hit in the binary) to its actual
+  reader: **`ItemArtifact::Load` @ 0x30edc0** (mangled `?Load@ItemArtifact@GAME@@...`), which calls
+  the DBR-field getter with `"bonusTableName"` and stores the resulting path string at `this+0xc80`.
+  This is on `ItemArtifact`, not a `MateriaRecord`-named class (Ghidra has no symbol literally named
+  `MateriaRecord`) — consistent with the established finding that "materia" completion-bonus tables
+  are just another `bonusTableName`-bearing item record loaded through the shared Artifact/Item load
+  path, not a bespoke code path. `ItemArtifactFormula::ItemArtifactFormula` @ 0x180311980 (the
+  formula-side constructor) was also inspected as a candidate resolver but is pure field-zeroing
+  init, no RNG/table logic — ruled out as the consumer.
+- Confirmed via `get_xrefs_to` on `LootRandomizerTable::ManualLoad` @ 0x180348ee0 that the
+  same selection machinery is shared by `GetPrefixTable` (0x1803412e5 call site),
+  `GetSuffixTable` (0x18034157b), `GetBrokenTable` (0x18034181b), and
+  `ValidateSelectRandomizerRecursive` (0x18034fcaa) — i.e. prefix/suffix/broken/completion-bonus
+  affix-name resolution all funnel through one generic weighted-table-load-and-pick routine. No
+  materia/completion-bonus-specific branch exists; the mechanism documented in the prior pass for
+  "randomizer tables" applies uniformly.
+- Did not get further than the prior pass on the open question (live call chain from top-level
+  item/loot generation down into `GetLootName`, and per-sample draw-count validation against
+  `userdata-test.db` seed 1082779 / item 3326). Ran out of scope this pass to do the live
+  seed-driven simulation — still recommend that as the next concrete step to fully close the loop
+  (simulate `completionbonus_a002_ringsamulets.dbr`'s 9 `randomizerWeight1..9` values against seed
+  1082779's draw stream and check whether `a35_energyregen.dbr` is the one selected at the expected
+  draw index).
+
+**Everything above is Ghidra-decompile-confirmed** (function addresses, field offsets, MINSTD
+formula, weight-walk logic). The mapping from a specific real item/seed to a specific selected
+sub-record (the "close the loop" validation) remains **not yet done** — hypothesis only.
+
+## Session update (July 7 2026, MateriaRecord investigated: NOT a simple third draw-order slot, it's a randomized completion-bonus table; Ghidra follow-up done same day, see "GHIDRA FOLLOW-UP" block below; no code changed)
+
+**GHIDRA FOLLOW-UP (July 7 2026, same day, later pass)**: the prior write-up below cited only DB-level
+findings (bonusTableName, LootRandomizerTable, 9 randomizerName slots) with zero Ghidra function
+names/addresses — that reverse-engineering step had not actually been done. It has now been done;
+Ghidra tools were available and returned real results.
+
+- `mcp__ghidra__list_strings` found the tag strings as expected: `randomizerName1..150` (multiple
+  DBR-table copies), `bonusTableName` (single hit @ 0x180663788), `LootRandomizerTable` /
+  `LootRandomizerTable_Dynamic` (class + full mangled method table: ctor/dtor/Load/ManualLoad/
+  GetRandomizerName/GetAllEntries/RTTI, e.g. `Load@LootRandomizerTable` @ 0x180992f37,
+  `GetRandomizerName@LootRandomizerTable_Dynamic` @ 0x180962325).
+- `mcp__ghidra__search_functions_by_name` for "Randomizer" surfaced the real call graph:
+  `LootRandomizerTable` ctor @ 0x1800d06b0 / 0x180348bc0, `LootRandomizerTable_Dynamic` ctor @
+  0x1800ee690 / 0x180349030, `GetRandomizerName` @ 0x18031a740 / 0x180348e10 / **0x18034f070**
+  (`LootRandomizerTable_Dynamic::GetRandomizerName`) / **0x18034faf0**
+  (`LootTable::GetRandomizerName`), `GetRandomizerNames` @ 0x180340fb0 / **0x180346b90**
+  (`LootItemTableRandomizer_Dyn::GetRandomizerNames`), `LootItemTableRandomizer_Dyn` ctor @
+  0x18033e1c0/0x1803418e0, `ValidateSelectRandomizerRecursive` @ **0x18034fc20**,
+  `SetRandomizerWeightModifiers` @ 0x18033caf0/0x180348300. No match for "CompletionBonus"
+  (that's a pure DBR path-naming convention, not a class name). "Weighted" only matched unrelated
+  `AddWeightedObjectToList`/`GetWeightedSpawnObject`.
+- **Decompiled `LootRandomizerTable_Dynamic::GetRandomizerName` @ 0x18034f070**: confirms the
+  selection algorithm is a **single MINSTD draw + cumulative-weight walk**, NOT two draws or a
+  binary search. It advances the RNG once (`uVar2 = (seed % 0x1f31d)*0x41a7 + (seed/0x1f31d)*-0xb14`,
+  the same MINSTD formula already validated for base/affix jitter), takes `uVar2 % totalWeight`
+  (totalWeight = `iVar1+1` where `iVar1` is the entry count field at `this+0x30`), then walks the
+  entry vector at `this+0x38..0x40` (each entry is 0x28 bytes, weight field at `entry+0x20`)
+  accumulating weights until the running sum exceeds the roll — a straightforward CDF walk over one
+  draw, matching how prefix/suffix table selection already works elsewhere in the codebase.
+- **Decompiled `LootTable::GetRandomizerName` @ 0x18034faf0**: a related but distinct function —
+  first draws to check a probability gate (`draw * const1 * const2 < param_2` i.e. a drop-chance
+  roll), and only if it passes, draws AGAIN and does the same cumulative-weight walk, then calls
+  `ValidateSelectRandomizerRecursive` (@ 0x18034fc20) on the result. `ValidateSelectRandomizerRecursive`
+  in turn `ManualLoad`s the selected DBR path as a nested `LootRandomizerTable`, calls
+  `GetRandomizerName` on IT, and recurses (depth-limited, decrementing `param_2`, engine-error-logs
+  past depth) — i.e. **completion-bonus/randomizer tables can chain to other randomizer tables**,
+  each link consuming its own draw(s), which explains why materia items showed more extra draws
+  than a single flat lookup would predict.
+- **Where this sits in the overall draw sequence**: traced callers up from `GetRandomizerName`.
+  `LootItemTableRandomizer_Dyn::GetRandomizerNames` @ 0x180346b90 (single MINSTD draw against the
+  summed weights of 10 category counts at `this+0x94..0xb8` — prefix/suffix/broken/rare-prefix/
+  rare-suffix/etc — then dispatches to `GetPrefixTable`/`GetSuffixTable`/`GetBrokenTable`/
+  `GetRarePrefixTable`/`GetRareSuffixTable` @ 0x180346e80/0x180347130/0x1803479be/0x1807363d8/etc,
+  each of which does its OWN cumulative-weight draw to pick a name within that category, THEN loads
+  it and calls `LootRandomizerTable_Dynamic::GetRandomizerName` again — confirming nested/chained
+  selection is the norm, not the exception). The sole caller of `GetRandomizerNames` is
+  `LootItemTable_DynWeight::GetLootName` @ 0x18033ef30, which is the **item-drop/loot-table name
+  resolution function** — it first calls `ProcessTableData`, then does its own cumulative-weight
+  draw to pick which sub-loot-table entry applies, THEN constructs a fresh
+  `LootItemTableRandomizer_Dyn`, calls `LoadFromDatabase`/`SetWeightModifiers`, and only then calls
+  `GetRandomizerNames`. Checked xrefs to `InitializeItem` @ 0x1803213e0 (the confirmed per-item
+  field-draw entry point) — every reference is a vtable/DATA slot, zero direct/unconditional CALL
+  sites. This confirms `GetLootName`/`GetRandomizerName`/`LootRandomizerTable` is a **separate,
+  upstream RNG-consuming subsystem**: it resolves WHICH prefix/suffix/completion-bonus DBR record
+  gets attached to a dropping item (loot-table item-class and affix-name selection), consuming its
+  own MINSTD draws from the same seeded generator BEFORE `InitializeItem`'s own per-field draw loop
+  ever begins reading that resolved record's fields. It is not a slot spliced into
+  `InitializeItem`'s existing per-store draw order the way the original hypothesis assumed.
+- **Still open**: exact live call chain from top-level item-generation (which function calls
+  `GetLootName` — not yet traced upward past it) and confirmation of how many total draws the
+  completion-bonus chain consumes for the specific 10 materia-only samples (would require
+  simulating the resolved DBR paths per sample seed and counting recursion depth — not attempted
+  this pass, this was a static-decompile pass only, no live/seed-driven simulation was run).
+
+Investigation-only session (per the task brief, no forced fit): extended the affix-pass investigation
+to items with a `MateriaRecord` set (and nothing else — Prefix/Suffix/Modifier/Enchantment/
+RelicCompletionBonus/Transmute all still absent), using the 10 materia-only rows in
+`userdata-test.db` (PlayerItem Ids 1220, 1228, 1528, 2785, 2877, 3026, 3087, 3326, 3365, 3555).
+
+**What was expected going in**: per the prior session's Ghidra lead (`docs/continuation.md`
+line ~320), Materia was believed to be a third slot in the same per-field loader mechanism as
+Prefix/Suffix — for Char/Skill/RetalMod stores drawing after Prefix/Suffix (before Base), for
+Damage/Defense stores drawing after Suffix (i.e. base→prefix→suffix→materia). The plan was to
+confirm this via draw alignment on the 10 base+materia-only samples (no prefix/suffix present, so
+materia's position relative to base is directly isolated) and add it as a new contribution source
+in `gdvalidate.py`'s `affix_rows()`/entries loop, mirroring the existing prefix/suffix dispatch.
+
+**What was actually found**: draw alignment on the simplest sample (`c027_ring` +
+`compa_markofillusions`, PlayerItem 3326, seed 1082779) refuted the simple-slot hypothesis
+immediately. The base record's own CHAR/DMG/DEF fields (`characterSpellCastSpeedModifier`=4→3,
+`offensiveLightningModifier`=18→21, `offensiveSlowLightningModifier`=18→19,
+`defensivePierce`=16→16) land at draw stream indices **0, 18, 22, 23** — i.e. 17 RNG draws are
+consumed between the first and second entries, far more than the 1-2 extra draws a simple
+materia-char-fields-early model would predict (materia's own char fields here are
+`characterIntelligence`=12 and `characterDefensiveAbility`=32, only 2 candidates, and neither
+combination of orderings reproduces `offensiveLightningModifier`→21 landing at index 18).
+
+**Root cause of the gap**: every one of the 10 materia-only samples' `MateriaRecord` DBR carries a
+non-empty `bonusTableName` field (confirmed via direct `TextValue` query on `DatabaseItemStat_v2`,
+e.g. `compa_markofillusions.dbr` → `bonusTableName='records/items/lootaffixes/completion/
+completionbonus_a002_ringsamulets.dbr'`). That target record's own DB row has `Class=
+'LootRandomizerTable'` and 9 `randomizerName1..9` slots (each a *different* completion-bonus DBR
+path, e.g. `a26a_fireresist.dbr` … `a35_energyregen.dbr` … `a36_healthregen.dbr`), each with a
+`randomizerWeight` — i.e. attaching a Materia to an item doesn't just apply the materia's own
+fixed stat block, it ALSO triggers a **weighted-random selection from a second, per-item-slot
+lookup table** (completion bonus), and the selected sub-record's own stats (which have their own
+`lootRandomizerJitter`, e.g. `a35_energyregen.dbr` has `characterManaRegenModifier=8,
+lootRandomizerJitter=50`) are what fill the gap — explaining both the extra draws (index selection
+in the weighted table + that record's own jitter) and tooltip lines that don't correspond to any
+field on the materia's own DBR row (e.g. ring 3326's "+1.5 Energy Regenerated per second" comes
+from the randomly-selected `a35_energyregen.dbr`, not from `compa_markofillusions.dbr` itself).
+This is a materially different and more complex mechanism than Prefix/Suffix jitter — it requires
+first reverse-engineering the weighted-random-index algorithm (which RNG draw(s) pick the index,
+whether by cumulative weight or straight modulo, Ghidra-unconfirmed) before any per-field jitter
+alignment is even meaningful, since which record's fields apply is itself seed-dependent.
+
+**All 10 samples show the same `bonusTableName`-present pattern** (weapons → `completionbonus_
+a003_weapons.dbr`/`a000_weapons.dbr`, armor → `a000_armor.dbr`/`a001_armor.dbr`/`b001_armor.dbr`,
+rings/amulets → `a002_ringsamulets.dbr`) — this is not an isolated quirk of one sample, it's the
+general Materia mechanism. No sample was found where a Materia's own DBR fields draw in isolation
+without this randomizer-table layer.
+
+**Per the task's explicit instruction not to force a partial/guessed model: no code was changed.**
+`gdvalidate.py` and `ItemStatEngine.cs` are unmodified; `MateriaRecord`-bearing rows remain
+completely unmodeled/excluded, same as before this session. Corpus numbers are unchanged from the
+prior session's ending state: base-only 1055/1055, single-affix 951/951 (100%), both-affix
+352/352 (100%). `dotnet test` not re-run since no C# changes were made.
+
+**Remaining open / next steps for a future session** (none attempted this session): (1) find the
+Ghidra function that resolves a `LootRandomizerTable`'s weighted index from a seed/RNG draw (search
+for xrefs to the `LootRandomizerTable` class or `bonusTableName` string, likely near the existing
+`FUN_18019f110`-family DamageAttributeStore loaders since materia items exercise the same
+per-field dispatch downstream); (2) once the index-selection formula is known, re-attempt the
+10-sample draw alignment with the CORRECT selected sub-record's fields substituted for the
+materia's raw DBR fields; (3) only then decide where in Char/Skill/RetalMod vs Damage/Defense
+per-kind draw order the resolved fields sit relative to base (the original open question, still
+unanswered). The ~148 samples where Materia is combined with Prefix/Suffix/etc remain untouched
+and should stay excluded until the materia-only mechanism is solved on its own.
+
 ## Session update (July 6 2026, NEWEST — AFFIX CORPUS 100%: every remaining affix mismatch solved in one session; Python AND C# both updated; 6 commits landed)
 
 Continued directly from the session below (which found the b_class* shift-by-one but couldn't find
