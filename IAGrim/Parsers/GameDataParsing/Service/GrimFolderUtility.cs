@@ -48,13 +48,16 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
                 return false;
             }
 
-            for (int i = 9; i >= 1; i--) {
+            // Ascending priority order (base -> GDX1 -> GDX2 -> ...): later entries in the
+            // returned list are loaded last and must win field-for-field overwrites in
+            // ItemAccumulator, matching the game engine's newest-expansion-wins behavior.
+            for (int i = 1; i <= 9; i++) {
                 AddIfExists(Path.Combine(grimdawnLocation, $"gdx{i}"));
             }
 
-            
+
              // No useful items, only writs. Not worth the insane parsing time.
-            for (int i = 9; i >= 1; i--) {
+            for (int i = 1; i <= 9; i++) {
                 AddIfExists(Path.Combine(grimdawnLocation, $"survivalmode{i}"));
             }
 

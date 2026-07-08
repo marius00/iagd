@@ -49,7 +49,11 @@ namespace IAGrim.Parsers.GameDataParsing.Model {
         }
 
         public void Add(IItem item) {
-            var internalItem = _items.ContainsKey(item.Record) ? _items[item.Record] : new InternalItem { Record = item.Record };
+            // The engine loads each record path as a whole-record replace (last file that
+            // defines the path wins entirely), not a per-field union. Arz files must be
+            // processed in ascending priority order (base -> GDX1 -> GDX2 -> ...) so that
+            // this replace-on-redefine matches which file "wins" in-game.
+            var internalItem = new InternalItem { Record = item.Record };
             foreach (var stat in item.Stats) {
                 internalItem.Stats[stat.Stat] = stat;
             }
