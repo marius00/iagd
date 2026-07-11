@@ -236,6 +236,35 @@ namespace IAGrim.Database {
             return statMap;
         }
 
+        public Dictionary<string, List<DBStatRow>> GetAllRecordStatsForIndexing() {
+            var statMap = new Dictionary<string, List<DBStatRow>>();
+
+            string sql = string.Join(" ", new[] {
+                $@"select db.{DatabaseItemTable.Record} as Record, s.stat as Stat, s.val1 as Value, s.textvalue as TextValue
+                FROM {DatabaseItemTable.Table} db, {DatabaseItemStatTable.Table} s where s.{DatabaseItemStatTable.Item} = db.{DatabaseItemTable.Id}",
+                "AND (val1 > 0 or stat in ( :whitelist ))",
+                "AND NOT stat IN ( :blacklist )"
+            });
+
+            using (var session = SessionCreator.OpenSession()) {
+                IQuery query = session.CreateSQLQuery(sql)
+                    .SetParameterList("whitelist", SpecialStats)
+                    .SetParameterList("blacklist", SpecialIgnores)
+                    .SetResultTransformer(Transformers.AliasToBean<DBStatRow>());
+
+                foreach (DBStatRow row in query.List<DBStatRow>()) {
+                    if (string.IsNullOrEmpty(row.Record))
+                        continue;
+                    if (!statMap.ContainsKey(row.Record))
+                        statMap[row.Record] = new List<DBStatRow>();
+                    statMap[row.Record].Add(row);
+                }
+            }
+
+            Logger.Debug($"Fetched stats for {statMap.Count} records for search indexing");
+            return statMap;
+        }
+
         public Dictionary<string, string> MapItemBitmaps(List<string> records) {
             Dictionary<string, int> bitmapScores = new Dictionary<string, int> {
                 ["bitmap"] = 10,

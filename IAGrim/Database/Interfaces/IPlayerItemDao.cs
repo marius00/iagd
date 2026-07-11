@@ -35,8 +35,5 @@ namespace IAGrim.Database.Interfaces {
         Dictionary<long, string> FindRecordsFromIds(IEnumerable<long> ids);
 
         bool Exists(PlayerItem item);
-
-
-        IList<PlayerItem> ListMissingReplica();
     }
 }

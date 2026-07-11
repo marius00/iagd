@@ -78,7 +78,6 @@ class ItemCornerContainer extends PureComponent<Props, object> {
     const showPluralBuddyItemIcon = item.type !== IItemType.Buddy && buddyItems.length > 1;
     const showRecipeIcon = item.hasRecipe && item.type === IItemType.Recipe;
     const showAugmentationIcon = item.type === IItemType.Augmentation;
-    const showGenericStatIcon = item.type === IItemType.Player && !item.replicaStats;
     const onClickBuddyIcon = this.props.onClickBuddyIcon;
 
     const cloudIconOk = getCloudIcon(true);
@@ -150,16 +149,6 @@ class ItemCornerContainer extends PureComponent<Props, object> {
             alt={"You can create this item (recipe)"}
           />
           </span>
-        }
-        {showGenericStatIcon ?
-        <span data-tip={translate('item.genericstats.warning')}>
-          <img
-            className="cursor-help"
-            src="static\warning.png"
-            style="max-width: 16px;"
-          />
-          </span>
-          : ''
         }
       </div>
     );

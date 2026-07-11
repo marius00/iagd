@@ -11,8 +11,6 @@ namespace IAGrim.Database.Migrations {
             {"itemskill_mapping", "CREATE TABLE itemskill_mapping (id_skill INTEGER not null, id_databaseitem INTEGER not null, primary key (id_skill, id_databaseitem))"},
             {"buddyitems_v6", "CREATE TABLE buddyitems_v6 (id_item_remote TEXT not null, id_buddy INTEGER not null, baserecord TEXT, prefixrecord TEXT, suffixrecord TEXT, modifierrecord TEXT, transmuterecord TEXT, materiarecord TEXT, stackcount INTEGER, ishardcore INTEGER, mod TEXT, name TEXT, namelowercase TEXT, levelrequirement REAL, created_at INTEGER, rarity TEXT, prefixrarity INTEGER, seed INTEGER, relicseed INTEGER, enchantmentseed INTEGER, AscendantAffixNameRecord TEXT, AscendantAffix2hNameRecord TEXT, RerollsUsed INTEGER, primary key (id_item_remote, id_buddy))"},
             {"BuddyItemRecord_v2", "CREATE TABLE BuddyItemRecord_v2 (id_item TEXT not null, record TEXT not null, primary key (id_item, record))"},
-            {"ReplicaItem2", "CREATE TABLE ReplicaItem2 (Id INTEGER not null, playeritemid INTEGER unique, buddyitemid TEXT unique, primary key (Id))"},
-            {"ReplicaItemRow", "CREATE TABLE ReplicaItemRow (Id INTEGER not null, replicaitemid INTEGER, Type INTEGER, Text TEXT, TextLowercase TEXT, primary key (Id))"},
             {"settings", "CREATE TABLE settings (setting TEXT not null, val1 INTEGER, V2 TEXT, primary key (setting))"},
             {"BuddySubscription", "CREATE TABLE BuddySubscription (Id INTEGER not null, Nickname TEXT, LastSyncTimestamp INTEGER, IsHidden INTEGER, primary key (Id))"},
             {"DatabaseItemStat_v2", "CREATE TABLE DatabaseItemStat_v2 (id_databaseitemstat  integer primary key autoincrement, id_databaseitem INTEGER, Stat TEXT, TextValue TEXT, val1 REAL, constraint FK_95F02CAE foreign key (id_databaseitem) references DatabaseItem_v2)"},
@@ -60,9 +58,6 @@ namespace IAGrim.Database.Migrations {
             "CREATE INDEX idx_playeritem_prefix on PlayerItem (PrefixRecord)",
             "CREATE INDEX idx_playeritem_rarity on PlayerItem (Rarity)",
             "CREATE INDEX idx_playeritem_suffix on PlayerItem (SuffixRecord)",
-            "CREATE INDEX idx_replicaitem_buddyitemid on ReplicaItem2 (buddyitemid)",
-            "CREATE INDEX idx_replicaitem_playeritemid on ReplicaItem2 (playeritemid)",
-            "CREATE INDEX idx_replicaitemstat_replicaitemid on ReplicaItemRow (replicaitemid)",
             "CREATE INDEX idx_databaseitemv2_baserecord on DatabaseItem_v2 (baserecord)",
         };
 

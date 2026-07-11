@@ -1,4 +1,5 @@
 ﻿using IAGrim.Parsers.Arz;
+using IAGrim.Services;
 using IAGrim.UI;
 using IAGrim.Utilities.HelperClasses;
 using StatTranslator;
@@ -46,6 +47,8 @@ namespace IAGrim.Utilities {
             }
         }
         public static StatManager StatManager { get; set; }
+
+        public static ReplicaStatResolver ReplicaStatResolver { get; set; }
 
     }
 }

@@ -245,14 +245,6 @@ namespace IAGrim.Database {
                         .ExecuteUpdate();
 
 
-                    session.CreateSQLQuery($"DELETE FROM ReplicaItemRow WHERE replicaitemid IN (SELECT id FROM ReplicaItem2 WHERE playeritemid IN ( :ids ))")
-                        .SetParameterList("ids", items.Select(m => m.Id).ToList())
-                        .ExecuteUpdate();
-
-                    session.CreateSQLQuery($"DELETE FROM ReplicaItem2 WHERE playeritemid IN ( :ids )")
-                        .SetParameterList("ids", items.Select(m => m.Id).ToList())
-                        .ExecuteUpdate();
-
                     session.CreateSQLQuery($"DELETE FROM {table} WHERE {stack} <= 0 AND {id} IN ( :ids )")
                         .SetParameterList("ids", items.Select(m => m.Id).ToList())
                         .ExecuteUpdate();
@@ -375,10 +367,6 @@ namespace IAGrim.Database {
                 
                 using (var transaction = session.BeginTransaction()) {
                     foreach (var item in items) {
-                        session.CreateSQLQuery($"DELETE FROM ReplicaItem2 WHERE playeritemid IN (select id from playeritem WHERE {PlayerItemTable.CloudId} = :uuid)")
-                            .SetParameter("uuid", item.Id)
-                            .ExecuteUpdate();
-
                         session.CreateSQLQuery($"DELETE FROM PlayerItem WHERE {PlayerItemTable.CloudId} = :uuid")
                             .SetParameter("uuid", item.Id)
                             .ExecuteUpdate();
@@ -635,8 +623,14 @@ namespace IAGrim.Database {
             }
 
             if (!string.IsNullOrEmpty(query.Wildcard)) {
-                // queryFragments.Add("(PI.namelowercase LIKE :name OR R.text LIKE :wildcard)");
-                queryFragments.Add("(PI.namelowercase LIKE :name OR R.id IN (SELECT replicaitemid FROM replicaitemrow WHERE IFNULL(textlowercase, text) LIKE :wildcard))");
+                // Match the item name, OR the seed-independent translated stat text of any of the
+                // item's records (built by RecordSearchTextIndexer into RecordStatText). Numbers are
+                // wildcarded in that index, so this matches stat keywords/phrases but not specific
+                // rolled values.
+                queryFragments.Add($@"(PI.namelowercase LIKE :name
+                    OR PI.baserecord   IN (SELECT {RecordStatTextTable.Record} FROM {RecordStatTextTable.Table} WHERE {RecordStatTextTable.SearchText} LIKE :wildcard)
+                    OR PI.prefixrecord IN (SELECT {RecordStatTextTable.Record} FROM {RecordStatTextTable.Table} WHERE {RecordStatTextTable.SearchText} LIKE :wildcard)
+                    OR PI.suffixrecord IN (SELECT {RecordStatTextTable.Record} FROM {RecordStatTextTable.Table} WHERE {RecordStatTextTable.SearchText} LIKE :wildcard))");
                 queryParams.Add("wildcard", $"%{query.Wildcard.ToLowerInvariant()}%");
                 queryParams.Add("name", $"%{query.Wildcard.Replace(' ', '%').ToLowerInvariant()}%");
             }
@@ -744,10 +738,8 @@ namespace IAGrim.Database {
                 IFNULL(RerollsUsed, 0) as RerollsUsed,
                 IFNULL(AffixRerollsUsed, 0) as AffixRerollsUsed,
                 coalesce((SELECT group_concat(Record, '|') FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord, PI.AscendantAffixNameRecord, PI.AscendantAffix2hNameRecord)), '') AS PetRecord,
-                IFNULL((select json_group_array(json_object('text', text, 'type', type)) from ReplicaItemRow where replicaitemid = R.id), '[]') AS ReplicaInfo,
                 PI.{PlayerItemTable.Seed} as Seed
-                FROM PlayerItem PI 
-                LEFT OUTER JOIN ReplicaItem2 R ON PI.ID = R.playeritemid
+                FROM PlayerItem PI
                 WHERE " + string.Join(" AND ", queryFragments)
             };
 
@@ -875,7 +867,6 @@ namespace IAGrim.Database {
             long RerollsUsed = Convert(arr[idx++]);
             long AffixRerollsUsed = Convert(arr[idx++]);
             string PetRecord = Convert<string>(arr[idx++])?.Trim();
-            string replicaInfo = Convert<string>(arr[idx++]);
             long seed = Convert<long>(arr[idx++]);
 
 
@@ -900,7 +891,6 @@ namespace IAGrim.Database {
                 IsHardcore = IsHardcore,
                 RerollsUsed = RerollsUsed,
                 AffixRerollsUsed = AffixRerollsUsed,
-                ReplicaInfo = replicaInfo,
                 Seed = seed
             };
         }
@@ -976,91 +966,6 @@ namespace IAGrim.Database {
             }
 
             return result;
-        }
-
-        public IList<PlayerItem> ListMissingReplica() {
-
-
-            //TODO: Relics are "ItemArtifact", those will crash the game. (TODO: Is this still true? I don't think so..)
-            // TODO: Seems super redundant to check prefix, suffix and materia for Class? BaseRecord determines slot no? Same thing is done in regular searches..
-            var specificItemTypesOnlySql = $@"
-                SELECT id FROM PlayerItem WHERE baserecord IN (
-                    select baserecord from databaseitem_V2 db where db.baserecord in (
-                        select baserecord from {PlayerItemTable.Table}
-                    )
-                    AND exists (
-                        select id_databaseitem from databaseitemstat_v2 dbs 
-                        WHERE stat = 'Class' 
-                        AND TextValue in ( 
-                            'ArmorProtective_Head', 
-                            'ArmorProtective_Hands', 
-                            'ArmorProtective_Feet', 
-                            'ArmorProtective_Legs', 
-                            'ArmorProtective_Chest', 
-                            'ArmorProtective_Waist', 
-                            'ArmorJewelry_Medal', 
-                            'ArmorJewelry_Ring', 
-                            'ArmorProtective_Shoulders', 
-                            'ArmorJewelry_Amulet',
-                            'WeaponMelee_Dagger', 
-                            'WeaponMelee_Mace', 
-                            'WeaponMelee_Axe',
-                            'WeaponMelee_Scepter',
-                            'WeaponMelee_Sword',
-                            'WeaponMelee_Spear2h',
-                            'WeaponMelee_Sword2h',
-                            'WeaponMelee_Mace2h',
-                            'WeaponMelee_Axe2h',
-                            'WeaponHunting_Ranged1h',
-                            'WeaponHunting_Ranged2h',
-                            'WeaponArmor_Offhand',
-                            'WeaponArmor_Shield',
-                            'ItemArtifact'
-                        ) 
-                        AND db.id_databaseitem = dbs.id_databaseitem
-                    )
-                )
-                ";
-
-            var sql = $@"
-                select PI.name as Name, 
-                PI.StackCount, 
-                PI.rarity as Rarity, 
-                PI.levelrequirement as LevelRequirement, 
-                PI.baserecord as BaseRecord, 
-                PI.prefixrecord as PrefixRecord, 
-                PI.suffixrecord as SuffixRecord, 
-                PI.ModifierRecord as ModifierRecord, 
-                PI.MateriaRecord as MateriaRecord,
-                PI.AscendantAffixNameRecord as AscendantAffixNameRecord,
-                PI.AscendantAffix2hNameRecord as AscendantAffix2hNameRecord,
-                PI.{PlayerItemTable.PrefixRarity} as PrefixRarity,
-                PI.{PlayerItemTable.CloudId} as CloudId,
-                PI.{PlayerItemTable.IsCloudSynchronized} as IsCloudSynchronizedValue,
-                PI.{PlayerItemTable.Id} as Id,
-                PI.{PlayerItemTable.Mod} as Mod,
-                CAST({PlayerItemTable.IsHardcore} as bit) as IsHardcore,
-                IFNULL(RerollsUsed, 0) as RerollsUsed,
-                IFNULL(AffixRerollsUsed, 0) as AffixRerollsUsed,
-                '' AS PetRecord,
-                '[]' AS ReplicaInfo,
-                PI.{PlayerItemTable.Seed} as Seed
-                FROM PlayerItem PI 
-                WHERE PI.Id NOT IN (SELECT R.PlayerItemId FROM ReplicaItem2 R WHERE R.PlayerItemId IS NOT NULL)
-
-                AND PI.Id IN ({specificItemTypesOnlySql})
-                
-                order by RANDOM ()
-                ";
-
-
-
-            using (var session = SessionCreator.OpenSession()) {
-                return session.CreateSQLQuery(sql).List()
-                    .Cast<object>()
-                    .Select(ToPlayerItem)
-                    .ToList();
-            }
         }
 
     }

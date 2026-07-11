@@ -3,6 +3,7 @@ using IAGrim.Database.DAO;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.TransferStash;
 using IAGrim.UI.Controller;
+using IAGrim.Utilities;
 using log4net;
 
 namespace IAGrim.Services {
@@ -51,7 +52,6 @@ namespace IAGrim.Services {
             IBuddySubscriptionDao buddySubscriptionDao;
             IItemSkillDao itemSkillDao;
             IItemCollectionDao itemCollectionRepo;
-            IReplicaItemDao replicaItemDao;
 
             databaseItemStatDao = new DatabaseItemStatDaoImpl(factory);
             playerItemDao = new PlayerItemDaoImpl(factory, databaseItemStatDao);
@@ -61,9 +61,10 @@ namespace IAGrim.Services {
             buddySubscriptionDao = new BuddySubscriptionDaoImpl(factory);
             itemSkillDao = new ItemSkillDaoImpl(factory);
             itemCollectionRepo = new ItemCollectionDaoImpl(factory);
-            replicaItemDao = new ReplicaItemDaoImpl(factory);
+            RuntimeSettings.ReplicaStatResolver = new ReplicaStatResolver(databaseItemStatDao);
+            var recordSearchTextIndexer = new RecordSearchTextIndexer(factory, databaseItemStatDao);
 
-            
+
 
             // Chicken and the egg..
             var itemStatService = new ItemStatService(databaseItemStatDao, itemSkillDao, settingsService);
@@ -86,9 +87,8 @@ namespace IAGrim.Services {
                 grimDawnDetector,
                 itemCollectionRepo,
                 searchController,
-                new ItemReplicaRequesterService(playerItemDao, buddyItemDao, settingsService),
-                replicaItemDao,
-                itemStatService
+                itemStatService,
+                recordSearchTextIndexer
             ];
 
             var cacher = new TransferStashServiceCache(databaseItemDao);

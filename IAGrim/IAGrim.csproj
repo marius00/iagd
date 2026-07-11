@@ -62,8 +62,6 @@
      <None Remove="Database\Model\ItemTag.hbm.xml" />
      <None Remove="Database\Model\PlayerItem.hbm.xml" />
      <None Remove="Database\Model\PlayerItemRecord.hbm.xml" />
-     <None Remove="Database\Model\ReplicaItem.hbm.xml" />
-     <None Remove="Database\Model\ReplicaItemRow.hbm.xml" />
    </ItemGroup>
    <ItemGroup>
      <Content Include="gd.ico" />
@@ -81,8 +79,6 @@
      <EmbeddedResource Include="Database\Model\ItemTag.hbm.xml" />
      <EmbeddedResource Include="Database\Model\PlayerItem.hbm.xml" />
      <EmbeddedResource Include="Database\Model\PlayerItemRecord.hbm.xml" />
-     <EmbeddedResource Include="Database\Model\ReplicaItem.hbm.xml" />
-     <EmbeddedResource Include="Database\Model\ReplicaItemRow.hbm.xml" />
    </ItemGroup>
  
 
@@ -115,6 +111,7 @@
     <ProjectReference Include="..\EvilsoftCommons\EvilsoftCommons.csproj" />
     <ProjectReference Include="..\Parser\Parser.csproj" />
     <ProjectReference Include="..\StatTranslator\StatTranslator.csproj" />
+    <ProjectReference Include="..\GrimDawnItemStats\GrimDawnItemStats.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -38,14 +38,6 @@ namespace IAGrim.Database {
                     session.CreateSQLQuery($"DELETE FROM {BuddyItemRecordTable.Table} WHERE NOT {BuddyItemRecordTable.Item} IN (SELECT {BuddyItemsTable.RemoteItemId} FROM {BuddyItemsTable.Table})")
                         .ExecuteUpdate();
 
-
-                    // Replica stats
-                    session.CreateSQLQuery($"DELETE FROM ReplicaItemRow WHERE replicaitemid IN (SELECT id FROM ReplicaItem2 WHERE playeritemid IS NULL AND NOT buddyitemid IN (SELECT {BuddyItemsTable.RemoteItemId} FROM {BuddyItemsTable.Table}))")
-                        .ExecuteUpdate();
-
-                    session.CreateSQLQuery($"DELETE FROM ReplicaItem2 WHERE playeritemid IS NULL AND NOT buddyitemid IN (SELECT {BuddyItemsTable.RemoteItemId} FROM {BuddyItemsTable.Table})")
-                        .ExecuteUpdate();
-
                     transaction.Commit();
                 }
             }
@@ -146,131 +138,10 @@ namespace IAGrim.Database {
                     session.CreateSQLQuery($"DELETE FROM {BuddyItemRecordTable.Table} WHERE NOT {BuddyItemRecordTable.Item} IN (SELECT {BuddyItemsTable.RemoteItemId} FROM {BuddyItemsTable.Table})")
                         .ExecuteUpdate();
 
-                    session.CreateSQLQuery($"DELETE FROM ReplicaItemRow WHERE replicaitemid IN (SELECT id FROM ReplicaItem2 WHERE playeritemid IS NULL AND NOT buddyitemid IN (SELECT {BuddyItemsTable.RemoteItemId} FROM {BuddyItemsTable.Table}))")
-                        .ExecuteUpdate();
-
-                    session.CreateSQLQuery($"DELETE FROM ReplicaItem2 WHERE playeritemid IS NULL AND NOT buddyitemid IN (SELECT {BuddyItemsTable.RemoteItemId} FROM {BuddyItemsTable.Table})")
-                        .ExecuteUpdate();
-
                     transaction.Commit();
                 }
             }
         }
-
-        public IList<BuddyItem> ListMissingReplica() {
-            // TODO: Relics are "ItemArtifact", those will crash the game.
-            var specificItemTypesOnlySql = $@"
-                
-                    select baserecord from databaseitem_V2 db where db.baserecord in (
-						select baserecord from buddyitems_v6
-					)
-                    AND exists (
-                        select id_databaseitem from databaseitemstat_v2 dbs 
-                        WHERE stat = 'Class' 
-                        AND TextValue in ( 
-                            'ArmorProtective_Head', 
-                            'ArmorProtective_Hands', 
-                            'ArmorProtective_Feet', 
-                            'ArmorProtective_Legs', 
-                            'ArmorProtective_Chest', 
-                            'ArmorProtective_Waist', 
-                            'ArmorJewelry_Medal', 
-                            'ArmorJewelry_Ring', 
-                            'ArmorProtective_Shoulders', 
-                            'ArmorJewelry_Amulet',
-                            'WeaponMelee_Dagger', 
-                            'WeaponMelee_Mace', 
-                            'WeaponMelee_Axe',
-                            'WeaponMelee_Spear2h',
-                            'WeaponMelee_Scepter',
-                            'WeaponMelee_Sword',
-                            'WeaponMelee_Sword2h',
-                            'WeaponMelee_Mace2h',
-                            'WeaponMelee_Axe2h',
-                            'WeaponHunting_Ranged1h',
-                            'WeaponHunting_Ranged2h',
-                            'WeaponArmor_Offhand',
-                            'WeaponArmor_Shield',
-                            'ItemArtifact'
-                        ) 
-                        AND db.id_databaseitem = dbs.id_databaseitem
-                    )
-                ";
-
-
-            var sql = $@"SELECT
-
-                                BI.{BuddyItemsTable.BaseRecord} as BaseRecord,
-                                BI.{BuddyItemsTable.PrefixRecord} as PrefixRecord,
-                                BI.{BuddyItemsTable.SuffixRecord} as SuffixRecord,
-                                BI.{BuddyItemsTable.ModifierRecord} as ModifierRecord,
-                                BI.{BuddyItemsTable.TransmuteRecord} as TransmuteRecord,
-                                BI.{BuddyItemsTable.MateriaRecord} as MateriaRecord,
-                                BI.AscendantAffixNameRecord as AscendantAffixNameRecord,
-                                BI.AscendantAffix2hNameRecord as AscendantAffix2hNameRecord,
-                                BI.{BuddyItemsTable.Rarity} as Rarity,
-                                BI.{BuddyItemsTable.PrefixRarity} as PrefixRarity,
-                                BI.{BuddyItemsTable.Name} as name,
-                                BI.{BuddyItemsTable.Seed} as Seed,
-                                BI.{BuddyItemsTable.RelicSeed} as RelicSeed,
-                                BI.{BuddyItemsTable.EnchantmentSeed} as EnchantmentSeed,
- 
-                                BI.{BuddyItemsTable.LevelRequirement} as MinimumLevel,
-                                BI.{BuddyItemsTable.RemoteItemId} as RemoteItemId,
-                                BI.{BuddyItemsTable.StackCount} as Count,
-                                BI.{BuddyItemsTable.SubscriptionId} as BuddyId,
-                                BI.{BuddyItemsTable.IsHardcore} as IsHardcore,
-                                BI.RerollsUsed as RerollsUsed,
-                                BI.AffixRerollsUsed as AffixRerollsUsed,
-                                S.{BuddySubscriptionTable.Nickname} as Stash
-
-
-                FROM {BuddyItemsTable.Table} BI, {BuddySubscriptionTable.Table} S
-                WHERE BI.{BuddyItemsTable.RemoteItemId} NOT IN (SELECT R.BuddyItemId FROM ReplicaItem2 R)
-
-                AND BI.{BuddyItemsTable.BaseRecord} IN ({specificItemTypesOnlySql})
-                AND {BuddyItemsTable.SubscriptionId} = {BuddySubscriptionTable.Id}
-
-                order by RANDOM ()
-                ";
-
-            using (ISession session = SessionCreator.OpenSession()) {
-                Logger.Debug(string.Join(" ", sql));
-                var q = session.CreateSQLQuery(string.Join(" ", sql));
-                q.AddScalar("BaseRecord", NHibernateUtil.String);
-                q.AddScalar("PrefixRecord", NHibernateUtil.String);
-                q.AddScalar("SuffixRecord", NHibernateUtil.String);
-                q.AddScalar("ModifierRecord", NHibernateUtil.String);
-                q.AddScalar("TransmuteRecord", NHibernateUtil.String);
-                q.AddScalar("MateriaRecord", NHibernateUtil.String);
-                q.AddScalar("AscendantAffixNameRecord", NHibernateUtil.String);
-                q.AddScalar("AscendantAffix2hNameRecord", NHibernateUtil.String);
-                q.AddScalar("Rarity", NHibernateUtil.String);
-                q.AddScalar("PrefixRarity", NHibernateUtil.Int64);
-                q.AddScalar("name", NHibernateUtil.String);
-                q.AddScalar("Seed", NHibernateUtil.Int64);
-                q.AddScalar("RelicSeed", NHibernateUtil.Int64);
-                q.AddScalar("EnchantmentSeed", NHibernateUtil.Int64);
-                q.AddScalar("MinimumLevel", NHibernateUtil.UInt32);
-                q.AddScalar("RemoteItemId", NHibernateUtil.String);
-                q.AddScalar("Count", NHibernateUtil.UInt32);
-                q.AddScalar("BuddyId", NHibernateUtil.Int64);
-                q.AddScalar("IsHardcore", NHibernateUtil.Boolean);
-                q.AddScalar("RerollsUsed", NHibernateUtil.Int64);
-                q.AddScalar("AffixRerollsUsed", NHibernateUtil.Int64);
-                q.AddScalar("Stash", NHibernateUtil.String);
-
-
-
-                Logger.Debug(q.QueryString);
-                q.SetResultTransformer(Transformers.AliasToBean<BuddyItem>());
-                var result = q.List<BuddyItem>();
-
-                return result;
-            }
-
-        }
-
 
         private class NameRow {
             public string Record { get; set; }
@@ -647,7 +518,14 @@ namespace IAGrim.Database {
             Dictionary<string, object> queryParams = new Dictionary<string, object>();
 
             if (!string.IsNullOrEmpty(query.Wildcard)) {
-                queryFragments.Add($"(BI.{BuddyItemsTable.NameLowercase} LIKE :name OR R.id IN (SELECT replicaitemid FROM replicaitemrow WHERE text LIKE :wildcard))");
+                // Match the item name, OR the seed-independent translated stat text of any of the
+                // item's records (built by RecordSearchTextIndexer into RecordStatText). Numbers are
+                // wildcarded in that index, so this matches stat keywords/phrases but not specific
+                // rolled values.
+                queryFragments.Add($@"(BI.{BuddyItemsTable.NameLowercase} LIKE :name
+                    OR BI.{BuddyItemsTable.BaseRecord}   IN (SELECT {RecordStatTextTable.Record} FROM {RecordStatTextTable.Table} WHERE {RecordStatTextTable.SearchText} LIKE :wildcard)
+                    OR BI.{BuddyItemsTable.PrefixRecord} IN (SELECT {RecordStatTextTable.Record} FROM {RecordStatTextTable.Table} WHERE {RecordStatTextTable.SearchText} LIKE :wildcard)
+                    OR BI.{BuddyItemsTable.SuffixRecord} IN (SELECT {RecordStatTextTable.Record} FROM {RecordStatTextTable.Table} WHERE {RecordStatTextTable.SearchText} LIKE :wildcard))");
                 queryParams.Add("wildcard", $"%{query.Wildcard.ToLower()}%");
                 queryParams.Add("name", $"%{query.Wildcard.Replace(' ', '%').ToLowerInvariant()}%");
             }
@@ -704,10 +582,8 @@ namespace IAGrim.Database {
                                 BI.{BuddyItemsTable.StackCount} as Count,
                                 BI.{BuddyItemsTable.SubscriptionId} as BuddyId,
                                 S.{BuddySubscriptionTable.Nickname} as Stash,
-                                coalesce((SELECT group_concat(Record, '|') FROM {BuddyItemRecordTable.Table} pir WHERE pir.{BuddyItemRecordTable.Item} = BI.{BuddyItemsTable.RemoteItemId} AND NOT {BuddyItemRecordTable.Record} IN (BI.BaseRecord, BI.SuffixRecord, BI.MateriaRecord, BI.PrefixRecord)), '') AS PetRecord,
-                                IFNULL((select json_group_array(json_object('text', text, 'type', type)) from ReplicaItemRow where replicaitemid = R.id), '[]') AS ReplicaInfo
-                FROM {BuddyItemsTable.Table} BI, {BuddySubscriptionTable.Table} S 
-                LEFT OUTER JOIN ReplicaItem2 R ON BI.{BuddyItemsTable.RemoteItemId} = R.buddyitemid
+                                coalesce((SELECT group_concat(Record, '|') FROM {BuddyItemRecordTable.Table} pir WHERE pir.{BuddyItemRecordTable.Item} = BI.{BuddyItemsTable.RemoteItemId} AND NOT {BuddyItemRecordTable.Record} IN (BI.BaseRecord, BI.SuffixRecord, BI.MateriaRecord, BI.PrefixRecord)), '') AS PetRecord
+                FROM {BuddyItemsTable.Table} BI, {BuddySubscriptionTable.Table} S
                 WHERE "
                     + string.Join(" AND ", queryFragments)
                     + $" AND BI.{BuddyItemsTable.SubscriptionId} = S.{BuddySubscriptionTable.Id} "
@@ -739,7 +615,6 @@ namespace IAGrim.Database {
                 q.AddScalar("BuddyId", NHibernateUtil.Int64);
                 q.AddScalar("Stash", NHibernateUtil.String);
                 q.AddScalar("PetRecord", NHibernateUtil.String);
-                q.AddScalar("ReplicaInfo", NHibernateUtil.String);
 
                 foreach (var key in queryParams.Keys) {
                     q.SetParameter(key, queryParams[key]);
@@ -775,15 +650,6 @@ namespace IAGrim.Database {
                     // Remove record from records table (lookup table)
                     session.CreateSQLQuery($"DELETE FROM {BuddyItemRecordTable.Table}")
                         .ExecuteUpdate();
-
-                    // Replica stats
-                    session.CreateSQLQuery($"DELETE FROM ReplicaItemRow WHERE replicaitemid IN (SELECT id FROM ReplicaItem2 WHERE playeritemid IS NULL AND buddyitemid IS NOT NULL)")
-                        .ExecuteUpdate();
-
-                    session.CreateSQLQuery($"DELETE FROM ReplicaItem2 WHERE playeritemid IS NULL AND buddyitemid IS NOT NULL")
-                        .ExecuteUpdate();
-
-
 
                     transaction.Commit();
                 }

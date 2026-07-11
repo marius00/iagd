@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using IAGrim.Database.Model;
-using IAGrim.Services.ItemReplica;
 using IAGrim.UI.Controller.dto;
 
 namespace IAGrim.UI.Misc.CEF {
@@ -14,6 +13,5 @@ namespace IAGrim.UI.Misc.CEF {
         bool IsReady();
 
         void SignalCloudIconChange(IList<long> playerItemIds);
-        void SignalReplicaStatChange(long playerItemId, IList<ItemStatInfo> stats);
     }
 }

@@ -11,7 +11,6 @@ import ICollectionItem from '../../interfaces/ICollectionItem';
 import { IStat, statToString } from '../../interfaces/IStat';
 import { v4 as uuidv4 } from 'uuid';
 import {PureComponent} from "preact/compat";
-import ReplicaStatContainer from "./ReplicaStatContainer";
 import styles from './ReplicaItem.module.css';
 
 interface Props {
@@ -105,7 +104,6 @@ class ReplicaItem extends PureComponent<Props, object> {
 
     const setName = GetSetName(item.baseRecord);
     const setItemsList = this.getSetItemTooltip(setName, item.isHardcore);
-    const showGenericStatIcon = item.type === IItemType.Player && !item.replicaStats;
     const showRecipeIcon = item.hasRecipe && item.type === IItemType.Recipe;
 
     const miText = item.isMonsterInfrequent ? ' / MI' : '';
@@ -124,7 +122,6 @@ class ReplicaItem extends PureComponent<Props, object> {
           <span className="item-socket-label">{item.socket}</span>
           }
 
-          {item.replicaStats && <ReplicaStatContainer rows={item.replicaStats} id={getUniqueId(item)} skills={item.bodyStats} hideGrantedSkill hideSetBonus /> }
           <ul className="headerStats">
             {headerStats}
           </ul>
@@ -132,7 +129,7 @@ class ReplicaItem extends PureComponent<Props, object> {
           <br/>
 
           <ul className="bodystats">
-            {!item.replicaStats && bodyStats}
+            {bodyStats}
           </ul>
 
           {petStats.length > 0 ? (
@@ -151,16 +148,6 @@ class ReplicaItem extends PureComponent<Props, object> {
                 <a data-tip={translate('items.label.youCanCraftThisItem')}>
                   <div className="recipe-item-corner">
                     <img className="cursor-help" src="static\recipe.png" alt={translate('items.label.youCanCraftThisIte')}/>
-                  </div>
-                </a>
-              </span>
-              : ''
-            }
-            {showGenericStatIcon ?
-              <span className="informative">
-                <a data-tip={translate('item.genericstats.warning')}>
-                  <div className="recipe-item-corner">
-                    <img className="cursor-help" src="static\warning.png" style="max-width: 16px;" alt={translate('item.genericstats.warning')}/>
                   </div>
                 </a>
               </span>

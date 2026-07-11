@@ -20,6 +20,7 @@ namespace IAGrim.Database.Migrations {
             new DatabaseItemHashFixMigration().Migrate(_sessionCreator);
             new FixPlayerItemIdTypeMigration().Migrate(_sessionCreator);
             new FixDatabaseItemIdTypeMigration().Migrate(_sessionCreator);
+            new AddRecordStatTextTable().Migrate(_sessionCreator);
             new HbmSchemaMigration().Migrate(_sessionCreator);
         }
     }

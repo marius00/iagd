@@ -1,6 +1,5 @@
 ﻿using IAGrim.Database.Model;
 using IAGrim.Services;
-using IAGrim.Services.ItemReplica;
 using IAGrim.Settings;
 using IAGrim.UI.Controller.dto;
 using IAGrim.UI.Misc.Protocol;
@@ -263,15 +262,6 @@ namespace IAGrim.UI.Misc.CEF {
         public void SignalCloudIconChange(IList<long> playerItemIds) {
             SendMessage(new IOMessage { Type = IOMessageType.UpdateCloudIconStatus, Data = new IOMessageCloudIconStateChange { Ids = playerItemIds } });
         }
-        public void SignalReplicaStatChange(long playerItemId, IList<ItemStatInfo> stats) {
-            SendMessage(new IOMessage {
-                Type = IOMessageType.UpdateItemStats,
-                Data = new IOMessageSetReplicaStats { Id = playerItemId, ReplicaStats = stats }
-            }
-            );
-        }
-
-
 
         public void SetOnlineBackupsEnabled(bool enabled) {
             SendMessage(new IOMessage { Type = IOMessageType.SetState, Data = new IOMessageStateChange { Type = IOMessageStateChangeType.ShowCloudIcon, Value = enabled } });

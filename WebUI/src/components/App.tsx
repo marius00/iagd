@@ -18,7 +18,6 @@ import EasterEgg from "./EasterEgg";
 import ModFilterWarning from "./ModFilterWarning";
 import FirstRunHelpThingie from "./FirstRunHelpThingie";
 import IItemAggregateRow from "../interfaces/IItemAggregateRow";
-import {IReplicaRow} from "../interfaces/IReplicaRow";
 import GdSeasonError from "./GdSeasonError";
 
 interface ApplicationState {
@@ -56,11 +55,6 @@ interface IOMessageCloudIconStateChange {
   ids: number[];
 }
 
-interface IOMessageSetReplicaStats {
-  id: number;
-  replicaStats: IReplicaRow[];
-}
-
 enum IOMessageType {
   ShowHelp,
   ShowMessage,
@@ -71,7 +65,6 @@ enum IOMessageType {
   SetCollectionItems,
   ShowModFilterWarning,
   UpdateCloudIconStatus,
-  UpdateItemStats,
 }
 
 enum IOMessageStateChangeType {
@@ -161,29 +154,6 @@ class App extends PureComponent<object, object> {
               }
             }
               break;
-
-            case IOMessageType.UpdateItemStats: {
-              // Obs! When finding the subindex, if it's not === 0, there is no reason to re-render the view is there?
-              // Gotta test if the comparison window will work if we don't re-render on a subindex change. -- Will require a 'isDirty' state to see if we call setState or not..
-              const payload = message.data as IOMessageSetReplicaStats;
-              const playerItemId = payload.id;
-              if (this.state.itemLookupMap.has(playerItemId)) {
-                const loc = this.state.itemLookupMap.get(playerItemId) as number;
-
-                for (let idx = 0; idx < this.state.items[loc].length; idx++) {
-                  if (this.state.items[loc][idx].uniqueIdentifier.startsWith("PI/" + playerItemId)) {
-
-                    const subItems = [...items[loc]] as IItem[];
-                    subItems[idx].replicaStats = payload.replicaStats;
-                    subItems[idx].bodyStats = [];
-                    subItems[idx].headerStats = [];
-                    subItems[idx].petStats = [];
-                    items[loc] = subItems;
-                  }
-                }
-              }
-            }
-              break;
           } // switch
         } // for
 
@@ -254,7 +224,6 @@ class App extends PureComponent<object, object> {
           }
           break;
 
-        case IOMessageType.UpdateItemStats:
         case IOMessageType.UpdateCloudIconStatus:
           this.delayedMessageQueue.push(message);
           break;

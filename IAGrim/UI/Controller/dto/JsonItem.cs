@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using IAGrim.Services.ItemReplica;
 
 namespace IAGrim.UI.Controller.dto {
 
@@ -33,8 +32,6 @@ namespace IAGrim.UI.Controller.dto {
         public string Extras { get; set; } // TODO: This should be a custom object
 
         public bool IsHardcore { get; set; }
-
-        public IList<ItemStatInfo> ReplicaStats { get; set; }
 
         public int CompareTo(JsonItem other) {
             if (other.Type != this.Type) {

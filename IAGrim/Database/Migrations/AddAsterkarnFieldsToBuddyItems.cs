@@ -42,13 +42,6 @@ namespace IAGrim.Database.Migrations {
                 transaction.Commit();
             }
 
-            if (!ColumnExists(sessionCreator, "ReplicaItemRow", "TextLowercase")) {
-                using ISession session = sessionCreator.OpenSession();
-                using ITransaction transaction = session.BeginTransaction();
-
-                session.CreateSQLQuery($"ALTER TABLE ReplicaItemRow ADD COLUMN TextLowercase TEXT").ExecuteUpdate();
-                transaction.Commit();
-            }
         }
     }
 }

@@ -64,7 +64,6 @@ namespace IAGrim.Database {
         public virtual long BuddyId { get; set; }
         public virtual bool IsHardcore { get; set; }
         public virtual string Mod { get; set; }
-        public virtual string ReplicaInfo { get; set; }
 
 
 

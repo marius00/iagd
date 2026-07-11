@@ -299,7 +299,6 @@ iatag_html_displaying=表示 {0}
 iatag_html_filter_missing=欠けている物のみ
 iatag_html_filter_owned=所有物のみ
 iatag_html_filter_purple=紫のみ
-iatag_html_genericstats=
 iatag_html_grimnotparsed=Grim Dawnのデータベースが解析されていません。
 \n
 \n続行する前に Grim Dawn タブにアクセスしてゲームを解析してください。

@@ -89,7 +89,6 @@ namespace IAGrim.UI.Misc.CEF {
                 {"notification.clearall", lang.GetTag("iatag_html_clearall")},
                 {"app.error.grimnotparsed", lang.GetTag("iatag_html_grimnotparsed")},
 
-                {"item.genericstats.warning", lang.GetTag("iatag_html_genericstats")},
                 {"item.buddies.watermark", lang.GetTag("iatag_html_buddies_watermark")},
             };
 

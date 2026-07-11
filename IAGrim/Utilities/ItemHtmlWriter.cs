@@ -7,10 +7,8 @@ using System.Linq;
 using EvilsoftCommons.Exceptions;
 using IAGrim.Database.DAO.Util;
 using IAGrim.Database.Model;
-using IAGrim.Services.ItemReplica;
 using IAGrim.UI.Controller.dto;
 using log4net;
-using Newtonsoft.Json;
 using StatTranslator;
 
 namespace IAGrim.Utilities {
@@ -63,29 +61,24 @@ namespace IAGrim.Utilities {
             bool isCloudSynced = false;
             object[] transferUrl = { "", "", "", "" };
             string uniqueIdentifier = GetUniqueIdentifier(item);
-            List<ItemStatInfo> replicaStats = null;
+            List<TranslatedStat> rolledStats = null;
             var mergeIdentifier = item.BaseRecord ?? string.Empty;
             if (item is PlayerItem pi) {
                 transferUrl = new object[] { pi.BaseRecord, pi.PrefixRecord, pi.SuffixRecord, pi.MateriaRecord, pi.Mod, pi.IsHardcore };
                 isCloudSynced = pi.IsCloudSynchronized;
                 isHardcore = pi.IsHardcore;
 
-                if (!string.IsNullOrEmpty(pi.ReplicaInfo)) {
-                    replicaStats = JsonConvert.DeserializeObject<List<ItemStatInfo>>(pi.ReplicaInfo);
-                }
-
+                rolledStats = RuntimeSettings.ReplicaStatResolver?.Resolve(pi.BaseRecord, pi.PrefixRecord, pi.SuffixRecord, (uint)pi.USeed);
 
                 mergeIdentifier += (pi.PrefixRecord ?? string.Empty) + (pi.SuffixRecord ?? string.Empty);
             }
             else if (item is BuddyItem bi) {
                 mergeIdentifier += (bi.PrefixRecord ?? string.Empty) + (bi.SuffixRecord ?? string.Empty);
-                if (!string.IsNullOrEmpty(bi.ReplicaInfo)) {
-                    replicaStats = JsonConvert.DeserializeObject<List<ItemStatInfo>>(bi.ReplicaInfo);
-                }
+                rolledStats = RuntimeSettings.ReplicaStatResolver?.Resolve(bi.BaseRecord, bi.PrefixRecord, bi.SuffixRecord, (uint)bi.Seed);
             }
 
-            if (replicaStats != null && replicaStats.Count == 0) {
-                replicaStats = null; // Too many things check for null instead of empty, so just set it to null.
+            if (rolledStats != null && rolledStats.Count == 0) {
+                rolledStats = null; // Too many things check for null instead of empty, so just set it to null.
             }
 
             ItemTypeDto type;
@@ -104,16 +97,7 @@ namespace IAGrim.Utilities {
                 type = ItemTypeDto.Unknown;
             }
 
-            bool skipStats = replicaStats != null;
-            var replicaBodyStats = new List<JsonStat>(0);
-            if (skipStats) {
-                // Add skillz
-                replicaBodyStats = item.BodyStats
-                    .Where(m => m.Extra != null)
-                    .Select(ToJsonStat)
-                    .ToHashSet()
-                    .ToList();
-            }
+            bool skipStats = rolledStats != null;
 
             var json = new JsonItem {
                 UniqueIdentifier = uniqueIdentifier,
@@ -126,7 +110,7 @@ namespace IAGrim.Utilities {
                 Level = item.MinimumLevel,
                 Socket = GetSocketFromItem(item?.Name) ?? string.Empty,
                 PetStats = skipStats ? new List<JsonStat>() : item.PetStats.Select(ToJsonStat).ToHashSet().ToList(),
-                BodyStats = skipStats ? replicaBodyStats : item.BodyStats.Select(ToJsonStat).ToHashSet().ToList(),
+                BodyStats = skipStats ? rolledStats.Select(ToJsonStat).ToList() : item.BodyStats.Select(ToJsonStat).ToHashSet().ToList(),
                 HeaderStats = skipStats ? new List<JsonStat>() : item.HeaderStats.Select(ToJsonStat).ToHashSet().ToList(),
                 Type = type,
                 HasRecipe = item.HasRecipe,
@@ -137,7 +121,6 @@ namespace IAGrim.Utilities {
                 Extras = extras,
                 IsMonsterInfrequent = item.ModifiedSkills.Any(s => s.IsMonsterInfrequent),
                 IsHardcore = isHardcore,
-                ReplicaStats = replicaStats,
             };
 
             if (!skipStats) {

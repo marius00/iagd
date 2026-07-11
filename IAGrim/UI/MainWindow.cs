@@ -12,7 +12,6 @@ using IAGrim.Parsers.Arz;
 using IAGrim.Parsers.GameDataParsing.Service;
 using IAGrim.Parsers.TransferStash;
 using IAGrim.Services;
-using IAGrim.Services.ItemReplica;
 using IAGrim.Services.MessageProcessor;
 using IAGrim.Settings;
 using IAGrim.UI.Controller;
@@ -43,15 +42,12 @@ namespace IAGrim.UI {
         private SplitSearchWindow? _searchWindow;
 
         private CsvFileMonitor? _csvFileMonitor = new CsvFileMonitor();
-        private CsvFileMonitor? _replicaCsvFileMonitor = new CsvFileMonitor();
-        private ItemReplicaRequesterService? _itemReplicaService;
 
         private Action<RegisterWindow.DataAndType>? _registerWindowDelegate;
         private RegisterWindow? _window;
         private InjectionHelper? _injector;
         private ProgressChangedEventHandler? _injectorCallbackDelegate;
         private CsvParsingService? _csvParsingService;
-        private ItemReplicaParser? _itemReplicaParser;
 
         private BuddyItemsService? _buddyItemsService;
         private BackgroundTask? _backupBackgroundTask;
@@ -275,14 +271,8 @@ namespace IAGrim.UI {
             _csvFileMonitor?.Dispose();
             _csvFileMonitor = null;
 
-            _replicaCsvFileMonitor?.Dispose();
-            _replicaCsvFileMonitor = null;
-
             _csvParsingService?.Dispose();
             _csvParsingService = null;
-
-            _itemReplicaService?.Dispose();
-            _itemReplicaService = null;
 
             _minimizeToTrayHandler?.Dispose();
             _minimizeToTrayHandler = null;
@@ -308,9 +298,6 @@ namespace IAGrim.UI {
 
             _window?.Dispose();
             _window = null;
-
-            _itemReplicaParser?.Dispose();
-            _itemReplicaParser = null;
 
             IterAndCloseForms(Controls);
         }
@@ -438,7 +425,6 @@ namespace IAGrim.UI {
         private void DatabaseLoadedTrigger() {
             _searchWindow.UpdateInterface();
             _searchWindow?.UpdateListViewDelayed();
-            _itemReplicaService.Reset();
         }
 
         private void MainWindow_Load(object sender, EventArgs e) {
@@ -470,10 +456,21 @@ namespace IAGrim.UI {
 
             var playerItemDao = _serviceProvider.Get<IPlayerItemDao>();
             var cacher = _serviceProvider.Get<TransferStashServiceCache>();
+            var recordSearchTextIndexer = _serviceProvider.Get<RecordSearchTextIndexer>();
             _parsingService.OnParseComplete += (o, args) => cacher.Refresh();
 
+            // The game DB just changed, so the free-text stat search index must be rebuilt.
+            _parsingService.OnParseComplete += (o, args) =>
+                new Thread(() => recordSearchTextIndexer.Rebuild(settingsService.GetLocal().LanguageCode)) {
+                    IsBackground = true
+                }.Start();
 
-            var replicaItemDao = _serviceProvider.Get<IReplicaItemDao>();
+            // Build (or language-refresh) the search index in the background on startup.
+            new Thread(() => recordSearchTextIndexer.EnsureBuilt(settingsService.GetLocal().LanguageCode)) {
+                IsBackground = true
+            }.Start();
+
+
             var transferStashService = new TransferStashService();
                 
 
@@ -508,7 +505,7 @@ namespace IAGrim.UI {
             };
 
 
-            _modsDatabaseConfigTab = new ModsDatabaseConfig(DatabaseLoadedTrigger, playerItemDao, _parsingService, grimDawnDetector, settingsService, _cefBrowserHandler, databaseItemDao, replicaItemDao);
+            _modsDatabaseConfigTab = new ModsDatabaseConfig(DatabaseLoadedTrigger, playerItemDao, _parsingService, grimDawnDetector, settingsService, _cefBrowserHandler, databaseItemDao);
             UIHelper.AddAndShow(_modsDatabaseConfigTab, modsPanel);
 
             var itemTagDao = _serviceProvider.Get<IItemTagDao>();
@@ -555,11 +552,6 @@ namespace IAGrim.UI {
                     _automaticUpdateChecker
                 ),
                 settingsPanel);
-
-            
-            _itemReplicaService = _serviceProvider.Get<ItemReplicaRequesterService>();
-            _itemReplicaService.Start();
-
 
 #if !DEBUG
             if (_automaticUpdateChecker.ShouldCheckForUpdates()) {
@@ -623,18 +615,11 @@ namespace IAGrim.UI {
             settingsService.GetLocal().OnMutate += delegate(object o, EventArgs args) { _cefBrowserHandler.SetOnlineBackupsEnabled(!settingsService.GetLocal().OptOutOfBackups); };
 
 
-            _csvParsingService = new CsvParsingService(playerItemDao, _userFeedbackService, cacher, transferStashService, replicaItemDao);
+            _csvParsingService = new CsvParsingService(playerItemDao, _userFeedbackService, cacher, transferStashService);
             _csvFileMonitor.OnModified += (_, arg) => {
                 var csvEvent = arg as CsvFileMonitor.CsvEvent;
                 _csvParsingService.Queue(csvEvent.Filename, csvEvent.Cooldown);
             };
-
-            _itemReplicaParser = new ItemReplicaParser(replicaItemDao, playerItemDao, _cefBrowserHandler);
-            _replicaCsvFileMonitor.OnModified += (_, arg) => {
-                _itemReplicaParser.Enqueue(arg);
-            };
-            _itemReplicaParser.Start();
-
 
             _csvParsingService.OnItemLooted += (_, arg) => {
                 _searchWindow.SelectModFilterIfNotSelected();
@@ -644,12 +629,7 @@ namespace IAGrim.UI {
             };
 
             _csvFileMonitor.StartMonitoring(GlobalPaths.CsvLocationIngoing, "*.csv");
-            _replicaCsvFileMonitor.StartMonitoring(GlobalPaths.CsvReplicaReadLocation, "*.json");
             _csvParsingService.Start();
-
-
-            var preloadThread= new Thread(_itemReplicaParser.Preload);
-            preloadThread.Start();
 
             Logger.Debug("UI initialization complete");
         }

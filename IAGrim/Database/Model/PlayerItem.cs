@@ -120,6 +120,5 @@ namespace IAGrim.Database {
         }
 
         public virtual long? CreationDate { get; set; }
-        public virtual string ReplicaInfo { get; set; }
     }
 }
