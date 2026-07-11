@@ -10,8 +10,8 @@ namespace IAGrim.Backup.FileWriter {
 
     public class IAFileExporter : FileExporter {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(IAFileExporter));
-        private readonly short _currentFileVer = 6;
-        readonly List<int> _supportedFileVer = new List<int> { 1, 2, 3, 4, 5, 6 };
+        private readonly short _currentFileVer = 7;
+        readonly List<int> _supportedFileVer = new List<int> { 1, 2, 3, 4, 5, 6, 7 };
         private readonly string _filename;
 
         public IAFileExporter(string filename) {
@@ -86,6 +86,10 @@ namespace IAGrim.Backup.FileWriter {
                     pi.RerollsUsed = IOHelper.GetUInt(bytes, pos);
                     pos += 4;
                 }
+                if (fileVer >= 7) {
+                    pi.AffixRerollsUsed = IOHelper.GetUInt(bytes, pos);
+                    pos += 4;
+                }
 
                 items.Add(pi);
             }
@@ -129,6 +133,7 @@ namespace IAGrim.Backup.FileWriter {
                     IOHelper.WriteBytePrefixed(fs, pi.AscendantAffixNameRecord);
                     IOHelper.WriteBytePrefixed(fs, pi.AscendantAffix2hNameRecord);
                     IOHelper.Write(fs, (uint)pi.RerollsUsed);
+                    IOHelper.Write(fs, (uint)pi.AffixRerollsUsed);
                 }
             }
         }

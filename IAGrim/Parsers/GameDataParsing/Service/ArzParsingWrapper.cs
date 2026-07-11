@@ -30,10 +30,9 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
         ) {
             tracker.MaxValue = arzFiles.Select(File.Exists).Count();
 
-            // Developers can flip this switch to get a full dump of the GD database. 
+            // Developers can flip this switch to get a full dump of the GD database.
             // Setting it to true will cause the parsing to skip a lot of data that IA does not need.
             const bool skipIrrelevantStats = true;  // "skipLots"
-
             ItemAccumulator accumulator = new ItemAccumulator();
             try {
                 foreach (string arzFile in arzFiles) {

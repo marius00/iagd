@@ -221,6 +221,7 @@ namespace IAGrim.Database {
                                 BI.{BuddyItemsTable.SubscriptionId} as BuddyId,
                                 BI.{BuddyItemsTable.IsHardcore} as IsHardcore,
                                 BI.RerollsUsed as RerollsUsed,
+                                BI.AffixRerollsUsed as AffixRerollsUsed,
                                 S.{BuddySubscriptionTable.Nickname} as Stash
 
 
@@ -256,6 +257,7 @@ namespace IAGrim.Database {
                 q.AddScalar("BuddyId", NHibernateUtil.Int64);
                 q.AddScalar("IsHardcore", NHibernateUtil.Boolean);
                 q.AddScalar("RerollsUsed", NHibernateUtil.Int64);
+                q.AddScalar("AffixRerollsUsed", NHibernateUtil.Int64);
                 q.AddScalar("Stash", NHibernateUtil.String);
 
 

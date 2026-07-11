@@ -32,5 +32,6 @@
     <property name="RelicSeed" column="relicseed" />
     <property name="EnchantmentSeed" column="enchantmentseed" />
     <property name="RerollsUsed" />
+    <property name="AffixRerollsUsed" />
   </class>
 </hibernate-mapping>
