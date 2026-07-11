@@ -41,9 +41,7 @@ namespace GAME {
 #endif
 
 #ifdef PLAYTEST
-		// Affix rerolls column (playtest offset 0x180). See seedRerolls above for
-		// the equivalent seed-reroll counter; this is the separate affix-reroll
-		// count confirmed by the game devs' upcoming save format.
+		// Affix rerolls column (playtest offset 0x180).
 		stream << replica.affixRerolls;
 #else
 		stream << 0;
