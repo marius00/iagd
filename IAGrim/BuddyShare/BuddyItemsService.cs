@@ -189,7 +189,9 @@ namespace IAGrim.BuddyShare {
                 PrefixRarity = itemDto.PrefixRarity,
                 Seed = itemDto.Seed,
                 RelicSeed = itemDto.RelicSeed,
-                EnchantmentSeed = itemDto.EnchantmentSeed
+                EnchantmentSeed = itemDto.EnchantmentSeed,
+                RerollsUsed = itemDto.RerollsUsed,
+                AffixRerollsUsed = itemDto.AffixRerollsUsed
             };
         }
 

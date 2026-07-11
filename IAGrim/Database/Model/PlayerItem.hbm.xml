@@ -24,6 +24,7 @@
 		<property name="MateriaCombines" />
 		<property name="StackCount" />
 		<property name="RerollsUsed" />
+		<property name="AffixRerollsUsed" />
 		<property name="Name" />
 		<property name="NameLowercase" column="namelowercase" index="idx_playeritem_lowercasename" />
 

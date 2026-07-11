@@ -21,6 +21,7 @@
         public long MateriaCombines { get; set; } = 0u;
         public long StackCount { get; set; } = 1;
         public long RerollsUsed { get; set; } = 0u;
+        public long AffixRerollsUsed { get; set; } = 0u;
 
 
         public long CreatedAt { get; set; }

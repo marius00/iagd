@@ -208,14 +208,16 @@ namespace IAGrim.Services {
 
             // 13 = legacy (no rerolls, no ascendants)
             // 14 = bugfix compat (rerolls present, ascendants were split to next line)
-            // 16 = current format (rerolls + ascendants)
-            if (pieces.Length != 13 && pieces.Length != 14 && pieces.Length != 16) {
-                Logger.Warn($"Expected 13, 14, or 16 columns in row, got {pieces.Length}");
+            // 16 = rerolls + ascendants
+            // 17 = current format (rerolls + ascendants + affix rerolls)
+            if (pieces.Length != 13 && pieces.Length != 14 && pieces.Length != 16 && pieces.Length != 17) {
+                Logger.Warn($"Expected 13, 14, 16, or 17 columns in row, got {pieces.Length}");
                 return null;
             }
 
             var hasRerolls = pieces.Length >= 14;
-            var hasAscendants = pieces.Length == 16;
+            var hasAscendants = pieces.Length >= 16;
+            var hasAffixRerolls = pieces.Length >= 17;
 
             int n = 0;
             return new PlayerItem {
@@ -235,6 +237,7 @@ namespace IAGrim.Services {
                 TransmuteRecord = pieces[n++]?.Trim(),
                 AscendantAffixNameRecord = hasAscendants ? pieces[n++]?.Trim() : null,
                 AscendantAffix2hNameRecord = hasAscendants ? pieces[n++]?.Trim() : null,
+                AffixRerollsUsed = hasAffixRerolls ? ToInt(pieces[n++]) : 0,
                 Tags = new HashSet<DBStatRow>(0)
             };
         }
@@ -257,7 +260,8 @@ namespace IAGrim.Services {
                 + item.EnchantmentSeed + sep
                 + item.TransmuteRecord?.Trim() + sep
                 + item.AscendantAffixNameRecord?.Trim() + sep
-                + item.AscendantAffix2hNameRecord?.Trim();
+                + item.AscendantAffix2hNameRecord?.Trim() + sep
+                + item.AffixRerollsUsed;
         }
     }
 }
