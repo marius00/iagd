@@ -19,9 +19,7 @@ namespace GAME {
 		stream << sanitizeCsvField(replica.suffixRecord.c_str()).c_str() << ";";
 		stream << replica.seed << ";";
 #ifdef PLAYTEST
-		// Rerolls column (playtest offset 0x17c). Previously this serialized the
-		// field at 0x178 by mistake, which is actually stackSize - so rerolls has
-		// never round-tripped correctly until now.
+		// Rerolls column (playtest offset 0x17c). 
 		stream << replica.seedRerolls << ";";
 #else
 		stream << 0 << ";";

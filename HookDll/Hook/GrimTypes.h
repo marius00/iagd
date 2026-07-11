@@ -1,11 +1,6 @@
 #pragma once
 #include <string>
-#include <iostream>
-#include <sstream>
 #include <vector>
-#include <Windows.h>
-#include <fstream>
-
 #include "Exports.h"
 
 
@@ -56,43 +51,16 @@ namespace GAME
 		std::basic_string<char, std::char_traits<char>, std::allocator<char> > ascendant2;
 #endif
 
-		// NOTE (playtest 1.3, verified against the game's ItemReplicaInfo
-		// constructor in Ghidra): the real layout of this window is
-		//   0x160 var1 (uint)
-		//   0x164 bool (defaults to TRUE; world-drop code branches on it for
-		//         floor placement vs velocity), padded to 0x168
-		//   0x168 velocity (Vec3, 0x168-0x174)
-		//   0x174 owner (uint)
-		// Our member names below are shifted 4 bytes within that window:
-		// "velocity" starts at the 0x164 bool, "owner" reads velocity.z, and
-		// "unknownDropData" reads the real owner field. Harmless for deposits
-		// (we zero all of them; the ctor-default bool at 0x164 ends up 0, which
-		// only matters for world drops we never do), but do NOT trust these
-		// member names when reading loot dumps.
 		unsigned int var1;              // playtest offset 0x160
 		Vec3 velocity;                  // playtest offset 0x164 (actually bool+pad, velocity.x/y)
 		unsigned int owner;             // playtest offset 0x170 (actually velocity.z)
 
 #ifdef PLAYTEST
-		// Actually the game's "owner" field (uint, offset 0x174) - the value
-		// 335232 seen on world-dropped items is the owning entity's object id,
-		// not drop noise. Kept under its old name to avoid churn; the important
-		// part is that it pads stackSize to the correct 0x178.
 		unsigned int unknownDropData;   // playtest offset 0x174 (real name: owner)
 #endif
-		// The game's ItemReplicaInfo constructor defaults stackSize to 1.
-		// Deserialize() must do the same: a 0 here creates items whose
-		// GetStackSize() returns 0, which the 1.3 crafting rework counts as
-		// "you own zero of this ingredient".
 		unsigned int stackSize;         // live: 0x134, playtest: 0x178
 
 #ifdef PLAYTEST
-		// Playtest 1.3 reroll counters. seedRerolls confirmed at offset 0x17c via
-		// a full CSV round-trip: an item set to rerolls=9 in the DB was injected
-		// through C#->CSV->fnCreateItem and re-read here with 0x17c == 9, cleanly
-		// separated from stackSize (0x178). affixRerolls (0x180) per dev-confirmed
-		// save format ordering (seedRerolls immediately followed by affixRerolls);
-		// not yet independently verified via round-trip.
 		unsigned int seedRerolls;    // playtest offset 0x17c
 		unsigned int affixRerolls;   // playtest offset 0x180
 #else
