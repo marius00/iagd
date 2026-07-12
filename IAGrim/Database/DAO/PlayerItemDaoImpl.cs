@@ -73,9 +73,9 @@ namespace IAGrim.Database {
                 .Where(record => record.Contains("/lootaffixes/")) // Ignore the base record
                 .ToList();
 
-            var classifications = stats
-                .Where(m => filteredRecords.Contains(m.Key))
-                .SelectMany(m => m.Value.Where(v => v.Stat == "itemClassification"))
+            var classifications = filteredRecords
+                .Where(stats.ContainsKey)
+                .SelectMany(record => stats[record].Where(v => v.Stat == "itemClassification"))
                 .Select(m => m.TextValue)
                 .ToList();
 
@@ -154,9 +154,9 @@ namespace IAGrim.Database {
         }
 
         public static IEnumerable<string> GetPetBonusRecords(Dictionary<string, List<DBStatRow>> stats, List<string> records) {
-            var relevant = stats.Where(m => records.Contains(m.Key));
-
-            return relevant.SelectMany(m => m.Value)
+            return records
+                .Where(stats.ContainsKey)
+                .SelectMany(record => stats[record])
                 .Where(m => m.Stat == "petBonusName")
                 .Select(m => m.TextValue);
         }
@@ -303,7 +303,20 @@ namespace IAGrim.Database {
             }
         }
 
-        private void UpdateItemDetails(ISession session, PlayerItem item, Dictionary<string, List<DBStatRow>> stats) {
+        /// <summary>
+        /// Load the entire ItemTag table into a Tag -> Name lookup.
+        /// Done once per rebuild so GetItemName doesn't issue a SELECT per item.
+        /// </summary>
+        private static Dictionary<string, string> LoadItemTags(ISession session) {
+            var map = new Dictionary<string, string>();
+            foreach (var tag in session.CreateCriteria<ItemTag>().List<ItemTag>()) {
+                map[tag.Tag] = tag.Name;
+            }
+
+            return map;
+        }
+
+        private void UpdateItemDetails(ISession session, PlayerItem item, Dictionary<string, List<DBStatRow>> stats, Dictionary<string, string> itemTags) {
             const string table = nameof(PlayerItem);
             const string rarity = nameof(PlayerItem.Rarity);
             const string levelReq = nameof(PlayerItem.LevelRequirement);
@@ -312,7 +325,7 @@ namespace IAGrim.Database {
             const string prefixRarity = PlayerItemTable.PrefixRarity;
             const string nameLowercase = nameof(PlayerItem.NameLowercase);
 
-            var itemName = ItemOperationsUtility.GetItemName(session, stats, item);
+            var itemName = ItemOperationsUtility.GetItemName(itemTags, stats, item);
             var records = GetRecordsForItem(item);
             session.CreateSQLQuery($@"UPDATE {table} 
                     SET {name} = :name, 
@@ -354,13 +367,14 @@ namespace IAGrim.Database {
                 using (var transaction = session.BeginTransaction()) {
                     // Now that we have base stats, we can calculate pet records as well
                     var stats = _databaseItemStatDao.GetStats(session, StatFetch.PlayerItems);
+                    var itemTags = LoadItemTags(session);
 
                     for (var i = 0; i < items.Count; i++) {
                         UpdatePetRecords(session, items.ElementAt(i), stats);
                     }
 
                     foreach (var item in items) {
-                        UpdateItemDetails(session, item, stats);
+                        UpdateItemDetails(session, item, stats, itemTags);
 
                         progress(1);
                     }
@@ -437,6 +451,7 @@ namespace IAGrim.Database {
                     using (var transaction = session.BeginTransaction()) {
                         // Now that we have base stats, we can calculate pet records as well
                         var stats = _databaseItemStatDao.GetStats(session, StatFetch.PlayerItems);
+                        var itemTags = LoadItemTags(session);
 
                         for (var i = 0; i < itemsToStore.Count; i++) {
                             if (ids.Contains(itemsToStore.ElementAt(i).Id))
@@ -446,7 +461,7 @@ namespace IAGrim.Database {
                         // Get the correct name etc
                         for (var i = 0; i < itemsToStore.Count; i++) {
                             var item = itemsToStore.ElementAt(i);
-                            UpdateItemDetails(session, item, stats);
+                            UpdateItemDetails(session, item, stats, itemTags);
                         }
 
                         transaction.Commit();
