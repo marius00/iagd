@@ -2,6 +2,13 @@
     cursor: help !important;
 }
 
+/* react-tooltip's "place-top" arrow connector renders above the tooltip
+   text (z-index: 2) instead of behind it like every other placement
+   (z-index: -1), so it visually overlaps the last line of text. */
+.__react_component_tooltip.place-top::before {
+    z-index: -1 !important;
+}
+
 .clipboard-container {
     position: fixed;
     right: 14px;
