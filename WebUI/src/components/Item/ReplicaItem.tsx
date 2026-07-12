@@ -105,7 +105,6 @@ class ReplicaItem extends PureComponent<Props, object> {
 
     const setName = GetSetName(item.baseRecord);
     const setItemsList = this.getSetItemTooltip(setName, item.isHardcore);
-    const showGenericStatIcon = item.type === IItemType.Player && !item.replicaStats;
     const showRecipeIcon = item.hasRecipe && item.type === IItemType.Recipe;
 
     const miText = item.isMonsterInfrequent ? ' / MI' : '';
@@ -156,18 +155,6 @@ class ReplicaItem extends PureComponent<Props, object> {
               </span>
               : ''
             }
-            {showGenericStatIcon ?
-              <span className="informative">
-                <a data-tip={translate('item.genericstats.warning')}>
-                  <div className="recipe-item-corner">
-                    <img className="cursor-help" src="static\warning.png" style="max-width: 16px;" alt={translate('item.genericstats.warning')}/>
-                  </div>
-                </a>
-              </span>
-              : ''
-            }
-
-
           {item.skill ? <Skill skill={item.skill} keyPrefix={getUniqueId(item)}/> : ''}
 
         </div>
