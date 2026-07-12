@@ -42,16 +42,17 @@ namespace IAGrim.Database.DAO.Util {
         /// <param name="records"></param>
         /// <returns></returns>
         public static string GetRarityForRecords(Dictionary<string, List<DBStatRow>> stats, List<string> records) {
-            var classifications = stats.Where(m => records.Contains(m.Key))
-                .SelectMany(m => m.Value.Where(v => v.Stat == "itemClassification"))
+            var classifications = records
+                .Where(stats.ContainsKey)
+                .SelectMany(record => stats[record].Where(v => v.Stat == "itemClassification"))
                 .Select(m => m.TextValue);
 
             return TranslateClassification(classifications);
         }
 
         public static string GetRarityForRecord(Dictionary<string, List<DBStatRow>> stats, string record) {
-            var classifications = stats.Where(m => record.Equals(m.Key))
-                .SelectMany(m => m.Value.Where(v => v.Stat == "itemClassification"))
+            var classifications = (stats.TryGetValue(record, out var rows) ? rows : Enumerable.Empty<DBStatRow>())
+                .Where(v => v.Stat == "itemClassification")
                 .Select(m => m.TextValue);
 
             return TranslateClassification(classifications);
@@ -108,8 +109,9 @@ namespace IAGrim.Database.DAO.Util {
         }
 
         public static float GetMinimumLevelForRecords(Dictionary<string, List<DBStatRow>> stats, List<string> records) {
-            var levels = stats.Where(m => records.Contains(m.Key))
-                .SelectMany(m => m.Value.Where(v => v.Stat == "levelRequirement"))
+            var levels = records
+                .Where(stats.ContainsKey)
+                .SelectMany(record => stats[record].Where(v => v.Stat == "levelRequirement"))
                 .Select(m => m.Value)
                 .ToList();
 
@@ -123,27 +125,25 @@ namespace IAGrim.Database.DAO.Util {
         /// <summary>
         /// Update the item name to include suffix/affix/etc
         /// </summary>
-        public static string GetItemName(ISession session, Dictionary<string, List<DBStatRow>> stats, RecordCollection item) {
+        public static string GetItemName(Dictionary<string, string> itemTags, Dictionary<string, List<DBStatRow>> stats, RecordCollection item) {
             // Grab tags
 
             var records = new string[] { item.PrefixRecord, item.BaseRecord, item.SuffixRecord, item.MateriaRecord };
             var desiredTagsNames = new string[] { "lootRandomizerName", "itemNameTag", "itemQualityTag", "itemStyleTag", "description" };
-            var relevants = stats.Where(m => records.Contains(m.Key));
-            var tagEntries = relevants.SelectMany(m => m.Value.Where(v => desiredTagsNames.Contains(v.Stat))).ToList();
+            var tagEntries = records
+                .Where(r => r != null && stats.ContainsKey(r))
+                .SelectMany(record => stats[record].Where(v => desiredTagsNames.Contains(v.Stat)))
+                .ToList();
 
-
-            // Grab tag values
-            ICriteria tagCrit = session.CreateCriteria<ItemTag>();
-            tagCrit.Add(Restrictions.In("Tag", tagEntries.Select(m => m.TextValue).ToArray()));
-            var tags = tagCrit.List<ItemTag>();
+            // Resolve a tag to its localized name, mirroring the old FirstOrDefault(..)?.Name lookup
+            string TagName(string tag) => tag != null && itemTags.TryGetValue(tag, out var n) ? n : null;
 
 
             string prefix = string.Empty;
             {
                 var prefixEntry = tagEntries.FirstOrDefault(m => m.Record == item.PrefixRecord && m.Stat == "lootRandomizerName");
                 if (prefixEntry != null) {
-                    var tag = tags.FirstOrDefault(m => m.Tag == prefixEntry.TextValue);
-                    prefix = tag?.Name ?? prefixEntry.TextValue;
+                    prefix = TagName(prefixEntry.TextValue) ?? prefixEntry.TextValue;
                 }
             }
 
@@ -151,7 +151,7 @@ namespace IAGrim.Database.DAO.Util {
             {
                 var suffixEntry = tagEntries.FirstOrDefault(m => m.Record == item.SuffixRecord && m.Stat == "lootRandomizerName");
                 if (suffixEntry != null) {
-                    suffix = tags.FirstOrDefault(m => m.Tag == suffixEntry.TextValue)?.Name ?? suffixEntry.TextValue;
+                    suffix = TagName(suffixEntry.TextValue) ?? suffixEntry.TextValue;
                 }
             }
 
@@ -162,8 +162,7 @@ namespace IAGrim.Database.DAO.Util {
                     coreEntry = tagEntries.FirstOrDefault(m => m.Record == item.BaseRecord && m.Stat == "description");
 
                 if (coreEntry != null) {
-                    var tag = tags.FirstOrDefault(m => m.Tag == coreEntry.TextValue);
-                    core = tag?.Name ?? coreEntry.TextValue;
+                    core = TagName(coreEntry.TextValue) ?? coreEntry.TextValue;
                 }
             }
 
@@ -171,8 +170,7 @@ namespace IAGrim.Database.DAO.Util {
             {
                 var coreEntry = tagEntries.FirstOrDefault(m => m.Record == item.BaseRecord && m.Stat == "itemQualityTag");
                 if (coreEntry != null) {
-                    var tag = tags.FirstOrDefault(m => m.Tag == coreEntry.TextValue);
-                    quality = tag?.Name ?? coreEntry.TextValue;
+                    quality = TagName(coreEntry.TextValue) ?? coreEntry.TextValue;
                 }
             }
 
@@ -180,8 +178,7 @@ namespace IAGrim.Database.DAO.Util {
             {
                 var coreEntry = tagEntries.FirstOrDefault(m => m.Record == item.BaseRecord && m.Stat == "itemStyleTag");
                 if (coreEntry != null) {
-                    var tag = tags.FirstOrDefault(m => m.Tag == coreEntry.TextValue);
-                    style = tag?.Name ?? coreEntry.TextValue;
+                    style = TagName(coreEntry.TextValue) ?? coreEntry.TextValue;
                 }
             }
 
@@ -189,8 +186,7 @@ namespace IAGrim.Database.DAO.Util {
             {
                 var entry = tagEntries.FirstOrDefault(m => m.Record == item.MateriaRecord && m.Stat == "description");
                 if (entry != null) {
-                    var tag = tags.FirstOrDefault(m => m.Tag == entry.TextValue);
-                    materia = tag?.Name ?? entry.TextValue;
+                    materia = TagName(entry.TextValue) ?? entry.TextValue;
 
                     materia = $" [{materia}]";
                 }
