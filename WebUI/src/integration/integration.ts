@@ -9,7 +9,7 @@ declare abstract class chrome {
     static webview: any;
 }
 
-export const isEmbedded = typeof chrome !== "undefined" && typeof chrome.webview.hostObjects.sync.core === 'function';
+export const isEmbedded = typeof chrome !== "undefined" && typeof (chrome as any)?.webview?.hostObjects?.sync?.core === 'function';
 
 export interface TransferResult {
     success: boolean;
