@@ -92,6 +92,12 @@ namespace IAGrim.Backup.Cloud.Service {
             List<DeleteItemDto> dtos = new List<DeleteItemDto>(items.Count);
             dtos.AddRange(items.Select(item => new DeleteItemDto {Id = item.Id}));
             for (int i = 0; i < dtos.Count; i += 100) {
+                // Stop syncing deletions immediately if the user logged out mid-sync.
+                if (_authService.CheckAuthentication() != AuthService.AccessStatus.Authorized) {
+                    Logger.Info("Authentication lost (logged out?), aborting remaining deletion batches");
+                    return;
+                }
+
                 var toSync = dtos.GetRange(i, Math.Min(100, dtos.Count - i));
                 if (_cloudSyncService.Delete(toSync)) {
                     _playerItemDao.ClearItemsMarkedForOnlineDeletion();
@@ -170,6 +176,12 @@ namespace IAGrim.Backup.Cloud.Service {
 
             Logger.Debug($"Got {items.Count} items to sync up");
             foreach (var batch in batches) {
+                // Stop uploading immediately if the user logged out mid-sync.
+                if (_authService.CheckAuthentication() != AuthService.AccessStatus.Authorized) {
+                    Logger.Info("Authentication lost (logged out?), aborting remaining upload batches");
+                    return;
+                }
+
                 Logger.Info($"Synchronizing batch with {batch.Count} items to cloud");
                 try {
                     if (_cloudSyncService.Save(batch.Select(ItemConverter.ToUpload).ToList())) {
