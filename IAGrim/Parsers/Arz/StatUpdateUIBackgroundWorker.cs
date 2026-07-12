@@ -46,7 +46,9 @@ namespace IAGrim.Parsers.Arz {
 
 
                 // Update all stats
+                Logger.Debug("Loading all player items (ListAll)");
                 IList<PlayerItem> items = _playerItemDao.ListAll();
+                Logger.Debug($"Loaded {items.Count} player items, updating stats");
                 worker.ReportProgress(Math.Max(100, items.Count), 1);
 
 

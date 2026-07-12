@@ -9,6 +9,7 @@ using IAGrim.Database.Interfaces;
 using IAGrim.Database.Model;
 using IAGrim.Services.Dto;
 using log4net;
+using Microsoft.Data.Sqlite;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Transform;
@@ -73,9 +74,9 @@ namespace IAGrim.Database {
                 .Where(record => record.Contains("/lootaffixes/")) // Ignore the base record
                 .ToList();
 
-            var classifications = stats
-                .Where(m => filteredRecords.Contains(m.Key))
-                .SelectMany(m => m.Value.Where(v => v.Stat == "itemClassification"))
+            var classifications = filteredRecords
+                .Where(stats.ContainsKey)
+                .SelectMany(record => stats[record].Where(v => v.Stat == "itemClassification"))
                 .Select(m => m.TextValue)
                 .ToList();
 
@@ -154,9 +155,9 @@ namespace IAGrim.Database {
         }
 
         public static IEnumerable<string> GetPetBonusRecords(Dictionary<string, List<DBStatRow>> stats, List<string> records) {
-            var relevant = stats.Where(m => records.Contains(m.Key));
-
-            return relevant.SelectMany(m => m.Value)
+            return records
+                .Where(stats.ContainsKey)
+                .SelectMany(record => stats[record])
                 .Where(m => m.Stat == "petBonusName")
                 .Select(m => m.TextValue);
         }
@@ -303,7 +304,29 @@ namespace IAGrim.Database {
             }
         }
 
-        private void UpdateItemDetails(ISession session, PlayerItem item, Dictionary<string, List<DBStatRow>> stats) {
+        /// <summary>
+        /// Load the entire ItemTag table into a Tag -> Name lookup.
+        /// Done once per rebuild so GetItemName doesn't issue a SELECT per item.
+        /// </summary>
+        private static Dictionary<string, string> LoadItemTags(ISession session) {
+            // Scalar SQL (not CreateCriteria) on purpose: CreateCriteria would pull all ~19k
+            // ItemTag rows into the session's first-level cache as managed entities. Those would
+            // then be dirty-checked on every auto-flush before each write in the loops below,
+            // turning stat updates into an O(items * tags) stall. Scalar rows are not tracked.
+            var map = new Dictionary<string, string>();
+            var rows = session.CreateSQLQuery($"SELECT {ItemTagTable.Id}, {ItemTagTable.Name} FROM {ItemTagTable.Table}")
+                .List();
+
+            foreach (object[] row in rows) {
+                if (row[0] is string tag) {
+                    map[tag] = row[1] as string;
+                }
+            }
+
+            return map;
+        }
+
+        private void UpdateItemDetails(ISession session, PlayerItem item, Dictionary<string, List<DBStatRow>> stats, Dictionary<string, string> itemTags) {
             const string table = nameof(PlayerItem);
             const string rarity = nameof(PlayerItem.Rarity);
             const string levelReq = nameof(PlayerItem.LevelRequirement);
@@ -312,7 +335,7 @@ namespace IAGrim.Database {
             const string prefixRarity = PlayerItemTable.PrefixRarity;
             const string nameLowercase = nameof(PlayerItem.NameLowercase);
 
-            var itemName = ItemOperationsUtility.GetItemName(session, stats, item);
+            var itemName = ItemOperationsUtility.GetItemName(itemTags, stats, item);
             var records = GetRecordsForItem(item);
             session.CreateSQLQuery($@"UPDATE {table} 
                     SET {name} = :name, 
@@ -332,41 +355,116 @@ namespace IAGrim.Database {
         }
 
         /// <summary>
+        /// Batched INSERT OR IGNORE into PlayerItemRecord using a single reused, prepared command.
+        /// Reusing one prepared statement across all rows avoids the per-statement construction cost
+        /// (NHibernate query pipeline / command allocation) that dominated the old per-row approach.
+        /// </summary>
+        private static void InsertPlayerItemRecords(SqliteConnection connection, SqliteTransaction transaction,
+                IList<PlayerItem> items, Func<PlayerItem, IEnumerable<string>> recordSelector) {
+            var sql = $"INSERT OR IGNORE INTO {nameof(PlayerItemRecord)} " +
+                      $"({nameof(PlayerItemRecord.PlayerItemId)}, {nameof(PlayerItemRecord.Record)}) VALUES (@id, @record)";
+
+            using (var cmd = new SqliteCommand(sql, connection, transaction)) {
+                var pId = cmd.Parameters.Add("@id", SqliteType.Integer);
+                var pRecord = cmd.Parameters.Add("@record", SqliteType.Text);
+                cmd.Prepare();
+
+                foreach (var item in items) {
+                    foreach (var record in recordSelector(item)) {
+                        pId.Value = item.Id;
+                        pRecord.Value = (object) record ?? DBNull.Value;
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Batched name/rarity/level update for all items, using a single reused, prepared command.
+        /// </summary>
+        private void UpdateItemDetailsBatch(SqliteConnection connection, SqliteTransaction transaction,
+                IList<PlayerItem> items, Dictionary<string, List<DBStatRow>> stats,
+                Dictionary<string, string> itemTags, Action<int> progress) {
+            var sql = $@"UPDATE {nameof(PlayerItem)}
+                    SET {nameof(PlayerItem.Name)} = @name,
+                        {nameof(PlayerItem.NameLowercase)} = @namelowercase,
+                        {nameof(PlayerItem.Rarity)} = @rarity,
+                        {nameof(PlayerItem.LevelRequirement)} = @levelreq,
+                        {PlayerItemTable.PrefixRarity} = @prefixrarity
+                    WHERE {nameof(PlayerItem.Id)} = @id";
+
+            using (var cmd = new SqliteCommand(sql, connection, transaction)) {
+                var pName = cmd.Parameters.Add("@name", SqliteType.Text);
+                var pNameLower = cmd.Parameters.Add("@namelowercase", SqliteType.Text);
+                var pRarity = cmd.Parameters.Add("@rarity", SqliteType.Text);
+                var pLevel = cmd.Parameters.Add("@levelreq", SqliteType.Real);
+                var pPrefix = cmd.Parameters.Add("@prefixrarity", SqliteType.Integer);
+                var pId = cmd.Parameters.Add("@id", SqliteType.Integer);
+                cmd.Prepare();
+
+                foreach (var item in items) {
+                    var records = GetRecordsForItem(item);
+                    var itemName = ItemOperationsUtility.GetItemName(itemTags, stats, item);
+
+                    pName.Value = (object) itemName ?? DBNull.Value;
+                    pNameLower.Value = (object) itemName?.ToLowerInvariant() ?? DBNull.Value;
+                    pRarity.Value = (object) ItemOperationsUtility.GetRarityForRecords(stats, records) ?? DBNull.Value;
+                    pLevel.Value = (double) ItemOperationsUtility.GetMinimumLevelForRecords(stats, records);
+                    pPrefix.Value = GetGreenQualityLevelForRecords(stats, records);
+                    pId.Value = item.Id;
+                    cmd.ExecuteNonQuery();
+
+                    progress(1);
+                }
+            }
+        }
+
+        /// <summary>
         /// Update internal item stats
         /// May take a lifetime and a half
         /// </summary>
         public void UpdateAllItemStats(IList<PlayerItem> items, Action<int> progress) {
             // A lame workaround for PlayerItemRecord not being available the first run..
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            Logger.Debug($"UpdateAllItemStats: starting for {items.Count} items");
 
-            using (var session = SessionCreator.OpenSession()) {
-                using (var transaction = session.BeginTransaction()) {
-                    session.CreateQuery("DELETE FROM PlayerItemRecord")
-                        .ExecuteUpdate();
+            // Writes go through a dedicated raw connection with reused prepared commands (fast bulk
+            // path, same approach as the game-db import). The NHibernate session is used only for the
+            // reads (GetStats / LoadItemTags), which run after phase 1 has committed.
+            using (var session = SessionCreator.OpenSession())
+            using (var connection = new SqliteConnection(SessionFactoryLoader.SessionFactory.ConnectionString)) {
+                connection.Open();
 
-                    // Get the base records stored
-                    for (var i = 0; i < items.Count; i++) {
-                        UpdateRecords(session, items.ElementAt(i));
+                // Phase 1: rebuild the base records
+                using (var transaction = connection.BeginTransaction()) {
+                    using (var delete = new SqliteCommand($"DELETE FROM {nameof(PlayerItemRecord)}", connection, transaction)) {
+                        delete.ExecuteNonQuery();
                     }
+
+                    InsertPlayerItemRecords(connection, transaction, items, GetRecordsForItem);
+                    transaction.Commit();
+                }
+                Logger.Debug($"UpdateAllItemStats: phase 1 (base records) done at {sw.ElapsedMilliseconds}ms");
+
+                // Reads: must observe the committed phase-1 records
+                var stats = _databaseItemStatDao.GetStats(session, StatFetch.PlayerItems);
+                Logger.Debug($"UpdateAllItemStats: GetStats returned {stats.Count} records at {sw.ElapsedMilliseconds}ms");
+                var itemTags = LoadItemTags(session);
+                Logger.Debug($"UpdateAllItemStats: LoadItemTags returned {itemTags.Count} tags at {sw.ElapsedMilliseconds}ms");
+
+                // Phase 2 + 3: pet records and item details
+                using (var transaction = connection.BeginTransaction()) {
+                    InsertPlayerItemRecords(connection, transaction, items,
+                        item => GetPetBonusRecords(stats, GetRecordsForItem(item)));
+                    Logger.Debug($"UpdateAllItemStats: phase 2 (pet records) done at {sw.ElapsedMilliseconds}ms");
+
+                    UpdateItemDetailsBatch(connection, transaction, items, stats, itemTags, progress);
+                    Logger.Debug($"UpdateAllItemStats: phase 3 (item details) done at {sw.ElapsedMilliseconds}ms");
 
                     transaction.Commit();
                 }
 
-                using (var transaction = session.BeginTransaction()) {
-                    // Now that we have base stats, we can calculate pet records as well
-                    var stats = _databaseItemStatDao.GetStats(session, StatFetch.PlayerItems);
-
-                    for (var i = 0; i < items.Count; i++) {
-                        UpdatePetRecords(session, items.ElementAt(i), stats);
-                    }
-
-                    foreach (var item in items) {
-                        UpdateItemDetails(session, item, stats);
-
-                        progress(1);
-                    }
-
-                    transaction.Commit();
-                }
+                Logger.Info($"UpdateAllItemStats: completed {items.Count} items in {sw.ElapsedMilliseconds}ms");
             }
         }
 
@@ -437,6 +535,7 @@ namespace IAGrim.Database {
                     using (var transaction = session.BeginTransaction()) {
                         // Now that we have base stats, we can calculate pet records as well
                         var stats = _databaseItemStatDao.GetStats(session, StatFetch.PlayerItems);
+                        var itemTags = LoadItemTags(session);
 
                         for (var i = 0; i < itemsToStore.Count; i++) {
                             if (ids.Contains(itemsToStore.ElementAt(i).Id))
@@ -446,7 +545,7 @@ namespace IAGrim.Database {
                         // Get the correct name etc
                         for (var i = 0; i < itemsToStore.Count; i++) {
                             var item = itemsToStore.ElementAt(i);
-                            UpdateItemDetails(session, item, stats);
+                            UpdateItemDetails(session, item, stats, itemTags);
                         }
 
                         transaction.Commit();
