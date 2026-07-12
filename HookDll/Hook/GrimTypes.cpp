@@ -2,6 +2,11 @@
 #include "Logger.h"
 #include <boost/lexical_cast.hpp>
 #include <algorithm>
+#include <iostream>
+#include <sstream>
+#include <vector>
+#include <Windows.h>
+#include <fstream>
 
 namespace GAME {
 	// Helper: strip \r, \n from a narrow string (defensive against game struct issues)

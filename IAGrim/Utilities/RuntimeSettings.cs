@@ -19,22 +19,6 @@ namespace IAGrim.Utilities {
 
         public static string Uuid { get; set; }
 
-
-        private static volatile StashAvailability _stashStatus = StashAvailability.UNKNOWN;
-
-        public static StashAvailability PreviousStashStatus { get; private set; } = StashAvailability.UNKNOWN;
-
-        public static StashAvailability StashStatus {
-            get => _stashStatus;
-            set {
-                if (_stashStatus == value) return;
-
-
-                PreviousStashStatus = _stashStatus;
-                _stashStatus = value;
-            }
-        }
-
         private static ILocalizedLanguage _language;
         public static ILocalizedLanguage Language {
             get {

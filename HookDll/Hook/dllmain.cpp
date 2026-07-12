@@ -7,18 +7,11 @@
 #include <fstream>
 #include "DataQueue.h"
 #include "MessageType.h"
-#include "StateRequestNpcAction.h"
-#include "StateRequestMoveAction.h"
 #include "InventorySack_AddItem.h"
-#include "NpcDetectionHook.h"
-#include "NpcDetectionHook13.h"
-#include "SaveTransferStash.h"
 #include "Exports.h"
-#include "CanUseDismantle.h"
 #include "OnDemandSeedInfo.h"
 #include "GameEngineUpdate.h"
 #include "HookLog.h"
-#include "SetTransferOpen.h"
 #include "Logger.h"
 #include "SetHardcore.h"
 #include "SettingsReader.h"
@@ -287,43 +280,7 @@ void EndWorkerThread() {
 
 #pragma endregion
 
-static void ConfigurePlayerPositionHooks(std::vector<BaseMethodHook*>& hooks) {
-	LogToFile(LogLevel::INFO, L"Configuring player position hooks..");
-	hooks.push_back(new StateRequestMoveAction(&g_dataQueue, g_hEvent, REQUEST_MOVE_ACTION_MOVETO));
-	hooks.push_back(new StateRequestMoveAction(&g_dataQueue, g_hEvent, REQUEST_MOVE_ACTION_IDLE));
-	hooks.push_back(new StateRequestMoveAction(&g_dataQueue, g_hEvent, REQUEST_MOVE_ACTION_LONG_IDLE));
-	hooks.push_back(new StateRequestMoveAction(&g_dataQueue, g_hEvent, REQUEST_MOVE_ACTION_MOVE_AND_SKILL));
-	hooks.push_back(new StateRequestMoveAction(&g_dataQueue, g_hEvent, REQUEST_MOVE_ACTION_MOVE_ACTOR));
-
-	hooks.push_back(new StateRequestMoveAction(&g_dataQueue, g_hEvent, REQUEST_MOVE_ACTION_MOVE_TO_SKILL));
-	hooks.push_back(new StateRequestMoveAction(&g_dataQueue, g_hEvent, REQUEST_MOVE_ACTION_PICKUP));
-	hooks.push_back(new StateRequestMoveAction(&g_dataQueue, g_hEvent, REQUEST_MOVE_ACTION_TALK_TO_NPC));
-	hooks.push_back(new StateRequestMoveAction(&g_dataQueue, g_hEvent, REQUEST_MOVE_ACTION_SKILL));
-
-	// For these, the target position could actually be the smuggler.
-	LogToFile(LogLevel::INFO, L"Configuring player position hooks for move-to-npc..");
-	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_IDLE));
-	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_MOVETO));
-	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_JUMP_TO_SKILL));
-	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_LONG_IDLE));
-	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_MOVE_AND_SKILL));
-	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_MOVE_TO_ACTOR));
-	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_MOVE_TO_SKILL));
-	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_PICKUP_ITEM));
-	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_TALK_TO_NPC));
-	hooks.push_back(new StateRequestNpcAction(&g_dataQueue, g_hEvent, REQUEST_NPC_ACTION_MOVE_TO_NPC));
-}
-
-static void ConfigureStashDetectionHooks(std::vector<BaseMethodHook*>& hooks) {
-	// Stash detection hooks
-	LogToFile(LogLevel::INFO, L"Configuring stash detection hooks..");
-	hooks.push_back(new NpcDetectionHook(&g_dataQueue, g_hEvent));
-	hooks.push_back(new NpcDetectionHook13(&g_dataQueue, g_hEvent));
-	hooks.push_back(new CanUseDismantle(&g_dataQueue, g_hEvent));
-	hooks.push_back(new SaveTransferStash(&g_dataQueue, g_hEvent));
-	hooks.push_back(new SetTransferOpen(&g_dataQueue, g_hEvent));
-
-
+static void ConfigureInstalootHooks(std::vector<BaseMethodHook*>& hooks) {
 	try {
 		LogToFile(LogLevel::INFO, L"Configuring instaloot hook..");
 		g_InventorySack_AddItemInstance = new InventorySack_AddItem(&g_dataQueue, g_hEvent);
@@ -513,9 +470,7 @@ int ProcessAttach(HINSTANCE _hModule) {
 
 
 	LogToFile(LogLevel::INFO, L"Preparing hooks..");
-	// Player position hooks
-	ConfigurePlayerPositionHooks(hooks);
-	ConfigureStashDetectionHooks(hooks);
+	ConfigureInstalootHooks(hooks);
 
 	LogToFile(LogLevel::INFO, L"Preparing replica hooks..");
 

@@ -5,7 +5,6 @@
 #include "BaseMethodHook.h"
 #include "GetPrivateStash.h"
 #include "GrimTypes.h"
-#include "SaveTransferStash.h"
 #include "SettingsReader.h"
 
 class InventorySack_AddItem : public BaseMethodHook {

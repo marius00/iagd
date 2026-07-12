@@ -17,9 +17,8 @@ void* GetPrivateStash::privateStashSack;
 void GetPrivateStash::EnableHook() {
 	originalMethod = (OriginalMethodPtr)GetProcAddressOrLogToFile(L"Game.dll", GET_PRIVATE_STASH);
 	if (originalMethod == NULL) {
-		DataItemPtr item(new DataItem(TYPE_ERROR_HOOKING_PRIVATE_STASH, 0, 0));
-		m_dataQueue->push(item);
-		SetEvent(m_hEvent);
+		// Instaloot needs the private stash sack pointer; failure is logged but no longer reported to the client.
+		LogToFile(LogLevel::FATAL, L"Failed to hook GetPrivateStash, instaloot private-stash deposits will not work");
 	}
 	
 	DetourTransactionBegin();
@@ -53,16 +52,7 @@ void* GetPrivateStash::GetPrivateStashInventorySack() {
 void* __stdcall GetPrivateStash::HookedMethod64(void* This) {
 	void* v = originalMethod(This);
 	try {
-
-		char b[1];
-		b[0] = 1;
-		DataItemPtr item(new DataItem(TYPE_OPEN_PRIVATE_STASH, 1, (char*)b));
-		m_dataQueue->push(item);
-		SetEvent(m_hEvent);
-
-
-		LogToFile(LogLevel::INFO, L"Player stash is opened");
-
+		// Capture the private stash inventory sack pointer for instaloot; stash open/close status is no longer reported.
 		privateStashSack = v;
 	}
 	catch (std::exception& ex) {
