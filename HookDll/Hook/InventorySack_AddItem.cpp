@@ -81,7 +81,7 @@ void InventorySack_AddItem::EnableHook() {
 		Hooked_InventorySack_SetTransferOpen,
 		m_dataQueue,
 		m_hEvent,
-		TYPE_OPEN_CLOSE_TRANSFER_STASH
+		2 // Diagnostic hook id only (formerly TYPE_OPEN_CLOSE_TRANSFER_STASH); instaloot needs this hook to know when the transfer stash is open.
 	);
 
 	m_isTransferStashOpen = false;

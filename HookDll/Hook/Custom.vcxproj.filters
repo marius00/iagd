@@ -4,9 +4,6 @@
     <Filter Include="CoreHooks">
       <UniqueIdentifier>{d7793ae7-36e6-4b2d-b13b-a96817b4219d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="CoreHooks\PlayerPosition">
-      <UniqueIdentifier>{8a5bd2b3-81da-4e92-92a4-b733b453fa30}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Setup">
       <UniqueIdentifier>{20930370-ff39-4302-be6c-3bd3493aba5f}</UniqueIdentifier>
     </Filter>
@@ -33,12 +30,6 @@
     <ClInclude Include="InventorySack_AddItem.h">
       <Filter>CoreHooks\Stash</Filter>
     </ClInclude>
-    <ClInclude Include="NpcDetectionHook.h">
-      <Filter>CoreHooks\Stash</Filter>
-    </ClInclude>
-    <ClInclude Include="SaveTransferStash.h">
-      <Filter>CoreHooks\Stash</Filter>
-    </ClInclude>
     <ClInclude Include="BaseMethodHook.h">
       <Filter>CoreHooks</Filter>
     </ClInclude>
@@ -51,15 +42,6 @@
     <ClInclude Include="GetPrivateStash.h">
       <Filter>CoreHooks\Stash</Filter>
     </ClInclude>
-    <ClInclude Include="StateRequestNpcAction.h">
-      <Filter>CoreHooks\PlayerPosition</Filter>
-    </ClInclude>
-    <ClInclude Include="StateRequestMoveAction.h">
-      <Filter>CoreHooks\PlayerPosition</Filter>
-    </ClInclude>
-    <ClInclude Include="CanUseDismantle.h">
-      <Filter>CoreHooks\Stash</Filter>
-    </ClInclude>
     <ClInclude Include="GrimTypes.h">
       <Filter>Shared</Filter>
     </ClInclude>
@@ -69,9 +51,6 @@
     <ClInclude Include="HookLog.h">
       <Filter>Shared</Filter>
     </ClInclude>
-    <ClInclude Include="SetTransferOpen.h">
-      <Filter>CoreHooks\Stash</Filter>
-    </ClInclude>
     <ClInclude Include="SetHardcore.h">
       <Filter>CoreHooks\Stash</Filter>
     </ClInclude>
@@ -80,9 +59,6 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="VTableDispatch.h">
       <Filter>CoreHooks</Filter>
-    </ClInclude>
-    <ClInclude Include="NpcDetectionHook13.h">
-      <Filter>CoreHooks\Stash</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -98,25 +74,10 @@
     <ClCompile Include="InventorySack_AddItem.cpp">
       <Filter>CoreHooks\Stash</Filter>
     </ClCompile>
-    <ClCompile Include="NpcDetectionHook.cpp">
-      <Filter>CoreHooks\Stash</Filter>
-    </ClCompile>
-    <ClCompile Include="SaveTransferStash.cpp">
-      <Filter>CoreHooks\Stash</Filter>
-    </ClCompile>
     <ClCompile Include="BaseMethodHook.cpp">
       <Filter>CoreHooks</Filter>
     </ClCompile>
     <ClCompile Include="GetPrivateStash.cpp">
-      <Filter>CoreHooks\Stash</Filter>
-    </ClCompile>
-    <ClCompile Include="StateRequestNpcAction.cpp">
-      <Filter>CoreHooks\PlayerPosition</Filter>
-    </ClCompile>
-    <ClCompile Include="StateRequestMoveAction.cpp">
-      <Filter>CoreHooks\PlayerPosition</Filter>
-    </ClCompile>
-    <ClCompile Include="CanUseDismantle.cpp">
       <Filter>CoreHooks\Stash</Filter>
     </ClCompile>
     <ClCompile Include="GrimTypes.cpp">
@@ -128,16 +89,10 @@
     <ClCompile Include="HookLog.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
-    <ClCompile Include="SetTransferOpen.cpp">
-      <Filter>CoreHooks\Stash</Filter>
-    </ClCompile>
     <ClCompile Include="SetHardcore.cpp">
       <Filter>CoreHooks\Stash</Filter>
     </ClCompile>
     <ClCompile Include="SettingsReader.cpp" />
-    <ClCompile Include="NpcDetectionHook13.cpp">
-      <Filter>CoreHooks\Stash</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

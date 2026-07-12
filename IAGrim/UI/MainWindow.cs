@@ -74,6 +74,9 @@ namespace IAGrim.UI {
         private bool _hasShownPathErrorPage = false;
         private bool _hasShown32bitErrorPage = false;
 
+        // Set when we intentionally aborted an injection, so the follow-up INJECTION_ERROR isn't treated as a real failure.
+        private bool _injectionAborted = false;
+
         /// <summary>
         /// Toolstrip callback for GDInjector
         /// </summary>
@@ -86,17 +89,16 @@ namespace IAGrim.UI {
             else {
                 switch (e.ProgressPercentage) {
                     case InjectionHelper.ABORTED:
-                        RuntimeSettings.StashStatus = StashAvailability.MENU;
+                        _injectionAborted = true;
                         break;
 
 
                     case InjectionHelper.INJECTION_ERROR: {
-                            if (RuntimeSettings.StashStatus == StashAvailability.MENU) {
+                            if (_injectionAborted) {
                                 // False positive, injection failed because we intentionally aborted.
                                 break;
                             }
 
-                            RuntimeSettings.StashStatus = StashAvailability.ERROR;
                             statusLabel.Text = e.UserState as string;
                             if (!_hasShownStashErrorPage) {
                                 _cefBrowserHandler.ShowHelp(HelpService.HelpType.StashError);
@@ -117,7 +119,6 @@ namespace IAGrim.UI {
                         }
 
                     case InjectionHelper.PATH_ERROR: {
-                            RuntimeSettings.StashStatus = StashAvailability.ERROR;
                             if (!_hasShownPathErrorPage) {
                                 _cefBrowserHandler.ShowHelp(HelpService.HelpType.PathError);
                                 _hasShownPathErrorPage = true;
@@ -127,7 +128,6 @@ namespace IAGrim.UI {
                         }
 
                     case InjectionHelper.INJECTION_ERROR_32BIT: {
-                        RuntimeSettings.StashStatus = StashAvailability.NOT64BIT;
                         statusLabel.Text = e.UserState as string;
                         if (!_hasShown32bitErrorPage) {
                             _cefBrowserHandler.ShowHelp(HelpService.HelpType.No32Bit);
@@ -138,14 +138,13 @@ namespace IAGrim.UI {
                     }
 
 
-                    // No grim dawn client, so stash is closed!
+                    // No grim dawn client running
                     case InjectionHelper.NO_PROCESS_FOUND:
-                        RuntimeSettings.StashStatus = StashAvailability.CLOSED;
+                        _injectionAborted = false;
                         break;
 
                     // Injection error
                     case InjectionHelper.INJECTION_ERROR_POSSIBLE_ACCESS_DENIED: {
-                        RuntimeSettings.StashStatus = StashAvailability.ERROR;
                         if (!_hasShownStashErrorPage) {
                             _cefBrowserHandler.ShowHelp(HelpService.HelpType.StashError);
                             _hasShownStashErrorPage = true;
@@ -157,7 +156,8 @@ namespace IAGrim.UI {
                         break;
                 }
 
-                _charBackupService.SetIsActive(RuntimeSettings.StashStatus == StashAvailability.CLOSED);
+                // Only back up characters while Grim Dawn isn't running (avoids reading save files mid-write).
+                _charBackupService.SetIsActive(e.ProgressPercentage == InjectionHelper.NO_PROCESS_FOUND);
             }
         }
 

@@ -36,47 +36,33 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseMethodHook.h" />
-    <ClInclude Include="CanUseDismantle.h" />
     <ClInclude Include="GrimTypes.h" />
     <ClInclude Include="HookLog.h" />
     <ClInclude Include="Logger.h" />
-    <ClInclude Include="NpcDetectionHook13.h" />
     <ClInclude Include="OnDemandSeedInfo.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SetHardcore.h" />
     <ClInclude Include="SettingsReader.h" />
-    <ClInclude Include="SetTransferOpen.h" />
-    <ClInclude Include="StateRequestNpcAction.h" />
-    <ClInclude Include="StateRequestMoveAction.h" />
     <ClInclude Include="DataQueue.h" />
     <ClInclude Include="Exports.h" />
     <ClInclude Include="GetPrivateStash.h" />
     <ClInclude Include="InventorySack_AddItem.h" />
     <ClInclude Include="MessageType.h" />
-    <ClInclude Include="NpcDetectionHook.h" />
-    <ClInclude Include="SaveTransferStash.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Vec3f.h" />
     <ClInclude Include="VTableDispatch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseMethodHook.cpp" />
-    <ClCompile Include="CanUseDismantle.cpp" />
     <ClCompile Include="GrimTypes.cpp" />
     <ClCompile Include="HookLog.cpp" />
-    <ClCompile Include="NpcDetectionHook13.cpp" />
     <ClCompile Include="OnDemandSeedInfo.cpp" />
     <ClCompile Include="SetHardcore.cpp" />
     <ClCompile Include="SettingsReader.cpp" />
-    <ClCompile Include="SetTransferOpen.cpp" />
-    <ClCompile Include="StateRequestNpcAction.cpp" />
-    <ClCompile Include="StateRequestMoveAction.cpp" />
     <ClCompile Include="DataQueue.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="GetPrivateStash.cpp" />
     <ClCompile Include="InventorySack_AddItem.cpp" />
-    <ClCompile Include="NpcDetectionHook.cpp" />
-    <ClCompile Include="SaveTransferStash.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
