@@ -20,6 +20,7 @@ namespace IAGrim.UI.Misc.CEF {
         public event EventHandler<StashTransferEventArgs>? ItemTransferEvent;
         public event EventHandler<ClipboardEventArg>? OnClipboard;
         public event EventHandler? OnRequestItems;
+        public event EventHandler? OnRequestCollectionData;
         public event EventHandler<GetSetItemAssociationsEventArgs>? OnRequestSetItemAssociations;
         public event EventHandler<RequestCharacterListEventArg>? OnRequestBackedUpCharacterList;
         public event EventHandler<RequestCharacterDownloadUrlEventArg>? OnRequestCharacterDownloadUrl;
@@ -110,6 +111,13 @@ namespace IAGrim.UI.Misc.CEF {
         // TODO: Weird flow, should just return items.
         public void RequestMoreItems() {
             OnRequestItems?.Invoke(this, EventArgs.Empty);
+        }
+
+        // Called by the frontend when the Collection tab becomes active (and when a search happens
+        // while it's already active). The Collection view is unrelated to item search and most users
+        // never open it, so its heavy aggregate queries are only run on demand rather than every search.
+        public void RequestCollectionData() {
+            OnRequestCollectionData?.Invoke(this, EventArgs.Empty);
         }
 
         public string GetBackedUpCharacters() {

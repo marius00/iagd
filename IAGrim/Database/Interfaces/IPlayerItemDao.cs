@@ -29,7 +29,8 @@ namespace IAGrim.Database.Interfaces {
 
         bool RequiresStatUpdate();
         IList<string> ListAllRecords();
-        List<PlayerItem> SearchForItems(ItemSearchRequest query, PlayerItem? item = null);
+        List<PlayerItem> SearchForItems(ItemSearchRequest query, out bool wasTruncated, PlayerItem? item = null);
+        void PopulateReplicaAndPetInfo(IList<PlayerItem> items);
 
         IList<ModSelection> GetModSelection();
         Dictionary<long, string> FindRecordsFromIds(IEnumerable<long> ids);

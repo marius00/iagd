@@ -22,6 +22,8 @@ interface IntegrationInterface {
 
     RequestMoreItems(): void;
 
+    RequestCollectionData(): void;
+
     GetItemSetAssociations(): string;
 
     GetBackedUpCharacters(): string;
@@ -57,6 +59,15 @@ export function requestMoreItems(): void {
     core.RequestMoreItems();
   } else {
     console.debug('It wants itemsss doesss itssss? no more have it doessssss');
+  }
+}
+
+// Ask C# to (re)build the Collection tab data. Only called when the Collection tab is open, since
+// that heavy aggregate query is unrelated to normal item searching and most users never open it.
+export function requestCollectionData(): void {
+  if (isEmbedded) {
+    console.debug("Requesting collection data");
+    core.RequestCollectionData();
   }
 }
 

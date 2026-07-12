@@ -4,7 +4,7 @@ import Help from "../containers/help/Help";
 import IItem from "../interfaces/IItem";
 import ICollectionItem from "../interfaces/ICollectionItem";
 import {PureComponent} from "preact/compat";
-import {isEmbedded, requestMoreItems, signalReady} from "../integration/integration";
+import {isEmbedded, requestCollectionData, requestMoreItems, signalReady} from "../integration/integration";
 import MockCollectionItemData from "../mock/MockCollectionItemData";
 import Spinner from "./Spinner";
 import '../style/App.css';
@@ -283,6 +283,11 @@ class App extends PureComponent<object, object> {
             });
           }
 
+          // If a search completes while the Collection tab is open, refresh it too (it's query-filtered).
+          if (data.replaceExistingItems && this.state.activeTab === App.COLLECTION_TAB) {
+            requestCollectionData();
+          }
+
           console.log("Item state is now", this.state.items);
         }
           break;
@@ -363,6 +368,17 @@ class App extends PureComponent<object, object> {
     };
   }
 
+
+  // Tab index 1 is the Collection view. Its data is fetched on demand (not on every search),
+  // so request it whenever the user switches to that tab.
+  static readonly COLLECTION_TAB = 1;
+
+  setActiveTab = (idx: number) => {
+    if (idx === App.COLLECTION_TAB) {
+      requestCollectionData();
+    }
+    this.setState({activeTab: idx});
+  }
 
   // Used primarily for setting mock items for testing
   setItems(items: IItem[]) {
@@ -468,7 +484,7 @@ class App extends PureComponent<object, object> {
 
     return (
       <div className={'App ' + (this.state.isDarkMode ? 'App-dark' : 'App-Light')}>
-        <Header activeTab={this.state.activeTab} setActiveTab={(idx: number) => this.setState({activeTab: idx})}/>
+        <Header activeTab={this.state.activeTab} setActiveTab={this.setActiveTab}/>
 
         {this.state.activeTab === 0 && !this.state.isGrimParsed && <GrimNotParsed/>}
         {this.state.activeTab === 0 && this.state.isGrimParsed && this.state.isFirstRun && <FirstRunHelpThingie/>}
