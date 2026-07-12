@@ -570,46 +570,43 @@ namespace IAGrim.Database {
             public Dictionary<string, string[]> Parameters;
         }
 
+        // Wrap a condition on the databaseitemstat_v2 row (aliased 'dbs') into a subquery returning
+        // the matching player item ids. Driven by joining PlayerItemRecord (owned records only) to
+        // databaseitem_v2 and databaseitemstat_v2 via indexes, rather than scanning all databaseitems
+        // with a correlated EXISTS and an owned-records UNION (which was 20-25x slower on large collections).
+        private static string RecordStatSubquery(string dbsCondition) {
+            return $@"
+                SELECT pir.Playeritemid FROM PlayerItemRecord pir
+                JOIN databaseitem_v2 db ON db.baserecord = pir.record
+                JOIN databaseitemstat_v2 dbs ON dbs.id_databaseitem = db.id_databaseitem AND ({dbsCondition})";
+        }
+
         private static DatabaseItemStatQuery CreateDatabaseStatQueryParams(ItemSearchRequest query) {
             var queryFragments = new List<string>();
             var queryParamsList = new Dictionary<string, string[]>();
 
             // Add the damage/resist filter
             foreach (var filter in query.Filters) {
-                queryFragments.Add(
-                    $"exists (select id_databaseitem from databaseitemstat_v2 dbs where stat in ( :filter_{filter.GetHashCode()} ) and db.id_databaseitem = dbs.id_databaseitem)");
+                queryFragments.Add($"dbs.stat in ( :filter_{filter.GetHashCode()} )");
                 queryParamsList.Add($"filter_{filter.GetHashCode()}", filter);
             }
 
             if (query.IsRetaliation) {
-                queryFragments.Add(
-                    "exists (select id_databaseitem from databaseitemstat_v2 dbs where stat like 'retaliation%' and db.id_databaseitem = dbs.id_databaseitem)");
+                queryFragments.Add("dbs.stat like 'retaliation%'");
             }
 
             // TODO: Seems we only have LIST parameters here.. won't work for this, since we'd get OR not AND on classes.
             // No way to get a non-list param?
             foreach (var desiredClass in query.Classes) {
                 queryFragments.Add(
-                    "exists (select id_databaseitem from databaseitemstat_v2 dbs where stat IN ('augmentSkill1Extras','augmentSkill2Extras','augmentSkill3Extras','augmentSkill4Extras','augmentMastery1','augmentMastery2','augmentMastery3','augmentMastery4') "
-                    + $" AND TextValue = '{desiredClass}'" // Not ideal
-                    + " AND db.id_databaseitem = dbs.id_databaseitem)");
+                    "dbs.stat IN ('augmentSkill1Extras','augmentSkill2Extras','augmentSkill3Extras','augmentSkill4Extras','augmentMastery1','augmentMastery2','augmentMastery3','augmentMastery4') "
+                    + $" AND dbs.TextValue = '{desiredClass}'"); // Not ideal
             }
 
             if (queryFragments.Count > 0) {
                 List<string> sql = new List<string>();
                 foreach (var fragment in queryFragments) {
-                    sql.Add($@"
-                        SELECT Playeritemid FROM PlayerItemRecord WHERE record IN (
-                            select baserecord from databaseitem_V2 db where db.baserecord in (
-                                select BaseRecord from playeritem union 
-                                select PrefixRecord from playeritem union 
-                                select SuffixRecord from playeritem union 
-                                select AscendantAffixNameRecord from playeritem union 
-                                select AscendantAffix2hNameRecord from playeritem union 
-                                select MateriaRecord from playeritem
-                            )
-                            AND {fragment}
-                        )");
+                    sql.Add(RecordStatSubquery(fragment));
                 }
 
 
@@ -624,8 +621,14 @@ namespace IAGrim.Database {
 
 
 
-        public List<PlayerItem> SearchForItems(ItemSearchRequest query, PlayerItem? item = null) {
+        // A search with broad/empty filters can otherwise match the entire item collection
+        // (100k+ rows on a well-played character), which is both useless to show the user
+        // and extremely expensive to materialize/merge/sort just to display a 64-item page.
+        public const int MaxSearchResults = 1000;
+
+        public List<PlayerItem> SearchForItems(ItemSearchRequest query, out bool wasTruncated, PlayerItem? item = null) {
             Logger.Debug($"Searching for items with query {query}");
+            wasTruncated = false;
             var queryFragments = new List<string>();
             var queryParams = new Dictionary<string, object>();
 
@@ -743,10 +746,10 @@ namespace IAGrim.Database {
                 CAST({PlayerItemTable.IsHardcore} as bit) as IsHardcore,
                 IFNULL(RerollsUsed, 0) as RerollsUsed,
                 IFNULL(AffixRerollsUsed, 0) as AffixRerollsUsed,
-                coalesce((SELECT group_concat(Record, '|') FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord, PI.AscendantAffixNameRecord, PI.AscendantAffix2hNameRecord)), '') AS PetRecord,
-                IFNULL((select json_group_array(json_object('text', text, 'type', type)) from ReplicaItemRow where replicaitemid = R.id), '[]') AS ReplicaInfo,
+                '' AS PetRecord,
+                '[]' AS ReplicaInfo,
                 PI.{PlayerItemTable.Seed} as Seed
-                FROM PlayerItem PI 
+                FROM PlayerItem PI
                 LEFT OUTER JOIN ReplicaItem2 R ON PI.ID = R.playeritemid
                 WHERE " + string.Join(" AND ", queryFragments)
             };
@@ -761,22 +764,7 @@ namespace IAGrim.Database {
 
             // Can be several slots for stuff like "2 Handed"
             if (query.Slot?.Length > 0) {
-                var subQuerySql = $@"
-                SELECT Playeritemid FROM PlayerItemRecord WHERE record IN (
-                    select baserecord from databaseitem_V2 db where db.baserecord in (
-                        select baserecord from {PlayerItemTable.Table} union 
-                        select prefixrecord from {PlayerItemTable.Table} union 
-                        select suffixrecord from {PlayerItemTable.Table} union 
-                        select materiarecord from {PlayerItemTable.Table}
-                    )
-                    AND exists (
-                        select id_databaseitem from databaseitemstat_v2 dbs 
-                        WHERE stat = 'Class' 
-                        AND TextValue in ( :class ) 
-                        AND db.id_databaseitem = dbs.id_databaseitem
-                    )
-                )
-                ";
+                var subQuerySql = RecordStatSubquery("dbs.stat = 'Class' AND dbs.TextValue in ( :class )");
 
                 sql.Add($" AND PI.Id {(query.SlotInverse ? "NOT" : "")} IN ({subQuerySql})");
 
@@ -786,32 +774,87 @@ namespace IAGrim.Database {
                 }
             }
 
-            using (var session = SessionCreator.OpenSession()) {
-                ISQLQuery q = session.CreateSQLQuery(string.Join(" ", sql));
+            // Only cap the general "browse" search. The single-item lookup (item != null) is
+            // already scoped to one specific id and never needs a limit.
+            if (item == null) {
+                sql.Add($" LIMIT {MaxSearchResults + 1}");
+            }
 
+            var combinedSql = string.Join(" ", sql);
+
+            void BindParams(ISQLQuery target) {
                 foreach (var key in queryParams.Keys) {
-                    q.SetParameter(key, queryParams[key]);
-                    Logger.Debug($"{key}: " + queryParams[key]);
+                    target.SetParameter(key, queryParams[key]);
                 }
 
                 if (subQuery != null) {
                     foreach (var key in subQuery.Parameters.Keys) {
-                        var parameterList = subQuery.Parameters[key];
-                        q.SetParameterList(key, parameterList);
-                        Logger.Debug($"{key}: " + string.Join(",", subQuery.Parameters[key]));
+                        target.SetParameterList(key, subQuery.Parameters[key]);
                     }
                 }
 
                 if (query.Slot?.Length > 0) {
-                    q.SetParameterList("class", query.Slot);
+                    target.SetParameterList("class", query.Slot);
                 }
+            }
 
-                Logger.Debug(q.QueryString);
+            using (var session = SessionCreator.OpenSession()) {
+                ISQLQuery q = session.CreateSQLQuery(combinedSql);
+                BindParams(q);
 
                 var items = q.List<object>().Select(ToPlayerItem).ToList();
-                Logger.Debug($"Search returned {items.Count} items");
+
+                if (item == null && items.Count > MaxSearchResults) {
+                    items = items.Take(MaxSearchResults).ToList();
+                    wasTruncated = true;
+                }
 
                 return items;
+            }
+        }
+
+
+        /// <summary>
+        /// Fetch the (expensive) PetRecord/ReplicaInfo columns for a small, specific set of items
+        /// (typically just the current page of search results) and populate them onto the given
+        /// PlayerItem instances. SearchForItems intentionally leaves these blank for the full match
+        /// set, since computing them per-row via correlated subqueries for every match (rather than
+        /// just the visible page) does not scale with large item collections.
+        /// </summary>
+        public void PopulateReplicaAndPetInfo(IList<PlayerItem> items) {
+            if (items.Count == 0) {
+                return;
+            }
+
+            const string sql = @"
+                SELECT PI.Id as Id,
+                coalesce((SELECT group_concat(Record, '|') FROM PlayerItemRecord pir WHERE pir.PlayerItemId = PI.Id AND NOT Record IN (PI.BaseRecord, PI.SuffixRecord, PI.MateriaRecord, PI.PrefixRecord, PI.AscendantAffixNameRecord, PI.AscendantAffix2hNameRecord)), '') AS PetRecord,
+                IFNULL((select json_group_array(json_object('text', text, 'type', type)) from ReplicaItemRow where replicaitemid = R.id), '[]') AS ReplicaInfo
+                FROM PlayerItem PI
+                LEFT OUTER JOIN ReplicaItem2 R ON PI.ID = R.playeritemid
+                WHERE PI.Id IN ( :ids )
+            ";
+
+            using (var session = SessionCreator.OpenSession()) {
+                var rows = session.CreateSQLQuery(sql)
+                    .SetParameterList("ids", items.Select(m => m.Id).Distinct().ToList())
+                    .List();
+
+                var byId = new Dictionary<long, (string PetRecord, string ReplicaInfo)>();
+                foreach (var row in rows) {
+                    var arr = (object[]) row;
+                    long id = Convert(arr[0]);
+                    string petRecord = Convert<string>(arr[1])?.Trim();
+                    string replicaInfo = Convert<string>(arr[2]);
+                    byId[id] = (petRecord, replicaInfo);
+                }
+
+                foreach (var item in items) {
+                    if (byId.TryGetValue(item.Id, out var info)) {
+                        item.PetRecord = info.PetRecord;
+                        item.ReplicaInfo = info.ReplicaInfo;
+                    }
+                }
             }
         }
 

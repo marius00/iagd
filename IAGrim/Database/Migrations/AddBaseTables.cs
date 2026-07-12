@@ -64,6 +64,7 @@ namespace IAGrim.Database.Migrations {
             "CREATE INDEX idx_replicaitem_playeritemid on ReplicaItem2 (playeritemid)",
             "CREATE INDEX idx_replicaitemstat_replicaitemid on ReplicaItemRow (replicaitemid)",
             "CREATE INDEX idx_databaseitemv2_baserecord on DatabaseItem_v2 (baserecord)",
+            "CREATE INDEX idx_playeritemrecord_record on PlayerItemRecord (record)",
         };
 
         private readonly List<string> _oldTables = new List<string>() {

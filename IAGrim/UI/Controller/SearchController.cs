@@ -25,6 +25,10 @@ namespace IAGrim.UI.Controller {
         public readonly JavascriptIntegration JsIntegration = new JavascriptIntegration();
         public event EventHandler? OnSearch;
 
+        // The most recent search query, used to (re)build the Collection tab on demand. The Collection
+        // view is filtered by the same query as the item search, but is only fetched when that tab is open.
+        private ItemSearchRequest? _lastQuery;
+
         public SearchController(
             IPlayerItemDao playerItemDao,
             ItemStatService itemStatService,
@@ -37,6 +41,15 @@ namespace IAGrim.UI.Controller {
             _itemCollectionRepo = itemCollectionRepo;
 
             JsIntegration.OnRequestItems += JsBind_OnRequestItems;
+            JsIntegration.OnRequestCollectionData += JsBind_OnRequestCollectionData;
+        }
+
+        private void JsBind_OnRequestCollectionData(object sender, EventArgs e) {
+            if (_lastQuery == null) {
+                return; // No search has run yet; nothing to build the collection view from.
+            }
+
+            UpdateCollectionItems(_lastQuery);
         }
 
         // TODO: Redo! Infiscroll
@@ -46,26 +59,34 @@ namespace IAGrim.UI.Controller {
         }
 
         private void UpdateCollectionItems(ItemSearchRequest query) {
+            // Both of these feed the side "collection" panel, not the main results grid (already
+            // rendered by now). They're heavy full-table aggregates, so keep them entirely off the
+            // UI thread — running GetItemAggregateStats on Main was freezing the UI ~2s per search.
             Thread thread = new Thread(() => {
                 ExceptionReporter.EnableLogUnhandledOnThread();
 
                 var itemCollection = _itemCollectionRepo.GetItemCollection(query);
                 Browser.SetCollectionItems(itemCollection);
+
+                var aggregateStats = _itemCollectionRepo.GetItemAggregateStats();
+                Browser.SetCollectionAggregateData(aggregateStats);
             });
             thread.Start();
-
-
-            Browser.SetCollectionAggregateData(_itemCollectionRepo.GetItemAggregateStats());
         }
-        
+
         private bool ApplyItems(bool append) {
             var items = _itemPaginationService.Fetch();
+
             if (items.Count == 0) {
                 Browser.AddItems(new List<List<JsonItem>>(0));
                 return false;
             }
 
+            var playerItemsOnPage = items.SelectMany(m => m).OfType<PlayerItem>().ToList();
+            _playerItemDao.PopulateReplicaAndPetInfo(playerItemsOnPage);
+
             _itemStatService.ApplyStats(items.SelectMany(m => m));
+
             var convertedItems = ItemHtmlWriter.ToJsonSerializable(items);
 
             if (append) {
@@ -84,7 +105,8 @@ namespace IAGrim.UI.Controller {
             }
             Logger.Info("Checking if newly looted item matches filter..");
 
-            var items = _playerItemDao.SearchForItems(query, item);
+            var items = _playerItemDao.SearchForItems(query, out _, item);
+            _playerItemDao.PopulateReplicaAndPetInfo(items);
             var merged = ItemOperationsUtility.MergeStackSize(items);
             _itemStatService.ApplyStats(merged.SelectMany(m => m));
             var convertedItems = ItemHtmlWriter.ToJsonSerializable(merged);
@@ -104,14 +126,18 @@ namespace IAGrim.UI.Controller {
 
                 Logger.Info("Searching for items..");
 
-                var items = new List<PlayerHeldItem>();
+                // Remember the query so the Collection tab can be (re)built on demand when the user opens it.
+                _lastQuery = query;
 
-                items.AddRange(_playerItemDao.SearchForItems(query));
+                var swTotal = System.Diagnostics.Stopwatch.StartNew();
+
+                var items = new List<PlayerHeldItem>();
+                items.AddRange(_playerItemDao.SearchForItems(query, out bool wasTruncated));
 
                 var personalCount = items.Sum(i => (long)i.Count);
 
                 if (includeBuddyItems && !query.SocketedOnly) {
-                    AddBuddyItems(items, query, out message);
+                    AddBuddyItems(items, query, wasTruncated, out message);
                 }
                 else {
                     message = personalCount == 0
@@ -119,16 +145,15 @@ namespace IAGrim.UI.Controller {
                         : string.Empty;
                 }
 
-
                 var merged = ItemOperationsUtility.MergeStackSize(items);
-
 
                 if (_itemPaginationService.Update(merged, orderByLevel, items.Count)) {
                     if (!ApplyItems(false)) {
                         Browser.SetItems(new List<List<JsonItem>>(0), 0);
                     }
 
-                    UpdateCollectionItems(query);
+                    // Collection data is no longer fetched here on every search. The frontend requests it
+                    // (via RequestCollectionData) only when the Collection tab is actually open.
                 }
                 else {
                     Browser.ShowLoadingAnimation(false);
@@ -141,6 +166,9 @@ namespace IAGrim.UI.Controller {
                     Browser.ShowModFilterWarning((int)numOtherItems);
                 }
 
+                swTotal.Stop();
+                Logger.Info($"Search completed in {swTotal.ElapsedMilliseconds}ms, {items.Count} results{(wasTruncated ? $" (capped at {PlayerItemDaoImpl.MaxSearchResults})" : "")}");
+
                 return message;
             }
             finally {
@@ -148,14 +176,16 @@ namespace IAGrim.UI.Controller {
             }
         }
 
-        private void AddBuddyItems(List<PlayerHeldItem> items, ItemSearchRequest query, out string message) {
+        private static object FormatCount(int count, bool wasTruncated) => wasTruncated ? $"{count}+" : count;
+
+        private void AddBuddyItems(List<PlayerHeldItem> items, ItemSearchRequest query, bool wasTruncated, out string message) {
             var buddyItems = new List<BuddyItem>(_buddyItemDao.FindBy(query));
             if (buddyItems.Count > 0) {
                 items.AddRange(buddyItems);
-                message = RuntimeSettings.Language.GetTag("iatag_items_found_self_and_buddy", items.Count - buddyItems.Count, buddyItems.Count);
-            } 
+                message = RuntimeSettings.Language.GetTag("iatag_items_found_self_and_buddy", FormatCount(items.Count - buddyItems.Count, wasTruncated), buddyItems.Count);
+            }
             else {
-                message = RuntimeSettings.Language.GetTag("iatag_items_found_selfonly", items.Count);
+                message = RuntimeSettings.Language.GetTag("iatag_items_found_selfonly", FormatCount(items.Count, wasTruncated));
             }
         }
 
