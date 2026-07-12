@@ -9,6 +9,7 @@ using IAGrim.Database.Interfaces;
 using IAGrim.Database.DAO.Dto;
 using IAGrim.Database.Model;
 using IAGrim.Parsers.Arz;
+using IAGrim.Services.ItemStats;
 using IAGrim.Settings;
 
 namespace IAGrim.Services {
@@ -142,26 +143,9 @@ namespace IAGrim.Services {
                     _databaseItemStatDao.GetStats(records, StatFetch.BuddyItems);
 
                 foreach (var pi in items) {
-                    List<DBStatRow> stats = new List<DBStatRow>();
-                    if (statMap.ContainsKey(pi.BaseRecord))
-                        stats.AddRange(Filter(statMap[pi.BaseRecord]));
-
-                    if (!string.IsNullOrEmpty(pi.PrefixRecord) && statMap.ContainsKey(pi.PrefixRecord))
-                        stats.AddRange(Filter(statMap[pi.PrefixRecord]));
-
-                    if (!string.IsNullOrEmpty(pi.SuffixRecord) && statMap.ContainsKey(pi.SuffixRecord))
-                        stats.AddRange(Filter(statMap[pi.SuffixRecord]));
-
-                    if (!string.IsNullOrEmpty(pi.ModifierRecord) && statMap.ContainsKey(pi.ModifierRecord))
-                        stats.AddRange(Filter(statMap[pi.ModifierRecord]));
-
-                    foreach (var petRecord in pi.PetRecords) {
-                        if (!string.IsNullOrEmpty(petRecord) && statMap.ContainsKey(petRecord))
-                            stats.AddRange(Filter(statMap[petRecord]));
-                    }
-
-
-                    pi.Tags = process(stats);
+                    uint seed = unchecked((uint)(int)pi.Seed);
+                    bool hasReplica = !string.IsNullOrEmpty(pi.ReplicaInfo);
+                    pi.Tags = BuildTags(pi, statMap, seed, hasReplica);
                 }
 
                 Logger.Debug($"Applied stats to {items.Count} items");
@@ -180,33 +164,67 @@ namespace IAGrim.Services {
                 }
 
                 foreach (PlayerItem pi in items) {
-                    List<DBStatRow> stats = new List<DBStatRow>();
-                    if (statMap.ContainsKey(pi.BaseRecord))
-                        stats.AddRange(Filter(statMap[pi.BaseRecord]));
-
-                    if (!string.IsNullOrEmpty(pi.PrefixRecord) && statMap.ContainsKey(pi.PrefixRecord))
-                        stats.AddRange(Filter(statMap[pi.PrefixRecord]));
-
-                    if (!string.IsNullOrEmpty(pi.SuffixRecord) && statMap.ContainsKey(pi.SuffixRecord))
-                        stats.AddRange(Filter(statMap[pi.SuffixRecord]));
-
-                    if (!string.IsNullOrEmpty(pi.ModifierRecord) && statMap.ContainsKey(pi.ModifierRecord))
-                        stats.AddRange(Filter(statMap[pi.ModifierRecord]));
-
-                    foreach (var petRecord in pi.PetRecords) {
-                        if (!string.IsNullOrEmpty(petRecord) && statMap.ContainsKey(petRecord)) {
-                            var petRecords = Filter(statMap[petRecord]);
-                            stats.AddRange(petRecords);
-                        }
-                    }
                     // TODO: Don't do this, use PlayerItemRecords.. somehow.. those contain pet bonuses
-
-                    pi.Tags = process(stats);
+                    uint seed = pi.USeed;
+                    bool hasReplica = !string.IsNullOrEmpty(pi.ReplicaInfo);
+                    pi.Tags = BuildTags(pi, statMap, seed, hasReplica);
                 }
 
 
                 Logger.Debug($"Applied stats to {items.Count} items");
             }
+        }
+
+        /// <summary>
+        /// Builds the translated-stat source rows (<see cref="BaseItem.Tags"/>) for an item.
+        ///
+        /// When the item has no game-provided replica stats, we reconstruct its real, seed-applied
+        /// values from the base/prefix/suffix records via <see cref="SeedStatCalculator"/> — the
+        /// same stats the game would report, just computed by us. If the engine can't yet model one
+        /// of the item's records, we fall back to the raw summed base stats.
+        /// </summary>
+        private HashSet<DBStatRow> BuildTags(BaseItem item, Dictionary<string, List<DBStatRow>> statMap, uint seed, bool hasReplica) {
+            List<DBStatRow> Raw(string record) =>
+                !string.IsNullOrEmpty(record) && statMap.ContainsKey(record) ? statMap[record] : new List<DBStatRow>();
+
+            List<DBStatRow> Filtered(string record) => Filter(Raw(record)).ToList();
+
+            var modifierRows = Filtered(item.ModifierRecord);
+            var petRows = new List<DBStatRow>();
+            foreach (var petRecord in item.PetRecords) {
+                petRows.AddRange(Filtered(petRecord));
+            }
+
+            IReadOnlyDictionary<string, double> rolled = hasReplica
+                ? null
+                : SeedStatCalculator.Compute(Raw(item.BaseRecord), Raw(item.PrefixRecord), Raw(item.SuffixRecord), seed);
+
+            var stats = new List<DBStatRow>();
+            if (rolled != null) {
+                // Carry over text stats (Class, set name, conversion types, bitmaps, skill refs, ...);
+                // the numeric rollable fields are supplied by the seed engine instead.
+                foreach (var record in new[] { item.BaseRecord, item.PrefixRecord, item.SuffixRecord }) {
+                    foreach (var row in Filtered(record)) {
+                        if (!string.IsNullOrEmpty(row.TextValue)) {
+                            stats.Add(row);
+                        }
+                    }
+                }
+
+                foreach (var kv in rolled) {
+                    stats.Add(new DBStatRow { Stat = kv.Key, Value = kv.Value });
+                }
+            }
+            else {
+                stats.AddRange(Filtered(item.BaseRecord));
+                stats.AddRange(Filtered(item.PrefixRecord));
+                stats.AddRange(Filtered(item.SuffixRecord));
+            }
+
+            stats.AddRange(modifierRows);
+            stats.AddRange(petRows);
+
+            return process(stats);
         }
 
 

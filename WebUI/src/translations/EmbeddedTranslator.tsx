@@ -21,7 +21,6 @@ class EmbeddedTranslator {
     'item.buddies.plural': 'Several of your Buddies have this item',
     'item.buddies.watermark': 'Buddyitem',
     'item.buddies.tooltip': 'One of your buddies has this item',
-    'item.genericstats.warning': 'You are seeing the generic stats for this item.\nSee the help tab for more information',
     'items.label.singleRare': 'This is a MI with a green affix',
     'items.label.doubleRare': 'This is a MI with two green affixes!',
     'item.label.bonusToAllPets': 'Bonus to All Pets:',
