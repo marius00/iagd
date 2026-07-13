@@ -23,13 +23,42 @@
         public TranslatedStat Extra;
 
         public override string ToString() {
-            return Text?.Replace("{0}", Param0?.ToString(System.Globalization.CultureInfo.InvariantCulture))
-                    .Replace("{1}", Param1?.ToString(System.Globalization.CultureInfo.InvariantCulture))
-                    .Replace("{2}", Param2?.ToString(System.Globalization.CultureInfo.InvariantCulture))
-                    .Replace("{3}", Param3)
-                    .Replace("{4}", Param4?.ToString(System.Globalization.CultureInfo.InvariantCulture))
-                    .Replace("{5}", Param5)
-                    .Replace("{6}", Param6);
+            var text = Text;
+            if (text == null) {
+                return null;
+            }
+
+            text = ReplaceNumeric(text, "{0}", Param0);
+            text = ReplaceNumeric(text, "{1}", Param1);
+            text = ReplaceNumeric(text, "{2}", Param2);
+            text = text.Replace("{3}", Param3);
+            text = ReplaceNumeric(text, "{4}", Param4);
+            text = text.Replace("{5}", Param5);
+            text = text.Replace("{6}", Param6);
+            return text;
+        }
+
+        /// <summary>
+        /// Replaces a numeric placeholder. When the placeholder is immediately followed by a '%'
+        /// (i.e. the value is a percentage), the value is rounded to the nearest whole integer so
+        /// seed-calculated stats don't render as "17.831049% Physical Damage converted to Cold".
+        /// </summary>
+        private static string ReplaceNumeric(string text, string placeholder, float? value) {
+            if (value == null) {
+                return text;
+            }
+
+            var idx = text.IndexOf(placeholder, System.StringComparison.Ordinal);
+            var isPercentage = idx >= 0
+                && idx + placeholder.Length < text.Length
+                && text[idx + placeholder.Length] == '%';
+
+            var formatted = isPercentage
+                ? System.Math.Round(value.Value, System.MidpointRounding.AwayFromZero)
+                    .ToString("0", System.Globalization.CultureInfo.InvariantCulture)
+                : value.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+
+            return text.Replace(placeholder, formatted);
         }
     }
 }
