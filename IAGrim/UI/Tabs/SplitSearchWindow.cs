@@ -2,6 +2,7 @@
 using IAGrim.Database.Dto;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.Arz;
+using IAGrim.Services.ItemStats;
 using IAGrim.Settings;
 using IAGrim.Theme;
 using IAGrim.UI.Controller;
@@ -161,8 +162,18 @@ namespace IAGrim.UI.Tabs {
 
             var rarity = _selectedItemQuality;
             var slot = _selectedSlot;
+
+            // If the search box holds a numeric comparison (e.g. ">100") and exactly one stat checkbox is
+            // selected, switch from wildcard text search to post-filtering the results by that stat's real
+            // computed value. Pet-bonus mode is excluded for now (its stats are stored under "pet"-prefixed
+            // field names). In this mode we leave Wildcard empty so the SQL text/name LIKE does not run.
+            var comparison = NumericComparisonFilter.TryParse(_searchBox.Text);
+            var comparisonActive = comparison != null && filters.Filters.Count == 1 && !filters.PetBonuses;
+
             var query = new ItemSearchRequest {
-                Wildcard = _searchBox.Text,
+                Wildcard = comparisonActive ? null : _searchBox.Text,
+                StatValueComparison = comparisonActive ? comparison : null,
+                StatValueComparisonFields = comparisonActive ? filters.Filters[0] : null,
                 Filters = filters.Filters,
                 MinimumLevel = ParseNumeric(_minLevel),
                 MaximumLevel = ParseNumeric(_maxLevel),

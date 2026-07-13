@@ -3,12 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IAGrim.Services.ItemStats;
 
 namespace IAGrim.Database.Dto {
 
     public class ItemSearchRequest {
         public string Wildcard { get; set; }
         public List<string[]> Filters { get; set; }
+
+        /// <summary>
+        /// Set when the user typed a numeric comparison (e.g. <c>&gt;100</c>) with exactly one stat
+        /// checkbox selected. The result set is post-filtered in-memory by each item's computed value for
+        /// <see cref="StatValueComparisonFields"/>, and <see cref="Wildcard"/> is left empty so the SQL
+        /// text/name LIKE does not run. Null for ordinary searches.
+        /// </summary>
+        public NumericComparisonFilter StatValueComparison { get; set; }
+
+        /// <summary>
+        /// The single selected checkbox's stat field names, whose per-item values are summed and tested
+        /// against <see cref="StatValueComparison"/>. Only meaningful when that comparison is set.
+        /// </summary>
+        public string[] StatValueComparisonFields { get; set; }
         public float MinimumLevel { get; set; }
         public float MaximumLevel { get; set; }
         public string Rarity { get; set; }

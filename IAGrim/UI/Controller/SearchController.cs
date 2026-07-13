@@ -147,6 +147,17 @@ namespace IAGrim.UI.Controller {
 
                 var merged = ItemOperationsUtility.MergeStackSize(items);
 
+                // Numeric-comparison mode: the user typed e.g. ">100" with a single stat checkbox selected.
+                // The SQL narrowed to items carrying that stat; now filter by each item's real computed
+                // value. Stats are normally applied per-page, but here we must apply them up-front (bounded
+                // by MaxSearchResults) so the filtered count and paging are correct.
+                if (query.StatValueComparison != null && query.StatValueComparisonFields != null) {
+                    _itemStatService.ApplyStats(merged.SelectMany(m => m));
+                    merged = merged
+                        .Where(group => MatchesStatComparison(group, query))
+                        .ToList();
+                }
+
                 if (_itemPaginationService.Update(merged, orderByLevel, items.Count)) {
                     if (!ApplyItems(false)) {
                         Browser.SetItems(new List<List<JsonItem>>(0), 0);
@@ -174,6 +185,26 @@ namespace IAGrim.UI.Controller {
             finally {
                 Browser.ShowLoadingAnimation(false);
             }
+        }
+
+        /// <summary>
+        /// Tests a merged stack group against the active numeric stat comparison. The item's real value for
+        /// the selected checkbox is the sum of its computed <see cref="BaseItem.Tags"/> rows whose field is
+        /// in <see cref="ItemSearchRequest.StatValueComparisonFields"/> (mirrors how a multi-field checkbox
+        /// stat is aggregated for display). Items missing the field roll up to 0 and fail a "&gt;N" test.
+        /// </summary>
+        private static bool MatchesStatComparison(List<PlayerHeldItem> group, ItemSearchRequest query) {
+            var tags = group.FirstOrDefault()?.Tags;
+            if (tags == null) {
+                return false;
+            }
+
+            var fields = query.StatValueComparisonFields;
+            double value = tags
+                .Where(t => string.IsNullOrEmpty(t.TextValue) && fields.Contains(t.Stat))
+                .Sum(t => t.Value);
+
+            return query.StatValueComparison.Matches(value);
         }
 
         private static object FormatCount(int count, bool wasTruncated) => wasTruncated ? $"{count}+" : count;
