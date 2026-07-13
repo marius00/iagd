@@ -51,6 +51,7 @@ namespace IAGrim.UI
             new FilterEventArgs
             {
                 Filters = OrFilters,
+                NumericFilters = NumericFilters,
                 PetBonuses = _miscFilter.PetBonuses,
                 IsRetaliation = _damageFilter.RetaliationDamage,
                 DuplicatesOnly = _miscFilter.DuplicatesOnly,
@@ -78,6 +79,24 @@ namespace IAGrim.UI
                 filters.AddRange(_dotFilter.Filters);
                 filters.AddRange(_resistanceFilters.Filters);
                 filters.AddRange(_miscFilter.Filters);
+
+                return filters;
+            }
+        }
+
+        /// <summary>
+        /// The per-checkbox numeric stat filters across all panels (only checkboxes with a filter set).
+        /// </summary>
+        private List<Services.ItemStats.StatValueFilter> NumericFilters
+        {
+            get
+            {
+                var filters = new List<Services.ItemStats.StatValueFilter>();
+
+                filters.AddRange(_damageFilter.NumericFilters);
+                filters.AddRange(_dotFilter.NumericFilters);
+                filters.AddRange(_resistanceFilters.NumericFilters);
+                filters.AddRange(_miscFilter.NumericFilters);
 
                 return filters;
             }
@@ -115,6 +134,9 @@ namespace IAGrim.UI
                         // Only search if the user desires auto search (probably 99%)
                         handler?.Invoke(this, Filters);
                     };
+
+                    // Setting/removing a numeric stat filter must also re-run the search.
+                    cb.FilterChanged += (sender, e) => OnChanged?.Invoke(this, Filters);
                 }
 
                 InitControlsRecursive(c.Controls);

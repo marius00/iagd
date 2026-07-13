@@ -7,16 +7,28 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using IAGrim.Services.ItemStats;
 
 namespace IAGrim.UI.Filters {
     public partial class Misc : UserControl {
         public Misc() {
             InitializeComponent();
+            health.SupportsNumericFilter = true;
+            cbDefense.SupportsNumericFilter = true;
+            cbOffensive.SupportsNumericFilter = true;
         }
 
         public void Misc_Load(object sender, EventArgs e) {
             miscPanel.ToggleState();
         }
+
+        // The three Misc stats that expose a numeric filter button, paired with the same fields their
+        // "stat exists" entries use in Filters below.
+        public List<StatValueFilter> NumericFilters => FilterBuilder.From(new (FirefoxCheckBox, string[])[] {
+            (health, new[] { "characterLifeModifier", "characterLife" }),
+            (cbDefense, new[] { "characterDefensiveAbilityModifier", "characterDefensiveAbility" }),
+            (cbOffensive, new[] { "characterOffensiveAbility", "characterOffensiveAbilityModifier" }),
+        });
 
         public bool SocketedOnly => cbSocketed.Checked;
         public bool DuplicatesOnly => cbDuplicates.Checked;

@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
+using IAGrim.Services.ItemStats;
 
 namespace IAGrim.UI.Filters {
     partial class DamageOverTimeFilter : UserControl {
         public DamageOverTimeFilter() {
             InitializeComponent();
+            FirefoxCheckBox.EnableNumericFilters(this);
             Load += DamageOverTimeFilter_Load;
         }
 
@@ -13,48 +16,45 @@ namespace IAGrim.UI.Filters {
             dotPanel.ToggleState();
         }
 
-        public List<string[]> Filters {
-            get {
-                var dotTypes = new List<string>();
-                if (dmgBleeding.Checked)
-                    dotTypes.Add("Bleeding");
+        // Selected DoT checkboxes paired with their stat fields, built once so both the plain "stat exists"
+        // filters and the per-checkbox numeric filters derive from the same mapping.
+        private List<(FirefoxCheckBox cb, string[] fields)> SelectedStatGroups() {
+            var groups = new List<(FirefoxCheckBox, string[])>();
 
-                if (dmgTrauma.Checked)
-                    dotTypes.Add("Physical");
+            var dotTypes = new[] {
+                (dmgBleeding, "Bleeding"),
+                (dmgTrauma, "Physical"),
+                (dmgBurn, "Fire"),
+                (dmgElectrocute, "Lightning"),
+                (dmgVitalityDecay, "Life"),
+                (dmgFrost, "Cold"),
+                (dmgPoison, "Poison"),
+            };
 
-                if (dmgBurn.Checked)
-                    dotTypes.Add("Fire");
+            foreach (var (cb, dot) in dotTypes) {
+                if (!cb.Checked)
+                    continue;
 
-                if (dmgElectrocute.Checked)
-                    dotTypes.Add("Lightning");
-
-                if (dmgVitalityDecay.Checked)
-                    dotTypes.Add("Life");
-
-                if (dmgFrost.Checked)
-                    dotTypes.Add("Cold");
-
-                if (dmgPoison.Checked)
-                    dotTypes.Add("Poison");
-
-                var filters = new List<string[]>();
-                foreach (var dot in dotTypes)
-                    filters.Add(new[] {
-                        $"offensiveSlow{dot}",
-                        $"offensiveSlow{dot}Modifier",
-                        $"offensiveSlow{dot}ModifierChance",
-                        $"offensiveSlow{dot}DurationModifier",
-                        $"retaliationSlow{dot}Min",
-                        $"retaliationSlow{dot}Chance",
-                        $"retaliationSlow{dot}Duration",
-                        $"retaliationSlow{dot}DurationMin"
-                    });
-
-                if (dmgLifeLeech.Checked)
-                    filters.Add(new[] {"offensiveLifeLeechMin", "offensiveSlowLifeLeachMin"});
-
-                return filters;
+                groups.Add((cb, new[] {
+                    $"offensiveSlow{dot}",
+                    $"offensiveSlow{dot}Modifier",
+                    $"offensiveSlow{dot}ModifierChance",
+                    $"offensiveSlow{dot}DurationModifier",
+                    $"retaliationSlow{dot}Min",
+                    $"retaliationSlow{dot}Chance",
+                    $"retaliationSlow{dot}Duration",
+                    $"retaliationSlow{dot}DurationMin"
+                }));
             }
+
+            if (dmgLifeLeech.Checked)
+                groups.Add((dmgLifeLeech, new[] {"offensiveLifeLeechMin", "offensiveSlowLifeLeachMin"}));
+
+            return groups;
         }
+
+        public List<string[]> Filters => SelectedStatGroups().Select(g => g.fields).ToList();
+
+        public List<StatValueFilter> NumericFilters => FilterBuilder.From(SelectedStatGroups());
     }
 }

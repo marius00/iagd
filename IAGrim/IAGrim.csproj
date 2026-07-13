@@ -55,6 +55,7 @@
      <None Remove="Database\Model\BuddySubscription.hbm.xml" />
      <None Remove="Database\Model\DatabaseItem.hbm.xml" />
      <None Remove="Database\Model\DatabaseItemStat.hbm.xml" />
+     <None Remove="Database\Model\ComputedItemStat.hbm.xml" />
      <None Remove="Database\Model\DatabaseSetting.hbm.xml" />
      <None Remove="Database\Model\DeletedPlayerItem.hbm.xml" />
      <None Remove="Database\Model\ItemSkill.hbm.xml" />
@@ -74,6 +75,7 @@
      <EmbeddedResource Include="Database\Model\BuddySubscription.hbm.xml" />
      <EmbeddedResource Include="Database\Model\DatabaseItem.hbm.xml" />
      <EmbeddedResource Include="Database\Model\DatabaseItemStat.hbm.xml" />
+     <EmbeddedResource Include="Database\Model\ComputedItemStat.hbm.xml" />
      <EmbeddedResource Include="Database\Model\DatabaseSetting.hbm.xml" />
      <EmbeddedResource Include="Database\Model\DeletedPlayerItem.hbm.xml" />
      <EmbeddedResource Include="Database\Model\ItemSkill.hbm.xml" />

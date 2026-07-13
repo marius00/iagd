@@ -28,6 +28,7 @@ namespace IAGrim.UI {
         private readonly IHelpService _helpService;
         private readonly IDatabaseItemDao _databaseItemDao;
         private readonly IReplicaItemDao _replicaItemDao;
+        private readonly IComputedItemStatDao _computedItemStatDao;
 
         public ModsDatabaseConfig(
             Action itemViewUpdateTrigger,
@@ -35,7 +36,8 @@ namespace IAGrim.UI {
             ParsingService parsingService,
             GrimDawnDetector grimDawnDetector,
             SettingsService settingsService,
-            IHelpService helpService, IDatabaseItemDao databaseItemDao, IReplicaItemDao replicaItemDao) {
+            IHelpService helpService, IDatabaseItemDao databaseItemDao, IReplicaItemDao replicaItemDao,
+            IComputedItemStatDao computedItemStatDao) {
             InitializeComponent();
             _itemViewUpdateTrigger = itemViewUpdateTrigger;
             _playerItemDao = playerItemDao;
@@ -46,6 +48,7 @@ namespace IAGrim.UI {
             _databaseItemDao = databaseItemDao;
             _databaseModSelectionService = new DatabaseModSelectionService();
             _replicaItemDao = replicaItemDao;
+            _computedItemStatDao = computedItemStatDao;
         }
 
         private void UpdateListView(IEnumerable<string> paths) {
@@ -170,6 +173,7 @@ namespace IAGrim.UI {
             updatingPlayerItemsScreen.ShowDialog();
 
             _replicaItemDao.DeleteAll();
+            _computedItemStatDao.DeleteAll();
 
             _itemViewUpdateTrigger?.Invoke();
         }

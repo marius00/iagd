@@ -13,6 +13,7 @@ namespace IAGrim.Database.Migrations {
             {"BuddyItemRecord_v2", "CREATE TABLE BuddyItemRecord_v2 (id_item TEXT not null, record TEXT not null, primary key (id_item, record))"},
             {"ReplicaItem2", "CREATE TABLE ReplicaItem2 (Id INTEGER not null, playeritemid INTEGER unique, buddyitemid TEXT unique, primary key (Id))"},
             {"ReplicaItemRow", "CREATE TABLE ReplicaItemRow (Id INTEGER not null, replicaitemid INTEGER, Type INTEGER, Text TEXT, TextLowercase TEXT, primary key (Id))"},
+            {"ComputedItemStat", "CREATE TABLE ComputedItemStat (Id INTEGER not null, playeritemid INTEGER, stat TEXT, value REAL, primary key (Id))"},
             {"settings", "CREATE TABLE settings (setting TEXT not null, val1 INTEGER, V2 TEXT, primary key (setting))"},
             {"BuddySubscription", "CREATE TABLE BuddySubscription (Id INTEGER not null, Nickname TEXT, LastSyncTimestamp INTEGER, IsHidden INTEGER, primary key (Id))"},
             {"DatabaseItemStat_v2", "CREATE TABLE DatabaseItemStat_v2 (id_databaseitemstat  integer primary key autoincrement, id_databaseitem INTEGER, Stat TEXT, TextValue TEXT, val1 REAL, constraint FK_95F02CAE foreign key (id_databaseitem) references DatabaseItem_v2)"},
@@ -65,6 +66,8 @@ namespace IAGrim.Database.Migrations {
             "CREATE INDEX idx_replicaitemstat_replicaitemid on ReplicaItemRow (replicaitemid)",
             "CREATE INDEX idx_databaseitemv2_baserecord on DatabaseItem_v2 (baserecord)",
             "CREATE INDEX idx_playeritemrecord_record on PlayerItemRecord (record)",
+            "CREATE INDEX idx_computeditemstat_playeritemid on ComputedItemStat (playeritemid)",
+            "CREATE INDEX idx_computeditemstat_stat_value on ComputedItemStat (stat, value)",
         };
 
         private readonly List<string> _oldTables = new List<string>() {

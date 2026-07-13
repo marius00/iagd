@@ -161,8 +161,10 @@ namespace IAGrim.UI.Tabs {
 
             var rarity = _selectedItemQuality;
             var slot = _selectedSlot;
+
             var query = new ItemSearchRequest {
                 Wildcard = _searchBox.Text,
+                StatValueFilters = filters.NumericFilters,
                 Filters = filters.Filters,
                 MinimumLevel = ParseNumeric(_minLevel),
                 MaximumLevel = ParseNumeric(_maxLevel),

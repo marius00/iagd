@@ -3,12 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IAGrim.Services.ItemStats;
 
 namespace IAGrim.Database.Dto {
 
     public class ItemSearchRequest {
         public string Wildcard { get; set; }
         public List<string[]> Filters { get; set; }
+
+        /// <summary>
+        /// Per-checkbox numeric stat filters (e.g. Fire damage &gt;= 30) attached via each stat checkbox's
+        /// filter button. Each is applied as an in-database subquery against the pre-computed stat table.
+        /// Empty/null for searches with no numeric stat filters.
+        /// </summary>
+        public List<StatValueFilter> StatValueFilters { get; set; }
+
         public float MinimumLevel { get; set; }
         public float MaximumLevel { get; set; }
         public string Rarity { get; set; }

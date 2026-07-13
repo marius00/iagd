@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="IAGrim" namespace="IAGrim.Database.Model">
+	<class name="ComputedItemStat" table="ComputedItemStat">
+		<id name="Id">
+			<generator class="identity" />
+		</id>
+
+		<property name="PlayerItemId">
+			<column name="playeritemid" index="idx_computeditemstat_playeritemid" />
+		</property>
+
+		<property name="Stat">
+			<column name="stat" index="idx_computeditemstat_stat_value" />
+		</property>
+
+		<property name="Value">
+			<column name="value" index="idx_computeditemstat_stat_value" />
+		</property>
+	</class>
+</hibernate-mapping>

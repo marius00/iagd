@@ -7,85 +7,60 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using IAGrim.Services.ItemStats;
 
 namespace IAGrim.UI.Filters {
     public partial class Resistances : UserControl {
         public Resistances() {
             InitializeComponent();
+            FirefoxCheckBox.EnableNumericFilters(this);
         }
 
-        public List<string[]> Filters {
-            get {
-                // Resist
-                var resistTypes = new List<string>();
+        // Selected resist checkboxes paired with their stat fields, built once so both the plain "stat
+        // exists" filters and the per-checkbox numeric filters derive from the same mapping.
+        private List<(FirefoxCheckBox cb, string[] fields)> SelectedStatGroups() {
+            var groups = new List<(FirefoxCheckBox, string[])>();
 
-                if (resistPhysical.Checked) {
-                    resistTypes.Add("Physical");
-                }
-
-                if (resistPiercing.Checked) {
-                    resistTypes.Add("Pierce");
-                }
-
-                if (resistFire.Checked) {
-                    resistTypes.Add("Fire");
-                }
-
-                if (resistCold.Checked) {
-                    resistTypes.Add("Cold");
-                }
-
-                if (resistLightning.Checked) {
-                    resistTypes.Add("Lightning");
-                }
-
-                if (resistAether.Checked) {
-                    resistTypes.Add("Aether");
-                }
-
-                if (resistVitality.Checked) {
-                    resistTypes.Add("Life");
-                }
-
-                if (resistChaos.Checked) {
-                    resistTypes.Add("Chaos");
-                }
-
-                if (resistPoison.Checked) {
-                    resistTypes.Add("Poison");
-                }
-
-                if (resistBleeding.Checked) {
-                    resistTypes.Add("Bleeding");
-                }
-
-                // TODO: Add freeze
-
-                if (resistStun.Checked) {
-                    resistTypes.Add("Stun");
-                }
-
-                var filters = new List<string[]>();
-                if (resistElemental.Checked) {
-                    filters.Add(new[] { "defensiveElementalResistance" });
-                }
-
-                foreach (var damageType in resistTypes) {
-                    filters.Add(new[]
-                    {
-                        $"defensive{damageType}",
-                        $"defensive{damageType}Modifier",
-                        $"defensiveSlow{damageType}",
-                        $"defensiveSlow{damageType}Modifier"
-                    });
-                }
-
-
-                if (resistSlow.Checked) {
-                    filters.Add(new []{"defensiveTotalSpeedResistance"});
-                }
-                return filters;
+            if (resistElemental.Checked) {
+                groups.Add((resistElemental, new[] { "defensiveElementalResistance" }));
             }
+
+            var resistTypes = new[] {
+                (resistPhysical, "Physical"),
+                (resistPiercing, "Pierce"),
+                (resistFire, "Fire"),
+                (resistCold, "Cold"),
+                (resistLightning, "Lightning"),
+                (resistAether, "Aether"),
+                (resistVitality, "Life"),
+                (resistChaos, "Chaos"),
+                (resistPoison, "Poison"),
+                (resistBleeding, "Bleeding"),
+                // TODO: Add freeze
+                (resistStun, "Stun"),
+            };
+
+            foreach (var (cb, damageType) in resistTypes) {
+                if (!cb.Checked)
+                    continue;
+
+                groups.Add((cb, new[] {
+                    $"defensive{damageType}",
+                    $"defensive{damageType}Modifier",
+                    $"defensiveSlow{damageType}",
+                    $"defensiveSlow{damageType}Modifier"
+                }));
+            }
+
+            if (resistSlow.Checked) {
+                groups.Add((resistSlow, new[] { "defensiveTotalSpeedResistance" }));
+            }
+
+            return groups;
         }
+
+        public List<string[]> Filters => SelectedStatGroups().Select(g => g.fields).ToList();
+
+        public List<StatValueFilter> NumericFilters => FilterBuilder.From(SelectedStatGroups());
     }
 }
