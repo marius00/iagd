@@ -8,6 +8,7 @@ using IAGrim.Database.Dto;
 using IAGrim.Database.Interfaces;
 using IAGrim.Database.Model;
 using IAGrim.Services.Dto;
+using IAGrim.Services.ItemStats;
 using log4net;
 using Microsoft.Data.Sqlite;
 using NHibernate;
@@ -698,6 +699,17 @@ namespace IAGrim.Database {
                 {petFilter}";
         }
 
+        private static string ToSqlOperator(StatValueFilter.Op op) {
+            switch (op) {
+                case StatValueFilter.Op.GreaterThan: return ">";
+                case StatValueFilter.Op.GreaterOrEqual: return ">=";
+                case StatValueFilter.Op.LessThan: return "<";
+                case StatValueFilter.Op.LessOrEqual: return "<=";
+                case StatValueFilter.Op.Equal: return "=";
+                default: return ">=";
+            }
+        }
+
         private static DatabaseItemStatQuery CreateDatabaseStatQueryParams(ItemSearchRequest query) {
             var queryFragments = new List<string>();
             var queryParamsList = new Dictionary<string, string[]>();
@@ -770,6 +782,7 @@ namespace IAGrim.Database {
             wasTruncated = false;
             var queryFragments = new List<string>();
             var queryParams = new Dictionary<string, object>();
+            var statFilterListParams = new Dictionary<string, string[]>();
 
             if (item != null) {
                 queryFragments.Add("(PI.id = :playerItemId)");
@@ -913,6 +926,29 @@ namespace IAGrim.Database {
                 }
             }
 
+            // Per-checkbox numeric stat filters (e.g. Fire damage >= 30). Each one narrows to items whose
+            // pre-computed, seed-applied value for the checkbox's fields (summed) satisfies the comparison,
+            // read straight from the ComputedItemStat table so the seed engine is not replayed here.
+            // Items not yet pre-computed have no rows and are (correctly) excluded until the background
+            // worker processes them.
+            if (query.StatValueFilters != null && query.StatValueFilters.Count > 0 && !query.PetBonuses) {
+                int svfIndex = 0;
+                foreach (var svf in query.StatValueFilters) {
+                    var fieldsParam = $"svf_fields_{svfIndex}";
+                    var thresholdParam = $"svf_threshold_{svfIndex}";
+
+                    sql.Add($@" AND PI.Id IN (
+                        SELECT playeritemid FROM ComputedItemStat
+                        WHERE stat IN ( :{fieldsParam} )
+                        GROUP BY playeritemid
+                        HAVING SUM(value) {ToSqlOperator(svf.Operator)} :{thresholdParam})");
+
+                    statFilterListParams.Add(fieldsParam, svf.Fields);
+                    queryParams.Add(thresholdParam, svf.Threshold);
+                    svfIndex++;
+                }
+            }
+
             // Only cap the general "browse" search. The single-item lookup (item != null) is
             // already scoped to one specific id and never needs a limit.
             if (item == null) {
@@ -934,6 +970,10 @@ namespace IAGrim.Database {
 
                 if (query.Slot?.Length > 0) {
                     target.SetParameterList("class", query.Slot);
+                }
+
+                foreach (var key in statFilterListParams.Keys) {
+                    target.SetParameterList(key, statFilterListParams[key]);
                 }
             }
 

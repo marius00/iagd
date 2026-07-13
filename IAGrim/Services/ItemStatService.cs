@@ -144,12 +144,20 @@ namespace IAGrim.Services {
 
                 foreach (var pi in items) {
                     uint seed = unchecked((uint)(int)pi.Seed);
-                    bool hasReplica = !string.IsNullOrEmpty(pi.ReplicaInfo);
-                    pi.Tags = BuildTags(pi, statMap, seed, hasReplica);
+                    pi.Tags = BuildTags(pi, statMap, seed, HasReplicaStats(pi.ReplicaInfo));
                 }
 
                 Logger.Debug($"Applied stats to {items.Count} items");
             }
+        }
+
+        /// <summary>
+        /// True only when the item actually carries game-provided replica stats. ReplicaInfo is stored as a
+        /// JSON array and comes back as the literal "[]" (not null/empty) when the item has no replica rows,
+        /// so a plain IsNullOrEmpty check would wrongly report a replica and suppress the seed reconstruction.
+        /// </summary>
+        private static bool HasReplicaStats(string replicaInfo) {
+            return !string.IsNullOrWhiteSpace(replicaInfo) && replicaInfo.Trim() != "[]";
         }
 
         public void ApplyStatsToPlayerItems(List<PlayerItem> items) {
@@ -166,8 +174,7 @@ namespace IAGrim.Services {
                 foreach (PlayerItem pi in items) {
                     // TODO: Don't do this, use PlayerItemRecords.. somehow.. those contain pet bonuses
                     uint seed = pi.USeed;
-                    bool hasReplica = !string.IsNullOrEmpty(pi.ReplicaInfo);
-                    pi.Tags = BuildTags(pi, statMap, seed, hasReplica);
+                    pi.Tags = BuildTags(pi, statMap, seed, HasReplicaStats(pi.ReplicaInfo));
                 }
 
 

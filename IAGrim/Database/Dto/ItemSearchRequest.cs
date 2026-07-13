@@ -12,18 +12,12 @@ namespace IAGrim.Database.Dto {
         public List<string[]> Filters { get; set; }
 
         /// <summary>
-        /// Set when the user typed a numeric comparison (e.g. <c>&gt;100</c>) with exactly one stat
-        /// checkbox selected. The result set is post-filtered in-memory by each item's computed value for
-        /// <see cref="StatValueComparisonFields"/>, and <see cref="Wildcard"/> is left empty so the SQL
-        /// text/name LIKE does not run. Null for ordinary searches.
+        /// Per-checkbox numeric stat filters (e.g. Fire damage &gt;= 30) attached via each stat checkbox's
+        /// filter button. Each is applied as an in-database subquery against the pre-computed stat table.
+        /// Empty/null for searches with no numeric stat filters.
         /// </summary>
-        public NumericComparisonFilter StatValueComparison { get; set; }
+        public List<StatValueFilter> StatValueFilters { get; set; }
 
-        /// <summary>
-        /// The single selected checkbox's stat field names, whose per-item values are summed and tested
-        /// against <see cref="StatValueComparison"/>. Only meaningful when that comparison is set.
-        /// </summary>
-        public string[] StatValueComparisonFields { get; set; }
         public float MinimumLevel { get; set; }
         public float MaximumLevel { get; set; }
         public string Rarity { get; set; }
