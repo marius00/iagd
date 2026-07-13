@@ -104,6 +104,12 @@ namespace IAGrim.Services {
             item.StackCount = Math.Max(item.StackCount, 1);
             item.CreationDate = DateTime.UtcNow.ToTimestamp();
 
+            // Assign the cloud identity up front (rather than lazily at REST upload time) so it is stable and persisted before the item can be pushed over
+            // the live websocket sync. Without this, a peer could receive the item via websocket with no id, then again via REST with an id, and duplicate it.
+            if (string.IsNullOrEmpty(item.CloudId)) {
+                item.CloudId = Guid.NewGuid().ToString().Replace("-", "");
+            }
+
             var classificationService = new ItemClassificationService(cache, playerItemDao);
             classificationService.Add(item);
 

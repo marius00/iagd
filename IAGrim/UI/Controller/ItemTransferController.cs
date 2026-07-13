@@ -21,6 +21,18 @@ namespace IAGrim.UI.Controller {
         private readonly TransferStashService _transferStashService;
         private readonly SettingsService _settingsService;
 
+        /// <summary>
+        /// Raised after items have been transferred back in-game and removed locally, carrying the cloud ids of the removed items so the deletion can be synced live.
+        /// </summary>
+        public event EventHandler<ItemsTransferredEventArgs>? OnItemsTransferredToGame;
+
+        public class ItemsTransferredEventArgs : EventArgs {
+            public IList<string> CloudIds { get; }
+            public ItemsTransferredEventArgs(IList<string> cloudIds) {
+                CloudIds = cloudIds;
+            }
+        }
+
         public ItemTransferController(
             CefBrowserHandler browser,
             Action<string> feedback,
@@ -80,6 +92,15 @@ namespace IAGrim.UI.Controller {
             int numItemsReceived = (int)items.Sum(item => Math.Max(1, item.StackCount));
             _transferStashService.Deposit(items, modOverride);
             _dao.Update(items, true);
+
+            var markedForDeletion = new HashSet<string>(_dao.GetItemsMarkedForOnlineDeletion().Select(d => d.Id));
+            var removedCloudIds = items
+                .Where(item => !string.IsNullOrEmpty(item.CloudId) && markedForDeletion.Contains(item.CloudId))
+                .Select(item => item.CloudId)
+                .ToList();
+            if (removedCloudIds.Count > 0) {
+                OnItemsTransferredToGame?.Invoke(this, new ItemsTransferredEventArgs(removedCloudIds));
+            }
 
             return new TransferStatus {
                 NumItemsTransferred = (int)numItemsReceived,
