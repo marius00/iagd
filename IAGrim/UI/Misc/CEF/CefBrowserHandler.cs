@@ -155,10 +155,10 @@ namespace IAGrim.UI.Misc.CEF {
             });
         }
 
-        public void SetCollectionItems(IList<CollectionItem> items) {
+        public void SetCollectionItems(IList<CollectionItem> items, bool isHardcore) {
             SendMessage(new IOMessage {
                 Type = IOMessageType.SetCollectionItems,
-                Data = items
+                Data = new { Items = items, IsHardcore = isHardcore }
             });
         }
 

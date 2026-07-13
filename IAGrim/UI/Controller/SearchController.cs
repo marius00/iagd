@@ -66,7 +66,7 @@ namespace IAGrim.UI.Controller {
                 ExceptionReporter.EnableLogUnhandledOnThread();
 
                 var itemCollection = _itemCollectionRepo.GetItemCollection(query);
-                Browser.SetCollectionItems(itemCollection);
+                Browser.SetCollectionItems(itemCollection, query.IsHardcore);
 
                 var aggregateStats = _itemCollectionRepo.GetItemAggregateStats();
                 Browser.SetCollectionAggregateData(aggregateStats);

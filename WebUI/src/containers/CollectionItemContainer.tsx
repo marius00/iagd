@@ -11,6 +11,7 @@ import IItemAggregateRow from "../interfaces/IItemAggregateRow";
 interface Props {
   items: ICollectionItem[];
   aggregate: IItemAggregateRow[];
+  isHardcore: boolean;
 }
 
 class CollectionItemContainer extends PureComponent<Props, object> {
@@ -155,11 +156,12 @@ class CollectionItemContainer extends PureComponent<Props, object> {
     const items = this.props.items;
     const isMock = this.props.items && this.props.items.length > 0 && this.props.items[0].baseRecord === "mock item";
 
-    // TODO: Use both numOwnedSc and numOwnedHc (if support is ever added)
+    const numOwned = (item: ICollectionItem) => this.props.isHardcore ? item.numOwnedHc : item.numOwnedSc;
+
     const filterItems = (item: ICollectionItem) => {
-      if (this.state.onlyGreen && item.numOwnedSc < 1) {
+      if (this.state.onlyGreen && numOwned(item) < 1) {
         return false;
-      } else if (this.state.onlyRed && item.numOwnedSc > 0) {
+      } else if (this.state.onlyRed && numOwned(item) > 0) {
         return false;
       } else if (this.state.onlyPurple && item.quality !== 'Legendary') {
         return false;
@@ -186,10 +188,10 @@ class CollectionItemContainer extends PureComponent<Props, object> {
         {this.renderItemAggregate()}
         <div className="collectionContainer">
           {items.filter(filterItems).map((item) =>
-            <a className={'collectionItem'} onClick={() => this.openItemSite(item)} key={'collected-' + item.baseRecord} data-tip={(item.numOwnedSc > 0 ? `${this.stripColorCodes(item.name)} (x${item.numOwnedSc})` : this.stripColorCodes(item.name))}>
+            <a className={'collectionItem'} onClick={() => this.openItemSite(item)} key={'collected-' + item.baseRecord} data-tip={(numOwned(item) > 0 ? `${this.stripColorCodes(item.name)} (x${numOwned(item)})` : this.stripColorCodes(item.name))}>
 
               {/* TODO: Icon background color */}
-              <div className={(item.numOwnedSc > 0 ? 'collected' : 'uncollected') + ' imageContainer' + (' item-icon-' + toQuality(item))}>
+              <div className={(numOwned(item) > 0 ? 'collected' : 'uncollected') + ' imageContainer' + (' item-icon-' + toQuality(item))}>
                 <span className="helper"></span>
                 <img src={(isMock ? "assets/":"") + item.icon} className={"item-icon" }/>
               </div>

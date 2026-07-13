@@ -27,6 +27,7 @@ interface ApplicationState {
   isLoading: boolean;
   activeTab: number;
   collectionItems: ICollectionItem[];
+  collectionIsHardcore: boolean;
   itemAggregate: IItemAggregateRow[];
   isDarkMode: boolean;
   helpSearchFilter: string;
@@ -102,6 +103,7 @@ class App extends PureComponent<object, object> {
     isLoading: true,
     activeTab: 0,
     collectionItems: [],
+    collectionIsHardcore: false,
     itemAggregate: [],
     isDarkMode: false,
     helpSearchFilter: '',
@@ -294,7 +296,8 @@ class App extends PureComponent<object, object> {
 
         case IOMessageType.SetCollectionItems:
           this.setState({
-            collectionItems: message.data
+            collectionItems: message.data.items,
+            collectionIsHardcore: message.data.isHardcore
           });
           break;
 
@@ -507,7 +510,7 @@ class App extends PureComponent<object, object> {
           hideItemSkills={this.state.hideItemSkills}
           requestUnknownItemHelp={() => this.setState({helpSearchFilter: 'UnknownItem', activeTab: 2})}
         />}
-        {this.state.activeTab === 1 && <CollectionItemContainer items={this.state.collectionItems} aggregate={this.state.itemAggregate}/>}
+        {this.state.activeTab === 1 && <CollectionItemContainer items={this.state.collectionItems} aggregate={this.state.itemAggregate} isHardcore={this.state.collectionIsHardcore}/>}
         {this.state.activeTab === 2 && <Help searchString={this.state.helpSearchFilter} onSearch={(v: string) => this.setState({helpSearchFilter: v})}/>}
 
         <NotificationContainer notifications={this.state.notifications} onClose={this.closeNotification}/>

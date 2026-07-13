@@ -7,7 +7,7 @@ namespace IAGrim.UI.Misc.CEF {
     public interface IBrowserCallbacks {
         void AddItems(List<List<JsonItem>> items);
         void SetItems(List<List<JsonItem>> items, int numItemsFound);
-        void SetCollectionItems(IList<CollectionItem> items);
+        void SetCollectionItems(IList<CollectionItem> items, bool isHardcore);
         void SetCollectionAggregateData(IList<CollectionItemAggregateRow> rows);
         void ShowLoadingAnimation(bool visible);
         void ShowModFilterWarning(int numOtherItems);
