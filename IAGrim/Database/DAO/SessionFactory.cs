@@ -46,5 +46,22 @@ namespace IAGrim.Database {
             //logger.DebugFormat("Stateless session opened on thread {0}, Stacktrace: {1}", System.Threading.Thread.CurrentThread.Name, new System.Diagnostics.StackTrace());
             return _sessionFactory.Value.OpenStatelessSession();
         }
+
+        /// <summary>
+        /// Truncates the SQLite write-ahead log back into the main database file.
+        /// WAL mode is enabled (see EnableWalJournalMode) but never checkpointed otherwise, so the
+        /// -wal file grows unbounded across sessions - especially when the process is killed rather
+        /// than closed cleanly. A large -wal makes the first queries on the next launch extremely
+        /// slow (observed as an ~11s stall during startup on a fully populated collection).
+        /// </summary>
+        public void Checkpoint() {
+            try {
+                using ISession session = OpenSession();
+                session.CreateSQLQuery("PRAGMA wal_checkpoint(TRUNCATE);").List();
+            }
+            catch (Exception ex) {
+                Logger.Warn("Failed to checkpoint the WAL", ex);
+            }
+        }
     }
 }

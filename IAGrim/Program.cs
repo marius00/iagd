@@ -167,22 +167,33 @@ namespace IAGrim
         }
 
         private static void Run(string[] args) {
+            var startupTimer = System.Diagnostics.Stopwatch.StartNew();
+            void Timed(string step) {
+                Logger.Info($"[timing] {step} took {startupTimer.ElapsedMilliseconds} ms");
+                startupTimer.Restart();
+            }
+
             var factory = new SessionFactory();
             Logger.Debug("Executing DB migrations..");
             new MigrationHandler(factory).Migrate();
+            Timed("DB migrations");
 
             var serviceProvider = ServiceProvider.Initialize();
+            Timed("ServiceProvider.Initialize");
 
             var settingsService = serviceProvider.Get<SettingsService>();
 
             var databaseItemDao = serviceProvider.Get<IDatabaseItemDao>();
             RuntimeSettings.InitializeLanguage(settingsService.GetLocal().LanguageCode, databaseItemDao.GetTagDictionary());
+            Timed("InitializeLanguage");
 #if DEBUG
             DumpTranslationTemplate();
+            Timed("DumpTranslationTemplate");
 #endif
 
             Logger.Debug("Loading UUID");
             LoadUuid(settingsService);
+            Timed("LoadUuid");
 
             // Persist Wine detection so the injected DLL can read it from the settings file
             settingsService.GetPersistent().IsRunningInWine = WineDetector.IsRunningInWine();
@@ -225,7 +236,15 @@ namespace IAGrim
 
 
             StartupService.PerformGrimUpdateCheck(settingsService);
+
+            // Self-heal a WAL that bloated from a previous unclean shutdown (e.g. a crash or the
+            // debugger being stopped). Runs off the UI thread so it never delays the window.
+            System.Threading.Tasks.Task.Run(() => factory.Checkpoint());
+
             Application.Run(_mw);
+
+            // Truncate the WAL back into the main db on a clean exit so the next launch starts fast.
+            factory.Checkpoint();
 
             Logger.Info("Application ended.");
         }
