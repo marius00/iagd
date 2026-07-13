@@ -7,6 +7,7 @@ using IAGrim.Backup.Cloud.CefSharp.Events;
 using IAGrim.Backup.Cloud.Service;
 using IAGrim.Backup.Cloud.Util;
 using IAGrim.BuddyShare;
+using IAGrim.Database;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.Arz;
 using IAGrim.Parsers.GameDataParsing.Service;
@@ -25,6 +26,7 @@ using IAGrim.Utilities.Cloud;
 using IAGrim.Utilities.HelperClasses;
 using log4net;
 using Microsoft.Web.WebView2.Core;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IAGrim.UI {
@@ -59,6 +61,7 @@ namespace IAGrim.UI {
         private readonly ParsingService _parsingService;
         private AuthService? _authService;
         private BackupServiceWorker? _backupServiceWorker;
+        private WebSocketSyncService? _webSocketSyncService;
         private readonly UserFeedbackService _userFeedbackService;
         private MinimizeToTrayHandler? _minimizeToTrayHandler;
         private ModsDatabaseConfig? _modsDatabaseConfigTab;
@@ -305,6 +308,8 @@ namespace IAGrim.UI {
 
             _backupServiceWorker?.Dispose();
             _backupServiceWorker = null;
+            _webSocketSyncService?.Dispose();
+            _webSocketSyncService = null;
 
             _window?.Dispose();
             _window = null;
@@ -515,6 +520,12 @@ namespace IAGrim.UI {
             var backupService = new BackupService(_authService, playerItemDao, settingsService, _cefBrowserHandler);
             _charBackupService = new CharacterBackupService(settingsService, _authService);
             _backupServiceWorker = new BackupServiceWorker(backupService, _charBackupService);
+
+            // Live sync for "multiple PCs" users: pushes new items/deletions and applies the same
+            // events from the user's other machines instantly. The regular backup above remains the
+            // source of truth; this only makes updates propagate faster.
+            _webSocketSyncService = new WebSocketSyncService(new AuthenticationProvider(settingsService), settingsService, playerItemDao);
+            _webSocketSyncService.Start();
             searchController.JsIntegration.OnRequestBackedUpCharacterList += (_, args) => {
                 RequestCharacterListEventArg a = args as RequestCharacterListEventArg;
                 a.Characters = _charBackupService.ListBackedUpCharacters();
@@ -641,6 +652,15 @@ namespace IAGrim.UI {
 
                 var item = arg.Item;
                 _searchWindow.UpdateListView(item);
+
+                // Push the freshly looted item to the user's other machines immediately.
+                _webSocketSyncService?.SendItems(new List<PlayerItem> { item });
+            };
+
+            // Push in-game transfers (deletions) live, so the item disappears from the user's other
+            // machines before it can be transferred a second time and duplicated.
+            _transferController.OnItemsTransferredToGame += (_, arg) => {
+                _webSocketSyncService?.SendDeletions(arg.CloudIds);
             };
 
             _csvFileMonitor.StartMonitoring(GlobalPaths.CsvLocationIngoing, "*.csv");

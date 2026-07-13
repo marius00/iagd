@@ -21,6 +21,10 @@ namespace IAGrim.Backup.Cloud {
                     throw new ArgumentException(env);
             }
 
+            // Websocket host mirrors the REST host, swapping http(s) for ws(s).
+            var wsHost = host.Replace("https://", "wss://").Replace("http://", "ws://");
+            WebSocketUrl = $"{wsHost}/ws";
+
             TokenVerificationUri = $"{host}/logincheck";
             TokenPollUri = $"{host}/status";
             UploadItemsUrl = $"{host}/upload";
@@ -39,6 +43,7 @@ namespace IAGrim.Backup.Cloud {
             LoginPageUrl = "https://iagd.evilsoft.net/login/";
         }
         public static string LoginPageUrl { get; private set; }
+        public static string WebSocketUrl { get; private set; }
         public static string DownloadUrl { get; private set; }
         public static string TokenVerificationUri { get; private set; }
         public static string TokenPollUri { get; private set; }
