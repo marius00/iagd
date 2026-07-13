@@ -82,9 +82,6 @@ namespace IAGrim.UI.Filters {
                     filters.Add(new[] {"augmentMastery1", "augmentMastery2"});
                 }
 
-                if (cbPetBonuses.Checked) {
-                    filters.Add(new[] {"petBonusName"});
-                }
 
                 if (cbEnergyRegen.Checked) {
                     filters.Add(new[] {"characterManaRegen", "characterManaRegenModifier"});
