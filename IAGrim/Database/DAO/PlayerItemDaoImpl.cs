@@ -473,6 +473,10 @@ namespace IAGrim.Database {
                 
                 using (var transaction = session.BeginTransaction()) {
                     foreach (var item in items) {
+                        session.CreateSQLQuery($"DELETE FROM ComputedItemStat WHERE playeritemid IN (select id from playeritem WHERE {PlayerItemTable.CloudId} = :uuid)")
+                            .SetParameter("uuid", item.Id)
+                            .ExecuteUpdate();
+
                         session.CreateSQLQuery($"DELETE FROM ReplicaItem2 WHERE playeritemid IN (select id from playeritem WHERE {PlayerItemTable.CloudId} = :uuid)")
                             .SetParameter("uuid", item.Id)
                             .ExecuteUpdate();

@@ -14,6 +14,7 @@ using IAGrim.Parsers.GameDataParsing.Service;
 using IAGrim.Parsers.TransferStash;
 using IAGrim.Services;
 using IAGrim.Services.ItemReplica;
+using IAGrim.Services.ItemStats;
 using IAGrim.Services.MessageProcessor;
 using IAGrim.Settings;
 using IAGrim.UI.Controller;
@@ -47,6 +48,7 @@ namespace IAGrim.UI {
         private CsvFileMonitor? _csvFileMonitor = new CsvFileMonitor();
         private CsvFileMonitor? _replicaCsvFileMonitor = new CsvFileMonitor();
         private ItemReplicaRequesterService? _itemReplicaService;
+        private ItemStatPrecomputeService? _itemStatPrecomputeService;
 
         private Action<RegisterWindow.DataAndType>? _registerWindowDelegate;
         private RegisterWindow? _window;
@@ -287,6 +289,9 @@ namespace IAGrim.UI {
             _itemReplicaService?.Dispose();
             _itemReplicaService = null;
 
+            _itemStatPrecomputeService?.Dispose();
+            _itemStatPrecomputeService = null;
+
             _minimizeToTrayHandler?.Dispose();
             _minimizeToTrayHandler = null;
 
@@ -479,6 +484,7 @@ namespace IAGrim.UI {
 
 
             var replicaItemDao = _serviceProvider.Get<IReplicaItemDao>();
+            var computedItemStatDao = _serviceProvider.Get<IComputedItemStatDao>();
             var transferStashService = new TransferStashService();
                 
 
@@ -513,7 +519,7 @@ namespace IAGrim.UI {
             };
 
 
-            _modsDatabaseConfigTab = new ModsDatabaseConfig(DatabaseLoadedTrigger, playerItemDao, _parsingService, grimDawnDetector, settingsService, _cefBrowserHandler, databaseItemDao, replicaItemDao);
+            _modsDatabaseConfigTab = new ModsDatabaseConfig(DatabaseLoadedTrigger, playerItemDao, _parsingService, grimDawnDetector, settingsService, _cefBrowserHandler, databaseItemDao, replicaItemDao, computedItemStatDao);
             UIHelper.AddAndShow(_modsDatabaseConfigTab, modsPanel);
 
             var itemTagDao = _serviceProvider.Get<IItemTagDao>();
@@ -570,6 +576,9 @@ namespace IAGrim.UI {
             
             _itemReplicaService = _serviceProvider.Get<ItemReplicaRequesterService>();
             _itemReplicaService.Start();
+
+            _itemStatPrecomputeService = _serviceProvider.Get<ItemStatPrecomputeService>();
+            _itemStatPrecomputeService.Start();
 
 
 #if !DEBUG

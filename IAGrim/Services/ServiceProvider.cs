@@ -2,6 +2,7 @@
 using IAGrim.Database.DAO;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.TransferStash;
+using IAGrim.Services.ItemStats;
 using IAGrim.UI.Controller;
 using log4net;
 
@@ -60,6 +61,7 @@ namespace IAGrim.Services {
             IItemSkillDao itemSkillDao;
             IItemCollectionDao itemCollectionRepo;
             IReplicaItemDao replicaItemDao;
+            IComputedItemStatDao computedItemStatDao;
 
             databaseItemStatDao = new DatabaseItemStatDaoImpl(factory);
             playerItemDao = new PlayerItemDaoImpl(factory, databaseItemStatDao);
@@ -70,6 +72,7 @@ namespace IAGrim.Services {
             itemSkillDao = new ItemSkillDaoImpl(factory);
             itemCollectionRepo = new ItemCollectionDaoImpl(factory);
             replicaItemDao = new ReplicaItemDaoImpl(factory);
+            computedItemStatDao = new ComputedItemStatDaoImpl(factory);
             Timed("Construct DAOs");
 
             
@@ -97,6 +100,8 @@ namespace IAGrim.Services {
                 searchController,
                 new ItemReplicaRequesterService(playerItemDao, buddyItemDao, settingsService),
                 replicaItemDao,
+                computedItemStatDao,
+                new ItemStatPrecomputeService(computedItemStatDao, databaseItemStatDao),
                 itemStatService
             ];
 
