@@ -669,48 +669,84 @@ namespace IAGrim.Database {
             public Dictionary<string, string[]> Parameters;
         }
 
+        // A PlayerItemRecord row is a "pet record" iff it isn't one of the item's own core records
+        // (base/prefix/suffix/materia/ascendant affixes). GetPetBonusRecords inserts the resolved petBonusName targets (which can point at devotion procs, granted skills, set bonuses, relics, etc
+        // IFNULL is required: Prefix/Suffix/Materia/Ascendant records are NULL (not '') on most items,
+        // and "x NOT IN (a, b, NULL)" evaluates to NULL/false for every row once any operand is NULL.
+        private const string PetRecordCondition = @"pir.record NOT IN (
+                IFNULL(pi2.BaseRecord, ''), IFNULL(pi2.PrefixRecord, ''), IFNULL(pi2.SuffixRecord, ''),
+                IFNULL(pi2.MateriaRecord, ''), IFNULL(pi2.AscendantAffixNameRecord, ''), IFNULL(pi2.AscendantAffix2hNameRecord, '')
+            )";
+
         // Wrap a condition on the databaseitemstat_v2 row (aliased 'dbs') into a subquery returning
         // the matching player item ids. Driven by joining PlayerItemRecord (owned records only) to
         // databaseitem_v2 and databaseitemstat_v2 via indexes, rather than scanning all databaseitems
         // with a correlated EXISTS and an owned-records UNION (which was 20-25x slower on large collections).
-        private static string RecordStatSubquery(string dbsCondition) {
+        private static string RecordStatSubquery(string dbsCondition, bool petOnly = false) {
+            var petJoin = petOnly ? "JOIN PlayerItem pi2 ON pi2.Id = pir.Playeritemid" : "";
+            var petFilter = petOnly ? $"AND {PetRecordCondition}" : "";
+
             return $@"
                 SELECT pir.Playeritemid FROM PlayerItemRecord pir
+                {petJoin}
                 JOIN databaseitem_v2 db ON db.baserecord = pir.record
-                JOIN databaseitemstat_v2 dbs ON dbs.id_databaseitem = db.id_databaseitem AND ({dbsCondition})";
+                JOIN databaseitemstat_v2 dbs ON dbs.id_databaseitem = db.id_databaseitem AND ({dbsCondition})
+                {petFilter}";
         }
 
         private static DatabaseItemStatQuery CreateDatabaseStatQueryParams(ItemSearchRequest query) {
             var queryFragments = new List<string>();
             var queryParamsList = new Dictionary<string, string[]>();
 
+            // Pet-bonus target records store every one of their stats under a "pet"-prefixed name
+            // (e.g. "petcharacterAttackSpeedModifier", "petretaliationPhysicalMin"), see StatManager's petStats handling, which does the same strip in reverse.
+            var petPrefix = query.PetBonuses ? "pet" : "";
+
             // Add the damage/resist filter
             foreach (var filter in query.Filters) {
+                var effectiveFilter = query.PetBonuses ? filter.Select(s => petPrefix + s).ToArray() : filter;
                 queryFragments.Add($"dbs.stat in ( :filter_{filter.GetHashCode()} )");
-                queryParamsList.Add($"filter_{filter.GetHashCode()}", filter);
+                queryParamsList.Add($"filter_{filter.GetHashCode()}", effectiveFilter);
             }
 
             if (query.IsRetaliation) {
-                queryFragments.Add("dbs.stat like 'retaliation%'");
+                queryFragments.Add($"dbs.stat like '{petPrefix}retaliation%'");
             }
 
             // TODO: Seems we only have LIST parameters here.. won't work for this, since we'd get OR not AND on classes.
             // No way to get a non-list param?
             foreach (var desiredClass in query.Classes) {
+                var classStats = new[] {
+                    "augmentSkill1Extras", "augmentSkill2Extras", "augmentSkill3Extras", "augmentSkill4Extras",
+                    "augmentMastery1", "augmentMastery2", "augmentMastery3", "augmentMastery4"
+                }.Select(s => $"'{petPrefix}{s}'");
                 queryFragments.Add(
-                    "dbs.stat IN ('augmentSkill1Extras','augmentSkill2Extras','augmentSkill3Extras','augmentSkill4Extras','augmentMastery1','augmentMastery2','augmentMastery3','augmentMastery4') "
+                    $"dbs.stat IN ({string.Join(",", classStats)}) "
                     + $" AND dbs.TextValue = '{desiredClass}'"); // Not ideal
             }
 
             if (queryFragments.Count > 0) {
                 List<string> sql = new List<string>();
                 foreach (var fragment in queryFragments) {
-                    sql.Add(RecordStatSubquery(fragment));
+                    sql.Add(RecordStatSubquery(fragment, query.PetBonuses));
                 }
 
 
                 return new DatabaseItemStatQuery {
                     SQL = sql,
+                    Parameters = queryParamsList,
+                };
+            }
+
+            // Pet bonus checked with no other stat filter selected: just require the item to have
+            // a pet record at all, i.e. the plain "has a pet bonus" meaning.
+            if (query.PetBonuses) {
+                return new DatabaseItemStatQuery {
+                    SQL = new List<string> {
+                        $@"SELECT pir.Playeritemid FROM PlayerItemRecord pir
+                           JOIN PlayerItem pi2 ON pi2.Id = pir.Playeritemid
+                           WHERE {PetRecordCondition}"
+                    },
                     Parameters = queryParamsList,
                 };
             }
