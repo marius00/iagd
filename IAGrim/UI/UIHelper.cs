@@ -12,7 +12,7 @@ namespace IAGrim.UI
         public static Action<Form, Panel> AddAndShow = (f, p) => {
             f.TopLevel = false;
             p.Controls.Add(f);
-            p.Width = p.Parent.Width;
+            p.Width = p.Parent!.Width;
             p.Height = p.Parent.Height;
             f.Show();
         };
@@ -23,7 +23,7 @@ namespace IAGrim.UI
                 {
                     new ComboBoxItemQuality
                     {
-                        Text = RuntimeSettings.Language.GetTag("iatag_rarity_any"),
+                        Text = RuntimeSettings.Language!.GetTag("iatag_rarity_any"),
                         Rarity = null
                     },
                     new ComboBoxItemQuality
@@ -73,7 +73,7 @@ namespace IAGrim.UI
                 {
                     new ComboBoxItem
                     {
-                        Text = language.GetTag("iatag_slot_any"),
+                        Text = language!.GetTag("iatag_slot_any"),
                         Filter = null
 
                     },

@@ -27,10 +27,11 @@ namespace IAGrim.Parsers.Arz {
             foreach (var item in _items) {
                 var skill = GetSkill(item);
                 if (skill != null) {
-                    if (!SkillItemMapping.ContainsKey(skill.Record))
-                        SkillItemMapping[skill.Record] = new List<string>();
+                    var skillRecord = skill.Record ?? string.Empty;
+                    if (!SkillItemMapping.ContainsKey(skillRecord))
+                        SkillItemMapping[skillRecord] = new List<string>();
 
-                    SkillItemMapping[skill.Record].Add(item.Record);
+                    SkillItemMapping[skillRecord].Add(item.Record ?? string.Empty);
                     Skills.Add(skill);
                 }
 
@@ -42,12 +43,12 @@ namespace IAGrim.Parsers.Arz {
             Logger.Debug($"Generated {Skills.Count} skills for {numItemsWithSkills} items.");
         }
 
-        private ItemGrantedSkill GetSkill(DatabaseItem item) {
+        private ItemGrantedSkill? GetSkill(DatabaseItem item) {
             try {
-                if (item.Stats.Any(m => m.Stat.Equals("itemSkillName"))) {
-                    var record = item.Stats.FirstOrDefault(m => m.Stat.Equals("itemSkillName"))?.TextValue;
+                if (item.Stats != null && item.Stats.Any(m => m.Stat?.Equals("itemSkillName") ?? false)) {
+                    var record = item.Stats.FirstOrDefault(m => m.Stat?.Equals("itemSkillName") ?? false)?.TextValue;
 
-                    var stats = _items.FirstOrDefault(m => m.Record.Equals(record))?.Stats;
+                    var stats = _items.FirstOrDefault(m => m.Record?.Equals(record) ?? false)?.Stats;
                     // Doesn't exist??
                     if (stats == null)
                         return null;
@@ -57,20 +58,20 @@ namespace IAGrim.Parsers.Arz {
                     if (subSkill != null) {
                         var sub = _items.FirstOrDefault(m => m.Record == subSkill.TextValue);
                         if (sub != null) {
-                            stats = sub.Stats;
+                            stats = sub.Stats ?? stats;
                             record = sub.Record;
                         }
                     }
 
 
-                    var nameTag = stats.FirstOrDefault(m => m.Stat.Equals("skillDisplayName"))?.TextValue ?? string.Empty;
-                    var descTag = stats.FirstOrDefault(m => m.Stat.Equals("skillBaseDescription"))?.TextValue ?? string.Empty;
+                    var nameTag = stats.FirstOrDefault(m => m.Stat?.Equals("skillDisplayName") ?? false)?.TextValue ?? string.Empty;
+                    var descTag = stats.FirstOrDefault(m => m.Stat?.Equals("skillBaseDescription") ?? false)?.TextValue ?? string.Empty;
 
 
                     var name = _tags.ContainsKey(nameTag) ? _tags[nameTag] : null;
                     var desc = _tags.ContainsKey(descTag) ? _tags[descTag] : null;
 
-                    var level = item.Stats.FirstOrDefault(m => m.Stat.Equals("itemSkillLevelEq"))?.TextValue;
+                    var level = item.Stats.FirstOrDefault(m => m.Stat?.Equals("itemSkillLevelEq") ?? false)?.TextValue;
                     long l = 0;
                     if (!string.IsNullOrEmpty(level))
                         long.TryParse(level, out l);
@@ -81,7 +82,7 @@ namespace IAGrim.Parsers.Arz {
                         Name = name,
                         Description = desc,
                         Level = l,
-                        Trigger = item.Stats.FirstOrDefault(m => m.Stat.Equals("itemSkillAutoController"))?.TextValue
+                        Trigger = item.Stats.FirstOrDefault(m => m.Stat?.Equals("itemSkillAutoController") ?? false)?.TextValue
                     };
                 }
             }

@@ -15,11 +15,11 @@ namespace IAGrim.Backup.Cloud.Service {
     public class BackupService {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(BackupService));
         private readonly SettingsService _settings;
-        private CloudSyncService _cloudSyncService;
+        private CloudSyncService? _cloudSyncService;
         private readonly IBrowserCallbacks _browser;
         private readonly AuthService _authService;
         private readonly IPlayerItemDao _playerItemDao;
-        private Limitations _cooldowns;
+        private Limitations? _cooldowns;
         private bool _hasSyncedDownOnce = false; // When not using DualPC enabled, IA will only download items once per session. They won't be updating anyways.
         private DateTimeOffset _lastSearchDt = DateTimeOffset.UtcNow;
         const int MaxBatchSize = 100;
@@ -46,11 +46,14 @@ namespace IAGrim.Backup.Cloud.Service {
             }
 
             if (_cloudSyncService == null) {
-                _cloudSyncService = new CloudSyncService(_authService.GetRestService());
+                _cloudSyncService = new CloudSyncService(_authService.GetRestService()!);
             }
 
             if (_cooldowns == null) {
                 var limits = _cloudSyncService.GetLimitations();
+                if (limits == null || limits.Regular == null || limits.MultiUsage == null) {
+                    return;
+                }
                 var regular = new LimitationSet(cooldownDeletion: limits.Regular.Delete, cooldownUpload: limits.Regular.Upload, cooldownDownload: limits.Regular.Download);
                 var multi = new LimitationSet(cooldownDeletion: limits.MultiUsage.Delete, cooldownUpload: limits.MultiUsage.Upload, cooldownDownload: limits.MultiUsage.Download);
                 _cooldowns = new Limitations(regular: regular, multiUsage: multi);
@@ -99,7 +102,7 @@ namespace IAGrim.Backup.Cloud.Service {
                 }
 
                 var toSync = dtos.GetRange(i, Math.Min(100, dtos.Count - i));
-                if (_cloudSyncService.Delete(toSync)) {
+                if (_cloudSyncService!.Delete(toSync)) {
                     _playerItemDao.ClearItemsMarkedForOnlineDeletion();
                     Logger.Debug($"Removal successful ({items.Count} items)");
                 }
@@ -184,7 +187,7 @@ namespace IAGrim.Backup.Cloud.Service {
 
                 Logger.Info($"Synchronizing batch with {batch.Count} items to cloud");
                 try {
-                    if (_cloudSyncService.Save(batch.Select(ItemConverter.ToUpload).ToList())) {
+                    if (_cloudSyncService!.Save(batch.Select(ItemConverter.ToUpload).ToList())) {
                         // TODO: Hopefully all were stored?
                         Logger.Info($"Upload successful, marking {batch.Count} as synchronized");
                         _playerItemDao.SetAsSynchronized(batch);
@@ -215,12 +218,12 @@ namespace IAGrim.Backup.Cloud.Service {
                 var knownItems = _playerItemDao.GetOnlineIds();
                 var deletedItems = _playerItemDao.GetItemsMarkedForOnlineDeletion();
                 var timestamp = _settings.GetPersistent().CloudUploadTimestamp;
-                var sync = _cloudSyncService.Get(timestamp);
+                var sync = _cloudSyncService!.Get(timestamp);
 
                 // Skip items we've deleted locally
-                var items = sync.Items
+                var items = (sync.Items ?? new List<CloudItemDto>())
                     .Where(item => deletedItems.All(deleted => deleted.Id != item.Id))
-                    .Where(item => !knownItems.Contains(item.Id))
+                    .Where(item => !knownItems.Contains(item.Id ?? ""))
                     .Select(ItemConverter.ToPlayerItem)
                     .ToList();
 
@@ -231,7 +234,7 @@ namespace IAGrim.Backup.Cloud.Service {
                     _playerItemDao.Save(batch);
                 }
 
-                foreach (var batch in ToBatches(sync.Removed)) {
+                foreach (var batch in ToBatches(sync.Removed ?? new List<DeleteItemDto>())) {
                     _playerItemDao.Delete(batch);
                 }
                 

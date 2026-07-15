@@ -52,7 +52,7 @@ namespace IAGrim.Services {
 
         private void FileSystemScanner(string path, string filter) {
             var knownFiles = new HashSet<string>(
-                Directory.GetFiles(path, filter).Select(Path.GetFileName)
+                Directory.GetFiles(path, filter).Select(f => Path.GetFileName(f)!)
             );
 
 
@@ -62,7 +62,7 @@ namespace IAGrim.Services {
                         .Select(Path.GetFileName);
 
                     foreach (var file in files) {
-                        if (knownFiles.Contains(file)) continue;
+                        if (file == null || knownFiles.Contains(file)) continue;
 
                         knownFiles.Add(file);
                         OnModified?.Invoke(this, new CsvEvent(Path.Combine(path, file)));

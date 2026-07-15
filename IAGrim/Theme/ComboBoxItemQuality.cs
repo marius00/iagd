@@ -10,18 +10,18 @@ namespace IAGrim.Theme {
             set;
         }
 
-        public string Rarity {
+        public string? Rarity {
             get;
             set;
         }
 
-        public string Text {
+        public string? Text {
             get;
             set;
         }
 
         public override string ToString() {
-            return Text;
+            return Text ?? string.Empty;
         }
     }
 }

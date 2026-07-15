@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 namespace IAGrim.Parsers.Arz {
     class StatUpdateUIBackgroundWorker : IDisposable {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(StatUpdateUIBackgroundWorker));
-        private BackgroundWorker _bw = new BackgroundWorker();
+        private BackgroundWorker? _bw = new BackgroundWorker();
         private bool _disposed = false;
         private readonly IPlayerItemDao _playerItemDao;
 
@@ -34,7 +34,7 @@ namespace IAGrim.Parsers.Arz {
 
 
 
-        private void bw_DoWork(object sender, DoWorkEventArgs e) {
+        private void bw_DoWork(object? sender, DoWorkEventArgs e) {
             try {
                 if (Thread.CurrentThread.Name == null)
                     Thread.CurrentThread.Name = "StatParserUI";
@@ -42,8 +42,9 @@ namespace IAGrim.Parsers.Arz {
 
                 Logger.Info("Updating player stats");
 
-                BackgroundWorker worker = sender as BackgroundWorker;
-
+                BackgroundWorker? worker = sender as BackgroundWorker;
+                if (worker == null)
+                    return;
 
                 // Update all stats
                 Logger.Debug("Loading all player items (ListAll)");

@@ -31,14 +31,14 @@ namespace IAGrim.UI {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void bw_ProgressChanged(object sender, ProgressChangedEventArgs e) {
+        void bw_ProgressChanged(object? sender, ProgressChangedEventArgs e) {
             if (this.InvokeRequired) {
                 this.Invoke((MethodInvoker)delegate {
                     bw_ProgressChanged(sender, e);
                 });
             }
             else {
-                if ((int)e.UserState == 1)
+                if ((int)e.UserState! == 1)
                     this.progressBar2.Maximum = e.ProgressPercentage;
                 else
                     this.progressBar2.Value = e.ProgressPercentage;
@@ -48,11 +48,11 @@ namespace IAGrim.UI {
 
         private void UpdatingPlayerItemsScreen_Load(object sender, EventArgs e) {
             this.FormClosing += ParsingDatabaseScreen_FormClosing;
-            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
+            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language!);
         }
 
 
-        void bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
+        void bw_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e) {
             if (e.Error != null)
                 throw e.Error;
 
@@ -62,7 +62,7 @@ namespace IAGrim.UI {
 
         
 
-        void ParsingDatabaseScreen_FormClosing(object sender, FormClosingEventArgs e) {
+        void ParsingDatabaseScreen_FormClosing(object? sender, FormClosingEventArgs e) {
             e.Cancel = !CanClose;
         }
 

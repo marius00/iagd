@@ -1,7 +1,7 @@
 ﻿namespace IAGrim.Backup.Cloud.Dto {
     public class CloudItemDto {
-        public string Id { get; set; }
-        public string Mod { get; set; }
+        public string? Id { get; set; }
+        public string? Mod { get; set; }
         public virtual bool IsHardcore { get; set; }
 
         public string BaseRecord { get; set; } = "";
@@ -29,9 +29,9 @@
         public long PrefixRarity { get; set; }
 
 
-        public string Name { get; set; }
-        public string NameLowercase { get; set; }
-        public string Rarity { get; set; }
+        public string? Name { get; set; }
+        public string? NameLowercase { get; set; }
+        public string? Rarity { get; set; }
         public int LevelRequirement { get; set; }
     }
 }

@@ -77,7 +77,7 @@ namespace IAGrim.Services.ItemStats {
             Dictionary<string, List<DBStatRow>> statMap =
                 _databaseItemStatDao.GetStats(records, StatFetch.PlayerItems);
 
-            List<DBStatRow> Rows(string record) =>
+            List<DBStatRow> Rows(string? record) =>
                 !string.IsNullOrEmpty(record) && statMap.ContainsKey(record) ? statMap[record] : new List<DBStatRow>();
 
             foreach (var item in items) {

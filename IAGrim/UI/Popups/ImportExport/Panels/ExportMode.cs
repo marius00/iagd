@@ -19,7 +19,7 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
         private readonly GDTransferFile[] _modSelection;
         private readonly IPlayerItemDao _playerItemDao;
         private readonly Action onClose;
-        private string _filename;
+        private string? _filename;
         private bool _isGdstashFormat = false;
 
         public ExportMode(GDTransferFile[] modSelection, IPlayerItemDao playerItemDao, Action onClose) {
@@ -64,15 +64,15 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
             cbItemSelection.SelectedIndex = 0;
             buttonExport.Enabled = false;
             cbItemSelection.Visible = false;
-            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
+            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language!);
         }
 
         private void buttonExport_Click(object sender, EventArgs e) {
-            if (buttonExport.Enabled) {
+            if (buttonExport.Enabled && _filename != null) {
                 if (_isGdstashFormat) {
                     var io = new GDFileExporter(_filename, string.Empty); // Params are not used for writing
 
-                    GDTransferFile settings = cbItemSelection.SelectedItem as GDTransferFile;
+                    GDTransferFile? settings = cbItemSelection.SelectedItem as GDTransferFile;
                     if (settings == null) {
                         var items = _playerItemDao.ListAll();
                         io.Write(items);
@@ -95,7 +95,7 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
                     io.Write(items);
                 }
                 
-                MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_exportsuccess"), RuntimeSettings.Language.GetTag("iatag_ui_exportsuccess"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(RuntimeSettings.Language!.GetTag("iatag_ui_exportsuccess"), RuntimeSettings.Language.GetTag("iatag_ui_exportsuccess"), MessageBoxButtons.OK, MessageBoxIcon.Information);
                 this.onClose();
             }
         }

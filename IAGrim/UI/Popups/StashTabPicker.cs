@@ -101,7 +101,7 @@ namespace IAGrim.UI.Popups {
             radioOutputSecondToLast.Checked = _settings.GetLocal().StashToDepositTo == 0;
             radioInputLast.Checked = _settings.GetLocal().StashToLootFrom == 0;
 
-            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
+            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language!);
         }
 
         private void radioOutputSecondToLast_CheckedChanged(object sender, EventArgs e) {

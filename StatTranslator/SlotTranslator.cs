@@ -3,7 +3,7 @@
 namespace StatTranslator
 {
     public static class SlotTranslator {
-        static Dictionary<string, string> SlotMap;
+        static Dictionary<string, string>? SlotMap;
         public static string Translate(ILocalizedLanguage language, string stat) {
             if (SlotMap == null) {
                 SlotMap = new Dictionary<string, string>

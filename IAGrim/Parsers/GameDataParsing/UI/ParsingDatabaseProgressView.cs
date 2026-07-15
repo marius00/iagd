@@ -36,7 +36,7 @@ namespace IAGrim.Parsers.GameDataParsing.UI {
             this.FormClosing += OnFormClosing;
         }
 
-        private void OnFormClosing(object sender, FormClosingEventArgs formClosingEventArgs) {
+        private void OnFormClosing(object? sender, FormClosingEventArgs formClosingEventArgs) {
             if (formClosingEventArgs.CloseReason == CloseReason.UserClosing) {
                 formClosingEventArgs.Cancel = !closePermitted;
             } else {
@@ -45,7 +45,9 @@ namespace IAGrim.Parsers.GameDataParsing.UI {
         }
 
         private void ParsingDatabaseProgressView_Load(object sender, EventArgs e) {
-            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
+            if (RuntimeSettings.Language != null) {
+                LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
+            }
         }
     }
 }

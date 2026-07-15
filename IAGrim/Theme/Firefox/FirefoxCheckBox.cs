@@ -23,7 +23,7 @@ class FirefoxCheckBox : CheckBox {
     public bool IsDarkMode { get; set; }
     private byte[] checkMarkBytes => Convert.FromBase64String(IsDarkMode ? Theme.GetCheckMark() :  Theme.GetLightCheckMark());
 
-    private Graphics G;
+    private Graphics? G;
 
 
     #endregion
@@ -66,7 +66,7 @@ class FirefoxCheckBox : CheckBox {
     }
 
     /// <summary>Raised when the numeric filter is set or removed via the filter dialog (not on cancel).</summary>
-    public event EventHandler FilterChanged;
+    public event EventHandler? FilterChanged;
 
     /// <summary>
     /// When true, a small filter (funnel) button is drawn on the right edge of the checkbox while it is
@@ -117,7 +117,7 @@ class FirefoxCheckBox : CheckBox {
         this.CheckedChanged += FirefoxCheckBox_CheckedChanged;
     }
 
-    private void FirefoxCheckBox_CheckedChanged(object sender, EventArgs e) {
+    private void FirefoxCheckBox_CheckedChanged(object? sender, EventArgs e) {
         // Unchecking the stat removes any numeric filter: "stat >= n" makes no sense without the stat.
         if (!Checked && HasFilter) {
             ClearFilter();
@@ -134,7 +134,7 @@ class FirefoxCheckBox : CheckBox {
     private bool ShouldShowFilterIcon =>
         SupportsNumericFilter && Enabled && Checked;
 
-    private void FirefoxCheckBox_EnabledChanged(object sender, EventArgs e) {
+    private void FirefoxCheckBox_EnabledChanged(object? sender, EventArgs e) {
         Invalidate();
     }
 
@@ -146,7 +146,7 @@ class FirefoxCheckBox : CheckBox {
 
         base.OnPaint(e);
 
-        G.Clear(Parent.BackColor);
+        G.Clear(Parent?.BackColor ?? BackColor);
 
         DpiHelper dpiHelper = new DpiHelper(G);
         Rectangle checkboxRect = dpiHelper.ScaleRectangle(new Rectangle(3, 3, 20, 20));

@@ -37,7 +37,7 @@ namespace IAGrim
             ExceptionReporter.Uuid = uuid;
         }
 
-        public static MainWindow MainWindow => _mw;
+        public static MainWindow? MainWindow => _mw;
 
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace IAGrim
                 Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
             }
 
-            var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
+            var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly());
             XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
 
 
@@ -209,6 +209,9 @@ namespace IAGrim
             // TODO: Offload to the new language loader
             if (RuntimeSettings.Language is EnglishLanguage language) {
                 foreach (var tag in itemTagDao.GetClassItemTags()) {
+                    if (tag.Tag == null || tag.Name == null) {
+                        continue;
+                    }
                     language.SetTagIfMissing(tag.Tag, tag.Name);
                 }
             }

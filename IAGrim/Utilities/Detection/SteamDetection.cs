@@ -16,7 +16,7 @@ namespace IAGrim.Utilities.Detection {
         /// Checks if a directory contains the "config/config.vdf" file, which typically indicates the Steam install directory.
         /// </summary>
         /// <param name="path">Path to check</param>
-        private static bool IsSteamDirectory(string path) {
+        private static bool IsSteamDirectory(string? path) {
             return !String.IsNullOrEmpty(path) && File.Exists(Path.Combine(path, "config", "config.vdf"));
         }
 
@@ -32,13 +32,13 @@ namespace IAGrim.Utilities.Detection {
         private static string GetSteamDirectoryFromValveRegistry() {
             foreach (string candidate in new[] { VALVE_32BIT_PATH, VALVE_64BIT_PATH }) {
 
-                using (RegistryKey registryKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\Valve\Steam")) {
+                using (RegistryKey? registryKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\Valve\Steam")) {
                     Logger.Debug("Looking for steam registry key..");
                     if (registryKey != null) {
-                        string location = (string)registryKey.GetValue("SteamPath");
+                        string? location = (string?)registryKey.GetValue("SteamPath");
                         if (IsSteamDirectory(location)) {
                             Logger.Info("Steam config location located");
-                            return location;
+                            return location!;
                         }
                     }
 
@@ -52,15 +52,15 @@ namespace IAGrim.Utilities.Detection {
 
         private static string GetSteamDirectoryFromShellRegistry() {
             // Attempt to locate steam via the shell command, registry entry "Computer\HKEY_CLASSES_ROOT\steam\Shell\Open\Command"
-            using (RegistryKey registryKey = Microsoft.Win32.Registry.ClassesRoot.OpenSubKey(@"steam\Shell\Open\Command")) {
-                string content = (string)registryKey?.GetValue("");
+            using (RegistryKey? registryKey = Microsoft.Win32.Registry.ClassesRoot.OpenSubKey(@"steam\Shell\Open\Command")) {
+                string? content = (string?)registryKey?.GetValue("");
                 if (!String.IsNullOrEmpty(content) && content.Contains(".exe")) {
                     var sub = content.Substring(0, 4 + content.IndexOf(".exe", StringComparison.InvariantCultureIgnoreCase)).Replace("\"", "");
                     var exe = Path.GetFullPath(sub);
                     if (File.Exists(exe)) {
-                        var candidate = Directory.GetParent(exe).FullName;
-                        if (IsSteamDirectory(candidate)) {
-                            return candidate;
+                        var parent = Directory.GetParent(exe);
+                        if (parent != null && IsSteamDirectory(parent.FullName)) {
+                            return parent.FullName;
                         }
                     }
                 }

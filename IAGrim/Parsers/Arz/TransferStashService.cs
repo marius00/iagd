@@ -67,7 +67,7 @@ namespace IAGrim.Parsers.Arz {
         }
 
 
-        public static PlayerItem Map(Item item, string mod, bool isHardcore) {
+        public static PlayerItem Map(Item item, string? mod, bool isHardcore) {
             return new PlayerItem {
                 BaseRecord = item.BaseRecord,
                 EnchantmentRecord = item.EnchantmentRecord,
@@ -94,19 +94,19 @@ namespace IAGrim.Parsers.Arz {
 
         public static Item Map(PlayerItem item) {
             return new Item (6u) {
-                BaseRecord = item.BaseRecord,
-                EnchantmentRecord = item.EnchantmentRecord,
+                BaseRecord = item.BaseRecord ?? "",
+                EnchantmentRecord = item.EnchantmentRecord ?? "",
                 EnchantmentSeed = (uint) item.EnchantmentSeed,
                 MateriaCombines = (uint) item.MateriaCombines,
-                MateriaRecord = item.MateriaRecord,
-                ModifierRecord = item.ModifierRecord,
-                PrefixRecord = item.PrefixRecord,
-                RelicCompletionBonusRecord = item.RelicCompletionBonusRecord,
+                MateriaRecord = item.MateriaRecord ?? "",
+                ModifierRecord = item.ModifierRecord ?? "",
+                PrefixRecord = item.PrefixRecord ?? "",
+                RelicCompletionBonusRecord = item.RelicCompletionBonusRecord ?? "",
                 RelicSeed = (uint) item.RelicSeed,
                 Seed = item.USeed,
                 StackCount = Math.Max(1, (uint) item.StackCount),
-                SuffixRecord = item.SuffixRecord,
-                TransmuteRecord = item.TransmuteRecord,
+                SuffixRecord = item.SuffixRecord ?? "",
+                TransmuteRecord = item.TransmuteRecord ?? "",
                 UNKNOWN = (uint) item.UNKNOWN
             };
         }

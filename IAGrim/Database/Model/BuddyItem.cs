@@ -14,19 +14,19 @@ namespace IAGrim.Database {
     public class BuddyItem : BaseItem, PlayerHeldItem {
         [Obsolete] // Absolutely do not use
         public virtual long Id { get; set; }
-        private DatabaseItem Internal { get; set; }
+        private DatabaseItem? Internal { get; set; }
         public virtual bool IsKnown => Internal != null;
         public virtual float MinimumLevel { get; set; }
-        public virtual PlayerItemSkill Skill { get; } = null;
-        public virtual string Bitmap => DatabaseItem.GetBitmap(Tags);
-        public virtual string Slot => DatabaseItem.GetSlot(Tags);
-        public virtual string Rarity { get; set; }
+        public virtual PlayerItemSkill? Skill { get; } = null;
+        public virtual string Bitmap => DatabaseItem.GetBitmap(Tags ?? new HashSet<DBStatRow>());
+        public virtual string Slot => DatabaseItem.GetSlot(Tags ?? Enumerable.Empty<DBStatRow>());
+        public virtual string? Rarity { get; set; }
         public virtual List<SkillModifierStat> ModifiedSkills { get; } = new List<SkillModifierStat>();
-        
+
         public virtual long PrefixRarity { get; set; }
-        public virtual string Stash { get; set; }
+        public virtual string? Stash { get; set; }
         public virtual string? Name { get; set; }
-        public virtual string NameLowercase { get; set; } // To help with case insensitive search on non-ascii characters
+        public virtual string? NameLowercase { get; set; } // To help with case insensitive search on non-ascii characters
         public virtual long StackCount { get; set; }
         public virtual long CreationDate { get; set; }
 
@@ -41,7 +41,7 @@ namespace IAGrim.Database {
             set => StackCount = (long)value;
         }
 
-        public virtual int CompareTo(object obj) {
+        public virtual int CompareTo(object? obj) {
             if (obj is PlayerHeldItem item) {
                 if (Name != null && item.Name != null) {
                     return Name.CompareTo(item.Name);
@@ -56,19 +56,19 @@ namespace IAGrim.Database {
         public virtual bool HasRecipe { get; set; }
 
         // Online UUID
-        public virtual string RemoteItemId { get; set; }
+        public virtual string? RemoteItemId { get; set; }
 
         /// <summary>
         /// SubscriptionId / ID of the buddy
         /// </summary>
         public virtual long BuddyId { get; set; }
         public virtual bool IsHardcore { get; set; }
-        public virtual string Mod { get; set; }
-        public virtual string ReplicaInfo { get; set; }
+        public virtual string? Mod { get; set; }
+        public virtual string? ReplicaInfo { get; set; }
 
 
 
-        public override bool Equals(object obj) {
+        public override bool Equals(object? obj) {
             if (obj is BuddyItem that) {
                 return this.RemoteItemId == that.RemoteItemId && this.BuddyId == that.BuddyId;
             }

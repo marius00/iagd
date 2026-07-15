@@ -18,7 +18,7 @@ namespace IAGrim.Database.Model {
 
         public virtual long Id { get; set; }
         public virtual long PlayerItemId { get; set; }
-        public virtual string Stat { get; set; }
+        public virtual string? Stat { get; set; }
         public virtual double Value { get; set; }
     }
 }

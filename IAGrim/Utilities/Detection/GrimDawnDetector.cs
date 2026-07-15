@@ -26,14 +26,14 @@ namespace IAGrim {
             // Hopefully this is where GOG stores all its games
             // Works for detecting Prison Architect
             string gog = @"Software\Wow6432Node\GOG.com\Games";
-            using (RegistryKey registryKey = Registry.LocalMachine.OpenSubKey(gog)) {
+            using (RegistryKey? registryKey = Registry.LocalMachine.OpenSubKey(gog)) {
                 Logger.Debug("Looking for Grim Dawn GOG install..");
                 if (registryKey != null) {
                     foreach (string s in registryKey.GetSubKeyNames()) {
-                        using (RegistryKey gameKey = Registry.LocalMachine.OpenSubKey(Path.Combine(gog, s))) {
+                        using (RegistryKey? gameKey = Registry.LocalMachine.OpenSubKey(Path.Combine(gog, s))) {
                             if (gameKey != null) {
-                                string exe = (string)gameKey.GetValue("EXEFILE");
-                                string location = (string)gameKey.GetValue("PATH");
+                                string? exe = (string?)gameKey.GetValue("EXEFILE");
+                                string? location = (string?)gameKey.GetValue("PATH");
                                 if (!string.IsNullOrEmpty(exe) && !string.IsNullOrEmpty(location)) {
                                     bool isGrimDawn = "grim dawn.exe".Equals(Path.GetFileName(exe).ToLowerInvariant());
                                     bool exists = File.Exists(Path.Combine(location, exe));
@@ -64,27 +64,32 @@ namespace IAGrim {
         /// </summary>
         /// <returns></returns>
         private static string FindSteamUserdata() {
-            using (RegistryKey registryKey = Registry.LocalMachine.OpenSubKey(@"Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 219990")) {
-                string location = (string) registryKey?.GetValue("InstallLocation");
+            using (RegistryKey? registryKey = Registry.LocalMachine.OpenSubKey(@"Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 219990")) {
+                string? location = (string?) registryKey?.GetValue("InstallLocation");
                 if (!string.IsNullOrEmpty(location)) {
 
-
-                    location = Path.Combine(Directory.GetParent(location).Parent.Parent.FullName, "userdata");
-                    if (Directory.Exists(location)) {
-                        Logger.Info("Grim Dawn userdata location located using App Id");
-                        return location;
+                    var parent = Directory.GetParent(location)?.Parent?.Parent;
+                    if (parent != null) {
+                        location = Path.Combine(parent.FullName, "userdata");
+                        if (Directory.Exists(location)) {
+                            Logger.Info("Grim Dawn userdata location located using App Id");
+                            return location;
+                        }
                     }
                 }
             }
 
-            using (RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(@"Software\Valve\Steam")) {
+            using (RegistryKey? registryKey = Registry.CurrentUser.OpenSubKey(@"Software\Valve\Steam")) {
                 if (registryKey != null) {
-                    string location = (string)registryKey.GetValue("SourceModInstallPath");
+                    string? location = (string?)registryKey.GetValue("SourceModInstallPath");
                     if (!string.IsNullOrEmpty(location)) {
-                        string p = Path.Combine(Directory.GetParent(location).Parent.FullName, "userdata");
-                        if (Directory.Exists(p)) {
-                            Logger.Info("Grim Dawn install location located using Source Mod Path");
-                            return p;
+                        var parent = Directory.GetParent(location)?.Parent;
+                        if (parent != null) {
+                            string p = Path.Combine(parent.FullName, "userdata");
+                            if (Directory.Exists(p)) {
+                                Logger.Info("Grim Dawn install location located using Source Mod Path");
+                                return p;
+                            }
                         }
                     }
                 }
@@ -131,14 +136,18 @@ namespace IAGrim {
 
                 foreach (string possible in possibles) {
                     Logger.Debug($"Checking {possible}...");
-                    var p = Path.Combine(Path.GetDirectoryName(possible), "database", "database.arz");
+                    var possibleDir = Path.GetDirectoryName(possible);
+                    if (possibleDir == null) {
+                        continue;
+                    }
+                    var p = Path.Combine(possibleDir, "database", "database.arz");
                     if (File.Exists(p)) {
-                        return Path.GetDirectoryName(possible);
+                        return Path.GetDirectoryName(possible) ?? string.Empty;
                     }
                     else {
-                        var x64 = Path.Combine(Path.GetDirectoryName(possible), "..", "database", "database.arz");
+                        var x64 = Path.Combine(possibleDir, "..", "database", "database.arz");
                         if (File.Exists(x64)) {
-                            return Path.GetDirectoryName(Path.GetFullPath(Path.Combine(possible, "..")));
+                            return Path.GetDirectoryName(Path.GetFullPath(Path.Combine(possible, ".."))) ?? string.Empty;
                         }
                     }
                 }
@@ -252,9 +261,10 @@ namespace IAGrim {
                 var searcher = new ManagementObjectSearcher("Select * From Win32_Process");
                 var processList = searcher.Get();
                 foreach (var process in processList) {
-                    if ("grim dawn.exe".Equals(process["Name"].ToString().ToLowerInvariant())) {
-                        if (File.Exists(process["ExecutablePath"].ToString()))
-                            paths.Add(process["ExecutablePath"].ToString());
+                    if ("grim dawn.exe".Equals(process["Name"]?.ToString()?.ToLowerInvariant())) {
+                        var executablePath = process["ExecutablePath"]?.ToString();
+                        if (executablePath != null && File.Exists(executablePath))
+                            paths.Add(executablePath);
                     }
                 }
             }
@@ -299,7 +309,7 @@ namespace IAGrim {
                     return GetWindowModuleFileName(pid);
                 }
 
-                return proc.MainModule?.FileName;
+                return proc.MainModule?.FileName ?? string.Empty;
             }	
             catch (ArgumentException ex) {
                 Logger.Warn(ex.Message);
@@ -321,7 +331,7 @@ namespace IAGrim {
 
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
+        public static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string? lpszWindow);
 
         [DllImport("user32.dll", SetLastError = true)]
         static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
@@ -338,7 +348,7 @@ namespace IAGrim {
             IntPtr prevWindow = IntPtr.Zero;
             do {
                 prevWindow = FindWindowEx(IntPtr.Zero, prevWindow, windowname, null);
-                if (prevWindow != null && prevWindow != IntPtr.Zero) {
+                if (prevWindow != IntPtr.Zero) {
                     GetWindowThreadProcessId(prevWindow, out pid);
                     string path = GetProcessPath(pid);
                     if (!string.IsNullOrEmpty(path)) {

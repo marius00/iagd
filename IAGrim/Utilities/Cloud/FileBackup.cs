@@ -10,7 +10,7 @@ namespace IAGrim.Utilities.Cloud {
 
     internal class FileBackup : ICloudBackup {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(FileBackup));
-        private Stopwatch _timer;
+        private Stopwatch? _timer;
         private readonly SettingsService _settingsService;
         private readonly IPlayerItemDao _playerItemDao;
 
@@ -156,6 +156,8 @@ namespace IAGrim.Utilities.Cloud {
         /// <param name="character">Character name (with leading _ if applicable)</param>
         public static void BackupCharacter(string target, string character) {
             var destination = Path.GetDirectoryName(target);
+            if (destination == null)
+                return;
             if (!Directory.Exists(destination))
                 Directory.CreateDirectory(destination);
 
@@ -198,6 +200,8 @@ namespace IAGrim.Utilities.Cloud {
 
         public static void BackupCommon(string target) {
             var destination = Path.GetDirectoryName(target);
+            if (destination == null)
+                return;
             if (!Directory.Exists(destination))
                 Directory.CreateDirectory(destination);
 

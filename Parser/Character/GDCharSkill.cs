@@ -13,9 +13,9 @@ namespace IAGrim.Parser.Character {
         private const string PATTERN_DEVOTION = "records/skills/devotion/(.*).dbr";
         private const string PATTERN_MASTER_SKILL = "records/skills/playerclass(.*)/[^_]+(.*).dbr";
 
-        public string Name { get; private set; }
-        public string AutoCastSkill { get; private set; }
-        public string AutoCastController { get; private set; }
+        public string? Name { get; private set; }
+        public string? AutoCastSkill { get; private set; }
+        public string? AutoCastController { get; private set; }
         public int Level { get; private set; }
         public int DevotionLevel { get; private set; }
         public int Experience { get; private set; }

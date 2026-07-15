@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IAGrim.Database.Model {
     public class ItemSetAssociation {
-        public string BaseRecord { get; set; }
-        public string SetName { get; set; }
+        public string? BaseRecord { get; set; }
+        public string? SetName { get; set; }
     }
 }

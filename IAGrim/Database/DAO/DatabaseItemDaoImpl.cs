@@ -1,5 +1,6 @@
 ﻿using IAGrim.Database.Interfaces;
 using log4net;
+using System.Linq;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Transform;
@@ -30,7 +31,8 @@ namespace IAGrim.Database {
             Dictionary<string, string> result = new Dictionary<string, string>();
             using (var session = SessionCreator.OpenStatelessSession()) {
                 foreach (ItemTag entry in session.CreateCriteria<ItemTag>().List()) {
-                    result[entry.Tag] = entry.Name;
+                    if (entry.Tag == null) continue;
+                    result[entry.Tag] = entry.Name ?? string.Empty;
                 }
             }
 
@@ -53,7 +55,7 @@ namespace IAGrim.Database {
                 }
 
                 using (ITransaction transaction = session.BeginTransaction()) {
-                    foreach (DatabaseItemStat stat in item.Stats) {
+                    foreach (DatabaseItemStat stat in item.Stats ?? Enumerable.Empty<DatabaseItemStat>()) {
                         stat.Parent = item;
                         //session.Insert(stat);
                     }
@@ -196,7 +198,7 @@ namespace IAGrim.Database {
 
                 using var transaction = dbConnection.BeginTransaction();
                 foreach (DatabaseItem item in items) {
-                    foreach (DatabaseItemStat stat in item.Stats) {
+                    foreach (DatabaseItemStat stat in item.Stats ?? Enumerable.Empty<DatabaseItemStat>()) {
                         using var command = new SqliteCommand(sql, dbConnection);
                         command.Transaction = transaction;
                         command.Parameters.Add(new SqliteParameter("@id", item.Id));

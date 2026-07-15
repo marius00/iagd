@@ -7,21 +7,21 @@ namespace IAGrim.Backup.Cloud.Util {
     static class ItemConverter {
         public static CloudItemDto ToUpload(PlayerItem pi) {
             return new CloudItemDto {
-                BaseRecord = pi.BaseRecord,
-                EnchantmentRecord = pi.EnchantmentRecord,
+                BaseRecord = pi.BaseRecord ?? "",
+                EnchantmentRecord = pi.EnchantmentRecord ?? "",
                 EnchantmentSeed = pi.EnchantmentSeed,
                 IsHardcore = pi.IsHardcore,
                 MateriaCombines = pi.MateriaCombines,
-                MateriaRecord = pi.MateriaRecord,
+                MateriaRecord = pi.MateriaRecord ?? "",
                 Mod = pi.Mod,
-                ModifierRecord = pi.ModifierRecord,
-                PrefixRecord = pi.PrefixRecord,
-                RelicCompletionBonusRecord = pi.RelicCompletionBonusRecord,
+                ModifierRecord = pi.ModifierRecord ?? "",
+                PrefixRecord = pi.PrefixRecord ?? "",
+                RelicCompletionBonusRecord = pi.RelicCompletionBonusRecord ?? "",
                 RelicSeed = pi.RelicSeed,
                 Seed = pi.Seed,
                 StackCount = Math.Max(pi.StackCount, 1),
-                SuffixRecord = pi.SuffixRecord,
-                TransmuteRecord = pi.TransmuteRecord,
+                SuffixRecord = pi.SuffixRecord ?? "",
+                TransmuteRecord = pi.TransmuteRecord ?? "",
                 Id = pi.CloudId,
                 CreatedAt = pi.CreationDate ?? DateTime.UtcNow.ToTimestamp(),
                 LevelRequirement = (int)pi.MinimumLevel,
@@ -29,10 +29,10 @@ namespace IAGrim.Backup.Cloud.Util {
                 NameLowercase = pi.NameLowercase,
                 Rarity = pi.Rarity,
                 PrefixRarity = pi.PrefixRarity,
-                AscendantAffix2hNameRecord = pi.AscendantAffix2hNameRecord,
+                AscendantAffix2hNameRecord = pi.AscendantAffix2hNameRecord ?? "",
                 RerollsUsed = pi.RerollsUsed,
                 AffixRerollsUsed = pi.AffixRerollsUsed,
-                AscendantAffixNameRecord = pi.AscendantAffixNameRecord,
+                AscendantAffixNameRecord = pi.AscendantAffixNameRecord ?? "",
             };
         }
 

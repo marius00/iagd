@@ -45,7 +45,7 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
 
         private void ImportExportModePicker_Load(object sender, EventArgs e) {
             this.Dock = DockStyle.Fill;
-            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
+            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language!);
         }
     }
 }

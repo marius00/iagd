@@ -9,11 +9,11 @@ namespace IAGrim.Backup.Cloud.Service {
         }
 
         public string GetToken() {
-            return _settings.GetPersistent().CloudAuthToken;
+            return _settings.GetPersistent().CloudAuthToken ?? string.Empty;
         }
 
         public string GetUser() {
-            return _settings.GetPersistent().CloudUser;
+            return _settings.GetPersistent().CloudUser ?? string.Empty;
         }
 
         public bool HasToken() {

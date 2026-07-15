@@ -22,14 +22,14 @@ namespace IAGrim.Database {
             get => IsCloudSynchronizedValue != null && IsCloudSynchronizedValue != 0;
             set => IsCloudSynchronizedValue = value ? 1 : 0;
         }
-        public virtual System.Int64 IsCloudSynchronizedValue { get; set; }
+        public virtual System.Int64? IsCloudSynchronizedValue { get; set; }
 
         public virtual bool IsKnown => Tags != null && Tags.Count > 0;
         
-        public virtual string Bitmap => Parser.Helperclasses.ParserHelpers<DBStatRow>.GetBitmap(Tags);
+        public virtual string Bitmap => Parser.Helperclasses.ParserHelpers<DBStatRow>.GetBitmap(Tags ?? Enumerable.Empty<DBStatRow>());
 
-        public virtual string Rarity { get; set; }
-        public string Mod { get; set; }
+        public virtual string? Rarity { get; set; }
+        public string? Mod { get; set; }
         public virtual bool IsHardcore { get; set; }
 
         public bool IsExpansion1 { get; set; }
@@ -46,17 +46,17 @@ namespace IAGrim.Database {
 
         public virtual string Slot {
             get {
-                if (Tags.Any(m => "Class".Equals(m.Stat)))
-                    return Tags.FirstOrDefault(m => "Class".Equals(m.Stat)).TextValue;
+                if (Tags != null && Tags.Any(m => "Class".Equals(m.Stat)))
+                    return Tags.FirstOrDefault(m => "Class".Equals(m.Stat))?.TextValue ?? string.Empty;
                 else
                     return string.Empty;
             }
         }
 
-        public virtual PlayerItemSkill Skill { get; set; }
+        public virtual PlayerItemSkill? Skill { get; set; }
 
 
-        private DatabaseItem Internal { get; set; }
+        private DatabaseItem? Internal { get; set; }
 
 
         public virtual List<SkillModifierStat> ModifiedSkills { get; } = new List<SkillModifierStat>();
@@ -72,7 +72,7 @@ namespace IAGrim.Database {
             }
         }
 
-        public virtual string RelicCompletionBonusRecord { get; set; }
+        public virtual string? RelicCompletionBonusRecord { get; set; }
         public virtual long RelicSeed { get; set; }
         public virtual long UNKNOWN { get; set; }
         public virtual long EnchantmentSeed { get; set; }
@@ -80,8 +80,8 @@ namespace IAGrim.Database {
         public virtual long StackCount { get; set; }
         public virtual long RerollsUsed { get; set; }
         public virtual long AffixRerollsUsed { get; set; }
-        public virtual string Name { get; set; }
-        public virtual string NameLowercase { get; set; } // To help with case insensitive search on non-ascii characters
+        public virtual string? Name { get; set; }
+        public virtual string? NameLowercase { get; set; } // To help with case insensitive search on non-ascii characters
         public virtual long PrefixRarity { get; set; }
 
         public virtual string Stash => string.Empty;
@@ -93,8 +93,8 @@ namespace IAGrim.Database {
         }
 
 
-        public virtual int CompareTo(object obj) {
-            PlayerHeldItem item = obj as PlayerHeldItem;
+        public virtual int CompareTo(object? obj) {
+            PlayerHeldItem? item = obj as PlayerHeldItem;
 
             if (item != null) {
                 if (Name != null && item.Name != null) {
@@ -120,6 +120,6 @@ namespace IAGrim.Database {
         }
 
         public virtual long? CreationDate { get; set; }
-        public virtual string ReplicaInfo { get; set; }
+        public virtual string? ReplicaInfo { get; set; }
     }
 }

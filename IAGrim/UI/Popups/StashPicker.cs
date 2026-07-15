@@ -23,7 +23,7 @@ namespace IAGrim.UI {
 
 
         private void StashPicker_Load(object sender, EventArgs e) {
-            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
+            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language!);
             int n = 0;
 
             var target = _settings.GetLocal().LastSelectedTargetMod;
@@ -45,7 +45,7 @@ namespace IAGrim.UI {
             this.Height += n * 33;
         }
 
-        public StashPickerResult Result { get; private set; }
+        public StashPickerResult? Result { get; private set; }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
             if (keyData == Keys.Enter) {
@@ -68,7 +68,7 @@ namespace IAGrim.UI {
                             Mod = mod.Mod,
                             IsHardcore = mod.IsHardcore
                         };
-                        _settings.GetLocal().LastSelectedTargetMod = mod.Mod;
+                        _settings.GetLocal().LastSelectedTargetMod = mod.Mod ?? string.Empty;
                         _settings.GetLocal().LastSelectedTargetModIsHc = mod.IsHardcore;
                         this.DialogResult = DialogResult.OK;
                     }
@@ -85,7 +85,7 @@ namespace IAGrim.UI {
         }
 
         public class StashPickerResult {
-            public string Mod {
+            public string? Mod {
                 get;
                 set;
             }

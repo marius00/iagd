@@ -7,7 +7,7 @@ namespace IAGrim.Parser.Arz {
 
     public class Record {
         public uint StringIndex { get; set; }
-        public string Type { get; set; }
+        public string? Type { get; set; }
 
         public uint Offset { get; set; }
 
@@ -21,8 +21,8 @@ namespace IAGrim.Parser.Arz {
             }
         }
 
-        public byte[] Compressed { get; set; }
-        public byte[] Uncompressed { get; set; }
+        public byte[]? Compressed { get; set; }
+        public byte[]? Uncompressed { get; set; }
 
 
         private uint _SizeUncompressed;

@@ -13,7 +13,7 @@ namespace IAGrim.UI.Popups {
         public ProgressBar ProgressBar => progressBar1;
         public DownloadingUpdateModal() {
             InitializeComponent();
-            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
+            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language!);
         }
 
         private void DownloadingUpdateModal_Load(object sender, EventArgs e) {

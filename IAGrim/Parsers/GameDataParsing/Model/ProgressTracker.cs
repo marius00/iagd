@@ -32,8 +32,8 @@ namespace IAGrim.Parsers.GameDataParsing.Model {
             }
         }
 
-        public event EventHandler OnProgressChanged;
-        public event EventHandler OnMaxValueChanged;
+        public event EventHandler? OnProgressChanged;
+        public event EventHandler? OnMaxValueChanged;
 
         public void Increment() {
             if (_currentValue + 1 <= _maxValue) {

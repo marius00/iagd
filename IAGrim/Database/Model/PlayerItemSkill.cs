@@ -10,29 +10,29 @@ using StatTranslator;
 
 namespace IAGrim.Database.Model {
     public class PlayerItemSkill {
-        public string PlayerItemRecord { get; set; }
-        public string Description { get; set; }
+        public string? PlayerItemRecord { get; set; }
+        public string? Description { get; set; }
 
         public long? Level { get; set; }
 
-        public string Record { get; set; }
+        public string? Record { get; set; }
 
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         public long StatsId { get; set; }
 
-        public string TriggerRecord { get; set; }
+        public string? TriggerRecord { get; set; }
 
-        public TranslatedStat Trigger => TriggerRecord == null ? null : RuntimeSettings.StatManager.TranslateSkillAutoController(TriggerRecord);
+        public TranslatedStat? Trigger => TriggerRecord == null ? null : RuntimeSettings.StatManager?.TranslateSkillAutoController(TriggerRecord);
 
-        public ISet<DBStatRow> Tags {
+        public ISet<DBStatRow>? Tags {
             get;
             set;
         }
 
         public IList<TranslatedStat> PetStats {
             get {
-                if (Tags == null)
+                if (Tags == null || RuntimeSettings.StatManager == null)
                     return new List<TranslatedStat>();
                 return RuntimeSettings.StatManager.ProcessStats(new HashSet<IItemStat>(Tags), TranslatedStatType.PET);
             }
@@ -40,7 +40,7 @@ namespace IAGrim.Database.Model {
 
         public IList<TranslatedStat> HeaderStats {
             get {
-                if (Tags == null)
+                if (Tags == null || RuntimeSettings.StatManager == null)
                     return new List<TranslatedStat>();
                 return RuntimeSettings.StatManager.ProcessStats(new HashSet<IItemStat>(Tags), TranslatedStatType.HEADER);
             }
@@ -48,7 +48,7 @@ namespace IAGrim.Database.Model {
 
         public IList<TranslatedStat> BodyStats {
             get {
-                if (Tags == null)
+                if (Tags == null || RuntimeSettings.StatManager == null)
                     return new List<TranslatedStat>();
                 return RuntimeSettings.StatManager.ProcessStats(new HashSet<IItemStat>(Tags), TranslatedStatType.BODY);
             }

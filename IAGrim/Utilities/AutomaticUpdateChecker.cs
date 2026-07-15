@@ -98,8 +98,8 @@ namespace IAGrim.Utilities {
                     return;
                 }
 
-                string version = release.TagName;
-                _downloadUri = release.Assets?.Count > 0 ? release.Assets[0].BrowserDownloadUrl : null;
+                string? version = release.TagName;
+                _downloadUri = release.Assets?.Count > 0 ? release.Assets[0].BrowserDownloadUrl ?? string.Empty : string.Empty;
                 if (string.IsNullOrEmpty(version) || string.IsNullOrEmpty(_downloadUri)) {
                     if (userInitiated) {
                         MessageBox.Show("Something went wrong checking for updates", "Something went wrong");

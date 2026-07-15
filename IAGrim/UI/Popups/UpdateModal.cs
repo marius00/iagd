@@ -17,7 +17,7 @@ namespace IAGrim.UI.Popups {
         private readonly SettingsService _settingsService;
         public UpdateModal(SettingsService settingsService, string version, bool forceUpdate) {
             InitializeComponent();
-            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
+            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language!);
             _settingsService = settingsService;
             _version = version;
             this.DialogResult = DialogResult.None;

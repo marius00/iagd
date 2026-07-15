@@ -5,22 +5,22 @@
     };
 
     public class TranslatedStat {
-        public string Text;
+        public string? Text;
         public float? Param0;
         public float? Param1;
         public float? Param2;
 
-        public string Param3;
+        public string? Param3;
         public float? Param4;
-        public string Param5;
-        public string Param6;
+        public string? Param5;
+        public string? Param6;
 
         public TranslatedStatType Type;
 
         /// <summary>
         /// This is used to embed extra data, like embedding "Tier 4 Occultist" on a +2 to SomeSkill
         /// </summary>
-        public TranslatedStat Extra;
+        public TranslatedStat? Extra;
 
         public override string ToString() {
             var text = Text;

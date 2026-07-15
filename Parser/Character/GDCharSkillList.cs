@@ -9,7 +9,7 @@ namespace IAGrim.Parser.Character {
     public class GDCharSkillList {
         private const int VERSION = 5;
         private const int BLOCK = 8;
-        public List<GDCharSkill> Skills { get; private set; }
+        public List<GDCharSkill>? Skills { get; private set; }
 
         public void Read(GDCryptoDataBuffer reader) {
             reader.ReadBlockStart(BLOCK);

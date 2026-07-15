@@ -8,13 +8,13 @@ namespace IAGrim.Utilities.Logging {
     // https://stackoverflow.com/questions/14114614/configuring-log4net-textboxappender-custom-appender-via-xml-file
     public class TextBoxAppender : AppenderSkeleton {
         private readonly object _lockObj = new object();
-        private TextBox _textBox;
-        public string FormName { get; set; }
-        public string TextBoxName { get; set; }
+        private TextBox? _textBox;
+        public string? FormName { get; set; }
+        public string? TextBoxName { get; set; }
         private List<string> backlog = new List<string>();
 
         protected override void Append(LoggingEvent loggingEvent) {
-            var msg = "[" + loggingEvent.TimeStamp.ToString("dd/MM HH:mm:ss") + "] " + loggingEvent.Level.DisplayName + " " + loggingEvent.RenderedMessage + "\r\n";
+            var msg = "[" + loggingEvent.TimeStamp.ToString("dd/MM HH:mm:ss") + "] " + loggingEvent.Level?.DisplayName + " " + loggingEvent.RenderedMessage + "\r\n";
             
             if (_textBox == null) {
                 backlog.Add(msg);
@@ -24,7 +24,7 @@ namespace IAGrim.Utilities.Logging {
                 if (String.IsNullOrEmpty(FormName) || String.IsNullOrEmpty(TextBoxName))
                     return;
 
-                Form form = Application.OpenForms[FormName];
+                Form? form = Application.OpenForms[FormName];
                 if (form == null)
                     return;
 

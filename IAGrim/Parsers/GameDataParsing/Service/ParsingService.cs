@@ -14,14 +14,14 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
     public class ParsingService {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ParsingService));
         private string _grimdawnLocation;
-        private string _modLocation;
+        private string? _modLocation;
 
         private readonly IItemTagDao _itemTagDao;
         private readonly IDatabaseItemDao _databaseItemDao;
         private readonly IDatabaseItemStatDao _databaseItemStatDao;
         private readonly IItemSkillDao _itemSkillDao;
         private readonly string _languageCode;
-        public event EventHandler OnParseComplete;
+        public event EventHandler? OnParseComplete;
 
 
         public ParsingService(
@@ -145,7 +145,7 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
                 parser.LoadItems(arzFiles, new WinformsProgressBar(form.LoadingItems).Tracker);
                 parser.MapItemNames(new WinformsProgressBar(form.MappingItemNames).Tracker);
                 parser.RenamePetStats(new WinformsProgressBar(form.MappingPetStats).Tracker);
-                _databaseItemDao.Save(parser.Items, new WinformsProgressBar(form.SavingItems).Tracker);
+                _databaseItemDao.Save(parser.Items ?? [], new WinformsProgressBar(form.SavingItems).Tracker);
                 _databaseItemDao.CreateItemIndexes(new WinformsProgressBar(form.IndexingItems).Tracker);
 
                 // TODO: This depends on the DB item name.. which is in english, not localized

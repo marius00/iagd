@@ -9,7 +9,7 @@ namespace IAGrim.Database.Interfaces {
         /// sentinel marker row), in one transaction. An empty map still writes the sentinel, marking the
         /// item as processed so it is not picked up again.
         /// </summary>
-        void SaveComputed(long playerItemId, IReadOnlyDictionary<string, double> stats);
+        void SaveComputed(long playerItemId, IReadOnlyDictionary<string, double>? stats);
 
         /// <summary>
         /// Player items (up to <paramref name="limit"/>) that have no rows in the computed-stat table yet,

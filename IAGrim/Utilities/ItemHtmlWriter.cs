@@ -63,10 +63,10 @@ namespace IAGrim.Utilities {
             bool isCloudSynced = false;
             object[] transferUrl = { "", "", "", "" };
             string uniqueIdentifier = GetUniqueIdentifier(item);
-            List<ItemStatInfo> replicaStats = null;
+            List<ItemStatInfo>? replicaStats = null;
             var mergeIdentifier = item.BaseRecord ?? string.Empty;
             if (item is PlayerItem pi) {
-                transferUrl = new object[] { pi.BaseRecord, pi.PrefixRecord, pi.SuffixRecord, pi.MateriaRecord, pi.Mod, pi.IsHardcore };
+                transferUrl = new object[] { pi.BaseRecord ?? "", pi.PrefixRecord ?? "", pi.SuffixRecord ?? "", pi.MateriaRecord ?? "", pi.Mod ?? "", pi.IsHardcore };
                 isCloudSynced = pi.IsCloudSynchronized;
                 isHardcore = pi.IsHardcore;
 
@@ -89,7 +89,7 @@ namespace IAGrim.Utilities {
             }
 
             ItemTypeDto type;
-            string extras = item.Stash;
+            string extras = item.Stash ?? string.Empty;
 
             if (item.IsRecipe) {
                 type = ItemTypeDto.Recipe;
@@ -121,10 +121,10 @@ namespace IAGrim.Utilities {
                 BaseRecord = item.BaseRecord ?? string.Empty,
                 URL = transferUrl,
                 Icon = item.Bitmap ?? string.Empty,
-                Name = PureItemName(item.Name) ?? string.Empty,
+                Name = PureItemName(item.Name ?? string.Empty) ?? string.Empty,
                 Quality = item.Rarity ?? string.Empty,
                 Level = item.MinimumLevel,
-                Socket = GetSocketFromItem(item?.Name) ?? string.Empty,
+                Socket = GetSocketFromItem(item.Name ?? string.Empty) ?? string.Empty,
                 PetStats = skipStats ? new List<JsonStat>() : item.PetStats.Select(ToJsonStat).ToHashSet().ToList(),
                 BodyStats = skipStats ? replicaBodyStats : item.BodyStats.Select(ToJsonStat).ToHashSet().ToList(),
                 HeaderStats = skipStats ? new List<JsonStat>() : item.HeaderStats.Select(ToJsonStat).ToHashSet().ToList(),
@@ -133,7 +133,7 @@ namespace IAGrim.Utilities {
                 Skill = (item.Skill != null && !skipStats) ? GetJsonSkill(item.Skill) : null,
                 GreenRarity = (int)item.PrefixRarity,
                 HasCloudBackup = isCloudSynced,
-                Slot = SlotTranslator.Translate(RuntimeSettings.Language, item.Slot ?? ""),
+                Slot = SlotTranslator.Translate(RuntimeSettings.Language!, item.Slot ?? ""),
                 Extras = extras,
                 IsMonsterInfrequent = item.ModifiedSkills.Any(s => s.IsMonsterInfrequent),
                 IsHardcore = isHardcore,

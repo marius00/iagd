@@ -16,10 +16,10 @@ namespace IAGrim.Database {
     /// Simplifies lookups, not having to do "OR BaseRecord OR PrefixRecord OR....", and may contain optional records such as petbonuses
     /// </summary>
     public class BuddyItemRecord {
-        public virtual string ItemId { get; set; }
-        public virtual string Record { get; set; }
+        public virtual string? ItemId { get; set; }
+        public virtual string? Record { get; set; }
 
-        public override bool Equals(object obj) {
+        public override bool Equals(object? obj) {
             if (obj is BuddyItemRecord that) {
                 return this.ItemId == that.ItemId && this.Record == that.Record;
             }

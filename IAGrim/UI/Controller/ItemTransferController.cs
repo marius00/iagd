@@ -48,7 +48,7 @@ namespace IAGrim.UI.Controller {
         }
 
 
-        List<PlayerItem> GetItemsForTransfer(StashTransferEventArgs args) {
+        List<PlayerItem>? GetItemsForTransfer(StashTransferEventArgs args) {
             List<PlayerItem> items = new List<PlayerItem>();
 
             // Detect the record type (long or string) and add the item(s)
@@ -59,7 +59,8 @@ namespace IAGrim.UI.Controller {
                     items.Add(item);
                 }
                 else {
-                    IList<PlayerItem> tmp = _dao.GetByRecord(args.Prefix, args.BaseRecord, args.Suffix, args.Materia, args.Mod, args.IsHardcore);
+                    // HasValidId (checked above) guarantees these are non-null.
+                    IList<PlayerItem> tmp = _dao.GetByRecord(args.Prefix!, args.BaseRecord!, args.Suffix!, args.Materia!, args.Mod!, args.IsHardcore);
                     if (tmp.Count > 0) {
                         if (!args.TransferAll)
                             Logger.Warn("Error transferring item, transfer all was false, but no player item id was located.");
@@ -70,10 +71,10 @@ namespace IAGrim.UI.Controller {
                 }
             }
 
-            if (items.Contains(null)) {
+            if (items.Any(i => i == null)) {
                 Logger.Warn("Attempted to transfer NULL item.");
 
-                var message = RuntimeSettings.Language.GetTag("iatag_feedback_item_does_not_exist");
+                var message = RuntimeSettings.Language!.GetTag("iatag_feedback_item_does_not_exist");
                 _setFeedback(message);
                 _browser.ShowMessage(message, UserFeedbackLevel.Danger);
 
@@ -93,10 +94,10 @@ namespace IAGrim.UI.Controller {
             _transferStashService.Deposit(items, modOverride);
             _dao.Update(items, true);
 
-            var markedForDeletion = new HashSet<string>(_dao.GetItemsMarkedForOnlineDeletion().Select(d => d.Id));
+            var markedForDeletion = new HashSet<string>(_dao.GetItemsMarkedForOnlineDeletion().Select(d => d.Id!));
             var removedCloudIds = items
                 .Where(item => !string.IsNullOrEmpty(item.CloudId) && markedForDeletion.Contains(item.CloudId))
-                .Select(item => item.CloudId)
+                .Select(item => item.CloudId!)
                 .ToList();
             if (removedCloudIds.Count > 0) {
                 OnItemsTransferredToGame?.Invoke(this, new ItemsTransferredEventArgs(removedCloudIds));
@@ -115,7 +116,7 @@ namespace IAGrim.UI.Controller {
         public void TransferItem(StashTransferEventArgs args) {
             Logger.Debug($"Item transfer requested, arguments: {args}");
 
-            List<PlayerItem> items = GetItemsForTransfer(args);
+            List<PlayerItem>? items = GetItemsForTransfer(args);
 
             StashPickerResult? modOverride = null;
             if (items?.Count > 0) {
@@ -129,12 +130,12 @@ namespace IAGrim.UI.Controller {
                 var result = TransferItems(items, modOverride);
                 args.NumTransferred = result.NumItemsTransferred;
                 args.IsSuccessful = true;
-                var message = RuntimeSettings.Language.GetTag("iatag_stash3_success", result.NumItemsTransferred);
+                var message = RuntimeSettings.Language!.GetTag("iatag_stash3_success", result.NumItemsTransferred);
                 _browser.ShowMessage(message, UserFeedbackLevel.Success);
             }
             else {
                 Logger.Warn("Could not find any items for the requested transfer");
-                _browser.ShowMessage(RuntimeSettings.Language.GetTag("iatag_feedback_unable_to_deposit"), UserFeedbackLevel.Warning);
+                _browser.ShowMessage(RuntimeSettings.Language!.GetTag("iatag_feedback_unable_to_deposit"), UserFeedbackLevel.Warning);
 
             }
         }

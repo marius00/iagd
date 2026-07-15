@@ -14,7 +14,7 @@ namespace IAGrim.Parsers.Arz {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(LocalizationLoader));
         private const int MaxMissingTagWarnings = 30;
         private static int _missingTagWarningCount = 0;        private IDictionary<string, string> _tagsItems = new Dictionary<string, string>();
-        private IDictionary<string, string> _tagsIa = new Dictionary<string, string>();
+        private IDictionary<string, string>? _tagsIa = new Dictionary<string, string>();
 
         public ISet<ItemTag> GetItemTags() {
             ISet<ItemTag> stats = new HashSet<ItemTag>();
@@ -46,14 +46,14 @@ namespace IAGrim.Parsers.Arz {
             }
         }
 
-        private static void ApplyLanguage(Control control, ILocalizedLanguage lang, ToolTip toolTip = null) {
+        private static void ApplyLanguage(Control control, ILocalizedLanguage lang, ToolTip? toolTip = null) {
             var tag = control.Tag?.ToString();
             bool hasTag = tag?.StartsWith("iatag_") ?? false;
             if (hasTag) {
                 // TextBox and ComboBox tags are tooltip-only; skip them when not applying tooltips
                 if (toolTip == null && (control is TextBox || control is ComboBox)) return;
 
-                var localizedTag = lang.GetTag(tag);
+                var localizedTag = lang.GetTag(tag!);
                 if (!string.IsNullOrEmpty(localizedTag)) {
                     if (toolTip != null) {
                         toolTip.SetToolTip(control, localizedTag);

@@ -17,19 +17,19 @@ namespace IAGrim.Utilities {
             }
         }
 
-        public static string Uuid { get; set; }
+        public static string? Uuid { get; set; }
 
-        private static ILocalizedLanguage _language;
-        public static ILocalizedLanguage Language {
+        private static ILocalizedLanguage? _language;
+        public static ILocalizedLanguage? Language {
             get {
                 return _language;
             }
             set {
                 _language = value;
-                StatManager = new StatManager(value);
+                StatManager = value == null ? null : new StatManager(value);
             }
         }
-        public static StatManager StatManager { get; set; }
+        public static StatManager? StatManager { get; set; }
 
     }
 }

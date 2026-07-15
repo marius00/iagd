@@ -4,7 +4,7 @@ namespace IAGrim.UI.Misc {
     /// Responsible for persisting the window size and location across runs.
     /// </summary>
     public class WindowSizeManager {
-        private Form _form;
+        private Form? _form;
         private readonly SettingsService _settingsService;
 
         public WindowSizeManager(Form form, SettingsService settingsService) {
@@ -16,6 +16,8 @@ namespace IAGrim.UI.Misc {
         }
 
         private void RestoreWindowPosition() {
+            if (_form == null) return;
+
             var obj = _settingsService.GetLocal().WindowPositionSettings;
             if (obj == null) return;
 
@@ -55,7 +57,7 @@ namespace IAGrim.UI.Misc {
             }
         }
 
-        private void _form_FormClosing(object sender, FormClosingEventArgs e) {
+        private void _form_FormClosing(object? sender, FormClosingEventArgs e) {
             if (_form != null) {
                 var screenInfo = Screen.FromControl(_form);
                 var state = _form.WindowState == FormWindowState.Maximized ? FormWindowState.Maximized : FormWindowState.Normal;
@@ -84,7 +86,7 @@ namespace IAGrim.UI.Misc {
             public int? Width { get; set; }
             public int? Top { get; set; }
             public int? Left { get; set; }
-            public string Display { get; set; }
+            public string? Display { get; set; }
         }
         
     }

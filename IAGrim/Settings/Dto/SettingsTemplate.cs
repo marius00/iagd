@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace IAGrim.Settings.Dto {
     class SettingsTemplate {
-        public LocalSettings Local { get; set; }
-        public PersistentSettings Persistent { get; set; }
+        public LocalSettings? Local { get; set; }
+        public PersistentSettings? Persistent { get; set; }
     }
 }
 

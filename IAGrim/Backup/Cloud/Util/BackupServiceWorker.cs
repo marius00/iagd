@@ -10,7 +10,7 @@ using log4net;
 namespace IAGrim.Backup.Cloud.Util {
     class BackupServiceWorker : IDisposable {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(BackupServiceWorker));
-        private BackgroundWorker _bw = new BackgroundWorker();
+        private BackgroundWorker? _bw = new BackgroundWorker();
         private readonly BackupService _backupService;
         private readonly CharacterBackupService _characterBackupService;
 
@@ -25,7 +25,7 @@ namespace IAGrim.Backup.Cloud.Util {
         }
 
 
-        private void bw_DoWork(object sender, DoWorkEventArgs e) {
+        private void bw_DoWork(object? sender, DoWorkEventArgs e) {
             if (Thread.CurrentThread.Name == null) {
                 Thread.CurrentThread.Name = "BackupServiceWorker";
                 Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
@@ -42,7 +42,7 @@ namespace IAGrim.Backup.Cloud.Util {
                 Logger.Error(ex.StackTrace);
             }
 
-            BackgroundWorker worker = sender as BackgroundWorker;
+            BackgroundWorker worker = (BackgroundWorker)sender!;
             while (!worker.CancellationPending) {
                 try {
                     Thread.Sleep(1000);

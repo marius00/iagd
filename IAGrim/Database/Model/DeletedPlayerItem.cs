@@ -4,9 +4,9 @@
     /// Used to delete items from the online backup.
     /// </summary>
     public class DeletedPlayerItem {
-        public virtual string Id { get; set; }
+        public virtual string? Id { get; set; }
 
-        public override bool Equals(object obj) {
+        public override bool Equals(object? obj) {
             if (obj is DeletedPlayerItem that) {
                 return this.Id == that.Id;
             }
@@ -16,7 +16,7 @@
         }
 
         public override int GetHashCode() {
-            return Id.GetHashCode();
+            return Id?.GetHashCode() ?? 0;
         }
     }
 }

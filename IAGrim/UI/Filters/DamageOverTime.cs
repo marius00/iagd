@@ -12,7 +12,7 @@ namespace IAGrim.UI.Filters {
             Load += DamageOverTimeFilter_Load;
         }
 
-        public void DamageOverTimeFilter_Load(object sender, EventArgs e) {
+        public void DamageOverTimeFilter_Load(object? sender, EventArgs e) {
             dotPanel.ToggleState();
         }
 

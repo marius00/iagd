@@ -2,6 +2,7 @@
 using IAGrim.Database.Dto;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.Arz;
+using IAGrim.Services.ItemStats;
 using IAGrim.Settings;
 using IAGrim.Theme;
 using IAGrim.UI.Controller;
@@ -18,25 +19,25 @@ namespace IAGrim.UI.Tabs {
         private readonly Action<string> _setStatus;
         private readonly SearchController _searchController;
         private readonly IItemTagDao _itemTagDao;
-        private System.Windows.Forms.Timer _delayedTextChangedTimer;
+        private System.Windows.Forms.Timer? _delayedTextChangedTimer;
         private DesiredSkills? _filterWindow;
         private TextBox _searchBox;
-        private CheckBox _orderByLevel;
-        private ComboBox _modFilter;
-        private ComboBox _slotFilter;
+        private CheckBox? _orderByLevel;
+        private ComboBox? _modFilter;
+        private ComboBox? _slotFilter;
         private SplitContainer _mainSplitter;
-        private ComboBox _itemQuality;
-        private ComboBoxItem _selectedSlot;
-        private TextBox _minLevel;
-        private TextBox _maxLevel;
-        private FlowLayoutPanel _flowPanelFilter;
-        private GroupBox _levelRequirementGroup;
+        private ComboBox? _itemQuality;
+        private ComboBoxItem? _selectedSlot;
+        private TextBox? _minLevel;
+        private TextBox? _maxLevel;
+        private FlowLayoutPanel? _flowPanelFilter;
+        private GroupBox? _levelRequirementGroup;
         private ComboBoxItemQuality? _selectedItemQuality;
-        private ScrollPanelMessageFilter _scrollableFilterView;
+        private ScrollPanelMessageFilter? _scrollableFilterView;
         private ToolStripContainer _toolStripContainer;
         private readonly SettingsService _settings;
-        private ToolTip toolTip1;
-        private System.ComponentModel.IContainer components;
+        private ToolTip? toolTip1;
+        private System.ComponentModel.IContainer? components;
         private readonly int FilterPanelMinSize;
         private Microsoft.Web.WebView2.WinForms.WebView2 webView21;
         private bool _hasCheckedModFilterNotEmpty = false;
@@ -71,21 +72,21 @@ namespace IAGrim.UI.Tabs {
             FilterPanelMinSize = new DpiHelper(CreateGraphics()).ScaleX(250);
 
             // Weird hack to not have the searcbox be height=4 on windows 11. 
-            _searchBox.MaximumSize = new Size(_searchBox.MaximumSize.Width, 0);
+            _searchBox!.MaximumSize = new Size(_searchBox.MaximumSize.Width, 0);
 
-            _mainSplitter.SplitterDistance = FilterPanelMinSize;
+            _mainSplitter!.SplitterDistance = FilterPanelMinSize;
             _mainSplitter.SplitterWidth = 5;
             _mainSplitter.BorderStyle = BorderStyle.None;
             _mainSplitter.SplitterMoved += MainSplitterOnSplitterMoved;
 
-            ModSelectionHandler = new ModSelectionHandler(_modFilter, playerItemDao, UpdateListViewDelayed, setStatus, _settings);
+            ModSelectionHandler = new ModSelectionHandler(_modFilter!, playerItemDao, UpdateListViewDelayed, setStatus, _settings);
 
-            _toolStripContainer.ContentPanel.Controls.Add(browser);
+            _toolStripContainer!.ContentPanel.Controls.Add(browser);
 
             Activated += SplitSearchWindow_Activated;
             Deactivate += SplitSearchWindow_Deactivate;
             var conf = CoreWebView2Environment.CreateAsync(null, GlobalPaths.EdgeCacheLocation).Result;
-            webView21.EnsureCoreWebView2Async(conf);
+            webView21!.EnsureCoreWebView2Async(conf);
 
             InitializeFilterPanel();
         }
@@ -101,12 +102,12 @@ namespace IAGrim.UI.Tabs {
                 }
                 else {
                     // Should only happen for the very first item ever looted, but it's a fairly poor user experience when it does happen.
-                    if (_modFilter.SelectedItem == null) {
+                    if (_modFilter!.SelectedItem == null) {
                         ModSelectionHandler.ConfigureModFilter();
                     }
 
                     if (_modFilter.SelectedItem == null && _modFilter.Items.Count > 0) {
-                        _modFilter.SelectedItem = _modFilter.Items[0];
+                        _modFilter.SelectedItem = _modFilter!.Items[0];
                         _hasCheckedModFilterNotEmpty = true;
                     }
                 }
@@ -118,12 +119,12 @@ namespace IAGrim.UI.Tabs {
         /// Clear all filters
         /// </summary>
         public void ClearFilters() {
-            _filterWindow.ClearFilters();
+            _filterWindow!.ClearFilters();
             _searchBox.Text = string.Empty;
-            _itemQuality.SelectedIndex = 0;
-            _slotFilter.SelectedIndex = 0;
-            _minLevel.Text = "0";
-            _maxLevel.Text = "110";
+            _itemQuality!.SelectedIndex = 0;
+            _slotFilter!.SelectedIndex = 0;
+            _minLevel!.Text = "0";
+            _maxLevel!.Text = "110";
 
             UpdateListViewDelayed();
         }
@@ -140,10 +141,10 @@ namespace IAGrim.UI.Tabs {
         /// </summary>
         public void UpdateListView(PlayerItem? item = null) {
             if (InvokeRequired) {
-                Invoke((MethodInvoker)delegate { UpdateListView(_filterWindow.Filters, item); });
+                Invoke((MethodInvoker)delegate { UpdateListView(_filterWindow!.Filters, item); });
             }
             else {
-                UpdateListView(_filterWindow.Filters, item);
+                UpdateListView(_filterWindow!.Filters, item);
             }
         }
 
@@ -164,10 +165,10 @@ namespace IAGrim.UI.Tabs {
 
             var query = new ItemSearchRequest {
                 Wildcard = _searchBox.Text,
-                StatValueFilters = filters.NumericFilters,
-                Filters = filters.Filters,
-                MinimumLevel = ParseNumeric(_minLevel),
-                MaximumLevel = ParseNumeric(_maxLevel),
+                StatValueFilters = filters.NumericFilters ?? new List<StatValueFilter>(),
+                Filters = filters.Filters ?? new List<string[]>(),
+                MinimumLevel = ParseNumeric(_minLevel!),
+                MaximumLevel = ParseNumeric(_maxLevel!),
                 Rarity = rarity?.Rarity,
                 PrefixRarity = rarity?.PrefixRarity ?? 0,
                 Slot = slot?.Filter,
@@ -177,7 +178,7 @@ namespace IAGrim.UI.Tabs {
                 DuplicatesOnly = filters.DuplicatesOnly,
                 Mod = transferFile.Mod,
                 IsHardcore = transferFile.IsHardcore,
-                Classes = filters.DesiredClass,
+                Classes = filters.DesiredClass ?? new List<string>(),
                 SocketedOnly = filters.SocketedOnly,
                 RecentOnly = filters.RecentOnly,
                 WithGrantSkillsOnly = filters.GrantsSkill,
@@ -189,7 +190,7 @@ namespace IAGrim.UI.Tabs {
             }
             else {
                 bool includeBuddyItems = !filters.DuplicatesOnly; // If we're looking for duplicates, we're probably doing a cleanup, not caring about buddyitems
-                var message = _searchController.Search(query, includeBuddyItems, _orderByLevel.Checked);
+                var message = _searchController.Search(query, includeBuddyItems, _orderByLevel!.Checked);
 
                 Logger.Info("Updating UI...");
 
@@ -208,7 +209,7 @@ namespace IAGrim.UI.Tabs {
             UpdateListViewDelayed(_settings.GetLocal().PreferDelayedSearch ? 200 : 0);
         }
 
-        private void BeginSearchOnAutoSearch(object sender, EventArgs e) {
+        private void BeginSearchOnAutoSearch(object? sender, EventArgs e) {
             UpdateListViewDelayed();
         }
 
@@ -219,10 +220,10 @@ namespace IAGrim.UI.Tabs {
             }
 
             if (InvokeRequired) {
-                Invoke((MethodInvoker) delegate { UpdateListView(_filterWindow.Filters); });
+                Invoke((MethodInvoker) delegate { UpdateListView(_filterWindow!.Filters); });
             }
             else {
-                UpdateListView(_filterWindow.Filters);
+                UpdateListView(_filterWindow!.Filters);
             }
         }
 
@@ -241,21 +242,21 @@ namespace IAGrim.UI.Tabs {
             _filterWindow.Show();
         }
 
-        private void MainSplitterOnSplitterMoved(object sender, SplitterEventArgs e) {
+        private void MainSplitterOnSplitterMoved(object? sender, SplitterEventArgs e) {
             if (_mainSplitter.SplitterDistance < FilterPanelMinSize) {
                 _mainSplitter.SplitterDistance = FilterPanelMinSize;
             }
         }
 
-        private void MaxLevel_MouseWheel(object sender, MouseEventArgs e) {
+        private void MaxLevel_MouseWheel(object? sender, MouseEventArgs e) {
             if (sender is Control c) {
                 if (e.Delta > 0) {
                     c.Text = Math.Min(ParseNumeric(c) + 1, 110).ToString();
                 }
                 else if (e.Delta < 0) {
                     var newValue = Math.Min(Math.Max(0, ParseNumeric(c) - 1), 110);
-                    if (ParseNumeric(_minLevel) > newValue) {
-                        _minLevel.Text = newValue.ToString();
+                    if (ParseNumeric(_minLevel!) > newValue) {
+                        _minLevel!.Text = newValue.ToString();
                     }
 
                     c.Text = Math.Min(Math.Max(0, ParseNumeric(c) - 1), 110).ToString();
@@ -265,12 +266,12 @@ namespace IAGrim.UI.Tabs {
             UpdateListViewDelayed(1200);
         }
 
-        private void MinLevel_MouseWheel(object sender, MouseEventArgs e) {
+        private void MinLevel_MouseWheel(object? sender, MouseEventArgs e) {
             if (sender is Control c) {
                 if (e.Delta > 0) {
                     var newValue = Math.Min(ParseNumeric(c) + 1, 110);
-                    if (ParseNumeric(_maxLevel) < newValue) {
-                        _maxLevel.Text = newValue.ToString();
+                    if (ParseNumeric(_maxLevel!) < newValue) {
+                        _maxLevel!.Text = newValue.ToString();
                     }
 
                     c.Text = newValue.ToString();
@@ -283,8 +284,8 @@ namespace IAGrim.UI.Tabs {
             UpdateListViewDelayed(1200);
         }
 
-        private void MinLevel_KeyPress(object sender, KeyPressEventArgs e) {
-            e.Handled = !(char.IsDigit(e.KeyChar) || ParseNumeric(_minLevel) > 105 || e.KeyChar == '\b');
+        private void MinLevel_KeyPress(object? sender, KeyPressEventArgs e) {
+            e.Handled = !(char.IsDigit(e.KeyChar) || ParseNumeric(_minLevel!) > 105 || e.KeyChar == '\b');
             UpdateListViewDelayed(1200);
         }
 
@@ -292,24 +293,24 @@ namespace IAGrim.UI.Tabs {
             return int.TryParse(tb.Text, out var val) ? val : 0;
         }
 
-        private void SplitSearchWindow_Load(object sender, EventArgs e) {
+        private void SplitSearchWindow_Load(object? sender, EventArgs e) {
             ModSelectionHandler.ConfigureModFilter();
 
-            _minLevel.KeyPress += MinLevel_KeyPress;
+            _minLevel!.KeyPress += MinLevel_KeyPress;
             _minLevel.Leave += (s, ev) => { if (!int.TryParse(_minLevel.Text, out _)) _minLevel.Text = "0"; };
             _minLevel.MouseWheel += MinLevel_MouseWheel;
 
-            _maxLevel.KeyPress += MinLevel_KeyPress;
+            _maxLevel!.KeyPress += MinLevel_KeyPress;
             _maxLevel.Leave += (s, ev) => { if (!int.TryParse(_maxLevel.Text, out _)) _maxLevel.Text = "200"; };
             _maxLevel.MouseWheel += MaxLevel_MouseWheel;
 
-            _itemQuality.Items.AddRange(UIHelper.QualityFilter.ToArray<object>());
+            _itemQuality!.Items.AddRange(UIHelper.QualityFilter.ToArray<object>());
             _itemQuality.SelectedIndex = 0;
             _selectedItemQuality = _itemQuality.SelectedItem as ComboBoxItemQuality;
             _itemQuality.SelectedIndexChanged += (s, ev) => { _selectedItemQuality = _itemQuality.SelectedItem as ComboBoxItemQuality; };
             _itemQuality.SelectedIndexChanged += BeginSearchOnAutoSearch;
 
-            _slotFilter.Items.AddRange(UIHelper.SlotFilter.ToArray<object>());
+            _slotFilter!.Items.AddRange(UIHelper.SlotFilter.ToArray<object>());
             _slotFilter.SelectedIndex = 0;
             _selectedSlot = _slotFilter.SelectedItem as ComboBoxItem;
             _slotFilter.SelectedIndexChanged += (s, ev) => { _selectedSlot = _slotFilter.SelectedItem as ComboBoxItem; };
@@ -319,33 +320,35 @@ namespace IAGrim.UI.Tabs {
 
             _searchBox.TextChanged += SearchBox_TextChanged;
 
-            _orderByLevel.CheckStateChanged += delegate { UpdateListViewDelayed(); };
+            _orderByLevel!.CheckStateChanged += delegate { UpdateListViewDelayed(); };
 
-            _flowPanelFilter.SizeChanged += FlowPanelFilter_Resize;
+            _flowPanelFilter!.SizeChanged += FlowPanelFilter_Resize;
             _mainSplitter.SizeChanged += FlowPanelFilter_Resize;
 
-            LocalizationLoader.ApplyTooltipLanguage(toolTip1, Controls, RuntimeSettings.Language);
+            LocalizationLoader.ApplyTooltipLanguage(toolTip1!, Controls, RuntimeSettings.Language!);
         }
 
-        private void SearchBox_TextChanged(object sender, EventArgs e) {
+        private void SearchBox_TextChanged(object? sender, EventArgs e) {
             UpdateListViewDelayed(600);
         }
 
-        private void SplitSearchWindow_Activated(object sender, EventArgs e) {
-            _scrollableFilterView = new ScrollPanelMessageFilter(_filterWindow);
+        private void SplitSearchWindow_Activated(object? sender, EventArgs e) {
+            _scrollableFilterView = new ScrollPanelMessageFilter(_filterWindow!);
             Application.AddMessageFilter(_scrollableFilterView);
         }
 
-        private void SplitSearchWindow_Deactivate(object sender, EventArgs e) {
-            Application.RemoveMessageFilter(_scrollableFilterView);
+        private void SplitSearchWindow_Deactivate(object? sender, EventArgs e) {
+            if (_scrollableFilterView != null) {
+                Application.RemoveMessageFilter(_scrollableFilterView);
+            }
         }
 
-        private void SplitSearchWindow_FormClosing(object sender, FormClosingEventArgs e) {
+        private void SplitSearchWindow_FormClosing(object? sender, FormClosingEventArgs e) {
             if (InvokeRequired) {
                 Invoke((System.Windows.Forms.MethodInvoker)delegate { SplitSearchWindow_FormClosing(sender, e); });
             }
             else {
-                _filterWindow.OnChanged -= BeginSearchOnAutoSearch;
+                _filterWindow!.OnChanged -= BeginSearchOnAutoSearch;
                 Activated -= SplitSearchWindow_Activated;
                 Deactivate -= SplitSearchWindow_Deactivate;
 
@@ -601,8 +604,8 @@ namespace IAGrim.UI.Tabs {
 
         }
 
-        private void FlowPanelFilter_Resize(object sender, EventArgs e) {
-            _searchBox.Width = Math.Max(300, _flowPanelFilter.Width - 500);
+        private void FlowPanelFilter_Resize(object? sender, EventArgs e) {
+            _searchBox.Width = Math.Max(300, _flowPanelFilter!.Width - 500);
             _searchBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
         }
     }

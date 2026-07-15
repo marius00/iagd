@@ -12,7 +12,7 @@ namespace IAGrim.UI.Misc.Protocol {
         /// </summary>
         public bool ReplaceExistingItems;
 
-        public List<List<JsonItem>> Items { get; set; }
+        public List<List<JsonItem>>? Items { get; set; }
 
         /// <summary>
         /// The number of items found, total (eg 3000 found, but batch has 64)

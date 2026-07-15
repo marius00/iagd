@@ -20,7 +20,7 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
     class ArzParsingWrapper {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ArzParsingWrapper));
         private readonly ItemTagAccumulator _tagAccumulator = new ItemTagAccumulator();
-        public List<DatabaseItem> Items { get; private set; }
+        public List<DatabaseItem>? Items { get; private set; }
 
         public List<ItemTag> Tags => _tagAccumulator.Tags;
 
@@ -48,7 +48,7 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
             }
             catch (ArgumentException ex) {
                 Logger.Warn(ex.Message, ex);
-                MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_corrupted"));
+                MessageBox.Show(RuntimeSettings.Language?.GetTag("iatag_ui_corrupted") ?? string.Empty);
                 throw;
             }
 
@@ -63,7 +63,11 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
             Logger.Debug($"Loading tags from {file}");
 
             List<IItemTag> tags = Parser.Arz.ArzParser.ParseArcFile(file);
-            tags.ForEach(m => _tagAccumulator.Add(m.Tag, m.Name));
+            tags.ForEach(m => {
+                if (m.Tag != null && m.Name != null) {
+                    _tagAccumulator.Add(m.Tag, m.Name);
+                }
+            });
             Logger.Debug($"Loaded {tags.Count} tags from {file}");
         }
 
@@ -95,15 +99,20 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
             // Load IA translation override file for the selected language
             if (hasIaOverride) {
                 var iaFile = LanguageMapping.GetIaTranslationFile(languageCode);
-                var localizationLoader = new LocalizationLoader();
-                localizationLoader.LoadIaTranslationFile(iaFile);
+                if (iaFile != null) {
+                    var localizationLoader = new LocalizationLoader();
+                    localizationLoader.LoadIaTranslationFile(iaFile);
 
-                var tags = localizationLoader.GetItemTags();
-                foreach (var tag in tags) {
-                    _tagAccumulator.Add(tag.Tag, tag.Name);
+                    var tags = localizationLoader.GetItemTags();
+                    foreach (var tag in tags) {
+                        if (tag.Tag == null || tag.Name == null) {
+                            continue;
+                        }
+                        _tagAccumulator.Add(tag.Tag, tag.Name);
+                    }
+
+                    Logger.Debug($"Loaded {tags.Count} IA override tags for language {languageCode}");
                 }
-
-                Logger.Debug($"Loaded {tags.Count} IA override tags for language {languageCode}");
                 tracker.Increment();
             }
 
@@ -112,6 +121,9 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
 
 
         public void MapItemNames(ProgressTracker tracker) {
+            if (Items == null)
+                return;
+
             var tags = Tags;
 
             tracker.MaxValue = Items.Count;
@@ -127,13 +139,13 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
                     List<string> finalTags = new List<string>();
                     foreach (var tag in keytags) {
                         var t = tags.FirstOrDefault(m => m.Tag == tag);
-                        if (t != null) {
+                        if (t?.Name != null) {
                             finalTags.Add(t.Name);
                         }
                     }
 
                     Items[i].Name = string.Join(" ", finalTags).Trim();
-                    Items[i].NameLowercase = Items[i].Name.ToLowerInvariant();
+                    Items[i].NameLowercase = Items[i].Name?.ToLowerInvariant() ?? string.Empty;
                 }
 
                 tracker.Increment();
@@ -147,21 +159,24 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
         public void RenamePetStats(ProgressTracker tracker) {
             Logger.Debug("Detecting records with pet bonus stats..");
 
-            var petRecords = Items.SelectMany(m => m.Stats.Where(s => s.Stat == "petBonusName")
+            if (Items == null)
+                return;
+
+            var petRecords = Items.SelectMany(m => (m.Stats ?? Enumerable.Empty<DatabaseItemStat>()).Where(s => s.Stat == "petBonusName")
                     .Select(s => s.TextValue))
                 .ToList(); // ToList for performance reasons
 
             var petItems = Items.Where(m => petRecords.Contains(m.Record)).ToList();
             tracker.MaxValue = petItems.Count;
             foreach (var petItem in petItems) {
-                var stats = petItem.Stats.Select(s => new DatabaseItemStat {
+                var stats = (petItem.Stats ?? Enumerable.Empty<DatabaseItemStat>()).Select(s => new DatabaseItemStat {
                     Stat = "pet" + s.Stat,
                     TextValue = s.TextValue,
                     Value = s.Value,
                     Parent = s.Parent
                 }).ToList();
 
-                petItem.Stats.Clear();
+                petItem.Stats?.Clear();
                 petItem.Stats = stats;
                 tracker.Increment();
             }
@@ -179,6 +194,9 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
         /// <param name="itemSkillDao"></param>
         /// <param name="tracker"></param>
         public void ParseComplexItems(IItemSkillDao itemSkillDao, ProgressTracker tracker) {
+            if (Items == null)
+                return;
+
             var mappedTags = _tagAccumulator.MappedTags;
             var skillParser = new ComplexItemParser(Items, mappedTags);
             skillParser.Generate(tracker);
@@ -188,10 +206,13 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
 
 
         public List<DatabaseItemStat> GenerateSpecialRecords(ProgressTracker tracker) {
-            var skills = Items
-                .Where(m => m.Record.Contains("/skills/"))
-                .ToList();
             List<DatabaseItemStat> result = new List<DatabaseItemStat>();
+            if (Items == null)
+                return result;
+
+            var skills = Items
+                .Where(m => m.Record?.Contains("/skills/") ?? false)
+                .ToList();
 
             var filtered = Items.Where(m => m.Id != 0).ToList();
             tracker.MaxValue = filtered.Count;

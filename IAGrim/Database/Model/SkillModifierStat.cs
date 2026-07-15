@@ -10,19 +10,19 @@ using StatTranslator;
 
 namespace IAGrim.Database.Model {
     public class SkillModifierStat {
-        public string Name { get; set; }
-        public string Class { get; set; }
+        public string? Name { get; set; }
+        public string? Class { get; set; }
         public float? Tier { get; set; }
         public bool IsMonsterInfrequent { get; set; }
 
         public virtual IList<TranslatedStat> Translated {
             get {
-                if (Tags == null)
+                if (Tags == null || RuntimeSettings.StatManager == null)
                     return new List<TranslatedStat>();
-                return RuntimeSettings.StatManager.ProcessSkillModifierStats(new HashSet<IItemStat>(Tags), Name, Class, Tier);
+                return RuntimeSettings.StatManager.ProcessSkillModifierStats(new HashSet<IItemStat>(Tags), Name ?? string.Empty, Class ?? string.Empty, Tier);
             }
         }
 
-        public ISet<DBStatRow> Tags { get; set; }
+        public ISet<DBStatRow>? Tags { get; set; }
     }
 }

@@ -14,13 +14,13 @@ namespace IAGrim.Parser.Arc {
         public const char TEXT_SEPARATOR_0A = (char)0x0A;
         public const char TEXT_SEPARATOR_0D = (char)0x0D;
 
-        private string zipFileName;
-        private string arcFileName;
-        private ARCHeader header;
-        private ARCFilePart[] parts;
-        public String[] strings;
-        private Record[] tocs;
-        private FileStream fs;
+        private string? zipFileName;
+        private string? arcFileName;
+        private ARCHeader? header;
+        private ARCFilePart[]? parts;
+        public String[]? strings;
+        private Record[]? tocs;
+        private FileStream? fs;
         private readonly bool lazyInitialize;
 
         public Decompress(String fileName, bool lazyInitialize) {

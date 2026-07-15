@@ -57,7 +57,7 @@ namespace IAGrim.Services {
 
 
         private static List<string> GetRecordsForItems(List<PlayerHeldItem> items) {
-            return items.Select(m => m.BaseRecord).Distinct().ToList();
+            return items.Select(m => m.BaseRecord).Where(r => r != null).Distinct().ToList()!;
         }
 
         private bool IsPlayerItem(PlayerHeldItem item) {
@@ -80,7 +80,7 @@ namespace IAGrim.Services {
         }
 
         private List<BuddyItem> GetBuddyItems(List<PlayerHeldItem> items) {
-            return items.Where(IsBuddyItem).Select(item => item as BuddyItem).ToList();
+            return items.Where(IsBuddyItem).OfType<BuddyItem>().ToList();
         }
 
 
@@ -113,14 +113,14 @@ namespace IAGrim.Services {
             }
 
 
-            var itemsWithSkills = items.Where(m => m.Skill != null).Select(m => m.Skill.StatsId).ToList();
+            var itemsWithSkills = items.Where(m => m.Skill != null).Select(m => m.Skill!.StatsId).ToList();
             if (itemsWithSkills.Count > 0) {
                 Logger.Debug($"Applying stats to skills for {itemsWithSkills.Count} items");
                 Dictionary<long, List<DBStatRow>> statMap =
                     _databaseItemStatDao.GetStats(itemsWithSkills, StatFetch.Skills);
 
                 foreach (var item in items.Where(m => m.Skill != null)) {
-                    if (statMap.ContainsKey(item.Skill.StatsId)) {
+                    if (statMap.ContainsKey(item.Skill!.StatsId)) {
                         item.Skill.Tags = process(statMap[item.Skill.StatsId]);
                     }
                     else {
@@ -156,7 +156,7 @@ namespace IAGrim.Services {
         /// JSON array and comes back as the literal "[]" (not null/empty) when the item has no replica rows,
         /// so a plain IsNullOrEmpty check would wrongly report a replica and suppress the seed reconstruction.
         /// </summary>
-        private static bool HasReplicaStats(string replicaInfo) {
+        private static bool HasReplicaStats(string? replicaInfo) {
             return !string.IsNullOrWhiteSpace(replicaInfo) && replicaInfo.Trim() != "[]";
         }
 
@@ -191,10 +191,10 @@ namespace IAGrim.Services {
         /// of the item's records, we fall back to the raw summed base stats.
         /// </summary>
         private HashSet<DBStatRow> BuildTags(BaseItem item, Dictionary<string, List<DBStatRow>> statMap, uint seed, bool hasReplica) {
-            List<DBStatRow> Raw(string record) =>
+            List<DBStatRow> Raw(string? record) =>
                 !string.IsNullOrEmpty(record) && statMap.ContainsKey(record) ? statMap[record] : new List<DBStatRow>();
 
-            List<DBStatRow> Filtered(string record) => Filter(Raw(record)).ToList();
+            List<DBStatRow> Filtered(string? record) => Filter(Raw(record)).ToList();
 
             var modifierRows = Filtered(item.ModifierRecord);
             var petRows = new List<DBStatRow>();
@@ -202,7 +202,7 @@ namespace IAGrim.Services {
                 petRows.AddRange(Filtered(petRecord));
             }
 
-            IReadOnlyDictionary<string, double> rolled = hasReplica
+            IReadOnlyDictionary<string, double>? rolled = hasReplica
                 ? null
                 : SeedStatCalculator.Compute(Raw(item.BaseRecord), Raw(item.PrefixRecord), Raw(item.SuffixRecord), seed);
 
@@ -240,9 +240,9 @@ namespace IAGrim.Services {
             List<DBStatRow> statsWithNumerics = stats.Where(m => string.IsNullOrEmpty(m.TextValue))
                 .GroupBy(r => r.Stat)
                 .Select(g => new DBStatRow {
-                    Record = g.FirstOrDefault().Record,
-                    TextValue = g.FirstOrDefault().TextValue,
-                    Stat = g.FirstOrDefault().Stat,
+                    Record = g.FirstOrDefault()!.Record,
+                    TextValue = g.FirstOrDefault()!.TextValue,
+                    Stat = g.FirstOrDefault()!.Stat,
                     Value = g.Sum(v => v.Value),
                 })
                 .ToList();

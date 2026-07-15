@@ -23,7 +23,7 @@ namespace IAGrim.UI {
             this.FormClosing += DonateNagScreen_FormClosing;
         }
 
-        void DonateNagScreen_FormClosing(object sender, FormClosingEventArgs e) {
+        void DonateNagScreen_FormClosing(object? sender, FormClosingEventArgs e) {
             if (e.CloseReason != CloseReason.WindowsShutDown && _nagDelay > 0)
                 e.Cancel = true;
         }
@@ -52,10 +52,10 @@ namespace IAGrim.UI {
 
             var tags = new []{ "iatag_ui_nagscreen1_button", "iatag_ui_nagscreen2_button", "iatag_ui_nagscreen3_button", "iatag_ui_nagscreen4_button", "iatag_ui_nagscreen5_button" };
             buttonNoThanks.Tag = tags[new Random().Next(tags.Length)];
-            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
+            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language!);
         }
 
-        void OnTimedEvent(object source, ElapsedEventArgs e) {
+        void OnTimedEvent(object? source, ElapsedEventArgs e) {
             int r = (_graycolor.R - _greenish.R) / NumSteps;
             int g = (_graycolor.G - _greenish.G) / NumSteps;
             int b = (_graycolor.B - _greenish.B) / NumSteps;

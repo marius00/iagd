@@ -69,7 +69,7 @@ namespace IAGrim.Parser.Stash {
         private uint borderColorindex;
         private uint symbolIndex;
         private uint symbolColorIndex;
-        private string buttonName;
+        private string? buttonName;
 
         public List<Item> Items { get; private set; }
 

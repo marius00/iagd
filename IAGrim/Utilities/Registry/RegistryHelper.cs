@@ -30,7 +30,7 @@ namespace IAGrim.Utilities.Registry {
             var root = Microsoft.Win32.Registry.CurrentUser;
 
             Logger.Debug($"Looking for registry key \"{path}\"..");
-            RegistryKey registryKey = root.OpenSubKey(path, true);
+            RegistryKey? registryKey = root.OpenSubKey(path, true);
 
             if (registryKey == null) {
                 Logger.Debug("Registry key not found, creating key..");

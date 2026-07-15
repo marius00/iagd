@@ -155,36 +155,34 @@ namespace IAGrim.Services {
               
             }
 
-            if (item.Id != null) {
-                var stats = csvLines
-                    .Skip(1) // skip header
-                    .Select(line => line.Split(';', 2)) // split into key/value
-                    .Where(parts => parts.Length == 2 && Int32.TryParse(parts[0].Trim(), out _))
-                    .Select(parts => {
-                        var text = Regex.Replace(
-                            Regex.Replace(parts[1].Trim(), @"(\^.?)", ""),
-                            @" (\[|\().+(\]|\))$", ""
-                        );
+            var stats = csvLines
+                .Skip(1) // skip header
+                .Select(line => line.Split(';', 2)) // split into key/value
+                .Where(parts => parts.Length == 2 && Int32.TryParse(parts[0].Trim(), out _))
+                .Select(parts => {
+                    var text = Regex.Replace(
+                        Regex.Replace(parts[1].Trim(), @"(\^.?)", ""),
+                        @" (\[|\().+(\]|\))$", ""
+                    );
 
-                        return new ReplicaItemRow {
-                            Text = text,
-                            TextLowercase = text.ToLowerInvariant(),
-                            Type = Int32.Parse(parts[0].Trim())
-                        };
-                    })
-                    .ToList();
+                    return new ReplicaItemRow {
+                        Text = text,
+                        TextLowercase = text.ToLowerInvariant(),
+                        Type = Int32.Parse(parts[0].Trim())
+                    };
+                })
+                .ToList();
 
-                var replicaItem = new ReplicaItem {
-                    PlayerItemId = item.Id,
-                    BuddyItemId = null,
-                };
-                Logger.Debug("Storing replica item stats for item " + item.Id);
-                try {
-                    replicaItemDao.Save(replicaItem, stats);
-                }
-                catch (Exception ex) {
-                    Logger.Warn("Error storing replica stats", ex);
-                }
+            var replicaItem = new ReplicaItem {
+                PlayerItemId = item.Id,
+                BuddyItemId = null,
+            };
+            Logger.Debug("Storing replica item stats for item " + item.Id);
+            try {
+                replicaItemDao.Save(replicaItem, stats);
+            }
+            catch (Exception ex) {
+                Logger.Warn("Error storing replica stats", ex);
             }
 
             return true;

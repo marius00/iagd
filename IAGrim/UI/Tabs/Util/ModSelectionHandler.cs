@@ -36,8 +36,8 @@ namespace IAGrim.UI.Tabs.Util {
             Dispose();
         }
 
-        private void cbModFilter_SelectedIndexChanged(object sender, EventArgs e) {
-            SelectedMod = _cbModFilter.SelectedItem as GDTransferFile;
+        private void cbModFilter_SelectedIndexChanged(object? sender, EventArgs e) {
+            SelectedMod = _cbModFilter!.SelectedItem as GDTransferFile;
             _updateView();
             _settings.GetLocal().LastSelectedMod = SelectedMod;
         }
@@ -52,10 +52,10 @@ namespace IAGrim.UI.Tabs.Util {
             if (mod != _lastMod || isHardcore != _lastHardcoreSetting) {
                 var options = GetAvailableModSelection();
 
-                _cbModFilter.Items.Clear();
+                _cbModFilter!.Items.Clear();
                 _cbModFilter.Items.AddRange(options);
 
-                var query = options.Where(m => m.Mod.Equals(mod) && m.IsHardcore == isHardcore);
+                var query = options.Where(m => m.Mod?.Equals(mod) == true && m.IsHardcore == isHardcore);
 
                 if (query.Any()) {
                     _cbModFilter.SelectedItem = query.FirstOrDefault();
@@ -67,16 +67,16 @@ namespace IAGrim.UI.Tabs.Util {
         }
 
         public void ConfigureModFilter() {
-            _cbModFilter.DropDown += modFilter_DropDown;
-            modFilter_DropDown(null, null);
+            _cbModFilter!.DropDown += modFilter_DropDown;
+            modFilter_DropDown(null, EventArgs.Empty);
 
             if (_cbModFilter.Items.Count == 0) {
                 if (_playerItemDao.GetNumItems() == 0) {
-                    _setStatus(RuntimeSettings.Language.GetTag("iatag_no_items_stored"));
+                    _setStatus(RuntimeSettings.Language!.GetTag("iatag_no_items_stored"));
 
                 }
                 else {
-                    _setStatus(RuntimeSettings.Language.GetTag("iatag_error_modfilter"));
+                    _setStatus(RuntimeSettings.Language!.GetTag("iatag_error_modfilter"));
                     Logger.Warn("Error loading mod filter");
                 }
             }
@@ -137,22 +137,22 @@ namespace IAGrim.UI.Tabs.Util {
         }
 
         public void UpdateModSelection(string mod) {
-            if (_cbModFilter.SelectedItem is GDTransferFile selected) {
+            if (_cbModFilter!.SelectedItem is GDTransferFile selected) {
                 // Survival mode is the crucible, which shares items with campaign.
                 UpdateModSelection(mod.Replace("survivalmode", ""), selected.IsHardcore);
             }
         }
 
         public void UpdateModSelection(bool isHardcore) {
-            if (_cbModFilter.SelectedItem is GDTransferFile selected) {
-                UpdateModSelection(selected.Mod, isHardcore);
+            if (_cbModFilter!.SelectedItem is GDTransferFile selected) {
+                UpdateModSelection(selected.Mod ?? string.Empty, isHardcore);
             }
         }
 
-        private void modFilter_DropDown(object sender, EventArgs e) {
+        private void modFilter_DropDown(object? sender, EventArgs e) {
             var entries = GetAvailableModSelection();
 
-            if (entries.Length != _cbModFilter.Items.Count) {
+            if (entries.Length != _cbModFilter!.Items.Count) {
                 _cbModFilter.Items.Clear();
                 _cbModFilter.Items.AddRange(entries.ToArray<object>());
             }

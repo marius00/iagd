@@ -35,11 +35,11 @@ namespace IAGrim.Theme {
             }
         }
 
-        void control_GotFocus(object sender, EventArgs e) {
+        void control_GotFocus(object? sender, EventArgs e) {
             panelHasFocus = true;
         }
 
-        void control_LostFocus(object sender, EventArgs e) {
+        void control_LostFocus(object? sender, EventArgs e) {
             panelHasFocus = false;
         }
 
@@ -51,8 +51,8 @@ namespace IAGrim.Theme {
             //and the vertical scroll bar is visible
 
             bool verticalScroll = false;
-            Form asForm = control as Form;
-            Panel asPanel = control as Panel;
+            Form? asForm = control as Form;
+            Panel? asPanel = control as Panel;
             
             if (asForm != null)
                 verticalScroll = asForm.VerticalScroll.Visible;

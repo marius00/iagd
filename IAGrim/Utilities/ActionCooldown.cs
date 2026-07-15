@@ -8,7 +8,7 @@ using IAGrim.Utilities.HelperClasses;
 
 namespace IAGrim.Utilities {
     class ActionCooldown {
-        private Stopwatch _stopwatch;
+        private Stopwatch? _stopwatch;
         private readonly long _cooldown;
 
         /// <summary>

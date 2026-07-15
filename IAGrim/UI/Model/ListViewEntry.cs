@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace IAGrim.UI.Model {
 
     class ListViewEntry {
-        public string Path { get; set; }
+        public string? Path { get; set; }
         public bool IsVanilla { get; set; }
     }
 }

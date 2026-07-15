@@ -14,7 +14,8 @@ namespace IAGrim.UI.Filters {
                 .Where(g => g.cb.HasFilter)
                 .Select(g => new StatValueFilter {
                     Fields = g.fields,
-                    Operator = g.cb.FilterOperator.Value,
+                    // HasFilter (checked above) guarantees FilterOperator is set.
+                    Operator = g.cb.FilterOperator!.Value,
                     Threshold = g.cb.FilterThreshold,
                 })
                 .ToList();

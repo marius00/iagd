@@ -58,7 +58,7 @@ namespace IAGrim.Database.DAO.Util {
             return TranslateClassification(classifications);
         }
 
-        public static string TranslateClassification(IEnumerable<string> classifications) {
+        public static string TranslateClassification(IEnumerable<string?> classifications) {
             var enumerable = classifications as string[] ?? classifications.ToArray();
             if (enumerable.Contains("Legendary"))
                 return "Epic";
@@ -128,22 +128,23 @@ namespace IAGrim.Database.DAO.Util {
         public static string GetItemName(Dictionary<string, string> itemTags, Dictionary<string, List<DBStatRow>> stats, RecordCollection item) {
             // Grab tags
 
-            var records = new string[] { item.PrefixRecord, item.BaseRecord, item.SuffixRecord, item.MateriaRecord };
+            var records = new string?[] { item.PrefixRecord, item.BaseRecord, item.SuffixRecord, item.MateriaRecord };
             var desiredTagsNames = new string[] { "lootRandomizerName", "itemNameTag", "itemQualityTag", "itemStyleTag", "description" };
             var tagEntries = records
-                .Where(r => r != null && stats.ContainsKey(r))
+                .OfType<string>()
+                .Where(stats.ContainsKey)
                 .SelectMany(record => stats[record].Where(v => desiredTagsNames.Contains(v.Stat)))
                 .ToList();
 
             // Resolve a tag to its localized name, mirroring the old FirstOrDefault(..)?.Name lookup
-            string TagName(string tag) => tag != null && itemTags.TryGetValue(tag, out var n) ? n : null;
+            string? TagName(string? tag) => tag != null && itemTags.TryGetValue(tag, out var n) ? n : null;
 
 
             string prefix = string.Empty;
             {
                 var prefixEntry = tagEntries.FirstOrDefault(m => m.Record == item.PrefixRecord && m.Stat == "lootRandomizerName");
                 if (prefixEntry != null) {
-                    prefix = TagName(prefixEntry.TextValue) ?? prefixEntry.TextValue;
+                    prefix = TagName(prefixEntry.TextValue) ?? prefixEntry.TextValue ?? string.Empty;
                 }
             }
 
@@ -151,7 +152,7 @@ namespace IAGrim.Database.DAO.Util {
             {
                 var suffixEntry = tagEntries.FirstOrDefault(m => m.Record == item.SuffixRecord && m.Stat == "lootRandomizerName");
                 if (suffixEntry != null) {
-                    suffix = TagName(suffixEntry.TextValue) ?? suffixEntry.TextValue;
+                    suffix = TagName(suffixEntry.TextValue) ?? suffixEntry.TextValue ?? string.Empty;
                 }
             }
 
@@ -162,7 +163,7 @@ namespace IAGrim.Database.DAO.Util {
                     coreEntry = tagEntries.FirstOrDefault(m => m.Record == item.BaseRecord && m.Stat == "description");
 
                 if (coreEntry != null) {
-                    core = TagName(coreEntry.TextValue) ?? coreEntry.TextValue;
+                    core = TagName(coreEntry.TextValue) ?? coreEntry.TextValue ?? string.Empty;
                 }
             }
 
@@ -170,7 +171,7 @@ namespace IAGrim.Database.DAO.Util {
             {
                 var coreEntry = tagEntries.FirstOrDefault(m => m.Record == item.BaseRecord && m.Stat == "itemQualityTag");
                 if (coreEntry != null) {
-                    quality = TagName(coreEntry.TextValue) ?? coreEntry.TextValue;
+                    quality = TagName(coreEntry.TextValue) ?? coreEntry.TextValue ?? string.Empty;
                 }
             }
 
@@ -178,11 +179,11 @@ namespace IAGrim.Database.DAO.Util {
             {
                 var coreEntry = tagEntries.FirstOrDefault(m => m.Record == item.BaseRecord && m.Stat == "itemStyleTag");
                 if (coreEntry != null) {
-                    style = TagName(coreEntry.TextValue) ?? coreEntry.TextValue;
+                    style = TagName(coreEntry.TextValue) ?? coreEntry.TextValue ?? string.Empty;
                 }
             }
 
-            string materia = string.Empty;
+            string? materia = string.Empty;
             {
                 var entry = tagEntries.FirstOrDefault(m => m.Record == item.MateriaRecord && m.Stat == "description");
                 if (entry != null) {
@@ -193,7 +194,7 @@ namespace IAGrim.Database.DAO.Util {
             }
 
 
-            string localizedName = RuntimeSettings.Language.TranslateName(prefix, quality, style, core, suffix);
+            string localizedName = RuntimeSettings.Language?.TranslateName(prefix, quality, style, core, suffix) ?? core;
             return localizedName + materia;
         }
     }

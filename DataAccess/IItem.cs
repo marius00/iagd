@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataAccess {
     public interface IItem {
-        string Record { get; }
-        ICollection<IItemStat> Stats { get; }
+        string? Record { get; }
+        ICollection<IItemStat>? Stats { get; }
     }
 }

@@ -110,7 +110,7 @@ static class Helpers {
 class FirefoxRadioButton : Control {
     #region " Public "
 
-    public event CheckedChangedEventHandler CheckedChanged;
+    public event CheckedChangedEventHandler? CheckedChanged;
 
     public delegate void CheckedChangedEventHandler(object sender, EventArgs e);
 
@@ -121,7 +121,7 @@ class FirefoxRadioButton : Control {
     private Helpers.MouseState State;
     private Color ETC = Color.Blue;
 
-    private Graphics G;
+    private Graphics? G;
     private bool _EnabledCalc;
     private bool _Checked;
 
@@ -184,7 +184,7 @@ class FirefoxRadioButton : Control {
 
         base.OnPaint(e);
 
-        G.Clear(Parent.BackColor);
+        G.Clear(Parent?.BackColor ?? BackColor);
 
         DpiHelper dpiHelper = new DpiHelper(G);
         Rectangle radioCircleRect = dpiHelper.ScaleRectangle(new Rectangle(2, 2, 22, 22));
@@ -257,7 +257,7 @@ class FirefoxRadioButton : Control {
 
 
         if (Enabled) {
-            if (!Checked) {
+            if (!Checked && Parent != null) {
                 foreach (Control C in Parent.Controls) {
                     if (C is FirefoxRadioButton) {
                         ((FirefoxRadioButton) C).Checked = false;
@@ -266,9 +266,7 @@ class FirefoxRadioButton : Control {
             }
 
             Checked = true;
-            if (CheckedChanged != null) {
-                CheckedChanged(this, e);
-            }
+            CheckedChanged?.Invoke(this, e);
         }
 
         State = Helpers.MouseState.Over;
@@ -295,7 +293,7 @@ class FirefoxH1 : Label {
 
     #endregion
 
-    private Graphics G;
+    private Graphics? G;
 
     #region " Control "
 
@@ -340,12 +338,12 @@ class FirefoxRedirect : Control {
 
     private Helpers.MouseState State;
 
-    private Graphics G;
+    private Graphics? G;
     private Color FC = Color.Blue;
 
     #endregion
 
-    private Font FF = null;
+    private Font? FF = null;
 
     #region " Control "
 
@@ -416,7 +414,7 @@ class FirefoxRedirect : Control {
 class FirefoxSubTabControl : TabControl {
     #region " Private "
 
-    private Graphics G;
+    private Graphics? G;
 
     #endregion
 
@@ -457,7 +455,7 @@ class FirefoxSubTabControl : TabControl {
 
         base.OnPaint(e);
 
-        G.Clear(Parent.BackColor);
+        G.Clear(Parent?.BackColor ?? BackColor);
 
 
         for (int i = 0; i <= TabPages.Count - 1; i++) {
@@ -498,7 +496,7 @@ class FirefoxSubTabControl : TabControl {
 class FirefoxMainTabControl : TabControl {
     #region " Private "
 
-    private Graphics G;
+    private Graphics? G;
     private Rectangle TabRect;
 
     #endregion

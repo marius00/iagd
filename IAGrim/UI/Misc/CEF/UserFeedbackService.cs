@@ -11,7 +11,7 @@ namespace IAGrim.UI.Misc.CEF {
     public class UserFeedbackService {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(UserFeedbackService));
         private readonly List<LogHistoryEntry> _history = new List<LogHistoryEntry>();
-        private LogHistoryEntry _previousEntry;
+        private LogHistoryEntry? _previousEntry;
         private readonly CefBrowserHandler _cefBrowserHandler;
 
         public UserFeedbackService(CefBrowserHandler cefBrowserHandler) {
@@ -23,11 +23,11 @@ namespace IAGrim.UI.Misc.CEF {
 
                 if (!IsRecent(entry)) {
                     if (!string.IsNullOrEmpty(entry.URL)) {
-                        _cefBrowserHandler.ShowMessage(entry.Message, entry.Level, entry.URL);
+                        _cefBrowserHandler.ShowMessage(entry.Message ?? string.Empty, entry.Level, entry.URL);
                         Logger.Info($"Feedback {entry.Message}");
                     }
                     else {
-                        _cefBrowserHandler.ShowMessage(entry.Message, entry.Level);
+                        _cefBrowserHandler.ShowMessage(entry.Message ?? string.Empty, entry.Level);
                         Logger.Info($"Feedback {entry.Message}");
                     }
 
@@ -54,7 +54,7 @@ namespace IAGrim.UI.Misc.CEF {
 
         class LogHistoryEntry {
             public long Timestamp { get; set; }
-            public string Message { get; set; }
+            public string? Message { get; set; }
         }
 
         public void SetFeedback(string level, string feedback, string helpUrl) {

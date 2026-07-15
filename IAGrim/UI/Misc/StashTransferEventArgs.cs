@@ -24,11 +24,11 @@ namespace IAGrim.UI.Misc {
             }
         }
 
-        public string Prefix => InternalId[1] as string;
-        public string BaseRecord => InternalId[0] as string;
-        public string Suffix => InternalId[2] as string;
-        public string Materia => InternalId[3] as string;
-        public string Mod => InternalId[4] as string;
+        public string? Prefix => InternalId[1] as string;
+        public string? BaseRecord => InternalId[0] as string;
+        public string? Suffix => InternalId[2] as string;
+        public string? Materia => InternalId[3] as string;
+        public string? Mod => InternalId[4] as string;
         public Boolean IsHardcore {
             get {
                 if (HasValidId && !"PI".Equals(BaseRecord))

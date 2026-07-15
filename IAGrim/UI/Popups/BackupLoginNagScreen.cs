@@ -22,7 +22,7 @@ namespace IAGrim.UI.Popups {
         }
 
         private void BackupLoginNagScreen_Load(object sender, EventArgs e) {
-            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
+            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language!);
             Guid guid = new Guid("{071E8B2B-169A-4BE2-9539-548A1F3F1F1B}");
             using (SingleInstance singleInstance = new SingleInstance(guid)) {
                 if (!singleInstance.IsFirstInstance) {
@@ -48,6 +48,9 @@ namespace IAGrim.UI.Popups {
                 return;
             }
             var args = e as AuthResultEvent;
+            if (args == null) {
+                return;
+            }
             if (args.IsAuthorized) {
                 linkLabel1.Hide();
                 linkLabel2.Hide();
@@ -65,7 +68,7 @@ namespace IAGrim.UI.Popups {
             _closeTimerCounter--;
 
             if (_closeTimerCounter <= 0) {
-                _closeTimer.Stop();
+                _closeTimer?.Stop();
                 this.Close();
             }
         }

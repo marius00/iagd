@@ -44,10 +44,10 @@ namespace IAGrim.Database.DAO {
                     .Add(Restrictions.Like(nameof(ItemTag.Tag), "tagSkillClassName%"))
                     .List<ItemTag>()
                     .Select(m => new ItemTag {
-                        Name = Regex.IsMatch(m.Name, namePattern)
-                            ? Regex.Replace(m.Name, namePattern, "$1/$2")
+                        Name = Regex.IsMatch(m.Name ?? string.Empty, namePattern)
+                            ? Regex.Replace(m.Name ?? string.Empty, namePattern, "$1/$2")
                             : m.Name,
-                        Tag = m.Tag.Replace("tagSkillClassName", "class")
+                        Tag = m.Tag!.Replace("tagSkillClassName", "class")
                     })
                     .ToList();
             }
@@ -64,12 +64,12 @@ namespace IAGrim.Database.DAO {
                     .SetResultTransformer(new AliasToBeanResultTransformer(typeof(ItemTag)))
                     .List<ItemTag>()
                     .Select(m => new ItemTag {
-                        Name = Regex.IsMatch(m.Name, namePattern)
-                            ? Regex.Replace(m.Name, namePattern, "$1/$2")
+                        Name = Regex.IsMatch(m.Name ?? string.Empty, namePattern)
+                            ? Regex.Replace(m.Name ?? string.Empty, namePattern, "$1/$2")
                             : m.Name,
-                        Tag = Regex.IsMatch(m.Tag, gdxClassesPattern)
-                            ? Regex.Replace(m.Tag, gdxClassesPattern, "class$1")
-                            : m.Tag.Replace("tagSkillClassName", "class")
+                        Tag = Regex.IsMatch(m.Tag ?? string.Empty, gdxClassesPattern)
+                            ? Regex.Replace(m.Tag ?? string.Empty, gdxClassesPattern, "class$1")
+                            : m.Tag?.Replace("tagSkillClassName", "class")
                     })
                     .ToHashSet();
             }

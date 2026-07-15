@@ -33,7 +33,7 @@ namespace IAGrim.UI.Popups {
         }
 
         private void AddEditBuddy_Load(object sender, EventArgs e) {
-            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
+            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language!);
             tbBuddyId.KeyPress += buddyId_KeyPress;
             tbBuddyNickname.KeyPress += nickname_KeyPress;
 
@@ -54,14 +54,14 @@ namespace IAGrim.UI.Popups {
             _helpService.ShowHelp(HelpService.HelpType.WhatIsBuddyNickname);
         }
 
-        private void buttonAdd_Click(object sender, EventArgs e) {
+        private void buttonAdd_Click(object? sender, EventArgs e) {
             if (tbBuddyId.Text.Length != 6) {
-                errorProvider1.SetError(tbBuddyId, RuntimeSettings.Language.GetTag("iatag_ui_buddy_userid_numeric_error_message"));
+                errorProvider1.SetError(tbBuddyId, RuntimeSettings.Language!.GetTag("iatag_ui_buddy_userid_numeric_error_message"));
                 errorProvider1.SetIconAlignment(tbBuddyId, ErrorIconAlignment.MiddleLeft);
             }
 
             else if (tbBuddyNickname.Text.Length <= 0) {
-                errorProvider1.SetError(tbBuddyNickname, RuntimeSettings.Language.GetTag("iatag_ui_buddy_nickname_error_message"));
+                errorProvider1.SetError(tbBuddyNickname, RuntimeSettings.Language!.GetTag("iatag_ui_buddy_nickname_error_message"));
                 errorProvider1.SetIconAlignment(tbBuddyNickname, ErrorIconAlignment.MiddleLeft);
             }
 
@@ -70,13 +70,13 @@ namespace IAGrim.UI.Popups {
                     DialogResult = DialogResult.OK;
                     Close();
                 } else {
-                    errorProvider1.SetError(tbBuddyId, RuntimeSettings.Language.GetTag("iatag_ui_buddy_userid_doesnotexist_error_message"));
+                    errorProvider1.SetError(tbBuddyId, RuntimeSettings.Language!.GetTag("iatag_ui_buddy_userid_doesnotexist_error_message"));
                     errorProvider1.SetIconAlignment(tbBuddyId, ErrorIconAlignment.MiddleLeft);
                 }
             }
         }
 
-        void buddyId_KeyPress(object sender, KeyPressEventArgs e) {
+        void buddyId_KeyPress(object? sender, KeyPressEventArgs e) {
             // Disallow more than 6 characters
             if (tbBuddyId.Text.Length >= 6 && !char.IsControl(e.KeyChar)) { // Non printable chars 0..31
                 e.Handled = true;
@@ -90,14 +90,14 @@ namespace IAGrim.UI.Popups {
             }
             else {
                 e.Handled = true;
-                errorProvider1.SetError(tbBuddyId, RuntimeSettings.Language.GetTag("iatag_ui_buddy_userid_numeric_error_message"));
+                errorProvider1.SetError(tbBuddyId, RuntimeSettings.Language!.GetTag("iatag_ui_buddy_userid_numeric_error_message"));
                 errorProvider1.SetIconAlignment(tbBuddyId, ErrorIconAlignment.MiddleLeft);
             }
 
             // Enter/Return key
             if (e.KeyChar == 13) {
                 if (tbBuddyId.Text.Length != 6) {
-                    errorProvider1.SetError(tbBuddyId, RuntimeSettings.Language.GetTag("iatag_ui_buddy_userid_numeric_error_message"));
+                    errorProvider1.SetError(tbBuddyId, RuntimeSettings.Language!.GetTag("iatag_ui_buddy_userid_numeric_error_message"));
                     errorProvider1.SetIconAlignment(tbBuddyId, ErrorIconAlignment.MiddleLeft);
                 }
                 else {
@@ -107,21 +107,21 @@ namespace IAGrim.UI.Popups {
                         tbBuddyNickname.Focus();
                     }
                     else {
-                        errorProvider1.SetError(tbBuddyId, RuntimeSettings.Language.GetTag("iatag_ui_buddy_userid_doesnotexist_error_message"));
+                        errorProvider1.SetError(tbBuddyId, RuntimeSettings.Language!.GetTag("iatag_ui_buddy_userid_doesnotexist_error_message"));
                         errorProvider1.SetIconAlignment(tbBuddyId, ErrorIconAlignment.MiddleLeft);
                     }
                 }
             }
         }
 
-        void nickname_KeyPress(object sender, KeyPressEventArgs e) {
+        void nickname_KeyPress(object? sender, KeyPressEventArgs e) {
             // Enter
             if (e.KeyChar == 13) {
                 if (tbBuddyNickname.Text.Length >= 1) {
                     buttonAdd_Click(sender, e);
                 }
                 else {
-                    errorProvider1.SetError(tbBuddyNickname, RuntimeSettings.Language.GetTag("iatag_ui_buddy_nickname_error_message"));
+                    errorProvider1.SetError(tbBuddyNickname, RuntimeSettings.Language!.GetTag("iatag_ui_buddy_nickname_error_message"));
                     errorProvider1.SetIconAlignment(tbBuddyNickname, ErrorIconAlignment.MiddleLeft);
                 }
                 e.Handled = true;

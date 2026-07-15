@@ -6,10 +6,10 @@ namespace IAGrim.UI
 {
     internal class FilterEventArgs : EventArgs
     {
-        public List<string[]> Filters { get; set; }
+        public List<string[]>? Filters { get; set; }
 
         /// <summary>Per-checkbox numeric stat filters (e.g. Fire &gt;= 30) from the stat filter buttons.</summary>
-        public List<StatValueFilter> NumericFilters { get; set; }
+        public List<StatValueFilter>? NumericFilters { get; set; }
 
         public bool PetBonuses { get; set; }
 
@@ -26,6 +26,6 @@ namespace IAGrim.UI
 
         public bool WithSummonerSkillOnly { get; set; }
 
-        public List<string> DesiredClass { get; set; }
+        public List<string>? DesiredClass { get; set; }
     }
 }

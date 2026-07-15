@@ -11,10 +11,10 @@ namespace IAGrim.Database {
     /// </summary>
     public class PlayerItemRecord {
         public virtual long PlayerItemId { get; set; }
-        public virtual string Record { get; set; }
+        public virtual string? Record { get; set; }
 
-        public override bool Equals(object obj) {
-            PlayerItemRecord that = obj as PlayerItemRecord;
+        public override bool Equals(object? obj) {
+            PlayerItemRecord? that = obj as PlayerItemRecord;
             if (that != null) {
                 return this.PlayerItemId == that.PlayerItemId && this.Record == that.Record;
             }

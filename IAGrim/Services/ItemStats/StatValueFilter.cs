@@ -1,3 +1,5 @@
+using System;
+
 namespace IAGrim.Services.ItemStats {
 
     /// <summary>
@@ -9,7 +11,7 @@ namespace IAGrim.Services.ItemStats {
         public enum Op { GreaterThan, GreaterOrEqual, LessThan, LessOrEqual, Equal }
 
         /// <summary>The stat field names contributed by the checkbox; their computed values are summed.</summary>
-        public string[] Fields { get; set; }
+        public string[] Fields { get; set; } = Array.Empty<string>();
 
         public Op Operator { get; set; }
 

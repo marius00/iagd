@@ -109,9 +109,9 @@ namespace IAGrim.UI {
         /// Sets the "last database update" timestamp to 0 to force an update
         /// Queues a database update, followed by an item stat update.
         /// </summary>
-        public void ForceDatabaseUpdate(string location, string modLocation) {
+        public void ForceDatabaseUpdate(string? location, string? modLocation) {
             if (!string.IsNullOrEmpty(location) && Directory.Exists(location)) {
-                _parsingService.Update(location, modLocation);
+                _parsingService.Update(location, modLocation ?? string.Empty);
                 _parsingService.Execute();
             }
             else {
@@ -125,7 +125,7 @@ namespace IAGrim.UI {
             _itemViewUpdateTrigger?.Invoke();
         }
 
-        private static ListViewEntry GetFirst(ListView lv) {
+        private static ListViewEntry? GetFirst(ListView lv) {
             foreach (ListViewItem lvi in lv.SelectedItems) {
                 return lvi.Tag as ListViewEntry;
             }
@@ -135,7 +135,7 @@ namespace IAGrim.UI {
 
         private void buttonForceUpdate_Click(object sender, EventArgs e) {
             if (EvilsoftCommons.DllInjector.DllInjector.FindProcessForWindow("Grim Dawn").Count > 0) {
-                MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_gdisrunning"));
+                MessageBox.Show(RuntimeSettings.Language!.GetTag("iatag_ui_gdisrunning"));
                 return;
             }
 
@@ -146,17 +146,22 @@ namespace IAGrim.UI {
             var mod = GetFirst(listViewMods);
             var entry = GetFirst(listViewInstalls);
 
-            if (mod != null) {
+            if (mod?.Path != null) {
                 // Load selected mod icons
                 ThreadPool.QueueUserWorkItem((m) => ArzParser.LoadSelectedModIcons(mod.Path));
             }
 
+            if (entry == null) {
+                Logger.Warn("ForceDatabaseUpdate requested with no install selected, aborting.");
+                return;
+            }
+
             ForceDatabaseUpdate(entry.Path, mod?.Path);
-            _settingsService.GetLocal().CurrentGrimdawnLocation = entry.Path;
+            _settingsService.GetLocal().CurrentGrimdawnLocation = entry.Path ?? string.Empty;
 
             // Store the loaded GD path, so we can poll it for updates later.
             //_settingsService.GetLocal().GrimDawnLocation = new List<string> { entry.Path }; // TODO: Wtf is this? Why overwrite any existing?
-            _settingsService.GetLocal().GrimDawnLocationLastModified = ParsingService.GetHighestTimestamp(entry.Path);
+            _settingsService.GetLocal().GrimDawnLocationLastModified = ParsingService.GetHighestTimestamp(entry.Path ?? string.Empty);
             _settingsService.GetLocal().HasWarnedGrimDawnUpdate = false;
 
             var isGdParsed = _databaseItemDao.GetRowCount() > 0;
@@ -185,7 +190,7 @@ namespace IAGrim.UI {
         private void buttonClean_Click(object sender, EventArgs e) {
             _databaseItemDao.Clean();
             buttonUpdateItemStats_Click(sender, e);
-            MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_clean_body"),
+            MessageBox.Show(RuntimeSettings.Language!.GetTag("iatag_ui_clean_body"),
                 RuntimeSettings.Language.GetTag("iatag_ui_clean_caption"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
             var isGdParsed = _databaseItemDao.GetRowCount() > 0;
@@ -203,7 +208,7 @@ namespace IAGrim.UI {
                         // TODO: Kill the task that keeps looking for GD.
                     }
                     else {
-                        var text = RuntimeSettings.Language.GetTag("iatag_ui_db_invalidlocation_body");
+                        var text = RuntimeSettings.Language!.GetTag("iatag_ui_db_invalidlocation_body");
                         var title = RuntimeSettings.Language.GetTag("iatag_ui_db_invalidlocation_title");
                         MessageBox.Show(text, title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }

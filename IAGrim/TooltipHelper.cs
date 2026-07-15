@@ -12,7 +12,7 @@ namespace EvilsoftCommons {
     /// Must be disposed before program exit
     /// </summary>
     public class TooltipHelper : IDisposable {
-        private ToolTip _tooltip;
+        private ToolTip? _tooltip;
         private ToolTip Tooltip {
             get {
                 if (_tooltip == null)

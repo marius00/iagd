@@ -44,15 +44,15 @@ namespace IAGrim.Backup.Cloud.Service {
 
 
         public List<CharacterListDto> ListBackedUpCharacters() {
-            CharacterListDto[] characters = _authService.GetRestService()?.Get<CharacterListDto[]>(Uris.ListCharacterUrl);
+            CharacterListDto[]? characters = _authService.GetRestService()?.Get<CharacterListDto[]>(Uris.ListCharacterUrl!);
             return characters?.ToList() ?? new List<CharacterListDto>(0);
         }
 
         class CharacterDownloadUrlDto {
-            public string Url { get; set; }
+            public string? Url { get; set; }
         }
 
-        public string GetDownloadUrl(string character) {
+        public string? GetDownloadUrl(string character) {
             var url = $"{Uris.DownloadCharacterUrl}?name={WebUtility.UrlEncode(character)}";
             return _authService.GetRestService()?.Get<CharacterDownloadUrlDto>(url)?.Url;
         }
@@ -116,7 +116,7 @@ namespace IAGrim.Backup.Cloud.Service {
                 }
             }
             catch (WebException ex) {
-                var resp = new StreamReader(ex.Response.GetResponseStream()).ReadToEnd();
+                var resp = ex.Response != null ? new StreamReader(ex.Response.GetResponseStream()).ReadToEnd() : string.Empty;
                 Logger.Warn(ex.Message, ex);
                 Logger.Warn(resp);
 

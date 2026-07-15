@@ -16,27 +16,37 @@ namespace IAGrim.UI
             cb.BackColor = SystemColors.Control;
         }
 
-        void cb_SelectionChangeCommitted(object sender, EventArgs e) {
-            ComboBox cb = sender as ComboBox;
-            IComboBoxItemToggle item = cb.SelectedItem as IComboBoxItemToggle;
+        void cb_SelectionChangeCommitted(object? sender, EventArgs e) {
+            ComboBox? cb = sender as ComboBox;
+            if (cb == null)
+                return;
+
+            IComboBoxItemToggle? item = cb.SelectedItem as IComboBoxItemToggle;
             if (item != null) {
                 if (!item.Enabled)
                     cb.SelectedIndex = LastSelection;
             }
         }
 
-        void cb_Enter(object sender, EventArgs e) {
-            LastSelection = (sender as ComboBox).SelectedIndex;
+        void cb_Enter(object? sender, EventArgs e) {
+            ComboBox? cb = sender as ComboBox;
+            if (cb == null)
+                return;
+
+            LastSelection = cb.SelectedIndex;
         }
 
 
-        private void comboBox_DrawItem(object sender, DrawItemEventArgs e) {
-            ComboBox comboBox = (ComboBox)sender;
+        private void comboBox_DrawItem(object? sender, DrawItemEventArgs e) {
+            ComboBox comboBox = (ComboBox)sender!;
             if (e.Index >= 0) {
-                IComboBoxItemToggle item = comboBox.Items[e.Index] as IComboBoxItemToggle;
+                IComboBoxItemToggle? item = comboBox.Items[e.Index] as IComboBoxItemToggle;
+                if (item == null)
+                    return;
+
                 if (!item.Enabled) {
                     e.Graphics.FillRectangle(SystemBrushes.Window, e.Bounds);
-                    e.Graphics.DrawString(comboBox.Items[e.Index].ToString(), comboBox.Font, Brushes.LightSlateGray, e.Bounds);
+                    e.Graphics.DrawString(comboBox.Items[e.Index]?.ToString(), comboBox.Font, Brushes.LightSlateGray, e.Bounds);
                 }
                 else {
                     e.DrawBackground();
@@ -44,7 +54,7 @@ namespace IAGrim.UI
                     // Set the brush according to whether the item is selected or not
                     Brush br = ((e.State & DrawItemState.Selected) > 0) ? SystemBrushes.HighlightText : SystemBrushes.ControlText;
 
-                    e.Graphics.DrawString(comboBox.Items[e.Index].ToString(), comboBox.Font, br, e.Bounds);
+                    e.Graphics.DrawString(comboBox.Items[e.Index]?.ToString(), comboBox.Font, br, e.Bounds);
                     e.DrawFocusRectangle();
                 }
             }

@@ -34,9 +34,9 @@ namespace DllInjector {
         private readonly string? _linuxHackPath;
 
         class RunArguments {
-            public string WindowName;
-            public string ClassName;
-            public string DllName;
+            public required string WindowName;
+            public required string ClassName;
+            public required string DllName;
         }
 
 

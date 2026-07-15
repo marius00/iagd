@@ -36,8 +36,8 @@ namespace IAGrim.Parsers.TransferStash {
             // Dupe-check list
 
             bool stacked = item.StackCount > 1
-                || _cache.StackableRecords.Contains(item.BaseRecord)
-                || _cache.SpecialRecords.Contains(item.BaseRecord); // Special "single seed" items.
+                || _cache.StackableRecords!.Contains(item.BaseRecord)
+                || _cache.SpecialRecords!.Contains(item.BaseRecord); // Special "single seed" items.
 
             if (stacked) {
                 Stacked.Add(item);
@@ -49,7 +49,7 @@ namespace IAGrim.Parsers.TransferStash {
 
             
             // We don't have this record at all, unknown to IA. Probably need to parse DB.
-            bool unknownItem = !_cache.AllRecords.Contains(item.BaseRecord);
+            bool unknownItem = !_cache.AllRecords!.Contains(item.BaseRecord);
             if (unknownItem) {
                 if (item.BaseRecord.StartsWith("records/storyelements/rewards/")) {
                     Quest.Add(item);

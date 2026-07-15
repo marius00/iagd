@@ -9,19 +9,19 @@ using IAGrim.Database.Model;
 namespace IAGrim.Database.Interfaces {
     public interface PlayerHeldItem : IComparable {
         Int64 Id { get; }
-        string Stash { get; }
+        string? Stash { get; }
         bool IsRecipe { get; }
         bool HasRecipe { get; set;}
 
         // The names of buddies who has this item
         ulong Count { get; set; }
-        string Name { get; }
-        string BaseRecord { get; }
+        string? Name { get; }
+        string? BaseRecord { get; }
 
         long PrefixRarity { get; }
 
 
-        string Rarity { get; }
+        string? Rarity { get; }
 
         float MinimumLevel { get; }
         string Slot { get; }
@@ -35,11 +35,11 @@ namespace IAGrim.Database.Interfaces {
 
         string Bitmap { get; }
 
-        ISet<DBStatRow> Tags {
+        ISet<DBStatRow>? Tags {
             get;
             set;
         }
 
-        PlayerItemSkill Skill { get; }
+        PlayerItemSkill? Skill { get; }
     }
 }

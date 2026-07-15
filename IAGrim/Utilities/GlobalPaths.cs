@@ -18,9 +18,9 @@ namespace IAGrim.Utilities {
 
         private static string LocalAppdata {
             get {
-                string appdata = System.Environment.GetEnvironmentVariable("LocalAppData");
+                string? appdata = System.Environment.GetEnvironmentVariable("LocalAppData");
                 if (string.IsNullOrEmpty(appdata))
-                    return Path.Combine(System.Environment.GetEnvironmentVariable("AppData"), "..", "local");
+                    return Path.Combine(System.Environment.GetEnvironmentVariable("AppData") ?? string.Empty, "..", "local");
                 else
                     return appdata;
             }

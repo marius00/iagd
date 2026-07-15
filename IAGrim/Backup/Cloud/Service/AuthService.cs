@@ -20,7 +20,7 @@ namespace IAGrim.Backup.Cloud.Service {
         private readonly IPlayerItemDao _playerItemDao;
         private Thread? _pollingThread = null;
         private volatile bool _isDisposing = false;
-        private string _pollingId;
+        private string? _pollingId;
         public event EventHandler<AuthResultEvent>? OnAuthCompletion;
 
         public enum AccessStatus {
@@ -153,7 +153,7 @@ namespace IAGrim.Backup.Cloud.Service {
                         Thread.Sleep(2000);
 
                         var content = new FormUrlEncodedContent(new[] {
-                            new KeyValuePair<string, string>("token", _pollingId),
+                            new KeyValuePair<string, string>("token", _pollingId!),
                         });
 
                         var result = httpClient.PostAsync(Uris.TokenPollUri, content).Result;
@@ -162,15 +162,22 @@ namespace IAGrim.Backup.Cloud.Service {
                         string body = result.Content.ReadAsStringAsync().Result;
                         if (status == HttpStatusCode.OK) {
                             Logger.Info($"Got Status {result} verifying authentication token");
-                            Dictionary<string, object> dataMap = JsonConvert.DeserializeObject<Dictionary<string, object>>(body);
-                            if (dataMap["status"].ToString() == "COMPLETED") {
+                            Dictionary<string, object>? dataMap = JsonConvert.DeserializeObject<Dictionary<string, object>>(body);
+                            if (dataMap != null && dataMap["status"].ToString() == "COMPLETED") {
                                 Logger.Info("Cloud reports login succeeded");
 
-                                _authenticationProvider.SetToken(dataMap["email"].ToString(), dataMap["token"].ToString());
+                                var email = dataMap["email"].ToString();
+                                var token = dataMap["token"].ToString();
+                                if (email == null || token == null) {
+                                    Logger.Warn("Cloud reported login succeeded, but email/token was missing from response");
+                                    return;
+                                }
+
+                                _authenticationProvider.SetToken(email, token);
 
                                 // This somewhat needlessly introduces the System.Runtime.Caching package
                                 MemoryCache.Default.Set(CacheKey, true, DateTimeOffset.Now.AddDays(1));
-                                OnAuthCompletion?.Invoke(this, new AuthResultEvent(dataMap["email"].ToString(), dataMap["token"].ToString()));
+                                OnAuthCompletion?.Invoke(this, new AuthResultEvent(email, token));
 
                                 return;
                             }
@@ -201,11 +208,11 @@ namespace IAGrim.Backup.Cloud.Service {
             MemoryCache.Default.Set(CacheKey, AccessStatus.Unauthorized, DateTimeOffset.Now.AddDays(1));
         }
 
-        public AuthenticationProvider GetAuthProvider() {
+        public AuthenticationProvider? GetAuthProvider() {
             return CheckAuthentication() == AccessStatus.Authorized ? _authenticationProvider : null;
         }
 
-        public RestService GetRestService() {
+        public RestService? GetRestService() {
             if (CheckAuthentication() != AccessStatus.Authorized) return null;
 
             var token = _authenticationProvider.GetToken();

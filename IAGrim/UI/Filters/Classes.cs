@@ -23,7 +23,7 @@ namespace IAGrim.UI.Filters {
             }
         }
 
-        public void Classes_Load(object sender, EventArgs e) {
+        public void Classes_Load(object? sender, EventArgs e) {
             // 3,4+n*33
             // 3,37
             // 3,70
@@ -57,7 +57,7 @@ namespace IAGrim.UI.Filters {
             int cbHeight = cbDemolitionist.Height;
 
             foreach (var tag in _classTags) {
-                var translationTag = $"{tag.Tag.ToLowerInvariant()}";
+                var translationTag = $"{(tag.Tag ?? string.Empty).ToLowerInvariant()}";
 
                 if (!prefilled.Contains(translationTag)) {
                     var cb = new FirefoxCheckBox {
@@ -67,12 +67,12 @@ namespace IAGrim.UI.Filters {
                         Location = new Point {X = 3, Y = 3 + cbNum * yOffsetHeight}
                     };
 
-                    _classes[tag.Tag] = cb;
+                    _classes[translationTag] = cb;
                     classesPanelBox.Controls.Add(cb);
                     cbNum++;
                 }
-                else if (_classes.ContainsKey(tag.Tag)) {
-                    _classes[tag.Tag].Text = tag.Name;
+                else if (_classes.ContainsKey(translationTag)) {
+                    _classes[translationTag].Text = tag.Name;
                 }
             }
 

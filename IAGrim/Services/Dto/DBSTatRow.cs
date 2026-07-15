@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 namespace IAGrim.Services.Dto {
 
     public class DBStatRow : IItemStat {
-        public string Record { get; set; }
-        public string Stat { get; set; }
+        public string? Record { get; set; }
+        public string? Stat { get; set; }
         public double Value { get; set; }
-        public string TextValue { get; set; }
+        public string? TextValue { get; set; }
 
         float IItemStat.Value {
             get => (float)Value;

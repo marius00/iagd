@@ -17,7 +17,7 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ImportMode));
         private readonly GDTransferFile[] _modSelection;
         private readonly IPlayerItemDao _playerItemDao;
-        private string _filename;
+        private string? _filename;
         private volatile bool isLocked = false;
 
         public ImportMode(GDTransferFile[] modSelection, IPlayerItemDao playerItemDao) {
@@ -33,24 +33,24 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
             cbItemSelection.Enabled = false;
 
             cbItemSelection.Items.AddRange(_modSelection);
-            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
+            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language!);
 
-            (this.Parent.Parent as Form).FormClosing += Form1_FormClosing;
+            (this.Parent!.Parent as Form)!.FormClosing += Form1_FormClosing;
         }
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e) {
+        private void Form1_FormClosing(object? sender, FormClosingEventArgs e) {
             e.Cancel = isLocked;
         }
 
         private void radioIAStash_CheckedChanged(object sender, EventArgs e) {
-            cbItemSelection.Visible = !(sender as Control).Enabled;
+            cbItemSelection.Visible = !(sender as Control)!.Enabled;
         }
 
         private void radioGDStash_CheckedChanged(object sender, EventArgs e) {
-            cbItemSelection.Visible = (sender as Control).Enabled;
+            cbItemSelection.Visible = (sender as Control)!.Enabled;
         }
 
         private void radioGameStash_CheckedChanged(object sender, EventArgs e) {
-            cbItemSelection.Visible = !(sender as Control).Enabled;
+            cbItemSelection.Visible = !(sender as Control)!.Enabled;
         }
 
         private void buttonBrowse_Click(object sender, EventArgs e) {
@@ -60,7 +60,7 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
                     CheckPathExists = true,
                     InitialDirectory = Path.Combine(GlobalPaths.SavePath, "Save"),
                     Multiselect = false,
-                    Title = RuntimeSettings.Language.GetTag("iatag_ui_importexport_selectfile")
+                    Title = RuntimeSettings.Language!.GetTag("iatag_ui_importexport_selectfile")
                 }) {
 
                     if (radioGDStash.Checked) {
@@ -122,14 +122,14 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
         }
 
         private void buttonImport_Click(object sender, EventArgs e) {
-            if (buttonImport.Enabled) {
+            if (buttonImport.Enabled && _filename != null) {
                 FileExporter io;
 
                 if (radioIAStash.Checked) {
                     io = new IAFileExporter(_filename);
                 }
                 else{
-                    GDTransferFile settings = cbItemSelection.SelectedItem as GDTransferFile;
+                    GDTransferFile? settings = cbItemSelection.SelectedItem as GDTransferFile;
                     io = new GDFileExporter(_filename, settings?.Mod ?? string.Empty);
                 }
 
@@ -150,7 +150,7 @@ namespace IAGrim.UI.Popups.ImportExport.Panels {
 
                     isLocked = false;
                     MessageBox.Show(
-                        RuntimeSettings.Language.GetTag("iatag_ui_importexport_import_success_body"),
+                        RuntimeSettings.Language!.GetTag("iatag_ui_importexport_import_success_body"),
                         RuntimeSettings.Language.GetTag("iatag_ui_importexport_import_success"),
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Information

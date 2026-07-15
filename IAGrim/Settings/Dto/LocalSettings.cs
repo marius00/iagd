@@ -6,10 +6,10 @@ using Newtonsoft.Json;
 
 namespace IAGrim.Settings.Dto {
     public class LocalSettings {
-        public event EventHandler OnMutate;
+        public event EventHandler? OnMutate;
 
-        private List<string> _grimDawnLocation;
-        private string _currentGrimdawnLocation;
+        private List<string>? _grimDawnLocation;
+        private string? _currentGrimdawnLocation;
         private bool? _preferDelayedSearch;
         private int _backupNumber;
         private long? _lastNagTimestamp;
@@ -18,21 +18,21 @@ namespace IAGrim.Settings.Dto {
         private int _stashToDepositTo;
         private int _stashToLootFrom;
         private GDTransferFile? _lastSelectedMod;
-        private string _lastSelectedTargetMod;
+        private string? _lastSelectedTargetMod;
         private bool _lastSelectedTargetModIsHc;
-        private string _localizationFile;
-        private string _languageCode;
-        private WindowSizeManager.WindowSizeProps _windowPositionSettings;
+        private string? _localizationFile;
+        private string? _languageCode;
+        private WindowSizeManager.WindowSizeProps? _windowPositionSettings;
         private bool _backupCustom;
         private bool _optOutOfBackups;
-        private string _backupCustomLocation;
+        private string? _backupCustomLocation;
         private bool _hasWarnedGrimDawnUpdate;
         private bool _isGrimDawnParsed;
         private long? _grimDawnLocationLastModified;
         private bool _startMinimized;
         private DateTime _lastCharSyncUtc;
 
-        public string MachineName { get; set; }
+        public string? MachineName { get; set; }
 
         public void AddGrimDawnLocation(string location) {
             if (_grimDawnLocation == null) {
@@ -47,7 +47,7 @@ namespace IAGrim.Settings.Dto {
         }
 
         public List<string> GrimDawnLocation {
-            get => _grimDawnLocation;
+            get => _grimDawnLocation ?? new List<string>();
             set {
                 _grimDawnLocation = value;
                 OnMutate?.Invoke(null, EventArgs.Empty);
@@ -121,7 +121,7 @@ namespace IAGrim.Settings.Dto {
         }
 
         public string LastSelectedTargetMod {
-            get => _lastSelectedTargetMod;
+            get => _lastSelectedTargetMod ?? string.Empty;
             set {
                 _lastSelectedTargetMod = value;
                 OnMutate?.Invoke(null, EventArgs.Empty);
@@ -138,7 +138,7 @@ namespace IAGrim.Settings.Dto {
 
         [Obsolete("Use LanguageCode instead. Kept for settings migration.")]
         public string LocalizationFile {
-            get => _localizationFile;
+            get => _localizationFile ?? string.Empty;
             set {
                 _localizationFile = value;
                 OnMutate?.Invoke(null, EventArgs.Empty);
@@ -154,7 +154,7 @@ namespace IAGrim.Settings.Dto {
         }
 
         public string CurrentGrimdawnLocation {
-            get => _currentGrimdawnLocation;
+            get => _currentGrimdawnLocation ?? string.Empty;
             set {
                 _currentGrimdawnLocation = value;
                 OnMutate?.Invoke(null, EventArgs.Empty);
@@ -171,7 +171,7 @@ namespace IAGrim.Settings.Dto {
 
 
 
-        public WindowSizeManager.WindowSizeProps WindowPositionSettings {
+        public WindowSizeManager.WindowSizeProps? WindowPositionSettings {
             get => _windowPositionSettings;
             set {
                 _windowPositionSettings = value;
@@ -188,7 +188,7 @@ namespace IAGrim.Settings.Dto {
         }
 
         public string BackupCustomLocation {
-            get => _backupCustomLocation;
+            get => _backupCustomLocation ?? string.Empty;
             set {
                 _backupCustomLocation = value;
                 OnMutate?.Invoke(null, EventArgs.Empty);

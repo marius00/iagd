@@ -21,7 +21,7 @@ namespace IAGrim.UI.Controller {
         private readonly IItemCollectionDao _itemCollectionRepo;
 
 
-        public IBrowserCallbacks Browser;
+        public IBrowserCallbacks? Browser;
         public readonly JavascriptIntegration JsIntegration = new JavascriptIntegration();
         public event EventHandler? OnSearch;
 
@@ -62,7 +62,7 @@ namespace IAGrim.UI.Controller {
             JsIntegration.OnRequestCollectionData += JsBind_OnRequestCollectionData;
         }
 
-        private void JsBind_OnRequestCollectionData(object sender, EventArgs e) {
+        private void JsBind_OnRequestCollectionData(object? sender, EventArgs e) {
             if (_lastQuery == null) {
                 return; // No search has run yet; nothing to build the collection view from.
             }
@@ -71,12 +71,17 @@ namespace IAGrim.UI.Controller {
         }
 
         // TODO: Redo! Infiscroll
-        private void JsBind_OnRequestItems(object sender, EventArgs e) {
+        private void JsBind_OnRequestItems(object? sender, EventArgs e) {
             ApplyItems(true);
             OnSearch?.Invoke(this, EventArgs.Empty);
         }
 
         private void UpdateCollectionItems(ItemSearchRequest query) {
+            var browser = Browser;
+            if (browser == null) {
+                return;
+            }
+
             // Both of these feed the side "collection" panel, not the main results grid (already
             // rendered by now). They're heavy full-table aggregates, so keep them entirely off the
             // UI thread — running GetItemAggregateStats on Main was freezing the UI ~2s per search.
@@ -84,15 +89,20 @@ namespace IAGrim.UI.Controller {
                 ExceptionReporter.EnableLogUnhandledOnThread();
 
                 var itemCollection = _itemCollectionRepo.GetItemCollection(query);
-                Browser.SetCollectionItems(itemCollection, query.IsHardcore);
+                browser.SetCollectionItems(itemCollection, query.IsHardcore);
 
                 var aggregateStats = _itemCollectionRepo.GetItemAggregateStats();
-                Browser.SetCollectionAggregateData(aggregateStats);
+                browser.SetCollectionAggregateData(aggregateStats);
             });
             thread.Start();
         }
 
         private bool ApplyItems(bool append) {
+            var browser = Browser;
+            if (browser == null) {
+                return false;
+            }
+
             // When appending (infinite scroll) and the in-memory buffer is drained, pull the next DB page
             // (items 1001-2000, 2001-3000, ...) before serving the next UI batch. Buddy items are not
             // paginated (fetched once up front), so only player items are fetched here.
@@ -119,7 +129,7 @@ namespace IAGrim.UI.Controller {
             var items = _itemPaginationService.Fetch();
 
             if (items.Count == 0) {
-                Browser.AddItems(new List<List<JsonItem>>(0), HasMore);
+                browser.AddItems(new List<List<JsonItem>>(0), HasMore);
                 return false;
             }
 
@@ -131,17 +141,18 @@ namespace IAGrim.UI.Controller {
             var convertedItems = ItemHtmlWriter.ToJsonSerializable(items);
 
             if (append) {
-                Browser.AddItems(convertedItems, HasMore, updatedNumItemsFound);
+                browser.AddItems(convertedItems, HasMore, updatedNumItemsFound);
             }
             else {
-                Browser.SetItems(convertedItems, _itemPaginationService.NumTotalItems, HasMore, !_playerTotalKnown);
+                browser.SetItems(convertedItems, _itemPaginationService.NumTotalItems, HasMore, !_playerTotalKnown);
             }
 
             return true;
         }
 
         public void Search(ItemSearchRequest query, PlayerItem item) {
-            if (!Browser.IsReady()) {
+            var browser = Browser;
+            if (browser == null || !browser.IsReady()) {
                 return;
             }
             Logger.Info("Checking if newly looted item matches filter..");
@@ -151,18 +162,19 @@ namespace IAGrim.UI.Controller {
             var merged = ItemOperationsUtility.MergeStackSize(items);
             _itemStatService.ApplyStats(merged.SelectMany(m => m));
             var convertedItems = ItemHtmlWriter.ToJsonSerializable(merged);
-            Browser.AddItems(convertedItems, HasMore);
+            browser.AddItems(convertedItems, HasMore);
         }
 
         public string Search(ItemSearchRequest query, bool includeBuddyItems, bool orderByLevel) {
-            if (!Browser.IsReady()) {
+            var browser = Browser;
+            if (browser == null || !browser.IsReady()) {
                 return string.Empty;
             }
             OnSearch?.Invoke(this, EventArgs.Empty);
             string message;
 
             // Signal that we are loading items
-            Browser.ShowLoadingAnimation(true);
+            browser.ShowLoadingAnimation(true);
             try {
 
                 Logger.Info("Searching for items..");
@@ -194,7 +206,7 @@ namespace IAGrim.UI.Controller {
                 }
                 else {
                     message = _playerTotalKnown && playerTotal == 0
-                        ? RuntimeSettings.Language.GetTag("iatag_no_matching_items_found")
+                        ? RuntimeSettings.Language!.GetTag("iatag_no_matching_items_found")
                         : string.Empty;
                 }
 
@@ -202,21 +214,21 @@ namespace IAGrim.UI.Controller {
 
                 if (_itemPaginationService.Update(merged, orderByLevel, _playerTotalCount + _buddyCount)) {
                     if (!ApplyItems(false)) {
-                        Browser.SetItems(new List<List<JsonItem>>(0), 0, false);
+                        browser.SetItems(new List<List<JsonItem>>(0), 0, false);
                     }
 
                     // Collection data is no longer fetched here on every search. The frontend requests it
                     // (via RequestCollectionData) only when the Collection tab is actually open.
                 }
                 else {
-                    Browser.ShowLoadingAnimation(false);
+                    browser.ShowLoadingAnimation(false);
                 }
 
                 // We have no search filters, yet can barely find any items. Despite there being more than twice as many items as we found.
                 // This might indicate the mod filter dropdown has the wrong setting.
                 var numOtherItems = _playerItemDao.GetNumItems() - personalCount;
                 if (query.IsEmpty && personalCount < 300 && numOtherItems > personalCount) {
-                    Browser.ShowModFilterWarning((int)numOtherItems);
+                    browser.ShowModFilterWarning((int)numOtherItems);
                 }
 
                 swTotal.Stop();
@@ -225,7 +237,7 @@ namespace IAGrim.UI.Controller {
                 return message;
             }
             finally {
-                Browser.ShowLoadingAnimation(false);
+                browser.ShowLoadingAnimation(false);
             }
         }
 
@@ -240,10 +252,10 @@ namespace IAGrim.UI.Controller {
                 items.AddRange(buddyItems);
                 // PlayerTotalDisplay reflects the total across all DB pages (or "1000+" while deferred), not
                 // just the first page currently in memory, so the "found" message shows the real count.
-                message = RuntimeSettings.Language.GetTag("iatag_items_found_self_and_buddy", PlayerTotalDisplay, buddyItems.Count);
+                message = RuntimeSettings.Language!.GetTag("iatag_items_found_self_and_buddy", PlayerTotalDisplay, buddyItems.Count);
             }
             else {
-                message = RuntimeSettings.Language.GetTag("iatag_items_found_selfonly", PlayerTotalDisplay);
+                message = RuntimeSettings.Language!.GetTag("iatag_items_found_selfonly", PlayerTotalDisplay);
             }
         }
 

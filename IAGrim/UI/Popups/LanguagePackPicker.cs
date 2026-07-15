@@ -17,7 +17,7 @@ using IAGrim.Settings.Dto;
 namespace IAGrim.UI {
     public partial class LanguagePackPicker : Form {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(LanguagePackPicker));
-        private IEnumerable<string> _paths;
+        private IEnumerable<string>? _paths;
         private readonly List<FirefoxRadioButton> _checkboxes = new List<FirefoxRadioButton>();
         private readonly IItemTagDao _itemTagDao;
         private readonly IPlayerItemDao _playerItemDao;
@@ -56,10 +56,10 @@ namespace IAGrim.UI {
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
-        private void buttonSelect_Click(object sender, EventArgs e) {
+        private void buttonSelect_Click(object? sender, EventArgs? e) {
             var cb = _checkboxes.FirstOrDefault(m => m.Checked);
             if (cb != null) {
-                var selectedCode = cb.Tag.ToString();
+                var selectedCode = cb.Tag?.ToString() ?? string.Empty;
 
                 if (selectedCode != _settings.GetLocal().LanguageCode) {
                     Logger.Info($"Switching language to {selectedCode}");
@@ -75,11 +75,11 @@ namespace IAGrim.UI {
         }
 
         private void LanguagePackPicker_Load(object sender, EventArgs e) {
-            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
+            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language!);
 
             var n = 0;
             var currentCode = _settings.GetLocal().LanguageCode;
-            var availableCodes = LanguageMapping.GetAvailableLanguages(_paths).ToList();
+            var availableCodes = LanguageMapping.GetAvailableLanguages(_paths ?? Enumerable.Empty<string>()).ToList();
 
             // Always show English first
             if (!availableCodes.Contains("EN")) {

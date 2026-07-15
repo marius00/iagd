@@ -12,12 +12,12 @@ namespace IAGrim.Utilities {
     /// Masks the windows username from logs
     /// </summary>
     class LoggerUsernameConverter : PatternLayoutConverter {
-        private readonly string _localAppdata = System.Environment.GetEnvironmentVariable("LocalAppData");
-        private readonly string _userProfile = System.Environment.GetEnvironmentVariable("UserProfile");
-        private static string _currentUser;
-        private static string _currentUserInversePath;
+        private readonly string? _localAppdata = System.Environment.GetEnvironmentVariable("LocalAppData");
+        private readonly string? _userProfile = System.Environment.GetEnvironmentVariable("UserProfile");
+        private static string? _currentUser;
+        private static string? _currentUserInversePath;
 
-        private static string CurrentUser {
+        private static string? CurrentUser {
             get {
                 if (string.IsNullOrEmpty(_currentUser)) {
                     var user = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
@@ -33,12 +33,12 @@ namespace IAGrim.Utilities {
         }
 
         protected override void Convert(TextWriter writer, LoggingEvent loggingEvent) {
-            string message = loggingEvent.RenderedMessage;
+            string message = loggingEvent.RenderedMessage ?? string.Empty;
 
-            message = message.Replace(_localAppdata, "%LocalAppData%") // Appdata is the most likely culprit
-                .Replace(_userProfile, "%UserProfile%") // Userprofile may occur when logging path to "My games"
-                .Replace(CurrentUser, "\\:filtered\\") // Userprofile may occur when logging path to "My games"
-                .Replace(_currentUserInversePath, "/:filtered/");
+            message = message.Replace(_localAppdata ?? "\0", "%LocalAppData%") // Appdata is the most likely culprit
+                .Replace(_userProfile ?? "\0", "%UserProfile%") // Userprofile may occur when logging path to "My games"
+                .Replace(CurrentUser ?? "\0", "\\:filtered\\") // Userprofile may occur when logging path to "My games"
+                .Replace(_currentUserInversePath ?? "\0", "/:filtered/");
 
 
             writer.Write(message);

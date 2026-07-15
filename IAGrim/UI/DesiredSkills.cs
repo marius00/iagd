@@ -37,7 +37,7 @@ namespace IAGrim.UI
 
             // Classes
             var classTags = itemTagDao.GetValidClassItemTags()
-                .Where(entry => Regex.Replace(entry.Tag, @"[^\d]", "").Length <= 3) // Filter out 4 digit classes (combo classes)
+                .Where(entry => Regex.Replace(entry.Tag ?? string.Empty, @"[^\d]", "").Length <= 3) // Filter out 4 digit classes (combo classes)
                 .ToList();
 
             _classesFilters = new Filters.Classes(classTags);
@@ -62,7 +62,7 @@ namespace IAGrim.UI
                 WithSummonerSkillOnly = _miscFilter.WithSummonerSkillOnly,
             };
 
-        public event EventHandler<FilterEventArgs> OnChanged;
+        public event EventHandler<FilterEventArgs>? OnChanged;
 
 
         /// <summary>

@@ -15,7 +15,7 @@ sealed class FirefoxButton : Control {
 
     private Helpers.MouseState State;
 
-    private Graphics G;
+    private Graphics? G;
 
     #endregion
 
@@ -27,7 +27,7 @@ sealed class FirefoxButton : Control {
     public Color BorderColor { get; set; } = Helpers.GreyColor(193);
     public Color HoverForeColor { get; set; } = Helpers.GreyColor(193);
     public Color BackColorDefault { get; set; } = Helpers.GreyColor(212);
-    public new Color BackColorOverride { get; set; } = Helpers.GreyColor(245);
+    public Color BackColorOverride { get; set; } = Helpers.GreyColor(245);
 
 
     public new bool Enabled {
@@ -66,7 +66,7 @@ sealed class FirefoxButton : Control {
 
         base.OnPaint(e);
 
-        G.Clear(Parent.BackColor);
+        G.Clear(Parent?.BackColor ?? BackColor);
 
         var fore = ForeColor;
         if (Enabled) {

@@ -27,7 +27,7 @@ namespace IAGrim {
             Logger.InfoFormat($"Playtest DLL version version {playtestDllVersion.FileVersion}");
 
             var minimumDllVersion = File.ReadAllText("dllver.txt").Trim();
-            if (dllVersion.FileVersion.CompareTo(minimumDllVersion) < 0) {
+            if ((dllVersion.FileVersion ?? string.Empty).CompareTo(minimumDllVersion) < 0) {
                 Logger.Error("The DLL version is incompatible, did you perhaps run into a conflict while updating and clicked ignore?");
                 Logger.Error("Item Assistant needs to be re-installed without GD running.");
 
@@ -123,7 +123,7 @@ namespace IAGrim {
         }
 
         public static void PerformGrimUpdateCheck(SettingsService settingsService) {
-            string location = settingsService.GetLocal().GrimDawnLocation?.FirstOrDefault();
+            string? location = settingsService.GetLocal().GrimDawnLocation?.FirstOrDefault();
             long lastParsed = settingsService.GetLocal().GrimDawnLocationLastModified;
 
             if (Directory.Exists(location)) {
@@ -133,8 +133,8 @@ namespace IAGrim {
                     if (lastModified > lastParsed) {
                         if (!settingsService.GetLocal().HasWarnedGrimDawnUpdate) {
                             Logger.Info("Grim Dawn appears to have been updated since last parse, notifying end user.");
-                            string message = RuntimeSettings.Language.GetTag("iatag_ui_database_modified_body");
-                            string title = RuntimeSettings.Language.GetTag("iatag_ui_database_modified_title");
+                            string message = RuntimeSettings.Language?.GetTag("iatag_ui_database_modified_body") ?? string.Empty;
+                            string title = RuntimeSettings.Language?.GetTag("iatag_ui_database_modified_title") ?? string.Empty;
                             settingsService.GetLocal().HasWarnedGrimDawnUpdate = true;
                             MessageBox.Show(message, title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         }
@@ -159,7 +159,7 @@ namespace IAGrim {
         public void PerformIconCheck(GrimDawnDetector grimDawnDetector, SettingsService settings) {
             try {
                 // Load the GD database (or mod, if any)
-                string gdPath = settings.GetLocal().CurrentGrimdawnLocation;
+                string? gdPath = settings.GetLocal().CurrentGrimdawnLocation;
 
                 if (string.IsNullOrEmpty(gdPath) || !Directory.Exists(gdPath)) {
                     gdPath = grimDawnDetector.GetGrimLocations().FirstOrDefault();

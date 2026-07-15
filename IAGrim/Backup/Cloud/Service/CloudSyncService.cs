@@ -27,7 +27,7 @@ namespace IAGrim.Backup.Cloud.Service {
         public bool Delete(List<DeleteItemDto> items) {
             try {
                 var json = JsonConvert.SerializeObject(items);
-                return _restService.Post(Uris.DeleteItemsUrl, json);
+                return _restService.Post(Uris.DeleteItemsUrl!, json);
             }
             catch (Exception ex) {
                 Logger.Warn(ex.Message, ex);
@@ -45,16 +45,16 @@ namespace IAGrim.Backup.Cloud.Service {
         /// </summary>
         /// <returns></returns>
         public bool DeleteAccount() {
-            return _restService.Delete(Uris.DeleteAccountUrl, "{}");
+            return _restService.Delete(Uris.DeleteAccountUrl!, "{}");
         }
 
         public bool Save(List<CloudItemDto> items) {
             var json = JsonConvert.SerializeObject(items);
-            return _restService.Post(Uris.UploadItemsUrl, json);
+            return _restService.Post(Uris.UploadItemsUrl!, json);
         }
 
         public LimitsDto GetLimitations() {
-            var url = Uris.FetchLimitationsUrl;
+            var url = Uris.FetchLimitationsUrl!;
             return _restService.Get<LimitsDto>(url);
         }
     }

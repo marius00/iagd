@@ -155,7 +155,7 @@ namespace IAGrim.Database {
             }
         }
 
-        public static IEnumerable<string> GetPetBonusRecords(Dictionary<string, List<DBStatRow>> stats, List<string> records) {
+        public static IEnumerable<string?> GetPetBonusRecords(Dictionary<string, List<DBStatRow>> stats, List<string> records) {
             return records
                 .Where(stats.ContainsKey)
                 .SelectMany(record => stats[record])
@@ -264,7 +264,7 @@ namespace IAGrim.Database {
             }
         }
 
-        private bool Exists(ISession session, string cloudId) {
+        private bool Exists(ISession session, string? cloudId) {
             var id = session.CreateCriteria<PlayerItem>()
                 .Add(Restrictions.Eq(nameof(PlayerItem.CloudId), cloudId))
                 .SetMaxResults(1)
@@ -320,7 +320,7 @@ namespace IAGrim.Database {
 
             foreach (object[] row in rows) {
                 if (row[0] is string tag) {
-                    map[tag] = row[1] as string;
+                    map[tag] = row[1] as string ?? string.Empty;
                 }
             }
 
@@ -361,7 +361,7 @@ namespace IAGrim.Database {
         /// (NHibernate query pipeline / command allocation) that dominated the old per-row approach.
         /// </summary>
         private static void InsertPlayerItemRecords(SqliteConnection connection, SqliteTransaction transaction,
-                IList<PlayerItem> items, Func<PlayerItem, IEnumerable<string>> recordSelector) {
+                IList<PlayerItem> items, Func<PlayerItem, IEnumerable<string?>> recordSelector) {
             var sql = $"INSERT OR IGNORE INTO {nameof(PlayerItemRecord)} " +
                       $"({nameof(PlayerItemRecord.PlayerItemId)}, {nameof(PlayerItemRecord.Record)}) VALUES (@id, @record)";
 
@@ -373,7 +373,7 @@ namespace IAGrim.Database {
                 foreach (var item in items) {
                     foreach (var record in recordSelector(item)) {
                         pId.Value = item.Id;
-                        pRecord.Value = (object) record ?? DBNull.Value;
+                        pRecord.Value = (object?) record ?? DBNull.Value;
                         cmd.ExecuteNonQuery();
                     }
                 }
@@ -408,7 +408,7 @@ namespace IAGrim.Database {
                     var itemName = ItemOperationsUtility.GetItemName(itemTags, stats, item);
 
                     pName.Value = (object) itemName ?? DBNull.Value;
-                    pNameLower.Value = (object) itemName?.ToLowerInvariant() ?? DBNull.Value;
+                    pNameLower.Value = (object?) itemName?.ToLowerInvariant() ?? DBNull.Value;
                     pRarity.Value = (object) ItemOperationsUtility.GetRarityForRecords(stats, records) ?? DBNull.Value;
                     pLevel.Value = (double) ItemOperationsUtility.GetMinimumLevelForRecords(stats, records);
                     pPrefix.Value = GetGreenQualityLevelForRecords(stats, records);
@@ -670,8 +670,8 @@ namespace IAGrim.Database {
         }
 
         class DatabaseItemStatQuery {
-            public List<string> SQL;
-            public Dictionary<string, string[]> Parameters;
+            public required List<string> SQL;
+            public required Dictionary<string, string[]> Parameters;
         }
 
         // A PlayerItemRecord row is a "pet record" iff it isn't one of the item's own core records
@@ -710,7 +710,7 @@ namespace IAGrim.Database {
             }
         }
 
-        private static DatabaseItemStatQuery CreateDatabaseStatQueryParams(ItemSearchRequest query) {
+        private static DatabaseItemStatQuery? CreateDatabaseStatQueryParams(ItemSearchRequest query) {
             var queryFragments = new List<string>();
             var queryParamsList = new Dictionary<string, string[]>();
 
@@ -1072,11 +1072,11 @@ namespace IAGrim.Database {
                     .SetParameterList("ids", items.Select(m => m.Id).Distinct().ToList())
                     .List();
 
-                var byId = new Dictionary<long, (string PetRecord, string ReplicaInfo)>();
+                var byId = new Dictionary<long, (string? PetRecord, string ReplicaInfo)>();
                 foreach (var row in rows) {
                     var arr = (object[]) row;
                     long id = Convert(arr[0]);
-                    string petRecord = Convert<string>(arr[1])?.Trim();
+                    string? petRecord = Convert<string>(arr[1])?.Trim();
                     string replicaInfo = Convert<string>(arr[2]);
                     byId[id] = (petRecord, replicaInfo);
                 }
@@ -1093,7 +1093,7 @@ namespace IAGrim.Database {
 
         private static T Convert<T>(object obj) {
             if (obj == null)
-                return default(T);
+                return default(T)!;
 
             if (obj is T t) {
                 return t;
@@ -1134,13 +1134,13 @@ namespace IAGrim.Database {
             long stackCount = Convert(arr[idx++]);
             string rarity = Convert<string>(arr[idx++]);
             int levelrequirement = (int)Convert(arr[idx++]);
-            string baserecord = Convert<string>(arr[idx++])?.Trim();
-            string prefixrecord = Convert<string>(arr[idx++])?.Trim();
-            string suffixrecord = Convert<string>(arr[idx++])?.Trim();
-            string ModifierRecord = Convert<string>(arr[idx++])?.Trim();
-            string MateriaRecord = Convert<string>(arr[idx++])?.Trim();
-            string AscendantAffixNameRecord = Convert<string>(arr[idx++])?.Trim();
-            string AscendantAffix2hNameRecord = Convert<string>(arr[idx++])?.Trim();
+            string? baserecord = Convert<string>(arr[idx++])?.Trim();
+            string? prefixrecord = Convert<string>(arr[idx++])?.Trim();
+            string? suffixrecord = Convert<string>(arr[idx++])?.Trim();
+            string? ModifierRecord = Convert<string>(arr[idx++])?.Trim();
+            string? MateriaRecord = Convert<string>(arr[idx++])?.Trim();
+            string? AscendantAffixNameRecord = Convert<string>(arr[idx++])?.Trim();
+            string? AscendantAffix2hNameRecord = Convert<string>(arr[idx++])?.Trim();
             long PrefixRarity = Convert(arr[idx++]);
             string CloudId = Convert<string>(arr[idx++]);
             bool IsCloudSynchronized = ConvertToBoolean(arr[idx++]);
@@ -1149,7 +1149,7 @@ namespace IAGrim.Database {
             bool IsHardcore = ConvertToBoolean(arr[idx++]);
             long RerollsUsed = Convert(arr[idx++]);
             long AffixRerollsUsed = Convert(arr[idx++]);
-            string PetRecord = Convert<string>(arr[idx++])?.Trim();
+            string? PetRecord = Convert<string>(arr[idx++])?.Trim();
             string replicaInfo = Convert<string>(arr[idx++]);
             long seed = Convert<long>(arr[idx++]);
 
@@ -1246,7 +1246,7 @@ namespace IAGrim.Database {
 
                     var baseRecord = Convert<string>(arr[1])?.Trim();
                     long Id = Convert(arr[0]);
-                    result[Id] = baseRecord;
+                    result[Id] = baseRecord ?? string.Empty;
                 }
             }
 

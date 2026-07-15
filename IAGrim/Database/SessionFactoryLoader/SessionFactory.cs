@@ -7,10 +7,10 @@ using IAGrim.Utilities;
 
 namespace SessionFactoryLoader {
     public class SessionFactory : ISessionFactoryWrapper {
-        private ISessionFactory _sessionFactory;
+        private ISessionFactory? _sessionFactory;
         private readonly ILog _logger = LogManager.GetLogger("SessionFactory");
 
-        public static string ConnectionString { get; private set; }
+        public static string? ConnectionString { get; private set; }
 
 
         private ISessionFactory CreateSessionFactory(string configFile) {

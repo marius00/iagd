@@ -11,7 +11,7 @@ namespace IAGrim.UI.Misc {
     class MinimizeToTrayHandler : IDisposable {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(MinimizeToTrayHandler));
         private FormWindowState _previousWindowState = FormWindowState.Normal;
-        private Form _form;
+        private Form? _form;
         private readonly NotifyIcon _notifyIcon;
         private readonly SettingsService _settingsService;
 
@@ -35,7 +35,8 @@ namespace IAGrim.UI.Misc {
 
         public bool MinimizeToTray => _settingsService.GetPersistent().MinimizeToTray;
 
-        public void notifyIcon_MouseDoubleClick(object sender, MouseEventArgs e) {
+        public void notifyIcon_MouseDoubleClick(object? sender, MouseEventArgs? e) {
+            if (_form == null) return;
             _form.Visible = true;
             _notifyIcon.Visible = false;
             _form.WindowState = _previousWindowState;
@@ -46,8 +47,9 @@ namespace IAGrim.UI.Misc {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnMinimizeWindow(object sender, EventArgs e) {
+        private void OnMinimizeWindow(object? sender, EventArgs e) {
             try {
+                if (_form == null) return;
                 if (MinimizeToTray) {
                     if (_form.WindowState == FormWindowState.Minimized) {
                         _form.Hide();

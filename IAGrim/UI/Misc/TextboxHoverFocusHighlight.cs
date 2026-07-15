@@ -17,24 +17,24 @@ public class TextboxHoverFocusHighlight {
         textbox.MouseLeave += textboxSearch_MouseLeave;
     }
 
-    void textboxSearch_MouseLeave(object sender, EventArgs e) {
+    void textboxSearch_MouseLeave(object? sender, EventArgs e) {
         if (!this.textbox.Focused)
             this.textbox.BackColor = System.Drawing.SystemColors.Window;
     }
 
-    void textboxSearch_MouseEnter(object sender, EventArgs e) {
+    void textboxSearch_MouseEnter(object? sender, EventArgs e) {
         this.textbox.BackColor = System.Drawing.Color.AliceBlue;
     }
 
-    void textboxSearch_MouseHover(object sender, EventArgs e) {
+    void textboxSearch_MouseHover(object? sender, EventArgs e) {
         this.textbox.BackColor = System.Drawing.Color.AliceBlue;
     }
 
-    void textboxSearch_LostFocus(object sender, EventArgs e) {
+    void textboxSearch_LostFocus(object? sender, EventArgs e) {
         this.textbox.BackColor = System.Drawing.SystemColors.Window;
     }
 
-    void textboxSearch_GotFocus(object sender, EventArgs e) {
+    void textboxSearch_GotFocus(object? sender, EventArgs e) {
         this.textbox.BackColor = System.Drawing.Color.AliceBlue;
     }
 

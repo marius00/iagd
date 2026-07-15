@@ -10,19 +10,19 @@ using StatTranslator;
 
 namespace IAGrim.Database.Model {
     public class BaseItem {
-        public virtual string BaseRecord { get; set; }
-        public virtual string PrefixRecord { get; set; }
-        public virtual string SuffixRecord { get; set; }
-        public virtual string ModifierRecord { get; set; }
-        public virtual string TransmuteRecord { get; set; }
-        public virtual string PetRecord { get; set; }
+        public virtual string? BaseRecord { get; set; }
+        public virtual string? PrefixRecord { get; set; }
+        public virtual string? SuffixRecord { get; set; }
+        public virtual string? ModifierRecord { get; set; }
+        public virtual string? TransmuteRecord { get; set; }
+        public virtual string? PetRecord { get; set; }
         public virtual List<string> PetRecords => string.IsNullOrEmpty(PetRecord) ? new List<string>(0) : new List<string>(PetRecord.Split('|'));
-        public virtual string MateriaRecord { get; set; }
-        public virtual string EnchantmentRecord { get; set; }
-        public virtual string AscendantAffixNameRecord { get; set; }
-        public virtual string AscendantAffix2hNameRecord { get; set; }
+        public virtual string? MateriaRecord { get; set; }
+        public virtual string? EnchantmentRecord { get; set; }
+        public virtual string? AscendantAffixNameRecord { get; set; }
+        public virtual string? AscendantAffix2hNameRecord { get; set; }
 
-        public virtual ISet<DBStatRow> Tags {
+        public virtual ISet<DBStatRow>? Tags {
             get;
             set;
         }
@@ -30,7 +30,7 @@ namespace IAGrim.Database.Model {
 
         public virtual IList<TranslatedStat> PetStats {
             get {
-                if (Tags == null)
+                if (Tags == null || RuntimeSettings.StatManager == null)
                     return new List<TranslatedStat>();
                 return RuntimeSettings.StatManager.ProcessStats(new HashSet<IItemStat>(Tags), TranslatedStatType.PET);
             }
@@ -38,7 +38,7 @@ namespace IAGrim.Database.Model {
 
         public virtual IList<TranslatedStat> HeaderStats {
             get {
-                if (Tags == null)
+                if (Tags == null || RuntimeSettings.StatManager == null)
                     return new List<TranslatedStat>();
                 return RuntimeSettings.StatManager.ProcessStats(new HashSet<IItemStat>(Tags), TranslatedStatType.HEADER);
             }
@@ -46,7 +46,7 @@ namespace IAGrim.Database.Model {
 
         public virtual IList<TranslatedStat> BodyStats {
             get {
-                if (Tags == null)
+                if (Tags == null || RuntimeSettings.StatManager == null)
                     return new List<TranslatedStat>();
                 return RuntimeSettings.StatManager.ProcessStats(new HashSet<IItemStat>(Tags), TranslatedStatType.BODY);
             }

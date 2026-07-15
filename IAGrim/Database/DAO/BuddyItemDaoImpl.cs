@@ -273,9 +273,9 @@ namespace IAGrim.Database {
 
 
         private class NameRow {
-            public string Record { get; set; }
-            public string Stat { get; set; }
-            public string Text { get; set; }
+            public string? Record { get; set; }
+            public string? Stat { get; set; }
+            public string? Text { get; set; }
         }
 
         private static string GetName(BuddyItem item, ICollection<NameRow> rows) {
@@ -296,7 +296,7 @@ namespace IAGrim.Database {
                 materia = $" [{materia}]";
             }
 
-            string localizedName = RuntimeSettings.Language.TranslateName(prefix, quality, style, core, suffix);
+            string localizedName = RuntimeSettings.Language?.TranslateName(prefix, quality, style, core, suffix) ?? core;
             return localizedName + materia;
         }
 
@@ -393,13 +393,13 @@ namespace IAGrim.Database {
         }
 
         private class LevelRequirementRow {
-            public string Record { get; set; }
+            public string? Record { get; set; }
             public double LevelRequirement { get; set; }
         }
 
         private class RarityRow {
-            public string Record { get; set; }
-            public string Rarity { get; set; }
+            public string? Record { get; set; }
+            public string? Rarity { get; set; }
         }
 
         private static readonly Dictionary<string, int> _rarityMap = new Dictionary<string, int> {
@@ -440,9 +440,9 @@ namespace IAGrim.Database {
             return rows.Where(row => row.Record == item.BaseRecord
                                      || row.Record == item.PrefixRecord
                                      || row.Record == item.SuffixRecord)
-                .OrderByDescending(row => ClassifyRarity(row.Rarity))
-                .Select(row => TranslateRarity(row.Rarity))
-                .FirstOrDefault();
+                .OrderByDescending(row => ClassifyRarity(row.Rarity ?? string.Empty))
+                .Select(row => TranslateRarity(row.Rarity ?? string.Empty))
+                .FirstOrDefault() ?? "White";
         }
 
         public void UpdateRarity(IList<BuddyItem> items) {
@@ -559,11 +559,11 @@ namespace IAGrim.Database {
         }
 
         class DatabaseItemStatQuery {
-            public string SQL;
-            public Dictionary<string, string[]> Parameters;
+            public required string SQL;
+            public required Dictionary<string, string[]> Parameters;
         }
 
-        private static DatabaseItemStatQuery CreateDatabaseStatQueryParams(ItemSearchRequest query) {
+        private static DatabaseItemStatQuery? CreateDatabaseStatQueryParams(ItemSearchRequest query) {
             List<string> queryFragments = new List<string>();
             Dictionary<string, string[]> queryParamsList = new Dictionary<string, string[]>();
 
@@ -654,7 +654,7 @@ namespace IAGrim.Database {
 
 
             queryFragments.Add($"(LOWER(BI.{BuddyItemsTable.Mod}) = LOWER( :mod ) OR BI.{BuddyItemsTable.Mod} IS NULL)");
-            queryParams.Add("mod", query.Mod);
+            queryParams.Add("mod", query.Mod ?? string.Empty);
 
             if (!string.IsNullOrEmpty(query.Rarity)) {
                 queryFragments.Add($"BI.{BuddyItemsTable.Rarity} = :rarity");

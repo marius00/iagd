@@ -24,7 +24,7 @@ namespace IAGrim.UI {
 
 
         private readonly Dictionary<Type, ColorSet> _darkColors = new Dictionary<Type, ColorSet>();
-        private Dictionary<Type, ColorSet> _regularColors = null;
+        private Dictionary<Type, ColorSet>? _regularColors = null;
         private bool _isLightMode = true;
 
         public DarkMode(Control root) {
@@ -102,30 +102,30 @@ namespace IAGrim.UI {
         }
 
         private void HandleControl(Control control, Dictionary<Type, ColorSet> colorSet) {
-            FirefoxButton button = control as FirefoxButton;
-            PanelBox pb = control as PanelBox;
-            LinkLabel linkLabel = control as LinkLabel;
-            FirefoxCheckBox cb = control as FirefoxCheckBox;
+            FirefoxButton? button = control as FirefoxButton;
+            PanelBox? pb = control as PanelBox;
+            LinkLabel? linkLabel = control as LinkLabel;
+            FirefoxCheckBox? cb = control as FirefoxCheckBox;
 
             if (button != null && colorSet.ContainsKey(button.GetType())) {
                 var colorset = colorSet[button.GetType()];
-                button.BackColor = colorset.BackColor.Value;
-                button.BackColorOverride = colorset.BackColor.Value;
-                button.ForeColor = colorset.ForeColor.Value;
-                button.HoverColor = colorset.HoverColor.Value;
-                button.HoverForeColor = colorset.HoverForeColor.Value;
+                button.BackColor = colorset.BackColor ?? button.BackColor;
+                button.BackColorOverride = colorset.BackColor ?? button.BackColorOverride;
+                button.ForeColor = colorset.ForeColor ?? button.ForeColor;
+                button.HoverColor = colorset.HoverColor ?? button.HoverColor;
+                button.HoverForeColor = colorset.HoverForeColor ?? button.HoverForeColor;
             }
             else if (pb != null && colorSet.ContainsKey(pb.GetType())) {
                 var colorset = colorSet[pb.GetType()];
-                pb.BackColor = colorset.BackColor.Value;
-                pb.ForeColor = colorset.ForeColor.Value;
-                pb.HeaderColor = colorset.HeaderColor.Value;
+                pb.BackColor = colorset.BackColor ?? pb.BackColor;
+                pb.ForeColor = colorset.ForeColor ?? pb.ForeColor;
+                pb.HeaderColor = colorset.HeaderColor ?? pb.HeaderColor;
             }
             else if (linkLabel != null && colorSet.ContainsKey(linkLabel.GetType())) {
                 var colorset = colorSet[linkLabel.GetType()];
-                linkLabel.BackColor = colorset.BackColor.Value;
-                linkLabel.ForeColor = colorset.ForeColor.Value;
-                linkLabel.LinkColor = colorset.LinkColor.Value;
+                linkLabel.BackColor = colorset.BackColor ?? linkLabel.BackColor;
+                linkLabel.ForeColor = colorset.ForeColor ?? linkLabel.ForeColor;
+                linkLabel.LinkColor = colorset.LinkColor ?? linkLabel.LinkColor;
             }
             else {
                 if (colorSet.ContainsKey(control.GetType())) {
@@ -157,15 +157,18 @@ namespace IAGrim.UI {
 
 
         private void FetchRegularColors(Control.ControlCollection collection) {
+            // Only called (recursively) right after _regularColors has been initialized in Activate().
+            var regularColors = _regularColors!;
+
             foreach (Control control in collection) {
                 FetchRegularColors(control.Controls);
 
-                FirefoxButton button = control as FirefoxButton;
-                PanelBox pb = control as PanelBox;
-                LinkLabel linkLabel = control as LinkLabel;
+                FirefoxButton? button = control as FirefoxButton;
+                PanelBox? pb = control as PanelBox;
+                LinkLabel? linkLabel = control as LinkLabel;
 
                 if (button != null) {
-                    _regularColors[typeof(FirefoxButton)] = new ColorSet {
+                    regularColors[typeof(FirefoxButton)] = new ColorSet {
                         BackColor = button.BackColor,
                         ForeColor = button.ForeColor,
                         HoverColor = button.HoverColor,
@@ -173,21 +176,21 @@ namespace IAGrim.UI {
                     };
                 }
                 else if (pb != null) {
-                    _regularColors[typeof(PanelBox)] = new ColorSet {
+                    regularColors[typeof(PanelBox)] = new ColorSet {
                         BackColor = pb.BackColor,
                         ForeColor = pb.ForeColor,
                         HeaderColor = pb.HeaderColor
                     };
                 }
                 else if (linkLabel != null) {
-                    _regularColors[typeof(LinkLabel)] = new ColorSet {
+                    regularColors[typeof(LinkLabel)] = new ColorSet {
                         BackColor = linkLabel.BackColor,
                         ForeColor = linkLabel.ForeColor,
                         LinkColor = linkLabel.LinkColor
                     };
                 }
                 else {
-                    _regularColors[control.GetType()] = new ColorSet {
+                    regularColors[control.GetType()] = new ColorSet {
                         BackColor = control.BackColor,
                         ForeColor = control.ForeColor
                     };

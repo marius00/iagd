@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 namespace DataAccess {
     public interface IItemStat {
 
-        string Record { get; set; }
-        string Stat { get; set; }
+        string? Record { get; set; }
+        string? Stat { get; set; }
         float Value { get; set; }
-        string TextValue { get; set; }
+        string? TextValue { get; set; }
 
     }
 

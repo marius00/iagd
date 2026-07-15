@@ -51,9 +51,9 @@ namespace IAGrim.Services {
                                               UInt32 nFiles,
                                               string[] rgsFilenames,
                                               UInt32 nApplications,
-                                              [In] RM_UNIQUE_PROCESS[] rgApplications,
+                                              [In] RM_UNIQUE_PROCESS[]? rgApplications,
                                               UInt32 nServices,
-                                              string[] rgsServiceNames);
+                                              string[]? rgsServiceNames);
 
         [DllImport("rstrtmgr.dll", CharSet = CharSet.Auto)]
         static extern int RmStartSession(out uint pSessionHandle, int dwSessionFlags, string strSessionKey);
@@ -65,7 +65,7 @@ namespace IAGrim.Services {
         static extern int RmGetList(uint dwSessionHandle,
                                     out uint pnProcInfoNeeded,
                                     ref uint pnProcInfo,
-                                    [In, Out] RM_PROCESS_INFO[] rgAffectedApps,
+                                    [In, Out] RM_PROCESS_INFO[]? rgAffectedApps,
                                     ref uint lpdwRebootReasons);
 
         /// <summary>

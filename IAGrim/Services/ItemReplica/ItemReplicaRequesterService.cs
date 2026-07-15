@@ -138,8 +138,8 @@ namespace IAGrim.Services {
 
 
 
-        private static string Serialize(BuddyItem bi) {
-            if (bi.BaseRecord.Length > 255 || bi.SuffixRecord?.Length > 255 || bi.PrefixRecord?.Length > 255
+        private static string? Serialize(BuddyItem bi) {
+            if (bi.BaseRecord?.Length > 255 || bi.SuffixRecord?.Length > 255 || bi.PrefixRecord?.Length > 255
                 || bi.MateriaRecord?.Length > 255 || bi.ModifierRecord?.Length > 255 || bi.EnchantmentRecord?.Length > 255
                 || bi.TransmuteRecord?.Length > 255 || bi.AscendantAffixNameRecord?.Length > 255 || bi.AscendantAffix2hNameRecord?.Length > 255) {
                 Logger.Warn("Received a buddy item with one or more records having a length of >255. Stat reproduction not possible.");
@@ -175,7 +175,7 @@ namespace IAGrim.Services {
             return sb.ToString();
         }
 
-        private static string Serialize(PlayerItem pi) {
+        private static string? Serialize(PlayerItem pi) {
             if (pi.BaseRecord?.Length > 255 || pi.SuffixRecord?.Length > 255 || pi.PrefixRecord?.Length > 255
                 || pi.MateriaRecord?.Length > 255 || pi.ModifierRecord?.Length > 255 || pi.EnchantmentRecord?.Length > 255
                 || pi.TransmuteRecord?.Length > 255 || pi.AscendantAffixNameRecord?.Length > 255 || pi.AscendantAffix2hNameRecord?.Length > 255) {

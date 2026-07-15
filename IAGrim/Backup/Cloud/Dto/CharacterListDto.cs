@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IAGrim.Backup.Cloud.Dto {
     public class CharacterListDto {
-        public string Name { get; set; }
+        public string? Name { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }

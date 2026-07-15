@@ -16,7 +16,7 @@ namespace IAGrim.Database.DAO {
         public ComputedItemStatDaoImpl(SessionFactory sessionCreator) : base(sessionCreator) {
         }
 
-        public void SaveComputed(long playerItemId, IReadOnlyDictionary<string, double> stats) {
+        public void SaveComputed(long playerItemId, IReadOnlyDictionary<string, double>? stats) {
             using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
                     session.CreateSQLQuery("DELETE FROM ComputedItemStat WHERE playeritemid = :pid")

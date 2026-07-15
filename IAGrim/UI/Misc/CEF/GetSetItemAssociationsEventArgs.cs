@@ -7,6 +7,6 @@ using IAGrim.Database.Model;
 
 namespace IAGrim.UI.Misc.CEF {
     public class GetSetItemAssociationsEventArgs : EventArgs {
-        public IList<ItemSetAssociation> Elements { get; set; }
+        public IList<ItemSetAssociation>? Elements { get; set; }
     }
 }

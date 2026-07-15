@@ -24,7 +24,7 @@ namespace IAGrim.Services.ItemStats {
         /// in which case downstream draws may be desynced and the caller should fall back to the
         /// raw base stats).
         /// </returns>
-        public static IReadOnlyDictionary<string, double> Compute(
+        public static IReadOnlyDictionary<string, double>? Compute(
             List<DBStatRow> baseRows,
             List<DBStatRow> prefixRows,
             List<DBStatRow> suffixRows,
@@ -69,9 +69,10 @@ namespace IAGrim.Services.ItemStats {
             // Multiple arz records (base + expansions) can carry the same field; take the highest
             // value per field, mirroring the Filter() the stat service already applies.
             return rows
+                .Where(r => r.Stat != null)
                 .GroupBy(r => r.Stat)
                 .Select(g => g.OrderByDescending(r => r.Value).First())
-                .Select(r => new ItemStatEngine.InputStat(r.Stat, r.TextValue ?? string.Empty, r.Value));
+                .Select(r => new ItemStatEngine.InputStat(r.Stat!, r.TextValue ?? string.Empty, r.Value));
         }
     }
 }

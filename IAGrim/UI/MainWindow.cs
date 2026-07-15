@@ -87,7 +87,7 @@ namespace IAGrim.UI {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void InjectorCallback(object sender, ProgressChangedEventArgs e) {
+        private void InjectorCallback(object? sender, ProgressChangedEventArgs e) {
             if (InvokeRequired) {
                 Invoke((System.Windows.Forms.MethodInvoker) delegate { InjectorCallback(sender, e); });
             }
@@ -162,7 +162,7 @@ namespace IAGrim.UI {
                 }
 
                 // Only back up characters while Grim Dawn isn't running (avoids reading save files mid-write).
-                _charBackupService.SetIsActive(e.ProgressPercentage == InjectionHelper.NO_PROCESS_FOUND);
+                _charBackupService?.SetIsActive(e.ProgressPercentage == InjectionHelper.NO_PROCESS_FOUND);
             }
         }
 
@@ -189,7 +189,7 @@ namespace IAGrim.UI {
         private void Browser_NavigationCompleted(object? sender, CoreWebView2NavigationCompletedEventArgs e) {
             var browser = (sender as Microsoft.Web.WebView2.WinForms.WebView2);
             if (browser == null) {
-                browser = (sender as CefBrowserHandler).BrowserControl;
+                browser = (sender as CefBrowserHandler)?.BrowserControl;
             }
 
             // Some users reports the webview is missing. This may or may not help..
@@ -204,7 +204,7 @@ namespace IAGrim.UI {
         {
             var browser = (sender as Microsoft.Web.WebView2.WinForms.WebView2);
             if (browser == null) {
-                browser = (sender as CefBrowserHandler).BrowserControl;
+                browser = (sender as CefBrowserHandler)?.BrowserControl;
             }
             if (args != null && browser != null) {
                 if (InvokeRequired) {
@@ -254,14 +254,14 @@ namespace IAGrim.UI {
         /// Update the UI's language
         /// </summary>
         public void UpdateLanguage() {
-            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
+            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language!);
             Refresh();
         }
 
 
         private void IterAndCloseForms(Control.ControlCollection controls) {
             foreach (Control c in controls) {
-                Form f = c as Form;
+                Form? f = c as Form;
                 if (f != null)
                     f.Close();
 
@@ -269,7 +269,7 @@ namespace IAGrim.UI {
             }
         }
 
-        private void MainWindow_FormClosing(object sender, FormClosingEventArgs e) {
+        private void MainWindow_FormClosing(object? sender, FormClosingEventArgs e) {
             // No idea which of these are triggering on rare occasions, perhaps Deactivate, sizechanged or filterWindow.
             FormClosing -= MainWindow_FormClosing;
             SizeChanged -= OnMinimizeWindow;
@@ -354,7 +354,7 @@ namespace IAGrim.UI {
                 case MessageType.TYPE_GameInfo_IsHardcore_via_init:
                     Logger.Info($"TYPE_GameInfo_IsHardcore({bt.Data[0] > 0}, {type})");
                     if (_settingsController.AutoUpdateModSettings) {
-                        _searchWindow.ModSelectionHandler.UpdateModSelection(bt.Data[0] > 0);
+                        _searchWindow?.ModSelectionHandler.UpdateModSelection(bt.Data[0] > 0);
                     }
 
                     break;
@@ -362,7 +362,7 @@ namespace IAGrim.UI {
                 case MessageType.TYPE_GameInfo_SetModName:
                     Logger.InfoFormat("TYPE_GameInfo_SetModName({0})", IOHelper.GetPrefixString(bt.Data, 0));
                     if (_settingsController.AutoUpdateModSettings) {
-                        _searchWindow.ModSelectionHandler.UpdateModSelection(IOHelper.GetPrefixString(bt.Data, 0));
+                        _searchWindow?.ModSelectionHandler.UpdateModSelection(IOHelper.GetPrefixString(bt.Data, 0));
                     }
 
                     break;
@@ -371,7 +371,7 @@ namespace IAGrim.UI {
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
             if (keyData == Keys.Escape) {
-                _searchWindow.ClearFilters();
+                _searchWindow?.ClearFilters();
                 return true; // indicate that you handled this keystroke
             }
 
@@ -410,8 +410,8 @@ namespace IAGrim.UI {
         }
 
 
-        private void TimerTickLookForGrimDawn(object sender, EventArgs e) {
-            System.Windows.Forms.Timer timer = sender as System.Windows.Forms.Timer;
+        private void TimerTickLookForGrimDawn(object? sender, EventArgs e) {
+            System.Windows.Forms.Timer? timer = sender as System.Windows.Forms.Timer;
             if (Thread.CurrentThread.Name == null) {
                 Thread.CurrentThread.Name = "DetectGrimDawnTimer";
                 Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
@@ -446,9 +446,9 @@ namespace IAGrim.UI {
         }
 
         private void DatabaseLoadedTrigger() {
-            _searchWindow.UpdateInterface();
+            _searchWindow?.UpdateInterface();
             _searchWindow?.UpdateListViewDelayed();
-            _itemReplicaService.Reset();
+            _itemReplicaService?.Reset();
         }
 
         private void MainWindow_Load(object sender, EventArgs e) {
@@ -514,7 +514,6 @@ namespace IAGrim.UI {
                     onlineSettings.UpdateUi();
                 }
                 else {
-                    int x = 9;
                 }
             };
 
@@ -538,12 +537,14 @@ namespace IAGrim.UI {
             };
             searchController.JsIntegration.OnRequestCharacterDownloadUrl += (_, args) => {
                 RequestCharacterDownloadUrlEventArg a = args as RequestCharacterDownloadUrlEventArg;
-                a.Url = _charBackupService.GetDownloadUrl(a.Character);
+                if (a.Character != null) {
+                    a.Url = _charBackupService.GetDownloadUrl(a.Character);
+                }
             };
 
             searchController.OnSearch += (o, args) => backupService.OnSearch();
 
-            _searchWindow = new SplitSearchWindow(_cefBrowserHandler.BrowserControl, SetFeedback, playerItemDao, searchController, itemTagDao, settingsService);
+            _searchWindow = new SplitSearchWindow(_cefBrowserHandler.BrowserControl!, SetFeedback, playerItemDao, searchController, itemTagDao, settingsService);
             UIHelper.AddAndShow(_searchWindow, searchPanel);
 
 
@@ -551,8 +552,8 @@ namespace IAGrim.UI {
             browser.CoreWebView2InitializationCompleted += Browser_CoreWebView2InitializationCompleted;
             browser.NavigationCompleted += Browser_NavigationCompleted;
 
-            searchPanel.Height = searchPanel.Parent.Height;
-            searchPanel.Width = searchPanel.Parent.Width;
+            searchPanel.Height = searchPanel.Parent!.Height;
+            searchPanel.Width = searchPanel.Parent!.Width;
 
             var languagePackPicker = new LanguagePackPicker(itemTagDao, playerItemDao, _parsingService, settingsService);
 
@@ -599,7 +600,7 @@ namespace IAGrim.UI {
             // Start the backup task
             _backupBackgroundTask = new BackgroundTask(new FileBackup(playerItemDao, settingsService));
 
-            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language);
+            LocalizationLoader.ApplyLanguage(Controls, RuntimeSettings.Language!);
 
             _messageProcessors.Add(new GenericErrorHandler());
             _messageProcessors.Add(new InjectionAbortedProcessor(SetInjectionAbortedStatus));
@@ -640,17 +641,17 @@ namespace IAGrim.UI {
                 _cefBrowserHandler.SetDarkMode(settingsService.GetPersistent().DarkMode);
             }
 
-            settingsService.GetLocal().OnMutate += delegate(object o, EventArgs args) { _cefBrowserHandler.SetOnlineBackupsEnabled(!settingsService.GetLocal().OptOutOfBackups); };
+            settingsService.GetLocal().OnMutate += delegate(object? o, EventArgs args) { _cefBrowserHandler.SetOnlineBackupsEnabled(!settingsService.GetLocal().OptOutOfBackups); };
 
 
             _csvParsingService = new CsvParsingService(playerItemDao, _userFeedbackService, cacher, transferStashService, replicaItemDao);
-            _csvFileMonitor.OnModified += (_, arg) => {
+            _csvFileMonitor!.OnModified += (_, arg) => {
                 var csvEvent = arg as CsvFileMonitor.CsvEvent;
                 _csvParsingService.Queue(csvEvent.Filename, csvEvent.Cooldown);
             };
 
             _itemReplicaParser = new ItemReplicaParser(replicaItemDao, playerItemDao, _cefBrowserHandler);
-            _replicaCsvFileMonitor.OnModified += (_, arg) => {
+            _replicaCsvFileMonitor!.OnModified += (_, arg) => {
                 _itemReplicaParser.Enqueue(arg);
             };
             _itemReplicaParser.Start();
@@ -683,8 +684,14 @@ namespace IAGrim.UI {
             Logger.Debug("UI initialization complete");
         }
 
-        void TransferItem(object ignored, EventArgs args) {
-            _transferController.TransferItem(args as StashTransferEventArgs);
+        void TransferItem(object? ignored, EventArgs args) {
+            if (_transferController == null) {
+                return;
+            }
+
+            if (args is StashTransferEventArgs transferArgs) {
+                _transferController.TransferItem(transferArgs);
+            }
         }
 
 
@@ -722,7 +729,7 @@ namespace IAGrim.UI {
         /// Files older than 30 seconds are deleted without reading.
         /// Files younger than 2 seconds are skipped (may still be written).
         /// </summary>
-        private void WineMessagePollTick(object sender, EventArgs e) {
+        private void WineMessagePollTick(object? sender, EventArgs e) {
             try {
                 var linuxHackPath = GlobalPaths.LinuxHack;
                 if (!Directory.Exists(linuxHackPath)) return;
@@ -790,7 +797,7 @@ namespace IAGrim.UI {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnMinimizeWindow(object sender, EventArgs e) {
+        private void OnMinimizeWindow(object? sender, EventArgs e) {
             _usageStatisticsReporter.ResetLastMinimized();
             _automaticUpdateChecker.ResetLastMinimized();
         }
@@ -807,21 +814,21 @@ namespace IAGrim.UI {
         #endregion Tray and Menu
 
 
-        private void SetItemsClipboard(object ignored, EventArgs _args) {
+        private void SetItemsClipboard(object? ignored, EventArgs _args) {
             if (InvokeRequired) {
                 Invoke((System.Windows.Forms.MethodInvoker) delegate { SetItemsClipboard(ignored, _args); });
             }
             else {
-                if (_args is ClipboardEventArg args) {
+                if (_args is ClipboardEventArg { Text: { } } args) {
                     Clipboard.SetText(args.Text);
                 }
 
-                _tooltipHelper.ShowTooltipAtMouse(RuntimeSettings.Language.GetTag("iatag_copied_clipboard"), _cefBrowserHandler.BrowserControl);
+                _tooltipHelper.ShowTooltipAtMouse(RuntimeSettings.Language!.GetTag("iatag_copied_clipboard"), _cefBrowserHandler.BrowserControl!);
             }
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e) {
-            _minimizeToTrayHandler.notifyIcon_MouseDoubleClick(sender, null);
+            _minimizeToTrayHandler?.notifyIcon_MouseDoubleClick(sender, null);
         }
 
     } // CLASS

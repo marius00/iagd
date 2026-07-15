@@ -32,11 +32,11 @@ namespace IAGrim.Parsers.GameDataParsing.Model {
         }
 
         private int CalculateHash(DatabaseItem item) {
-            List<string> source = new List<string> {item.Record};
-            foreach (var stat in item.Stats) {
+            List<string> source = new List<string> {item.Record ?? "-"};
+            foreach (var stat in item.Stats ?? Enumerable.Empty<DatabaseItemStat>()) {
                 source.Add(stat.Stat ?? "-");
                 source.Add((stat?.Value ?? 0).ToString(CultureInfo.CurrentCulture));
-                source.Add(stat.TextValue ?? "-");
+                source.Add(stat?.TextValue ?? "-");
                 source.Add(item.Name ?? "-"); // Useful for re-parsing with language packs
             }
 
@@ -44,7 +44,7 @@ namespace IAGrim.Parsers.GameDataParsing.Model {
         }
 
         class InternalItem {
-            public string Record { get; set; }
+            public required string Record { get; set; }
             public Dictionary<string, IItemStat> Stats { get; } = new Dictionary<string, IItemStat>();
         }
 
@@ -53,8 +53,16 @@ namespace IAGrim.Parsers.GameDataParsing.Model {
             // defines the path wins entirely), not a per-field union. Arz files must be
             // processed in ascending priority order (base -> GDX1 -> GDX2 -> ...) so that
             // this replace-on-redefine matches which file "wins" in-game.
+            if (item.Record == null) {
+                return;
+            }
+
             var internalItem = new InternalItem { Record = item.Record };
-            foreach (var stat in item.Stats) {
+            foreach (var stat in item.Stats ?? Enumerable.Empty<IItemStat>()) {
+                if (stat.Stat == null) {
+                    continue;
+                }
+
                 internalItem.Stats[stat.Stat] = stat;
             }
 

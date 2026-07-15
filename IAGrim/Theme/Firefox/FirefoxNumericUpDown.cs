@@ -9,7 +9,7 @@ namespace IAGrim.Theme.Firefox {
     class FirefoxNumericUpDown : Control {
 
         #region " Private "
-        private Graphics G;
+        private Graphics? G;
         private int _Value;
         private int _Min;
         private int _Max;
@@ -86,14 +86,14 @@ namespace IAGrim.Theme.Firefox {
             Enabled = true;
         }
 
-        private void FirefoxNumericUpDown_MouseWheel(object sender, MouseEventArgs e) {
+        private void FirefoxNumericUpDown_MouseWheel(object? sender, MouseEventArgs e) {
             if (e.Delta > 0)
                 Increase();
             else
                 Decrease();
         }
 
-        private void FirefoxNumericUpDown_EnabledChanged(object sender, EventArgs e) {
+        private void FirefoxNumericUpDown_EnabledChanged(object? sender, EventArgs e) {
             Invalidate();
         }
 
@@ -224,7 +224,7 @@ namespace IAGrim.Theme.Firefox {
 
             base.OnPaint(e);
 
-            G.Clear(Parent.BackColor);
+            G.Clear(Parent?.BackColor ?? BackColor);
 
 
             if (Enabled) {

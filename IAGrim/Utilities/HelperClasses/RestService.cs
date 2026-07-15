@@ -30,7 +30,7 @@ namespace IAGrim.Utilities.HelperClasses {
             var result = _client.GetAsync(url).Result;
             if (result.IsSuccessStatusCode) {
                 string body = result.Content.ReadAsStringAsync().Result;
-                return JsonConvert.DeserializeObject<T>(body, _settings);
+                return JsonConvert.DeserializeObject<T>(body, _settings)!;
             }
             else {
                 Logger.Warn($"Got response code {result.StatusCode} on GET {url}");
@@ -46,7 +46,7 @@ namespace IAGrim.Utilities.HelperClasses {
             var result = _client.PostAsync(url, new StringContent(json, Encoding.UTF8, "application/json")).Result;
             if (result.IsSuccessStatusCode) {
                 var responseJson = result.Content.ReadAsStringAsync().Result;
-                return JsonConvert.DeserializeObject<T>(responseJson, _settings);
+                return JsonConvert.DeserializeObject<T>(responseJson, _settings)!;
             }
             else {
                 Logger.Warn($"Got response code {result.StatusCode} while posting json");

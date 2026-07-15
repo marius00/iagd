@@ -134,16 +134,17 @@ namespace IAGrim.Parsers.Arz {
             DatabaseItem item,
             IEnumerable<DatabaseItem> items) {
             var stats = item.Stats;
+            if (stats == null) return;
 
             // Special case for "+1 to occultist" etc, since its a combination of 2 stats
             for (var i = 1; i <= 4; i++) {
-                var hasLevel = stats.Any(m => m.Stat.Equals("augmentMasteryLevel" + i));
-                var hasClass = stats.Any(m => m.Stat.Equals("augmentMasteryName" + i));
+                var hasLevel = stats.Any(m => m.Stat?.Equals("augmentMasteryLevel" + i) ?? false);
+                var hasClass = stats.Any(m => m.Stat?.Equals("augmentMasteryName" + i) ?? false);
 
                 if (hasLevel && hasClass) {
-                    var amount = stats.First(m => m.Stat.Equals("augmentMasteryLevel" + i)).Value;
-                    var profession = stats.First(m => m.Stat.Equals("augmentMasteryName" + i)).TextValue;
-                    var professionTag = ExtractClassFromRecord(profession, items);
+                    var amount = stats.First(m => m.Stat?.Equals("augmentMasteryLevel" + i) ?? false).Value;
+                    var profession = stats.First(m => m.Stat?.Equals("augmentMasteryName" + i) ?? false).TextValue;
+                    var professionTag = ExtractClassFromRecord(profession ?? string.Empty, items);
 
                     result.Add(new DatabaseItemStat {
                         Parent = item,
@@ -158,27 +159,27 @@ namespace IAGrim.Parsers.Arz {
             }
         }
 
-        private static string GetSkillDisplayName(IEnumerable<DatabaseItem> items, string skillRecord) {
+        private static string? GetSkillDisplayName(IEnumerable<DatabaseItem>? items, string? skillRecord) {
             var skill = items?.Where(m => m.Record == skillRecord).FirstOrDefault()?.Stats;
 
             if (skill != null) {
                 // Get the tag-name from the skill
-                var skillNameEntry = skill.FirstOrDefault(m => m.Stat.Equals("skillDisplayName"));
+                var skillNameEntry = skill.FirstOrDefault(m => m.Stat?.Equals("skillDisplayName") ?? false);
 
                 if (skillNameEntry?.TextValue != null)
                     return skillNameEntry.TextValue;
 
                 // It may be without a name, but reference a pet skill
-                var petSkillName = skill.Where(m => m.Stat.Equals("petSkillName"));
+                var petSkillName = skill.Where(m => m.Stat?.Equals("petSkillName") ?? false);
 
                 if (petSkillName.Any())
-                    return GetSkillDisplayName(items, petSkillName.FirstOrDefault().TextValue);
+                    return GetSkillDisplayName(items, petSkillName.FirstOrDefault()?.TextValue);
 
                 // The pet skill may in turn reference a buff skill, or the original skill might.
-                var buffSkillName = skill.Where(m => m.Stat.Equals("buffSkillName"));
+                var buffSkillName = skill.Where(m => m.Stat?.Equals("buffSkillName") ?? false);
 
                 if (buffSkillName.Any())
-                    return GetSkillDisplayName(items, buffSkillName.FirstOrDefault().TextValue);
+                    return GetSkillDisplayName(items, buffSkillName.FirstOrDefault()?.TextValue);
             }
             else {
                 Logger.Warn($"Could not find skill \"{skillRecord}\", broken mod?");
@@ -187,29 +188,29 @@ namespace IAGrim.Parsers.Arz {
             return null;
         }
 
-        public static string GetRootSkillRecord(List<DatabaseItem> statLoader, string skillRecord) {
+        public static string? GetRootSkillRecord(List<DatabaseItem> statLoader, string? skillRecord) {
             //var skill = allRecords.Where(m => m.Record.Equals(skillRecord))
 
             var item = statLoader.FirstOrDefault(m => m.Record == skillRecord);
-            var skill = item?.Stats;
+            var skill = item?.Stats ?? Enumerable.Empty<DatabaseItemStat>();
 
             // Get the tag-name from the skill
-            var skillNameEntry = skill.FirstOrDefault(m => m.Stat.Equals("skillDisplayName"));
+            var skillNameEntry = skill.FirstOrDefault(m => m.Stat?.Equals("skillDisplayName") ?? false);
 
             if (skillNameEntry?.TextValue != null)
-                return item.Record;
+                return item?.Record;
 
             // It may be without a name, but reference a pet skill
-            var petSkillName = skill.Where(m => m.Stat.Equals("petSkillName"));
+            var petSkillName = skill.Where(m => m.Stat?.Equals("petSkillName") ?? false);
 
             if (petSkillName.Any())
-                return GetRootSkillRecord(statLoader, petSkillName.FirstOrDefault().TextValue);
+                return GetRootSkillRecord(statLoader, petSkillName.FirstOrDefault()?.TextValue);
 
             // The pet skill may in turn reference a buff skill, or the original skill might.
-            var buffSkillName = skill.Where(m => m.Stat.Equals("buffSkillName"));
+            var buffSkillName = skill.Where(m => m.Stat?.Equals("buffSkillName") ?? false);
 
-            if (skill.Any(m => m.Stat.Equals("buffSkillName")))
-                return GetRootSkillRecord(statLoader, buffSkillName.FirstOrDefault().TextValue);
+            if (skill.Any(m => m.Stat?.Equals("buffSkillName") ?? false))
+                return GetRootSkillRecord(statLoader, buffSkillName.FirstOrDefault()?.TextValue);
 
             return null;
         }
@@ -226,15 +227,16 @@ namespace IAGrim.Parsers.Arz {
             Dictionary<string, string> tags
         ) {
             var stats = item.Stats;
+            if (stats == null) return;
 
             // Special case for "+1 to specific skill" etc, since its a combination of 2 stats
             for (var i = 1; i <= 4; i++) {
-                var hasLevel = stats.Any(m => m.Stat.Equals("augmentSkillLevel" + i));
-                var hasClass = stats.Any(m => m.Stat.Equals("augmentSkillName" + i));
+                var hasLevel = stats.Any(m => m.Stat?.Equals("augmentSkillLevel" + i) ?? false);
+                var hasClass = stats.Any(m => m.Stat?.Equals("augmentSkillName" + i) ?? false);
 
                 if (hasLevel && hasClass) {
-                    var amount = stats.First(m => m.Stat.Equals("augmentSkillLevel" + i)).Value;
-                    var skillRecord = stats.First(m => m.Stat.Equals("augmentSkillName" + i)).TextValue;
+                    var amount = stats.First(m => m.Stat?.Equals("augmentSkillLevel" + i) ?? false).Value;
+                    var skillRecord = stats.First(m => m.Stat?.Equals("augmentSkillName" + i) ?? false).TextValue;
 
                     // Get the tag-name from the skill
                     var skillNameEntry = GetSkillDisplayName(skills, skillRecord);
@@ -258,14 +260,14 @@ namespace IAGrim.Parsers.Arz {
 
                     // Extra data (class and tier for +1 to someskill)
                     var rootSkill = GetRootSkillRecord(skills, skillRecord);
-                    var classTrainingRecord = GetClassTrainingRecordFromSkill(skills, skillRecord);
+                    var classTrainingRecord = GetClassTrainingRecordFromSkill(skills, skillRecord ?? string.Empty);
 
-                    var dbStat = (skills.FirstOrDefault(m => m.Record == rootSkill)?.Stats).FirstOrDefault(m => m.Stat == "skillTier");
+                    var dbStat = (skills.FirstOrDefault(m => m.Record == rootSkill)?.Stats ?? Enumerable.Empty<DatabaseItemStat>()).FirstOrDefault(m => m.Stat == "skillTier");
 
                     if (dbStat != null) {
                         var skillClass = !string.IsNullOrEmpty(classTrainingRecord)
-                            ? ExtractClassFromRecord(classTrainingRecord, items)
-                            : ExtractClassFromRecord(skillRecord, items);
+                            ? ExtractClassFromRecord(classTrainingRecord ?? string.Empty, items)
+                            : ExtractClassFromRecord(skillRecord ?? string.Empty, items);
 
                         result.Add(new DatabaseItemStat {
                             Parent = item,
@@ -281,13 +283,13 @@ namespace IAGrim.Parsers.Arz {
             }
         }
 
-        private static string GetClassTrainingRecordFromSkill(IEnumerable<DatabaseItem> dbItems, string skillRecordPath) {
+        private static string? GetClassTrainingRecordFromSkill(IEnumerable<DatabaseItem> dbItems, string skillRecordPath) {
             var currentSkillFolder = skillRecordPath.Substring(0, skillRecordPath.LastIndexOf('/') + 1);
 
             return dbItems
                 .FirstOrDefault(x =>
-                    x.Record.Contains($"{currentSkillFolder}_classtraining_")
-                    && x.Stats.Any(y => y.Stat == "MasteryEnumeration"))
+                    (x.Record?.Contains($"{currentSkillFolder}_classtraining_") ?? false)
+                    && (x.Stats?.Any(y => y.Stat == "MasteryEnumeration") ?? false))
                 ?.Record;
         }
     }

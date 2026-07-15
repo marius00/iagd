@@ -12,9 +12,9 @@ namespace IAGrim.Parsers.TransferStash {
         /// <summary>
         /// Typical "single seed" items such as Dynamite
         /// </summary>
-        public IList<string> SpecialRecords { get; private set; }
-        public ISet<string> AllRecords { get; private set; }
-        public ISet<string> StackableRecords { get; private set; }
+        public IList<string>? SpecialRecords { get; private set; }
+        public ISet<string>? AllRecords { get; private set; }
+        public ISet<string>? StackableRecords { get; private set; }
 
         public TransferStashServiceCache(IDatabaseItemDao databaseItemDao) {
             _databaseItemDao = databaseItemDao;

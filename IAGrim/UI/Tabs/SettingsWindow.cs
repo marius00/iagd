@@ -102,7 +102,7 @@ namespace IAGrim.UI.Tabs {
             Clipboard.SetText("https://discord.gg/5wuCPbB");
 
             _tooltipHelper.ShowTooltipForControl(
-                RuntimeSettings.Language.GetTag("iatag_ui_copiedclipboard"),
+                RuntimeSettings.Language!.GetTag("iatag_ui_copiedclipboard"),
                 linkLabel1,
                 TooltipHelper.TooltipLocation.TOP
             );
@@ -142,7 +142,7 @@ namespace IAGrim.UI.Tabs {
 
 
         private void cbDualComputer_CheckedChanged(object sender, EventArgs e) {
-            _settings.GetPersistent().UsingDualComputer = (sender as FirefoxCheckBox).Checked;
+            _settings.GetPersistent().UsingDualComputer = (sender as FirefoxCheckBox)?.Checked == true;
 
             if (_settings.GetPersistent().UsingDualComputer) {
                 MessageBox.Show("IAGD is restarting to toggle DUAL-pC mode", "Restarting");
@@ -177,18 +177,18 @@ namespace IAGrim.UI.Tabs {
 
 
         private void cbStartMinimized_CheckedChanged(object sender, EventArgs e) {
-            _settings.GetLocal().StartMinimized = (sender as FirefoxCheckBox).Checked;
+            _settings.GetLocal().StartMinimized = (sender as FirefoxCheckBox)?.Checked == true;
         }
 
         private void cbDarkMode_CheckedChanged(object sender, EventArgs e) {
-            if (_settings.GetPersistent().DarkMode != (sender as FirefoxCheckBox).Checked) {
+            if (_settings.GetPersistent().DarkMode != ((sender as FirefoxCheckBox)?.Checked == true)) {
                 MessageBox.Show("IAGD is restarting to toggle dark mode", "Restarting");
-                _settings.GetPersistent().DarkMode = (sender as FirefoxCheckBox).Checked;
+                _settings.GetPersistent().DarkMode = (sender as FirefoxCheckBox)?.Checked == true;
                 Application.Restart();
                 Environment.Exit(0);
             }
 
-            _settings.GetPersistent().DarkMode = (sender as FirefoxCheckBox).Checked;
+            _settings.GetPersistent().DarkMode = (sender as FirefoxCheckBox)?.Checked == true;
 
         }
 

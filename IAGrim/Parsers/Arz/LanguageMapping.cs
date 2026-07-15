@@ -44,7 +44,7 @@ namespace IAGrim.Parsers.Arz {
             if (string.IsNullOrEmpty(code) || code.Equals("EN", System.StringComparison.OrdinalIgnoreCase))
                 return null;
 
-            var appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            var appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) ?? System.AppContext.BaseDirectory;
             var path = Path.Combine(appDir, "Resources", "translations", $"{code.ToLowerInvariant()}.txt");
             return File.Exists(path) ? path : null;
         }

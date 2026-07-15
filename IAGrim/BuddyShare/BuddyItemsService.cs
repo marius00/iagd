@@ -18,7 +18,7 @@ using IAGrim.Settings;
 namespace IAGrim.BuddyShare {
     class BuddyItemsService : IDisposable {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(BuddyItemsService));
-        private BackgroundWorker _bw = new BackgroundWorker();
+        private BackgroundWorker? _bw = new BackgroundWorker();
         private bool _disposed = false;
 
         private readonly IBuddyItemDao _buddyItemDao;
@@ -48,7 +48,7 @@ namespace IAGrim.BuddyShare {
         }
 
 
-        private void bw_DoWork(object sender, DoWorkEventArgs e) {
+        private void bw_DoWork(object? sender, DoWorkEventArgs e) {
             if (Thread.CurrentThread.Name == null) {
                 Thread.CurrentThread.Name = "BuddyBackground";
                 Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
@@ -57,15 +57,17 @@ namespace IAGrim.BuddyShare {
             ExceptionReporter.EnableLogUnhandledOnThread();
             try {
                 Logger.Info("Fetching own buddy ID from cloud..");
-                var id = _authService.GetRestService()?.Get<BuddyIdResult>(Uris.GetBuddyIdUrl);
-                _settings.GetPersistent().BuddySyncUserIdV3 = id?.Id;
+                if (Uris.GetBuddyIdUrl != null) {
+                    var id = _authService.GetRestService()?.Get<BuddyIdResult>(Uris.GetBuddyIdUrl);
+                    _settings.GetPersistent().BuddySyncUserIdV3 = id?.Id;
+                }
             }
             catch (Exception ex) {
                 Logger.Error(ex.Message);
                 Logger.Error(ex.StackTrace);
             }
 
-            BackgroundWorker worker = sender as BackgroundWorker;
+            BackgroundWorker worker = (BackgroundWorker)sender!;
             while (!worker.CancellationPending) {
                 try {
                     Thread.Sleep(5000);
@@ -106,8 +108,10 @@ namespace IAGrim.BuddyShare {
                     var buddyId = _settings.GetPersistent().BuddySyncUserIdV3;
                     if (!buddyId.HasValue || buddyId <= 0) {
                         Logger.Info("Fetching own buddy ID from cloud");
-                        var id = _authService.GetRestService()?.Get<BuddyIdResult>(Uris.GetBuddyIdUrl);
-                        _settings.GetPersistent().BuddySyncUserIdV3 = id.Id;
+                        if (Uris.GetBuddyIdUrl != null) {
+                            var id = _authService.GetRestService()?.Get<BuddyIdResult>(Uris.GetBuddyIdUrl);
+                            _settings.GetPersistent().BuddySyncUserIdV3 = id?.Id;
+                        }
                     }
 
                 }
@@ -124,7 +128,7 @@ namespace IAGrim.BuddyShare {
         }
 
 
-        private ItemDownloadDto Get(BuddySubscription subscription) {
+        private ItemDownloadDto? Get(BuddySubscription subscription) {
             var url = $"{Uris.BuddyItemsUrl}?id={subscription.Id}&ts={subscription.LastSyncTimestamp}";
             return _authService.GetRestService()?.Get<ItemDownloadDto>(url);
         }
@@ -137,8 +141,8 @@ namespace IAGrim.BuddyShare {
                 var sync = Get(subscription);
 
                 // Skip items we've already have
-                var items = sync.Items?
-                    .Where(item => !knownItems.Contains(item.Id))
+                var items = sync?.Items?
+                    .Where(item => !knownItems.Contains(item.Id ?? ""))
                     .Select(item => ToBuddyItem(subscription, item))
                     .ToList() ?? [];
                 
@@ -152,17 +156,17 @@ namespace IAGrim.BuddyShare {
                 _buddyItemDao.UpdateNames(items);
 
                 // Delete items that no longer exist
-                Logger.Info($"There are {sync.Removed?.Count ?? 0} buddy items items to remove");
-                if (sync.Removed != null) {
+                Logger.Info($"There are {sync?.Removed?.Count ?? 0} buddy items items to remove");
+                if (sync?.Removed != null) {
                     _buddyItemDao.Delete(subscription, sync.Removed);
                 }
 
                 // Store timestamp to db
-                subscription.LastSyncTimestamp = sync.Timestamp;
+                subscription.LastSyncTimestamp = sync?.Timestamp ?? subscription.LastSyncTimestamp;
                 _subscriptionRepo.Update(subscription);
 
 
-                Logger.Debug($"Fetched {items.Count} items, new timestamp is {sync.Timestamp}");
+                Logger.Debug($"Fetched {items.Count} items, new timestamp is {sync?.Timestamp}");
             }
             catch (Exception ex) {
                 Logger.Warn(ex);

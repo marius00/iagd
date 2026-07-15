@@ -29,7 +29,7 @@ namespace IAGrim.Services.ItemReplica {
         private readonly IReplicaItemDao _replicaItemDao;
         private readonly IPlayerItemDao _playerItemDao;
         private readonly IBrowserCallbacks _browser;
-        private Thread _thread = null;
+        private Thread? _thread = null;
         private volatile bool _isCancelled;
         private readonly ConcurrentQueue<string> _queue = new ConcurrentQueue<string>();
         
@@ -42,20 +42,20 @@ namespace IAGrim.Services.ItemReplica {
 
 
         class JsonObj {
-            public string playerItemId { get; set; }
-            public string buddyItemId { get; set; }
-            public JsonReplicaObj replica { get; set; }
-            public List<JsonStatObj> stats { get; set; }
+            public string? playerItemId { get; set; }
+            public string? buddyItemId { get; set; }
+            public JsonReplicaObj? replica { get; set; }
+            public List<JsonStatObj>? stats { get; set; }
         }
 
         class JsonStatObj {
-            public string text { get; set; }
-            public string type { get; set; }
+            public string? text { get; set; }
+            public string? type { get; set; }
         }
 
         class JsonReplicaObj {
-            public string baseRecord { get; set; }
-            public string prefixRecord { get; set; }
+            public string? baseRecord { get; set; }
+            public string? prefixRecord { get; set; }
         }
 
         public void Preload() {
@@ -112,6 +112,8 @@ namespace IAGrim.Services.ItemReplica {
         }
         public void Enqueue(EventArgs arg) {
             var csvEvent = arg as CsvFileMonitor.CsvEvent; // Stupid name, its json..
+            if (csvEvent == null)
+                return;
             Enqueue(csvEvent.Filename);
         }
 
@@ -125,29 +127,33 @@ namespace IAGrim.Services.ItemReplica {
                 var json = File.ReadAllText(filename);
                 _logger.Info($"Parsing file {filename} for item stats");
                 var arr = JsonConvert.DeserializeObject<Dictionary<string, JsonObj>>(json);
+                if (arr == null) {
+                    _logger.Warn($"Failed to deserialize replica file {filename}");
+                    return;
+                }
 
-                var playerItemIds = arr.Select(m => long.Parse(m.Value.playerItemId));
+                var playerItemIds = arr.Select(m => long.Parse(m.Value.playerItemId ?? "0"));
                 var playerRecordMap = _playerItemDao.FindRecordsFromIds(playerItemIds);
                 foreach (var itemTemplate in arr) {
                     var template = itemTemplate.Value;
-                    var stats = template.stats
-                        .Where(m => !m.text.TrimStart().StartsWith("Tag not found"))
+                    var stats = (template.stats ?? Enumerable.Empty<JsonStatObj>())
+                        .Where(m => !(m.text ?? string.Empty).TrimStart().StartsWith("Tag not found"))
                         .Select(m => new ReplicaItemRow {
                             // Strip out [0-9] damage suffixes introduced in the Asterkarn DLC
                             // Strip out ^K ^W color codes
-                            Text = Regex.Replace(Regex.Replace(m.text.Trim(), @"(\^.?)", ""), @" (\[|\().+(\]|\))$", ""),
-                            TextLowercase = Regex.Replace(Regex.Replace(m.text.Trim(), @"(\^.?)", ""), @" (\[|\().+(\]|\))$", "").ToLowerInvariant(),
-                            Type = Int32.Parse(m.type),
+                            Text = Regex.Replace(Regex.Replace((m.text ?? string.Empty).Trim(), @"(\^.?)", ""), @" (\[|\().+(\]|\))$", ""),
+                            TextLowercase = Regex.Replace(Regex.Replace((m.text ?? string.Empty).Trim(), @"(\^.?)", ""), @" (\[|\().+(\]|\))$", "").ToLowerInvariant(),
+                            Type = Int32.Parse(m.type ?? "0"),
                         }).ToList();
 
 
-                    var playerItemId = long.Parse(template.playerItemId);
+                    var playerItemId = long.Parse(template.playerItemId ?? "0");
                     if (playerItemId > 0 && string.IsNullOrEmpty(template.buddyItemId)) {
                         if (!playerRecordMap.ContainsKey(playerItemId)) {
                             _logger.Warn($"Could not find playerItemId({playerItemId}) in the db");
                             continue;
-                        } else if (playerRecordMap[playerItemId] != template.replica.baseRecord) {
-                            _logger.Warn($"Got record '{template.replica.baseRecord}' for PID({playerItemId}), expected record '{playerRecordMap[playerItemId]}'");
+                        } else if (playerRecordMap[playerItemId] != template.replica?.baseRecord) {
+                            _logger.Warn($"Got record '{template.replica?.baseRecord}' for PID({playerItemId}), expected record '{playerRecordMap[playerItemId]}'");
                             continue;
                         }
                     }

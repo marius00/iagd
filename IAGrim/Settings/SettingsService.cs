@@ -26,24 +26,34 @@ namespace IAGrim.Settings {
         private SettingsService(SettingsTemplate data, string persistentStorage) {
             _data = data;
 
-            if (_data.Local?.MachineName != Environment.MachineName) {
-                Logger.Warn($"Local settings are for {_data?.Local?.MachineName}, expected {Environment.MachineName}. Discarding local settings.");
-                _data.Local = new LocalSettings {
+            var local = _data.Local;
+            if (local?.MachineName != Environment.MachineName) {
+                Logger.Warn($"Local settings are for {local?.MachineName}, expected {Environment.MachineName}. Discarding local settings.");
+                local = new LocalSettings {
                     MachineName = Environment.MachineName
                 };
+                _data.Local = local;
+            }
+
+            var persistent = _data.Persistent;
+            if (persistent == null) {
+                persistent = new PersistentSettings();
+                _data.Persistent = persistent;
             }
 
             _persistentStorage = persistentStorage;
-            _data.Local.OnMutate += (sender, args) => Persist();
-            _data.Persistent.OnMutate += (sender, args) => Persist();
+            local.OnMutate += (sender, args) => Persist();
+            persistent.OnMutate += (sender, args) => Persist();
         }
 
         public LocalSettings GetLocal() {
-            return _data.Local;
+            // Invariant established in the constructor: _data.Local is always assigned a non-null value.
+            return _data.Local!;
         }
 
         public PersistentSettings GetPersistent() {
-            return _data.Persistent;
+            // Invariant established in the constructor: _data.Persistent is always assigned a non-null value.
+            return _data.Persistent!;
         }
 
 

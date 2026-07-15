@@ -3,11 +3,11 @@ using System;
 
 namespace IAGrim.Utilities.HelperClasses {
     public class GDTransferFile : IComboBoxItemToggle, IEquatable<GDTransferFile> {
-        public string Filename { get; set; }
+        public string? Filename { get; set; }
 
         public bool IsHardcore { get; set; }
 
-        public string Mod { get; set; }
+        public string? Mod { get; set; }
 
         public virtual bool Enabled { get; set; }
 
@@ -18,22 +18,22 @@ namespace IAGrim.Utilities.HelperClasses {
         [JsonIgnore] public virtual DateTime LastAccess { get; set; }
 
         public override string ToString() {
-            var text = string.IsNullOrEmpty(Mod) ? RuntimeSettings.Language.GetTag("iatag_ui_vanilla") : Mod;
+            var text = string.IsNullOrEmpty(Mod) ? RuntimeSettings.Language!.GetTag("iatag_ui_vanilla") : Mod;
             if (Downgrade == DowngradeType.AoM) {
-                text = RuntimeSettings.Language.GetTag("iatag_ui_no_fg");
+                text = RuntimeSettings.Language!.GetTag("iatag_ui_no_fg");
             }
             else if (Downgrade == DowngradeType.NoExpansions) {
-                text = RuntimeSettings.Language.GetTag("iatag_ui_no_expansion");
+                text = RuntimeSettings.Language!.GetTag("iatag_ui_no_expansion");
             }
 
             if (IsHardcore) {
-                return $"{text}{RuntimeSettings.Language.GetTag("iatag_ui_hc")}";
+                return $"{text}{RuntimeSettings.Language!.GetTag("iatag_ui_hc")}";
             }
 
             return text;
         }
 
-        public bool Equals(GDTransferFile other) {
+        public bool Equals(GDTransferFile? other) {
             if (ReferenceEquals(null, other)) {
                 return false;
             }
@@ -49,7 +49,7 @@ namespace IAGrim.Utilities.HelperClasses {
                    && Downgrade == other.Downgrade;
         }
 
-        public override bool Equals(object obj) {
+        public override bool Equals(object? obj) {
             if (ReferenceEquals(null, obj)) {
                 return false;
             }

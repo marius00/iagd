@@ -17,13 +17,15 @@ namespace IAGrim.Theme {
 
 
         class CustomComparer : IComparer<Control> {
-            public int Compare(Control x, Control y) {
+            public int Compare(Control? x, Control? y) {
+                if (x == null) return y == null ? 0 : -1;
+                if (y == null) return 1;
                 return x.Top.CompareTo(y.Top);
             }
         }
 
 
-        private void AutoSizeForm_Load(object sender, EventArgs e) {
+        private void AutoSizeForm_Load(object? sender, EventArgs e) {
             // When a child resizes, we need to recalculate.
 
             for (int i = 0; i < Controls.Count; i++) {

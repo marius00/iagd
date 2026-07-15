@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 
 namespace IAGrim.Parser.Character {
     public class CharacterReader {
-        private GDCryptoDataBuffer reader;
-        public string Name { get; private set; }
+        private GDCryptoDataBuffer? reader;
+        public string? Name { get; private set; }
         public int Level { get; private set; }
         public GDInventory Inventory { get; private set; }
         private GDCharSkillList SkillList = new GDCharSkillList();

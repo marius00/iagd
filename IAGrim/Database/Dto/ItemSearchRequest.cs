@@ -8,20 +8,20 @@ using IAGrim.Services.ItemStats;
 namespace IAGrim.Database.Dto {
 
     public class ItemSearchRequest {
-        public string Wildcard { get; set; }
-        public List<string[]> Filters { get; set; }
+        public string? Wildcard { get; set; }
+        public List<string[]> Filters { get; set; } = new List<string[]>();
 
         /// <summary>
         /// Per-checkbox numeric stat filters (e.g. Fire damage &gt;= 30) attached via each stat checkbox's
         /// filter button. Each is applied as an in-database subquery against the pre-computed stat table.
         /// Empty/null for searches with no numeric stat filters.
         /// </summary>
-        public List<StatValueFilter> StatValueFilters { get; set; }
+        public List<StatValueFilter> StatValueFilters { get; set; } = new List<StatValueFilter>();
 
         public float MinimumLevel { get; set; }
         public float MaximumLevel { get; set; }
-        public string Rarity { get; set; }
-        public string[] Slot { get; set; }
+        public string? Rarity { get; set; }
+        public string[]? Slot { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the search should exclude items with types specified in the <see cref="Slot"/> array.
@@ -33,12 +33,12 @@ namespace IAGrim.Database.Dto {
         public bool PetBonuses { get; set; }
         public bool IsRetaliation { get; set; }
         public bool DuplicatesOnly { get; set; }
-        public string Mod { get; set; }
+        public string? Mod { get; set; }
         public bool IsHardcore { get; set; }
         public bool RecipeItemsOnly { get; set; }
         public int PrefixRarity { get; set; }
 
-        public List<string> Classes { get; set; }
+        public List<string> Classes { get; set; } = new List<string>();
 
         public bool SocketedOnly { get; set; }
 

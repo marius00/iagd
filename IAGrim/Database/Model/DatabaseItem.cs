@@ -11,31 +11,31 @@ namespace IAGrim.Database {
         public virtual long Id { get; set; }
 
 
-        public virtual string Record { get; set; }
-        public virtual IList<DatabaseItemStat> Stats { get; set; }
+        public virtual string? Record { get; set; }
+        public virtual IList<DatabaseItemStat>? Stats { get; set; }
 
         public virtual int Hash { get; set; }
 
-        public virtual string Name { set; get; }
+        public virtual string? Name { set; get; }
 
-        public virtual string NameLowercase { get; set; }
+        public virtual string? NameLowercase { get; set; }
 
         public virtual string GetTag(string tag) {
-            if (Stats.Any(m => tag.Equals(m.Stat)))
-                return Stats.FirstOrDefault(m => tag.Equals(m.Stat))?.TextValue;
+            if (Stats != null && Stats.Any(m => tag.Equals(m.Stat)))
+                return Stats.FirstOrDefault(m => tag.Equals(m.Stat))?.TextValue ?? string.Empty;
             return
                 string.Empty;
         }
         public virtual string GetTag(string tag, string fallback) {
-            if (Stats.Any(m => tag.Equals(m.Stat)))
-                return Stats.FirstOrDefault(m => tag.Equals(m.Stat))?.TextValue;
+            if (Stats != null && Stats.Any(m => tag.Equals(m.Stat)))
+                return Stats.FirstOrDefault(m => tag.Equals(m.Stat))?.TextValue ?? string.Empty;
             return
                 GetTag(fallback);
         }
 
         public static float GetMinimumLevel(IEnumerable<DBStatRow> Stats) {
             if (Stats.Any(m => "levelRequirement".Equals(m.Stat)))
-                return (float)Stats.Where(m => "levelRequirement".Equals(m.Stat)).FirstOrDefault().Value;
+                return (float)(Stats.Where(m => "levelRequirement".Equals(m.Stat)).FirstOrDefault()?.Value ?? 0);
             else
                 return 0;
         }
@@ -44,7 +44,7 @@ namespace IAGrim.Database {
         /// Get the reference to this items bitmap
         /// </summary>
         public static string GetBitmap(ISet<DBStatRow> stats) {
-            string result = string.Empty;
+            string? result = string.Empty;
             if (stats != null) {
                 if (stats.Any(m => "bitmap".Equals(m.Stat)))
                     result = stats.FirstOrDefault(m => "bitmap".Equals(m.Stat))?.TextValue;
@@ -55,8 +55,8 @@ namespace IAGrim.Database {
                 else if (stats.Any(m => "shardBitmap".Equals(m.Stat)))
                     result = stats.FirstOrDefault(m => "shardBitmap".Equals(m.Stat))?.TextValue;
 
-                else if (stats.Any(m => m.Stat.Contains("itmap")))
-                    result = stats.FirstOrDefault(m => m.Stat.Contains("itmap"))?.TextValue;
+                else if (stats.Any(m => m.Stat != null && m.Stat.Contains("itmap")))
+                    result = stats.FirstOrDefault(m => m.Stat != null && m.Stat.Contains("itmap"))?.TextValue;
                 /*
                     
                     else if (Stats.Any(m => "artifactFormulaBitmapName".Equals(m.Stat)))
@@ -68,7 +68,7 @@ namespace IAGrim.Database {
 
         public static string GetSlot(IEnumerable<DBStatRow> Stats) {
             if (Stats.Any(m => "Class".Equals(m.Stat)))
-                return Stats.Where(m => "Class".Equals(m.Stat)).FirstOrDefault().TextValue;
+                return Stats.Where(m => "Class".Equals(m.Stat)).FirstOrDefault()?.TextValue ?? string.Empty;
             else
                 return string.Empty;
         }
@@ -76,8 +76,8 @@ namespace IAGrim.Database {
 
         public virtual string Slot {
             get {
-                if (Stats.Any(m => "Class".Equals(m.Stat)))
-                    return Stats.Where(m => "Class".Equals(m.Stat)).FirstOrDefault().TextValue;
+                if (Stats != null && Stats.Any(m => "Class".Equals(m.Stat)))
+                    return Stats.Where(m => "Class".Equals(m.Stat)).FirstOrDefault()?.TextValue ?? string.Empty;
                 else
                     return string.Empty;
             }
@@ -88,7 +88,7 @@ namespace IAGrim.Database {
                 return "Blue";
             }
             else if (Stats.Any(m => "itemClassification".Equals(m.Stat))) {
-                string value = Stats.Where(m => "itemClassification".Equals(m.Stat)).FirstOrDefault().TextValue;
+                string? value = Stats.Where(m => "itemClassification".Equals(m.Stat)).FirstOrDefault()?.TextValue;
 
                 if ("Epic".Equals(value))
                     return "Blue";
@@ -108,21 +108,21 @@ namespace IAGrim.Database {
         }
 
         public override int GetHashCode() {
-            return Record.GetHashCode();
+            return Record?.GetHashCode() ?? 0;
         }
 
-        public override bool Equals(object obj) {
-            DatabaseItem other = obj as DatabaseItem;
+        public override bool Equals(object? obj) {
+            DatabaseItem? other = obj as DatabaseItem;
             if (other != null)
-                return Record.Equals(other.Record);
+                return Record?.Equals(other.Record) ?? other.Record == null;
 
             return base.Equals(obj);
         }
 
-        public virtual int CompareTo(object obj) {
-            DatabaseItem other = obj as DatabaseItem;
+        public virtual int CompareTo(object? obj) {
+            DatabaseItem? other = obj as DatabaseItem;
             if (other != null) {
-                return Record.CompareTo(other.Record);
+                return string.Compare(Record, other.Record, StringComparison.Ordinal);
             }
 
             return 0;

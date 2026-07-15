@@ -215,10 +215,11 @@ namespace IAGrim.Database {
 
             statMap[string.Empty] = new List<DBStatRow>();
             foreach (DBStatRow row in query.List<DBStatRow>()) {
-                if (!statMap.ContainsKey(row.Record))
-                    statMap[row.Record] = new List<DBStatRow>();
+                var recordKey = row.Record ?? string.Empty;
+                if (!statMap.ContainsKey(recordKey))
+                    statMap[recordKey] = new List<DBStatRow>();
 
-                statMap[row.Record].Add(row);
+                statMap[recordKey].Add(row);
             }
 
             Logger.Debug($"Fetching stat for {statMap.Count} records");
@@ -252,20 +253,20 @@ namespace IAGrim.Database {
 
             // Grab all the possible bitmaps for each record
             using (var session = SessionCreator.OpenSession()) {
-                DatabaseItemStat stat = null;
-                DatabaseItem P = null;
-                var stats = session.QueryOver<DatabaseItemStat>(() => stat)
-                    .JoinAlias(() => stat.Parent, () => P)
-                    .Where(m => P.Record.IsIn(records))
-                    .Where(m => m.Stat.IsIn(new string[] { "bitmap", "relicBitmap", "shardBitmap", "artifactBitmap", "noteBitmap", "artifactFormulaBitmapName" }))
+                DatabaseItemStat? stat = null;
+                DatabaseItem? P = null;
+                var stats = session.QueryOver<DatabaseItemStat>(() => stat!)
+                    .JoinAlias(() => stat!.Parent, () => P)
+                    .Where(m => P!.Record!.IsIn(records))
+                    .Where(m => m.Stat!.IsIn(new string[] { "bitmap", "relicBitmap", "shardBitmap", "artifactBitmap", "noteBitmap", "artifactFormulaBitmapName" }))
                     .List<DatabaseItemStat>();
 
-                    
+
                 // Find the best bitmap for each record
                 foreach (string record in records) {
-                    var best = stats.Where(m => m.Parent.Record.Equals(record)).OrderByDescending(m => bitmapScores[m.Stat]);
+                    var best = stats.Where(m => m.Parent != null && record.Equals(m.Parent.Record)).OrderByDescending(m => bitmapScores[m.Stat!]);
                     if (best.Any()) {
-                        recordBitmap[record] = best.First().TextValue;
+                        recordBitmap[record] = best.First().TextValue ?? string.Empty;
                     }
                 }
 

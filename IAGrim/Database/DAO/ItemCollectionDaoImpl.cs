@@ -95,7 +95,7 @@ namespace IAGrim.Database {
 
                 foreach (var item in collectionItems)
                 {
-                    string localizedName = RuntimeSettings.Language.TranslateName(item.Name);
+                    string? localizedName = RuntimeSettings.Language?.TranslateName(item.Name ?? string.Empty) ?? item.Name;
                     item.Name = localizedName;
                 }
 

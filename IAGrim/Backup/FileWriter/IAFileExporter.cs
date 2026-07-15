@@ -37,7 +37,7 @@ namespace IAGrim.Backup.FileWriter {
             string ReadString() {
                 var s = IOHelper.GetBytePrefixedString(bytes, pos);
                 pos += 1 + s?.Length ?? 0;
-                return s;
+                return s!;
             }
 
             int numItems = IOHelper.GetInt(bytes, pos); pos += 4;
@@ -103,18 +103,18 @@ namespace IAGrim.Backup.FileWriter {
                 IOHelper.Write(fs, (int)items.Count);
 
                 foreach (PlayerItem pi in items) {
-                    IOHelper.WriteBytePrefixed(fs, pi.BaseRecord);
-                    IOHelper.WriteBytePrefixed(fs, pi.PrefixRecord);
-                    IOHelper.WriteBytePrefixed(fs, pi.SuffixRecord);
-                    IOHelper.WriteBytePrefixed(fs, pi.ModifierRecord);
-                    IOHelper.WriteBytePrefixed(fs, pi.TransmuteRecord);
+                    IOHelper.WriteBytePrefixed(fs, pi.BaseRecord ?? string.Empty);
+                    IOHelper.WriteBytePrefixed(fs, pi.PrefixRecord ?? string.Empty);
+                    IOHelper.WriteBytePrefixed(fs, pi.SuffixRecord ?? string.Empty);
+                    IOHelper.WriteBytePrefixed(fs, pi.ModifierRecord ?? string.Empty);
+                    IOHelper.WriteBytePrefixed(fs, pi.TransmuteRecord ?? string.Empty);
 
                     IOHelper.Write(fs, (uint)pi.Seed);
-                    IOHelper.WriteBytePrefixed(fs, pi.MateriaRecord);
-                    IOHelper.WriteBytePrefixed(fs, pi.RelicCompletionBonusRecord);
+                    IOHelper.WriteBytePrefixed(fs, pi.MateriaRecord ?? string.Empty);
+                    IOHelper.WriteBytePrefixed(fs, pi.RelicCompletionBonusRecord ?? string.Empty);
 
                     IOHelper.Write(fs, (uint)pi.RelicSeed);
-                    IOHelper.WriteBytePrefixed(fs, pi.EnchantmentRecord);
+                    IOHelper.WriteBytePrefixed(fs, pi.EnchantmentRecord ?? string.Empty);
 
                     IOHelper.Write(fs, (uint)pi.UNKNOWN);
                     IOHelper.Write(fs, (uint)pi.EnchantmentSeed);
@@ -124,14 +124,14 @@ namespace IAGrim.Backup.FileWriter {
                     IOHelper.Write(fs, pi.IsHardcore);
 
                     IOHelper.Write(fs, pi.IsExpansion1);
-                    IOHelper.WriteBytePrefixed(fs, pi.Mod);
+                    IOHelper.WriteBytePrefixed(fs, pi.Mod ?? string.Empty);
 
                     IOHelper.WriteBytePrefixed(fs, string.Empty);
-                    IOHelper.WriteBytePrefixed(fs, pi.CloudId);
+                    IOHelper.WriteBytePrefixed(fs, pi.CloudId ?? string.Empty);
                     IOHelper.Write(fs, pi.IsCloudSynchronized);
 
-                    IOHelper.WriteBytePrefixed(fs, pi.AscendantAffixNameRecord);
-                    IOHelper.WriteBytePrefixed(fs, pi.AscendantAffix2hNameRecord);
+                    IOHelper.WriteBytePrefixed(fs, pi.AscendantAffixNameRecord ?? string.Empty);
+                    IOHelper.WriteBytePrefixed(fs, pi.AscendantAffix2hNameRecord ?? string.Empty);
                     IOHelper.Write(fs, (uint)pi.RerollsUsed);
                     IOHelper.Write(fs, (uint)pi.AffixRerollsUsed);
                 }

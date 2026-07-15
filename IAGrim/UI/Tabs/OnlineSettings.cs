@@ -16,7 +16,7 @@ namespace IAGrim.UI.Tabs {
         private readonly IHelpService _helpService;
         private readonly IBuddyItemDao _buddyItemDao;
         private readonly IBuddySubscriptionDao _buddySubscriptionDao;
-        private TooltipHelper _tooltipHelper;
+        private TooltipHelper? _tooltipHelper;
 
         public OnlineSettings(IPlayerItemDao playerItemDao, SettingsService settings, IHelpService helpService, IBuddyItemDao buddyItemDao, IBuddySubscriptionDao buddySubscriptionDao) {
             InitializeComponent();
@@ -38,16 +38,16 @@ namespace IAGrim.UI.Tabs {
 
             var status = authService?.CheckAuthentication();
             if (status == AuthService.AccessStatus.Authorized) {
-                labelStatus.Text = RuntimeSettings.Language.GetTag("iatag_ui_backup_loggedinas", _settings.GetPersistent().CloudUser);
+                labelStatus.Text = RuntimeSettings.Language!.GetTag("iatag_ui_backup_loggedinas", _settings.GetPersistent().CloudUser ?? string.Empty);
                 buttonLogin.Enabled = false;
                 _settings.GetLocal().OptOutOfBackups = false;
             }
             else if (status == AuthService.AccessStatus.Unknown) {
-                labelStatus.Text = RuntimeSettings.Language.GetTag("iatag_ui_backup_statusunknown");
+                labelStatus.Text = RuntimeSettings.Language!.GetTag("iatag_ui_backup_statusunknown");
                 buttonLogin.Enabled = false;
             }
             else {
-                labelStatus.Text = RuntimeSettings.Language.GetTag("iatag_ui_backup_notloggedin");
+                labelStatus.Text = RuntimeSettings.Language!.GetTag("iatag_ui_backup_notloggedin");
                 buttonLogin.Enabled = true;
             }
 
@@ -97,7 +97,7 @@ namespace IAGrim.UI.Tabs {
             }
 
             var authService = new AuthService(new AuthenticationProvider(_settings), _playerItemDao);
-            if ((sender as FirefoxButton).EnabledCalc) {
+            if ((sender as FirefoxButton)?.EnabledCalc == true) {
                 var access = authService.CheckAuthentication();
 
                 switch (access) {
@@ -110,11 +110,11 @@ namespace IAGrim.UI.Tabs {
                         break;
                     case AuthService.AccessStatus.Unknown:
                         Logger.Debug($"Login, state {access}, displaying error..");
-                        MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_backup_service_error"));
+                        MessageBox.Show(RuntimeSettings.Language!.GetTag("iatag_ui_backup_service_error"));
                         break;
                     default: {
                         Logger.Debug($"Login, state {access}, displaying already logged in..");
-                            var alreadyLoggedIn = RuntimeSettings.Language.GetTag("iatag_feedback_already_logged_in");
+                            var alreadyLoggedIn = RuntimeSettings.Language!.GetTag("iatag_feedback_already_logged_in");
 
                         MessageBox.Show(
                             alreadyLoggedIn,
@@ -139,7 +139,7 @@ namespace IAGrim.UI.Tabs {
 
         private void linkDeleteBackup_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             var authService = new AuthService(new AuthenticationProvider(_settings), _playerItemDao);
-            var caption = RuntimeSettings.Language.GetTag("iatag_ui_backup_deleteaccount_header");
+            var caption = RuntimeSettings.Language!.GetTag("iatag_ui_backup_deleteaccount_header");
             var content = RuntimeSettings.Language.GetTag("iatag_ui_backup_deleteaccount_body");
             if (MessageBox.Show(
                 content,
@@ -149,7 +149,7 @@ namespace IAGrim.UI.Tabs {
                 MessageBoxDefaultButton.Button2) == DialogResult.Yes) {
                 try {
                     var restService = authService.GetRestService();
-                    var cloudSyncService = new CloudSyncService(authService.GetRestService());
+                    var cloudSyncService = new CloudSyncService(authService.GetRestService()!);
                     if (restService != null && cloudSyncService.DeleteAccount()) {
                         MessageBox.Show(
                             RuntimeSettings.Language.GetTag("iatag_ui_backup_deleteaccount_success_body"),
@@ -194,7 +194,7 @@ namespace IAGrim.UI.Tabs {
             _settings.GetPersistent().CloudUploadTimestamp = 0;
             _playerItemDao.ResetOnlineSyncState();
             _buddyItemDao.Delete();
-            MessageBox.Show(RuntimeSettings.Language.GetTag("iatag_ui_backup_logout_successful_body"), RuntimeSettings.Language.GetTag("iatag_ui_backup_logout_successful_header"));
+            MessageBox.Show(RuntimeSettings.Language!.GetTag("iatag_ui_backup_logout_successful_body"), RuntimeSettings.Language.GetTag("iatag_ui_backup_logout_successful_header"));
             UpdateUi();
         }
 
@@ -209,7 +209,7 @@ namespace IAGrim.UI.Tabs {
         public void UpdateBuddyList() {
             buddyList.Items.Clear();
 
-            var visible = RuntimeSettings.Language.GetTag("iatag_ui_buddy_column_visible");
+            var visible = RuntimeSettings.Language!.GetTag("iatag_ui_buddy_column_visible");
             var hidden = RuntimeSettings.Language.GetTag("iatag_ui_buddy_column_hidden");
             var subscriptions = _buddySubscriptionDao.ListAll();
             foreach (var subscription in subscriptions) {
@@ -241,7 +241,7 @@ namespace IAGrim.UI.Tabs {
         private void btnAddBuddy_Click(object sender, EventArgs e) {
             var authService = new AuthService(new AuthenticationProvider(_settings), _playerItemDao);
             if (btnAddBuddy.Enabled) {
-                var diag = new AddEditBuddy(_helpService, authService.GetRestService());
+                var diag = new AddEditBuddy(_helpService, authService.GetRestService()!);
                 if (diag.ShowDialog() == DialogResult.OK) {
                     bool isMyself = diag.BuddyId == _settings.GetPersistent().BuddySyncUserIdV3;
                     if (diag.BuddyId > 0 && !isMyself) {
@@ -259,7 +259,7 @@ namespace IAGrim.UI.Tabs {
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e) {
             foreach (ListViewItem item in buddyList.SelectedItems) {
-                if (item != null && long.TryParse(item.Tag.ToString(), out var id)) {
+                if (item != null && long.TryParse(item.Tag?.ToString(), out var id)) {
                     _buddyItemDao.RemoveBuddy(id);
                     UpdateBuddyList();
                 }
@@ -269,8 +269,8 @@ namespace IAGrim.UI.Tabs {
         private void editToolStripMenuItem_Click(object sender, EventArgs e) {
             var authService = new AuthService(new AuthenticationProvider(_settings), _playerItemDao);
             foreach (ListViewItem item in buddyList.SelectedItems) {
-                if (item != null && long.TryParse(item.Tag.ToString(), out var id)) {
-                    var diag = new AddEditBuddy(_helpService, authService.GetRestService()) {BuddyId = id};
+                if (item != null && long.TryParse(item.Tag?.ToString(), out var id)) {
+                    var diag = new AddEditBuddy(_helpService, authService.GetRestService()!) {BuddyId = id};
                     if (diag.ShowDialog() == DialogResult.OK) {
                         var entry = _buddySubscriptionDao.GetById(diag.BuddyId);
                         entry.Nickname = diag.Nickname;
@@ -283,9 +283,10 @@ namespace IAGrim.UI.Tabs {
         }
 
         private void labelBuddyId_Click(object sender, EventArgs e) {
-            if (_settings.GetPersistent().BuddySyncUserIdV3.HasValue && _settings.GetPersistent().BuddySyncUserIdV3 > 0) {
-                _tooltipHelper.ShowTooltipForControl(RuntimeSettings.Language.GetTag("iatag_ui_copiedclipboard"), labelBuddyId);
-                Clipboard.SetText(_settings.GetPersistent().BuddySyncUserIdV3.ToString());
+            var buddySyncUserId = _settings.GetPersistent().BuddySyncUserIdV3;
+            if (buddySyncUserId.HasValue && buddySyncUserId > 0) {
+                _tooltipHelper?.ShowTooltipForControl(RuntimeSettings.Language!.GetTag("iatag_ui_copiedclipboard"), labelBuddyId);
+                Clipboard.SetText(buddySyncUserId.Value.ToString());
             }
         }
 
@@ -305,7 +306,7 @@ namespace IAGrim.UI.Tabs {
 
         private void btnToggleBuddyVisibility_Click(object sender, EventArgs e) {
             foreach (ListViewItem item in buddyList.SelectedItems) {
-                if (item != null && long.TryParse(item.Tag.ToString(), out var id)) {
+                if (item != null && long.TryParse(item.Tag?.ToString(), out var id)) {
                     var entry = _buddySubscriptionDao.GetById(id);
                     entry.IsHidden = !entry.IsHidden;
                     _buddySubscriptionDao.Update(entry);
@@ -316,7 +317,7 @@ namespace IAGrim.UI.Tabs {
 
         private void showToolStripMenuItem_Click(object sender, EventArgs e) {
             foreach (ListViewItem item in buddyList.SelectedItems) {
-                if (item != null && long.TryParse(item.Tag.ToString(), out var id)) {
+                if (item != null && long.TryParse(item.Tag?.ToString(), out var id)) {
                     var entry = _buddySubscriptionDao.GetById(id);
                     entry.IsHidden = false;
                     _buddySubscriptionDao.Update(entry);
@@ -327,7 +328,7 @@ namespace IAGrim.UI.Tabs {
 
         private void hideToolStripMenuItem_Click(object sender, EventArgs e) {
             foreach (ListViewItem item in buddyList.SelectedItems) {
-                if (item != null && long.TryParse(item.Tag.ToString(), out var id)) {
+                if (item != null && long.TryParse(item.Tag?.ToString(), out var id)) {
                     var entry = _buddySubscriptionDao.GetById(id);
                     entry.IsHidden = true;
                     _buddySubscriptionDao.Update(entry);

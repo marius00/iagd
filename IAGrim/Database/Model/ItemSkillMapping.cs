@@ -3,7 +3,7 @@
         public virtual int Id { get; set; }
         public virtual int DatabaseItemId { get; set; }
 
-        public override bool Equals(object obj) {
+        public override bool Equals(object? obj) {
             if (obj is ItemSkillMapping that) {
                 return this.Id == that.Id && this.DatabaseItemId == that.DatabaseItemId;
             }

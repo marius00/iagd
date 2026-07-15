@@ -143,6 +143,10 @@ namespace IAGrim.Backup.Cloud.Service {
         }
 
         private void Connect() {
+            if (Uris.WebSocketUrl == null) {
+                throw new InvalidOperationException("Websocket URL is not configured");
+            }
+
             var socket = new ClientWebSocket();
             socket.Options.SetRequestHeader("Authorization", _authenticationProvider.GetToken());
             socket.Options.SetRequestHeader("X-Api-User", _authenticationProvider.GetUser());
@@ -211,12 +215,12 @@ namespace IAGrim.Backup.Cloud.Service {
 
             // Skip anything we already own (dedupe by cloud id) or have locally deleted -- the same
             // item will also arrive via the regular REST download, so this prevents duplication.
-            var known = new HashSet<string>(_playerItemDao.GetOnlineIds().Where(id => !string.IsNullOrEmpty(id)));
-            var deleted = new HashSet<string>(_playerItemDao.GetItemsMarkedForOnlineDeletion().Select(d => d.Id));
+            var known = new HashSet<string>(_playerItemDao.GetOnlineIds().Where(id => !string.IsNullOrEmpty(id)).Select(id => id!));
+            var deleted = new HashSet<string>(_playerItemDao.GetItemsMarkedForOnlineDeletion().Select(d => d.Id!));
 
             var toStore = items
                 .Where(i => !string.IsNullOrEmpty(i.Id))
-                .Where(i => !known.Contains(i.Id) && !deleted.Contains(i.Id))
+                .Where(i => !known.Contains(i.Id!) && !deleted.Contains(i.Id!))
                 .Select(ItemConverter.ToPlayerItem) // marks IsCloudSynchronized = true, so we never re-upload it
                 .ToList();
 

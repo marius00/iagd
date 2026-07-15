@@ -3,9 +3,9 @@ using IAGrim.Utilities;
 
 namespace IAGrim.UI.Misc.CEF {
     public class UserFeedback {
-        public string Message { get; set; }
+        public string? Message { get; set; }
         public UserFeedbackLevel Level { get; set; } = UserFeedbackLevel.Info;
-        public string URL { get; set; }
+        public string? URL { get; set; }
 
         public UserFeedback() { }
 
@@ -24,12 +24,12 @@ namespace IAGrim.UI.Misc.CEF {
         }
 
         public static UserFeedback FromTag(string tag) {
-            return new UserFeedback(RuntimeSettings.Language.GetTag(tag));
+            return new UserFeedback(RuntimeSettings.Language!.GetTag(tag));
         }
 
         public static List<UserFeedback> FromTagSingleton(string tag) {
             return new List<UserFeedback> {
-                new UserFeedback(RuntimeSettings.Language.GetTag(tag))
+                new UserFeedback(RuntimeSettings.Language!.GetTag(tag))
             };
         }
 
