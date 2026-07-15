@@ -1,4 +1,4 @@
-#Translated by D3Z1R3
+﻿#Translated by D3Z1R3
 #Traducido por D3Z1R3
 Aether=de éter
 Aetherials=Etéreos
@@ -475,7 +475,7 @@ iatag_ui_elemental=Elemental
 iatag_ui_enabled=Habilitado
 iatag_ui_energy_regen=Regeneración de energía
 iatag_ui_experience=Experiencia
-iatag_ui_experimentalupdates=Características frecuentes
+iatag_ui_checkupdatesdaily=Buscar actualizaciones diariamente
 iatag_ui_export=Exportar
 iatag_ui_export_export=Exportar
 iatag_ui_export_stashfile=Stash File
@@ -567,7 +567,7 @@ iatag_ui_preparing_pet_stats=Preparing pet stats
 iatag_ui_questionmark= ? 
 iatag_ui_recentonly=Solo reciente
 iatag_ui_reflect=Reflejado
-iatag_ui_regularupdates=Actualizaciones frecuentes
+iatag_ui_checkupdatesweekly=Buscar actualizaciones semanalmente
 iatag_ui_resistance_aether=Éter
 iatag_ui_resistance_bleeding=Sangrado
 iatag_ui_resistance_chaos=Caos
@@ -765,7 +765,6 @@ iatag_ui_cunning=Astucia
 iatag_ui_delayedlooting=Extraer objetos al salir del contrabandista (clásico)
 iatag_ui_donate_title=Donar
 iatag_ui_dontremindme=No me lo recuerdes
-iatag_ui_downgrade_ia=Revertir versión
 iatag_ui_downloading=Descargando..
 iatag_ui_explain_classiclooting=Este es el comportamiento antiguo de Item Assistant y NO soporta Steam Cloud Sync. Los objetos no se extraerán inmediatamente, sino que se eliminarán cuando te alejes del contrabandista.
 iatag_ui_explain_classiclooting_restartia=Cambiar esta configuración requiere reiniciar Item Assistant

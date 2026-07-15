@@ -1,4 +1,4 @@
-tagItemNameOrder={%_s0}{%_s1}{%_s2}{%_s3}{%_s4}
+﻿tagItemNameOrder={%_s0}{%_s1}{%_s2}{%_s3}{%_s4}
 offensivePierceRatioMin={0}% Rüstungsdurchdringung
 defensiveProtection={0} Rüstung
 defensiveStun={0}% Reduzierte Betäubungsdauer
@@ -336,7 +336,6 @@ Bitte überprüfe die Integrität deiner Grim Dawn Installation und versuche es 
 iatag_ui_gdisrunning=Grim Dawn läuft derzeit. Bitte schließe Grim Dawn bevor du die Datenbank parsst
 iatag_ui_update_header=Nach Updates suchen
 iatag_ui_checkforupdates=Nach Updates suchen
-iatag_ui_downgrade_ia=Downgrade
 iatag_ui_howtorestore=Wie stelle ich Backups wieder her?
 iatag_ui_updatingstats_title=Aktualisiere Werte für eigene Gegenstände..
 iatag_ui_updatingstats=Aktualisiere Werte für deine Gegenstände...
@@ -477,8 +476,8 @@ iatag_ui_transferanymod=Zu jedem Mod übertragen
 iatag_ui_minimizetotray=In Taskleiste minimieren
 iatag_ui_startminimized=Minimiert starten
 iatag_ui_update_title=Automatische Updates
-iatag_ui_experimentalupdates=Häufige Features
-iatag_ui_regularupdates=Regelmäßige Updates
+iatag_ui_checkupdatesdaily=Täglich nach Updates suchen
+iatag_ui_checkupdatesweekly=Wöchentlich nach Updates suchen
 iatag_ui_donate_title=Spenden
 iatag_ui_donatenow=Jetzt spenden!
 iatag_ui_openforum=Forum öffnen

@@ -1,4 +1,4 @@
-tagItemNameOrder={%_s0}{%_s1}{%_s2}{%_s3}{%_s4}
+﻿tagItemNameOrder={%_s0}{%_s1}{%_s2}{%_s3}{%_s4}
 offensivePierceRatioMin={0}% Pénétration d'armure
 defensiveProtection={0} Armure
 defensiveStun={0}% Durée d'étourdissement réduite
@@ -336,7 +336,6 @@ Veuillez vérifier l'intégrité de votre installation de Grim Dawn et réessaye
 iatag_ui_gdisrunning=Grim Dawn est en cours d'exécution. Veuillez fermer Grim Dawn avant d'analyser la base de données
 iatag_ui_update_header=Vérifier les mises à jour
 iatag_ui_checkforupdates=Vérifier les mises à jour
-iatag_ui_downgrade_ia=Rétrograder
 iatag_ui_howtorestore=Comment restaurer les sauvegardes?
 iatag_ui_updatingstats_title=Mise à jour des statistiques des objets possédés..
 iatag_ui_updatingstats=Mise à jour des statistiques de vos objets...
@@ -477,8 +476,8 @@ iatag_ui_transferanymod=Transférer vers n'importe quel mod
 iatag_ui_minimizetotray=Minimiser dans la barre
 iatag_ui_startminimized=Démarrer minimisé
 iatag_ui_update_title=Mises à jour automatiques
-iatag_ui_experimentalupdates=Fonctionnalités fréquentes
-iatag_ui_regularupdates=Mises à jour régulières
+iatag_ui_checkupdatesdaily=Rechercher des mises à jour quotidiennement
+iatag_ui_checkupdatesweekly=Rechercher des mises à jour chaque semaine
 iatag_ui_donate_title=Don
 iatag_ui_donatenow=Donner maintenant!
 iatag_ui_openforum=Ouvrir le forum

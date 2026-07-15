@@ -5,7 +5,7 @@
         private long? _buddySyncUserIdV3;
 
         // Settings
-        private bool? _subscribeExperimentalUpdates;
+        private bool? _checkUpdatesDaily;
         private DateTime? _nextUpdateCheck;
         private bool? _minimizeToTray;
         private bool? _usingDualComputer;
@@ -32,10 +32,10 @@
         }
 
         // Settings
-        public bool SubscribeExperimentalUpdates {
-            get => _subscribeExperimentalUpdates ?? false;
+        public bool CheckUpdatesDaily {
+            get => _checkUpdatesDaily ?? false;
             set {
-                _subscribeExperimentalUpdates = value;
+                _checkUpdatesDaily = value;
                 OnMutate?.Invoke(null, EventArgs.Empty);
             }
         }

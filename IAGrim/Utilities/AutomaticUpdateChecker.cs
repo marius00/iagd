@@ -2,12 +2,13 @@
 using IAGrim.Settings;
 using IAGrim.UI.Popups;
 using log4net;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Net;
 using System.Runtime.InteropServices;
-using System.Xml.Linq;
 using Timer = System.Timers.Timer;
 
 namespace IAGrim.Utilities {
@@ -16,8 +17,7 @@ namespace IAGrim.Utilities {
     /// Auto => You have an update [only if IA has focus? check on get focus?]. Not modal/blocking
     /// Manual => You have an update[modal/blocking]
     /// Manual => No update available (popup)
-    /// Downgrade => Start downgrading now
-    /// 
+    ///
     /// Download progress bar view
     /// </summary>
     class AutomaticUpdateChecker {
@@ -32,16 +32,19 @@ namespace IAGrim.Utilities {
         [DllImport("kernel32")]
         private static extern UInt64 GetTickCount64();
 
-        private const string Url = "https://grimdawn.evilsoft.net/version.php";
+        private const string Url = "https://api.github.com/repos/marius00/iagd/releases/latest";
 
-        private static string GetUpdateXmlUri(bool requestLatest) {
-            var version = ExceptionReporter.VersionString;
+        private class GitHubAsset {
+            [JsonProperty("browser_download_url")]
+            public string? BrowserDownloadUrl { get; set; }
+        }
 
-            if (requestLatest) {
-                return $"{Url}?beta&version={version}&is64bit=true";
-            }
+        private class GitHubRelease {
+            [JsonProperty("tag_name")]
+            public string? TagName { get; set; }
 
-            return $"{Url}?version={version}&is64bit=true";
+            [JsonProperty("assets")]
+            public List<GitHubAsset>? Assets { get; set; }
         }
 
         public AutomaticUpdateChecker(SettingsService settings) {
@@ -59,7 +62,8 @@ namespace IAGrim.Utilities {
                 bool hasBeenMinimizedRecently = (DateTime.UtcNow - _lastTimeNotMinimized).TotalHours < 38;
                 if (GetTickCount64() > 5 * 60 * 1000 && hasBeenMinimizedRecently && ShouldCheckForUpdates()) {
                     CheckForUpdates();
-                    _settings.GetPersistent().NextUpdateCheck = DateTime.UtcNow.AddDays(1);
+                    int checkIntervalDays = _settings.GetPersistent().CheckUpdatesDaily ? 1 : 7;
+                    _settings.GetPersistent().NextUpdateCheck = DateTime.UtcNow.AddDays(checkIntervalDays);
                 }
             };
             _timer.Interval = 12 * hour;
@@ -76,30 +80,27 @@ namespace IAGrim.Utilities {
         }
 
         public void CheckForUpdates(bool manualUpdate = false) {
-            var uri = GetUpdateXmlUri(manualUpdate || _settings.GetPersistent().SubscribeExperimentalUpdates);
-            CheckForUpdates(uri, false, manualUpdate);
+            CheckForUpdates(Url, false, manualUpdate);
         }
 
         private void CheckForUpdates(string uri, bool forceUpdate, bool userInitiated) {
             try {
                 using WebClient client = new WebClient();
-                var xmlContent = client.DownloadString(uri);
+                client.Headers.Add("User-Agent", "IAGrim");
+                var jsonContent = client.DownloadString(uri);
 
-                XDocument doc;
-                using StringReader reader = new StringReader(xmlContent);
-                doc = XDocument.Load(reader);
-                if (doc == null) {
+                var release = JsonConvert.DeserializeObject<GitHubRelease>(jsonContent);
+                if (release == null) {
                     if (userInitiated) {
                         MessageBox.Show("Something went wrong checking for updates", "Something went wrong");
                     }
-                    Logger.Warn("Could not parse XML in version check");
+                    Logger.Warn("Could not parse JSON in version check");
                     return;
                 }
 
-
-                string version = doc.Root.Element("version")?.Value;
-                _downloadUri = doc.Root.Element("url")?.Value;
-                if (string.IsNullOrEmpty(version)) {
+                string version = release.TagName;
+                _downloadUri = release.Assets?.Count > 0 ? release.Assets[0].BrowserDownloadUrl : null;
+                if (string.IsNullOrEmpty(version) || string.IsNullOrEmpty(_downloadUri)) {
                     if (userInitiated) {
                         MessageBox.Show("Something went wrong checking for updates", "Something went wrong");
                     }
@@ -162,13 +163,6 @@ namespace IAGrim.Utilities {
             // Start installer and exit IAGD
             Process.Start(new ProcessStartInfo { FileName = "file://" + _installerPath, UseShellExecute = true });
             System.Environment.Exit(0);
-        }
-
-        /// <summary>
-        /// Downgrade to the version on the website, usually older and more stable.
-        /// </summary>
-        public void Downgrade() {
-            CheckForUpdates(GetUpdateXmlUri(false) + "&downgrade", true, true);
         }
 
         public void Dispose() {

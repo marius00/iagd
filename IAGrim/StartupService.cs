@@ -71,7 +71,7 @@ namespace IAGrim {
 
 
                 Logger.Info("Transfer to any mod is " + (settings.GetPersistent().TransferAnyMod ? "enabled" : "disabled"));
-                Logger.Info("Experimental updates is " + (settings.GetPersistent().SubscribeExperimentalUpdates ? "enabled" : "disabled"));
+                Logger.Info("Update check frequency is " + (settings.GetPersistent().CheckUpdatesDaily ? "daily" : "weekly"));
                 Logger.Info((new WindowsPrincipal(WindowsIdentity.GetCurrent())).IsInRole(WindowsBuiltInRole.Administrator) ? "Running as administrator" : "Not running with low privileges");
 
                 Logger.Info("There are items stored for the following mods:");

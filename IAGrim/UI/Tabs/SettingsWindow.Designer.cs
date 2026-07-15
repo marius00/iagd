@@ -43,7 +43,6 @@
             linkSourceCode = new LinkLabel();
             cbHideSkills = new FirefoxCheckBox();
             pbAutomaticUpdates = new PanelBox();
-            linkDowngrade = new LinkLabel();
             linkCheckForUpdates = new LinkLabel();
             helpWhatIsExperimentalUpdates = new LinkLabel();
             helpWhatIsRegularUpdates = new LinkLabel();
@@ -334,7 +333,6 @@
             // pbAutomaticUpdates
             // 
             pbAutomaticUpdates.BackColor = Color.FromArgb(240, 240, 240);
-            pbAutomaticUpdates.Controls.Add(linkDowngrade);
             pbAutomaticUpdates.Controls.Add(linkCheckForUpdates);
             pbAutomaticUpdates.Controls.Add(helpWhatIsExperimentalUpdates);
             pbAutomaticUpdates.Controls.Add(helpWhatIsRegularUpdates);
@@ -353,21 +351,7 @@
             pbAutomaticUpdates.Tag = "iatag_ui_update_title";
             pbAutomaticUpdates.Text = "Automatic Updates";
             pbAutomaticUpdates.TextLocation = "8; 5";
-            // 
-            // linkDowngrade
-            // 
-            linkDowngrade.AutoSize = true;
-            linkDowngrade.Font = new Font("Segoe UI", 8.25F);
-            linkDowngrade.Location = new Point(436, 76);
-            linkDowngrade.Margin = new Padding(4, 0, 4, 0);
-            linkDowngrade.Name = "linkDowngrade";
-            linkDowngrade.Size = new Size(68, 13);
-            linkDowngrade.TabIndex = 32;
-            linkDowngrade.TabStop = true;
-            linkDowngrade.Tag = "iatag_ui_downgrade_ia";
-            linkDowngrade.Text = "Downgrade";
-            linkDowngrade.LinkClicked += linkDowngrade_LinkClicked;
-            // 
+            //
             // linkCheckForUpdates
             // 
             linkCheckForUpdates.AutoSize = true;
@@ -426,8 +410,8 @@
             radioBeta.Name = "radioBeta";
             radioBeta.Size = new Size(530, 31);
             radioBeta.TabIndex = 1;
-            radioBeta.Tag = "iatag_ui_experimentalupdates";
-            radioBeta.Text = "Frequent Updates";
+            radioBeta.Tag = "iatag_ui_checkupdatesdaily";
+            radioBeta.Text = "Check for updates daily";
             radioBeta.CheckedChanged += radioBeta_CheckedChanged;
             // 
             // radioRelease
@@ -442,8 +426,8 @@
             radioRelease.Name = "radioRelease";
             radioRelease.Size = new Size(530, 31);
             radioRelease.TabIndex = 0;
-            radioRelease.Tag = "iatag_ui_regularupdates";
-            radioRelease.Text = "Regular Updates";
+            radioRelease.Tag = "iatag_ui_checkupdatesweekly";
+            radioRelease.Text = "Check for updates weekly";
             radioRelease.CheckedChanged += radioRelease_CheckedChanged;
             // 
             // panelBox2
@@ -671,7 +655,6 @@
         private FirefoxCheckBox cbDarkMode;
         private System.Windows.Forms.LinkLabel linkCheckForUpdates;
         private FirefoxCheckBox cbAutoDismiss;
-        private System.Windows.Forms.LinkLabel linkDowngrade;
         private FirefoxCheckBox cbTransferAnyMod;
         private FirefoxCheckBox cbDelaySearch;
         private LinkLabel helpWhatIsDelayWhenSearching;

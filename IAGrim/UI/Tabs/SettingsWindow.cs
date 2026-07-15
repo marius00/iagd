@@ -61,8 +61,8 @@ namespace IAGrim.UI.Tabs {
         private void SettingsWindow_Load(object sender, EventArgs e) {
             this.Dock = DockStyle.Fill;
 
-            radioBeta.Checked = _settings.GetPersistent().SubscribeExperimentalUpdates;
-            radioRelease.Checked = !_settings.GetPersistent().SubscribeExperimentalUpdates;
+            radioBeta.Checked = _settings.GetPersistent().CheckUpdatesDaily;
+            radioRelease.Checked = !_settings.GetPersistent().CheckUpdatesDaily;
             cbDualComputer.Checked = _settings.GetPersistent().UsingDualComputer;
             cbStartMinimized.Checked = _settings.GetLocal().StartMinimized;
             cbDarkMode.Checked = _settings.GetPersistent().DarkMode;
@@ -82,11 +82,11 @@ namespace IAGrim.UI.Tabs {
         }
 
         private void radioRelease_CheckedChanged(object sender, EventArgs e) {
-            _settings.GetPersistent().SubscribeExperimentalUpdates = false;
+            _settings.GetPersistent().CheckUpdatesDaily = false;
         }
 
         private void radioBeta_CheckedChanged(object sender, EventArgs e) {
-            _settings.GetPersistent().SubscribeExperimentalUpdates = true;
+            _settings.GetPersistent().CheckUpdatesDaily = true;
         }
 
         // create bindings and stick these into its own settings class
@@ -200,10 +200,6 @@ namespace IAGrim.UI.Tabs {
             _settings.GetPersistent().AutoDismissNotifications = ((FirefoxCheckBox)sender).Checked;
         }
 
-
-        private void linkDowngrade_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            _automaticUpdateChecker.Downgrade();
-        }
 
         private void firefoxCheckBox1_CheckedChanged(object sender, EventArgs e) {
             _settings.GetPersistent().TransferAnyMod = ((FirefoxCheckBox)sender).Checked;
