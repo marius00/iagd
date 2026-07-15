@@ -144,8 +144,9 @@ namespace IAGrim.UI.Tabs {
         private void cbDualComputer_CheckedChanged(object sender, EventArgs e) {
             _settings.GetPersistent().UsingDualComputer = (sender as FirefoxCheckBox)?.Checked == true;
 
-            if (_settings.GetPersistent().UsingDualComputer) {
-                MessageBox.Show("IAGD is restarting to toggle DUAL-pC mode", "Restarting");
+
+            if (_settings.GetPersistent().UsingDualComputer != ((sender as FirefoxCheckBox)?.Checked == true)) {
+                MessageBox.Show("IAGD is restarting to toggle DUAL-PC mode", "Restarting");
                 Application.Restart();
                 Environment.Exit(0);
             }

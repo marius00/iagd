@@ -9,6 +9,14 @@
     z-index: -1 !important;
 }
 
+/* Dark tooltips (e.g. the set-bonus "This set consists of…" list) default to
+   bright white, which is harsher than the rest of the dark UI. Use the standard
+   secondary gray so it matches the other muted text. Colored spans inside the
+   tooltip (e.g. red for unowned set members) still override this. */
+.__react_component_tooltip.type-dark {
+    color: var(--item-misc-info, #999999);
+}
+
 .clipboard-container {
     position: fixed;
     right: 14px;
