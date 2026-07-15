@@ -133,6 +133,14 @@ class App extends PureComponent<object, object> {
 
     signalReady()
 
+    // The set-bonus tooltip ("This set consists of the following items:") resolves each set
+    // member's name and owned-count against collectionItems. That data is otherwise only fetched
+    // when the Collection tab is opened, so request it up front — otherwise the tooltip on the
+    // Items tab renders every member as an unresolved "0x" with no name.
+    if (isEmbedded) {
+      requestCollectionData();
+    }
+
     // Things such as real item stats and cloud sync status gets aggregated and updated every few seconds.
     // This is not critical to display realtime, and we may have hundreds of events per second during syncs
     if (!this.delayedUpdateTimer) {

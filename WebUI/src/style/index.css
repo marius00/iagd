@@ -15,7 +15,7 @@ body {
 /* Will be introduced with CEFSharp v86 or v87 */
 @media (prefers-color-scheme: dark) {
 	body {
-		--background-color: rgb(255, 174, 201);
+		--background-color: rgb(0, 0, 0);
 	}
 }
 
