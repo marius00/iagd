@@ -32,6 +32,7 @@ interface ApplicationState {
   isDarkMode: boolean;
   helpSearchFilter: string;
   numItems: number;
+  numItemsApproximate: boolean;
   hasMore: boolean;
   showBackupCloudIcon: boolean;
   notifications: NotificationMessage[];
@@ -91,6 +92,7 @@ interface IOMessageSetItems {
   replaceExistingItems: boolean;
   items: IItem[][];
   numItemsFound: number;
+  numItemsApproximate: boolean;
   hasMore: boolean;
 }
 
@@ -110,6 +112,7 @@ class App extends PureComponent<object, object> {
     isDarkMode: false,
     helpSearchFilter: '',
     numItems: 0,
+    numItemsApproximate: false,
     hasMore: false,
     showBackupCloudIcon: true,
     notifications: [],
@@ -276,6 +279,7 @@ class App extends PureComponent<object, object> {
               isLoading: false,
               items: data.items,
               numItems: data.numItemsFound || 0,
+              numItemsApproximate: data.numItemsApproximate,
               hasMore: data.hasMore,
               isFirstRun: isFirstRun,
               itemLookupMap: lookupMap,
@@ -286,6 +290,10 @@ class App extends PureComponent<object, object> {
               isLoading: false,
               items: items.concat(data.items),
               hasMore: data.hasMore,
+              // The first page may defer the exact total (shown as "1000+"); when C# later computes it
+              // during pagination it sends numItemsFound >= 0 on an append to update the displayed count,
+              // at which point the total is exact and the "+" is dropped.
+              ...(data.numItemsFound >= 0 ? { numItems: data.numItemsFound, numItemsApproximate: false } : {}),
               itemLookupMap: this.calculateItemLocations(data.items, items.length, this.state.itemLookupMap),
             });
           }
@@ -507,6 +515,7 @@ class App extends PureComponent<object, object> {
           showBackupCloudIcon={this.state.showBackupCloudIcon}
           items={this.state.items}
           numItems={this.state.numItems}
+          numItemsApproximate={this.state.numItemsApproximate}
           hasMore={this.state.hasMore}
           isLoading={this.state.isLoading}
           onItemReduce={(url, transferAll) => this.reduceItemCount(url, transferAll)}

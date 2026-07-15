@@ -16,6 +16,7 @@ import React from "react";
 interface Props {
   items: IItem[][];
   numItems?: number;
+  numItemsApproximate?: boolean;
   hasMore?: boolean;
   isLoading: boolean;
   onItemReduce(item: IItem, transferAll: boolean): void;
@@ -148,7 +149,9 @@ class ItemContainer extends PureComponent<Props, object> {
             {<div class="clipboard-link" onClick={() => setClipboard(this.getClipboardContent())}>
               {translate('app.copyToClipboard')}
             </div>}
-            <div>{translate('items.displaying', numItemsDisplayed + '/' + this.props.numItems)}</div>
+            {/* Append "+" when the exact total is still deferred (result was capped and the real COUNT
+                hasn't been computed yet), so a capped result reads e.g. "64/1000+". */}
+            <div>{translate('items.displaying', numItemsDisplayed + '/' + this.props.numItems + (this.props.numItemsApproximate ? '+' : ''))}</div>
           </div>
 
           {this.state.isComparing && <ItemComparer

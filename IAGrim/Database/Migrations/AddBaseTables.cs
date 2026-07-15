@@ -58,6 +58,7 @@ namespace IAGrim.Database.Migrations {
             "CREATE INDEX idx_playeritem_baserecord on PlayerItem (baserecord)",
             "CREATE INDEX idx_playeritem_levelreq on PlayerItem (LevelRequirement)",
             "CREATE INDEX idx_playeritem_lowercasename on PlayerItem (namelowercase)",
+            "CREATE INDEX idx_playeritem_name on PlayerItem (name, Id)",
             "CREATE INDEX idx_playeritem_prefix on PlayerItem (PrefixRecord)",
             "CREATE INDEX idx_playeritem_rarity on PlayerItem (Rarity)",
             "CREATE INDEX idx_playeritem_suffix on PlayerItem (SuffixRecord)",

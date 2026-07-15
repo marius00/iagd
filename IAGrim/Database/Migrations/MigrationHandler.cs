@@ -24,6 +24,7 @@ namespace IAGrim.Database.Migrations {
             Run(new FixPlayerItemIdTypeMigration());
             Run(new FixDatabaseItemIdTypeMigration());
             Run(new AddPlayerItemRecordIndex());
+            Run(new AddPlayerItemNameIndex());
             Run(new HbmSchemaMigration());
         }
 

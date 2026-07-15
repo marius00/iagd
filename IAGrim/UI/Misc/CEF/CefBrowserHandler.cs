@@ -144,11 +144,12 @@ namespace IAGrim.UI.Misc.CEF {
         /// </summary>
         /// <param name="items">The current batch</param>
         /// <param name="numItemsFound">The number of items found, total (eg 3000 found, but batch has 64)</param>
-        public void SetItems(List<List<JsonItem>> items, int numItemsFound, bool hasMore) {
+        public void SetItems(List<List<JsonItem>> items, int numItemsFound, bool hasMore, bool numItemsApproximate = false) {
             SendMessage(new IOMessage {
                 Type = IOMessageType.SetItems,
                 Data = new IOMessageSetItems {
                     NumItemsFound = numItemsFound,
+                    NumItemsApproximate = numItemsApproximate,
                     Items = items,
                     ReplaceExistingItems = true,
                     HasMore = hasMore,
@@ -163,13 +164,17 @@ namespace IAGrim.UI.Misc.CEF {
             });
         }
 
-        public void AddItems(List<List<JsonItem>> items, bool hasMore) {
+        // numItemsFound < 0 means "no update to the displayed total" (the common append case). A non-negative
+        // value updates it - used when the real total was deferred on the first page and later computed once
+        // the user paginated past it.
+        public void AddItems(List<List<JsonItem>> items, bool hasMore, int numItemsFound = -1) {
             SendMessage(new IOMessage {
                 Type = IOMessageType.SetItems,
                 Data = new IOMessageSetItems {
                     Items = items,
                     ReplaceExistingItems = false,
                     HasMore = hasMore,
+                    NumItemsFound = numItemsFound,
                 }
             });
         }

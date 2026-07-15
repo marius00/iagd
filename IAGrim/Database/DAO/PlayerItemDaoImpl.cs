@@ -726,7 +726,15 @@ namespace IAGrim.Database {
             }
 
             if (query.IsRetaliation) {
-                queryFragments.Add($"dbs.stat like '{petPrefix}retaliation%'");
+                // Match all "retaliation*" stats via a sargable prefix RANGE rather than LIKE. SQLite's LIKE is
+                // case-insensitive by default and cannot use the (BINARY) index on DatabaseItemStat_v2.Stat, so
+                // "stat LIKE 'retaliation%'" scanned stat rows. A ">= prefix AND < prefix++" range uses the
+                // index instead. GD stat names are lowercase-prefixed (e.g. "retaliationPhysicalMin"), matching
+                // the binary ordering. The upper bound is the prefix with its last char incremented.
+                var retaliationPrefix = $"{petPrefix}retaliation";
+                var retaliationUpper = retaliationPrefix.Substring(0, retaliationPrefix.Length - 1)
+                                       + (char)(retaliationPrefix[retaliationPrefix.Length - 1] + 1);
+                queryFragments.Add($"(dbs.stat >= '{retaliationPrefix}' AND dbs.stat < '{retaliationUpper}')");
             }
 
             // TODO: Seems we only have LIST parameters here.. won't work for this, since we'd get OR not AND on classes.
@@ -777,7 +785,14 @@ namespace IAGrim.Database {
         // and extremely expensive to materialize/merge/sort just to display a 64-item page.
         public const int MaxSearchResults = 1000;
 
-        public List<PlayerItem> SearchForItems(ItemSearchRequest query, int skip, bool orderByLevel, out int totalCount, out bool wasTruncated, PlayerItem? item = null) {
+        /// <summary>
+        /// A sentinel <see cref="totalCount"/> meaning "more than <see cref="MaxSearchResults"/> matches, exact
+        /// total not computed". Returned when computeCount is false and the result was capped, so the caller can
+        /// defer the (expensive, full-scan) COUNT until the user actually paginates past the first page.
+        /// </summary>
+        public const int UnknownTotalCount = -1;
+
+        public List<PlayerItem> SearchForItems(ItemSearchRequest query, int skip, bool orderByLevel, bool computeCount, out int totalCount, out bool wasTruncated, PlayerItem? item = null) {
             Logger.Debug($"Searching for items with query {query} (skip {skip})");
             wasTruncated = false;
             totalCount = 0;
@@ -1004,16 +1019,26 @@ namespace IAGrim.Database {
                     wasTruncated = true;
                 }
 
-                if (item == null && skip == 0) {
-                    // Real total across all pages (pre stack-merge), for the UI count + to know when there
-                    // are further pages to fetch. Same body/params as the row query, no paging. Only computed
-                    // for the first page; subsequent page fetches already know the total from that first call.
+                if (item != null) {
+                    totalCount = items.Count;
+                }
+                else if (!wasTruncated) {
+                    // The result fit in a single page (<= MaxSearchResults), so the row count IS the total,
+                    // regardless of computeCount. No separate COUNT pass needed - this is the common case and
+                    // avoids a second full scan of the match set on every search.
+                    totalCount = items.Count;
+                }
+                else if (computeCount) {
+                    // Capped result and the caller wants the real total (e.g. the user has paginated past the
+                    // first page). This is the expensive path: a full-scan COUNT re-running the whole WHERE body.
                     ISQLQuery countQuery = session.CreateSQLQuery("SELECT COUNT(*) " + bodySql);
                     BindParams(countQuery);
                     totalCount = System.Convert.ToInt32(countQuery.UniqueResult());
                 }
-                else if (item != null) {
-                    totalCount = items.Count;
+                else {
+                    // Capped result, exact total deferred. Report "unknown" so the caller can show "1000+" and
+                    // only pay for the COUNT if/when the user actually scrolls past the first page.
+                    totalCount = UnknownTotalCount;
                 }
 
                 return items;
