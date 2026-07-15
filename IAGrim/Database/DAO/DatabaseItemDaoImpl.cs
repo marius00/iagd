@@ -232,9 +232,11 @@ namespace IAGrim.Database {
         /// Returns the records for potions, components, etc.. typical stackables.
         /// </summary>
         public IList<string> GetStackableComponentsPotionsMisc() {
-            const string sql = @"select distinct i.baserecord from databaseitemstat_v2 s, databaseitem_v2 i 
-                where (Stat = 'Class' AND TextValue IN ('ItemRelic', 'OneShot_PotionHealth', 'OneShot_PotionMana', 'OneShot_Scroll') OR i.baserecord like '%questitems%')
-                and i.id_databaseitem = s.id_databaseitem";
+            const string sql = @"select distinct i.baserecord from databaseitemstat_v2 s, databaseitem_v2 i
+                where Stat = 'Class' AND TextValue IN ('ItemRelic', 'OneShot_PotionHealth', 'OneShot_PotionMana', 'OneShot_Scroll')
+                and i.id_databaseitem = s.id_databaseitem
+                UNION
+                select i.baserecord from databaseitem_v2 i where i.baserecord like '%questitems%'";
 
             using (ISession session = SessionCreator.OpenSession()) {
                 return session.CreateSQLQuery(sql).List<string>();
