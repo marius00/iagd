@@ -144,13 +144,14 @@ namespace IAGrim.UI.Misc.CEF {
         /// </summary>
         /// <param name="items">The current batch</param>
         /// <param name="numItemsFound">The number of items found, total (eg 3000 found, but batch has 64)</param>
-        public void SetItems(List<List<JsonItem>> items, int numItemsFound) {
-            SendMessage(new IOMessage { 
-                Type = IOMessageType.SetItems, 
+        public void SetItems(List<List<JsonItem>> items, int numItemsFound, bool hasMore) {
+            SendMessage(new IOMessage {
+                Type = IOMessageType.SetItems,
                 Data = new IOMessageSetItems {
                     NumItemsFound = numItemsFound,
                     Items = items,
                     ReplaceExistingItems = true,
+                    HasMore = hasMore,
                 }
             });
         }
@@ -162,12 +163,13 @@ namespace IAGrim.UI.Misc.CEF {
             });
         }
 
-        public void AddItems(List<List<JsonItem>> items) {
+        public void AddItems(List<List<JsonItem>> items, bool hasMore) {
             SendMessage(new IOMessage {
                 Type = IOMessageType.SetItems,
                 Data = new IOMessageSetItems {
                     Items = items,
                     ReplaceExistingItems = false,
+                    HasMore = hasMore,
                 }
             });
         }

@@ -16,6 +16,7 @@ import React from "react";
 interface Props {
   items: IItem[][];
   numItems?: number;
+  hasMore?: boolean;
   isLoading: boolean;
   onItemReduce(item: IItem, transferAll: boolean): void;
   onRequestMoreItems(): void;
@@ -106,7 +107,11 @@ class ItemContainer extends PureComponent<Props, object> {
 
   render() {
     const items = this.props.items;
-    const canLoadMoreItems = this.props.numItems !== undefined ? this.props.numItems > items.length : true;
+    // Prefer the explicit hasMore signal from C# (robust across DB-page boundaries and the pre/post
+    // stack-merge count mismatch); fall back to the count comparison only when it wasn't provided.
+    const canLoadMoreItems = this.props.hasMore !== undefined
+      ? this.props.hasMore
+      : (this.props.numItems !== undefined ? this.props.numItems > items.length : true);
 
     let comparingItem = [] as IItem[];
     if (this.state.isComparing) {

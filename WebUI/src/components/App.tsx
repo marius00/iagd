@@ -32,6 +32,7 @@ interface ApplicationState {
   isDarkMode: boolean;
   helpSearchFilter: string;
   numItems: number;
+  hasMore: boolean;
   showBackupCloudIcon: boolean;
   notifications: NotificationMessage[];
   hideItemSkills: boolean;
@@ -90,6 +91,7 @@ interface IOMessageSetItems {
   replaceExistingItems: boolean;
   items: IItem[][];
   numItemsFound: number;
+  hasMore: boolean;
 }
 
 
@@ -108,6 +110,7 @@ class App extends PureComponent<object, object> {
     isDarkMode: false,
     helpSearchFilter: '',
     numItems: 0,
+    hasMore: false,
     showBackupCloudIcon: true,
     notifications: [],
     hideItemSkills: false,
@@ -273,6 +276,7 @@ class App extends PureComponent<object, object> {
               isLoading: false,
               items: data.items,
               numItems: data.numItemsFound || 0,
+              hasMore: data.hasMore,
               isFirstRun: isFirstRun,
               itemLookupMap: lookupMap,
             });
@@ -281,6 +285,7 @@ class App extends PureComponent<object, object> {
             this.setState({
               isLoading: false,
               items: items.concat(data.items),
+              hasMore: data.hasMore,
               itemLookupMap: this.calculateItemLocations(data.items, items.length, this.state.itemLookupMap),
             });
           }
@@ -502,6 +507,7 @@ class App extends PureComponent<object, object> {
           showBackupCloudIcon={this.state.showBackupCloudIcon}
           items={this.state.items}
           numItems={this.state.numItems}
+          hasMore={this.state.hasMore}
           isLoading={this.state.isLoading}
           onItemReduce={(url, transferAll) => this.reduceItemCount(url, transferAll)}
           onRequestMoreItems={() => this.requestMoreItems()}

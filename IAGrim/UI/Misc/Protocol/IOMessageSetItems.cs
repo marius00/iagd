@@ -18,5 +18,12 @@ namespace IAGrim.UI.Misc.Protocol {
         /// The number of items found, total (eg 3000 found, but batch has 64)
         /// </summary>
         public int NumItemsFound { get; set; }
+
+        /// <summary>
+        /// Whether further items can still be fetched (more buffered pages, or more DB pages to load).
+        /// The frontend uses this to decide whether to keep infinite-scrolling, rather than comparing
+        /// counts (NumItemsFound is pre stack-merge, so it can exceed the number of displayed rows).
+        /// </summary>
+        public bool HasMore { get; set; }
     }
 }

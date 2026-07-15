@@ -29,6 +29,17 @@ namespace IAGrim.UI.Controller {
         // view is filtered by the same query as the item search, but is only fetched when that tab is open.
         private ItemSearchRequest? _lastQuery;
 
+        // Cross-batch pagination state for the current query. The DB search is capped at MaxSearchResults
+        // rows per call; once the user scrolls past the buffered page we fetch the next DB page at _dbSkip.
+        private bool _lastOrderByLevel;
+        private int _dbSkip;                 // Offset of the next (not-yet-fetched) DB page of player items.
+        private int _playerTotalCount;       // Total matching player items in the DB (all pages), pre stack-merge.
+        private int _buddyCount;             // Buddy items are fetched once up front and never paginated.
+
+        // Whether the frontend should keep requesting more items: either the buffer still holds unserved
+        // rows, or there are further DB pages to fetch.
+        private bool HasMore => !_itemPaginationService.BufferExhausted || _dbSkip < _playerTotalCount;
+
         public SearchController(
             IPlayerItemDao playerItemDao,
             ItemStatService itemStatService,
@@ -75,10 +86,19 @@ namespace IAGrim.UI.Controller {
         }
 
         private bool ApplyItems(bool append) {
+            // When appending (infinite scroll) and the in-memory buffer is drained, pull the next DB page
+            // (items 1001-2000, 2001-3000, ...) before serving the next UI batch. Buddy items are not
+            // paginated (fetched once up front), so only player items are fetched here.
+            if (append && _lastQuery != null && _itemPaginationService.BufferExhausted && _dbSkip < _playerTotalCount) {
+                var more = _playerItemDao.SearchForItems(_lastQuery, _dbSkip, _lastOrderByLevel, out _, out _);
+                _dbSkip += PlayerItemDaoImpl.MaxSearchResults;
+                _itemPaginationService.Append(ItemOperationsUtility.MergeStackSize(more));
+            }
+
             var items = _itemPaginationService.Fetch();
 
             if (items.Count == 0) {
-                Browser.AddItems(new List<List<JsonItem>>(0));
+                Browser.AddItems(new List<List<JsonItem>>(0), HasMore);
                 return false;
             }
 
@@ -90,10 +110,10 @@ namespace IAGrim.UI.Controller {
             var convertedItems = ItemHtmlWriter.ToJsonSerializable(items);
 
             if (append) {
-                Browser.AddItems(convertedItems);
+                Browser.AddItems(convertedItems, HasMore);
             }
             else {
-                Browser.SetItems(convertedItems, _itemPaginationService.NumTotalItems);
+                Browser.SetItems(convertedItems, _itemPaginationService.NumTotalItems, HasMore);
             }
 
             return true;
@@ -105,12 +125,12 @@ namespace IAGrim.UI.Controller {
             }
             Logger.Info("Checking if newly looted item matches filter..");
 
-            var items = _playerItemDao.SearchForItems(query, out _, item);
+            var items = _playerItemDao.SearchForItems(query, 0, false, out _, out _, item);
             _playerItemDao.PopulateReplicaAndPetInfo(items);
             var merged = ItemOperationsUtility.MergeStackSize(items);
             _itemStatService.ApplyStats(merged.SelectMany(m => m));
             var convertedItems = ItemHtmlWriter.ToJsonSerializable(merged);
-            Browser.AddItems(convertedItems);
+            Browser.AddItems(convertedItems, HasMore);
         }
 
         public string Search(ItemSearchRequest query, bool includeBuddyItems, bool orderByLevel) {
@@ -131,25 +151,31 @@ namespace IAGrim.UI.Controller {
 
                 var swTotal = System.Diagnostics.Stopwatch.StartNew();
 
+                // Reset cross-batch pagination state for this new query and fetch the first DB page.
+                _lastOrderByLevel = orderByLevel;
+                _dbSkip = PlayerItemDaoImpl.MaxSearchResults; // first page is offset 0; next page starts here
+                _buddyCount = 0;
+
                 var items = new List<PlayerHeldItem>();
-                items.AddRange(_playerItemDao.SearchForItems(query, out bool wasTruncated));
+                items.AddRange(_playerItemDao.SearchForItems(query, 0, orderByLevel, out int playerTotal, out _));
+                _playerTotalCount = playerTotal;
 
                 var personalCount = items.Sum(i => (long)i.Count);
 
                 if (includeBuddyItems && !query.SocketedOnly) {
-                    AddBuddyItems(items, query, wasTruncated, out message);
+                    AddBuddyItems(items, query, out message);
                 }
                 else {
-                    message = personalCount == 0
+                    message = playerTotal == 0
                         ? RuntimeSettings.Language.GetTag("iatag_no_matching_items_found")
                         : string.Empty;
                 }
 
                 var merged = ItemOperationsUtility.MergeStackSize(items);
 
-                if (_itemPaginationService.Update(merged, orderByLevel, items.Count)) {
+                if (_itemPaginationService.Update(merged, orderByLevel, playerTotal + _buddyCount)) {
                     if (!ApplyItems(false)) {
-                        Browser.SetItems(new List<List<JsonItem>>(0), 0);
+                        Browser.SetItems(new List<List<JsonItem>>(0), 0, false);
                     }
 
                     // Collection data is no longer fetched here on every search. The frontend requests it
@@ -167,7 +193,7 @@ namespace IAGrim.UI.Controller {
                 }
 
                 swTotal.Stop();
-                Logger.Info($"Search completed in {swTotal.ElapsedMilliseconds}ms, {items.Count} results{(wasTruncated ? $" (capped at {PlayerItemDaoImpl.MaxSearchResults})" : "")}");
+                Logger.Info($"Search completed in {swTotal.ElapsedMilliseconds}ms, {playerTotal} total results (first page of up to {PlayerItemDaoImpl.MaxSearchResults})");
 
                 return message;
             }
@@ -176,16 +202,17 @@ namespace IAGrim.UI.Controller {
             }
         }
 
-        private static object FormatCount(int count, bool wasTruncated) => wasTruncated ? $"{count}+" : count;
-
-        private void AddBuddyItems(List<PlayerHeldItem> items, ItemSearchRequest query, bool wasTruncated, out string message) {
+        private void AddBuddyItems(List<PlayerHeldItem> items, ItemSearchRequest query, out string message) {
             var buddyItems = new List<BuddyItem>(_buddyItemDao.FindBy(query));
+            _buddyCount = buddyItems.Count;
             if (buddyItems.Count > 0) {
                 items.AddRange(buddyItems);
-                message = RuntimeSettings.Language.GetTag("iatag_items_found_self_and_buddy", FormatCount(items.Count - buddyItems.Count, wasTruncated), buddyItems.Count);
+                // _playerTotalCount is the true total across all DB pages (set before this call), not just
+                // the first page currently in memory, so the "found" message reflects the real count.
+                message = RuntimeSettings.Language.GetTag("iatag_items_found_self_and_buddy", _playerTotalCount, buddyItems.Count);
             }
             else {
-                message = RuntimeSettings.Language.GetTag("iatag_items_found_selfonly", FormatCount(items.Count, wasTruncated));
+                message = RuntimeSettings.Language.GetTag("iatag_items_found_selfonly", _playerTotalCount);
             }
         }
 

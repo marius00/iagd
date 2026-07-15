@@ -5,8 +5,8 @@ using IAGrim.UI.Controller.dto;
 
 namespace IAGrim.UI.Misc.CEF {
     public interface IBrowserCallbacks {
-        void AddItems(List<List<JsonItem>> items);
-        void SetItems(List<List<JsonItem>> items, int numItemsFound);
+        void AddItems(List<List<JsonItem>> items, bool hasMore);
+        void SetItems(List<List<JsonItem>> items, int numItemsFound, bool hasMore);
         void SetCollectionItems(IList<CollectionItem> items, bool isHardcore);
         void SetCollectionAggregateData(IList<CollectionItemAggregateRow> rows);
         void ShowLoadingAnimation(bool visible);

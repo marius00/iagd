@@ -777,9 +777,10 @@ namespace IAGrim.Database {
         // and extremely expensive to materialize/merge/sort just to display a 64-item page.
         public const int MaxSearchResults = 1000;
 
-        public List<PlayerItem> SearchForItems(ItemSearchRequest query, out bool wasTruncated, PlayerItem? item = null) {
-            Logger.Debug($"Searching for items with query {query}");
+        public List<PlayerItem> SearchForItems(ItemSearchRequest query, int skip, bool orderByLevel, out int totalCount, out bool wasTruncated, PlayerItem? item = null) {
+            Logger.Debug($"Searching for items with query {query} (skip {skip})");
             wasTruncated = false;
+            totalCount = 0;
             var queryFragments = new List<string>();
             var queryParams = new Dictionary<string, object>();
             var statFilterListParams = new Dictionary<string, string[]>();
@@ -878,30 +879,33 @@ namespace IAGrim.Database {
                     and stat.stat = 'spawnObjects')");
             }
 
-            var sql = new List<string> {
-                $@"select PI.name as Name, 
-                PI.StackCount, 
-                PI.rarity as Rarity, 
-                PI.levelrequirement as LevelRequirement, 
-                PI.baserecord as BaseRecord, 
-                PI.prefixrecord as PrefixRecord, 
-                PI.suffixrecord as SuffixRecord, 
-                PI.ModifierRecord as ModifierRecord, 
+            const string selectColumns = @"select PI.name as Name,
+                PI.StackCount,
+                PI.rarity as Rarity,
+                PI.levelrequirement as LevelRequirement,
+                PI.baserecord as BaseRecord,
+                PI.prefixrecord as PrefixRecord,
+                PI.suffixrecord as SuffixRecord,
+                PI.ModifierRecord as ModifierRecord,
                 PI.MateriaRecord as MateriaRecord,
                 PI.AscendantAffixNameRecord as AscendantAffixNameRecord,
                 PI.AscendantAffix2hNameRecord as AscendantAffix2hNameRecord,
-                PI.{PlayerItemTable.PrefixRarity} as PrefixRarity,
-                PI.{PlayerItemTable.CloudId} as CloudId,
-                PI.{PlayerItemTable.IsCloudSynchronized} as IsCloudSynchronizedValue,
-                PI.{PlayerItemTable.Id} as Id,
-                PI.{PlayerItemTable.Mod} as Mod,
-                CAST({PlayerItemTable.IsHardcore} as bit) as IsHardcore,
+                PI.PrefixRarity as PrefixRarity,
+                PI.cloudid as CloudId,
+                PI.cloud_hassync as IsCloudSynchronizedValue,
+                PI.Id as Id,
+                PI.Mod as Mod,
+                CAST(PI.IsHardcore as bit) as IsHardcore,
                 IFNULL(RerollsUsed, 0) as RerollsUsed,
                 IFNULL(AffixRerollsUsed, 0) as AffixRerollsUsed,
                 '' AS PetRecord,
                 '[]' AS ReplicaInfo,
-                PI.{PlayerItemTable.Seed} as Seed
-                FROM PlayerItem PI
+                PI.Seed as Seed ";
+
+            // The FROM/WHERE body is shared verbatim between the row query and the COUNT(*) query
+            // (see below) so the total count can never drift from what the paged query actually returns.
+            var sql = new List<string> {
+                @"FROM PlayerItem PI
                 LEFT OUTER JOIN ReplicaItem2 R ON PI.ID = R.playeritemid
                 WHERE " + string.Join(" AND ", queryFragments)
             };
@@ -949,13 +953,25 @@ namespace IAGrim.Database {
                 }
             }
 
-            // Only cap the general "browse" search. The single-item lookup (item != null) is
-            // already scoped to one specific id and never needs a limit.
-            if (item == null) {
-                sql.Add($" LIMIT {MaxSearchResults + 1}");
-            }
+            // Shared FROM/WHERE body (before ordering/paging), reused by both the row query and the count query.
+            var bodySql = string.Join(" ", sql);
 
-            var combinedSql = string.Join(" ", sql);
+            // Deterministic ordering so LIMIT/OFFSET slices are stable across pages (no row skipped or
+            // duplicated between batches). Matches PlayerItem.CompareTo (Name, then Id) so the pages arrive
+            // pre-sorted in the order the UI displays; PI.Id is the final tiebreaker for stability.
+            var orderBy = orderByLevel
+                ? " ORDER BY PI.levelrequirement, PI.name, PI.Id "
+                : " ORDER BY PI.name, PI.Id ";
+
+            // Only cap/paginate the general "browse" search. The single-item lookup (item != null) is
+            // already scoped to one specific id and never needs a limit.
+            string combinedSql;
+            if (item == null) {
+                combinedSql = selectColumns + bodySql + orderBy + $" LIMIT {MaxSearchResults + 1} OFFSET {skip}";
+            }
+            else {
+                combinedSql = selectColumns + bodySql;
+            }
 
             void BindParams(ISQLQuery target) {
                 foreach (var key in queryParams.Keys) {
@@ -986,6 +1002,18 @@ namespace IAGrim.Database {
                 if (item == null && items.Count > MaxSearchResults) {
                     items = items.Take(MaxSearchResults).ToList();
                     wasTruncated = true;
+                }
+
+                if (item == null && skip == 0) {
+                    // Real total across all pages (pre stack-merge), for the UI count + to know when there
+                    // are further pages to fetch. Same body/params as the row query, no paging. Only computed
+                    // for the first page; subsequent page fetches already know the total from that first call.
+                    ISQLQuery countQuery = session.CreateSQLQuery("SELECT COUNT(*) " + bodySql);
+                    BindParams(countQuery);
+                    totalCount = System.Convert.ToInt32(countQuery.UniqueResult());
+                }
+                else if (item != null) {
+                    totalCount = items.Count;
                 }
 
                 return items;
