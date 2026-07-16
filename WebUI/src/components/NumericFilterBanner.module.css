@@ -1,0 +1,80 @@
+.backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.55);
+    z-index: 1000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal {
+    background-color: var(--banner-background);
+    color: var(--banner-color);
+
+    /* Padding/border must count toward max-height, or the confirm button drops below the fold in a small window. */
+    box-sizing: border-box;
+    min-width: 300px;
+    max-width: 620px;
+    width: 80vw;
+    max-height: 90vh;
+    overflow-y: auto;
+
+    padding: 20px 30px 30px 30px;
+    text-align: center;
+    user-select: none;
+
+    border-radius: 8px;
+    border: 1px solid var(--banner-border);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+}
+
+.modal h2 {
+    margin-top: 10px;
+    color: var(--banner-header);
+}
+
+.modal p {
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.screenshot {
+    max-width: 100%;
+    border: 1px solid var(--banner-screenshot-border);
+    border-radius: 4px;
+    margin: 10px 0 20px 0;
+}
+
+/* The App root carries .App-dark in dark mode, so the matching screenshot can be picked in CSS. */
+.darkScreenshot {
+    display: none;
+}
+
+:global(.App-dark) .lightScreenshot {
+    display: none;
+}
+
+:global(.App-dark) .darkScreenshot {
+    display: inline-block;
+}
+
+.btnConfirm {
+    background-color: var(--banner-button-background);
+    border-radius: 5px;
+    border: 1px solid var(--banner-button-border);
+    color: var(--banner-button-color);
+    width: 230px;
+    display: inline-block;
+    cursor: pointer;
+    padding: 8px 4px;
+    font-size: 18px;
+}
+
+.btnConfirm:hover {
+    background-color: var(--banner-button-background-hover);
+}

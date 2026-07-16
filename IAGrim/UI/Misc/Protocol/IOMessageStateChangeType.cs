@@ -8,5 +8,6 @@
         EasterEggMode,
         IsLoading,
         GdSeasonError,
+        ShowNumericFilterBanner,
     }
 }

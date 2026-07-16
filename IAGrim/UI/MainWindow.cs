@@ -33,6 +33,10 @@ using System.ComponentModel;
 namespace IAGrim.UI {
     public partial class MainWindow : Form {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(MainWindow));
+
+        /// <summary>Users with fewer items than this are still getting set up, and don't need the numeric filter introduction.</summary>
+        private const int NumericFilterBannerMinItems = 450;
+
         private readonly CefBrowserHandler _cefBrowserHandler;
         private readonly ISettingsReadController _settingsController;
         private readonly ServiceProvider _serviceProvider;
@@ -235,8 +239,10 @@ namespace IAGrim.UI {
 
 
                     _cefBrowserHandler.SetOnlineBackupsEnabled(!settingsService.GetLocal().OptOutOfBackups);
-                    _cefBrowserHandler.SetIsFirstRun(_serviceProvider.Get<IPlayerItemDao>().GetNumItems() == 0);
-                    if (_serviceProvider.Get<IPlayerItemDao>().GetNumItems() == 0) {
+
+                    var numItems = _serviceProvider.Get<IPlayerItemDao>().GetNumItems();
+                    _cefBrowserHandler.SetIsFirstRun(numItems == 0);
+                    if (numItems == 0) {
                     } else if (DateTime.Now.Month == 4 && DateTime.Now.Day == 1) {
                         if (settingsService.GetLocal().EasterPrank) {
                             _cefBrowserHandler.SetEasterEggMode();
@@ -245,6 +251,12 @@ namespace IAGrim.UI {
                     }
                     else {
                         settingsService.GetLocal().EasterPrank = true;
+                    }
+
+                    // Introduce the numeric stat filter to established users who haven't found it yet.
+                    var persistent = settingsService.GetPersistent();
+                    if (numItems >= NumericFilterBannerMinItems && !persistent.NumericFilterUsed && !persistent.NumericFilterBannerDismissed) {
+                        _cefBrowserHandler.SetShowNumericFilterBanner(true);
                     }
                 }
             }
@@ -477,6 +489,7 @@ namespace IAGrim.UI {
 
             searchController.Browser = _cefBrowserHandler;
             searchController.JsIntegration.OnClipboard += SetItemsClipboard;
+            searchController.JsIntegration.OnDismissNumericFilterBanner += (_, _) => settingsService.GetPersistent().NumericFilterBannerDismissed = true;
 
             var playerItemDao = _serviceProvider.Get<IPlayerItemDao>();
             var cacher = _serviceProvider.Get<TransferStashServiceCache>();

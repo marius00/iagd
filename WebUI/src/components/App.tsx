@@ -4,7 +4,7 @@ import Help from "../containers/help/Help";
 import IItem from "../interfaces/IItem";
 import ICollectionItem from "../interfaces/ICollectionItem";
 import {PureComponent} from "preact/compat";
-import {isEmbedded, requestCollectionData, requestMoreItems, signalReady} from "../integration/integration";
+import {dismissNumericFilterBanner, isEmbedded, requestCollectionData, requestMoreItems, signalReady} from "../integration/integration";
 import MockCollectionItemData from "../mock/MockCollectionItemData";
 import Spinner from "./Spinner";
 import '../style/App.css';
@@ -20,6 +20,7 @@ import FirstRunHelpThingie from "./FirstRunHelpThingie";
 import IItemAggregateRow from "../interfaces/IItemAggregateRow";
 import {IReplicaRow} from "../interfaces/IReplicaRow";
 import GdSeasonError from "./GdSeasonError";
+import NumericFilterBanner from "./NumericFilterBanner";
 
 interface ApplicationState {
   items: IItem[][];
@@ -43,6 +44,7 @@ interface ApplicationState {
   hasShownModFilterWarning: boolean;
   easterEggMode: boolean;
   gdSeasonError: boolean;
+  showNumericFilterBanner: boolean;
 }
 
 interface IOMessage {
@@ -86,6 +88,7 @@ enum IOMessageStateChangeType {
   EasterEggMode,
   IsLoading,
   GdSeasonError,
+  ShowNumericFilterBanner,
 }
 
 interface IOMessageSetItems {
@@ -123,6 +126,7 @@ class App extends PureComponent<object, object> {
     hasShownModFilterWarning: false,
     easterEggMode: false,
     gdSeasonError: false,
+    showNumericFilterBanner: false,
   } as ApplicationState;
 
   componentDidMount() {
@@ -360,6 +364,12 @@ class App extends PureComponent<object, object> {
               });
               break;
 
+            case IOMessageStateChangeType.ShowNumericFilterBanner:
+              this.setState({
+                showNumericFilterBanner: data.value,
+              });
+              break;
+
 
             case IOMessageStateChangeType.FirstRun:
               this.setState({
@@ -481,6 +491,11 @@ class App extends PureComponent<object, object> {
     // TODO: Fix this weird loop? This one will request more items.. which will end up in a call from C# to window.addItems().. is that how we wanna do this?
   }
 
+  closeNumericFilterBanner = () => {
+    this.setState({showNumericFilterBanner: false});
+    dismissNumericFilterBanner();
+  }
+
   closeNotification = (id?: string) => {
     const notifications = [...this.state.notifications];
 
@@ -519,6 +534,7 @@ class App extends PureComponent<object, object> {
         {this.state.activeTab === 3 && <CharacterListContainer/>}
 
         {this.state.activeTab === 0 && this.state.showModFilterWarning > 0 && <ModFilterWarning numOtherItems={this.state.showModFilterWarning}/>}
+        {this.state.activeTab === 0 && this.state.showNumericFilterBanner && <NumericFilterBanner close={this.closeNumericFilterBanner}/>}
         {this.state.activeTab === 0 && <ItemContainer
           showBackupCloudIcon={this.state.showBackupCloudIcon}
           items={this.state.items}

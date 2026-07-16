@@ -15,6 +15,8 @@
         private bool? _hideSkills;
         private bool? _autoDismissNotifications;
         private bool? _isRunningInWine;
+        private bool? _numericFilterUsed;
+        private bool? _numericFilterBannerDismissed;
 
         private long? _cloudUploadTimestamp;
 
@@ -134,6 +136,24 @@
             get => _isRunningInWine ?? false;
             set {
                 _isRunningInWine = value;
+                OnMutate?.Invoke(null, EventArgs.Empty);
+            }
+        }
+
+        /// <summary>Set the first time a numeric stat filter is applied; suppresses the introduction banner.</summary>
+        public bool NumericFilterUsed {
+            get => _numericFilterUsed ?? false;
+            set {
+                _numericFilterUsed = value;
+                OnMutate?.Invoke(null, EventArgs.Empty);
+            }
+        }
+
+        /// <summary>Set when the user confirms the numeric filter introduction banner.</summary>
+        public bool NumericFilterBannerDismissed {
+            get => _numericFilterBannerDismissed ?? false;
+            set {
+                _numericFilterBannerDismissed = value;
                 OnMutate?.Invoke(null, EventArgs.Empty);
             }
         }

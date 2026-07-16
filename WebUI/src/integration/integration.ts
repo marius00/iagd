@@ -32,6 +32,8 @@ interface IntegrationInterface {
     SignalReady(): void;
 
     GetTranslationStrings(): { [index: string]: string };
+
+    DismissNumericFilterBanner(): void;
 }
 
 
@@ -93,7 +95,17 @@ export function openUrl(url: string): void {
 
 export function signalReady(): void {
     console.log("Notifying IAGD that we're ready")
-    core.SignalReady()
+    if (isEmbedded) {
+        core.SignalReady()
+    }
+}
+
+export function dismissNumericFilterBanner(): void {
+  if (isEmbedded) {
+    core.DismissNumericFilterBanner();
+  } else {
+    console.debug('Dismissing numeric filter banner');
+  }
 }
 
 export interface CharacterListDto {

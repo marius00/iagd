@@ -67,6 +67,16 @@ body {
 
 	--notification-background-color: #1f2024;
 	--notification-text-color: #ffffff;
+
+	--banner-background: rgb(253, 249, 219);
+	--banner-color: rgb(122, 89, 62);
+	--banner-header: rgb(122, 89, 62);
+	--banner-border: #551c1c;
+	--banner-screenshot-border: #b9ab84;
+	--banner-button-background: #ff7f7f;
+	--banner-button-background-hover: #ff9a9a;
+	--banner-button-color: black;
+	--banner-button-border: #551c1c;
 }
 
 .App-dark {
@@ -117,6 +127,17 @@ body {
 
 	--notification-background-color: #171614;
 	--notification-text-color: #acaaaa;
+
+	/* Mirrors the dark palette of the WinForms value filter dialog this banner is introducing. */
+	--banner-background: #232220;
+	--banner-color: #b0b0b0;
+	--banner-header: #e3ba6b;
+	--banner-border: #3d3c3a;
+	--banner-screenshot-border: #3d3c3a;
+	--banner-button-background: #7d3a3a;
+	--banner-button-background-hover: #8f4444;
+	--banner-button-color: #eeeeeec4;
+	--banner-button-border: #551c1c;
 }
 
 ::-webkit-scrollbar-thumb {

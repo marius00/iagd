@@ -259,6 +259,10 @@ namespace IAGrim.UI.Misc.CEF {
             SendMessage(new IOMessage { Type = IOMessageType.SetState, Data = new IOMessageStateChange { Type = IOMessageStateChangeType.EasterEggMode, Value = true } });
         }
 
+        public void SetShowNumericFilterBanner(bool val) {
+            SendMessage(new IOMessage { Type = IOMessageType.SetState, Data = new IOMessageStateChange { Type = IOMessageStateChangeType.ShowNumericFilterBanner, Value = val } });
+        }
+
         public void SetGdSeasonMode() {
             SendMessage(new IOMessage { Type = IOMessageType.SetState, Data = new IOMessageStateChange { Type = IOMessageStateChangeType.GdSeasonError, Value = true } });
         }

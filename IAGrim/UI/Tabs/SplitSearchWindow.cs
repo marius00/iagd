@@ -210,6 +210,12 @@ namespace IAGrim.UI.Tabs {
         }
 
         private void BeginSearchOnAutoSearch(object? sender, EventArgs e) {
+            // Once the user finds the numeric stat filter on their own, the introduction banner is no longer relevant.
+            var persistent = _settings.GetPersistent();
+            if (!persistent.NumericFilterUsed && e is FilterEventArgs { NumericFilters.Count: > 0 }) {
+                persistent.NumericFilterUsed = true;
+            }
+
             UpdateListViewDelayed();
         }
 
