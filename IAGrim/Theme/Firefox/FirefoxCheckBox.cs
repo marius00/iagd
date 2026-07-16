@@ -239,9 +239,9 @@ class FirefoxCheckBox : CheckBox {
         };
 
         if (_overIcon && !HasFilter) {
-            using (SolidBrush hb = new SolidBrush(Helpers.GreyColor(235))) {
-                Helpers.FillRoundRectBetter(g, _filterIconRect, 3, Helpers.GreyColor(235));
-            }
+            // Nudged away from the surrounding background rather than a fixed shade, so the hover stays
+            // subtle in dark mode instead of flashing near-white.
+            Helpers.FillRoundRectBetter(g, _filterIconRect, 3, IsDarkMode ? Color.FromArgb(0x3d, 0x3c, 0x3a) : Helpers.GreyColor(235));
         }
 
         using (SolidBrush fb = new SolidBrush(color)) {
@@ -270,7 +270,7 @@ class FirefoxCheckBox : CheckBox {
     }
 
     private void OpenFilterDialog() {
-        var result = NumericFilterDialog.Show(this, FilterOperator, FilterThreshold);
+        var result = NumericFilterDialog.Show(this, FilterOperator, FilterThreshold, IsDarkMode);
         if (result == null) {
             return; // cancelled
         }

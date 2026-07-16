@@ -32,17 +32,23 @@ namespace IAGrim.UI.Popups {
             ("=", StatValueFilter.Op.Equal),
         };
 
+        // Mirrors the palette in UI/DarkMode.cs, which does not reach modal dialogs opened outside the main window tree.
+        private static readonly Color DarkBackground = Color.FromArgb(0x23, 0x22, 0x20);
+        private static readonly Color DarkInputBackground = Color.FromArgb(0x33, 0x33, 0x33);
+        private static readonly Color DarkForeground = Color.FromArgb(0xb0, 0xb0, 0xb0);
+
         private readonly ComboBox _operator = new ComboBox();
         private readonly NumericUpDown _value = new NumericUpDown();
         private Result? _result;
 
-        private NumericFilterDialog(StatValueFilter.Op? op, double threshold, bool hasExisting) {
+        private NumericFilterDialog(StatValueFilter.Op? op, double threshold, bool hasExisting, bool darkMode) {
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             StartPosition = FormStartPosition.Manual;
             ShowInTaskbar = false;
             Text = "Value filter";
             ClientSize = new Size(240, 96);
-            BackColor = Color.White;
+            BackColor = darkMode ? DarkBackground : Color.White;
+            ForeColor = darkMode ? DarkForeground : SystemColors.ControlText;
             Font = new Font("Segoe UI", 9.75f);
 
             var caption = new Label {
@@ -93,14 +99,26 @@ namespace IAGrim.UI.Popups {
 
             AcceptButton = ok;
             CancelButton = cancel;
+
+            if (darkMode) {
+                foreach (Control control in Controls) {
+                    control.BackColor = control is Label ? DarkBackground : DarkInputBackground;
+                    control.ForeColor = DarkForeground;
+
+                    if (control is Button button) {
+                        button.FlatStyle = FlatStyle.Flat;
+                        button.FlatAppearance.BorderColor = DarkInputBackground;
+                    }
+                }
+            }
         }
 
         /// <summary>
         /// Shows the dialog anchored near the invoking control. Returns the chosen filter, or null when
         /// the user cancelled (leaving any existing filter untouched).
         /// </summary>
-        public static Result? Show(Control owner, StatValueFilter.Op? currentOp, double currentThreshold) {
-            using (var dialog = new NumericFilterDialog(currentOp, currentThreshold, currentOp != null)) {
+        public static Result? Show(Control owner, StatValueFilter.Op? currentOp, double currentThreshold, bool darkMode) {
+            using (var dialog = new NumericFilterDialog(currentOp, currentThreshold, currentOp != null, darkMode)) {
                 var anchor = owner.PointToScreen(new Point(owner.Width, 0));
                 dialog.Location = new Point(anchor.X - dialog.Width + 20, anchor.Y + 24);
                 dialog.ShowDialog(owner);
