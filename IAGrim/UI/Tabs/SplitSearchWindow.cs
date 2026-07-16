@@ -85,6 +85,13 @@ namespace IAGrim.UI.Tabs {
 
             Activated += SplitSearchWindow_Activated;
             Deactivate += SplitSearchWindow_Deactivate;
+
+            // Painted by the webview until the page itself paints; must match the WebUI body/App background
+            // or the user gets a white flash on startup.
+            webView21!.DefaultBackgroundColor = _settings.GetPersistent().DarkMode
+                ? Color.Black
+                : Color.FromArgb(85, 68, 96);
+
             var conf = CoreWebView2Environment.CreateAsync(null, GlobalPaths.EdgeCacheLocation).Result;
             webView21!.EnsureCoreWebView2Async(conf);
 
@@ -441,7 +448,6 @@ namespace IAGrim.UI.Tabs {
             webView21.AllowExternalDrop = true;
             webView21.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             webView21.CreationProperties = null;
-            webView21.DefaultBackgroundColor = Color.White;
             webView21.Location = new Point(4, 3);
             webView21.Margin = new Padding(4, 3, 4, 3);
             webView21.Name = "webView21";

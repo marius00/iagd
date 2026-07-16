@@ -134,9 +134,9 @@ body {
 	--banner-header: #e3ba6b;
 	--banner-border: #3d3c3a;
 	--banner-screenshot-border: #3d3c3a;
-	--banner-button-background: #7d3a3a;
-	--banner-button-background-hover: #8f4444;
-	--banner-button-color: #eeeeeec4;
+	--banner-button-background: #c46060;
+	--banner-button-background-hover: #d47070;
+	--banner-button-color: black;
 	--banner-button-border: #551c1c;
 }
 
