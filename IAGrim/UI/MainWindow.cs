@@ -203,7 +203,6 @@ namespace IAGrim.UI {
 
 
                 MessageBox.Show($"A a fatal error occurred while attempting to navigate in the Microsoft Edge WebView2 Runtime\nError: {e.WebErrorStatus}", "Error - WebView2", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Environment.Exit(0);
             } else {
                 Logger.Info("WebView2 navigation succeeded");
             }
@@ -242,7 +241,6 @@ namespace IAGrim.UI {
                             MessageBox.Show($"A a fatal error occurred while attempting to initialize the Microsoft Edge WebView2 Runtime\n(Exception details unavailable)\nTry manuall installing the Microsoft WebView2 Runtime", "Error - WebView2", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
 
-                        Environment.Exit(0);
                     }
 
                     browser.CoreWebView2.SetVirtualHostNameToFolderMapping(
