@@ -196,6 +196,18 @@ namespace IAGrim.UI {
                 browser = (sender as CefBrowserHandler)?.BrowserControl;
             }
 
+            if (!e.IsSuccess) {
+                Logger.Error("WebView2 navigation failed, possible error rendering the WebView2 control.");
+                Logger.Error("Try manually installing the Microsoft Edge WebView2 Runtime");
+                Logger.Error($"Error code: {e.WebErrorStatus}");
+
+
+                MessageBox.Show($"A a fatal error occurred while attempting to navigate in the Microsoft Edge WebView2 Runtime\nError: {e.WebErrorStatus}", "Error - WebView2", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Environment.Exit(0);
+            } else {
+                Logger.Info("WebView2 navigation succeeded");
+            }
+
             // Some users reports the webview is missing. This may or may not help..
             if (browser != null) {
                 browser.Hide();
@@ -215,6 +227,23 @@ namespace IAGrim.UI {
                     Invoke((System.Windows.Forms.MethodInvoker)delegate { Browser_CoreWebView2InitializationCompleted(sender, args); });
                 }
                 else {
+
+                    if (args.IsSuccess) {
+                        Logger.Info("WebView2 initialization successful");
+
+                    } else {
+                        Logger.Error("WebView2 initialization failed");
+                        Logger.Error("Try manually installing the Microsoft Edge WebView2 Runtime");
+                        if (args.InitializationException != null) {
+                            Logger.Fatal($"Exception: {args.InitializationException.Message}", args.InitializationException);
+                            MessageBox.Show($"A a fatal error occurred while attempting to initialize the Microsoft Edge WebView2 Runtime\nError: {args.InitializationException.Message}\nTry manuall installing the Microsoft WebView2 Runtime", "Error - WebView2", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        } else {
+                            Logger.Fatal("No exception provided, cause unknown");
+                            MessageBox.Show($"A a fatal error occurred while attempting to initialize the Microsoft Edge WebView2 Runtime\n(Exception details unavailable)\nTry manuall installing the Microsoft WebView2 Runtime", "Error - WebView2", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+
+                        Environment.Exit(0);
+                    }
 
                     browser.CoreWebView2.SetVirtualHostNameToFolderMapping(
                         "app",
