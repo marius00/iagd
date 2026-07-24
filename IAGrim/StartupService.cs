@@ -170,6 +170,12 @@ namespace IAGrim {
                     int numFilesExpected = 2100;
                     bool missingLokarrIcons = false;
 
+                    if (Directory.Exists(Path.Combine(gdPath, "gdx3"))) {
+                        // Fangs of Asterkarn. A complete icon extraction is ~717 more than
+                        // base+gdx1+gdx2; kept slightly lower as a conservative floor.
+                        numFilesExpected += 660;
+                    }
+
                     if (Directory.Exists(Path.Combine(gdPath, "gdx2"))) {
                         numFilesExpected += 850;
                     }
