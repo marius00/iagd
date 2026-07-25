@@ -69,9 +69,11 @@ namespace IAGrim.Services {
                             if (!Handle(entry.Filename, out var item)) {
                                 _queue.Enqueue(entry);
                             }
-                            else {
+                            else if (item != null) {
                                 // After we've stored the replica stats etc.
-                                OnItemLooted?.Invoke(this, new ItemLootedEventArg(item!));
+                                // Handle() also returns true for files it discarded (duplicates,
+                                // deposited-back, undeserializable) -- those have no item to report.
+                                OnItemLooted?.Invoke(this, new ItemLootedEventArg(item));
                             }
                         }
                         else {

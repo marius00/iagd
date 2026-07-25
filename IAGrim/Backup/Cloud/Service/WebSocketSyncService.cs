@@ -244,7 +244,9 @@ namespace IAGrim.Backup.Cloud.Service {
 
         /// <summary>Push newly acquired items to the user's other machines. No-op if not connected.</summary>
         public void SendItems(IList<PlayerItem> items) {
-            var withCloudId = items.Where(i => !string.IsNullOrEmpty(i.CloudId)).ToList();
+            if (!IsConnected || items == null) return;
+
+            var withCloudId = items.Where(i => i != null && !string.IsNullOrEmpty(i.CloudId)).ToList();
             if (withCloudId.Count == 0) return;
 
             foreach (var batch in Batch(withCloudId)) {
@@ -257,6 +259,8 @@ namespace IAGrim.Backup.Cloud.Service {
 
         /// <summary>Push item deletions (transfers back in-game) to the user's other machines. No-op if not connected.</summary>
         public void SendDeletions(IList<string> cloudIds) {
+            if (!IsConnected || cloudIds == null) return;
+
             var ids = cloudIds.Where(id => !string.IsNullOrEmpty(id)).ToList();
             if (ids.Count == 0) return;
 
@@ -267,6 +271,10 @@ namespace IAGrim.Backup.Cloud.Service {
                 });
             }
         }
+
+        // False whenever live sync is inactive: not logged in, "multiple PCs" disabled, or simply
+        // between reconnects. Callers use this to skip all work; the regular REST sync carries it instead.
+        private bool IsConnected => _socket?.State == WebSocketState.Open;
 
         private void Send(WsEnvelope envelope) {
             var socket = _socket;
