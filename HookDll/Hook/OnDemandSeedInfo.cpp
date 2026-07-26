@@ -46,11 +46,11 @@ void OnDemandSeedInfo::EnableHook() {
 	g_self = this;
 
 	gameSetDifficultyRampMethod = (OriginalEngineRenderMethodPtr)HookGame(
-		"?SetDifficultyRamp@GameEngine@GAME@@QEAAXH@Z",
+		"?SetDifficultyRamp@GameEngine@GAME@@QEAAXH_N@Z",
 		HookedGameSetDifficultyRampMethod,
 		m_dataQueue,
 		m_hEvent,
-		TYPE_GAMEENGINE_UPDATE
+		TYPE_GAMEENGINE_SetDifficultyRamp
 	);
 
 	dll_Engine_Render = (Engine_Render)HookEngine(
@@ -451,11 +451,11 @@ std::wstring randomFilename32() {
 	return str.substr(0, 32);    // assumes 32 < number of characters in str         
 }
 
-void* __fastcall OnDemandSeedInfo::HookedGameSetDifficultyRampMethod(void* This, int v) {
+void* __fastcall OnDemandSeedInfo::HookedGameSetDifficultyRampMethod(void* This, int v, bool b) {
 	std::lock_guard<std::mutex> guard(g_self->_mutex);
 
 	LogToFile(LogLevel::INFO, L"The pesky SetDifficultyRamp@GameEngine is being called");
-	auto result = g_self->gameSetDifficultyRampMethod(This, v);
+	auto result = g_self->gameSetDifficultyRampMethod(This, v, b);
 	return result;
 }
 

@@ -52,12 +52,17 @@ protected:
 	static OnDemandSeedInfo* g_self;
 
 	// Game hook - To run code inside the game in a safe manner
-	typedef void* (__thiscall* OriginalEngineRenderMethodPtr)(void* This, int v);
+	// GameEngine::SetDifficultyRamp gained a trailing bool in the 2026-07-26 FOA patch:
+	//   before: ?SetDifficultyRamp@GameEngine@GAME@@QEAAXH@Z    -> void(int)
+	//   after:  ?SetDifficultyRamp@GameEngine@GAME@@QEAAXH_N@Z  -> void(int, bool)
+	// The extra argument arrives in R8, so it has to be declared and forwarded or the
+	// original method reads whatever happens to be in that register.
+	typedef void* (__thiscall* OriginalEngineRenderMethodPtr)(void* This, int v, bool b);
 	typedef void* (__thiscall* Engine_Render)(void* This);
 
 	OriginalEngineRenderMethodPtr gameSetDifficultyRampMethod;
 	Engine_Render dll_Engine_Render;
-	static void* __fastcall HookedGameSetDifficultyRampMethod(void* This, int v);
+	static void* __fastcall HookedGameSetDifficultyRampMethod(void* This, int v, bool b);
 	static void* __fastcall Hooked_Engine_Render(void* This);
 	static std::wstring GetModName(GAME::GameInfo* gameInfo);
 	ParsedSeedRequest* ReadReplicaInfo(const std::wstring& filename);

@@ -31,11 +31,15 @@ void* BaseMethodHook::HookDll(const wchar_t* dll, char* procAddress, void* Hooke
 	void* originalMethod = GetProcAddressOrLogToFile(dll, procAddress);
 	m_messageId = id;
 	if (originalMethod == NULL) {
+		// Export missing -- almost always a game patch that changed a signature, which
+		// changes the mangled name. Bail out instead of falling through to DetourAttach
+		// on a null target: that leaves the caller holding a null "original method"
+		// pointer which it will happily call through if the detour ever does install.
 		ReportHookError(m_dataQueue, m_hEvent, id);
+		return NULL;
 	}
-	else {
-		ReportHookSuccess(m_dataQueue, m_hEvent, id);
-	}
+
+	ReportHookSuccess(m_dataQueue, m_hEvent, id);
 
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
@@ -54,9 +58,21 @@ void* BaseMethodHook::HookEngine(char* procAddress, void* HookedMethod, DataQueu
 	return HookDll(L"Engine.dll", procAddress, HookedMethod, m_dataQueue, m_hEvent, id);
 }
 
-void BaseMethodHook::Unhook(void* originalMethod, void* Method) {
-	LONG res1 = DetourTransactionBegin();
-	LONG res2 = DetourUpdateThread(GetCurrentThread());
-	DetourDetach((PVOID*)&originalMethod, Method);
+// "originalMethod" must be the address of the caller's trampoline pointer, not the pointer
+// itself: Detours reads *originalMethod to find the trampoline and writes the restored
+// target back into it. Taking the parameter by value and detaching &parameter (as this used
+// to) hands Detours the address of a local, so every detach failed with ERROR_INVALID_BLOCK
+// and the detour stayed installed -- which means the game jumps into freed memory once the
+// DLL unloads.
+void BaseMethodHook::Unhook(void** originalMethod, void* Method) {
+	// A hook that never installed (missing export after a game patch) leaves this null.
+	// Nothing to detach, and DetourDetach would just fail on it.
+	if (originalMethod == NULL || *originalMethod == NULL) {
+		return;
+	}
+
+	DetourTransactionBegin();
+	DetourUpdateThread(GetCurrentThread());
+	DetourDetach(originalMethod, Method);
 	DetourTransactionCommit();
 }

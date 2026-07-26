@@ -58,7 +58,23 @@ namespace GAME
 
 		unsigned int seedRerolls;       // offset 0x17c
 		unsigned int affixRerolls;      // offset 0x180
+
+		// Retail FOA v1.3 added two more dwords that the 1.3 playtest did not have.
+		// ItemReplicaInfo::operator= in the retail Game.dll copies through byte 0x188
+		// (dword index 0x62), so a struct ending at affixRerolls is 8 bytes short of
+		// what the game writes. GetItemReplicaInfo() then runs off the end of our
+		// object -- off the end of a stack local in HandleItem().
+		// Purpose unknown; present only to make the layout match.
+		unsigned int unknownFoaField1;  // offset 0x184
+		unsigned int unknownFoaField2;  // offset 0x188
 	};
+
+	// The game writes this struct for us (Item::GetItemReplicaInfo) and reads it back
+	// (Item::CreateItem), so the layout has to match the shipped Game.dll exactly. Get
+	// it wrong and the game runs off the end of our object. Verify against
+	// ItemReplicaInfo::operator= in the target Game.dll before changing anything here.
+	static_assert(sizeof(ItemReplicaInfo) == 0x190,
+		"ItemReplicaInfo layout does not match retail Grim Dawn FOA v1.3");
 	struct Object { void* dummy; };
 	struct Item { void* dummy; };
 	struct ItemEquipment { void* dummy; };
