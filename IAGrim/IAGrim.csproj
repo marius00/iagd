@@ -2,13 +2,15 @@
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
 	
-	<BuildDateTimeUtc>$([System.DateTime]::Now.Subtract($([System.DateTime]::new(2000,1,1, 0, 0, 0))).TotalDays.ToString("0"))</BuildDateTimeUtc>
+	<!-- Days since 2000-01-01, floored (matches how .net framework's 1.4.* build stamp worked) -->
+	<BuildDateTimeUtc>$([System.Math]::Floor($([System.DateTime]::Now.Subtract($([System.DateTime]::new(2000,1,1, 0, 0, 0))).TotalDays)))</BuildDateTimeUtc>
 	<VersionRevision>$([System.Convert]::ToUInt16($([MSBuild]::Divide($([System.DateTime]::Now.TimeOfDay.TotalSeconds),2))))</VersionRevision>
-  
-    
-    <!-- Combine into a version string (e.g., 1.0.20251004.052530) -->
+	<!-- Revision is 2-second ticks since midnight: 0..43199, always rendered as 5 digits -->
+	<VersionRevisionPadded>$([System.String]::Format('{0:00000}', $([System.Convert]::ToInt32($(VersionRevision)))))</VersionRevisionPadded>
+
+    <!-- Combine into a version string (e.g., 1.5.9703.09915) -->
     <Version>1.5.$(BuildDateTimeUtc).$(VersionRevision)</Version>
-    <AssemblyInformationalVersion>$(Version)</AssemblyInformationalVersion>
+    <AssemblyInformationalVersion>1.5.$(BuildDateTimeUtc).$(VersionRevisionPadded)</AssemblyInformationalVersion>
   </PropertyGroup>
 
   <PropertyGroup>

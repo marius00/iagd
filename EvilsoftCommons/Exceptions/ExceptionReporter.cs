@@ -78,7 +78,7 @@ namespace EvilsoftCommons.Exceptions {
             get {
                 try {
                     var version = System.Reflection.Assembly.GetEntryAssembly()?.GetName().Version;
-                    return $"{version?.Major}.{version?.Minor}.{version?.Build}.{version?.Revision}";
+                    return $"{version?.Major}.{version?.Minor}.{version?.Build}.{version?.Revision:00000}";
                 }
                 catch (Exception ex) {
                     Logger.Warn("Error getting assembly version, automatic updates may not function correctly.");
@@ -86,7 +86,7 @@ namespace EvilsoftCommons.Exceptions {
                     Logger.Warn(ex.StackTrace);
 
                     var version = Assembly.GetExecutingAssembly().GetName().Version;
-                    return $"{version?.Major}.{version?.Minor}.{version?.Build}.{version?.Revision}";
+                    return $"{version?.Major}.{version?.Minor}.{version?.Build}.{version?.Revision:00000}";
                 }
             }
         }
