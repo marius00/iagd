@@ -123,9 +123,18 @@ namespace EvilsoftCommons.DllInjector {
             return false;
         }
 
-        public static bool IsPlaytest(string dll) {
+        /// <summary>
+        /// The old playtest has been merged into the main game, so these exports now identify the live game.
+        /// Their absence means we're running the older GD v1.2, which needs its own (frozen) hook DLL.
+        /// </summary>
+        public static bool IsGrimDawn12(string dll) {
             // A couple of ones, just in case one changes.
-            return HasSpecificDllExport(dll, "??0AscendantAltar@GAME@@QEAA@XZ") || HasSpecificDllExport(dll, "?AddAscendantExperienceMod@GameEngine@GAME@@QEAAXM@Z");
+            return !(HasSpecificDllExport(dll, "??0AscendantAltar@GAME@@QEAA@XZ") || HasSpecificDllExport(dll, "?AddAscendantExperienceMod@GameEngine@GAME@@QEAAXM@Z"));
+        }
+
+        public static bool IsPlaytest(string dll) {
+            // TODO: The previous playtest is now the live game, a new export is needed to detect the current playtest.
+            return false;
         }
 
         private static bool HasSpecificDllExport(string dll, string export) {
@@ -162,7 +171,7 @@ namespace EvilsoftCommons.DllInjector {
                     }
 
                     if (processTemp.ExitCode != 0) {
-                        Logger.Fatal("Could not determine if running GD v1.1 or v1.2, will most likely crash the game.");
+                        Logger.Fatal("Could not determine if running GD v1.2 or newer, will most likely crash the game.");
                         Logger.Fatal("Halting IA");
                         System.Environment.Exit(1);
                     }

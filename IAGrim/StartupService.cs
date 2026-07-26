@@ -21,10 +21,10 @@ namespace IAGrim {
             Logger.InfoFormat("Running version {0} from {1:dd/MM/yyyy}", ExceptionReporter.VersionString, buildDate);
 
             FileVersionInfo dllVersion = FileVersionInfo.GetVersionInfo(Path.Combine(Directory.GetCurrentDirectory(), "ItemAssistantHook_x64.dll"));
-            FileVersionInfo playtestDllVersion = FileVersionInfo.GetVersionInfo(Path.Combine(Directory.GetCurrentDirectory(), "ItemAssistantHook_playtest_x64.dll"));
 
             Logger.InfoFormat($"DLL version version {dllVersion.FileVersion}");
-            Logger.InfoFormat($"Playtest DLL version version {playtestDllVersion.FileVersion}");
+            LogOptionalDllVersion("GD v1.2", "ItemAssistantHook_x64-GD12.dll");
+            LogOptionalDllVersion("Playtest", "ItemAssistantHook_playtest_x64.dll");
 
             var minimumDllVersion = File.ReadAllText("dllver.txt").Trim();
             if ((dllVersion.FileVersion ?? string.Empty).CompareTo(minimumDllVersion) < 0) {
@@ -46,6 +46,19 @@ namespace IAGrim {
                     "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
+        }
+
+        /// <summary>
+        /// Logs the version of a hook DLL which may not be present in every install (GD v1.2 / playtest builds).
+        /// </summary>
+        private static void LogOptionalDllVersion(string label, string filename) {
+            var path = Path.Combine(Directory.GetCurrentDirectory(), filename);
+            if (File.Exists(path)) {
+                Logger.InfoFormat($"{label} DLL version {FileVersionInfo.GetVersionInfo(path).FileVersion}");
+            }
+            else {
+                Logger.InfoFormat($"{label} DLL not present ({filename})");
+            }
         }
 
         public static void PrintStartupInfo(SessionFactory factory, SettingsService settings) {

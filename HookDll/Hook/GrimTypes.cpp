@@ -1,8 +1,11 @@
 #include "GrimTypes.h"
 #include "Logger.h"
+#include <atomic>
 #include <boost/lexical_cast.hpp>
 #include <algorithm>
 #include <iostream>
+#include <mutex>
+#include <set>
 #include <sstream>
 #include <vector>
 #include <Windows.h>
@@ -23,12 +26,8 @@ namespace GAME {
 		stream << sanitizeCsvField(replica.prefixRecord.c_str()).c_str() << ";";
 		stream << sanitizeCsvField(replica.suffixRecord.c_str()).c_str() << ";";
 		stream << replica.seed << ";";
-#ifdef PLAYTEST
-		// Rerolls column (playtest offset 0x17c). 
+		// Rerolls column (offset 0x17c).
 		stream << replica.seedRerolls << ";";
-#else
-		stream << 0 << ";";
-#endif
 		stream << sanitizeCsvField(replica.modifierRecord.c_str()).c_str() << ";";
 		stream << sanitizeCsvField(replica.materiaRecord.c_str()).c_str() << ";";
 		stream << sanitizeCsvField(replica.relicBonus.c_str()).c_str() << ";";
@@ -37,20 +36,11 @@ namespace GAME {
 		stream << replica.enchantmentSeed << ";";
 		stream << sanitizeCsvField(replica.transmuteRecord.c_str()).c_str() << ";";
 
-#ifdef PLAYTEST
 		stream << sanitizeCsvField(replica.ascendant1.c_str()).c_str() << ";";
 		stream << sanitizeCsvField(replica.ascendant2.c_str()).c_str() << ";";
-#else
-		stream << "" << ";";
-		stream << "" << ";";
-#endif
 
-#ifdef PLAYTEST
-		// Affix rerolls column (playtest offset 0x180).
+		// Affix rerolls column (offset 0x180).
 		stream << replica.affixRerolls;
-#else
-		stream << 0;
-#endif
 
 		return stream.str();
 	}
@@ -105,12 +95,8 @@ namespace GAME {
 		item->suffixRecord = tokens.at(idx++);
 		item->seed = (unsigned int)stoul(tokens.at(idx++));
 		if (isNewDlc) {
-#ifdef PLAYTEST
 			// See Serialize(): this column carries the reroll count (offset 0x17c).
 			item->seedRerolls = (unsigned int)stoul(tokens.at(idx++));
-#else
-			auto unused = (unsigned int)stoul(tokens.at(idx++));
-#endif
 		}
 		item->modifierRecord = tokens.at(idx++);
 		item->materiaRecord = tokens.at(idx++);
@@ -120,21 +106,12 @@ namespace GAME {
 		item->enchantmentSeed = (unsigned int)stoul(tokens.at(idx++));
 		item->transmuteRecord = tokens.at(idx++);
 		if (tokens.size() >= 16) {
-#ifdef PLAYTEST
 			item->ascendant1 = tokens.at(idx++);
 			item->ascendant2 = tokens.at(idx++);
-#else
-			auto ascendant1 = tokens.at(idx++);
-			auto ascendant2 = tokens.at(idx++);
-#endif
 		}
 		if (tokens.size() == 17) {
-#ifdef PLAYTEST
 			// See Serialize(): this column carries the affix reroll count (offset 0x180).
 			item->affixRerolls = (unsigned int)stoul(tokens.at(idx++));
-#else
-			auto unused = (unsigned int)stoul(tokens.at(idx++));
-#endif
 		}
 
 		return item;
@@ -185,6 +162,98 @@ GAME::Engine* fnGetEngine(bool skipLog) {
 	return engine;
 }
 
+bool fnIsWorldAlive(GAME::GameEngine* gameEngine) {
+	if (gameEngine == nullptr) {
+		return false;
+	}
+
+	if (IsGameLoading(gameEngine)) {
+		return false;
+	}
+
+	if (!IsGameEngineOnline(gameEngine)) {
+		return false;
+	}
+
+	// Deliberately NOT using IsGameWaiting(gameEngine, false) here. It looks like the
+	// stronger check (it null-checks GetMainPlayer internally) but it also demands
+	// player state == 2 and player+0x242a == 0, and we don't know what those mean.
+	// If either is set while the transfer stash is open it would silently disable
+	// instaloot, so we settle for the player null check, which is the part we want.
+	return fnGetMainPlayer(gameEngine) != nullptr;
+}
+
+namespace {
+	std::atomic<ULONGLONG> g_lastAddItemTick{ 0 };
+	std::atomic<int> g_lastWorldState{ -1 }; // -1 unknown, 0 dead, 1 alive
+
+	const wchar_t* WorldStateName(int state) {
+		switch (state) {
+		case 0:  return L"DEAD";
+		case 1:  return L"ALIVE";
+		default: return L"UNKNOWN";
+		}
+	}
+}
+
+void fnNoteItemAdded() {
+	g_lastAddItemTick = GetTickCount64();
+}
+
+long long fnMsSinceLastAddItem() {
+	const ULONGLONG last = g_lastAddItemTick.load();
+	if (last == 0) {
+		return -1;
+	}
+
+	return static_cast<long long>(GetTickCount64() - last);
+}
+
+void fnLogWorldStateTransition(GAME::GameEngine* gameEngine, const wchar_t* site) {
+	const int state = fnIsWorldAlive(gameEngine) ? 1 : 0;
+	const int previous = g_lastWorldState.exchange(state);
+	if (previous == state) {
+		return;
+	}
+
+	std::wstringstream ss;
+	ss << L"WORLD STATE " << WorldStateName(previous) << L" -> " << WorldStateName(state)
+	   << L" at " << site;
+
+	ss << std::hex << std::showbase;
+	ss << L" | gGameEngine=" << reinterpret_cast<DWORD_PTR>(gameEngine);
+
+	// Skill::GetSkillProfile() returns this address for every skill that has no
+	// profile of its own, and ~GameEngine destroys it. If a dump faults reading
+	// [rax+0x140] / [rax+0x150], compare rax against this value.
+	ss << L" | defaultSkillProfile="
+	   << (gameEngine != nullptr ? reinterpret_cast<DWORD_PTR>(gameEngine) + 0x1d8 : 0);
+
+	GAME::Engine* engine = fnGetEngine(true);
+	ss << L" | gEngine=" << reinterpret_cast<DWORD_PTR>(engine);
+	ss << L" | gameInfo="
+	   << reinterpret_cast<DWORD_PTR>(engine != nullptr ? fnGetGameInfo(engine) : nullptr);
+	ss << L" | mainPlayer="
+	   << reinterpret_cast<DWORD_PTR>(gameEngine != nullptr ? fnGetMainPlayer(gameEngine) : nullptr);
+	ss << std::dec << std::noshowbase;
+
+	if (gameEngine != nullptr) {
+		ss << L" | isGameLoading=" << (IsGameLoading(gameEngine) ? 1 : 0);
+		ss << L" | isEngineOnline=" << (IsGameEngineOnline(gameEngine) ? 1 : 0);
+	}
+
+	const long long sinceAddItem = fnMsSinceLastAddItem();
+	ss << L" | msSinceLastAddItem=";
+	if (sinceAddItem < 0) {
+		ss << L"never";
+	}
+	else {
+		ss << sinceAddItem;
+	}
+
+	LogToFile(LogLevel::WARNING, ss.str());
+}
+
 bool fnGetHardcore(GAME::GameInfo* gameInfo, bool skipLog) {
 	pGetHardcore f = pGetHardcore(GetProcAddressOrLogToFile(L"engine.dll", "?GetHardcore@GameInfo@GAME@@QEBA_NXZ", skipLog));
 	return f(gameInfo);
@@ -193,12 +262,25 @@ bool fnGetHardcore(GAME::GameInfo* gameInfo, bool skipLog) {
 
 typedef std::basic_string<char, std::char_traits<char>, std::allocator<char> > const& Fancystring;
 
+/// <summary>
+/// Some exports (gEngine, gGameEngine) are looked up on every tick, so confirming each one
+/// on every lookup drowns the log. Returns true only the first time we see a given export.
+/// </summary>
+static bool IsFirstLookupOfExport(const char* procAddress) {
+	// Called from the game threads as well as IA's polling threads, so the set needs a lock.
+	static std::mutex mutex;
+	static std::set<std::string> seen;
+
+	std::lock_guard<std::mutex> guard(mutex);
+	return seen.insert(procAddress).second;
+}
+
 void* GetProcAddressOrLogToFile(const wchar_t* dll, char* procAddress, bool skipLog) {
 	void* originalMethod = GetProcAddress(::GetModuleHandle(dll), procAddress);
 	if (originalMethod == NULL) {
 		LogToFile(LogLevel::FATAL, std::string("Error finding export from DLL: ") + std::string(procAddress));
 	}
-	else if (!skipLog) {
+	else if (!skipLog && IsFirstLookupOfExport(procAddress)) {
 		LogToFile(LogLevel::INFO, std::string("Successfully found DLL export: ") + std::string(procAddress));
 	}
 

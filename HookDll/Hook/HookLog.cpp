@@ -51,6 +51,7 @@ HookLog::HookLog() : m_lastMessageCount(0), m_initialized(false) {
 
 HookLog::~HookLog() {
     if (m_out.is_open()) {
+		writeRepeatSummary();
         m_out
             << L"****************************" << std::endl
             << L"   Hook Logging Terminated  " << std::endl
@@ -60,20 +61,28 @@ HookLog::~HookLog() {
     }
 }
 
-void HookLog::out(const char* src) {
-	return out(std::wstring(src, src + strlen(src)));
+void HookLog::out(const char* src, bool forceFlush) {
+	return out(std::wstring(src, src + strlen(src)), forceFlush);
 }
 
-void HookLog::out( std::wstring const& output ) {
+/// Emit the "repeated N times" line for the message we are about to move off of.
+/// Callers must already hold m_mutex.
+void HookLog::writeRepeatSummary() {
+	if (m_lastMessageCount > 1) {
+		m_out << L"    (last message repeated " << m_lastMessageCount << L" times)" << std::endl;
+	}
+}
+
+void HookLog::out( std::wstring const& output, bool forceFlush ) {
+	std::lock_guard<std::mutex> guard(m_mutex);
+
     if (m_out.is_open()) {
         if (!m_lastMessage.empty()) {
             if (m_lastMessage.compare(output) == 0) {
                 ++m_lastMessageCount;
             }
             else {
-				if (m_lastMessageCount > 1) {
-					//m_out << L"Last message was repeated " << m_lastMessageCount << L" times." << std::endl;
-				}
+				writeRepeatSummary();
                 m_lastMessage = output;
                 m_lastMessageCount = 1;
                 m_out << output.c_str() << std::endl;
@@ -85,7 +94,7 @@ void HookLog::out( std::wstring const& output ) {
             m_out << output.c_str() << std::endl;
         }
 
-		if (!m_initialized) {
+		if (!m_initialized || forceFlush) {
 			m_out.flush();
 		}
     }

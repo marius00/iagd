@@ -108,20 +108,27 @@ std::string LogLevelToStringA(LogLevel level) {
 
 	return "UNKNOWN";
 }
+/// Anything above INFO gets flushed straight to disk. Without this the tail of the
+/// log is still sitting in the ofstream buffer when the game AVs, which is exactly
+/// the part we need when diagnosing a crash.
+static bool ShouldFlush(LogLevel level) {
+	return level != LogLevel::INFO;
+}
+
 void LogToFile(LogLevel level, const wchar_t* message) {
-	g_log.out(logStartupTime() + LogLevelToString(level) + message);
+	g_log.out(logStartupTime() + LogLevelToString(level) + message, ShouldFlush(level));
 }
 void LogToFile(LogLevel level, const char* message) {
-	g_log.out((logStartupTimeChar() + LogLevelToStringA(level).c_str() + std::string(message)).c_str());
+	g_log.out((logStartupTimeChar() + LogLevelToStringA(level).c_str() + std::string(message)).c_str(), ShouldFlush(level));
 }
 void LogToFile(LogLevel level, const std::string message) {
-	g_log.out((logStartupTimeChar() + LogLevelToStringA(level) + message).c_str());
+	g_log.out((logStartupTimeChar() + LogLevelToStringA(level) + message).c_str(), ShouldFlush(level));
 }
 void LogToFile(LogLevel level, std::wstring message) {
-	g_log.out(logStartupTime() + LogLevelToString(level) + message);
+	g_log.out(logStartupTime() + LogLevelToString(level) + message, ShouldFlush(level));
 }
 void LogToFile(LogLevel level, std::wstringstream message) {
-	g_log.out(logStartupTime() + LogLevelToString(level) + message.str());
+	g_log.out(logStartupTime() + LogLevelToString(level) + message.str(), ShouldFlush(level));
 }
 
 

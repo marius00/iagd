@@ -474,7 +474,7 @@ void* __fastcall OnDemandSeedInfo::Hooked_Engine_Render(void* This) {
 			// Items with skills may also end up with missing info if created from the main menu.
 
 			auto gameEngine = fnGetGameEngine();
-			if (gameEngine != nullptr && !IsGameLoading(gameEngine) && IsGameEngineOnline(gameEngine)) {
+			if (fnIsWorldAlive(gameEngine)) {
 
 				// Process the queue
 				int num = 0;
@@ -486,7 +486,8 @@ void* __fastcall OnDemandSeedInfo::Hooked_Engine_Render(void* This) {
 				if (!lock.owns_lock()) {
 					return g_self->dll_Engine_Render(This);
 				}
-				while (!g_self->m_itemQueue.empty() && num++ < 100 && !IsGameLoading(gameEngine) && IsGameEngineOnline(gameEngine)) {
+				// Re-fetch the engine pointer each iteration: it can go away underneath us mid-loop.
+				while (!g_self->m_itemQueue.empty() && num++ < 100 && fnIsWorldAlive(fnGetGameEngine())) {
 					LogToFile(LogLevel::INFO, L"Processing..");
 					ParsedSeedRequestPtr ptr = g_self->m_itemQueue.pop();
 					if (ptr == nullptr) {

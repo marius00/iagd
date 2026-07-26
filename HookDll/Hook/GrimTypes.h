@@ -46,29 +46,18 @@ namespace GAME
 		unsigned int enchantmentSeed;
 		std::basic_string<char, std::char_traits<char>, std::allocator<char> > transmuteRecord;
 
-#ifdef PLAYTEST
 		std::basic_string<char, std::char_traits<char>, std::allocator<char> > ascendant1;
 		std::basic_string<char, std::char_traits<char>, std::allocator<char> > ascendant2;
-#endif
 
-		unsigned int var1;              // playtest offset 0x160
-		Vec3 velocity;                  // playtest offset 0x164 (actually bool+pad, velocity.x/y)
-		unsigned int owner;             // playtest offset 0x170 (actually velocity.z)
+		unsigned int var1;              // offset 0x160
+		Vec3 velocity;                  // offset 0x164 (actually bool+pad, velocity.x/y)
+		unsigned int owner;             // offset 0x170 (actually velocity.z)
 
-#ifdef PLAYTEST
-		unsigned int unknownDropData;   // playtest offset 0x174 (real name: owner)
-#endif
-		unsigned int stackSize;         // live: 0x134, playtest: 0x178
+		unsigned int unknownDropData;   // offset 0x174 (real name: owner)
+		unsigned int stackSize;         // offset 0x178 (0x134 on GD v1.2)
 
-#ifdef PLAYTEST
-		unsigned int seedRerolls;    // playtest offset 0x17c
-		unsigned int affixRerolls;   // playtest offset 0x180
-#else
-		// Same two dwords as above, but on live these predate rerolls entirely
-		// and are unrelated fields - keep their original names here.
-		unsigned int visiblePlayerId;
-		unsigned int droppedPlayerId;
-#endif
+		unsigned int seedRerolls;       // offset 0x17c
+		unsigned int affixRerolls;      // offset 0x180
 	};
 	struct Object { void* dummy; };
 	struct Item { void* dummy; };
@@ -252,5 +241,34 @@ typedef bool(__fastcall* pGetHardcore)(GAME::GameInfo*);
 
 GAME::GameEngine* fnGetGameEngine();
 GAME::Engine* fnGetEngine(bool skipLog = false);
+
+/// <summary>
+/// True only when there is a live, playable world to touch.
+///
+/// The individual game state getters are weaker than their names suggest:
+/// IsGameLoading() and IsGameWaiting(true) both just read the same bool at
+/// GameEngine+0x36d10, and IsGameEngineOnline() reads a bool at GameEngine+0x34.
+/// None of them go null when the world is torn down on exit-to-menu.
+///
+/// So the only real "is there a world" signal available is GetMainPlayer() != null,
+/// which is what this adds on top of the two bools.
+///
+/// Re-check this between units of work, not once up front: the answer can change
+/// underneath us mid-loop.
+/// </summary>
+bool fnIsWorldAlive(GAME::GameEngine* gameEngine);
+
+/// Timestamps the last InventorySack::AddItem call. Only used to annotate the
+/// teardown log with "how long ago did the player last pick something up", so we
+/// can test the theory that the crash needs a recent pickup.
+void fnNoteItemAdded();
+
+/// Logs one line each time the world flips alive <-> dead, with the pointers needed
+/// to correlate against a crash dump. Safe to call every frame: it only writes on a
+/// transition, and it is the transition itself we are trying to catch.
+void fnLogWorldStateTransition(GAME::GameEngine* gameEngine, const wchar_t* site);
+
+/// Milliseconds since the last AddItem, or -1 if there hasn't been one.
+long long fnMsSinceLastAddItem();
 
 bool fnGetHardcore(GAME::GameInfo* gameInfo, bool skipLog = false);

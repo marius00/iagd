@@ -314,7 +314,21 @@ namespace DllInjector {
             return string.Join("\\", args);
         }
 
-        private static Dictionary<string, bool> _isPlaytestCache = new Dictionary<string, bool>(1);
+        private enum GameVariant { Live, GrimDawn12, Playtest }
+
+        private static GameVariant DetectGameVariant(string gdFilename) {
+            if (InjectionVerifier.IsGrimDawn12(gdFilename)) {
+                return GameVariant.GrimDawn12;
+            }
+
+            if (InjectionVerifier.IsPlaytest(gdFilename)) {
+                return GameVariant.Playtest;
+            }
+
+            return GameVariant.Live;
+        }
+
+        private static Dictionary<string, GameVariant> _gameVariantCache = new Dictionary<string, GameVariant>(1);
         private static string GetFilenameForPid(uint pid, string dllName) {
             string dll64Bit;
             try {
@@ -326,20 +340,28 @@ namespace DllInjector {
                 // Figure out the filename
                 var gdFilename = GetGameDllPath(GetWindowModuleFileName(pid));
 
-                if (!_isPlaytestCache.ContainsKey(gdFilename)) {
-                    _isPlaytestCache[gdFilename] = InjectionVerifier.IsPlaytest(gdFilename); // No playtest dll at the moment, will probably be one again very soon.
+                if (!_gameVariantCache.ContainsKey(gdFilename)) {
+                    _gameVariantCache[gdFilename] = DetectGameVariant(gdFilename);
                 }
 
-                if (_isPlaytestCache[gdFilename]) {
-                    dll64Bit = Path.Combine(Directory.GetCurrentDirectory(), dllName.Replace("_x64", "_playtest_x64"));
-                    Logger.Info("Playtest detected, using DLL " + dll64Bit);
+                switch (_gameVariantCache[gdFilename]) {
+                    case GameVariant.GrimDawn12:
+                        dll64Bit = Path.Combine(Directory.GetCurrentDirectory(), dllName.Replace(".dll", "-GD12.dll"));
+                        Logger.Info("Grim Dawn v1.2 detected, using DLL " + dll64Bit);
+                        break;
 
-                    if (!File.Exists(dll64Bit)) {
-                        Logger.Error("Could not find DLL");
-                    }
+                    case GameVariant.Playtest:
+                        dll64Bit = Path.Combine(Directory.GetCurrentDirectory(), dllName.Replace("_x64", "_playtest_x64"));
+                        Logger.Info("Playtest detected, using DLL " + dll64Bit);
+                        break;
+
+                    default:
+                        dll64Bit = Path.Combine(Directory.GetCurrentDirectory(), dllName);
+                        break;
                 }
-                else {
-                    dll64Bit = Path.Combine(Directory.GetCurrentDirectory(), dllName);
+
+                if (!File.Exists(dll64Bit)) {
+                    Logger.Error("Could not find DLL " + dll64Bit);
                 }
 
                 return dll64Bit;

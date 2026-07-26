@@ -14,6 +14,7 @@
 #include <boost/range/iterator_range.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <iostream>
+#include <sstream>
 #include "Logger.h"
 #include "VTableDispatch.h"
 
@@ -199,6 +200,7 @@ void* __fastcall InventorySack_AddItem::Hooked_GameInfo_GameInfo_Param(void* Thi
 /// <param name="SkipPlaySound"></param>
 /// <returns></returns>
 void* __fastcall InventorySack_AddItem::Hooked_InventorySack_AddItem_Drop(void* This, GAME::Item *item, bool findPosition, bool SkipPlaySound) {
+	fnNoteItemAdded(); // Diagnostics only -- fires for every sack, including the player's own inventory.
 	try {
 		if (HandleItem(This, item)) {
 			return (void*)1;
@@ -226,6 +228,7 @@ void* __fastcall InventorySack_AddItem::Hooked_InventorySack_AddItem_Drop(void* 
 /// <param name="SkipPlaySound"></param>
 /// <returns></returns>
 void* __fastcall InventorySack_AddItem::Hooked_InventorySack_AddItem_Vec2(void* This, void* position, GAME::Item* item, bool SkipPlaySound) {
+	fnNoteItemAdded(); // Diagnostics only -- fires for every sack, including the player's own inventory.
 	try {
 		if (HandleItem(This, item)) {
 			return (void*)1;
@@ -279,22 +282,15 @@ static void DumpReplicaInfo(const GAME::ItemReplicaInfo& item) {
 	msg += L"\n  enchantmentLevel  = " + std::to_wstring(item.enchantmentLevel);
 	msg += L"\n  enchantmentSeed   = " + std::to_wstring(item.enchantmentSeed);
 	msg += L"\n  transmuteRecord   = " + w(item.transmuteRecord);
-#ifdef PLAYTEST
 	msg += L"\n  ascendant1        = " + w(item.ascendant1);
 	msg += L"\n  ascendant2        = " + w(item.ascendant2);
-#endif
 	msg += L"\n  var1              = " + std::to_wstring(item.var1);
 	msg += L"\n  velocity          = (" + std::to_wstring(item.velocity.x) + L", "
 		+ std::to_wstring(item.velocity.y) + L", " + std::to_wstring(item.velocity.z) + L")";
 	msg += L"\n  owner             = " + std::to_wstring(item.owner);
 	msg += L"\n  stackSize         = " + std::to_wstring(item.stackSize);
-#ifdef PLAYTEST
 	msg += L"\n  seedRerolls       = " + std::to_wstring(item.seedRerolls);
 	msg += L"\n  affixRerolls      = " + std::to_wstring(item.affixRerolls);
-#else
-	msg += L"\n  visiblePlayerId   = " + std::to_wstring(item.visiblePlayerId);
-	msg += L"\n  droppedPlayerId   = " + std::to_wstring(item.droppedPlayerId);
-#endif
 
 	// Raw hex dump of the object. sizeof gives us the struct our DLL believes
 	// in; the game may write more, but this shows how our fields overlay memory.
@@ -562,6 +558,9 @@ bool InventorySack_AddItem::HandleItem(void* stash, GAME::Item* item) {
 		return false;
 
 	auto gameEngine = fnGetGameEngine();
+	if (!fnIsWorldAlive(gameEngine))
+		return false;
+
 	if (!IsSackToLootFrom(stash, gameEngine))
 		return false;
 
@@ -727,6 +726,11 @@ GAME::InventorySack* InventorySack_AddItem::GetSackToDepositTo(GAME::GameEngine*
 /// <returns></returns>
 void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int v) {
 	try {
+		// Diagnostics: catch the exact frame the world dies under us. Only writes on
+		// a transition, and is deliberately outside the m_isActive gate so the log is
+		// comparable between "IA attached and active" and "IA attached but idle".
+		fnLogWorldStateTransition((GAME::GameEngine*)This, L"GameEngine::Update");
+
 		// IA not running? Continue
 		if (!m_isActive) {
 			//LogToFile(L"Debug: NotActive");
@@ -734,7 +738,7 @@ void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int
 		}
 
 		// If the game is not in a a "ready state", just continue.
-		if (IsGameLoading(This) || IsGameWaiting(This, true) || !IsGameEngineOnline(This)) {
+		if (!fnIsWorldAlive((GAME::GameEngine*)This)) {
 			//LogToFile(L"Debug: NotReady");
 			m_isTransferStashOpen = false; // Just to be on the safe side
 			return dll_GameEngine_Update(This, v);
@@ -756,8 +760,13 @@ void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int
 
 		GAME::GameInfo* gameInfo = fnGetGameInfo(engine);
 		if (gameInfo == nullptr) {
-			LogToFile(LogLevel::WARNING, L"GameInfo is null, aborting..");
-			return false;
+			// This fires during exit-to-menu teardown: GameInfo is destroyed while
+			// GameEngine is still ticking. Until recently this path returned without
+			// calling the original Update(), which dropped the game's update tick.
+			LogToFile(LogLevel::WARNING,
+				L"GameInfo is null (world tearing down?), skipping IA work this tick. msSinceLastAddItem="
+				+ std::to_wstring(fnMsSinceLastAddItem()));
+			return dll_GameEngine_Update(This, v);
 		}
 
 		if (m_isTransferStashOpen) {
@@ -860,6 +869,8 @@ void InventorySack_AddItem::ThreadMain(void*) {
 	LogToFile(LogLevel::INFO, L"IA is running, starting deposit listener..");
 	try {
 		std::set<std::wstring> knownFiles = std::set<std::wstring>();
+		GAME::GameInfo* lastGameInfo = nullptr;
+
 		while (m_isActive) {
 			Sleep(500);
 
@@ -872,7 +883,21 @@ void InventorySack_AddItem::ThreadMain(void*) {
 			GAME::GameInfo* gameInfo = fnGetGameInfo(engine);
 			if (gameInfo == nullptr) {
 				LogToFile(LogLevel::INFO, L"GameInfo is null, aborting..");
+				lastGameInfo = nullptr;
 				continue;
+			}
+
+			// Diagnostics: this thread calls into Engine.dll every 500ms with no
+			// synchronisation against the game loop. GetModName() below reads a string
+			// out of this GameInfo. If the pointer is churning around the same time the
+			// world tears down, we are racing its destruction.
+			if (gameInfo != lastGameInfo) {
+				std::wstringstream ss;
+				ss << L"ThreadMain: GameInfo changed " << std::hex << std::showbase
+				   << reinterpret_cast<DWORD_PTR>(lastGameInfo) << L" -> "
+				   << reinterpret_cast<DWORD_PTR>(gameInfo);
+				LogToFile(LogLevel::WARNING, ss.str());
+				lastGameInfo = gameInfo;
 			}
 
 			std::wstring folder = GetFolderToLootFrom(GetModName(gameInfo), fnGetHardcore(gameInfo, true));
