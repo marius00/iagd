@@ -11,7 +11,14 @@ namespace IAGrim.Services {
         [DllImport("ntdll.dll", EntryPoint = "wine_get_version")]
         private static extern IntPtr wine_get_version();
 
+        // The operating system won't change mid-run, so only look it up once
+        private static readonly Lazy<bool> IsWine = new Lazy<bool>(DetectWine);
+
         public static bool IsRunningInWine() {
+            return IsWine.Value;
+        }
+
+        private static bool DetectWine() {
             try {
                 // Attempt to get the function pointer
                 IntPtr functionPointer = wine_get_version();
