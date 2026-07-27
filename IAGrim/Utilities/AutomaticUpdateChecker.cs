@@ -39,6 +39,7 @@ namespace IAGrim.Utilities {
             public string? BrowserDownloadUrl { get; set; }
         }
 
+
         private class GitHubRelease {
             [JsonProperty("tag_name")]
             public string? TagName { get; set; }
