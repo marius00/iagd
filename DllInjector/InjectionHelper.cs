@@ -245,17 +245,9 @@ namespace DllInjector {
                         continue;
                     }
 
-                    // Figure out the filename
-                    try {
-                        dll64Bit = GetFilenameForPid(pid, arguments.DllName);
-                    } catch (Exception ex) {
-                        Logger.Warn("Something went wrong figuring out the filename for process", ex);
-                        worker.ReportProgress(INJECTION_ERROR_POSSIBLE_ACCESS_DENIED, null);
-                        continue;
-                    }
-                    // TODO: if this throws, open help page.
-
-                    // 32bit not supported
+                    // 32bit not supported.
+                    // Check this before resolving the filename: a 32bit process points at the 32bit Game.dll,
+                    // whose exports carry x86 mangling and would be misdetected as GD v1.2 (and cached as such).
                     try {
                         if (!Is64Bit((int)pid, worker)) {
                             Logger.Fatal("This version of Item Assistant does not support 32bit Grim Dawn");
@@ -273,6 +265,16 @@ namespace DllInjector {
                         continue;
 
                     }
+
+                    // Figure out the filename
+                    try {
+                        dll64Bit = GetFilenameForPid(pid, arguments.DllName);
+                    } catch (Exception ex) {
+                        Logger.Warn("Something went wrong figuring out the filename for process", ex);
+                        worker.ReportProgress(INJECTION_ERROR_POSSIBLE_ACCESS_DENIED, null);
+                        continue;
+                    }
+                    // TODO: if this throws, open help page.
 
                     // Actual injection
                     bool alreadyInjected = _linuxHackPath != null
@@ -331,14 +333,19 @@ namespace DllInjector {
         private static Dictionary<string, GameVariant> _gameVariantCache = new Dictionary<string, GameVariant>(1);
         private static string GetFilenameForPid(uint pid, string dllName) {
             string dll64Bit;
+            string grimDawnExe = GetWindowModuleFileName(pid);
             try {
-                var grimDawnExe = GetWindowModuleFileName(pid);
                 if (grimDawnExe == string.Empty) {
                     throw new Exception("Could not determine Grim Dawn path from pid, most likely a permissions issue.");
                 }
 
-                // Figure out the filename
-                var gdFilename = GetGameDllPath(GetWindowModuleFileName(pid));
+                // Figure out the filename.
+                // Careful: reuse the path resolved above. Re-querying it here would race against the game shutting down,
+                // and an empty result silently degrades into the bare relative path "Game.dll".
+                var gdFilename = GetGameDllPath(grimDawnExe);
+                if (!Path.IsPathRooted(gdFilename)) {
+                    throw new Exception($"Resolved a non-absolute path to Game.dll (\"{gdFilename}\") from \"{grimDawnExe}\".");
+                }
 
                 if (!_gameVariantCache.ContainsKey(gdFilename)) {
                     _gameVariantCache[gdFilename] = DetectGameVariant(gdFilename);
@@ -366,10 +373,10 @@ namespace DllInjector {
 
                 return dll64Bit;
             } catch (Exception ex) {
-                var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(GetWindowModuleFileName(pid));
+                var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(grimDawnExe);
                 var b64 = System.Convert.ToBase64String(plainTextBytes);
 
-                Logger.Warn("The module filename in question is: " + GetWindowModuleFileName(pid));
+                Logger.Warn("The module filename in question is: " + grimDawnExe);
                 Logger.Warn("Base64: " + b64);
                 Logger.Warn(ex);
                 throw;
@@ -378,10 +385,10 @@ namespace DllInjector {
 
         // Copy-pasta from GrimDawnDetector: Remove once latest PlayTest is public
 
-        [DllImport("kernel32.dll")]
+        [DllImport("kernel32.dll", SetLastError = true)]
         static extern IntPtr OpenProcess(UInt32 dwDesiredAccess, Int32 bInheritHandle, UInt32 dwProcessId);
 
-        [DllImport("psapi.dll")]
+        [DllImport("psapi.dll", SetLastError = true)]
         static extern uint GetModuleFileNameEx(IntPtr hProcess, IntPtr hModule, [Out] StringBuilder lpBaseName, [In][MarshalAs(UnmanagedType.U4)] int nSize);
 
         [DllImport("kernel32.dll")]
@@ -391,9 +398,23 @@ namespace DllInjector {
             const int nChars = 1024;
             StringBuilder filename = new StringBuilder(nChars);
             IntPtr hProcess = OpenProcess(1040, 0, pid);
-            GetModuleFileNameEx(hProcess, IntPtr.Zero, filename, nChars);
-            CloseHandle(hProcess);
-            return (filename.ToString());
+            if (hProcess == IntPtr.Zero) {
+                Logger.Warn($"Could not open process {pid} (error {Marshal.GetLastWin32Error()}), it has most likely exited.");
+                return string.Empty;
+            }
+
+            try {
+                uint length = GetModuleFileNameEx(hProcess, IntPtr.Zero, filename, nChars);
+                if (length == 0) {
+                    Logger.Warn($"Could not get the module filename for process {pid} (error {Marshal.GetLastWin32Error()}).");
+                    return string.Empty;
+                }
+
+                return filename.ToString(0, (int) Math.Min(length, nChars));
+            }
+            finally {
+                CloseHandle(hProcess);
+            }
         }
     }
 }

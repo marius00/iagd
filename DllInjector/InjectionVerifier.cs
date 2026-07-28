@@ -140,10 +140,10 @@ namespace EvilsoftCommons.DllInjector {
         private static bool HasAnyDllExport(string dll, params string[] wanted) {
             var exports = GetDllExports(dll);
             if (exports == null) {
-                Logger.Fatal($"Could not read the export table of \"{dll}\".");
-                Logger.Fatal("Could not determine if running GD v1.2 or newer, will most likely crash the game.");
-                Logger.Fatal("Halting IA");
-                System.Environment.Exit(1);
+                // Injecting the wrong hook DLL crashes the game, so we must not guess a variant here.
+                // Skipping this injection attempt is safe though -- the caller retries on the next poll.
+                Logger.Error($"Could not read the export table of \"{dll}\", unable to determine if running GD v1.2 or newer.");
+                throw new IOException($"Could not read the export table of \"{dll}\".");
             }
 
             return wanted.Any(exports.Contains);
