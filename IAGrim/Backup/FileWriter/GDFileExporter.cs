@@ -7,7 +7,7 @@ using System.IO;
 namespace IAGrim.Backup.FileWriter {
 
     public class GDFileExporter : FileExporter {
-        const int SUPPORTED_FILE_VER = 2;
+        const int SUPPORTED_FILE_VER = 3;
         private readonly string _filename;
         private readonly string _mod;
 
@@ -27,7 +27,7 @@ namespace IAGrim.Backup.FileWriter {
 
             string ReadString() {
                 var s = IOHelper.GetBytePrefixedString(bytes, pos);
-                pos += 1 + s?.Length ?? 0;
+                pos += 1 + (s?.Length ?? 0);
                 return s!;
             }
 
@@ -49,7 +49,7 @@ namespace IAGrim.Backup.FileWriter {
                 pi.MateriaCombines = IOHelper.GetUInt(bytes, pos); pos += 4;
                 pi.EnchantmentSeed = IOHelper.GetUInt(bytes, pos); pos += 4;
 
-                if (file_ver != 1) {
+                if (file_ver >= 2) {
                     pi.AscendantAffixNameRecord = ReadString();
                     pi.AscendantAffix2hNameRecord = ReadString();
                 }
@@ -58,8 +58,12 @@ namespace IAGrim.Backup.FileWriter {
                 pi.StackCount = IOHelper.GetUInt(bytes, pos); pos += 4;
 
 
-                if (file_ver != 1) {
+                if (file_ver >= 2) {
                     pi.RerollsUsed = IOHelper.GetUInt(bytes, pos); pos += 4;
+                }
+
+                if (file_ver >= 3) {
+                    pi.AffixRerollsUsed = IOHelper.GetUInt(bytes, pos); pos += 4;
                 }
 
 
@@ -102,6 +106,7 @@ namespace IAGrim.Backup.FileWriter {
 
                     IOHelper.Write(fs, (uint)pi.StackCount);
                     IOHelper.Write(fs, (uint)pi.RerollsUsed);
+                    IOHelper.Write(fs, (uint)pi.AffixRerollsUsed);
                     IOHelper.Write(fs, pi.IsHardcore);
                     IOHelper.Write(fs, (byte)0); // Char name                    
                 }
