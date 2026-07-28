@@ -193,6 +193,7 @@ namespace IAGrim.UI.Tabs {
                 Slot = slot?.Filter,
                 SlotInverse = slot?.Inverse ?? false,
                 PetBonuses = filters.PetBonuses,
+                HasPetBonus = filters.HasPetBonus,
                 IsRetaliation = filters.IsRetaliation,
                 DuplicatesOnly = filters.DuplicatesOnly,
                 Mod = transferFile.Mod,

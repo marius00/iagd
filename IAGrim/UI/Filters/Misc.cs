@@ -33,6 +33,7 @@ namespace IAGrim.UI.Filters {
         public bool SocketedOnly => cbSocketed.Checked;
         public bool DuplicatesOnly => cbDuplicates.Checked;
         public bool PetBonuses => cbPetBonuses.Checked;
+        public bool HasPetBonus => cbHasPetBonus.Checked;
         public bool RecentOnly => cbRecentOnly.Checked;
         public bool GrantsSkill => cbGrantsSkill.Checked;
         public bool WithSummonerSkillOnly => cbSummonerSkill.Checked;

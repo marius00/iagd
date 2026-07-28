@@ -13,6 +13,8 @@ namespace IAGrim.UI
 
         public bool PetBonuses { get; set; }
 
+        public bool HasPetBonus { get; set; }
+
         public bool IsRetaliation { get; set; }
 
         public bool DuplicatesOnly { get; set; }

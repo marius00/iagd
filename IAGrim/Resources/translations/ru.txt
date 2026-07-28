@@ -1,4 +1,4 @@
-﻿offensivePierceRatioMin={0}% пробивание брони
+offensivePierceRatioMin={0}% пробивание брони
 defensiveProtection={0} броня
 skillChanceWeight={0}% шанс применения
 skillProjectileNumber={0} снаряд(a,ов)
@@ -805,3 +805,6 @@ Vitality=Жизненная сила
 # Missing translations (English defaults)
 iatag_ui_zipbackup=Zip backups
 iatag_ui_zipbackup_define=Define
+
+# Missing translations (English defaults)
+iatag_ui_haspetbonus=Has Pet Bonus

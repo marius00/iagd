@@ -1,4 +1,4 @@
-﻿Aether=イーサー
+Aether=イーサー
 Aetherials=イセリアル
 augmentAllLevel=+{0} 全スキル
 augmentMastery1=+{0} {3} の全スキル
@@ -803,3 +803,6 @@ iatag_ui_updatenow=今すぐアップデート
 # Missing translations (English defaults)
 iatag_ui_zipbackup=Zip backups
 iatag_ui_zipbackup_define=Define
+
+# Missing translations (English defaults)
+iatag_ui_haspetbonus=Has Pet Bonus

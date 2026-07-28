@@ -30,7 +30,18 @@ namespace IAGrim.Database.Dto {
         /// </summary>
         public bool SlotInverse { get; set; }
 
+        /// <summary>
+        /// Pet-bonus scope: restrict all other stat filters to the item's pet records instead of its
+        /// player-facing records (e.g. "attack speed on the pet"). See PlayerItemDaoImpl.
+        /// </summary>
         public bool PetBonuses { get; set; }
+
+        /// <summary>
+        /// Plain "has a pet bonus" filter (the legacy behaviour): match items that grant any pet bonus,
+        /// without scoping the other stat filters to the pet. Combines with normal filters so a player
+        /// can search e.g. "has a pet bonus AND cold damage (on the player)".
+        /// </summary>
+        public bool HasPetBonus { get; set; }
         public bool IsRetaliation { get; set; }
         public bool DuplicatesOnly { get; set; }
         public string? Mod { get; set; }
@@ -61,7 +72,7 @@ namespace IAGrim.Database.Dto {
                     return false;
                 if (!String.IsNullOrEmpty(Rarity) || Slot != null)
                     return false;
-                if (PetBonuses || IsRetaliation || Classes.Count > 0 || SocketedOnly || RecentOnly)
+                if (PetBonuses || HasPetBonus || IsRetaliation || Classes.Count > 0 || SocketedOnly || RecentOnly)
                     return false;
                 return true;
             }

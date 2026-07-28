@@ -1,4 +1,4 @@
-﻿offensivePierceRatioMin={0}% 穿刺转换
+offensivePierceRatioMin={0}% 穿刺转换
 defensiveProtection={0} 护甲
 defensiveStun=減少{0}% 眩晕时间
 skillChanceWeight={0}% 几率使用
@@ -831,3 +831,6 @@ TagQualityOld=过时
 # Missing translations (English defaults)
 iatag_ui_zipbackup=Zip backups
 iatag_ui_zipbackup_define=Define
+
+# Missing translations (English defaults)
+iatag_ui_haspetbonus=Has Pet Bonus

@@ -53,6 +53,7 @@ namespace IAGrim.UI
                 Filters = OrFilters,
                 NumericFilters = NumericFilters,
                 PetBonuses = _miscFilter.PetBonuses,
+                HasPetBonus = _miscFilter.HasPetBonus,
                 IsRetaliation = _damageFilter.RetaliationDamage,
                 DuplicatesOnly = _miscFilter.DuplicatesOnly,
                 SocketedOnly = _miscFilter.SocketedOnly,

@@ -504,6 +504,7 @@ namespace StatTranslator {
             {"iatag_ui_block", "Block"},
             {"iatag_ui_setbonus", "Set Bonus"},
             {"iatag_ui_petbonuses", "Pet Bonuses"},
+            {"iatag_ui_haspetbonus", "Has Pet Bonus"},
             {"iatag_ui_mastery", "Mastery Skills"},
             {"iatag_ui_castspeed", "Cast Speed"},
             {"iatag_ui_attackspeed", "Attack Speed"},

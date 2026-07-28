@@ -749,28 +749,29 @@ namespace IAGrim.Database {
                     + $" AND dbs.TextValue = '{desiredClass}'"); // Not ideal
             }
 
-            if (queryFragments.Count > 0) {
-                List<string> sql = new List<string>();
-                foreach (var fragment in queryFragments) {
-                    sql.Add(RecordStatSubquery(fragment, query.PetBonuses));
-                }
-
-
-                return new DatabaseItemStatQuery {
-                    SQL = sql,
-                    Parameters = queryParamsList,
-                };
+            List<string> sql = new List<string>();
+            foreach (var fragment in queryFragments) {
+                sql.Add(RecordStatSubquery(fragment, query.PetBonuses));
             }
 
-            // Pet bonus checked with no other stat filter selected: just require the item to have
+            // Legacy "has a pet bonus" filter: match items whose own records carry a petBonusName stat.
+            // Never pet-scoped (petOnly stays false), so it combines with regular non-pet stat filters -
+            // e.g. "has a pet bonus AND cold damage on the player".
+            if (query.HasPetBonus) {
+                sql.Add(RecordStatSubquery("dbs.stat = 'petBonusName'"));
+            }
+
+            // Pet bonus scope checked with no other stat filter selected: just require the item to have
             // a pet record at all, i.e. the plain "has a pet bonus" meaning.
-            if (query.PetBonuses) {
-                return new DatabaseItemStatQuery {
-                    SQL = new List<string> {
-                        $@"SELECT pir.Playeritemid FROM PlayerItemRecord pir
+            if (query.PetBonuses && queryFragments.Count == 0) {
+                sql.Add($@"SELECT pir.Playeritemid FROM PlayerItemRecord pir
                            JOIN PlayerItem pi2 ON pi2.Id = pir.Playeritemid
-                           WHERE {PetRecordCondition}"
-                    },
+                           WHERE {PetRecordCondition}");
+            }
+
+            if (sql.Count > 0) {
+                return new DatabaseItemStatQuery {
+                    SQL = sql,
                     Parameters = queryParamsList,
                 };
             }

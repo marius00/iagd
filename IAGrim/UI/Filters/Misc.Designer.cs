@@ -43,6 +43,7 @@ namespace IAGrim.UI.Filters {
             this.shieldStuff = new FirefoxCheckBox();
             this.setbonus = new FirefoxCheckBox();
             this.cbPetBonuses = new FirefoxCheckBox();
+            this.cbHasPetBonus = new FirefoxCheckBox();
             this.cbMasterySkills = new FirefoxCheckBox();
             this.cbCastspeed = new FirefoxCheckBox();
             this.cbAttackSpeed = new FirefoxCheckBox();
@@ -76,6 +77,7 @@ namespace IAGrim.UI.Filters {
             this.miscPanel.Controls.Add(this.shieldStuff);
             this.miscPanel.Controls.Add(this.setbonus);
             this.miscPanel.Controls.Add(this.cbPetBonuses);
+            this.miscPanel.Controls.Add(this.cbHasPetBonus);
             this.miscPanel.Controls.Add(this.cbMasterySkills);
             this.miscPanel.Controls.Add(this.cbCastspeed);
             this.miscPanel.Controls.Add(this.cbAttackSpeed);
@@ -381,7 +383,24 @@ namespace IAGrim.UI.Filters {
             this.cbPetBonuses.TabIndex = 8;
             this.cbPetBonuses.Tag = "iatag_ui_petbonuses";
             this.cbPetBonuses.Text = "Pet Bonuses";
-            // 
+            //
+            // cbHasPetBonus
+            //
+            this.cbHasPetBonus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbHasPetBonus.Bold = false;
+            this.cbHasPetBonus.EnabledCalc = true;
+            this.cbHasPetBonus.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cbHasPetBonus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(78)))), ((int)(((byte)(90)))));
+            this.cbHasPetBonus.IsDarkMode = false;
+            this.cbHasPetBonus.Location = new System.Drawing.Point(4, 866);
+            this.cbHasPetBonus.Name = "cbHasPetBonus";
+            this.cbHasPetBonus.Size = new System.Drawing.Size(272, 27);
+            this.cbHasPetBonus.TabIndex = 25;
+            this.cbHasPetBonus.Tag = "iatag_ui_haspetbonus";
+            this.cbHasPetBonus.Text = "Has Pet Bonus";
+            this.cbHasPetBonus.UseVisualStyleBackColor = true;
+            //
             // cbMasterySkills
             // 
             this.cbMasterySkills.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -534,6 +553,7 @@ namespace IAGrim.UI.Filters {
         private FirefoxCheckBox shieldStuff;
         private FirefoxCheckBox setbonus;
         private FirefoxCheckBox cbPetBonuses;
+        private FirefoxCheckBox cbHasPetBonus;
         private FirefoxCheckBox cbMasterySkills;
         private FirefoxCheckBox cbCastspeed;
         private FirefoxCheckBox cbAttackSpeed;

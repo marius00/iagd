@@ -1,4 +1,4 @@
-﻿tagItemNameOrder={%_s3}{%_3a1}{%_3a2}{%_3a0}{%_s4}
+tagItemNameOrder={%_s3}{%_3a1}{%_3a2}{%_3a0}{%_s4}
 offensivePierceRatioMin={0}% Perfuração de armadura
 defensiveProtection={0} Armaduras
 defensiveStun={0}% Duração reduzida do atordoamento
@@ -813,3 +813,6 @@ petBurstSpawn=+{0} Invocações para {3}
 # Missing translations (English defaults)
 iatag_ui_zipbackup=Zip backups
 iatag_ui_zipbackup_define=Define
+
+# Missing translations (English defaults)
+iatag_ui_haspetbonus=Has Pet Bonus
