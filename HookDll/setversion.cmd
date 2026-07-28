@@ -1,10 +1,10 @@
 @set "SCRIPTDIR=%~dp0"
 
-@powershell "(Get-Item -path '%SCRIPTDIR%..\iagrim\bin\release\net10.0-windows\iagrim.exe').VersionInfo.FileVersion" > "%SCRIPTDIR%ver.txt"
+@powershell "(Get-Item -path '%SCRIPTDIR%..\iagrim\bin\release\net10.0-windows\win-x64\iagrim.exe').VersionInfo.FileVersion" > "%SCRIPTDIR%ver.txt"
 @set /p IA_RELEASE_VERSION=<"%SCRIPTDIR%ver.txt"
 @del "%SCRIPTDIR%ver.txt"
 
-@powershell "(Get-Item -path '%SCRIPTDIR%..\iagrim\bin\debug\net10.0-windows\iagrim.exe').VersionInfo.FileVersion" > "%SCRIPTDIR%ver.txt"
+@powershell "(Get-Item -path '%SCRIPTDIR%..\iagrim\bin\debug\net10.0-windows\win-x64\iagrim.exe').VersionInfo.FileVersion" > "%SCRIPTDIR%ver.txt"
 @set /p IA_DEBUG_VERSION=<"%SCRIPTDIR%ver.txt"
 @del "%SCRIPTDIR%ver.txt"
 
