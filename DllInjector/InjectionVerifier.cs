@@ -129,7 +129,7 @@ namespace EvilsoftCommons.DllInjector {
         /// </summary>
         public static bool IsGrimDawn12(string dll) {
             // A couple of ones, just in case one changes.
-            return !(HasSpecificDllExport(dll, "??0AscendantAltar@GAME@@QEAA@XZ") || HasSpecificDllExport(dll, "?AddAscendantExperienceMod@GameEngine@GAME@@QEAAXM@Z"));
+            return !(HasAnyDllExport(dll, "??0AscendantAltar@GAME@@QEAA@XZ", "?AddAscendantExperienceMod@GameEngine@GAME@@QEAAXM@Z"));
         }
 
         public static bool IsPlaytest(string dll) {
@@ -137,55 +137,121 @@ namespace EvilsoftCommons.DllInjector {
             return false;
         }
 
-        private static bool HasSpecificDllExport(string dll, string export) {
-            FixRegistryNagOnListDlls();
+        private static bool HasAnyDllExport(string dll, params string[] wanted) {
+            var exports = GetDllExports(dll);
+            if (exports == null) {
+                Logger.Fatal($"Could not read the export table of \"{dll}\".");
+                Logger.Fatal("Could not determine if running GD v1.2 or newer, will most likely crash the game.");
+                Logger.Fatal("Halting IA");
+                System.Environment.Exit(1);
+            }
 
-            Logger.Info("Running dumpbin...");
+            return wanted.Any(exports.Contains);
+        }
 
-            List<string> output = new List<string>();
-            if (File.Exists("dumpbin.exe")) {
-                ProcessStartInfo startInfo = new ProcessStartInfo {
-                    FileName = "dumpbin.exe",
-                    Arguments = $"/exports \"{dll}\"",
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
+        /// <summary>
+        /// Reads the export name table straight out of the PE file.
+        /// This used to shell out to dumpbin.exe, but that is only a thin wrapper around link.exe,
+        /// which in turn needs a whole set of MSVC runtime DLLs that are only present on dev machines.
+        /// Returns null if the file could not be parsed.
+        /// </summary>
+        private static HashSet<string>? GetDllExports(string dll) {
+            try {
+                if (!File.Exists(dll)) {
+                    Logger.Warn($"The file \"{dll}\" does not exist.");
+                    return null;
+                }
 
-                Process processTemp = new Process();
-                processTemp.StartInfo = startInfo;
-                processTemp.EnableRaisingEvents = true;
-                try {
-                    processTemp.Start();
-                    processTemp.WaitForExit(3000);
+                byte[] image = File.ReadAllBytes(dll);
 
+                if (image.Length < 0x40 || BitConverter.ToUInt16(image, 0) != 0x5A4D) // "MZ"
+                    return null;
 
-                    while (!processTemp.StandardOutput.EndOfStream) {
-                        string line = processTemp.StandardOutput.ReadLine();
-                        output.Add(line);
+                int peOffset = BitConverter.ToInt32(image, 0x3C);
+                if (peOffset <= 0 || peOffset + 0x18 > image.Length || BitConverter.ToUInt32(image, peOffset) != 0x00004550) // "PE\0\0"
+                    return null;
 
-                        if (line.Contains(export)) { // Export only exists on specific versions of GD
-                            return true;
+                int coffOffset = peOffset + 4;
+                int numberOfSections = BitConverter.ToUInt16(image, coffOffset + 2);
+                int sizeOfOptionalHeader = BitConverter.ToUInt16(image, coffOffset + 16);
+                int optionalHeaderOffset = coffOffset + 20;
+
+                ushort magic = BitConverter.ToUInt16(image, optionalHeaderOffset);
+                // The export directory is the first entry in the data directory, which sits right after the
+                // version-specific part of the optional header (96 bytes for PE32, 112 for PE32+).
+                int dataDirectoryOffset;
+                if (magic == 0x20B) // PE32+
+                    dataDirectoryOffset = optionalHeaderOffset + 112;
+                else if (magic == 0x10B) // PE32
+                    dataDirectoryOffset = optionalHeaderOffset + 96;
+                else
+                    return null;
+
+                uint exportDirRva = BitConverter.ToUInt32(image, dataDirectoryOffset);
+                if (exportDirRva == 0)
+                    return new HashSet<string>(); // Valid PE, simply no exports
+
+                int sectionHeadersOffset = optionalHeaderOffset + sizeOfOptionalHeader;
+                var sections = new List<(uint VirtualAddress, uint VirtualSize, uint RawAddress, uint RawSize)>();
+                for (int i = 0; i < numberOfSections; i++) {
+                    int s = sectionHeadersOffset + i * 40;
+                    if (s + 40 > image.Length)
+                        return null;
+
+                    sections.Add((
+                        BitConverter.ToUInt32(image, s + 12),
+                        BitConverter.ToUInt32(image, s + 8),
+                        BitConverter.ToUInt32(image, s + 20),
+                        BitConverter.ToUInt32(image, s + 16)
+                    ));
+                }
+
+                int RvaToOffset(uint rva) {
+                    foreach (var section in sections) {
+                        if (rva >= section.VirtualAddress && rva < section.VirtualAddress + Math.Max(section.VirtualSize, section.RawSize)) {
+                            long offset = section.RawAddress + (rva - section.VirtualAddress);
+                            return offset >= 0 && offset < image.Length ? (int) offset : -1;
                         }
                     }
 
-                    if (processTemp.ExitCode != 0) {
-                        Logger.Fatal("Could not determine if running GD v1.2 or newer, will most likely crash the game.");
-                        Logger.Fatal("Halting IA");
-                        System.Environment.Exit(1);
-                    }
+                    return -1;
                 }
-                catch (Exception ex) {
-                    Logger.Warn("Exception while attempting to verify isPlaytest.. " + ex.Message + ex.StackTrace);
-                    System.Environment.Exit(1);
+
+                int exportDirOffset = RvaToOffset(exportDirRva);
+                if (exportDirOffset < 0 || exportDirOffset + 40 > image.Length)
+                    return null;
+
+                uint numberOfNames = BitConverter.ToUInt32(image, exportDirOffset + 24);
+                uint namePointerRva = BitConverter.ToUInt32(image, exportDirOffset + 32);
+
+                int namePointerOffset = RvaToOffset(namePointerRva);
+                if (namePointerOffset < 0)
+                    return null;
+
+                var exports = new HashSet<string>(StringComparer.Ordinal);
+                for (uint i = 0; i < numberOfNames; i++) {
+                    long entry = namePointerOffset + i * 4L;
+                    if (entry + 4 > image.Length)
+                        return null;
+
+                    int nameOffset = RvaToOffset(BitConverter.ToUInt32(image, (int) entry));
+                    if (nameOffset < 0)
+                        continue;
+
+                    int end = nameOffset;
+                    while (end < image.Length && image[end] != 0)
+                        end++;
+
+                    exports.Add(Encoding.ASCII.GetString(image, nameOffset, end - nameOffset));
                 }
+
+                Logger.Info($"Read {exports.Count} exports from \"{dll}\".");
+                return exports;
             }
-            else {
-                Logger.Warn("Could not find dumpbin.exe, unable to verify isPlaytest.");
-                System.Environment.Exit(1);
+            catch (Exception ex) {
+                Logger.Warn($"Error reading the export table of \"{dll}\".. " + ex.Message + ex.StackTrace);
+                return null;
             }
-            return false;
         }
 
     }
