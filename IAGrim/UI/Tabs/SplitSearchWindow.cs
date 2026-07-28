@@ -92,7 +92,19 @@ namespace IAGrim.UI.Tabs {
                 ? Color.Black
                 : Color.FromArgb(85, 68, 96);
 
-            var conf = CoreWebView2Environment.CreateAsync(null, GlobalPaths.EdgeCacheLocation).Result;
+            // WINE PATCH: the Chromium sandbox and GPU/renderer subprocesses fail to spawn reliably under
+            // Wine (especially while Grim Dawn is running), so WebView2 navigation never completes and the
+            // item grid stays blank. --no-sandbox + --disable-gpu + --single-process avoids the failing
+            // subprocess/sandbox path so the page renders regardless of Grim Dawn. Applied ONLY under Wine
+            // so Windows keeps its default (sandboxed, GPU-accelerated, multi-process) behaviour untouched.
+            CoreWebView2Environment conf;
+            if (IAGrim.Services.WineDetector.IsRunningInWine()) {
+                var envOptions = new CoreWebView2EnvironmentOptions { AdditionalBrowserArguments = "--no-sandbox --disable-gpu --disable-gpu-compositing --single-process" };
+                conf = CoreWebView2Environment.CreateAsync(null, GlobalPaths.EdgeCacheLocation, envOptions).Result;
+            }
+            else {
+                conf = CoreWebView2Environment.CreateAsync(null, GlobalPaths.EdgeCacheLocation).Result;
+            }
             webView21!.EnsureCoreWebView2Async(conf);
 
             InitializeFilterPanel();
