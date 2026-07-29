@@ -10,7 +10,8 @@
 
     <!-- Combine into a version string (e.g., 1.5.9703.09915) -->
     <Version>1.5.$(BuildDateTimeUtc).$(VersionRevision)</Version>
-    <AssemblyInformationalVersion>1.5.$(BuildDateTimeUtc).$(VersionRevisionPadded)</AssemblyInformationalVersion>
+    <InformationalVersion>1.5.$(BuildDateTimeUtc).$(VersionRevisionPadded)</InformationalVersion>
+    <AssemblyInformationalVersion>$(InformationalVersion)</AssemblyInformationalVersion>
   </PropertyGroup>
 
   <PropertyGroup>
