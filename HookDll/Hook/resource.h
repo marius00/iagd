@@ -14,4 +14,6 @@
 #endif
 
 
-#define IAGD_VER "1.5.9703.11973" 
+// IAGD_VER is generated at build time from the current timestamp by the GenerateIagdVersionHeader target
+// in Custom.vcxproj. The generated header is not committed.
+#include "version_generated.h"

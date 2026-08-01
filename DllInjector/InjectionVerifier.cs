@@ -82,6 +82,46 @@ namespace EvilsoftCommons.DllInjector {
             return false;
         }
 
+        /// <summary>
+        /// Wine/Proton: true if the injected DLL reported that it deliberately aborted the attach, meaning the
+        /// game is not ready to be hooked yet (still loading, or in the character select menu -- injecting there
+        /// tends to crash the game). Not a failure, just "try again on the next poll".
+        ///
+        /// The marker is consumed, so each aborted attach is reported exactly once. It has to be read here rather
+        /// than taken from the DLL's .msg stream: an abort unloads the DLL, which removes the .PID file this class
+        /// verifies against, and the .msg is drained asynchronously by the UI poll timer -- long after the injector
+        /// has already concluded the injection failed.
+        /// </summary>
+        public static bool ConsumeInjectionAbortedMarker(long pid, string linuxHackPath) {
+            try {
+                Directory.CreateDirectory(linuxHackPath);
+
+                foreach (var file in Directory.GetFiles(linuxHackPath, "*.ABORTED")) {
+                    var fileName = Path.GetFileNameWithoutExtension(file);
+                    bool isCurrentPid = long.TryParse(fileName, out long filePid) && filePid == pid;
+                    bool isStale = (DateTime.Now - File.GetLastWriteTime(file)).TotalDays > 1;
+
+                    // Consume our own marker, and clean up anything left behind by a previous game process.
+                    try {
+                        File.Delete(file);
+                    }
+                    catch (IOException ex) {
+                        Logger.Warn($"Could not delete injection aborted marker {file}: {ex.Message}");
+                        continue;
+                    }
+
+                    if (isCurrentPid && !isStale) {
+                        return true;
+                    }
+                }
+            }
+            catch (Exception ex) {
+                Logger.Warn($"Error checking for an injection aborted marker: {ex.Message}");
+            }
+
+            return false;
+        }
+
         public static bool VerifyInjection(long pid, string dll) {
             FixRegistryNagOnListDlls();
 
@@ -124,29 +164,20 @@ namespace EvilsoftCommons.DllInjector {
         }
 
         /// <summary>
-        /// The old playtest has been merged into the main game, so these exports now identify the live game.
-        /// Their absence means we're running the older GD v1.2, which needs its own (frozen) hook DLL.
+        /// Detects a playtest build, which needs its own hook DLL.
+        ///
+        /// Currently always false: the previous playtest has been merged into the live game, so there is nothing
+        /// to tell apart right now. Kept wired up because the next playtest will need it again -- fill in an
+        /// export that only the playtest build has and match it against <see cref="GetDllExports"/>, e.g.
+        /// <c>GetDllExports(dll)?.Contains("??0AscendantAltar@GAME@@QEAA@XZ") == true</c>.
+        ///
+        /// Whatever goes here must be a *positive* test for the playtest, never an absence test. Absence is
+        /// indistinguishable from an export table we failed to read, and the fallback has to stay on the default
+        /// DLL: injecting a mismatched hook DLL crashes the game, whereas retrying costs a poll interval.
         /// </summary>
-        public static bool IsGrimDawn12(string dll) {
-            // A couple of ones, just in case one changes.
-            return !(HasAnyDllExport(dll, "??0AscendantAltar@GAME@@QEAA@XZ", "?AddAscendantExperienceMod@GameEngine@GAME@@QEAAXM@Z"));
-        }
-
         public static bool IsPlaytest(string dll) {
             // TODO: The previous playtest is now the live game, a new export is needed to detect the current playtest.
             return false;
-        }
-
-        private static bool HasAnyDllExport(string dll, params string[] wanted) {
-            var exports = GetDllExports(dll);
-            if (exports == null) {
-                // Injecting the wrong hook DLL crashes the game, so we must not guess a variant here.
-                // Skipping this injection attempt is safe though -- the caller retries on the next poll.
-                Logger.Error($"Could not read the export table of \"{dll}\", unable to determine if running GD v1.2 or newer.");
-                throw new IOException($"Could not read the export table of \"{dll}\".");
-            }
-
-            return wanted.Any(exports.Contains);
         }
 
         /// <summary>

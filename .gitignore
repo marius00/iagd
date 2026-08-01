@@ -414,3 +414,6 @@ bin
 /Inno/ndp472-kb4054531-web.exe
 /Inno/vc2015_redist.x64.exe
 /Inno/vcredist_x86.exe
+
+# Generated at build time by the GenerateIagdVersionHeader target in Custom.vcxproj
+HookDll/Hook/version_generated.h

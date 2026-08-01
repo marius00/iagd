@@ -86,6 +86,13 @@ namespace IAGrim.UI {
         // Set when we intentionally aborted an injection, so the follow-up INJECTION_ERROR isn't treated as a real failure.
         private bool _injectionAborted = false;
 
+        // The DLL reports an abort out-of-band (WM_COPYDATA, or a polled file under Wine), so it can land *after*
+        // the INJECTION_ERROR it was meant to excuse -- the aborted-flag check above then misses it entirely.
+        // Requiring a run of failures instead means a game that is merely still loading no longer trips the
+        // "stash error" help page, while a genuinely broken injection still reports within a few seconds.
+        private const int InjectionErrorsBeforeHelpPage = 5;
+        private int _consecutiveInjectionErrors = 0;
+
         /// <summary>
         /// Toolstrip callback for GDInjector
         /// </summary>
@@ -99,17 +106,24 @@ namespace IAGrim.UI {
                 switch (e.ProgressPercentage) {
                     case InjectionHelper.ABORTED:
                         _injectionAborted = true;
+                        _consecutiveInjectionErrors = 0;
                         break;
 
 
                     case InjectionHelper.INJECTION_ERROR: {
                             if (_injectionAborted) {
-                                // False positive, injection failed because we intentionally aborted.
+                                // False positive, injection failed because we intentionally aborted. Consumed
+                                // rather than left set: on Windows the abort arrives by WM_COPYDATA and can land
+                                // just after the error it explains, but it only ever excuses that one error --
+                                // leaving the flag up would swallow every genuine failure for the rest of the session.
+                                _injectionAborted = false;
                                 break;
                             }
 
                             statusLabel.Text = e.UserState as string;
-                            if (!_hasShownStashErrorPage) {
+                            _consecutiveInjectionErrors++;
+                            if (!_hasShownStashErrorPage && _consecutiveInjectionErrors >= InjectionErrorsBeforeHelpPage) {
+                                Logger.Error($"Injection has failed {_consecutiveInjectionErrors} times in a row, showing the stash error page.");
                                 _cefBrowserHandler.ShowHelp(HelpService.HelpType.StashError);
                                 _hasShownStashErrorPage = true;
                             }
@@ -150,6 +164,7 @@ namespace IAGrim.UI {
                     // No grim dawn client running
                     case InjectionHelper.NO_PROCESS_FOUND:
                         _injectionAborted = false;
+                        _consecutiveInjectionErrors = 0;
                         break;
 
                     // Injection error
@@ -161,7 +176,9 @@ namespace IAGrim.UI {
 
                         break;
                     }
+                    // Already injected, so whatever failed before has resolved itself.
                     case InjectionHelper.STILL_RUNNING:
+                        _consecutiveInjectionErrors = 0;
                         break;
                 }
 

@@ -8,7 +8,13 @@
 	<!-- Revision is 2-second ticks since midnight: 0..43199, always rendered as 5 digits -->
 	<VersionRevisionPadded>$([System.String]::Format('{0:00000}', $([System.Convert]::ToInt32($(VersionRevision)))))</VersionRevisionPadded>
 
-    <!-- Combine into a version string (e.g., 1.5.9703.09915) -->
+    <!--
+      Two spellings of the same version, deliberately:
+        Version              -> FileVersion/AssemblyVersion, a numeric win32 resource. CANNOT be zero-padded.
+        InformationalVersion -> a string, IS zero-padded, and is what the git tags are cut from.
+      So the revision is four or five digits wide depending on which one you read. Never compare these as
+      strings ("9500" sorts above "11000"); use IAGrim.Utilities.VersionUtility, which compares numerically.
+    -->
     <Version>1.5.$(BuildDateTimeUtc).$(VersionRevision)</Version>
     <InformationalVersion>1.5.$(BuildDateTimeUtc).$(VersionRevisionPadded)</InformationalVersion>
     <AssemblyInformationalVersion>$(InformationalVersion)</AssemblyInformationalVersion>

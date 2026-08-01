@@ -294,9 +294,18 @@ namespace DllInjector {
                             : InjectionVerifier.VerifyInjection(pid, dll64Bit);
 
                         if (!verifiedAfterInject) {
-                            Logger.Error($"Error injecting DLL into Grim Dawn.");
+                            // The DLL may have loaded and then deliberately aborted, because the game isn't ready to be hooked yet (still loading, or in character select -- hooking there tends to
+                            // crash it). That unloads the DLL, so it looks identical to a failed injection here.
+                            // Under Wine the DLL leaves a marker to tell the two apart; on Windows the same information arrives by WM_COPYDATA.
+                            if (_linuxHackPath != null && InjectionVerifier.ConsumeInjectionAbortedMarker(pid, _linuxHackPath)) {
+                                Logger.Info("Injection was aborted by the DLL, Grim Dawn is not ready to be hooked yet. Retrying shortly..");
+                                worker.ReportProgress(ABORTED, null);
+                            }
+                            else {
+                                Logger.Error($"Error injecting DLL into Grim Dawn.");
 
-                            worker.ReportProgress(INJECTION_ERROR, null);
+                                worker.ReportProgress(INJECTION_ERROR, null);
+                            }
                         }
                     }
                 }
@@ -316,13 +325,10 @@ namespace DllInjector {
             return string.Join("\\", args);
         }
 
-        private enum GameVariant { Live, GrimDawn12, Playtest }
+        private enum GameVariant { Live, Playtest }
+
 
         private static GameVariant DetectGameVariant(string gdFilename) {
-            if (InjectionVerifier.IsGrimDawn12(gdFilename)) {
-                return GameVariant.GrimDawn12;
-            }
-
             if (InjectionVerifier.IsPlaytest(gdFilename)) {
                 return GameVariant.Playtest;
             }
@@ -352,11 +358,6 @@ namespace DllInjector {
                 }
 
                 switch (_gameVariantCache[gdFilename]) {
-                    case GameVariant.GrimDawn12:
-                        dll64Bit = Path.Combine(Directory.GetCurrentDirectory(), dllName.Replace(".dll", "-GD12.dll"));
-                        Logger.Info("Grim Dawn v1.2 detected, using DLL " + dll64Bit);
-                        break;
-
                     case GameVariant.Playtest:
                         dll64Bit = Path.Combine(Directory.GetCurrentDirectory(), dllName.Replace("_x64", "_playtest_x64"));
                         Logger.Info("Playtest detected, using DLL " + dll64Bit);

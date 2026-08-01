@@ -109,7 +109,10 @@ namespace IAGrim.Utilities {
                     return;
                 }
 
-                if (String.Compare(version, ExceptionReporter.VersionString) > 0 || forceUpdate) {
+                // Numeric compare: the tag may be padded or unpadded ("1.5.9707.09210" / "1.5.9707.9210"), and a
+                // string compare on a variable-width revision would rank "9500" above "11000" -- which offered
+                // users a downgrade as an update.
+                if (VersionUtility.IsNewerThan(version, ExceptionReporter.VersionString) || forceUpdate) {
                     Logger.Info($"Latest version is {version}, local version is {ExceptionReporter.VersionString}, update available");
                     if (new UpdateModal(_settings, version, forceUpdate).ShowDialog() == DialogResult.OK) {
                         Download(version);

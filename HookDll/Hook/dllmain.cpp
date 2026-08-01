@@ -366,8 +366,35 @@ bool GetProductAndVersion()
 }
 */
 
+// Wine/Proton: an aborted attach is not a failure, it just means the game is not ready to be hooked yet
+// (still loading, or sitting in the character select menu -- injecting there tends to crash the game).
+//
+// The .msg written below can't carry that news on its own: DllMain returns FALSE after an abort, so the DLL
+// is unloaded and ProcessDetach removes the .PID file, which is the only thing the injector looks at. It
+// therefore sees "not injected" and reports a hard failure, while the .msg saying otherwise is drained
+// asynchronously by the UI's poll timer -- too late, and racing the injector for the same file.
+//
+// So drop a dedicated marker the injector can check synchronously right after it injects. It is consumed
+// (deleted) on the C# side, and re-written on every aborted attach.
+void WriteInjectionAbortedMarker() {
+	if (g_linuxHackFolder.empty()) {
+		return;
+	}
+
+	std::wstring markerFile = g_linuxHackFolder + std::to_wstring(GetCurrentProcessId()) + L".ABORTED";
+	HANDLE hMarker = CreateFile(markerFile.c_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (hMarker != INVALID_HANDLE_VALUE) {
+		CloseHandle(hMarker);
+		LogToFile(LogLevel::INFO, L"Wrote injection aborted marker: " + markerFile);
+	}
+	else {
+		LogToFile(LogLevel::WARNING, L"Failed to write injection aborted marker: " + markerFile);
+	}
+}
+
 void ReportCancelledInjection() {
 	if (g_isRunningInWine) {
+		WriteInjectionAbortedMarker();
 		WriteMessageToFile(TYPE_INJECTION_CANCELLED, nullptr, 0);
 		return;
 	}

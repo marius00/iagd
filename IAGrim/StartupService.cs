@@ -23,12 +23,15 @@ namespace IAGrim {
             FileVersionInfo dllVersion = FileVersionInfo.GetVersionInfo(Path.Combine(Directory.GetCurrentDirectory(), "ItemAssistantHook_x64.dll"));
 
             Logger.InfoFormat($"DLL version version {dllVersion.FileVersion}");
-            LogOptionalDllVersion("GD v1.2", "ItemAssistantHook_x64-GD12.dll");
             LogOptionalDllVersion("Playtest", "ItemAssistantHook_playtest_x64.dll");
 
+            // Numeric compare: dllver.txt is written from the DLL's ProductVersion (zero-padded revision) while
+            // FileVersion is a numeric win32 resource that can't carry the padding, so the same version can be
+            // spelled two ways. A string compare here read a stale DLL as up to date whenever the revision widths
+            // differed, which is exactly the "updated while GD was running" case this check exists to catch.
             var minimumDllVersion = File.ReadAllText("dllver.txt").Trim();
-            if ((dllVersion.FileVersion ?? string.Empty).CompareTo(minimumDllVersion) < 0) {
-                Logger.Error("The DLL version is incompatible, did you perhaps run into a conflict while updating and clicked ignore?");
+            if (VersionUtility.IsOlderThan(dllVersion.FileVersion, minimumDllVersion)) {
+                Logger.Error($"The DLL version ({dllVersion.FileVersion}) is older than the required {minimumDllVersion}, did you perhaps run into a conflict while updating and clicked ignore?");
                 Logger.Error("Item Assistant needs to be re-installed without GD running.");
 
                 MessageBox.Show("IAGD install is corrupted.\nReinstall IAGD without GD running.", "Warning",
