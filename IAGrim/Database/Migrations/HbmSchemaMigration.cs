@@ -35,9 +35,11 @@ namespace IAGrim.Database.Migrations {
                     var ns = mappingEl.Attribute("namespace")?.Value;
 
                     foreach (var classEl in mappingEl.Elements(Ns + "class")) {
-                        var tableName = classEl.Attribute("table")?.Value;
                         var className = classEl.Attribute("name")?.Value;
-                        if (tableName == null || className == null) continue;
+                        if (className == null) continue;
+
+                        // NHibernate defaults the table name to the class name when @table is omitted
+                        var tableName = classEl.Attribute("table")?.Value ?? className;
 
                         // Skip if table doesn't exist yet (AddBaseTables will create it with all columns)
                         if (!TableExists(sessionCreator, tableName)) continue;

@@ -5,20 +5,17 @@ import styles from "./ModFilterWarning.module.css";
 
 interface Props {
   numOtherItems: number;
+  close: () => void;
 }
 
+// Dismissal is owned by App, not this component: it is unmounted whenever the user leaves the search
+// tab, so local state would forget the dismissal and the warning would pop back up on return.
 class ModFilterWarning extends PureComponent<Props, object> {
-  state = {
-    isHidden: false,
-  }
   render() {
-  if (this.state.isHidden) {
-    return null;
-  }
   return (
   <div className={styles.outer}>
         <div className={styles.large +" "+ styles.large +" "+ styles.yellow +" "+ styles.border +" "+ styles.panel + " " + styles.container}>
-          <span className={styles.button +" "+ styles.large +" "+ styles.topright} onClick={() => this.setState({isHidden: true})}>×</span>
+          <span className={styles.button +" "+ styles.large +" "+ styles.topright} onClick={() => this.props.close()}>×</span>
           <h3>Warning!</h3>
           <p>You have an additional {this.props.numOtherItems} items which were filtered out due to the mod filter.</p>
           <p>If you are having trouble finding your items, check the mod filter drop down in the top right corner.</p>

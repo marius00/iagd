@@ -74,6 +74,10 @@ namespace IAGrim.Database.Dto {
                     return false;
                 if (PetBonuses || HasPetBonus || IsRetaliation || Classes.Count > 0 || SocketedOnly || RecentOnly)
                     return false;
+                if (WithGrantSkillsOnly || WithSummonerSkillOnly || DuplicatesOnly || PrefixRarity > 0)
+                    return false;
+                if (StatValueFilters?.Count > 0)
+                    return false;
                 return true;
             }
         }

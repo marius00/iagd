@@ -41,7 +41,7 @@ interface ApplicationState {
   isGrimParsed: boolean;
   isFirstRun: boolean;
   showModFilterWarning: number;
-  hasShownModFilterWarning: boolean;
+  modFilterWarningDismissed: boolean;
   easterEggMode: boolean;
   gdSeasonError: boolean;
   showNumericFilterBanner: boolean;
@@ -123,7 +123,7 @@ class App extends PureComponent<object, object> {
     isGrimParsed: true,
     isFirstRun: false,
     showModFilterWarning: 0,
-    hasShownModFilterWarning: false,
+    modFilterWarningDismissed: false,
     easterEggMode: false,
     gdSeasonError: false,
     showNumericFilterBanner: false,
@@ -265,11 +265,11 @@ class App extends PureComponent<object, object> {
           break;
 
         case IOMessageType.ShowModFilterWarning:
-          // Enable "is first run" tutorial window
-          if (!this.state.hasShownModFilterWarning) {
+          // Shown per search (SetItems clears it again), but once the user has dismissed it we stay
+          // quiet for the rest of the session rather than re-nagging on every subsequent search.
+          if (!this.state.modFilterWarningDismissed) {
             this.setState({
               showModFilterWarning: message.data as number,
-              hasShownModFilterWarning: true,
             });
           }
           break;
@@ -295,6 +295,9 @@ class App extends PureComponent<object, object> {
               hasMore: data.hasMore,
               isFirstRun: isFirstRun,
               itemLookupMap: lookupMap,
+              // The warning belongs to a single search. C# sends SetItems first and only then decides
+              // whether to raise it, so clearing here keeps a stale banner from outliving its search.
+              showModFilterWarning: 0,
             });
           } else {
             const items = [...this.state.items];
@@ -491,6 +494,10 @@ class App extends PureComponent<object, object> {
     // TODO: Fix this weird loop? This one will request more items.. which will end up in a call from C# to window.addItems().. is that how we wanna do this?
   }
 
+  closeModFilterWarning = () => {
+    this.setState({showModFilterWarning: 0, modFilterWarningDismissed: true});
+  }
+
   closeNumericFilterBanner = () => {
     this.setState({showNumericFilterBanner: false});
     dismissNumericFilterBanner();
@@ -533,7 +540,7 @@ class App extends PureComponent<object, object> {
         {this.state.activeTab === 0 && !isEmbedded ? <MockItemsButton onClick={(items) => this.setItems(items)}/> : ''}
         {this.state.activeTab === 3 && <CharacterListContainer/>}
 
-        {this.state.activeTab === 0 && this.state.showModFilterWarning > 0 && <ModFilterWarning numOtherItems={this.state.showModFilterWarning}/>}
+        {this.state.activeTab === 0 && this.state.showModFilterWarning > 0 && <ModFilterWarning numOtherItems={this.state.showModFilterWarning} close={this.closeModFilterWarning}/>}
         {this.state.activeTab === 0 && this.state.showNumericFilterBanner && <NumericFilterBanner close={this.closeNumericFilterBanner}/>}
         {this.state.activeTab === 0 && <ItemContainer
           showBackupCloudIcon={this.state.showBackupCloudIcon}
