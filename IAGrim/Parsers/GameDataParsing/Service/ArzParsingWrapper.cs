@@ -13,6 +13,7 @@ using IAGrim.Parser.Arc;
 using IAGrim.Parsers.Arz;
 using IAGrim.Parsers.GameDataParsing.Model;
 using IAGrim.Utilities;
+using StatTranslator;
 using log4net;
 using log4net.Repository.Hierarchy;
 
@@ -67,17 +68,16 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
             Logger.Debug($"Loaded {tags.Count} tags from {file}");
         }
 
+        /// <summary>
+        /// Only the games own tags are stored. IA's bundled translation file is layered on top of these at
+        /// startup (see LocalizationLoader.LoadLanguage) and must not be baked into the tag table -- the
+        /// game is the authority on everything it defines, IA only fills in its own UI strings.
+        /// </summary>
         public void LoadTags(
             List<string> tagfiles,
-            string languageCode,
             ProgressTracker tracker
         ) {
-            bool hasIaOverride = !string.IsNullOrEmpty(languageCode) 
-                                 && !languageCode.Equals("EN", StringComparison.OrdinalIgnoreCase)
-                                 && LanguageMapping.GetIaTranslationFile(languageCode) != null;
-
-            int numFiles = tagfiles.Count - tagfiles.Where(string.IsNullOrEmpty).Count() + (hasIaOverride ? 1 : 0);
-            tracker.MaxValue = numFiles;
+            tracker.MaxValue = tagfiles.Count - tagfiles.Where(string.IsNullOrEmpty).Count();
 
             // Load tags in a prioritized order (EN first, then selected language arc — already ordered by caller)
             foreach (var tagfile in tagfiles) {
@@ -89,26 +89,6 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
                     Logger.Debug($"Ignoring non-existing tagfile {tagfile}");
                 }
 
-                tracker.Increment();
-            }
-
-            // Load IA translation override file for the selected language
-            if (hasIaOverride) {
-                var iaFile = LanguageMapping.GetIaTranslationFile(languageCode);
-                if (iaFile != null) {
-                    var localizationLoader = new LocalizationLoader();
-                    localizationLoader.LoadIaTranslationFile(iaFile);
-
-                    var tags = localizationLoader.GetItemTags();
-                    foreach (var tag in tags) {
-                        if (tag.Tag == null || tag.Name == null) {
-                            continue;
-                        }
-                        _tagAccumulator.Add(tag.Tag, tag.Name);
-                    }
-
-                    Logger.Debug($"Loaded {tags.Count} IA override tags for language {languageCode}");
-                }
                 tracker.Increment();
             }
 
@@ -140,7 +120,10 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
                         }
                     }
 
-                    Items[i].Name = string.Join(" ", finalTags).Trim();
+                    // Combine rather than join: in a gendered language each of these tags carries every
+                    // gendered form ("[ms]Mächtiger[fs]Mächtige.."), and only the item name settles which
+                    // one the others have to use.
+                    Items[i].Name = ItemNameCombinator.Combine(finalTags.ToArray());
                     Items[i].NameLowercase = Items[i].Name?.ToLowerInvariant() ?? string.Empty;
                 }
 

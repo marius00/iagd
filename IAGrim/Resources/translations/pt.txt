@@ -1,4 +1,3 @@
-tagItemNameOrder={%_s3}{%_3a1}{%_3a2}{%_3a0}{%_s4}
 offensivePierceRatioMin={0}% Perfuração de armadura
 defensiveProtection={0} Armaduras
 defensiveStun={0}% Duração reduzida do atordoamento

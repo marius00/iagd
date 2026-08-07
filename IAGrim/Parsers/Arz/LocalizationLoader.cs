@@ -13,20 +13,8 @@ namespace IAGrim.Parsers.Arz {
     public class LocalizationLoader {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(LocalizationLoader));
         private const int MaxMissingTagWarnings = 30;
-        private static int _missingTagWarningCount = 0;        private IDictionary<string, string> _tagsItems = new Dictionary<string, string>();
+        private static int _missingTagWarningCount = 0;
         private IDictionary<string, string>? _tagsIa = new Dictionary<string, string>();
-
-        public ISet<ItemTag> GetItemTags() {
-            ISet<ItemTag> stats = new HashSet<ItemTag>();
-            foreach (var item in _tagsItems) {
-                stats.Add(new ItemTag {
-                    Name = item.Value,
-                    Tag = item.Key
-                });
-            }
-
-            return stats;
-        }
 
         /// <summary>
         /// Recursively check each control for .Tag == "iatag_*"
@@ -76,9 +64,12 @@ namespace IAGrim.Parsers.Arz {
 
         /// <summary>
         /// Load language using a language code and English fallback.
-        /// Reads the bundled IA translation override file for the given language code.
+        /// <paramref name="gameTags"/> are the tags parsed out of the games own Text_XX.arc, and are the
+        /// authority on anything the game itself defines -- most importantly tagItemNameOrder, which states
+        /// how the localization wants prefix/quality/style/name/suffix ordered and gendered. The bundled IA
+        /// translation file is layered on top, it only carries IA's own UI strings.
         /// </summary>
-        public ILocalizedLanguage LoadLanguage(string languageCode, EnglishLanguage fallback) {
+        public ILocalizedLanguage LoadLanguage(string languageCode, IDictionary<string, string> gameTags, EnglishLanguage fallback) {
             var iaTranslationFile = LanguageMapping.GetIaTranslationFile(languageCode);
             if (iaTranslationFile != null) {
                 LoadIaTranslationFile(iaTranslationFile);
@@ -86,7 +77,7 @@ namespace IAGrim.Parsers.Arz {
                 Logger.Info($"No bundled IA translation file found for language code '{languageCode}'");
             }
 
-            var dataset = new Dictionary<string, string>(_tagsItems);
+            var dataset = new Dictionary<string, string>(gameTags);
             if (_tagsIa != null) {
                 foreach (var tag in _tagsIa) {
                     dataset[tag.Key] = tag.Value;

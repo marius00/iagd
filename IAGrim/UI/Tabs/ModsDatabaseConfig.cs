@@ -116,6 +116,12 @@ namespace IAGrim.UI {
                 _parsingService.Update(location, modLocation ?? string.Empty);
                 _parsingService.Execute();
                 parsed = true;
+
+                // The tags were just dropped and rebuilt, in whatever language is currently selected.
+                // The language has to be reloaded from them before the item names below are generated,
+                // or the names come out ordered for the language that was parsed previously.
+                _settingsService.GetLocal().ParsedLanguageCode = _settingsService.GetLocal().LanguageCode;
+                RuntimeSettings.InitializeLanguage(_settingsService.GetLocal().LanguageCode, _databaseItemDao.GetTagDictionary());
             }
             else {
                 Logger.Warn("Could not find the Grim Dawn install location");

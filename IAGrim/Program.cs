@@ -216,6 +216,18 @@ namespace IAGrim
             );
             Timed("PerformMissingExpansionDataCheck");
 
+            // Only if the parse above didn't already run, it parses in the current language anyway.
+            if (!autoParsed) {
+                autoParsed = StartupService.PerformLanguageChangeCheck(
+                    parsingService,
+                    databaseItemDao,
+                    serviceProvider.Get<IPlayerItemDao>(),
+                    grimDawnDetector,
+                    settingsService
+                );
+                Timed("PerformLanguageChangeCheck");
+            }
+
             StartupService.PrintStartupInfo(factory, settingsService);
 
             // TODO: Offload to the new language loader

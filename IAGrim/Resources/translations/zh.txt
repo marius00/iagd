@@ -825,7 +825,6 @@ iatag_ui_weapon_life_leech=武器生命偷取
 iatag_ui_why_showing_stashpicker=为什么我需要选择？
 petBurstSpawn=+{0} 召唤 : {3}
 ResistanceMaxResist=最大
-tagItemNameOrder={%_s0}{%_s1}{%_s2}{%_s3}{%_s4}
 TagQualityOld=过时
 
 # Missing translations (English defaults)

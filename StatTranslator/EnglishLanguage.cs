@@ -54,9 +54,10 @@ namespace StatTranslator {
             );
         }
 
+        // tagItemNameOrder is deliberately absent: it is defined by Grim Dawn itself, per language, and is
+        // read from the parsed game tags. Listing it here would offer it up for translation, and a hand
+        // written value overrides the games own ordering (see ItemNameOrderFallback).
         private readonly Dictionary<string, string> _stats = new Dictionary<string, string> {
-            {"tagItemNameOrder", "{%_s0}{%_s1}{%_s2}{%_s3}{%_s4}"},
-
 
             // Simply Header stats
             {"offensivePierceRatioMin", "{0}% Armor Piercing"},
@@ -824,8 +825,12 @@ namespace StatTranslator {
             {"iatag_ui_title_importexport", "Import / Export"}
         };
 
-        private const string English = "{%_s0}{%_s1}{%_s2}{%_s3}{%_s4}";
-        private readonly ItemNameCombinator _itemCombinator = new ItemNameCombinator(English);
+        /// <summary>
+        /// The English tagItemNameOrder, used when the game tags are not available (an unparsed database).
+        /// </summary>
+        public const string ItemNameOrderFallback = "{%_s0}{%_s1}{%_s2}{%_s3}{%_s4}";
+
+        private readonly ItemNameCombinator _itemCombinator = new ItemNameCombinator(ItemNameOrderFallback);
 
         public string TranslateName(string prefix, string quality, string style, string name, string suffix) {
             return _itemCombinator.TranslateName(prefix, quality, style, name, suffix);

@@ -183,7 +183,7 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
             List<string> tagfiles,
             List<string> arzFiles
         ) {
-            parser.LoadTags(tagfiles, _languageCode, new WinformsProgressBar(form.LoadingTags).Tracker);
+            parser.LoadTags(tagfiles, new WinformsProgressBar(form.LoadingTags).Tracker);
             _itemTagDao.Save(parser.Tags, new WinformsProgressBar(form.SavingTags).Tracker);
             parser.LoadItems(arzFiles, new WinformsProgressBar(form.LoadingItems).Tracker);
             parser.MapItemNames(new WinformsProgressBar(form.MappingItemNames).Tracker);

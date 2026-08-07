@@ -28,7 +28,15 @@ namespace StatTranslator {
                 }
             }
 
-            _itemCombinator = new ItemNameCombinator(dataset["tagItemNameOrder"]);
+            // Grim Dawn defines the item name ordering per language, eg German genders the prefix to match
+            // the item name ("{%_3a0}..") where English simply concatenates. Missing means the game database
+            // has not been parsed yet, in which case there are no localized item names to order either.
+            if (!_stats.TryGetValue("tagItemNameOrder", out var itemNameOrder) || string.IsNullOrWhiteSpace(itemNameOrder)) {
+                Logger.Warn("The parsed game tags contain no tagItemNameOrder, falling back to the English ordering");
+                itemNameOrder = EnglishLanguage.ItemNameOrderFallback;
+            }
+
+            _itemCombinator = new ItemNameCombinator(itemNameOrder);
         }
 
         public string TranslateName(string prefix, string quality, string style, string name, string suffix) {

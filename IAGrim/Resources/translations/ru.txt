@@ -798,7 +798,6 @@ ResistanceMaxResist=Максимальное
 tagFactionUser10_ia=Барроухолм
 tagFactionUser11_ia=Сопротивление Малмута
 tagFactionUser9_ia=Изгнанница
-tagItemNameOrder={%_s0}{%_s1}{%_s2}{%_s3}{%_s4}
 TagQualityOld=Устаревшее
 Vitality=Жизненная сила
 

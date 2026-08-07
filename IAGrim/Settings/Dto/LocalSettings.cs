@@ -24,6 +24,7 @@ namespace IAGrim.Settings.Dto {
         private bool _lastSelectedTargetModIsHc;
         private string? _localizationFile;
         private string? _languageCode;
+        private string? _parsedLanguageCode;
         private WindowSizeManager.WindowSizeProps? _windowPositionSettings;
         private bool _backupCustom;
         private bool _optOutOfBackups;
@@ -151,6 +152,18 @@ namespace IAGrim.Settings.Dto {
             get => string.IsNullOrEmpty(_languageCode) ? "EN" : _languageCode;
             set {
                 _languageCode = value;
+                OnMutate?.Invoke(null, EventArgs.Empty);
+            }
+        }
+
+        /// <summary>
+        /// The language the game database was last parsed with. Item names are stored translated, so a
+        /// language change only takes effect on the items already in the database once we parse again.
+        /// </summary>
+        public string ParsedLanguageCode {
+            get => _parsedLanguageCode ?? string.Empty;
+            set {
+                _parsedLanguageCode = value;
                 OnMutate?.Invoke(null, EventArgs.Empty);
             }
         }

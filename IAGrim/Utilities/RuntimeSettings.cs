@@ -13,7 +13,7 @@ namespace IAGrim.Utilities {
                 Language = english;
             }
             else {
-                Language = new LocalizationLoader().LoadLanguage(languageCode, english);
+                Language = new LocalizationLoader().LoadLanguage(languageCode, dbTags, english);
             }
         }
 
