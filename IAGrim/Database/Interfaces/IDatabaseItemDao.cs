@@ -11,6 +11,7 @@ namespace IAGrim.Database.Interfaces {
         IList<string> ListAllRecords();
 
         long GetRowCount();
+        long GetRowCountForRecordsLike(string pattern);
         IList<ItemSetAssociation> GetItemSetAssociations();
         IList<string> GetSpecialStackableRecords();
         IList<string> GetStackableComponentsPotionsMisc();

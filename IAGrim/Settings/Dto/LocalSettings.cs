@@ -10,6 +10,8 @@ namespace IAGrim.Settings.Dto {
 
         private List<string>? _grimDawnLocation;
         private string? _currentGrimdawnLocation;
+        private string? _currentGrimdawnMod;
+        private List<string>? _autoParsedExpansions;
         private bool? _preferDelayedSearch;
         private int _backupNumber;
         private long? _lastNagTimestamp;
@@ -157,6 +159,31 @@ namespace IAGrim.Settings.Dto {
             get => _currentGrimdawnLocation ?? string.Empty;
             set {
                 _currentGrimdawnLocation = value;
+                OnMutate?.Invoke(null, EventArgs.Empty);
+            }
+        }
+
+        /// <summary>
+        /// The mod that was selected the last time the database was parsed, so that an automatic
+        /// re-parse doesn't silently downgrade a modded database to vanilla.
+        /// </summary>
+        public string CurrentGrimdawnMod {
+            get => _currentGrimdawnMod ?? string.Empty;
+            set {
+                _currentGrimdawnMod = value;
+                OnMutate?.Invoke(null, EventArgs.Empty);
+            }
+        }
+
+        /// <summary>
+        /// Expansions we have already attempted an automatic database parse for.
+        /// Prevents re-parsing on every startup when the parse doesn't produce the expected data
+        /// (broken install, unsupported game version, ..).
+        /// </summary>
+        public List<string> AutoParsedExpansions {
+            get => _autoParsedExpansions ?? new List<string>();
+            set {
+                _autoParsedExpansions = value;
                 OnMutate?.Invoke(null, EventArgs.Empty);
             }
         }

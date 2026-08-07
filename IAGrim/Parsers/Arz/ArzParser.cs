@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Forms;
 using EvilsoftCommons;
 using EvilsoftCommons.Exceptions;
@@ -10,12 +11,56 @@ using IAGrim.Database;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parser.Arc;
 using IAGrim.Parsers.GameDataParsing.Service;
+using IAGrim.Services;
 using IAGrim.Utilities;
 using log4net;
 
 namespace IAGrim.Parsers.Arz {
     public class ArzParser {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ArzParser));
+
+        // Icon extraction writes into a single shared storage folder, and skips icons already on disk.
+        // Two concurrent extractions would race on the same output files, so they are serialized.
+        private static readonly object IconExtractionLock = new object();
+
+        /// <summary>
+        /// Extracts item icons for the base game, its expansions and (optionally) the selected mod,
+        /// on a background thread. Icons already present on disk are skipped, so this is safe to call
+        /// on every database parse -- it picks up icons for items added by a game update.
+        /// Safe to call concurrently; overlapping requests are serialized.
+        /// </summary>
+        public static void QueueIconExtraction(string? grimDawnLocation, string? modLocation) {
+            if (string.IsNullOrEmpty(grimDawnLocation) && string.IsNullOrEmpty(modLocation)) {
+                Logger.Warn("Icon extraction requested with no Grim Dawn install or mod, skipping.");
+                return;
+            }
+
+            // A dedicated low priority thread rather than the threadpool: this runs for several
+            // seconds and should yield to whatever the user is actually doing.
+            var thread = new Thread(() => {
+                // An escaping exception on a background thread would take down the process.
+                try {
+                    lock (IconExtractionLock) {
+                        if (!string.IsNullOrEmpty(grimDawnLocation)) {
+                            LoadIconsOnly(grimDawnLocation);
+                        }
+
+                        if (!string.IsNullOrEmpty(modLocation)) {
+                            LoadSelectedModIcons(modLocation);
+                        }
+                    }
+                }
+                catch (Exception ex) {
+                    // Icons are cosmetic, items remain accessible without them.
+                    Logger.Warn("Error extracting item icons: " + ex.Message, ex);
+                }
+            });
+
+            thread.IsBackground = true;
+            thread.Priority = ThreadPriority.BelowNormal;
+            thread.Name = "IconExtraction";
+            thread.Start();
+        }
 
         public static void LoadIconsOnly(string grimDawnLocation) {
             ExceptionReporter.EnableLogUnhandledOnThread();
@@ -51,31 +96,29 @@ namespace IAGrim.Parsers.Arz {
         /// </summary>
         /// <param name="modPath"></param>
         public static void LoadSelectedModIcons(string modPath) {
-            var fileNames = Directory.EnumerateFiles(modPath, "*items.arc", SearchOption.AllDirectories).ToList();
+            // Runs on a threadpool thread; an escaping exception would take down the process.
+            try {
+                var fileNames = Directory.EnumerateFiles(modPath, "*items.arc", SearchOption.AllDirectories).ToList();
 
-            foreach (var fileName in fileNames) {
-                var arcFile = GrimFolderUtility.FindArcFile(modPath, fileName);
+                foreach (var fileName in fileNames) {
+                    var arcFile = GrimFolderUtility.FindArcFile(modPath, fileName);
 
-                if (!string.IsNullOrEmpty(arcFile)) {
-                    Logger.Debug($"Loading mods icons from {arcFile} ({modPath})");
-                    LoadIcons(arcFile);
+                    if (!string.IsNullOrEmpty(arcFile)) {
+                        Logger.Debug($"Loading mods icons from {arcFile} ({modPath})");
+                        LoadIcons(arcFile);
+                    }
+                    else {
+                        Logger.Warn($"Could not find the file {arcFile}, skipping.");
+                    }
                 }
-                else {
-                    Logger.Warn($"Could not find the file {arcFile}, skipping.");
-                }
+            }
+            catch (Exception ex) {
+                Logger.Warn($"Error loading mod icons from {modPath}: " + ex.Message, ex);
             }
         }
 
         private static void LoadIcons(string arcItemsFile) {
             Logger.Info($"Loading item icons from {arcItemsFile}.");
-
-            var isArcFileLocked = IOHelper.IsFileLocked(new FileInfo(arcItemsFile));
-
-            if (isArcFileLocked) {
-                Logger.Error($"The file {arcItemsFile} is currently locked for reading. Perhaps Grim Dawn is running?");
-                throw new IOException($"Unable to read {arcItemsFile}, file is locked.");
-            }
-
 
             if (!File.Exists(arcItemsFile)) {
                 Logger.Warn($"Item icon file \"{arcItemsFile}\" could not be located.");
@@ -90,6 +133,26 @@ namespace IAGrim.Parsers.Arz {
                 MessageBox.Show(
                     "Unable to parse icons, ARZ file is corrupted.\nIf you are using steam, please verify the install integrity.",
                     "Corrupted GD installation", MessageBoxButtons.OK);
+            }
+            catch (IOException ex) {
+                LogFileInUse(arcItemsFile, ex);
+            }
+        }
+
+        /// <summary>
+        /// Logs an I/O failure along with whichever process is holding the file, to make
+        /// sharing violations distinguishable from byte-range locks in user-submitted logs.
+        /// </summary>
+        internal static void LogFileInUse(string file, IOException ex) {
+            Logger.Error($"Unable to read {file} (HResult 0x{ex.HResult:X8}): {ex.Message}", ex);
+
+            try {
+                foreach (var process in DebugLockedFileUtil.WhoIsLocking(file)) {
+                    Logger.Error($"The process \"{process.ProcessName}\" (pid {process.Id}) is holding {file}");
+                }
+            }
+            catch (Exception lockEx) {
+                Logger.Warn("Could not determine which process is holding the file: " + lockEx.Message);
             }
         }
 

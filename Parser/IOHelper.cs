@@ -9,6 +9,19 @@ namespace EvilsoftCommons {
 
     internal class IOHelper {
         private static ILog logger = LogManager.GetLogger(typeof(IOHelper));
+
+        /// <summary>
+        /// Opens a file for reading in a way thats compatible with Grim Dawn having it open.
+        ///
+        /// Grim Dawn keeps its .arc resources open for the entire session with FILE_SHARE_READ.
+        /// Requesting write access, or requesting an exclusive share mode, yields ERROR_SHARING_VIOLATION
+        /// even though the file is perfectly readable. Read + ReadWrite|Delete coexists with the game,
+        /// and additionally tolerates Steam replacing the file mid-parse.
+        /// </summary>
+        public static FileStream OpenSharedRead(string path) {
+            return new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+        }
+
         public static int ReadInteger(FileStream fs, bool endian = false) {
             byte[] array = new byte[4];
             if (fs.Read(array, 0, 4) != 4) {

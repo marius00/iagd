@@ -205,7 +205,7 @@ namespace IAGrim.Parser.Arz {
         public static List<IItemTag> ParseArcFile(string file) {
             // Load the ARC data (item names etc)
             if (!string.IsNullOrEmpty(file)) {
-                var decompresser = new Decompress(file, true);
+                using var decompresser = new Decompress(file, true);
                 decompresser.decompress();
 
                 var tags = new List<IItemTag>();
@@ -233,7 +233,7 @@ namespace IAGrim.Parser.Arz {
         public static List<IItem> LoadItemRecords(string arzFile, bool skipLots) {
             var header = new GRIMDAWN_ARZ_V3_HEADER();
 
-            using (var fs = new FileStream(arzFile, FileMode.Open)) {
+            using (var fs = IOHelper.OpenSharedRead(arzFile)) {
                 header.Unknown = IOHelper.ReadUShort(fs);
                 header.Version = IOHelper.ReadUShort(fs);
                 header.RecordTableStart = IOHelper.ReadUInteger(fs);

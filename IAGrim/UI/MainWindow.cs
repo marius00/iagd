@@ -48,6 +48,7 @@ namespace IAGrim.UI {
         private readonly List<IMessageProcessor> _messageProcessors = new List<IMessageProcessor>();
 
         private SplitSearchWindow? _searchWindow;
+        private DarkMode? _darkMode;
 
         private CsvFileMonitor? _csvFileMonitor = new CsvFileMonitor();
         private CsvFileMonitor? _replicaCsvFileMonitor = new CsvFileMonitor();
@@ -513,6 +514,14 @@ namespace IAGrim.UI {
 
         private void DatabaseLoadedTrigger() {
             _searchWindow?.UpdateInterface();
+
+            // UpdateInterface() rebuilds the search filter panel from scratch, so the new controls
+            // come up with their (light) designer colors. Re-theme them, or the left hand filter
+            // menu loses dark mode after parsing Grim Dawn. No-op when dark mode is off.
+            if (_searchWindow != null) {
+                _darkMode?.Reapply(_searchWindow);
+            }
+
             _searchWindow?.UpdateListViewDelayed();
             _itemReplicaService?.Reset();
         }
@@ -626,6 +635,7 @@ namespace IAGrim.UI {
 
 
             var dm = new DarkMode(this);
+            _darkMode = dm;
             UIHelper.AddAndShow(
                 new SettingsWindow(
                     _cefBrowserHandler,

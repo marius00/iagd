@@ -101,6 +101,24 @@ namespace IAGrim.UI {
             Application.SetColorMode(_isLightMode ? SystemColorMode.System : SystemColorMode.Dark);
         }
 
+        /// <summary>
+        /// Applies the currently active color scheme to a control subtree.
+        ///
+        /// Activate() only walks the control tree as it exists at the time it is called, so controls
+        /// created later keep their (light) designer defaults. The search filter panel is rebuilt from
+        /// scratch every time the Grim Dawn database is parsed, and needs to be re-themed afterwards.
+        ///
+        /// No-op in light mode, where the designer defaults are already correct.
+        /// </summary>
+        public void Reapply(Control root) {
+            if (_isLightMode) {
+                return;
+            }
+
+            HandleControl(root, _darkColors);
+            It(root.Controls, _darkColors);
+        }
+
         private void HandleControl(Control control, Dictionary<Type, ColorSet> colorSet) {
             FirefoxButton? button = control as FirefoxButton;
             PanelBox? pb = control as PanelBox;

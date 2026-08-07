@@ -12,26 +12,16 @@ namespace EvilsoftCommons {
         private static ILog logger = LogManager.GetLogger(typeof(IOHelper));
 
 
-        public static bool IsFileLocked(FileInfo file) {
-            FileStream? stream = null;
-
-            try {
-                stream = file.Open(FileMode.Open, FileAccess.Read, FileShare.None);
-            }
-            catch (IOException) {
-                //the file is unavailable because it is:
-                //still being written to
-                //or being processed by another thread
-                //or does not exist (has already been processed)
-                return true;
-            }
-            finally {
-                if (stream != null)
-                    stream.Close();
-            }
-
-            //file is not locked
-            return false;
+        /// <summary>
+        /// Opens a file for reading in a way that coexists with Grim Dawn having it open.
+        ///
+        /// Grim Dawn keeps its .arc resources open for the entire session with FILE_SHARE_READ.
+        /// Requesting write access, or requesting an exclusive share mode, yields ERROR_SHARING_VIOLATION
+        /// even though the file is perfectly readable. Read + ReadWrite|Delete coexists with the game,
+        /// and additionally tolerates Steam replacing the file mid-parse.
+        /// </summary>
+        public static FileStream OpenSharedRead(string path) {
+            return new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
         }
 
 

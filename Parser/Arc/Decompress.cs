@@ -52,7 +52,10 @@ namespace IAGrim.Parser.Arc {
 
 
         private void decompressARC() {
-            fs = new FileStream(arcFileName, FileMode.Open, FileAccess.Read);
+            if (string.IsNullOrEmpty(arcFileName))
+                return;
+
+            fs = IOHelper.OpenSharedRead(arcFileName);
             header = getHeader(fs);
             parts = getFileParts(fs);
             strings = getStrings(fs);
@@ -447,6 +450,8 @@ namespace IAGrim.Parser.Arc {
 
         public void Dispose() {
             fs?.Dispose();
+            fs = null;
+            GC.SuppressFinalize(this);
         }
     }
 }

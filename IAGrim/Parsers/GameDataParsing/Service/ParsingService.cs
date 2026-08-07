@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Windows.Forms;
 using EvilsoftCommons;
 using EvilsoftCommons.Exceptions;
 using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.GameDataParsing.Model;
 using IAGrim.Parsers.GameDataParsing.UI;
+using IAGrim.Utilities;
 using log4net;
 
 namespace IAGrim.Parsers.GameDataParsing.Service {
@@ -140,38 +142,69 @@ namespace IAGrim.Parsers.GameDataParsing.Service {
             // Invoke the background thread & show progress UI
             Thread t = new Thread(() => {
                 ExceptionReporter.EnableLogUnhandledOnThread();
-                parser.LoadTags(tagfiles, _languageCode, new WinformsProgressBar(form.LoadingTags).Tracker);
-                _itemTagDao.Save(parser.Tags, new WinformsProgressBar(form.SavingTags).Tracker);
-                parser.LoadItems(arzFiles, new WinformsProgressBar(form.LoadingItems).Tracker);
-                parser.MapItemNames(new WinformsProgressBar(form.MappingItemNames).Tracker);
-                parser.RenamePetStats(new WinformsProgressBar(form.MappingPetStats).Tracker);
-                _databaseItemDao.Save(parser.Items ?? [], new WinformsProgressBar(form.SavingItems).Tracker);
-                _databaseItemDao.CreateItemIndexes(new WinformsProgressBar(form.IndexingItems).Tracker);
 
-                // TODO: This depends on the DB item name.. which is in english, not localized
-                {
-                    var records = parser.GenerateSpecialRecords(new WinformsProgressBar(form.GeneratingSpecialStats).Tracker);
-                    _databaseItemStatDao.Save(records, new WinformsProgressBar(form.SavingSpecialStats).Tracker);
-                };
-
-
-                parser.ParseComplexItems(_itemSkillDao, new WinformsProgressBar(form.GeneratingSkills).Tracker);
-                {
-                    var tracker = new WinformsProgressBar(form.SkillCorrectnessCheck).Tracker;
-                    tracker.MaxValue = 1;
-                    _itemSkillDao.EnsureCorrectSkillRecords();
-                    tracker.MaxProgress();
-                };
-
-
-                Action close = () => form.OverrideClose();
-                form.Invoke(close);
+                try {
+                    ExecuteParse(parser, form, tagfiles, arzFiles);
+                }
+                catch (IOException ex) {
+                    // Grim Dawn itself does not block us from reading its files, but Steam mid-update (or antivirus) can
+                    Logger.Warn($"Unable to read the Grim Dawn game files (HResult 0x{ex.HResult:X8}): {ex.Message}", ex);
+                    ShowGameFilesInUseMessage();
+                }
+                finally {
+                    try {
+                        form.Invoke(() => form.OverrideClose());
+                    }
+                    catch (Exception ex) {
+                        Logger.Warn("Error closing the parsing progress window: " + ex.Message, ex);
+                    }
+                }
             });
 
             t.Start();
             form.ShowDialog();
 
             OnParseComplete?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void ShowGameFilesInUseMessage() {
+            var message = RuntimeSettings.Language?.GetTag("iatag_ui_gamefiles_in_use");
+            if (string.IsNullOrEmpty(message)) {
+                message = "Unable to read the Grim Dawn game files, they are in use by another program.\n"
+                          + "If Steam is currently updating or verifying Grim Dawn, please wait for it to finish and try again.";
+            }
+
+            MessageBox.Show(message, "Grim Dawn files in use", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+
+        private void ExecuteParse(
+            ArzParsingWrapper parser,
+            ParsingDatabaseProgressView form,
+            List<string> tagfiles,
+            List<string> arzFiles
+        ) {
+            parser.LoadTags(tagfiles, _languageCode, new WinformsProgressBar(form.LoadingTags).Tracker);
+            _itemTagDao.Save(parser.Tags, new WinformsProgressBar(form.SavingTags).Tracker);
+            parser.LoadItems(arzFiles, new WinformsProgressBar(form.LoadingItems).Tracker);
+            parser.MapItemNames(new WinformsProgressBar(form.MappingItemNames).Tracker);
+            parser.RenamePetStats(new WinformsProgressBar(form.MappingPetStats).Tracker);
+            _databaseItemDao.Save(parser.Items ?? [], new WinformsProgressBar(form.SavingItems).Tracker);
+            _databaseItemDao.CreateItemIndexes(new WinformsProgressBar(form.IndexingItems).Tracker);
+
+            // TODO: This depends on the DB item name.. which is in english, not localized
+            {
+                var records = parser.GenerateSpecialRecords(new WinformsProgressBar(form.GeneratingSpecialStats).Tracker);
+                _databaseItemStatDao.Save(records, new WinformsProgressBar(form.SavingSpecialStats).Tracker);
+            };
+
+
+            parser.ParseComplexItems(_itemSkillDao, new WinformsProgressBar(form.GeneratingSkills).Tracker);
+            {
+                var tracker = new WinformsProgressBar(form.SkillCorrectnessCheck).Tracker;
+                tracker.MaxValue = 1;
+                _itemSkillDao.EnsureCorrectSkillRecords();
+                tracker.MaxProgress();
+            };
         }
     }
 }

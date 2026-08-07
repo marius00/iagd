@@ -57,7 +57,7 @@ namespace IAGrim.Parser.Arc {
                     logger.Warn($"The specified output folder {destinationFolder} does not exist, icon extraction aborted.");
                 }
                 else {
-                    var dc = new Decompress(itemsArcFullPath, true);
+                    using var dc = new Decompress(itemsArcFullPath, true);
                     dc.decompress();
 
                     foreach (var icon in dc.strings) {
@@ -120,7 +120,11 @@ namespace IAGrim.Parser.Arc {
                                     continue;
                                 }
 
-                                var img = ExtractImage(b);
+                                // Bitmaps hold unmanaged GDI+ memory. Leaving thousands of them to
+                                // the finalizer grows the unmanaged heap far faster than the GC
+                                // notices (the managed wrapper is tiny), which is what caused
+                                // out of memory during icon extraction on lower end machines.
+                                using var img = ExtractImage(b);
                                 img?.Save(imagePath, ImageFormat.Png);
                             }
                             catch (Exception ex) {

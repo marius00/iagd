@@ -110,9 +110,12 @@ namespace IAGrim.UI {
         /// Queues a database update, followed by an item stat update.
         /// </summary>
         public void ForceDatabaseUpdate(string? location, string? modLocation) {
+            var parsed = false;
+
             if (!string.IsNullOrEmpty(location) && Directory.Exists(location)) {
                 _parsingService.Update(location, modLocation ?? string.Empty);
                 _parsingService.Execute();
+                parsed = true;
             }
             else {
                 Logger.Warn("Could not find the Grim Dawn install location");
@@ -123,6 +126,15 @@ namespace IAGrim.UI {
 
             updatingPlayerItemsScreen.ShowDialog();
             _itemViewUpdateTrigger?.Invoke();
+
+            // Icons go last. Extraction is memory hungry, so running it alongside the database
+            // parse spikes peak memory (out of memory on lower end machines) and slows the parse
+            // down. Everything above is modal/blocking, so the parse is complete by this point.
+            // A game update can add items whose icons we have never extracted, and the startup
+            // icon check is a file-count heuristic that will not notice those.
+            if (parsed) {
+                ArzParser.QueueIconExtraction(location, modLocation);
+            }
         }
 
         private static ListViewEntry? GetFirst(ListView lv) {
@@ -134,11 +146,8 @@ namespace IAGrim.UI {
         }
 
         private void buttonForceUpdate_Click(object sender, EventArgs e) {
-            if (EvilsoftCommons.DllInjector.DllInjector.FindProcessForWindow("Grim Dawn").Count > 0) {
-                MessageBox.Show(RuntimeSettings.Language!.GetTag("iatag_ui_gdisrunning"));
-                return;
-            }
-
+            // Grim Dawn holds its .arc resources open for the whole session, but only with
+            // FILE_SHARE_READ -- they remain readable, so there is no need to block parsing here.
             _databaseItemDao.Clean();
 
             var isGdParsed2 = _databaseItemDao.GetRowCount() > 0;
@@ -146,18 +155,17 @@ namespace IAGrim.UI {
             var mod = GetFirst(listViewMods);
             var entry = GetFirst(listViewInstalls);
 
-            if (mod?.Path != null) {
-                // Load selected mod icons
-                ThreadPool.QueueUserWorkItem((m) => ArzParser.LoadSelectedModIcons(mod.Path));
-            }
-
             if (entry == null) {
                 Logger.Warn("ForceDatabaseUpdate requested with no install selected, aborting.");
                 return;
             }
 
+            // Icons (base game, expansions and the selected mod) are queued by ForceDatabaseUpdate.
             ForceDatabaseUpdate(entry.Path, mod?.Path);
             _settingsService.GetLocal().CurrentGrimdawnLocation = entry.Path ?? string.Empty;
+
+            // Remembered so an automatic re-parse doesn't silently downgrade a modded database to vanilla.
+            _settingsService.GetLocal().CurrentGrimdawnMod = mod?.Path ?? string.Empty;
 
             // Store the loaded GD path, so we can poll it for updates later.
             //_settingsService.GetLocal().GrimDawnLocation = new List<string> { entry.Path }; // TODO: Wtf is this? Why overwrite any existing?
