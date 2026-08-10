@@ -15,11 +15,6 @@ namespace IAGrim.Database.Migrations {
         private const string CorrectCreateTable =
             "CREATE TABLE DatabaseItem_v2 (id_databaseitem INTEGER not null, baserecord TEXT unique, name TEXT, hash INTEGER, namelowercase TEXT, primary key (id_databaseitem))";
 
-        private static readonly List<string> Indices = new List<string> {
-            "CREATE INDEX idx_databaseitemv2_record on DatabaseItem_v2 (baserecord)",
-            "CREATE INDEX idx_databaseitemv2_baserecord on DatabaseItem_v2 (baserecord)",
-        };
-
         private static readonly HashSet<string> NewTableColumns = new HashSet<string>(System.StringComparer.OrdinalIgnoreCase) {
             "id_databaseitem", "baserecord", "name", "hash", "namelowercase"
         };
@@ -83,15 +78,7 @@ namespace IAGrim.Database.Migrations {
         }
 
         private void RecreateIndices(SessionFactory sessionCreator) {
-            foreach (var index in Indices) {
-                var indexName = index.Split(" ")[2];
-                if (IndexExists(sessionCreator, indexName)) continue;
-
-                using ISession session = sessionCreator.OpenSession();
-                using ITransaction tx = session.BeginTransaction();
-                session.CreateSQLQuery(index).ExecuteUpdate();
-                tx.Commit();
-            }
+            AddIndices.CreateMissing(sessionCreator, AddIndices.For("DatabaseItem_v2"));
         }
 
         private static bool NeedsRebuild(SessionFactory sessionCreator) {

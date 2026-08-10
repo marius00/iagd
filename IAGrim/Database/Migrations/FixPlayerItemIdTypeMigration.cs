@@ -42,18 +42,10 @@ namespace IAGrim.Database.Migrations {
                 "AscendantAffixNameRecord" TEXT,
                 "AscendantAffix2hNameRecord" TEXT,
                 "RerollsUsed" INTEGER,
+                "AffixRerollsUsed" INTEGER,
                 PRIMARY KEY("Id")
             )
             """;
-
-        private static readonly List<string> PlayerItemIndices = new List<string> {
-            "CREATE INDEX idx_playeritem_baserecord on PlayerItem (baserecord)",
-            "CREATE INDEX idx_playeritem_levelreq on PlayerItem (LevelRequirement)",
-            "CREATE INDEX idx_playeritem_lowercasename on PlayerItem (namelowercase)",
-            "CREATE INDEX idx_playeritem_prefix on PlayerItem (PrefixRecord)",
-            "CREATE INDEX idx_playeritem_rarity on PlayerItem (Rarity)",
-            "CREATE INDEX idx_playeritem_suffix on PlayerItem (SuffixRecord)",
-        };
 
         // All columns in the new table (lowercase for comparison)
         private static readonly HashSet<string> NewTableColumns = new HashSet<string>(System.StringComparer.OrdinalIgnoreCase) {
@@ -63,7 +55,8 @@ namespace IAGrim.Database.Migrations {
             "EnchantmentSeed", "MateriaCombines", "StackCount", "Name",
             "namelowercase", "Rarity", "LevelRequirement", "Mod", "IsHardcore",
             "cloudid", "cloud_hassync", "created_at",
-            "AscendantAffixNameRecord", "AscendantAffix2hNameRecord", "RerollsUsed"
+            "AscendantAffixNameRecord", "AscendantAffix2hNameRecord", "RerollsUsed",
+            "AffixRerollsUsed"
         };
 
         public override void Migrate(SessionFactory sessionCreator) {
@@ -77,6 +70,13 @@ namespace IAGrim.Database.Migrations {
             var existingColumns = GetColumnNames(sessionCreator, "PlayerItem");
             var columnsToCopy = existingColumns.Where(c => NewTableColumns.Contains(c)).ToList();
             var columnList = string.Join(", ", columnsToCopy.Select(c => $"\"{c}\""));
+
+            // The rebuild only keeps the columns listed above. If a mapped column has been added since
+            // this list was last updated, it would be silently dropped along with its data.
+            var droppedColumns = existingColumns.Where(c => !NewTableColumns.Contains(c)).ToList();
+            if (droppedColumns.Count > 0) {
+                Logger.Warn($"PlayerItem rebuild will drop unknown columns: {string.Join(", ", droppedColumns)}");
+            }
 
             using ISession session = sessionCreator.OpenSession();
             using ITransaction transaction = session.BeginTransaction();
@@ -104,16 +104,8 @@ namespace IAGrim.Database.Migrations {
 
             transaction.Commit();
 
-            // Recreate indexes (outside the main transaction)
-            foreach (var index in PlayerItemIndices) {
-                var indexName = index.Split(" ")[2];
-                if (IndexExists(sessionCreator, indexName)) continue;
-
-                using ISession idxSession = sessionCreator.OpenSession();
-                using ITransaction idxTx = idxSession.BeginTransaction();
-                idxSession.CreateSQLQuery(index).ExecuteUpdate();
-                idxTx.Commit();
-            }
+            // Recreate the indexes dropped along with the old table (outside the main transaction)
+            AddIndices.CreateMissing(sessionCreator, AddIndices.For("PlayerItem"));
 
             Logger.Info($"PlayerItem table rebuilt successfully with {newCount} rows");
         }
