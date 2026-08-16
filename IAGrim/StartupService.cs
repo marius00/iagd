@@ -139,6 +139,27 @@ namespace IAGrim {
             return SettingsService.Load(GlobalPaths.SettingsFile);
         }
 
+        /// <summary>
+        /// Startup argument for resetting the settings that can leave IA impossible to find:
+        /// a window position on a monitor that no longer exists, or a window hidden in the system tray.
+        /// </summary>
+        public const string SafeModeArgument = "--safe-mode";
+
+        public static bool IsSafeMode(string[]? args) {
+            return args?.Any(arg => SafeModeArgument.Equals(arg?.Trim(), StringComparison.OrdinalIgnoreCase)) ?? false;
+        }
+
+        /// <summary>
+        /// Restores the window related settings to their defaults
+        /// </summary>
+        public static void ResetWindowSettings(SettingsService settings) {
+            Logger.Info("Safe mode: resetting window position, start minimized and minimize to tray.");
+
+            settings.GetLocal().WindowPositionSettings = null;
+            settings.GetLocal().StartMinimized = false;
+            settings.GetPersistent().MinimizeToTray = false;
+        }
+
         public static void PerformGrimUpdateCheck(SettingsService settingsService) {
             string? location = settingsService.GetLocal().GrimDawnLocation?.FirstOrDefault();
             long lastParsed = settingsService.GetLocal().GrimDawnLocationLastModified;

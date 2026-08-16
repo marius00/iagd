@@ -20,6 +20,8 @@ Name: starticon; Description: "Create a &startmenu icon"; GroupDescription: "Ico
 [Icons]
 Name: "{commonprograms}\IAGD"; Filename: "{app}\\IAGrim.exe"; Tasks: starticon
 Name: "{commondesktop}\IAGD"; Filename: "{app}\\IAGrim.exe"; Tasks: desktopicon
+; Resets the window position / minimize to tray settings, for when IA starts off-screen or hidden in the tray.
+Name: "{commonprograms}\IAGD (safemode)"; Filename: "{app}\IAGrim.exe"; Parameters: "--safe-mode"; Comment: "Start IAGD with the window position and tray settings reset"; Tasks: starticon
 
 
 [Files]
