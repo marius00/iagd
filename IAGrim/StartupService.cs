@@ -160,6 +160,27 @@ namespace IAGrim {
             settings.GetPersistent().MinimizeToTray = false;
         }
 
+        /// <summary>
+        /// Deletes the settings file and restarts IA, leaving the item database untouched.
+        /// The process is killed rather than shut down cleanly: the in-memory settings are written back
+        /// on exit (window position), which would recreate the file we just deleted.
+        /// </summary>
+        public static void ResetSettingsAndRestart() {
+            try {
+                Logger.Info($"Deleting {GlobalPaths.SettingsFile} on user request");
+                File.Delete(GlobalPaths.SettingsFile);
+            }
+            catch (Exception ex) {
+                Logger.Error($"Could not delete {GlobalPaths.SettingsFile}", ex);
+                MessageBox.Show($"Could not delete the settings file:\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            Process.Start(new ProcessStartInfo { FileName = Application.ExecutablePath, UseShellExecute = true });
+            LogManager.Shutdown();
+            Environment.Exit(0);
+        }
+
         public static void PerformGrimUpdateCheck(SettingsService settingsService) {
             string? location = settingsService.GetLocal().GrimDawnLocation?.FirstOrDefault();
             long lastParsed = settingsService.GetLocal().GrimDawnLocationLastModified;

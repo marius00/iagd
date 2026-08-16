@@ -53,6 +53,7 @@
             buttonPaypal = new Button();
             panelBox1 = new PanelBox();
             buttonAdvancedSettings = new FirefoxButton();
+            buttonResetSettings = new FirefoxButton();
             buttonImportExport = new FirefoxButton();
             buttonLanguageSelect = new FirefoxButton();
             buttonViewBackups = new FirefoxButton();
@@ -477,6 +478,7 @@
             // panelBox1
             // 
             panelBox1.BackColor = Color.FromArgb(240, 240, 240);
+            panelBox1.Controls.Add(buttonResetSettings);
             panelBox1.Controls.Add(buttonAdvancedSettings);
             panelBox1.Controls.Add(buttonImportExport);
             panelBox1.Controls.Add(buttonLanguageSelect);
@@ -515,9 +517,29 @@
             buttonAdvancedSettings.Tag = "iatag_ui_advancedsettings";
             buttonAdvancedSettings.Text = "Reconfigure tabs";
             buttonAdvancedSettings.Click += buttonAdvancedSettings_Click;
-            // 
+            //
+            // buttonResetSettings
+            //
+            buttonResetSettings.BackColor = Color.FromArgb(240, 240, 240);
+            buttonResetSettings.BackColorDefault = Color.FromArgb(212, 212, 212);
+            buttonResetSettings.BackColorOverride = Color.FromArgb(245, 245, 245);
+            buttonResetSettings.BorderColor = Color.FromArgb(193, 193, 193);
+            buttonResetSettings.EnabledCalc = true;
+            buttonResetSettings.Font = new Font("Segoe UI", 10F);
+            buttonResetSettings.ForeColor = Color.FromArgb(56, 68, 80);
+            buttonResetSettings.HoverColor = Color.FromArgb(232, 232, 232);
+            buttonResetSettings.HoverForeColor = Color.FromArgb(193, 193, 193);
+            buttonResetSettings.Location = new Point(22, 278);
+            buttonResetSettings.Margin = new Padding(4, 3, 4, 3);
+            buttonResetSettings.Name = "buttonResetSettings";
+            buttonResetSettings.Size = new Size(224, 37);
+            buttonResetSettings.TabIndex = 9;
+            buttonResetSettings.Tag = "iatag_ui_resetsettings";
+            buttonResetSettings.Text = "Reset settings";
+            buttonResetSettings.Click += buttonResetSettings_Click;
+            //
             // buttonImportExport
-            // 
+            //
             buttonImportExport.BackColor = Color.FromArgb(240, 240, 240);
             buttonImportExport.BackColorDefault = Color.FromArgb(212, 212, 212);
             buttonImportExport.BackColorOverride = Color.FromArgb(245, 245, 245);
@@ -644,6 +666,7 @@
         private FirefoxButton buttonImportExport;
         private FirefoxCheckBox cbHideSkills;
         private FirefoxButton buttonAdvancedSettings;
+        private FirefoxButton buttonResetSettings;
         private System.Windows.Forms.LinkLabel linkSourceCode;
         private FirefoxCheckBox cbDualComputer;
         private System.Windows.Forms.LinkLabel helpWhatIsUsingMultiplePc;

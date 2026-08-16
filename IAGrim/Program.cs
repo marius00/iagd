@@ -109,12 +109,9 @@ namespace IAGrim
                             "Item Assistant is already running", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
 
-                    if (args != null && args.Length > 0) {
-                        singleInstance.PassArgumentsToFirstInstance(args);
-                    }
-                    else {
-                        singleInstance.PassArgumentsToFirstInstance(new string[] { "--ignore" });
-                    }
+                    // Ask the running instance to show itself, otherwise starting IA a second time looks like
+                    // nothing happened at all: the window may well be hidden away in the system tray.
+                    ShowExistingInstanceMessage.Notify();
 
                     Logger.Info("Already has an instance of IA Running, exiting..");
                 }

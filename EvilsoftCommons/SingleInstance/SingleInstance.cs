@@ -41,23 +41,35 @@ namespace EvilsoftCommons.SingleInstance {
                 throw new InvalidOperationException("This is the first instance.");
 
             try {
-                using (NamedPipeClientStream client = new NamedPipeClientStream(identifier.ToString()))
-                using (StreamWriter writer = new StreamWriter(client)) {
+                using (NamedPipeClientStream client = new NamedPipeClientStream(identifier.ToString())) {
                     client.Connect(200);
 
-                    foreach (String argument in arguments)
-                        writer.WriteLine(argument);
+                    // The writer is created only once the pipe is connected: disposing a StreamWriter wrapped
+                    // around an unconnected pipe flushes it, and PipeStream then throws InvalidOperationException
+                    // from inside the unwind. That replaces the TimeoutException on its way to the catch below,
+                    // leaves the process with an unhandled exception, and kills the second instance mid-startup.
+                    using (StreamWriter writer = new StreamWriter(client)) {
+                        foreach (String argument in arguments)
+                            writer.WriteLine(argument);
+                    }
                 }
                 return true;
             }
             catch (TimeoutException) { } //Couldn't connect to server
             catch (IOException) { } //Pipe was broken
+            catch (Exception ex) {
+                // Nothing is supposed to stop a second instance from exiting quietly.
+                logger.Warn("Unexpected error passing the arguments to the running instance", ex);
+            }
 
             return false;
         }
 
         /// <summary>
         /// Listens for arguments being passed from successive instances of the application.
+        ///
+        /// Does nothing: no pipe server is created, so <see cref="PassArgumentsToFirstInstance"/> always
+        /// times out and the arguments of a second instance are discarded.
         /// </summary>
         public void ListenForArgumentsFromSuccessiveInstances() {
             if (!IsFirstInstance)

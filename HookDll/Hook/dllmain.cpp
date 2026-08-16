@@ -499,7 +499,7 @@ int ProcessAttach(HINSTANCE _hModule) {
 
 	g_hEvent = CreateEvent(NULL, FALSE, FALSE, L"IA_Worker");
 
-	LogToFile(LogLevel::INFO, L"DLL for GD 1.2");
+	LogToFile(LogLevel::INFO, L"DLL for GD 1.3");
 
 
 

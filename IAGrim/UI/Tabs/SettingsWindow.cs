@@ -135,6 +135,18 @@ namespace IAGrim.UI.Tabs {
             new StashTabPicker(_settings, _cefBrowserHandler).ShowDialog();
         }
 
+        private void buttonResetSettings_Click(object sender, EventArgs e) {
+            var body = RuntimeSettings.Language!.GetTag("iatag_ui_resetsettings_body");
+            var title = RuntimeSettings.Language!.GetTag("iatag_ui_resetsettings_title");
+
+            var result = MessageBox.Show(body, title, MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
+                MessageBoxDefaultButton.Button2);
+
+            if (result == DialogResult.Yes) {
+                StartupService.ResetSettingsAndRestart();
+            }
+        }
+
         private void linkSourceCode_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             Process.Start(
                 new ProcessStartInfo { FileName = "https://github.com/marius00/iagd", UseShellExecute = true });
