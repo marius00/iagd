@@ -41,6 +41,7 @@ namespace IAGrim.UI.Tabs {
         private readonly int FilterPanelMinSize;
         private Microsoft.Web.WebView2.WinForms.WebView2 webView21;
         private bool _hasCheckedModFilterNotEmpty = false;
+        private bool _isAdjustingSplitter;
 
         /// <summary>
         /// ModSelectionHandler
@@ -78,6 +79,7 @@ namespace IAGrim.UI.Tabs {
             _mainSplitter.SplitterWidth = 5;
             _mainSplitter.BorderStyle = BorderStyle.None;
             _mainSplitter.SplitterMoved += MainSplitterOnSplitterMoved;
+            _mainSplitter.Resize += MainSplitterOnResize;
 
             ModSelectionHandler = new ModSelectionHandler(_modFilter!, playerItemDao, UpdateListViewDelayed, setStatus, _settings);
 
@@ -268,9 +270,34 @@ namespace IAGrim.UI.Tabs {
             _filterWindow.Show();
         }
 
-        private void MainSplitterOnSplitterMoved(object? sender, SplitterEventArgs e) {
-            if (_mainSplitter.SplitterDistance < FilterPanelMinSize) {
-                _mainSplitter.SplitterDistance = FilterPanelMinSize;
+        /// <summary>
+        /// Keeps the filter panel from being dragged below its minimum width.
+        /// Never set SplitterDistance to a value the SplitContainer cannot honour: the setter silently clamps
+        /// to (Width - Panel2MinSize - SplitterWidth) and then raises SplitterMoved again, so an unreachable
+        /// value makes this handler re-enter itself endlessly and hangs the UI thread (blank window /
+        /// "not responding") whenever the control is laid out narrower than FilterPanelMinSize.
+        /// </summary>
+        private void MainSplitterOnSplitterMoved(object? sender, SplitterEventArgs e) => EnforceFilterPanelMinSize();
+
+        private void MainSplitterOnResize(object? sender, EventArgs e) => EnforceFilterPanelMinSize();
+
+        private void EnforceFilterPanelMinSize() {
+            if (_isAdjustingSplitter || _mainSplitter.SplitterDistance >= FilterPanelMinSize) {
+                return;
+            }
+
+            var maxDistance = _mainSplitter.Width - _mainSplitter.Panel2MinSize - _mainSplitter.SplitterWidth;
+            var desired = Math.Min(FilterPanelMinSize, maxDistance);
+            if (desired < _mainSplitter.Panel1MinSize || desired == _mainSplitter.SplitterDistance) {
+                return;
+            }
+
+            _isAdjustingSplitter = true;
+            try {
+                _mainSplitter.SplitterDistance = desired;
+            }
+            finally {
+                _isAdjustingSplitter = false;
             }
         }
 

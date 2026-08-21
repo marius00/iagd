@@ -712,6 +712,18 @@ namespace IAGrim.UI {
 #endif
 
             Shown += (_, __) => { StartInjector(); };
+
+            // The tab panels are sized to their parent when their content is added, which happens here in
+            // Load - before the window is shown and before WindowSizeManager restores the saved geometry.
+            // On some machines the tab pages are not laid out at that point, which leaves the panels (and
+            // everything docked inside them) stuck at a fraction of the window size. Re-fit them once the
+            // real size is known; it is a no-op when they were already correct.
+            Shown += (_, __) => {
+                UIHelper.FitToParent(searchPanel);
+                UIHelper.FitToParent(onlinePanel);
+                UIHelper.FitToParent(modsPanel);
+                UIHelper.FitToParent(settingsPanel);
+            };
             _buddyItemsService = new BuddyItemsService(
                 buddyItemDao,
                 3 * 60 * 1000,

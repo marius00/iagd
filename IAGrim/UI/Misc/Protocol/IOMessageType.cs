@@ -18,3 +18,4 @@ namespace IAGrim.UI.Misc.Protocol {
         UpdateItemStats,
     }
 }
+

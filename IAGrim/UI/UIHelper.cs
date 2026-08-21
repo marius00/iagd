@@ -9,13 +9,43 @@ namespace IAGrim.UI
 {
     class UIHelper {
 
+        private static readonly HashSet<Panel> TrackedPanels = new HashSet<Panel>();
+
         public static Action<Form, Panel> AddAndShow = (f, p) => {
             f.TopLevel = false;
             p.Controls.Add(f);
-            p.Width = p.Parent!.Width;
-            p.Height = p.Parent.Height;
+            KeepFittedToParent(p);
             f.Show();
         };
+
+        /// <summary>
+        /// Stretches a tab panel over its parent, and keeps it stretched for the lifetime of the panel.
+        /// The panel is anchored rather than docked, so it only tracks *changes* to its parent size, applied
+        /// as deltas. Those deltas are lost if the panel is sized while the parent has not been laid out yet
+        /// (during Load, before the window is shown, before the saved geometry is restored), which leaves the
+        /// panel - and everything docked inside it - permanently clipped to a fraction of the window.
+        /// Re-fitting on every parent resize is idempotent and immune to the ordering.
+        /// </summary>
+        public static void KeepFittedToParent(Panel p) {
+            if (p.Parent == null) {
+                return;
+            }
+
+            if (TrackedPanels.Add(p)) {
+                p.Parent.SizeChanged += (_, _) => FitToParent(p);
+            }
+
+            FitToParent(p);
+        }
+
+        public static void FitToParent(Panel p) {
+            if (p.Parent == null) {
+                return;
+            }
+
+            p.Width = p.Parent.Width;
+            p.Height = p.Parent.Height;
+        }
 
         public static ComboBoxItemQuality[] QualityFilter {
             get {
