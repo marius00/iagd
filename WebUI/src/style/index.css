@@ -1,8 +1,5 @@
 
 body {
-	--background-color: rgb(0, 0, 0);
-
-
 	margin: 0;
 	padding: 0;
 	/* font-family: sans-serif; */
@@ -10,63 +7,111 @@ body {
 	font-family: "verdana", "geneva", "lucida", "lucida grande", "arial", "helvetica", sans-serif;
 	font-size: 12px;
 	box-sizing: border-box;
-	background: var(--background-color);
-}
-/* Will be introduced with CEFSharp v86 or v87 */
-@media (prefers-color-scheme: dark) {
-	body {
-		--background-color: rgb(0, 0, 0);
-	}
+
+	/* Transparent on purpose. The host paints WebView2.DefaultBackgroundColor (SplitSearchWindow.cs)
+	   until .App renders, so leaving body unpainted means the startup colour is decided in exactly
+	   one place. Giving body its own colour here reintroduces a second flash, because body cannot
+	   know the theme until the DarkMode message arrives from C#. */
+	background: transparent;
 }
 
+/*
+ * Light theme.
+ *
+ * The item cards keep Grim Dawn's parchment look, so everything around them is built from the same
+ * warm neutral family rather than the old grey-purple: page = muted greige, cards = a lighter
+ * parchment that lifts off it, header = dark warm brown. Text colours are all picked to clear 4.5:1
+ * against the card background, which the previous grey-on-tan values did not.
+ */
 .App {
-	--background-color: rgb(85,68,96); /*Legacy*/
+	--background-color: #413c35;
 	background: var(--background-color);
 
-    --header-color: #bfbdbd;
-    --copy-clipboard-link: #bfbdbd;
-    --copy-clipboard-bg: #313131;
-    --collection-items: #FFFFFF;
+	--accent: #b07d2a;
+	--text-primary: #ddd8cd;
+	--text-muted: #a39b8c;
+	--heading-color: #e6c98a;
 
-	--item-background: #e8d5b6;
-	--item-background-hover: #e8d5b6;
-	--item-stat-label: #000000;
-    --color-items: #000000;
-	--item-stat-modifier: #495057;
-	--item-golden-header: #8e5420;
-	--item-border: #896947;
-	--item-transfer: black;
-	--item-misc-info: black;
-	--item-header-info: black;
+    --header-color: #ece2d2;
+    --copy-clipboard-link: #ece2d2;
+    --copy-clipboard-bg: #3a352d;
+    --collection-items: #ddd8cd;
+
+	--item-background: #dcd7ca;
+	--item-background-hover: #e9e4d7;
+	--item-stat-label: #33291f;
+    --color-items: #33291f;
+	--item-stat-modifier: #4a4034;
+	--item-golden-header: #7a4e14;
+	--item-border: #6a6358;
+	--item-shadow: 0 1px 2px rgba(60, 54, 42, 0.10), 0 4px 10px rgba(60, 54, 42, 0.07);
+	--item-shadow-hover: 0 2px 4px rgba(60, 54, 42, 0.14), 0 8px 18px rgba(60, 54, 42, 0.10);
+	--item-transfer: #6f4f1c;
+	--item-misc-info: #726a5b;
+	--item-header-info: #3f3527;
 	--item-grantskill-label: inherit;
 	--item-grantskill-content: inherit;
-	--item-skill: #000000;
-	--item-itemdescription: black;
+	--item-skill: #155d90;
+	--item-itemdescription: #4a4034;
 
-	--item-skill-trigger: gray;
+	--item-skill-trigger: #837a68;
 	--item-supergreen: var(--item-color-green);
-	--item-socket: black;
-	--item-set: black;
-	--item-pet: black;
-	--item-pet-bullet: black;
-	--item-setinfo-name: #318C88;
-	--item-setinfo-description: black;
-	--item-disabled: gray;
+	--item-socket: #4a4034;
+	--item-set: #3f3527;
+	--item-pet: #3f3527;
+	--item-pet-bullet: #7a4e14;
+	--item-setinfo-name: #1a605c;
+	--item-setinfo-description: #4a4034;
+	--item-disabled: #655e52;
 
-	--item-color-green: #006400;
-	--item-color-blue: #338cce;
-	--item-color-epic: #a638ff;
-	--item-color-unknown: #81551a;
-	--item-color-yellow: #7d7703;
-	--item-warning-zero: orange;
+	--item-color-green: #186018;
+	--item-color-blue: #155d90;
+	--item-color-epic: #6f26bd;
+	--item-color-unknown: #7a4e14;
+	--item-color-yellow: #6b5c0a;
+	--item-color-white: #4f4839;
+	--item-warning-zero: #a82a1e;
 
-	--itemcompare-header-bg: rgb(63, 48, 72);
-	--itemcompare-header-h2: #fff8f8;
-	--itemcompare-header-x-hover: #3c3c3c59;
-	--itemcompare-border: black;
+	--itemcompare-header-bg: #2b2721;
+	--itemcompare-header-h2: #f0e6d6;
+	--itemcompare-header-x-hover: rgba(255, 255, 255, 0.14);
+	--itemcompare-border: #bdb5a4;
 
-	--notification-background-color: #1f2024;
-	--notification-text-color: #ffffff;
+	--notification-background-color: #e9e4d7;
+	--notification-text-color: #33291f;
+	--notification-success: #186018;
+
+	--help-header-bg: #cfc9ba;
+	--help-header-color: #40342a;
+
+	--input-background: #f0ece2;
+	--input-color: #33291f;
+	--input-border: #b0a996;
+
+	--table-background: #e6e1d5;
+	--table-border: #b0a996;
+	--table-header-bg: #cfc9ba;
+	--table-text: #33291f;
+	--table-header-color: #40342a;
+	--table-row-alt: #d5d0c2;
+
+	--notice-background: #e4dfd2;
+	--notice-border: #b8b1a1;
+	--notice-accent: #9a6a1f;
+	--notice-color: #33291f;
+
+	--slider-off: #c6bca8;
+	--slider-on: #a8762a;
+
+	--collected-border: #2f7d3f;
+	--uncollected-border: #b6483f;
+	--uncollected-background: rgba(214, 78, 68, 0.16);
+
+	--characters-heading: #e6c98a;
+	--characters-icon: #7db7ff;
+
+	--spinner-overlay: #443f36;
+	--spinner-dot: #f5efe3;
 
 	--banner-background: rgb(253, 249, 219);
 	--banner-color: rgb(122, 89, 62);
@@ -83,6 +128,11 @@ body {
 	--background-color: rgb(0, 0, 0);
 	background: var(--background-color);
 
+	--accent: #e3ba6b;
+	--text-primary: #eeeeeec4;
+	--text-muted: #999999;
+	--heading-color: #e3ba6b;
+
     --header-color: #eeeeeee6;
     --copy-clipboard-link: #eeeeeec4;
     --copy-clipboard-bg: #120529;
@@ -95,6 +145,8 @@ body {
 	--item-stat-modifier: #dbb284;
 	--item-golden-header: #e3ba6b;
 	--item-border: #211e1c;
+	--item-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
+	--item-shadow-hover: 0 2px 8px rgba(0, 0, 0, 0.7);
 	--item-transfer: #eeeeeec4;
 	--item-misc-info: #999999;
 	--item-header-info: #eeeeeec4;
@@ -118,6 +170,7 @@ body {
 	--item-color-epic: #a638ff;
 	--item-color-unknown: #81551a;
 	--item-color-yellow: #f1e51b;
+	--item-color-white: gray;
 	--item-warning-zero: red;
 
 	--itemcompare-header-bg: #2f2a2a82;
@@ -127,6 +180,39 @@ body {
 
 	--notification-background-color: #171614;
 	--notification-text-color: #acaaaa;
+	--notification-success: #00ff00;
+
+	--help-header-bg: #afafaf;
+	--help-header-color: #333333;
+
+	--input-background: #000000;
+	--input-color: #a5a1a1;
+	--input-border: #3d3c3a;
+
+	--table-background: transparent;
+	--table-border: #3d3c3a;
+	--table-header-bg: #1f1e1c;
+	--table-text: #eeeeeec4;
+	--table-header-color: #e3ba6b;
+	--table-row-alt: #131211;
+
+	--notice-background: #1c1b19;
+	--notice-border: #3d3c3a;
+	--notice-accent: #e3ba6b;
+	--notice-color: #c9c5bb;
+
+	--slider-off: #4a4a4a;
+	--slider-on: #2196F3;
+
+	--collected-border: #3c9a4e;
+	--uncollected-border: #c0504a;
+	--uncollected-background: #f01c1c82;
+
+	--characters-heading: #dedeff;
+	--characters-icon: #7db7ff;
+
+	--spinner-overlay: #000000;
+	--spinner-dot: #eeeeee;
 
 	/* Mirrors the dark palette of the WinForms value filter dialog this banner is introducing. */
 	--banner-background: #232220;
@@ -140,12 +226,23 @@ body {
 	--banner-button-border: #551c1c;
 }
 
+/* Keeps the UA rendering of form controls (inputs, checkboxes) in step with the active theme.
+   :root stays "dark" so the window scrollbar is unaffected on older WebView2 runtimes. */
+.App {
+	color-scheme: light;
+}
+.App-dark {
+	color-scheme: dark;
+}
+
+/* Warm neutral: legible against both the black and the greige page background, since the window
+   scrollbar sits outside .App and can't read the theme variables. */
 ::-webkit-scrollbar-thumb {
-    background-color: #888; /* Thumb color */
+    background-color: #8d8578; /* Thumb color */
     border-radius: 5px; /* Rounded corners for the thumb */
 }
 ::-webkit-scrollbar-thumb:hover {
-    background-color: #555;
+    background-color: #6f685c;
 }
 :root {
     color-scheme: dark; /* or light */

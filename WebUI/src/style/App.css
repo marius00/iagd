@@ -42,3 +42,18 @@
 .App {
     margin-top: 56px;
 }
+/* The themed background lives on .App, but the element is only as tall as its content — a short
+   view (e.g. the Collections tab before its data arrives) used to leave the black <body> showing
+   below the fold. */
+.App {
+    min-height: calc(100vh - 56px);
+    color: var(--text-primary);
+}
+
+/* Deliberately not `.App h1, .App h2` — item cards use headings too, and those are coloured by
+   item rarity instead. */
+.collectionItems > h2,
+.characters h1,
+.characters h2 {
+    color: var(--heading-color);
+}

@@ -1,13 +1,26 @@
 .center {
     margin-top: 30px;
     white-space: pre;
-    padding: 20px;
-    background-color: rgb(255,174,201);
+    padding: 20px 24px;
+    background-color: var(--notice-background);
+    color: var(--notice-color);
+    border: 1px solid var(--notice-border);
+    border-left: 4px solid var(--notice-accent);
+    border-radius: 6px;
+    box-shadow: var(--item-shadow);
 
     position: fixed;
     left: 50%;
     transform: translateX(-50%);
     z-index: 1000;
+}
+
+.center img {
+    max-width: 100%;
+    height: auto;
+    margin-top: 4px;
+    border: 1px solid var(--notice-border);
+    border-radius: 4px;
 }
 
 .testing-dummy-stuff {

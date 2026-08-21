@@ -15,7 +15,7 @@
 .NotificationContainer .toast {
     background-color: var(--notification-background-color);
     border: 1px;
-    box-shadow: 1px 1px 4px #cecece;
+    box-shadow: var(--item-shadow-hover);
     padding: 10px 14px 18px 14px;
     color: var(--notification-text-color);
     position: relative;
@@ -27,7 +27,7 @@
 
 
 .NotificationContainer .toast .success {
-    color: #00ff00;
+    color: var(--notification-success);
 }
 
 .NotificationContainer .toast .close {

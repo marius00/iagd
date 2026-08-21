@@ -19,7 +19,7 @@
 .itemList {
     display: flex;
     flex-wrap: wrap;
-    color: #000;
+    color: var(--color-items);
 
     /* Scrollable */
     height: calc(100% - 52px);
@@ -34,7 +34,7 @@
     color: var(--itemcompare-header-h2)
 }
 .closeButton {
-    color: red; /* TODO: */
+    color: var(--itemcompare-header-h2);
     font-size: 20px;
     position: absolute;
     right: 0;

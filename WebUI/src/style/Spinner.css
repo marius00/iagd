@@ -6,7 +6,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    background-color: #000000;
+    background-color: var(--spinner-overlay, #000000);
     opacity : 0.55;
     margin: 0px;
     padding: 0px;
@@ -35,7 +35,7 @@
     margin: 0 auto;
     width: 15%;
     height: 15%;
-    background-color: #eee;
+    background-color: var(--spinner-dot, #eee);
     border-radius: 100%;
     -webkit-animation: sk-circleFadeDelay 1.2s infinite ease-in-out both;
     animation: sk-circleFadeDelay 1.2s infinite ease-in-out both;

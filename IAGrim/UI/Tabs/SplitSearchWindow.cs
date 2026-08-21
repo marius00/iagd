@@ -88,11 +88,12 @@ namespace IAGrim.UI.Tabs {
             Activated += SplitSearchWindow_Activated;
             Deactivate += SplitSearchWindow_Deactivate;
 
-            // Painted by the webview until the page itself paints; must match the WebUI body/App background
-            // or the user gets a white flash on startup.
+            // Painted by the webview until the page itself paints; must match the WebUI --background-color
+            // of the matching theme (WebUI/src/style/index.css) or the user gets a flash on startup.
+            // The WebUI leaves <body> transparent so this is the only colour on screen until it renders.
             webView21!.DefaultBackgroundColor = _settings.GetPersistent().DarkMode
                 ? Color.Black
-                : Color.FromArgb(85, 68, 96);
+                : Color.FromArgb(65, 60, 53); // #413c35
 
             // WINE PATCH: the Chromium sandbox and GPU/renderer subprocesses fail to spawn reliably under
             // Wine (especially while Grim Dawn is running), so WebView2 navigation never completes and the

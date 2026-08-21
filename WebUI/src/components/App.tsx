@@ -529,7 +529,7 @@ class App extends PureComponent<object, object> {
 
 
     return (
-      <div className={'App ' + (this.state.isDarkMode ? 'App-dark' : 'App-Light')}>
+      <div className={'App ' + (this.state.isDarkMode ? 'App-dark' : 'App-light')}>
         <Header activeTab={this.state.activeTab} setActiveTab={this.setActiveTab}/>
 
         {this.state.activeTab === 0 && !this.state.isGrimParsed && <GrimNotParsed/>}

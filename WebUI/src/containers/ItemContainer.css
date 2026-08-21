@@ -6,7 +6,7 @@
   text-decoration: line-through !important;
 }
 .uncollected {
-  background-color: #f01c1c82;
+  background-color: var(--uncollected-background);
 }
 
 .item-icon-blue {
@@ -29,7 +29,7 @@
   color: var(--item-color-yellow) !important;
 }
 .item .item-quality-white {
-  color: gray !important;
+  color: var(--item-color-white) !important;
 }
 .item .supergreen {
   color: var(--item-supergreen);
@@ -50,7 +50,9 @@
   color: var(--item-skill);
 }
 
-.App-Light .bodystats .modified-skill, .skill .modified-skill, .pet-stats .modified-skill {
+.App-light .bodystats .modified-skill,
+.App-light .skill .modified-skill,
+.App-light .pet-stats .modified-skill {
   text-decoration: underline;
 }
 
@@ -80,6 +82,8 @@
   border: 1px solid var(--item-border);
   margin: 10px;
   background: var(--item-background);
+  box-shadow: var(--item-shadow);
+  transition: background-color 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
   -webkit-box-sizing: border-box;
   /* Safari/Chrome, other WebKit */
   -moz-box-sizing: border-box;
@@ -206,6 +210,7 @@ a { cursor: pointer; }
 }
 .items .item:hover {
   background: var(--item-background-hover);
+  box-shadow: var(--item-shadow-hover);
 }
 .items .item .text {
   padding-left: 75px;
@@ -219,7 +224,7 @@ a { cursor: pointer; }
 .items .item .text h3 span {
   font-size: 18px;
   font-weight: bold;
-  color: #81551a;
+  color: var(--item-color-unknown);
 }
 .items .item .text ul {
   list-style: none;
@@ -288,7 +293,7 @@ a { cursor: pointer; }
   font-size: 20px;
   text-align: center;
   vertical-align: center;
-  color: black;
+  color: var(--text-muted);
   height: calc(100vh - 122px);
 }
 .items {
@@ -349,23 +354,43 @@ a { cursor: pointer; }
 .load-more-items {
   width: 100%;
   height: 42px;
+  margin: 10px;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--item-transfer);
+  background: var(--item-background);
+  border: 1px solid var(--item-border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+.load-more-items:hover {
+  background: var(--item-background-hover);
 }
 
 
 .aggregate-table {
-  border: 1px solid;
+  color: var(--table-text);
+  border: 1px solid var(--table-border);
   border-collapse: collapse;
+  background: var(--table-background);
+  border-radius: 4px;
 }
 .aggregate-table tr {
-  border-bottom: 1px solid;
+  border-bottom: 1px solid var(--table-border);
+}
+.aggregate-table tr:nth-child(even) {
+  background: var(--table-row-alt);
 }
 .aggregate-table td {
-  border-right: 1px solid;
+  border-right: 1px solid var(--table-border);
   text-align: center;
-  padding: 0px 5px 0px 5px;
+  padding: 3px 8px;
 }
 .aggregate-table th {
   font-weight: bold;
-  border-right: 1px solid;
-  padding: 0px 5px 0px 5px;
+  border-right: 1px solid var(--table-border);
+  padding: 3px 8px;
+  background: var(--table-header-bg);
+  color: var(--table-header-color);
 }

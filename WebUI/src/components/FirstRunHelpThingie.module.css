@@ -1,11 +1,20 @@
 .center {
     margin-top: 30px;
-    padding: 20px;
-    background-color: rgb(255,174,201);
+    padding: 20px 24px;
+    background-color: var(--notice-background);
+    color: var(--notice-color);
+    border: 1px solid var(--notice-border);
+    border-left: 4px solid var(--notice-accent);
+    border-radius: 6px;
+    box-shadow: var(--item-shadow);
 
     position: fixed;
     left: 50%;
     transform: translateX(-50%);
     z-index: 1000;
     width: 90%;
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+    box-sizing: border-box;
+    line-height: 1.5;
 }

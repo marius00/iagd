@@ -1,7 +1,8 @@
 .collectionItems {
   margin: 15px;
+  padding-top: 10px;
 }
-.App-dark .collectionItems {
+.collectionItems {
   color: var(--collection-items);
 }
 .collectionItem {
@@ -10,11 +11,11 @@
   padding: 5px;
 }
 .collectionItem .collected {
-  border: 2px solid green;
+  border: 2px solid var(--collected-border);
 }
 
 .collectionItem .uncollected {
-  border: 2px solid red;
+  border: 2px solid var(--uncollected-border);
 }
 .collectionContainer .item-icon-container {
   height: 68px;
@@ -43,12 +44,19 @@
 }
 
 .collectionItem {
-  background: #e8d5b6;
-  border-bottom: 1px dashed gray;
-  border-top: 1px dashed gray;
+  background: var(--item-background);
+  border: 1px solid var(--item-border);
+  border-radius: 8px;
+  box-shadow: var(--item-shadow);
   display: inline-block;
   min-height: 68px;
   min-width: 68px;
+  transition: background-color 120ms ease, box-shadow 120ms ease;
+}
+
+.collectionItem:hover {
+  background: var(--item-background-hover);
+  box-shadow: var(--item-shadow-hover);
 }
 
 .toggleContainer {
@@ -76,7 +84,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #ccc;
+  background-color: var(--slider-off, #ccc);
   -webkit-transition: .4s;
   transition: .4s;
 }
@@ -94,7 +102,7 @@
 }
 
 input:checked + .slider {
-  background-color: #2196F3;
+  background-color: var(--slider-on, #2196F3);
 }
 
 input:focus + .slider {
