@@ -59,8 +59,13 @@ namespace IAGrim.UI.Controller {
                     items.Add(item);
                 }
                 else {
+                    // The frontend merges items into a single stack on base/prefix/suffix only, ignoring the
+                    // component (materia). Match on the same key when transferring all of them, otherwise every
+                    // item in the stack that has a component is silently left behind.
+                    var materia = args.TransferAll ? null : args.Materia;
+
                     // HasValidId (checked above) guarantees these are non-null.
-                    IList<PlayerItem> tmp = _dao.GetByRecord(args.Prefix!, args.BaseRecord!, args.Suffix!, args.Materia!, args.Mod!, args.IsHardcore);
+                    IList<PlayerItem> tmp = _dao.GetByRecord(args.Prefix!, args.BaseRecord!, args.Suffix!, materia, args.Mod!, args.IsHardcore);
                     if (tmp.Count > 0) {
                         if (!args.TransferAll)
                             Logger.Warn("Error transferring item, transfer all was false, but no player item id was located.");

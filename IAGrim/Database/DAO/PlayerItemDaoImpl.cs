@@ -33,14 +33,20 @@ namespace IAGrim.Database {
         /// List all player items
         /// </summary>
         /// <returns></returns>
-        public IList<PlayerItem> GetByRecord(string prefixRecord, string baseRecord, string suffixRecord, string materiaRecord, string mod, bool isHardcore) {
+        public IList<PlayerItem> GetByRecord(string prefixRecord, string baseRecord, string suffixRecord, string? materiaRecord, string mod, bool isHardcore) {
             using (var session = SessionCreator.OpenSession()) {
                 // TODO:
                 var crits = session.CreateCriteria<PlayerItem>()
                     .Add(Restrictions.Eq("BaseRecord", baseRecord))
                     .Add(Restrictions.Eq("PrefixRecord", prefixRecord))
-                    .Add(Restrictions.Eq("SuffixRecord", suffixRecord))
-                    .Add(Restrictions.Eq("MateriaRecord", materiaRecord));
+                    .Add(Restrictions.Eq("SuffixRecord", suffixRecord));
+
+                // A null materia means "any component". Transfer all relies on this: the UI merges items
+                // into a single stack on base/prefix/suffix alone, so restricting on the component would
+                // silently leave behind the items in that stack which have one.
+                if (materiaRecord != null) {
+                    crits = crits.Add(Restrictions.Eq("MateriaRecord", materiaRecord));
+                }
 
                 if (string.IsNullOrEmpty(mod)) {
                     crits = crits.Add(Restrictions.Or(Restrictions.Eq("Mod", ""), Restrictions.IsNull("Mod")));
