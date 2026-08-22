@@ -15,7 +15,19 @@
 #include "Logger.h"
 #include "SetHardcore.h"
 #include "SettingsReader.h"
-HookLog g_log;
+
+/// The log is constructed on first use rather than as a namespace-scope global.
+///
+/// LogToFile is reachable from static initialisers in *other* translation units -- GrimTypes resolves the game.dll exports that way, and logs when one is missing. Initialisation order
+/// across translation units is unspecified, so a namespace-scope HookLog can still be unconstructed when that happens. Writing to it then is undefined behaviour, and it occurs
+/// before any log file exists, so the resulting crash leaves no trace at all -- which is what  made this expensive to find.
+///
+/// A function-local static is initialised on first call instead. That is well defined from
+/// anywhere, including another translation unit's static initialiser, and thread safe since C++11.
+static HookLog& g_log() {
+	static HookLog instance;
+	return instance;
+}
 
 #pragma region Variables
 // Switches hook logging on/off
@@ -23,7 +35,7 @@ HookLog g_log;
 #define LOG(streamdef) \
 { \
     std::wstring msg = (((std::wostringstream&)(std::wostringstream().flush() << streamdef)).str()); \
-	g_log.out(logStartupTime() + msg); \
+	g_log().out(logStartupTime() + msg); \
     msg += _T("\n"); \
     OutputDebugString(msg.c_str()); \
 }
@@ -46,6 +58,7 @@ HWND g_targetWnd = NULL;
 
 bool g_isRunningInWine = false;
 std::wstring g_linuxHackFolder;
+HANDLE g_singleInstanceMutex = NULL;
 
 #pragma endregion
 
@@ -116,19 +129,19 @@ static bool ShouldFlush(LogLevel level) {
 }
 
 void LogToFile(LogLevel level, const wchar_t* message) {
-	g_log.out(logStartupTime() + LogLevelToString(level) + message, ShouldFlush(level));
+	g_log().out(logStartupTime() + LogLevelToString(level) + message, ShouldFlush(level));
 }
 void LogToFile(LogLevel level, const char* message) {
-	g_log.out((logStartupTimeChar() + LogLevelToStringA(level).c_str() + std::string(message)).c_str(), ShouldFlush(level));
+	g_log().out((logStartupTimeChar() + LogLevelToStringA(level).c_str() + std::string(message)).c_str(), ShouldFlush(level));
 }
 void LogToFile(LogLevel level, const std::string message) {
-	g_log.out((logStartupTimeChar() + LogLevelToStringA(level) + message).c_str(), ShouldFlush(level));
+	g_log().out((logStartupTimeChar() + LogLevelToStringA(level) + message).c_str(), ShouldFlush(level));
 }
 void LogToFile(LogLevel level, std::wstring message) {
-	g_log.out(logStartupTime() + LogLevelToString(level) + message, ShouldFlush(level));
+	g_log().out(logStartupTime() + LogLevelToString(level) + message, ShouldFlush(level));
 }
 void LogToFile(LogLevel level, std::wstringstream message) {
-	g_log.out(logStartupTime() + LogLevelToString(level) + message.str(), ShouldFlush(level));
+	g_log().out(logStartupTime() + LogLevelToString(level) + message.str(), ShouldFlush(level));
 }
 
 
@@ -418,10 +431,63 @@ void ReportCancelledInjection() {
 
 std::vector<BaseMethodHook*> hooks;
 std::wstring GetIagdFolder();
+
+/// Refuse to initialise if this hook is already loaded in the target process.
+///
+/// LoadLibrary only dedupes by module path, so the same DLL under a second filename loads a
+/// second, independent copy. Both then patch the same game functions -- the later one over the
+/// earlier one's trampolines -- and both start their own worker and seed-info threads writing the
+/// same files. That reliably crashes the game.
+///
+/// The name carries the pid, so two separate game processes are unaffected.
+static bool ClaimSingleInstance() {
+	const std::wstring name = L"Local\\ItemAssistantHook_" + std::to_wstring(GetCurrentProcessId());
+
+	g_singleInstanceMutex = CreateMutexW(NULL, TRUE, name.c_str());
+	if (g_singleInstanceMutex == NULL) {
+		// Cannot tell either way, and refusing would block a legitimate attach. Proceed.
+		LogToFile(LogLevel::WARNING, L"Could not create the single-instance mutex, continuing anyway.");
+		return true;
+	}
+
+	if (GetLastError() == ERROR_ALREADY_EXISTS) {
+		CloseHandle(g_singleInstanceMutex);
+		g_singleInstanceMutex = NULL;
+		return false;
+	}
+
+	return true;
+}
+
+/// The game-state exports are bound during static initialisation, which runs before DllMain and
+/// therefore before game.dll is known to be loaded. A missing one leaves a null function pointer,
+/// and the calls below used to make it without checking -- which is not distinguishable, from the
+/// outside, from the game crashing on its own.
+///
+/// A game that is not ready yet is the normal case rather than an error: the injector retries.
+static bool GameStateExportsResolved() {
+	if (IsGameLoading == nullptr || IsGameWaiting == nullptr || IsGameEngineOnline == nullptr) {
+		LogToFile(LogLevel::WARNING, L"The game.dll state exports are not all available, the game is not ready to be hooked.");
+		return false;
+	}
+
+	return true;
+}
+
 int ProcessAttach(HINSTANCE _hModule) {
 	//GetProductAndVersion();
 	LogToFile(LogLevel::INFO, std::string("DLL Compiled: ") + std::string(__DATE__) + std::string(" ") + std::string(__TIME__));
 	LogToFile(LogLevel::INFO, L"Attatching to process..");
+
+	// Before anything else, and in particular before g_isRunningInWine is set: a refused attach
+	// still gets a DLL_PROCESS_DETACH, and ProcessDetach deletes the .PID file when it thinks it
+	// is running under Wine. That file belongs to the copy that is already attached.
+	if (!ClaimSingleInstance()) {
+		LogToFile(LogLevel::FATAL,
+			L"This hook is already loaded in this process, refusing to attach a second copy. "
+			L"Two copies would hook the same functions and crash the game.");
+		return FALSE;
+	}
 
 	// Check if running in Wine/Proton
 	try {
@@ -451,6 +517,12 @@ int ProcessAttach(HINSTANCE _hModule) {
 		}
 	}
 
+
+	if (!GameStateExportsResolved()) {
+		ReportCancelledInjection();
+		LogToFile(LogLevel::INFO, L"Game state exports unavailable, aborting DLL injection..");
+		return FALSE;
+	}
 
 	GAME::GameEngine* gameEngine = fnGetGameEngine();
 	if (gameEngine == nullptr) {
@@ -526,7 +598,7 @@ int ProcessAttach(HINSTANCE _hModule) {
 	StartWorkerThread();
 	LogToFile(LogLevel::INFO, L"Initialization complete..");
 
-	g_log.setInitialized(true);
+	g_log().setInitialized(true);
 	return TRUE;
 }
 
@@ -559,6 +631,12 @@ int ProcessDetach(HINSTANCE _hModule) {
 		DWORD pid = GetCurrentProcessId();
 		std::wstring pidFile = g_linuxHackFolder + std::to_wstring(pid) + L".PID";
 		DeleteFile(pidFile.c_str());
+	}
+
+	if (g_singleInstanceMutex != NULL) {
+		ReleaseMutex(g_singleInstanceMutex);
+		CloseHandle(g_singleInstanceMutex);
+		g_singleInstanceMutex = NULL;
 	}
 
 	LOG(L"DLL detached..");

@@ -71,6 +71,21 @@ namespace IAGrim
             Uris.Initialize(Uris.EnvCloud);
             StartupService.Init();
 
+            if (DiagnosticsReport.IsRequested(args)) {
+                var reportPath = DiagnosticsReport.WriteAndOpen();
+                MessageBox.Show(
+                    reportPath != null
+                        ? $"Diagnostics written to:\n{reportPath}\n\nAttach this file to your bug report."
+                        : "The diagnostics report could not be written. See the log for details.",
+                    "Item Assistant diagnostics", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                LogManager.Shutdown();
+                System.Environment.Exit(0);
+            }
+
+            // Into the ordinary log as well, so every log file a user sends already carries it.
+            DiagnosticsReport.LogAtStartup();
+
 
 
 #if DEBUG
