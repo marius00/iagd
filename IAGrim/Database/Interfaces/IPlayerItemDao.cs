@@ -26,7 +26,7 @@ namespace IAGrim.Database.Interfaces {
 
         IList<DeletedPlayerItem> GetItemsMarkedForOnlineDeletion();
         IList<string> GetOnlineIds();
-        void ClearItemsMarkedForOnlineDeletion();
+        void ClearItemsMarkedForOnlineDeletion(IList<DeleteItemDto> items);
         void ResetOnlineSyncState();
 
         void Update(IList<PlayerItem> items, bool clearOnlineId);

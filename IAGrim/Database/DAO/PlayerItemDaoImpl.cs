@@ -585,13 +585,18 @@ namespace IAGrim.Database {
         }
 
         /// <summary>
-        /// Simply delete the 'mark for deletion' tags
+        /// Delete the 'mark for deletion' tags for the given items only.
+        /// Clearing more than what the cloud confirmed will let those items back in on the next download.
         /// </summary>
-        /// <returns></returns>
-        public void ClearItemsMarkedForOnlineDeletion() {
+        public void ClearItemsMarkedForOnlineDeletion(IList<DeleteItemDto> items) {
+            var ids = items.Select(m => m.Id).Where(id => !string.IsNullOrEmpty(id)).ToList();
+            if (ids.Count == 0) return;
+
             using (var session = SessionCreator.OpenSession()) {
                 using (var transaction = session.BeginTransaction()) {
-                    session.CreateQuery($"DELETE FROM {nameof(DeletedPlayerItem)}").ExecuteUpdate();
+                    session.CreateQuery($"DELETE FROM {nameof(DeletedPlayerItem)} WHERE {nameof(DeletedPlayerItem.Id)} IN ( :ids )")
+                        .SetParameterList("ids", ids)
+                        .ExecuteUpdate();
                     transaction.Commit();
                 }
             }

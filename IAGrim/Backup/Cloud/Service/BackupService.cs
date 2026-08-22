@@ -94,22 +94,24 @@ namespace IAGrim.Backup.Cloud.Service {
 
             List<DeleteItemDto> dtos = new List<DeleteItemDto>(items.Count);
             dtos.AddRange(items.Select(item => new DeleteItemDto {Id = item.Id}));
-            for (int i = 0; i < dtos.Count; i += 100) {
+
+            var cleared = 0;
+            foreach (var batch in ToBatches(dtos)) {
                 // Stop syncing deletions immediately if the user logged out mid-sync.
                 if (_authService.CheckAuthentication() != AuthService.AccessStatus.Authorized) {
-                    Logger.Info("Authentication lost (logged out?), aborting remaining deletion batches");
+                    Logger.Info($"Authentication lost (logged out?), aborting remaining deletion batches ({cleared}/{items.Count} done)");
                     return;
                 }
 
-                var toSync = dtos.GetRange(i, Math.Min(100, dtos.Count - i));
-                if (_cloudSyncService!.Delete(toSync)) {
-                    _playerItemDao.ClearItemsMarkedForOnlineDeletion();
-                    Logger.Debug($"Removal successful ({items.Count} items)");
-                }
-                else {
-                    Logger.Warn("Got an error while removing remote items");
+                if (!_cloudSyncService!.Delete(batch)) {
+                    Logger.Warn($"Got an error while removing remote items, aborting remaining deletion batches ({cleared}/{items.Count} done)");
                     return;
                 }
+
+                // Only clear what the cloud confirmed, so an interrupted sync can resume where it left off.
+                _playerItemDao.ClearItemsMarkedForOnlineDeletion(batch);
+                cleared += batch.Count;
+                Logger.Debug($"Removal successful ({cleared}/{items.Count} items)");
             }
         }
 
