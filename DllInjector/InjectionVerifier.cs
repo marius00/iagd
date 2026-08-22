@@ -129,8 +129,6 @@ namespace EvilsoftCommons.DllInjector {
             List<string> output = new List<string>();
 
             // Against the install folder, not the working directory: see the note in InjectionHelper.InjectXBit.
-            // A miss here is quieter than most -- verification is simply skipped, and a successful injection is
-            // then reported as a failure.
             var listDlls = Path.Combine(AppContext.BaseDirectory, "Listdlls.exe");
             if (File.Exists(listDlls)) {
                 ProcessStartInfo startInfo = new ProcessStartInfo {

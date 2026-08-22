@@ -19,10 +19,6 @@ namespace IAGrim.Services {
             return IsWine.Value;
         }
 
-        /// <summary>
-        /// The Wine version we are running under, or null on Windows. Reported rather than acted on: knowing it is
-        /// 9.0 versus 10.4 is most of the context missing from a "it does not work under Wine" bug report.
-        /// </summary>
         public static string? GetWineVersion() {
             return Version.Value;
         }

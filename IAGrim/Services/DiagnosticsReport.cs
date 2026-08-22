@@ -31,7 +31,7 @@ namespace IAGrim.Services {
         }
 
         /// <summary>
-        /// Writes the report next to the settings file and opens it, for a user who was asked to produce one.
+        /// Writes the report next to the settings file and opens it
         /// Returns the path it was written to, or null if it could not be written.
         /// </summary>
         public static string? WriteAndOpen() {
@@ -58,8 +58,7 @@ namespace IAGrim.Services {
         }
 
         /// <summary>
-        /// Emits the report into the ordinary log at startup, so that every log file a user sends already carries
-        /// it and nobody has to ask them to run anything.
+        /// Emits the report into the ordinary log at startup
         /// </summary>
         public static void LogAtStartup() {
             try {
@@ -118,7 +117,6 @@ namespace IAGrim.Services {
             return sb.ToString();
         }
 
-        /// <summary>The three files without which no loot is ever captured, and the versions they claim.</summary>
         private static void AppendHookFiles(StringBuilder sb, Action<string> section, Action<string, object?> item) {
             section("Hook and injector");
 
@@ -160,11 +158,6 @@ namespace IAGrim.Services {
             }
         }
 
-        /// <summary>
-        /// What the hook has actually been doing. The settings value is read back off disk rather than from the
-        /// in-memory copy on purpose: that file is the hook's contract, and the symptom of the two disagreeing is
-        /// loot quietly not arriving.
-        /// </summary>
         private static void AppendBridgeState(StringBuilder sb, Action<string> section, Action<string, object?> item) {
             section("Bridge");
 
@@ -207,9 +200,7 @@ namespace IAGrim.Services {
         }
 
         /// <summary>
-        /// Reads one persistent flag straight out of the settings JSON, the way the hook's own reader does, rather
-        /// than through SettingsService -- which may not exist yet, and which would report what IAGD believes
-        /// instead of what is on disk.
+        /// Reads one persistent flag straight out of the settings JSON, the way the hook's own reader does
         /// </summary>
         private static string ReadSettingsFlag(string settingsFile, string key) {
             try {
