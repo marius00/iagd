@@ -35,35 +35,23 @@ function isItEaster(): boolean {
   return new Date() >= startOfEaster && new Date <= easterSunday;
 }
 
-function getCloudIcon(isOk: boolean) {
-  const isHalloween = new Date().getMonth() == 9 && new Date().getDate() >= 24;
-  const isEaster = isItEaster();
-
-  let suffix = '';
-  if (isHalloween) {
-    suffix = '-hw';
-    console.log("Switching to halloween cloud icons");
-  } else if (isEaster) {
-    suffix = '-easter';
-      console.log("Switching to easter cloud icons");
+// Resolved once at load rather than four times per item per render. The seasonal window only ever changes
+// across a date boundary, and the app is not expected to stay open through one.
+const seasonalTheme = (() => {
+  const now = new Date();
+  if (now.getMonth() == 9 && now.getDate() >= 24) {
+    return {icon: '-hw', label: '.hw'};
   }
-
-  return isOk ? `static/cloud-ok${suffix}.png` : `static/cloud-err${suffix}.png`;
-}
-
-function getCloudLabel(isOk: boolean) {
-  const isHalloween = new Date().getMonth() == 9 && new Date().getDate() >= 24;
-  const isEaster = isItEaster();
-
-  let suffix = '';
-  if (isHalloween) {
-    suffix = '.hw';
-  } else if (isEaster) {
-    suffix = '.easter';
+  if (isItEaster()) {
+    return {icon: '-easter', label: '.easter'};
   }
+  return {icon: '', label: ''};
+})();
 
-  return isOk ? `items.label.cloudOk${suffix}` : `items.label.cloudError${suffix}`;
-}
+const cloudIconOk = `static/cloud-ok${seasonalTheme.icon}.png`;
+const cloudIconErr = `static/cloud-err${seasonalTheme.icon}.png`;
+const cloudLabelOk = `items.label.cloudOk${seasonalTheme.label}`;
+const cloudLabelError = `items.label.cloudError${seasonalTheme.label}`;
 
 class ItemCornerContainer extends PureComponent<Props, object> {
   render() {
@@ -79,11 +67,6 @@ class ItemCornerContainer extends PureComponent<Props, object> {
     const showRecipeIcon = item.hasRecipe && item.type === IItemType.Recipe;
     const showAugmentationIcon = item.type === IItemType.Augmentation;
     const onClickBuddyIcon = this.props.onClickBuddyIcon;
-
-    const cloudIconOk = getCloudIcon(true);
-    const cloudIconErr = getCloudIcon(false);
-    const cloudLabelOk = getCloudLabel(true);
-    const cloudLabelError = getCloudLabel(false);
 
     return (
       <div className="recipe-item-corner">

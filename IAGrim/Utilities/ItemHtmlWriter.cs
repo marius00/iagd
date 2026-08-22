@@ -155,6 +155,28 @@ namespace IAGrim.Utilities {
         }
 
         /// <summary>
+        /// Whether the destination already holds this exact file. Length plus write time is what every installer and
+        /// sync tool uses for this; hashing 15 MB on every launch would cost more than the copy it saves.
+        /// </summary>
+        private static bool IsUpToDate(string source, string destination) {
+            try {
+                var dest = new FileInfo(destination);
+                if (!dest.Exists) {
+                    return false;
+                }
+
+                var src = new FileInfo(source);
+                return src.Length == dest.Length && src.LastWriteTimeUtc == dest.LastWriteTimeUtc;
+            }
+            catch (Exception ex) {
+                // Any doubt about the destination's state and we copy; being wrong here only costs the copy we
+                // were going to do anyway, while skipping a file that needed updating leaves a stale UI on disk.
+                Logger.Debug($"Could not compare \"{source}\" against \"{destination}\", copying it: {ex.Message}");
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Copy any css/js files from the app\resource folder to the items working directory
         /// </summary>
         public static void CopyMissingFiles() {
@@ -165,12 +187,21 @@ namespace IAGrim.Utilities {
                 Directory.CreateDirectory(dirPath.Replace(appResFolder, GlobalPaths.StorageFolder));
             }
 
-            //Copy all the files & Replaces any files with the same name
+            // Only the files that are actually missing or stale. This runs on every launch and the resource folder
+            // is ~15 MB, so copying it wholesale spent real time re-writing bytes that were already identical.
+            var copied = 0;
             foreach (string newPath in Directory.GetFiles(appResFolder, "*.*", SearchOption.AllDirectories)) {
-                File.Copy(newPath, newPath.Replace(appResFolder, GlobalPaths.StorageFolder), true);
+                var destination = newPath.Replace(appResFolder, GlobalPaths.StorageFolder);
+
+                if (IsUpToDate(newPath, destination)) {
+                    continue;
+                }
+
+                File.Copy(newPath, destination, true);
+                copied++;
             }
 
-            Logger.Debug("Copy complete");
+            Logger.Debug($"Copy complete, {copied} file(s) updated");
         }
 
         public static List<List<JsonItem>> ToJsonSerializable(List<List<PlayerHeldItem>> items) {

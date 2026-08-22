@@ -273,7 +273,6 @@ namespace IAGrim.UI {
                             GlobalPaths.StorageFolder,
                             CoreWebView2HostResourceAccessKind.Allow
                         );
-                        browser.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
 
 
 

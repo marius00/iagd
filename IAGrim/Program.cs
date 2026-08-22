@@ -39,6 +39,32 @@ namespace IAGrim
 
         public static MainWindow? MainWindow => _mw;
 
+        /// <summary>
+        /// Builds the session factory ahead of the first caller that needs it.
+        ///
+        /// Purely an overlap: a failure here is swallowed, because <see cref="SessionFactory"/> caches it on the
+        /// shared Lazy and rethrows it to whoever asks next -- on their thread, with their error handling intact.
+        /// </summary>
+        private static void WarmUpDatabase() {
+            var thread = new Thread(() => {
+                ExceptionReporter.EnableLogUnhandledOnThread();
+
+                try {
+                    var sw = System.Diagnostics.Stopwatch.StartNew();
+                    SessionFactory.Warmup();
+                    Logger.Info($"[timing] Session factory warmup took {sw.ElapsedMilliseconds} ms");
+                }
+                catch (Exception ex) {
+                    Logger.Debug($"Session factory warmup failed, deferring to the first real caller: {ex.Message}");
+                }
+            });
+
+            // Never hold up process exit; the second-instance path bails out long before this finishes.
+            thread.IsBackground = true;
+            thread.Name = "DbWarmup";
+            thread.Start();
+        }
+
 
         /// <summary>
         ///  The main entry point for the application.
@@ -63,6 +89,11 @@ namespace IAGrim
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
 
+
+            // Compiling the NHibernate mappings is ~0.5s of work that nothing before Run() depends on, so it runs
+            // alongside the version checks and the diagnostics dump instead of after them. The factory is a shared
+            // Lazy, so Migrate() below either finds it built or blocks until it is.
+            WarmUpDatabase();
 
             Logger.Info("Starting exception monitor for bug reports..");
             Logger.Debug("Anonymous usage statistics can be seen at https://webstats.evilsoft.net/iagd");

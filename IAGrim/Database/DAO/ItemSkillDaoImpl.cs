@@ -13,19 +13,38 @@ namespace IAGrim.Database.DAO {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ItemSkillDaoImpl));
         private readonly SessionFactory _sessionCreator;
 
-        // TODO: Store this query elsewhere? Unfortunate dependency.
-        public static readonly string ListItemsQuery = string.Join(" ",
-            $"SELECT p.{PlayerItemTable.Record} as PlayerItemRecord, ",
-            $"s.{SkillTable.Description}, ",
-            $"s.{SkillTable.Level}, ",
-            $"s.{SkillTable.Name}, ",
+        // Every item record in the game database that grants a skill. Used as an "does this record grant a skill"
+        // set test, so it deliberately does not join PlayerItem: callers already test it against a player item's
+        // record, which makes an owned-only restriction redundant and turns the join into one row per owned copy.
+        public static readonly string SkillGrantingRecordsQuery = string.Join(" ",
+            $"SELECT DISTINCT db.{DatabaseItemTable.Record} as PlayerItemRecord",
+            $"from {SkillTable.Table} s, {SkillMappingTable.Table} map, {DatabaseItemTable.Table} db ",
+            $"where s.{SkillTable.Id} = map.{SkillMappingTable.Skill} ",
+            $"and map.{SkillMappingTable.Item} = db.{DatabaseItemTable.Id} "
+        );
+
+        // As above, but restricted to records the player owns a copy of. The buddy-item search has always scoped
+        // its "grants a skill" filter that way; kept as-is so this stays a performance change and nothing else.
+        public static readonly string OwnedSkillGrantingRecordsQuery = string.Join(" ",
+            SkillGrantingRecordsQuery,
+            $"and db.{DatabaseItemTable.Record} IN (SELECT {PlayerItemTable.Record} FROM {PlayerItemTable.Table})"
+        );
+
+        // The skills granted by a given set of item records. Scoped to the records actually being displayed:
+        // the unscoped form returned one row per (skill-granting record, owned copy of it), which on a large
+        // collection is tens of thousands of duplicate rows to materialize on every search and every page.
+        private static readonly string ListForRecordsQuery = string.Join(" ",
+            $"SELECT DISTINCT db.{DatabaseItemTable.Record} as PlayerItemRecord, ",
+            $"s.{SkillTable.Description} as Description, ",
+            $"s.{SkillTable.Level} as Level, ",
+            $"s.{SkillTable.Name} as Name, ",
             $"s.{SkillTable.Trigger} as TriggerRecord, ",
             $"s.{SkillTable.StatsId} as StatsId, ",
             $"s.{SkillTable.Record} as Record",
-            $"from {SkillTable.Table} s, {SkillMappingTable.Table} map, {DatabaseItemTable.Table} db, {PlayerItemTable.Table} p ",
+            $"from {SkillTable.Table} s, {SkillMappingTable.Table} map, {DatabaseItemTable.Table} db ",
             $"where s.{SkillTable.Id} = map.{SkillMappingTable.Skill} ",
             $"and map.{SkillMappingTable.Item} = db.{DatabaseItemTable.Id} ",
-            $"and db.{DatabaseItemTable.Record} = p.{PlayerItemTable.Record} "
+            $"and db.{DatabaseItemTable.Record} IN ( :records )"
         );
 
         public ItemSkillDaoImpl(SessionFactory sessionCreator) {
@@ -77,9 +96,15 @@ namespace IAGrim.Database.DAO {
             }
         }
 
-        public IList<PlayerItemSkill> List() {
+        public IList<PlayerItemSkill> ListForRecords(IEnumerable<string> baseRecords) {
+            var records = baseRecords.Where(r => !string.IsNullOrEmpty(r)).Distinct().ToList();
+            if (records.Count == 0) {
+                return new List<PlayerItemSkill>(0);
+            }
+
             using (ISession session = _sessionCreator.OpenSession()) {
-                return session.CreateSQLQuery(ListItemsQuery)
+                return session.CreateSQLQuery(ListForRecordsQuery)
+                    .SetParameterList("records", records)
                     .SetResultTransformer(Transformers.AliasToBean<PlayerItemSkill>())
                     .List<PlayerItemSkill>();
             }

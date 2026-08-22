@@ -226,9 +226,12 @@ namespace IAGrim.UI.Controller {
 
                 // We have no search filters, yet can barely find any items. Despite there being more than twice as many items as we found.
                 // This might indicate the mod filter dropdown has the wrong setting.
-                var numOtherItems = _playerItemDao.GetNumItems() - personalCount;
-                if (query.IsEmpty && personalCount < 300 && numOtherItems > personalCount) {
-                    browser.ShowModFilterWarning((int)numOtherItems);
+                // The cheap conditions are checked first so the table-wide count is only paid for when it can actually be used.
+                if (query.IsEmpty && personalCount < 300) {
+                    var numOtherItems = _playerItemDao.GetNumItems() - personalCount;
+                    if (numOtherItems > personalCount) {
+                        browser.ShowModFilterWarning((int)numOtherItems);
+                    }
                 }
 
                 swTotal.Stop();

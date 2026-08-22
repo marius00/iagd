@@ -184,19 +184,27 @@ namespace IAGrim.Database {
         private Dictionary<string, List<DBStatRow>> GetStats(ISession session, IEnumerable<string> records, StatFetch fetchMode) {
             Dictionary<string, List<DBStatRow>> statMap = new Dictionary<string, List<DBStatRow>>();
 
-            Logger.Debug($"Fetching all stats for {records.Count()} items, fetchMode={fetchMode}");
+            // Callers hand us a lazy Distinct() chain; materialize once rather than re-running it per inspection.
+            var recordFilter = records as IList<string> ?? records.ToList();
+            var hasRecordFilter = recordFilter.Count > 0;
 
+            Logger.Debug($"Fetching all stats for {recordFilter.Count} items, fetchMode={fetchMode}");
+
+            // The owned-records restriction only narrows the search to records the player actually has. An explicit
+            // record filter is always a subset of those (it is built from the items being displayed), so applying
+            // both means scanning the whole record table to re-prove something the filter already guarantees.
+            var restrictToOwnedRecords = !hasRecordFilter;
 
             string sql = string.Join(" ",
-                new[] { $@"select db.{DatabaseItemTable.Record} as Record, s.stat as Stat, s.val1 as Value, s.textvalue as TextValue 
+                new[] { $@"select db.{DatabaseItemTable.Record} as Record, s.stat as Stat, s.val1 as Value, s.textvalue as TextValue
                 FROM {DatabaseItemTable.Table} db, databaseitemstat_v2 s where s.id_databaseitem = db.{DatabaseItemTable.Id}",
 
                 "AND (val1 > 0 or stat in ( :whitelist ))",
-                    fetchMode == StatFetch.PlayerItems ? $"AND baserecord IN (SELECT record FROM playeritemrecord)" : "",
-                    fetchMode == StatFetch.BuddyItems ? $"AND {DatabaseItemTable.Record} IN (SELECT {BuddyItemRecordTable.Record} FROM {BuddyItemRecordTable.Table})" : "",
+                    restrictToOwnedRecords && fetchMode == StatFetch.PlayerItems ? $"AND baserecord IN (SELECT record FROM playeritemrecord)" : "",
+                    restrictToOwnedRecords && fetchMode == StatFetch.BuddyItems ? $"AND {DatabaseItemTable.Record} IN (SELECT {BuddyItemRecordTable.Record} FROM {BuddyItemRecordTable.Table})" : "",
                 fetchMode == StatFetch.Skills ? $"AND db.{DatabaseItemTable.Id} IN (SELECT map.{SkillMappingTable.Item} FROM {SkillMappingTable.Table} map)" : "", // Redundant? Either doesn't cover enough, or completely redundant
                 "AND NOT stat IN ( :blacklist )",
-                records.Any() ? $"AND db.{DatabaseItemTable.Record} IN ( :filter )" : ""
+                hasRecordFilter ? $"AND db.{DatabaseItemTable.Record} IN ( :filter )" : ""
                 }
             );
 
@@ -207,9 +215,8 @@ namespace IAGrim.Database {
                 .SetResultTransformer(Transformers.AliasToBean<DBStatRow>());
 
             Logger.Debug(sql);
-            if (records.Count() > 0) {
-                query.SetParameterList("filter", records);
-                //logger.Debug($":filter={String.Join(",", records)}");
+            if (hasRecordFilter) {
+                query.SetParameterList("filter", recordFilter);
             }
 
 

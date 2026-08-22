@@ -63,7 +63,6 @@ class CollectionItemContainer extends PureComponent<Props, object> {
     }
 
     table['Sum'] = sum; // TODO: Translate support
-    console.log('prelim', table);
 
     // TODO: Translate support
     return <table className={'aggregate-table'}>

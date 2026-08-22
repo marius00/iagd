@@ -83,9 +83,15 @@ export function getItemSetAssociations(): string {
     console.debug("Requesting item set associations");
     itemSetAssociationsCache = core.GetItemSetAssociations();
     return itemSetAssociationsCache;
-  } else {
+  }
+
+  // Dev fixture. import.meta.env.DEV is replaced with a literal false when building for production, so the
+  // branch and the ~60 KB of JSON behind it are dropped instead of being shipped and parsed on every launch.
+  if (import.meta.env.DEV) {
     return JSON.stringify(MockItemSetData);
   }
+
+  return '[]';
 }
 
 

@@ -21,7 +21,14 @@ namespace IAGrim {
             DateTime buildDate = ExceptionReporter.BuildDate;
             Logger.InfoFormat("Running version {0} from {1:dd/MM/yyyy}", ExceptionReporter.VersionString, buildDate);
 
-            VerifyHookDllVersion();
+            try {
+                VerifyHookDllVersion();
+            }
+            catch (Exception ex) {
+                // A diagnostic check must never be the reason IAGD fails to start: it runs before the main window
+                // exists, so anything thrown here leaves the end user with a crash report and no application at all.
+                Logger.Warn("Could not verify the hook DLL version", ex);
+            }
         }
 
         /// <summary>

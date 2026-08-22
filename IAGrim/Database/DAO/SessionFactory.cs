@@ -33,6 +33,18 @@ namespace IAGrim.Database {
             }
         }
 
+        /// <summary>
+        /// Builds the shared factory (parsing the config and compiling the hbm mappings) without opening a
+        /// connection, so it can be done ahead of time on another thread.
+        ///
+        /// Deliberately does not open a session: the first thing that runs against the database is the journal-mode
+        /// migration, and "PRAGMA journal_mode = WAL" can come back busy while another connection is alive.
+        /// </summary>
+        public static void Warmup() {
+            NameCurrentThreadIfUnnamed();
+            _ = _sessionFactory.Value;
+        }
+
         public ISession OpenSession() {
             NameCurrentThreadIfUnnamed();
 

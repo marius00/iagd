@@ -3,7 +3,7 @@ import Header from './header';
 import Help from "../containers/help/Help";
 import IItem from "../interfaces/IItem";
 import ICollectionItem from "../interfaces/ICollectionItem";
-import {PureComponent} from "preact/compat";
+import {PureComponent, Suspense, lazy} from "preact/compat";
 import {dismissNumericFilterBanner, isEmbedded, requestCollectionData, requestMoreItems, signalReady} from "../integration/integration";
 import MockCollectionItemData from "../mock/MockCollectionItemData";
 import Spinner from "./Spinner";
@@ -14,13 +14,16 @@ import ItemContainer from "../containers/ItemContainer";
 import CollectionItemContainer from "../containers/CollectionItemContainer";
 import NotificationContainer, {NotificationMessage} from "./NotificationComponent";
 import GrimNotParsed from "./GrimNotParsed";
-import EasterEgg from "./EasterEgg";
 import ModFilterWarning from "./ModFilterWarning";
 import FirstRunHelpThingie from "./FirstRunHelpThingie";
 import IItemAggregateRow from "../interfaces/IItemAggregateRow";
 import {IReplicaRow} from "../interfaces/IReplicaRow";
 import GdSeasonError from "./GdSeasonError";
 import NumericFilterBanner from "./NumericFilterBanner";
+
+// Split into its own chunk: a once-a-year gag should not put its stylesheet (a ~94 KB embedded image) into
+// the bundle on every launch. If the chunk fails to load the gag is simply skipped, which is fine.
+const EasterEgg = lazy(() => import("./EasterEgg"));
 
 interface ApplicationState {
   items: IItem[][];
@@ -131,7 +134,7 @@ class App extends PureComponent<object, object> {
 
   componentDidMount() {
     // Mock data for not embedded / dev mode
-    if (!isEmbedded) {
+    if (import.meta.env.DEV && !isEmbedded) {
       this.setState({collectionItems: MockCollectionItemData});
     }
 
@@ -141,8 +144,16 @@ class App extends PureComponent<object, object> {
     // member's name and owned-count against collectionItems. That data is otherwise only fetched
     // when the Collection tab is opened, so request it up front — otherwise the tooltip on the
     // Items tab renders every member as an unresolved "0x" with no name.
+    //
+    // Held back until the browser is idle: it is thousands of rows to serialize, ship and parse, it is
+    // only needed once the user hovers a set item, and doing it inline competes with the first paint.
     if (isEmbedded) {
-      requestCollectionData();
+      const idle = (window as any).requestIdleCallback;
+      if (idle) {
+        idle(() => requestCollectionData(), {timeout: 5000});
+      } else {
+        setTimeout(() => requestCollectionData(), 1000);
+      }
     }
 
     // Things such as real item stats and cloud sync status gets aggregated and updated every few seconds.
@@ -155,9 +166,16 @@ class App extends PureComponent<object, object> {
           // Prevent state changes when empty
           return;
         }
-        console.log("Queued messages:", messages);
-
         const items = [...this.state.items];
+
+        // Item is a PureComponent, so an updated item has to be a new object for the change to be picked up;
+        // editing the existing one in place leaves its identity untouched and the row keeps its stale contents.
+        const replaceItem = (loc: number, idx: number, replacement: IItem) => {
+          const subItems = [...items[loc]] as IItem[];
+          subItems[idx] = replacement;
+          items[loc] = subItems;
+        };
+
         for (let i = 0; i < messages.length; i++) {
           const message = messages[i];
           switch (message.type) {
@@ -168,13 +186,9 @@ class App extends PureComponent<object, object> {
                 if (this.state.itemLookupMap.has(playerItemId)) {
                   const loc = this.state.itemLookupMap.get(playerItemId) as number;
 
-                  for (let idx = 0; idx < this.state.items[loc].length; idx++) {
-                    if (this.state.items[loc][idx].uniqueIdentifier.startsWith("PI/" + playerItemId)) {
-
-                      // console.log("Successfully(?) marked PI " + playerItemId + " as having a cloud backup");
-                      const subItems = [...items[loc]] as IItem[];
-                      subItems[idx].hasCloudBackup = true;
-                      items[loc] = subItems;
+                  for (let idx = 0; idx < items[loc].length; idx++) {
+                    if (items[loc][idx].uniqueIdentifier.startsWith("PI/" + playerItemId)) {
+                      replaceItem(loc, idx, {...items[loc][idx], hasCloudBackup: true});
                     }
                   }
                 }
@@ -190,15 +204,15 @@ class App extends PureComponent<object, object> {
               if (this.state.itemLookupMap.has(playerItemId)) {
                 const loc = this.state.itemLookupMap.get(playerItemId) as number;
 
-                for (let idx = 0; idx < this.state.items[loc].length; idx++) {
-                  if (this.state.items[loc][idx].uniqueIdentifier.startsWith("PI/" + playerItemId)) {
-
-                    const subItems = [...items[loc]] as IItem[];
-                    subItems[idx].replicaStats = payload.replicaStats;
-                    subItems[idx].bodyStats = [];
-                    subItems[idx].headerStats = [];
-                    subItems[idx].petStats = [];
-                    items[loc] = subItems;
+                for (let idx = 0; idx < items[loc].length; idx++) {
+                  if (items[loc][idx].uniqueIdentifier.startsWith("PI/" + playerItemId)) {
+                    replaceItem(loc, idx, {
+                      ...items[loc][idx],
+                      replicaStats: payload.replicaStats,
+                      bodyStats: [],
+                      headerStats: [],
+                      petStats: [],
+                    });
                   }
                 }
               }
@@ -244,7 +258,8 @@ class App extends PureComponent<object, object> {
 
     // @ts-ignore: message doesn't exist on window
     window.message = (message: IOMessage) => {
-      console.log(message, 'existing state:', this.state);
+      // Deliberately not logging the message or state here: this fires for every inbound message (hundreds
+      // per second during a sync) and each call pins the whole item list in the console's retained buffer.
       switch (message.type) {
         case IOMessageType.ShowCharacterBackups:
           this.setState({
@@ -318,7 +333,6 @@ class App extends PureComponent<object, object> {
             requestCollectionData();
           }
 
-          console.log("Item state is now", this.state.items);
         }
           break;
 
@@ -332,7 +346,6 @@ class App extends PureComponent<object, object> {
         case IOMessageType.SetAggregateItemData: {
           const data = message.data;
           const itemAggregate = typeof data === 'string' ? JSON.parse(data) : data;
-          console.log('Item Aggregate:', itemAggregate);
           this.setState({
             itemAggregate: itemAggregate
           });
@@ -488,7 +501,6 @@ class App extends PureComponent<object, object> {
   }
 
   requestMoreItems() {
-    console.log('More items it wantssssss?');
     this.setState({isLoading: true});
     requestMoreItems();
     // TODO: Fix this weird loop? This one will request more items.. which will end up in a call from C# to window.addItems().. is that how we wanna do this?
@@ -521,7 +533,7 @@ class App extends PureComponent<object, object> {
 
   render() {
     if (this.state.easterEggMode) {
-      return <EasterEgg close={() => this.setState({easterEggMode: false})}/>;
+      return <Suspense fallback={null}><EasterEgg close={() => this.setState({easterEggMode: false})}/></Suspense>;
     }
     if (this.state.gdSeasonError) {
       return <GdSeasonError close={() => this.setState({gdSeasonError: false})}/>;
@@ -537,7 +549,7 @@ class App extends PureComponent<object, object> {
         {this.state.isLoading && isEmbedded && <Spinner/>}
 
 
-        {this.state.activeTab === 0 && !isEmbedded ? <MockItemsButton onClick={(items) => this.setItems(items)}/> : ''}
+        {import.meta.env.DEV && this.state.activeTab === 0 && !isEmbedded ? <MockItemsButton onClick={(items) => this.setItems(items)}/> : ''}
         {this.state.activeTab === 3 && <CharacterListContainer/>}
 
         {this.state.activeTab === 0 && this.state.showModFilterWarning > 0 && <ModFilterWarning numOtherItems={this.state.showModFilterWarning} close={this.closeModFilterWarning}/>}

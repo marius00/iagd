@@ -893,7 +893,7 @@ namespace IAGrim.Database {
             // Only items which grants new skills
             if (query.WithGrantSkillsOnly) {
                 // TODO: Are there any prefixes or suffixes which grants skills?
-                queryFragments.Add($"PI.baserecord IN (SELECT PlayerItemRecord from ({ItemSkillDaoImpl.ListItemsQuery}) y)");
+                queryFragments.Add($"PI.baserecord IN ({ItemSkillDaoImpl.SkillGrantingRecordsQuery})");
             }
 
             if (query.WithSummonerSkillOnly) {

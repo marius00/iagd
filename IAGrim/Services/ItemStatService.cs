@@ -107,9 +107,19 @@ namespace IAGrim.Services {
 
         private void ApplySkills(List<PlayerItem> items) {
             Logger.Debug($"Applying skills to items");
-            var skills = _itemSkillDao.List();
+
+            // Scoped to the records on this page. Fetching every skill in the collection and scanning that list
+            // per item was the dominant cost of a search once the collection got large.
+            var skills = _itemSkillDao.ListForRecords(items.Select(m => m.BaseRecord).OfType<string>());
+            var skillByRecord = new Dictionary<string, PlayerItemSkill>();
+            foreach (var skill in skills) {
+                if (skill.PlayerItemRecord != null && !skillByRecord.ContainsKey(skill.PlayerItemRecord)) {
+                    skillByRecord[skill.PlayerItemRecord] = skill;
+                }
+            }
+
             foreach (var item in items) {
-                item.Skill = skills.FirstOrDefault(skill => skill.PlayerItemRecord == item.BaseRecord);
+                item.Skill = item.BaseRecord != null && skillByRecord.TryGetValue(item.BaseRecord, out var s) ? s : null;
             }
 
 

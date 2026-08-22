@@ -6,37 +6,46 @@ interface ItemSetAssociation {
 }
 
 
-let dataset = [] as Array<ItemSetAssociation>;
-const reverseLookup: { [index: string]: string[] } = {};
+// Both directions are indexed up front. These are read once per item per render, so a scan over the
+// association list here shows up directly in the cost of drawing a page of results.
+const setNameByRecord = new Map<string, string>();
+const recordsBySetName = new Map<string, string[]>();
+let isLoaded = false;
+
+function load() {
+  if (isLoaded) {
+    return;
+  }
+  isLoaded = true;
+
+  const dataset = JSON.parse(getItemSetAssociations()) as ItemSetAssociation[];
+  for (const entry of dataset) {
+    // First one wins, matching the previous filter(..)[0] lookup.
+    if (!setNameByRecord.has(entry.baseRecord)) {
+      setNameByRecord.set(entry.baseRecord, entry.setName);
+    }
+
+    const members = recordsBySetName.get(entry.setName);
+    if (members) {
+      members.push(entry.baseRecord);
+    } else {
+      recordsBySetName.set(entry.setName, [entry.baseRecord]);
+    }
+  }
+}
 
 // Returns the set name or undefined
 export default function GetSetName(baseRecord: string): string | undefined {
-  if (dataset.length === 0) {
-    dataset = JSON.parse(getItemSetAssociations());
-
-    for (const idx in dataset) {
-      const entry = dataset[idx];
-      if (reverseLookup.hasOwnProperty(entry.setName)) {
-        reverseLookup[entry.setName] = reverseLookup[entry.setName].concat(entry.baseRecord);
-      } else {
-        reverseLookup[entry.setName] = [entry.baseRecord];
-      }
-    }
-  }
-
-  const elems = dataset.filter(elem => elem.baseRecord === baseRecord);
-  if (elems.length > 0) {
-    return elems[0].setName;
-  }
-
-  return undefined;
+  load();
+  return setNameByRecord.get(baseRecord);
 }
 
-// Returns the items in a given set or undefined
-export function GetSetItems(setName: string|undefined): string[] {
-  if (setName !== undefined) {
-    return reverseLookup[setName];
+// Returns the items in a given set, or an empty list
+export function GetSetItems(setName: string | undefined): string[] {
+  if (setName === undefined) {
+    return [];
   }
 
-  return [];
+  load();
+  return recordsBySetName.get(setName) ?? [];
 }

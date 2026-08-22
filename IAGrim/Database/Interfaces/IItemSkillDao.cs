@@ -8,7 +8,7 @@ namespace IAGrim.Database.Interfaces {
 
         void Save(Dictionary<string, List<string>> skillItemMapping, bool additive);
 
-        IList<PlayerItemSkill> List();
+        IList<PlayerItemSkill> ListForRecords(IEnumerable<string> baseRecords);
         void EnsureCorrectSkillRecords();
     }
 }
