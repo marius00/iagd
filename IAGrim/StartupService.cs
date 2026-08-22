@@ -22,18 +22,6 @@ namespace IAGrim {
             Logger.InfoFormat("Running version {0} from {1:dd/MM/yyyy}", ExceptionReporter.VersionString, buildDate);
 
             VerifyHookDllVersion();
-
-            // Logged rather than shown. Both keys are absent in any Wine prefix, so this used to open two modal
-            // warnings on every single launch there -- and neither redistributable has an identified consumer: see
-            // the standing question above both checks in DependencyChecker. A missing dependency that nothing needs
-            // is not worth interrupting a user for, but it is worth having in the log if one ever turns out to matter.
-            if (!DependencyChecker.CheckVs2013Installed()) {
-                Logger.Info("The VS 2013 (x86) redistributable does not appear to be installed.");
-            }
-
-            if (!DependencyChecker.CheckVs2010Installed()) {
-                Logger.Info("The VS 2010 (x86) redistributable does not appear to be installed.");
-            }
         }
 
         /// <summary>
