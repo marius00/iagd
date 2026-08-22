@@ -21,7 +21,27 @@ namespace IAGrim {
             DateTime buildDate = ExceptionReporter.BuildDate;
             Logger.InfoFormat("Running version {0} from {1:dd/MM/yyyy}", ExceptionReporter.VersionString, buildDate);
 
-            FileVersionInfo dllVersion = FileVersionInfo.GetVersionInfo(Path.Combine(Directory.GetCurrentDirectory(), "ItemAssistantHook_x64.dll"));
+            VerifyHookDllVersion();
+        }
+
+        /// <summary>
+        /// Reports a hook DLL left behind by an update that could not overwrite it, which is the case where loot
+        /// silently stops being captured.
+        ///
+        /// Everything here resolves against the install folder rather than the working directory. Both paths used
+        /// to be relative and both throw rather than degrade when the working directory is not ours: the Windows
+        /// shortcut sets it, so this never surfaced, but nothing guarantees it. A launcher script, a shell, or
+        /// another process starting IAGD leaves it wherever it happened to be, and startup then died here, before
+        /// the main window existed.
+        /// </summary>
+        private static void VerifyHookDllVersion() {
+            var hookDll = Path.Combine(AppContext.BaseDirectory, "ItemAssistantHook_x64.dll");
+            if (!File.Exists(hookDll)) {
+                Logger.Error($"Could not find the hook DLL at \"{hookDll}\". Loot cannot be captured without it; IAGD needs to be reinstalled.");
+                return;
+            }
+
+            FileVersionInfo dllVersion = FileVersionInfo.GetVersionInfo(hookDll);
 
             Logger.InfoFormat($"DLL version version {dllVersion.FileVersion}");
             LogOptionalDllVersion("Playtest", "ItemAssistantHook_playtest_x64.dll");
@@ -30,7 +50,13 @@ namespace IAGrim {
             // FileVersion is a numeric win32 resource that can't carry the padding, so the same version can be
             // spelled two ways. A string compare here read a stale DLL as up to date whenever the revision widths
             // differed, which is exactly the "updated while GD was running" case this check exists to catch.
-            var minimumDllVersion = File.ReadAllText("dllver.txt").Trim();
+            var versionFile = Path.Combine(AppContext.BaseDirectory, "dllver.txt");
+            if (!File.Exists(versionFile)) {
+                Logger.Warn($"Could not find \"{versionFile}\", skipping the hook DLL version check.");
+                return;
+            }
+
+            var minimumDllVersion = File.ReadAllText(versionFile).Trim();
             if (VersionUtility.IsOlderThan(dllVersion.FileVersion, minimumDllVersion)) {
                 Logger.Error($"The DLL version ({dllVersion.FileVersion}) is older than the required {minimumDllVersion}, did you perhaps run into a conflict while updating and clicked ignore?");
                 Logger.Error("Item Assistant needs to be re-installed without GD running.");
@@ -38,25 +64,13 @@ namespace IAGrim {
                 MessageBox.Show("IAGD install is corrupted.\nReinstall IAGD without GD running.", "Warning",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-
-
-            if (!DependencyChecker.CheckVs2013Installed()) {
-                MessageBox.Show("It appears VS 2013 (x86) redistributable is not installed.\nPlease install it to continue using IA",
-                    "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-
-            if (!DependencyChecker.CheckVs2010Installed()) {
-                MessageBox.Show("It appears VS 2010 (x86) redistributable is not installed.\nPlease install it to continue using IA",
-                    "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-
         }
 
         /// <summary>
         /// Logs the version of a hook DLL which may not be present in every install (GD v1.2 / playtest builds).
         /// </summary>
         private static void LogOptionalDllVersion(string label, string filename) {
-            var path = Path.Combine(Directory.GetCurrentDirectory(), filename);
+            var path = Path.Combine(AppContext.BaseDirectory, filename);
             if (File.Exists(path)) {
                 Logger.InfoFormat($"{label} DLL version {FileVersionInfo.GetVersionInfo(path).FileVersion}");
             }

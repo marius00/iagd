@@ -95,22 +95,29 @@ namespace IAGrim.UI.Tabs {
                 ? Color.Black
                 : Color.FromArgb(65, 60, 53); // #413c35
 
-            // WINE PATCH: the Chromium sandbox and GPU/renderer subprocesses fail to spawn reliably under
-            // Wine (especially while Grim Dawn is running), so WebView2 navigation never completes and the
-            // item grid stays blank. --no-sandbox + --disable-gpu + --single-process avoids the failing
-            // subprocess/sandbox path so the page renders regardless of Grim Dawn. Applied ONLY under Wine
-            // so Windows keeps its default (sandboxed, GPU-accelerated, multi-process) behaviour untouched.
-            CoreWebView2Environment conf;
-            if (IAGrim.Services.WineDetector.IsRunningInWine()) {
-                var envOptions = new CoreWebView2EnvironmentOptions { AdditionalBrowserArguments = "--no-sandbox --disable-gpu --disable-gpu-compositing --single-process" };
-                conf = CoreWebView2Environment.CreateAsync(null, GlobalPaths.EdgeCacheLocation, envOptions).Result;
+            var conf = CreateWebViewEnvironment();
+            if (conf != null) {
+                webView21!.EnsureCoreWebView2Async(conf);
             }
-            else {
-                conf = CoreWebView2Environment.CreateAsync(null, GlobalPaths.EdgeCacheLocation).Result;
-            }
-            webView21!.EnsureCoreWebView2Async(conf);
 
             InitializeFilterPanel();
+        }
+
+        /// <summary>
+        /// Builds the WebView2 environment, or tells the user why the item grid is going to be empty.
+        ///
+        /// A missing runtime used to reach here as an exception out of the constructor, taking IAGD down during
+        /// startup -- before the main window existed, and so before any of the WebView2 error handling could run.
+        /// </summary>
+        private CoreWebView2Environment? CreateWebViewEnvironment() {
+            var conf = WebView2Runtime.TryCreateEnvironment(out var error);
+            if (conf != null) {
+                return conf;
+            }
+
+            Logger.Error("The WebView2 environment could not be created; the item grid cannot be displayed.");
+            MessageBox.Show(error, "Error - WebView2", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return null;
         }
 
 

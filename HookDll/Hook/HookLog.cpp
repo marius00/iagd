@@ -7,13 +7,18 @@
 #include "Logger.h"
 
 // TODO: What's this doing in HookLog.cpp ??
+//
+// Deliberately does not log. It runs from HookLog's own constructor, so on the failure path it used to write through g_log -- the very object still being built -- and it does so before any log file exists,
+// which makes the resulting crash completely silent. The one caller that can safely report a failure (the constructor below) does so once its stream is open.
 std::wstring GetIagdFolder() {
-    PWSTR path_tmp;
+    // Documented to be set to null on failure, but it is an out-parameter on a call that may not have run at all, and this used to be freed uninitialised.
+    PWSTR path_tmp = nullptr;
     auto get_folder_path_ret = SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, nullptr, &path_tmp);
 
     if (get_folder_path_ret != S_OK) {
-        CoTaskMemFree(path_tmp);
-		LogToFile(LogLevel::WARNING, L"ERROR Could not find roaming appdata folder");
+        if (path_tmp != nullptr) {
+            CoTaskMemFree(path_tmp);
+        }
         return std::wstring();
     }
 
@@ -39,6 +44,11 @@ HookLog::HookLog() : m_lastMessageCount(0), m_initialized(false) {
             << L"****************************"  << std::endl
             << L"    Hook Logging Started"      << std::endl
             << L"****************************"  << std::endl;
+
+        // The only safe place to report this: GetIagdFolder cannot log, and by here we have a stream.
+        if (iagdFolder.empty()) {
+            m_out << L"WARNING Could not find the roaming appdata folder, logging to the temp folder instead." << std::endl;
+        }
 
         TCHAR buffer[MAX_PATH];
         DWORD size = GetCurrentDirectory(MAX_PATH, buffer);

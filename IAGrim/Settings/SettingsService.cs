@@ -28,7 +28,10 @@ namespace IAGrim.Settings {
 
             var local = _data.Local;
             if (local?.MachineName != Environment.MachineName) {
-                Logger.Warn($"Local settings are for {local?.MachineName}, expected {Environment.MachineName}. Discarding local settings.");
+                // Worth spelling out what this costs, because the message alone does not: the cached Grim Dawn
+                // locations go with it, so the next start re-detects from scratch. It also fires for anyone
+                // sharing one settings file between Windows and a Wine prefix, which report different names.
+                Logger.Warn($"Local settings are for {local?.MachineName}, expected {Environment.MachineName}. Discarding local settings, including the cached Grim Dawn location.");
                 local = new LocalSettings {
                     MachineName = Environment.MachineName
                 };

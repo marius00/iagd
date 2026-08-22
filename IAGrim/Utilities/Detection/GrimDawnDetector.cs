@@ -216,6 +216,19 @@ namespace IAGrim {
         }
 
         public static void AppendSteamPaths(ICollection<string> locations) {
+            // Proton names the game's install folder outright, so there is no library to walk. Checked the same way the library scan checks its candidates, because an install folder without a database is not one
+            // we can parse. Null on Windows, and null in a prefix IAGD was not launched into by Steam.
+            var fromProton = ProtonPaths.GameInstallDir;
+            if (fromProton != null) {
+                if (File.Exists(Path.Combine(fromProton, "database", "database.arz"))) {
+                    Logger.Info($"Grim Dawn install folder supplied by Proton: {fromProton}");
+                    locations.Add(CleanInvertedSlashes(fromProton));
+                }
+                else {
+                    Logger.Warn($"Proton points at \"{fromProton}\" but there is no database\\database.arz there, ignoring it.");
+                }
+            }
+
             try {
                 var steamPath = SteamDetection.GetSteamDirectory();
                 var steamInstallPaths = SteamDetection.ExtractSteamLibraryPaths(Path.Combine(steamPath, "config", "libraryfolders.vdf"));

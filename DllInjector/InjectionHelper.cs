@@ -33,6 +33,34 @@ namespace DllInjector {
         private readonly ProgressChangedEventHandler _registeredProgressCallback;
         private readonly string? _linuxHackPath;
 
+        /// <summary>
+        /// Shortest gap between two injection attempts against the same process.
+        ///
+        /// Refusing an attach is the normal state, not an error: the DLL declines while the game is loading or
+        /// sitting in character select, and the injector is expected to come back later. Without a floor here the
+        /// only pacing is the 800ms sleep at the top of <see cref="Process"/> plus however long verification takes
+        /// -- which on Windows is a Listdlls run, but under Wine is a file existence check, so the loop tightens to
+        /// roughly one full LoadLibrary into a live game every second for as long as someone sits at character
+        /// select. Five seconds is far below anything a player would notice and an order of magnitude less work.
+        /// </summary>
+        private static readonly TimeSpan RetryInterval = TimeSpan.FromSeconds(5);
+
+        /// <summary>
+        /// How old the game process must be before the first attach is attempted, under Wine only.
+        ///
+        /// The readiness gate everywhere else is the window: the process exists within a second of launch, while
+        /// the window only appears once the loader has finished. Under Proton that stops being true -- the window
+        /// turns up seconds into startup, long before the engine is built -- so the window alone lets an attach
+        /// land in the middle of initialisation. No character load beats 45 seconds, so the gate costs nothing
+        /// there and puts the whole startup window out of reach.
+        ///
+        /// Deliberately not applied on Windows, where the window has always been a sufficient gate and changing
+        /// that would delay every attach by 45 seconds for no benefit.
+        /// </summary>
+        private static readonly TimeSpan WineMinimumGameAge = TimeSpan.FromSeconds(45);
+
+        private readonly Dictionary<uint, DateTime> _nextAttempt = new Dictionary<uint, DateTime>();
+
         class RunArguments {
             public required string WindowName;
             public required string ClassName;
@@ -85,7 +113,7 @@ namespace DllInjector {
 
                 Logger.Info("Generating the path to the IA DLL...");
                 try {
-                    Path.Combine(Directory.GetCurrentDirectory(), (e.Argument as RunArguments).DllName);
+                    Path.Combine(AppContext.BaseDirectory, (e.Argument as RunArguments).DllName);
                 }
                 catch (Exception ex) {
                     Logger.Fatal("Error generating path to the IA dll, try installing IA in a different folder...");
@@ -94,7 +122,7 @@ namespace DllInjector {
                 }
 
                 while (!worker.CancellationPending) {
-                    if (!File.Exists("DllInjector64.exe")) {
+                    if (!File.Exists(Path.Combine(AppContext.BaseDirectory, "DllInjector64.exe"))) {
                         Logger.Fatal("Shutting down injection helper. End user has been avasted and IA is now inoperational until reinstalled.");
                         return;
                     }
@@ -126,6 +154,63 @@ namespace DllInjector {
             }
             else {
                 throw new NotSupportedException("Class name provided instead of window name, not yet implemented.");
+            }
+        }
+
+        /// <summary>
+        /// True when this process is due for another injection attempt, recording the next permitted time as a
+        /// side effect. See <see cref="RetryInterval"/>.
+        /// </summary>
+        private bool IsDueForAttempt(uint pid) {
+            if (_nextAttempt.TryGetValue(pid, out var next) && DateTime.UtcNow < next) {
+                return false;
+            }
+
+            _nextAttempt[pid] = DateTime.UtcNow + RetryInterval;
+            return true;
+        }
+
+        /// <summary>
+        /// Under Wine, refuse to touch a game process that is still starting up. See <see cref="WineMinimumGameAge"/>.
+        ///
+        /// Fails open: a process whose start time cannot be read is treated as old enough, because the alternative
+        /// is never attaching at all.
+        /// </summary>
+        private bool IsOldEnoughToHook(uint pid) {
+            if (_linuxHackPath == null) {
+                return true;
+            }
+
+            try {
+                var age = DateTime.Now - System.Diagnostics.Process.GetProcessById((int) pid).StartTime;
+                if (age < WineMinimumGameAge) {
+                    Logger.Info($"Grim Dawn ({pid}) has been running for {age.TotalSeconds:F0}s, waiting until it is {WineMinimumGameAge.TotalSeconds:F0}s old before attaching.");
+                    return false;
+                }
+            }
+            catch (Exception ex) {
+                Logger.Warn($"Could not determine how long process {pid} has been running, attaching anyway. {ex.Message}");
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Drops pacing state for processes that have gone away, so a long session does not accumulate an entry
+        /// per game launch. Also means a restarted game starts eager rather than inheriting the old one's interval.
+        ///
+        /// Only the pacing state. <see cref="_previouslyInjected"/> deliberately keeps departed processes: it
+        /// doubles as "have we seen a game at all this session", which is what separates NO_PROCESS_FOUND from
+        /// NO_PROCESS_FOUND_ON_STARTUP -- and only the former re-enables character backup once the game closes.
+        /// Pruning it would silently stop backups from resuming after a play session.
+        /// </summary>
+        private void ForgetDepartedProcesses(HashSet<uint> alive) {
+            if (_nextAttempt.Count == 0) {
+                return;
+            }
+
+            foreach (var pid in _nextAttempt.Keys.Where(pid => !alive.Contains(pid)).ToList()) {
+                _nextAttempt.Remove(pid);
             }
         }
 
@@ -161,10 +246,16 @@ namespace DllInjector {
 
             method = 1;
 
-            Logger.Info($"Running {injector}...");
-            if (File.Exists(injector)) {
+            // Resolved against the install folder rather than the working directory, which is not ours to assume:
+            // the Windows shortcut sets it, but anything else starting IAGD -- a launcher script, a shell, another
+            // process -- leaves it wherever it happened to be, and the injector then silently cannot be found.
+            var injectorPath = Path.Combine(AppContext.BaseDirectory, injector);
+
+            Logger.Info($"Running {injectorPath}...");
+            if (File.Exists(injectorPath)) {
                 ProcessStartInfo startInfo = new ProcessStartInfo();
-                startInfo.FileName = injector;
+                startInfo.FileName = injectorPath;
+                startInfo.WorkingDirectory = AppContext.BaseDirectory;
                 startInfo.Arguments = $"-t {method} \"{exe}\" \"{dll}\"";
                 startInfo.RedirectStandardOutput = true;
                 startInfo.RedirectStandardError = true;
@@ -202,7 +293,7 @@ namespace DllInjector {
                 }
             }
             else {
-                Logger.Warn($"Could not find {injector}, unable to inject into Grim Dawn.");
+                Logger.Warn($"Could not find {injectorPath}, unable to inject into Grim Dawn.");
             }
             return IntPtr.Zero;
         }
@@ -221,6 +312,7 @@ namespace DllInjector {
             }
 
             HashSet<uint> pids = FindProcesses(arguments);
+            ForgetDepartedProcesses(pids);
 
 
             if (pids.Count == 0 && _previouslyInjected.Count == 0) {
@@ -234,7 +326,7 @@ namespace DllInjector {
 
 
 
-            string dll64Bit = Path.Combine(Directory.GetCurrentDirectory(), arguments.DllName);
+            string dll64Bit = Path.Combine(AppContext.BaseDirectory,arguments.DllName);
             if (!File.Exists(dll64Bit)) {
                 Logger.FatalFormat("Could not find {1} at \"{0}\"", dll64Bit, arguments.DllName);
             }
@@ -242,6 +334,17 @@ namespace DllInjector {
                 foreach (uint pid in pids) {
                     if (_previouslyInjected.Contains(pid)) {
                         worker.ReportProgress(STILL_RUNNING, null);
+                        continue;
+                    }
+
+                    // Pacing, before anything that costs a process launch or reports a status. Neither of these
+                    // is a failure: the game is simply not ready to be hooked yet, and saying so on every pass
+                    // would be noise -- so they report nothing at all and the next pass tries again.
+                    if (!IsDueForAttempt(pid)) {
+                        continue;
+                    }
+
+                    if (!IsOldEnoughToHook(pid)) {
                         continue;
                     }
 
@@ -359,12 +462,12 @@ namespace DllInjector {
 
                 switch (_gameVariantCache[gdFilename]) {
                     case GameVariant.Playtest:
-                        dll64Bit = Path.Combine(Directory.GetCurrentDirectory(), dllName.Replace("_x64", "_playtest_x64"));
+                        dll64Bit = Path.Combine(AppContext.BaseDirectory,dllName.Replace("_x64", "_playtest_x64"));
                         Logger.Info("Playtest detected, using DLL " + dll64Bit);
                         break;
 
                     default:
-                        dll64Bit = Path.Combine(Directory.GetCurrentDirectory(), dllName);
+                        dll64Bit = Path.Combine(AppContext.BaseDirectory,dllName);
                         break;
                 }
 
