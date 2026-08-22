@@ -2,6 +2,8 @@
 
 For a binary download, see https://grimdawn.evilsoft.net
 
+**Running on Linux? [See here](LINUX.md)** — Item Assistant has to be launched inside Grim Dawn's own Proton prefix, and that guide covers why and how.
+
 
 
 ## Issues running this project?

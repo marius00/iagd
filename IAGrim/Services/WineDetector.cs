@@ -13,9 +13,32 @@ namespace IAGrim.Services {
 
         // The operating system won't change mid-run, so only look it up once
         private static readonly Lazy<bool> IsWine = new Lazy<bool>(DetectWine);
+        private static readonly Lazy<string?> Version = new Lazy<string?>(DetectWineVersion);
 
         public static bool IsRunningInWine() {
             return IsWine.Value;
+        }
+
+        /// <summary>
+        /// The Wine version we are running under, or null on Windows. Reported rather than acted on: knowing it is
+        /// 9.0 versus 10.4 is most of the context missing from a "it does not work under Wine" bug report.
+        /// </summary>
+        public static string? GetWineVersion() {
+            return Version.Value;
+        }
+
+        private static string? DetectWineVersion() {
+            if (!IsWine.Value) {
+                return null;
+            }
+
+            try {
+                return Marshal.PtrToStringAnsi(wine_get_version());
+            }
+            catch (Exception ex) {
+                Logger.Warn("Detected Wine, but could not read its version", ex);
+                return null;
+            }
         }
 
         private static bool DetectWine() {

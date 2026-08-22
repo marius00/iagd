@@ -5,12 +5,14 @@ using IAGrim.Backup.Cloud.Service;
 using IAGrim.Parsers.Arz;
 using IAGrim.Settings;
 using IAGrim.Utilities;
+using log4net;
 using Microsoft.Web.WebView2.Core;
 using System;
 
 
 namespace IAGrim.UI.Popups {
     public partial class BackupLoginNagScreen : Form {
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(BackupLoginNagScreen));
         private readonly AuthService _authAuthService;
         private readonly SettingsService _settingsService;
         private int _closeTimerCounter = 5;
@@ -34,19 +36,15 @@ namespace IAGrim.UI.Popups {
             var pollingId = _authAuthService.Authenticate(true);
             _authAuthService.OnAuthCompletion += _authAuthService_OnAuthCompletion;
 
-            // WINE PATCH: the Chromium sandbox and GPU/renderer subprocesses fail to spawn reliably under
-            // Wine (especially while Grim Dawn is running), so WebView2 navigation never completes and the
-            // item grid stays blank. --no-sandbox + --disable-gpu + --single-process avoids the failing
-            // subprocess/sandbox path so the page renders regardless of Grim Dawn. Applied ONLY under Wine
-            // so Windows keeps its default (sandboxed, GPU-accelerated, multi-process) behaviour untouched.
-            CoreWebView2Environment conf;
-            if (IAGrim.Services.WineDetector.IsRunningInWine()) {
-                var envOptions = new CoreWebView2EnvironmentOptions { AdditionalBrowserArguments = "--no-sandbox --disable-gpu --disable-gpu-compositing --single-process" };
-                conf = CoreWebView2Environment.CreateAsync(null, GlobalPaths.EdgeCacheLocation, envOptions).Result;
+            // No runtime means no sign-in page. Close rather than throw: this is an unprompted nag screen, so
+            // taking IAGD down over it would be absurd, and the main window has already explained what is missing.
+            var conf = WebView2Runtime.TryCreateEnvironment(out var error);
+            if (conf == null) {
+                Logger.Warn($"Cannot show the backup login screen without a working WebView2 runtime. {error}");
+                this.Close();
+                return;
             }
-            else {
-                conf = CoreWebView2Environment.CreateAsync(null, GlobalPaths.EdgeCacheLocation).Result;
-            }
+
             webView21.EnsureCoreWebView2Async(conf);
 
             webView21.NavigationCompleted += WebView21_NavigationCompleted;

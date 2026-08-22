@@ -127,9 +127,15 @@ namespace EvilsoftCommons.DllInjector {
 
             Logger.Info("Running Listdlls...");
             List<string> output = new List<string>();
-            if (File.Exists("Listdlls.exe")) {
+
+            // Against the install folder, not the working directory: see the note in InjectionHelper.InjectXBit.
+            // A miss here is quieter than most -- verification is simply skipped, and a successful injection is
+            // then reported as a failure.
+            var listDlls = Path.Combine(AppContext.BaseDirectory, "Listdlls.exe");
+            if (File.Exists(listDlls)) {
                 ProcessStartInfo startInfo = new ProcessStartInfo {
-                    FileName = "Listdlls.exe",
+                    FileName = listDlls,
+                    WorkingDirectory = AppContext.BaseDirectory,
                     Arguments = $"{pid}",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -158,7 +164,7 @@ namespace EvilsoftCommons.DllInjector {
                 }
             }
             else {
-                Logger.Warn("Could not find Listdlls.exe, unable to verify successful injection.");
+                Logger.Warn($"Could not find {listDlls}, unable to verify successful injection.");
             }
             return false;
         }

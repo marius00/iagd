@@ -21,6 +21,13 @@ namespace IAGrim.Utilities.Detection {
         }
 
         public static string GetSteamDirectory() {
+            // Ahead of the registry, because inside a Proton prefix the registry is either silent or wrong, and  this is the value Steam itself passed us. Absent on Windows, so the order below is unchanged there.
+            var fromProton = ProtonPaths.SteamRoot;
+            if (IsSteamDirectory(fromProton)) {
+                Logger.Info($"Steam config location supplied by Proton: {fromProton}");
+                return fromProton!;
+            }
+
             var path = GetSteamDirectoryFromValveRegistry();
             if (string.Empty == path) {
                 return GetSteamDirectoryFromShellRegistry();
