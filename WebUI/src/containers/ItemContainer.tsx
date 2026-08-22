@@ -165,7 +165,7 @@ class ItemContainer extends PureComponent<Props, object> {
           {items.map(renderItem)}
 
           {canLoadMoreItems && <button onClick={this.props.onRequestMoreItems} className="load-more-items">{translate('button.loadmoreitems')}</button>}
-          {canLoadMoreItems && <OnScrollLoader onTrigger={this.props.onRequestMoreItems} />}
+          {canLoadMoreItems && <OnScrollLoader onTrigger={this.props.onRequestMoreItems} isLoading={this.props.isLoading} />}
           <ReactTooltip html={true} type={this.props.isDarkMode ? 'dark' : 'light'} />
         </div>
       );
