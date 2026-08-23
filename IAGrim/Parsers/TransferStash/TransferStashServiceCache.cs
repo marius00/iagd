@@ -23,7 +23,7 @@ namespace IAGrim.Parsers.TransferStash {
 
         public void Refresh() {
             var special = new List<string>();
-            special.AddRange(StashTab.HardcodedRecords);
+            special.AddRange(HardcodedStackableRecords.Hardcoded);
             special.AddRange(_databaseItemDao.GetSpecialStackableRecords());
             SpecialRecords = special;
             AllRecords = new HashSet<string>(_databaseItemDao.ListAllRecords());

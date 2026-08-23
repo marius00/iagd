@@ -7,7 +7,6 @@ using IAGrim.Database.Migrations;
 using IAGrim.Parsers.GameDataParsing.Service;
 using IAGrim.Services;
 using IAGrim.Settings;
-using IAGrim.StashFile;
 using IAGrim.UI;
 using IAGrim.UI.Misc.CEF;
 using IAGrim.Utilities;

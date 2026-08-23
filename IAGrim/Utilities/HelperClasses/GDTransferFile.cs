@@ -1,30 +1,15 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 
 namespace IAGrim.Utilities.HelperClasses {
     public class GDTransferFile : IComboBoxItemToggle, IEquatable<GDTransferFile> {
-        public string? Filename { get; set; }
-
         public bool IsHardcore { get; set; }
 
         public string? Mod { get; set; }
 
         public virtual bool Enabled { get; set; }
 
-        public bool IsExpansion1 { get; set; }
-
-        public DowngradeType Downgrade { get; set; }
-
-        [JsonIgnore] public virtual DateTime LastAccess { get; set; }
-
         public override string ToString() {
             var text = string.IsNullOrEmpty(Mod) ? RuntimeSettings.Language!.GetTag("iatag_ui_vanilla") : Mod;
-            if (Downgrade == DowngradeType.AoM) {
-                text = RuntimeSettings.Language!.GetTag("iatag_ui_no_fg");
-            }
-            else if (Downgrade == DowngradeType.NoExpansions) {
-                text = RuntimeSettings.Language!.GetTag("iatag_ui_no_expansion");
-            }
 
             if (IsHardcore) {
                 return $"{text}{RuntimeSettings.Language!.GetTag("iatag_ui_hc")}";
@@ -42,11 +27,8 @@ namespace IAGrim.Utilities.HelperClasses {
                 return true;
             }
 
-            return string.Equals(Filename, other.Filename)
-                   && IsHardcore == other.IsHardcore
-                   && string.Equals(Mod, other.Mod)
-                   && IsExpansion1 == other.IsExpansion1
-                   && Downgrade == other.Downgrade;
+            return IsHardcore == other.IsHardcore
+                   && string.Equals(Mod, other.Mod);
         }
 
         public override bool Equals(object? obj) {
@@ -67,18 +49,10 @@ namespace IAGrim.Utilities.HelperClasses {
 
         public override int GetHashCode() {
             unchecked {
-                var hashCode = (Filename != null ? Filename.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ IsHardcore.GetHashCode();
+                var hashCode = IsHardcore.GetHashCode();
                 hashCode = (hashCode * 397) ^ (Mod != null ? Mod.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ IsExpansion1.GetHashCode();
                 return hashCode;
             }
-        }
-
-        public enum DowngradeType {
-            None,
-            AoM,
-            NoExpansions
         }
     }
 }

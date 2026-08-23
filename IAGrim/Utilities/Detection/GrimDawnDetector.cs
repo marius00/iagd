@@ -59,64 +59,6 @@ namespace IAGrim {
         }
 
 
-        /// <summary>
-        /// Get the location of Grim Dawn using the steam app id or steam client from the registry
-        /// </summary>
-        /// <returns></returns>
-        private static string FindSteamUserdata() {
-            using (RegistryKey? registryKey = Registry.LocalMachine.OpenSubKey(@"Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 219990")) {
-                string? location = (string?) registryKey?.GetValue("InstallLocation");
-                if (!string.IsNullOrEmpty(location)) {
-
-                    var parent = Directory.GetParent(location)?.Parent?.Parent;
-                    if (parent != null) {
-                        location = Path.Combine(parent.FullName, "userdata");
-                        if (Directory.Exists(location)) {
-                            Logger.Info("Grim Dawn userdata location located using App Id");
-                            return location;
-                        }
-                    }
-                }
-            }
-
-            using (RegistryKey? registryKey = Registry.CurrentUser.OpenSubKey(@"Software\Valve\Steam")) {
-                if (registryKey != null) {
-                    string? location = (string?)registryKey.GetValue("SourceModInstallPath");
-                    if (!string.IsNullOrEmpty(location)) {
-                        var parent = Directory.GetParent(location)?.Parent;
-                        if (parent != null) {
-                            string p = Path.Combine(parent.FullName, "userdata");
-                            if (Directory.Exists(p)) {
-                                Logger.Info("Grim Dawn install location located using Source Mod Path");
-                                return p;
-                            }
-                        }
-                    }
-                }
-            }
-
-            return string.Empty;
-        }
-
-        /// <summary>
-        /// Get the path to the steam "cloud save" folder for Grim Dawn
-        /// </summary>
-        /// <returns></returns>
-        public static string FindSteamGrimDawnUserdata() {
-            string userdataPath = FindSteamUserdata();
-            if (!string.IsNullOrEmpty(userdataPath)) {
-                foreach (string userid in Directory.GetDirectories(userdataPath)) {
-                    string fullpath = Path.Combine(userdataPath, userid, "219990", "remote", "save");
-                    if (File.Exists(Path.Combine(fullpath, "transfer.gst")))
-                        return fullpath;
-                    else if (File.Exists(Path.Combine(fullpath, "transfer.gsh")))
-                        return fullpath;
-                }
-            }
-
-            return string.Empty;
-        }
-
 
         /// <summary>
         /// Find the path to Grim Dawn by searching for the HWND it creates

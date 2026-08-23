@@ -112,9 +112,8 @@ namespace IAGrim.Utilities.Cloud {
         }
 
         public static bool IsStashFilesNewerThan(DateTime dt) {
-            string gameSaves = Path.Combine(GlobalPaths.SavePath, "Save");
             foreach (var file in new string[] {"transfer.gst", "transfer.gsh"}) {
-                var filename = Path.Combine(gameSaves, file);
+                var filename = Path.Combine(GlobalPaths.SavePath, file);
                 if (File.Exists(filename)) {
                     if (File.GetLastWriteTimeUtc(filename) > dt) {
                         return true;
@@ -162,9 +161,7 @@ namespace IAGrim.Utilities.Cloud {
                 Directory.CreateDirectory(destination);
 
 
-            string gameSaves = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "Grim Dawn", "Save");
-
-            string[] files = Directory.GetFiles(Path.Combine(gameSaves, "main", character), "*.*", SearchOption.AllDirectories);
+            string[] files = Directory.GetFiles(Path.Combine(GlobalPaths.SavePath, "main", character), "*.*", SearchOption.AllDirectories);
 
 
             if (File.Exists(target)) {
@@ -187,7 +184,7 @@ namespace IAGrim.Utilities.Cloud {
                     continue;
                 }
 
-                var relativePath = f.Replace(gameSaves, "").Replace(Path.GetFileName(f), "");
+                var relativePath = f.Replace(GlobalPaths.SavePath, "").Replace(Path.GetFileName(f), "");
 
                 if (relativePath.StartsWith("\\")) {
                     relativePath = relativePath.Substring(1);

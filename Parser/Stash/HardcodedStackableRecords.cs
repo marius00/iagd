@@ -1,16 +1,9 @@
-using IAGrim.StashFile;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace IAGrim.Parser.Stash {
-    public class StashTab {
-        private static readonly string[] StackableSlots = { "ItemRelic", "OneShot_PotionHealth", "OneShot_PotionMana", "OneShot_Scroll" };
-        private readonly uint Version;
 
+    public static class HardcodedStackableRecords {
         // TODO: Load this dynamically
         // select s.id_databaseitem, i.name from databaseitemstat_v2 s, databaseitem_v2 i where stat = 'preventEasyDrops' and i.id_databaseitem = s.id_databaseitem -- These are stackable
-        public static readonly string[] HardcodedRecords = {
+        public static readonly string[] Hardcoded = {
             "records/items/crafting/materials/craft_bloodchthon.dbr",
             "records/items/crafting/materials/craft_manticore.dbr",
             "records/items/crafting/materials/craft_ancientheart.dbr",
@@ -58,89 +51,5 @@ namespace IAGrim.Parser.Stash {
             "records/items/gearaccessories/necklaces/a00_necklace.dbr", // Salt bag
             //"records/storyelementsgdx2/questassets/areag_n.dbr"
         };
-
-        private Block _block = new Block();
-
-        public uint Width = 10u;
-
-        public uint Height = 18u;
-        
-        private uint borderIndex;
-        private uint borderColorindex;
-        private uint symbolIndex;
-        private uint symbolColorIndex;
-        private string? buttonName;
-
-        public List<Item> Items { get; private set; }
-
-        public StashTab(uint version) {
-            this.Items = new List<Item>();
-            this.Version = version;
-        }
-
-        public static bool CanStack(string slot) {
-            return StackableSlots.Contains(slot);
-        }
-
-        public bool Read(GDCryptoDataBuffer pCrypto, uint containerVersion) {
-            uint numItems = 0;
-            bool failed = !Block.ReadStart(out this._block, pCrypto) || !pCrypto.ReadCryptoUInt(out this.Width) || !pCrypto.ReadCryptoUInt(out this.Height) || !pCrypto.ReadCryptoUInt(out numItems);
-
-
-            bool result;
-            if (failed) {
-                return false;
-            }
-            else {
-                this.Items = new List<Item>();
-                for (uint i = 0u; i < numItems; i += 1u) {
-                    Item item = new Item(this.Version);
-                    bool flag2 = !item.Read(pCrypto);
-                    if (flag2) {
-                        return false;
-                    }
-                    this.Items.Add(item);
-                }
-
-                if (containerVersion >= 9) {
-                    pCrypto.ReadCryptoUInt(out borderIndex);
-                    pCrypto.ReadCryptoUInt(out borderColorindex);
-                    pCrypto.ReadCryptoUInt(out symbolIndex);
-                    pCrypto.ReadCryptoUInt(out symbolColorIndex);
-                    pCrypto.ReadCryptoWString(out buttonName);
-                }
-
-
-                bool flag3 = !this._block.ReadEnd(pCrypto);
-                result = !flag3;
-            }
-            return result;
-        }
-
-        public void Write(DataBuffer pBuffer) {
-            this._block.WriteStart(0, pBuffer);
-            pBuffer.WriteUInt(this.Width);
-            pBuffer.WriteUInt(this.Height);
-            if ((this.Items == null) || (this.Items.Count < 1)) {
-                pBuffer.WriteUInt(0);
-            }
-            else {
-                pBuffer.WriteUInt((uint)this.Items.Count);
-                foreach (var item in this.Items) {
-                    item.Write(pBuffer);
-                }
-            }
-            if (this.Version >= 9) {
-                pBuffer.WriteUInt(borderIndex);
-                pBuffer.WriteUInt(borderColorindex);
-                pBuffer.WriteUInt(symbolIndex);
-                pBuffer.WriteUInt(symbolColorIndex);
-                pBuffer.WriteWString(buttonName);
-            }
-            this._block.WriteEnd(pBuffer);
-        }
-
-
     }
-
 }

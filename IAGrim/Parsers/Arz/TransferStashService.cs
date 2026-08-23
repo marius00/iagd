@@ -1,6 +1,5 @@
 ﻿using EvilsoftCommons;
 using IAGrim.Database;
-using IAGrim.StashFile;
 using IAGrim.Utilities;
 using log4net;
 using System;
@@ -14,33 +13,6 @@ using static IAGrim.UI.StashPicker;
 namespace IAGrim.Parsers.Arz {
     internal class TransferStashService {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(TransferStashService));
-
-
-
-        /// <summary>
-        /// Attempt to get the name of the current mod
-        /// Vanilla leaves this tag empty
-        /// </summary>
-        /// <param name="filename"></param>
-        /// <param name="result"></param>
-        /// <returns></returns>
-        public static bool TryGetModLabel(string filename, out string result) {
-            if (File.Exists(filename)) {
-                var pCrypto = new GDCryptoDataBuffer(DataBuffer.ReadBytesFromDisk(filename));
-                var stash = new Stash();
-
-                if (stash.Read(pCrypto)) {
-                    result = stash.ModLabel;
-                    return true;
-                }
-                else {
-                    Logger.Warn($"Discarding transfer file \"{filename}\", could not read the file.");
-                }
-            }
-
-            result = string.Empty;
-            return false;
-        }
 
 
         public void Deposit(IList<PlayerItem> playerItems, StashPickerResult? modOverride) {
@@ -93,7 +65,7 @@ namespace IAGrim.Parsers.Arz {
         }
 
         public static Item Map(PlayerItem item) {
-            return new Item (6u) {
+            return new Item {
                 BaseRecord = item.BaseRecord ?? "",
                 EnchantmentRecord = item.EnchantmentRecord ?? "",
                 EnchantmentSeed = (uint) item.EnchantmentSeed,
