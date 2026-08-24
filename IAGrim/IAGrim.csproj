@@ -342,4 +342,16 @@
     <Exec Command="xcopy /Y /C &quot;$(SolutionDir)Dependencies\&quot; &quot;$(TargetDir)&quot;" />
   </Target>
 
+  <!--
+    dllver.txt states the hook DLL version IAGD expects, and used to be written only by HookDll\copy.cmd.
+    That made it a manual step which is easy to skip: package a release without having run copy.cmd since
+    the output folder was last emptied and the installer silently ships without the file. Deriving it from
+    the DLL that is actually in the output folder, on every build, keeps the two in sync and cannot be
+    forgotten. ProductVersion rather than FileVersion, for the reason given at the top of this file.
+  -->
+  <Target Name="WriteHookDllVersion" AfterTargets="PostBuild"
+          Condition="'$(OS)' == 'Windows_NT' And Exists('$(TargetDir)ItemAssistantHook_x64.dll')">
+    <Exec Command="powershell -NoProfile -Command &quot;(Get-Item '$(TargetDir)ItemAssistantHook_x64.dll').VersionInfo.ProductVersion.Trim() | Set-Content -Encoding ascii '$(TargetDir)dllver.txt'&quot;" />
+  </Target>
+
 </Project>

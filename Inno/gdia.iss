@@ -24,6 +24,13 @@ Name: "{commondesktop}\IAGD"; Filename: "{app}\\IAGrim.exe"; Tasks: desktopicon
 Name: "{commonprograms}\IAGD (safemode)"; Filename: "{app}\IAGrim.exe"; Parameters: "--safe-mode"; Comment: "Start IAGD with the window position and tray settings reset"; Tasks: starticon
 
 
+; Packaging must fail loudly rather than ship an install without dllver.txt: IAGD reads it on startup to
+; detect a hook DLL left behind by an update that could not overwrite it. It is written by the IAGrim
+; build (see IAGrim.csproj) and by HookDll\copy.cmd; missing here means neither has run against this
+; output folder, so the release would go out with no version check at all.
+#if !FileExists(AddBackslash(SourcePath) + "..\IAGrim\bin\Release\net10.0-windows\win-x64\dllver.txt")
+  #error dllver.txt is missing from IAGrim\bin\Release\net10.0-windows\win-x64 - rebuild IAGrim (or run HookDll\copy.cmd) before packaging.
+#endif
 [Files]
 Source: "..\IAGrim\bin\Release\net10.0-windows\win-x64\*"; Excludes: "*.pdb"; DestDir: "{app}"; Flags: overwritereadonly replacesameversion recursesubdirs createallsubdirs touch ignoreversion
 Source: "readme.txt"; DestDir: "{app}";
