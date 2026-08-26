@@ -17,6 +17,7 @@
 #include <sstream>
 #include "Logger.h"
 #include "VTableDispatch.h"
+#include "CrashReporter.h"
 
 
 #define STASH_1 0
@@ -201,6 +202,7 @@ void* __fastcall InventorySack_AddItem::Hooked_GameInfo_GameInfo_Param(void* Thi
 /// <returns></returns>
 void* __fastcall InventorySack_AddItem::Hooked_InventorySack_AddItem_Drop(void* This, GAME::Item *item, bool findPosition, bool SkipPlaySound) {
 	fnNoteItemAdded(); // Diagnostics only -- fires for every sack, including the player's own inventory.
+	CrashReporter::Note("AddItem(Drop)", (uint64_t)This, (uint64_t)item);
 	try {
 		if (HandleItem(This, item)) {
 			return (void*)1;
@@ -229,6 +231,7 @@ void* __fastcall InventorySack_AddItem::Hooked_InventorySack_AddItem_Drop(void* 
 /// <returns></returns>
 void* __fastcall InventorySack_AddItem::Hooked_InventorySack_AddItem_Vec2(void* This, void* position, GAME::Item* item, bool SkipPlaySound) {
 	fnNoteItemAdded(); // Diagnostics only -- fires for every sack, including the player's own inventory.
+	CrashReporter::Note("AddItem(Vec2)", (uint64_t)This, (uint64_t)item);
 	try {
 		if (HandleItem(This, item)) {
 			return (void*)1;
@@ -900,7 +903,12 @@ void InventorySack_AddItem::ThreadMain(void*) {
 				lastGameInfo = gameInfo;
 			}
 
+			// GetModName runs Engine.dll's own string assignment against this GameInfo, so if the main thread
+			// is destroying the world at the same moment the fault lands in the game, with no IA frame on the
+			// faulting thread's stack. An "enter" with no matching "leave" in the breadcrumbs is that race.
+			CrashReporter::Note("poll:deposit enter GameInfo", (uint64_t)gameInfo);
 			std::wstring folder = GetFolderToLootFrom(GetModName(gameInfo), fnGetHardcore(gameInfo, true));
+			CrashReporter::Note("poll:deposit leave GameInfo", (uint64_t)gameInfo);
 			// LogToFile(std::wstring(L"Looking for files in dir: ") + folder);
 
 			for (auto& entry : boost::make_iterator_range(boost::filesystem::directory_iterator(folder), {})) {

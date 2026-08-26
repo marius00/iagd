@@ -6,6 +6,11 @@ class BaseMethodHook {
 public:
 	BaseMethodHook();
 	BaseMethodHook(DataQueue* dataQueue, HANDLE hEvent);
+
+	/// ProcessDetach holds these as BaseMethodHook* and deletes them through that pointer, which is undefined
+	/// behaviour without a virtual destructor and skips ~OnDemandSeedInfo along with its queue and mutex.
+	virtual ~BaseMethodHook() = default;
+
 	virtual void EnableHook();
 	virtual void DisableHook();
 protected:

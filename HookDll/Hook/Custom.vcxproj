@@ -43,6 +43,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="SetHardcore.h" />
     <ClInclude Include="SettingsReader.h" />
+    <ClInclude Include="CrashReporter.h" />
     <ClInclude Include="DataQueue.h" />
     <ClInclude Include="Exports.h" />
     <ClInclude Include="GetPrivateStash.h" />
@@ -59,6 +60,7 @@
     <ClCompile Include="OnDemandSeedInfo.cpp" />
     <ClCompile Include="SetHardcore.cpp" />
     <ClCompile Include="SettingsReader.cpp" />
+    <ClCompile Include="CrashReporter.cpp" />
     <ClCompile Include="DataQueue.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="GetPrivateStash.cpp" />
@@ -335,7 +337,11 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>None</DebugInformationFormat>
       <SDLCheck>true</SDLCheck>
-      <ExceptionHandling>Async</ExceptionHandling>
+      <!-- Sync (/EHsc), matching Release. Under Async (/EHa) every "catch (...)" in this DLL also catches
+           structured exceptions, so an access violation raised inside a game call the hooks wrap is swallowed
+           and execution continues into the original method with the game's own state half-modified. That
+           trades a locatable crash for corruption that surfaces later somewhere unrelated. -->
+      <ExceptionHandling>Sync</ExceptionHandling>
     </ClCompile>
     <Link>
       <AdditionalDependencies>detours.lib;%(AdditionalDependencies)</AdditionalDependencies>

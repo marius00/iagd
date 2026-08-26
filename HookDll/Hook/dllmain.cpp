@@ -15,6 +15,7 @@
 #include "Logger.h"
 #include "SetHardcore.h"
 #include "SettingsReader.h"
+#include "CrashReporter.h"
 
 /// The log is constructed on first use rather than as a namespace-scope global.
 ///
@@ -65,6 +66,9 @@ HANDLE g_singleInstanceMutex = NULL;
 #pragma region CORE
 
 
+/// Every log line carries its thread id. The hook runs on the game's update thread, on whatever thread drives
+/// Engine::Render, and on the DLL's own polling threads; the races worth catching -- calling into Engine.dll
+/// from a polling thread while the world tears down on another -- are only visible as an interleaving.
 std::wstring logStartupTime() {
 	__time64_t rawtime;
 	struct tm timeinfo;
@@ -73,10 +77,9 @@ std::wstring logStartupTime() {
 	_time64(&rawtime);
 	localtime_s(&timeinfo, &rawtime);
 
-	wcsftime(buffer, sizeof(buffer), L"%Y-%m-%d %H:%M:%S ", &timeinfo);
-	std::wstring str(buffer);
+	wcsftime(buffer, _countof(buffer), L"%Y-%m-%d %H:%M:%S ", &timeinfo);
 
-	return str;
+	return std::wstring(buffer) + L"[t" + std::to_wstring(GetCurrentThreadId()) + L"] ";
 }
 
 std::string logStartupTimeChar() {
@@ -88,9 +91,8 @@ std::string logStartupTimeChar() {
 	localtime_s(&timeinfo, &rawtime);
 
 	strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S ", &timeinfo);
-	std::string str(buffer);
 
-	return str;
+	return std::string(buffer) + "[t" + std::to_string(GetCurrentThreadId()) + "] ";
 }
 
 std::wstring LogLevelToString(LogLevel level) {
@@ -568,6 +570,9 @@ int ProcessAttach(HINSTANCE _hModule) {
 
 	LogToFile(LogLevel::INFO, L"Game is most likely running, proceeding with injection.");
 
+	// Installed only once we have committed to hooking. An aborted attach unloads the DLL again, and a
+	// vectored handler left pointing into an unmapped module is a guaranteed crash rather than a report of one.
+	CrashReporter::Install();
 
 	g_hEvent = CreateEvent(NULL, FALSE, FALSE, L"IA_Worker");
 
@@ -611,6 +616,14 @@ int ProcessDetach(HINSTANCE _hModule) {
 	LOG(L"Detatching DLL..");
 	OutputDebugString(L"ProcessDetach");
 
+	// Before anything else is torn down: the handler lives in this module, so it has to stop being reachable
+	// while this module is still mapped.
+	CrashReporter::Uninstall();
+
+	// Stop the seed-info thread up front so it cannot call into the game while the other hooks are detached.
+	if (listener != nullptr) {
+		listener->Stop();
+	}
 
 	for (unsigned int i = 0; i < hooks.size(); i++) {
 		hooks[i]->DisableHook();
@@ -618,11 +631,10 @@ int ProcessDetach(HINSTANCE _hModule) {
 	}
 	hooks.clear();
 
-	if (listener != nullptr) {
-		listener->Stop();
-		delete listener;
-		listener = nullptr;
-	}
+	// Both are entries in `hooks` rather than separate allocations, so the loop above already freed them.
+	// Clearing the globals keeps the worker thread from using either while it winds down.
+	listener = nullptr;
+	g_InventorySack_AddItemInstance = nullptr;
 
 	EndWorkerThread();
 

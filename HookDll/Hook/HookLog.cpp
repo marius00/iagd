@@ -28,6 +28,27 @@ std::wstring GetIagdFolder() {
     return path + L"\\..\\local\\evilsoft\\iagd\\";
 }
 
+/// Roll the log over once it gets to a certain size
+/// Keeping the second-to-last log to help with crash debugging.
+static void RotateIfLarge(const std::wstring& logFile) {
+    const unsigned long long MAX_BYTES = 4ull * 1024 * 1024;
+
+    WIN32_FILE_ATTRIBUTE_DATA attributes;
+    if (!GetFileAttributesExW(logFile.c_str(), GetFileExInfoStandard, &attributes)) {
+        return;
+    }
+
+    const unsigned long long size =
+        ((unsigned long long)attributes.nFileSizeHigh << 32) | attributes.nFileSizeLow;
+    if (size < MAX_BYTES) {
+        return;
+    }
+
+    const std::wstring previous = logFile + L".1";
+    DeleteFileW(previous.c_str());
+    MoveFileW(logFile.c_str(), previous.c_str());
+}
+
 HookLog::HookLog() : m_lastMessageCount(0), m_initialized(false) {
     std::wstring iagdFolder = GetIagdFolder(); // %appdata%\..\local\evilsoft\iagd
 
@@ -35,14 +56,18 @@ HookLog::HookLog() : m_lastMessageCount(0), m_initialized(false) {
     GetTempPath(MAX_PATH, tmpfolder);
 
     std::wstring logFile(!iagdFolder.empty() ? iagdFolder : tmpfolder);
-    logFile += L"iagd_hook.log"; 
+    logFile += L"iagd_hook.log";
 
-    m_out.open(logFile);
+    RotateIfLarge(logFile);
+
+    /// Appended mode: The DLL is loaded and unloaded on every aborted attach -- the game is loading/in menu -- and the injector retries every few seconds, so a truncating open
+    /// discards the previous session several times over before a player who just crashed could collect it.
+    m_out.open(logFile, std::ios::out | std::ios::app);
 
     if (m_out.is_open()) {
         m_out
             << L"****************************"  << std::endl
-            << L"    Hook Logging Started"      << std::endl
+            << L"    Hook Logging Started  (pid " << GetCurrentProcessId() << L")" << std::endl
             << L"****************************"  << std::endl;
 
         // The only safe place to report this: GetIagdFolder cannot log, and by here we have a stream.
@@ -50,11 +75,16 @@ HookLog::HookLog() : m_lastMessageCount(0), m_initialized(false) {
             m_out << L"WARNING Could not find the roaming appdata folder, logging to the temp folder instead." << std::endl;
         }
 
+        // When the buffer is too small GetCurrentDirectory returns the required size, null included, which can
+        // exceed MAX_PATH. On success it terminates the buffer itself, so only the failure case needs handling.
         TCHAR buffer[MAX_PATH];
         DWORD size = GetCurrentDirectory(MAX_PATH, buffer);
-        buffer[size] = '\0';
-
-        m_out << L"Current Directory: " << buffer << std::endl;
+        if (size == 0 || size >= MAX_PATH) {
+            m_out << L"Current Directory: <unavailable>" << std::endl;
+        }
+        else {
+            m_out << L"Current Directory: " << buffer << std::endl;
+        }
     }
 }
 

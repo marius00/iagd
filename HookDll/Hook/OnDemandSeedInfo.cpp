@@ -12,6 +12,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string.hpp> 
 #include "VTableDispatch.h"
+#include "CrashReporter.h"
 
 #include "Logger.h"
 std::wstring GetIagdFolder();
@@ -294,7 +295,11 @@ void OnDemandSeedInfo::Process() {
 				continue;
 			}
 
+			// Second of the two threads making unsynchronised Engine.dll calls; the other is in
+			// InventorySack_AddItem::ThreadMain. 
+			CrashReporter::Note("poll:seedinfo enter GameInfo", (uint64_t)gameInfo);
 			std::wstring folder = GetFolderToReadFrom(GetModName(gameInfo), fnGetHardcore(gameInfo, true));
+			CrashReporter::Note("poll:seedinfo leave GameInfo", (uint64_t)gameInfo);
 
 			for (auto& entry : boost::make_iterator_range(boost::filesystem::directory_iterator(folder), {})) {
 				auto filename = std::wstring(entry.path().c_str());
