@@ -13,7 +13,7 @@ using IAGrim.Utilities;
 using IAGrim.Services.Dto;
 
 namespace IAGrim.Database {
-    public class PlayerItem : BaseItem, PlayerHeldItem, IComparable, ICloneable, RecordCollection {
+    public class PlayerItem : BaseItem, PlayerHeldItem, IComparable, ICloneable {
         public virtual long Id { get; set; }
 
         public virtual string? CloudId { get; set; }

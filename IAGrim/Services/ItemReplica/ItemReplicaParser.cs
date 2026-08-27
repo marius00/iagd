@@ -12,7 +12,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 
 
@@ -139,10 +138,8 @@ namespace IAGrim.Services.ItemReplica {
                     var stats = (template.stats ?? Enumerable.Empty<JsonStatObj>())
                         .Where(m => !(m.text ?? string.Empty).TrimStart().StartsWith("Tag not found"))
                         .Select(m => new ReplicaItemRow {
-                            // Strip out [0-9] damage suffixes introduced in the Asterkarn DLC
-                            // Strip out ^K ^W color codes
-                            Text = Regex.Replace(Regex.Replace((m.text ?? string.Empty).Trim(), @"(\^.?)", ""), @" (\[|\().+(\]|\))$", ""),
-                            TextLowercase = Regex.Replace(Regex.Replace((m.text ?? string.Empty).Trim(), @"(\^.?)", ""), @" (\[|\().+(\]|\))$", "").ToLowerInvariant(),
+                            Text = ReplicaTextFormatter.Display(m.text),
+                            TextLowercase = ReplicaTextFormatter.Searchable(m.text),
                             Type = Int32.Parse(m.type ?? "0"),
                         }).ToList();
 

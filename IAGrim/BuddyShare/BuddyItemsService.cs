@@ -72,8 +72,8 @@ namespace IAGrim.BuddyShare {
                 try {
                     Thread.Sleep(5000);
 
-                    var missingNames = _buddyItemDao.ListItemsWithMissingName();
-                    _buddyItemDao.UpdateNames(missingNames);
+                    var missingDetails = _buddyItemDao.ListItemsWithMissingDetails();
+                    _buddyItemDao.UpdateItemDetails(missingDetails);
 
                     if (_settings.GetLocal().OptOutOfBackups) {
                         Logger.Info("User opted out of online features, disabling buddy items.");
@@ -153,7 +153,7 @@ namespace IAGrim.BuddyShare {
                     Logger.Debug($"Storing batch of {batch.Count} items");
                     _buddyItemDao.Save(subscription, batch);
                 }
-                _buddyItemDao.UpdateNames(items);
+                _buddyItemDao.UpdateItemDetails(items);
 
                 // Delete items that no longer exist
                 Logger.Info($"There are {sync?.Removed?.Count ?? 0} buddy items items to remove");

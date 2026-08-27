@@ -5,13 +5,13 @@ using IAGrim.Database.Interfaces;
 using IAGrim.Parsers.Arz;
 using IAGrim.Parsers.TransferStash;
 using IAGrim.Services.Dto;
+using IAGrim.Services.ItemReplica;
 using IAGrim.UI.Misc.CEF;
 using IAGrim.Utilities;
 using IAGrim.Utilities.HelperClasses;
 using log4net;
 using System.Collections.Concurrent;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace IAGrim.Services {
     class CsvParsingService(IPlayerItemDao playerItemDao, UserFeedbackService userFeedbackService, TransferStashServiceCache cache, TransferStashService transferStashService, IReplicaItemDao replicaItemDao)
@@ -161,17 +161,10 @@ namespace IAGrim.Services {
                 .Skip(1) // skip header
                 .Select(line => line.Split(';', 2)) // split into key/value
                 .Where(parts => parts.Length == 2 && Int32.TryParse(parts[0].Trim(), out _))
-                .Select(parts => {
-                    var text = Regex.Replace(
-                        Regex.Replace(parts[1].Trim(), @"(\^.?)", ""),
-                        @" (\[|\().+(\]|\))$", ""
-                    );
-
-                    return new ReplicaItemRow {
-                        Text = text,
-                        TextLowercase = text.ToLowerInvariant(),
-                        Type = Int32.Parse(parts[0].Trim())
-                    };
+                .Select(parts => new ReplicaItemRow {
+                    Text = ReplicaTextFormatter.Display(parts[1]),
+                    TextLowercase = ReplicaTextFormatter.Searchable(parts[1]),
+                    Type = Int32.Parse(parts[0].Trim())
                 })
                 .ToList();
 

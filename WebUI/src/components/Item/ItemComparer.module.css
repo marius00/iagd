@@ -45,19 +45,7 @@
 .closeButton:hover {
     background-color: var(--itemcompare-header-x-hover);
 }
-.itemComparer .replica-type-26 {
-    display: none;
-}
-
-.itemComparer .replica-type-22 {
-    display: none;
-}
 
 
-.itemComparer > .replica-type-22 {
-    display: none;
-}
 
-.itemComparer + .replica-type-22 {
-    display: none;
-}
+

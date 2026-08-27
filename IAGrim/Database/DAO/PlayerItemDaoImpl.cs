@@ -74,7 +74,7 @@ namespace IAGrim.Database {
         /// <param name="stats"></param>
         /// <param name="records"></param>
         /// <returns></returns>
-        private int GetGreenQualityLevelForRecords(Dictionary<string, List<DBStatRow>> stats, List<string> records) {
+        public static int GetGreenQualityLevelForRecords(Dictionary<string, List<DBStatRow>> stats, List<string> records) {
             // Filter out green components
             var filteredRecords = records
                 .Where(record => !record.StartsWith("records/items/materia/"))
@@ -315,7 +315,7 @@ namespace IAGrim.Database {
         /// Load the entire ItemTag table into a Tag -> Name lookup.
         /// Done once per rebuild so GetItemName doesn't issue a SELECT per item.
         /// </summary>
-        private static Dictionary<string, string> LoadItemTags(ISession session) {
+        public static Dictionary<string, string> LoadItemTags(ISession session) {
             // Scalar SQL (not CreateCriteria) on purpose: CreateCriteria would pull all ~19k
             // ItemTag rows into the session's first-level cache as managed entities. Those would
             // then be dirty-checked on every auto-flush before each write in the loops below,

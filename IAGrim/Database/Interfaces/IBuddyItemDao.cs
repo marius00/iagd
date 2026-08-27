@@ -5,13 +5,8 @@ using IAGrim.Database.Dto;
 namespace IAGrim.Database.Interfaces {
     public interface IBuddyItemDao : IBaseDao<BuddyItem> {
         void RemoveBuddy(long buddyId);
-        IList<BuddyItem> ListItemsWithMissingRarity();
-        IList<BuddyItem> ListItemsWithMissingLevelRequirement();
-        IList<BuddyItem> ListItemsWithMissingName();
-
-        void UpdateLevelRequirements(IList<BuddyItem> items);
-        void UpdateRarity(IList<BuddyItem> items);
-        void UpdateNames(IList<BuddyItem> items);
+        IList<BuddyItem> ListItemsWithMissingDetails();
+        void UpdateItemDetails(IList<BuddyItem> items);
         IList<BuddyItem> FindBy(ItemSearchRequest query);
 
         long GetNumItems(long subscriptionId);

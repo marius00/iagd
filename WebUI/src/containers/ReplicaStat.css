@@ -1,44 +1,80 @@
+/*
+ * Colors for the raw tooltip rows the game dumps for an item (see ReplicaStat.tsx).
+ *
+ * A row's "type" only identifies a visual role within its nesting level: the game numbers the
+ * same role differently for an item, a component, a granted skill and a set bonus. The numbers
+ * below are what Grim Dawn emits today, taken from the dumps in %LOCALAPPDATA%/EvilSoft/IAGD/replica.
+ * Legacy numbers from older builds are kept wherever they don't clash with a current one.
+ *
+ * Within a row, ^-prefixed codes mark the segments (see .replica-letter-* at the bottom), so a rule
+ * here sets the color of whatever the codes leave unclaimed -- usually the value in "+91% Fire Damage".
+ */
+
 .replica p {
   margin: 2px;
 }
 
-/* Item description */
-.replica-type-16 {
+.App-dark .replica {
+    color: var(--item-disabled);
+}
+
+/* Item name (IAGrim renders its own header) and "[Release Ctrl to Hide Details]" (details are always on) */
+.replica-type-3, .replica-type-4, .replica-type-5, .replica-type-6, .replica-type-7, .replica-type-13,
+.replica-type-14, .replica-type-64, .replica-type-77, .replica-type-35 {
+  display: none;
+}
+
+/* Flavour text: "The Chthonian scale thirsts for blood." */
+.replica-type-16, .replica-type-17, .replica-type-30, .replica-type-32 {
   color: var(--item-itemdescription);
 }
 
-/* Set name */
-.replica-type-20 {
-  color: var(--item-setinfo-name);
-}
-
-/* Set description */
-.replica-type-21 {
-  color: var(--item-setinfo-description);
-}
-
-/* 4: Item name: Armor, 5: Weapon, 6: Gazer man (head?), 77: GI */
-.replica-type-4, .replica-type-5, .replica-type-6, .replica-type-77 {
-  display: none;
-}
-
-
-
-/* 64: Slot & Quality, ex: Epic Ring, 3: No idea.. buddyitems? */
-.replica-type-64, .replica-type-3 {
-  display: none;
-}
-
-.replica-type-0 {
-  white-space: pre-wrap;
-  display: block;
-}
-
-/* Weapon damage and total armor.. also the stupid "+334 Damage Per Second (If Equipped)" */
-.replica-type-17, .replica-type-66 {
+/* Quality and slot: "Legendary Medal" */
+.replica-type-66 {
   color: var(--item-stat-modifier);
 }
 
+/* Requirements ("^rRequired Physique: 662") and the weapon header ("^W1.39 ^SAttacks per Second") */
+.replica-type-20 {
+  color: var(--item-disabled);
+}
+
+/* Item stats, at every nesting level: the item itself (18/19/81), a component (33), a granted
+   skill (26/82/83), a pet bonus (42/55/69/71) and a set bonus (28). */
+.replica-type-18, .replica-type-19, .replica-type-26, .replica-type-28, .replica-type-33,
+.replica-type-42, .replica-type-55, .replica-type-69, .replica-type-71, .replica-type-81,
+.replica-type-82, .replica-type-83 {
+  color: var(--item-stat-modifier);
+}
+
+/* Stats belonging to a component, pet or granted skill sit under their own header */
+.replica .replica-type-26, .replica .replica-type-33, .replica .replica-type-42,
+.replica .replica-type-55, .replica .replica-type-69, .replica .replica-type-71,
+.replica .replica-type-83 {
+  margin-left: 14px;
+}
+
+/* Section headers: "Granted Skills", "Bonus to All Pets", "Crab Spirit Abilities:", "Completion Bonus" */
+.replica-type-24, .replica-type-25, .replica-type-34, .replica-type-36, .replica-type-65, .replica-type-67,
+.replica-type-68, .replica-type-70 {
+  font-weight: bold;
+  color: var(--item-grantskill-label);
+}
+
+.replica-type-34, .replica-type-36 {
+  padding-top: 15px !important;
+}
+
+/* Skill name: "Counterblow (15% Chance on Block)", "Jab" */
+.replica-type-37, .replica-type-38, .replica-type-53 {
+    font-weight: bold;
+    color: var(--item-grantskill-content);
+}
+
+/* Skill description, and notes such as "(Can be upgraded by Ashes of Awakening.)" */
+.replica-type-39, .replica-type-40, .replica-type-84 {
+  color: var(--item-misc-info);
+}
 
 /* +x to SomeSkill */
 .replica-type-79 {
@@ -47,93 +83,63 @@
   cursor: pointer; /* TODO: Add the tooltip */
 }
 
-/* Regular item stats */
- .replica-type-18, .replica-type-25, .replica-type-26, .replica-type-40, .replica-type-82, .replica-type-71 {
-   color: var(--item-stat-modifier);
- }
-
-p .replica-type-26 {
-  margin-left: 15px;
-
-}
-.replica-letter-E {
-  color: var(--item-stat-label);
+/* Set name */
+.replica-type-21 {
+  color: var(--item-setinfo-name);
 }
 
-/* "(2) Set", "(3) Set" etc */
+/* Set flavour text */
 .replica-type-22 {
+  color: var(--item-setinfo-description);
+}
+
+/* Set members, and the "(2) Set", "(3) Set" headers above each tier of bonuses */
+.replica-type-23 {
   color: var(--item-golden-header);
 }
 
-/* Item stat, number at the end: Increases Armor by ^H-30%*/
-.replica-letter-H {
-  color: var(--item-stat-modifier);
-}
-
-/* Granted skills */
-.replica-type-34 {
-  padding-top: 15px !important;
-  font-weight: bold;
-  color: var(--item-grantskill-label);
-}
-/* Skill name */
-.replica-type-36 {
-    font-weight: bold;
-    color: var(--item-grantskill-content);
-}
-
-/* [Release Ctrl to Hide Details] */
-.replica-type-35 {
-    display: none;
-}
-
-/* Skill description */
-.replica-type-37, .replica-type-38, .replica-type-39, .replica-type-81, .replica-type-70 {
-  color: var(--item-misc-info);
-}
-
-/* Level requirement, spirit requirement, etc.. show or noshow? */
-.replica-type-19, .replica-type-81 {
-  color: var(--item-disabled);
-}
-
-
-.App-dark .replica {
-    color: var(--item-disabled);
-}
-
-/* Component name */
-.replica-type-27 {
+/* Component name: "Polished Emerald" */
+.replica-type-27, .replica-type-29 {
   color: var(--item-color-yellow);
   display: inline;
 }
 
-/* Just says "Component" */
-.replica-type-29 {
+/* Just says "Component" / "Rare Component" */
+.replica-type-31 {
   display: inline;
   font-size: 10px;
   color: var(--item-color-yellow);
 }
-.replica-type-29::before {
+.replica-type-31::before {
   content: '(';
 }
-.replica-type-29::after {
+.replica-type-31::after {
   content: ')';
 }
 
-/* Component modifiers */
-.replica-type-31 {
-  margin-left: 14px !important;
+/*
+ * Segment colors, from the ^-codes the game embeds in a row.
+ */
+
+/* Stat label: "+91% ^EFire Damage" */
+.replica-letter-E {
+  color: var(--item-stat-label);
+}
+
+/* Value inside a stat: "^EIncreases Armor by ^H8%" */
+.replica-letter-H {
   color: var(--item-stat-modifier);
 }
 
-/* 68: "Bonus to all pets", 23: Grants skill */
-.replica-type-68, .replica-type-23 {
-  font-weight: bold;
-  color: var(--item-grantskill-label);
-}
-/* "Bonus to all pets" modifiers */
-.replica-type-69 {
-  margin-left: 14px !important;
+/* Weapon header: "^W1.78 ^SAttacks per Second", and weapon damage: "175-202 ^SChaos Damage" */
+.replica-letter-W {
   color: var(--item-stat-modifier);
+}
+.replica-letter-S {
+  color: var(--item-stat-label);
+}
+
+/* Skill name inside a stat: "+3 ^Eto ^ZPanetti's Replicating Missile" */
+.replica-letter-Z {
+  color: var(--item-skill);
 }

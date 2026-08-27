@@ -9,7 +9,7 @@ using IAGrim.Utilities;
 using StatTranslator;
 
 namespace IAGrim.Database.Model {
-    public class BaseItem {
+    public class BaseItem : RecordCollection {
         public virtual string? BaseRecord { get; set; }
         public virtual string? PrefixRecord { get; set; }
         public virtual string? SuffixRecord { get; set; }

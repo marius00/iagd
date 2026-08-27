@@ -272,116 +272,50 @@ namespace IAGrim.Database {
         }
 
 
-        private class NameRow {
-            public string? Record { get; set; }
-            public string? Stat { get; set; }
-            public string? Text { get; set; }
-        }
-
-        private static string GetName(BuddyItem item, ICollection<NameRow> rows) {
-            // Grab tags
-            string prefix = rows.FirstOrDefault(m => m.Record == item.PrefixRecord && m.Stat == "lootRandomizerName")?.Text ?? string.Empty;
-            string suffix = rows.FirstOrDefault(m => m.Record == item.SuffixRecord && m.Stat == "lootRandomizerName")?.Text ?? string.Empty;
-
-            string core = rows.FirstOrDefault(m => m.Record == item.BaseRecord && m.Stat == "itemNameTag")?.Text ?? string.Empty;
-            if (string.IsNullOrEmpty(core)) {
-                core = rows.FirstOrDefault(m => m.Record == item.BaseRecord && m.Stat == "description")?.Text ?? string.Empty;
+        /// <summary>
+        /// Fill in name, rarity, level requirement and prefix rarity from the local Grim Dawn database.
+        /// The buddy sync only carries records and seeds, so these are derived here exactly the way they are
+        /// for the user's own items. Deriving them locally also keeps a buddy's items filterable by level and
+        /// rarity, and searchable by name, for whichever language and game version this client is running.
+        /// </summary>
+        public void UpdateItemDetails(IList<BuddyItem> items) {
+            if (items.Count == 0) {
+                return;
             }
 
-            string quality = rows.FirstOrDefault(m => m.Record == item.BaseRecord && m.Stat == "itemQualityTag")?.Text ?? string.Empty;
-            string style = rows.FirstOrDefault(m => m.Record == item.BaseRecord && m.Stat == "itemStyleTag")?.Text ?? string.Empty;
+            Logger.Debug($"Updating name, rarity and level requirement for {items.Count} buddy items");
 
-            string materia = rows.FirstOrDefault(m => m.Record == item.MateriaRecord && m.Stat == "description")?.Text ?? string.Empty;
-            if (!string.IsNullOrEmpty(materia)) {
-                materia = $" [{materia}]";
-            }
+            string updateSql = $@"UPDATE {BuddyItemsTable.Table} SET 
+                    {BuddyItemsTable.Name} = :name,
+                    {BuddyItemsTable.NameLowercase} = :nameLowercase,
+                    {BuddyItemsTable.Rarity} = :rarity,
+                    {BuddyItemsTable.PrefixRarity} = :prefixRarity,
+                    {BuddyItemsTable.LevelRequirement} = :levelRequirement
+                    WHERE {BuddyItemsTable.RemoteItemId} = :id";
 
-            string localizedName = RuntimeSettings.Language?.TranslateName(prefix, quality, style, core, suffix) ?? core;
-            return localizedName + materia;
-        }
-
-        public void UpdateNames(IList<BuddyItem> items) {
-            Logger.Debug("Updating item names");
-
-            string sql = $@"
-                SELECT {DatabaseItemTable.Record} as Record, {DatabaseItemStatTable.Stat} as Stat, tags.{ItemTagTable.Name} as Text
-                FROM {DatabaseItemTable.Table} item, {DatabaseItemStatTable.Table} stat, {ItemTagTable.Table} tags
-                WHERE item.{DatabaseItemTable.Id} = stat.{DatabaseItemStatTable.Item}
-                AND {DatabaseItemStatTable.TextValue} = {ItemTagTable.Id}
-                AND {DatabaseItemStatTable.Stat} IN ('lootRandomizerName', 'itemNameTag', 'itemQualityTag', 'itemStyleTag', 'description')
-                AND ({DatabaseItemTable.Record} IN (SELECT {BuddyItemsTable.BaseRecord} FROM {BuddyItemsTable.Table} WHERE {BuddyItemsTable.Name} IS NULL OR {BuddyItemsTable.Name} = '')
-                    OR {DatabaseItemTable.Record} IN (SELECT {BuddyItemsTable.PrefixRecord} FROM {BuddyItemsTable.Table} WHERE {BuddyItemsTable.Name} IS NULL OR {BuddyItemsTable.Name} = '')
-                    OR {DatabaseItemTable.Record} IN (SELECT {BuddyItemsTable.SuffixRecord} FROM {BuddyItemsTable.Table} WHERE {BuddyItemsTable.Name} IS NULL OR {BuddyItemsTable.Name} = '')
-                )";
-
-            IList<NameRow> rows;
             using (ISession session = SessionCreator.OpenSession()) {
-                rows = session.CreateSQLQuery(sql)
-                    .SetResultTransformer(Transformers.AliasToBean<NameRow>())
-                    .List<NameRow>();
-            }
+                var stats = _databaseItemStatDao.GetStats(session, StatFetch.BuddyItems);
+                var itemTags = PlayerItemDaoImpl.LoadItemTags(session);
 
-            Logger.Debug("Updating the names for buddy items");
-
-            string updateSql = $"UPDATE {BuddyItemsTable.Table} SET {BuddyItemsTable.Name} = :name, {BuddyItemsTable.NameLowercase} = :nameLowercase WHERE {BuddyItemsTable.RemoteItemId} = :id";
-            using (ISession session = SessionCreator.OpenSession()) {
                 using (ITransaction transaction = session.BeginTransaction()) {
                     foreach (var item in items) {
-                        var name = GetName(item, rows);
-                        if (!string.IsNullOrEmpty(name)) {
-                            session.CreateSQLQuery(updateSql)
-                                .SetParameter("id", item.RemoteItemId)
-                                .SetParameter("name", name)
-                                .SetParameter("nameLowercase", name.ToLowerInvariant())
-                                .ExecuteUpdate();
+                        // A record this database has never seen (a mod the user doesn't have, or a newer game
+                        // version) would resolve to a blank name and "Unknown" rarity. Leave the item as it is
+                        // and pick it up again once the database does know the record.
+                        if (string.IsNullOrEmpty(item.BaseRecord) || !stats.ContainsKey(item.BaseRecord)) {
+                            continue;
                         }
-                    }
 
-                    transaction.Commit();
-                }
-            }
+                        var records = PlayerItemDaoImpl.GetRecordsForItem(item);
+                        var name = ItemOperationsUtility.GetItemName(itemTags, stats, item);
 
-            Logger.Debug("Names updated");
-        }
-
-        private static int GetLevelRequirement(BuddyItem item, IEnumerable<LevelRequirementRow> rows) {
-            return (int) rows.Where(row => row.Record == item.BaseRecord
-                                           || row.Record == item.PrefixRecord
-                                           || row.Record == item.SuffixRecord)
-                .OrderByDescending(row => row.LevelRequirement)
-                .Select(row => row.LevelRequirement)
-                .FirstOrDefault();
-        }
-
-        public void UpdateLevelRequirements(IList<BuddyItem> items) {
-            Logger.Debug("Updating item level requirements");
-
-            string sql = $@"
-                SELECT {DatabaseItemTable.Record} as Record, {DatabaseItemStatTable.Value} as LevelRequirement 
-                FROM {DatabaseItemTable.Table} item, {DatabaseItemStatTable.Table} stat
-                WHERE item.{DatabaseItemTable.Id} = stat.{DatabaseItemStatTable.Item}
-                AND {DatabaseItemStatTable.Stat} = 'levelRequirement'
-                AND ({DatabaseItemTable.Record} IN (SELECT {BuddyItemsTable.BaseRecord} FROM {BuddyItemsTable.Table})
-                    OR {DatabaseItemTable.Record} IN (SELECT {BuddyItemsTable.PrefixRecord} FROM {BuddyItemsTable.Table})
-                    OR {DatabaseItemTable.Record} IN (SELECT {BuddyItemsTable.SuffixRecord} FROM {BuddyItemsTable.Table})
-                )";
-
-            IList<LevelRequirementRow> rows;
-            using (ISession session = SessionCreator.OpenSession()) {
-                rows = session.CreateSQLQuery(sql)
-                    .SetResultTransformer(Transformers.AliasToBean<LevelRequirementRow>())
-                    .List<LevelRequirementRow>();
-            }
-
-            Logger.Debug("Updating the level requirements for buddy items");
-            string updateSql = $"UPDATE {BuddyItemsTable.Table} SET {BuddyItemsTable.LevelRequirement} = :requirement WHERE {BuddyItemsTable.RemoteItemId} = :id";
-            using (ISession session = SessionCreator.OpenSession()) {
-                using (ITransaction transaction = session.BeginTransaction()) {
-                    foreach (var item in items) {
-                        var requirement = GetLevelRequirement(item, rows);
                         session.CreateSQLQuery(updateSql)
                             .SetParameter("id", item.RemoteItemId)
-                            .SetParameter("requirement", requirement)
+                            .SetParameter("name", name)
+                            .SetParameter("nameLowercase", name.ToLowerInvariant())
+                            .SetParameter("rarity", ItemOperationsUtility.GetRarityForRecords(stats, records))
+                            .SetParameter("prefixRarity", PlayerItemDaoImpl.GetGreenQualityLevelForRecords(stats, records))
+                            .SetParameter("levelRequirement", (double) ItemOperationsUtility.GetMinimumLevelForRecords(stats, records))
                             .ExecuteUpdate();
                     }
 
@@ -389,101 +323,7 @@ namespace IAGrim.Database {
                 }
             }
 
-            Logger.Debug("Level requirements updated");
-        }
-
-        private class LevelRequirementRow {
-            public string? Record { get; set; }
-            public double LevelRequirement { get; set; }
-        }
-
-        private class RarityRow {
-            public string? Record { get; set; }
-            public string? Rarity { get; set; }
-        }
-
-        private static readonly Dictionary<string, int> _rarityMap = new Dictionary<string, int> {
-            {"Legendary", 6},
-            {"Epic", 5},
-            {"Rare", 4},
-            {"Quest", 3},
-            {"Magical", 2},
-        };
-
-        private static readonly Dictionary<string, string> _rarityTranslations = new Dictionary<string, string> {
-            {"Legendary", "Epic"},
-            {"Epic", "Blue"},
-            {"Rare", "Green"},
-            {"Quest", "Green"},
-            {"Magical", "Yellow"},
-        };
-
-        private static int ClassifyRarity(string rarity) {
-            if (_rarityMap.ContainsKey(rarity))
-                return _rarityMap[rarity];
-            else {
-                return -1;
-            }
-        }
-
-        private static string TranslateRarity(string rarity) {
-            if (string.IsNullOrEmpty(rarity))
-                return "White";
-
-            if (_rarityTranslations.ContainsKey(rarity))
-                return _rarityTranslations[rarity];
-
-            return "White";
-        }
-
-        private static string GetRarity(BuddyItem item, IEnumerable<RarityRow> rows) {
-            return rows.Where(row => row.Record == item.BaseRecord
-                                     || row.Record == item.PrefixRecord
-                                     || row.Record == item.SuffixRecord)
-                .OrderByDescending(row => ClassifyRarity(row.Rarity ?? string.Empty))
-                .Select(row => TranslateRarity(row.Rarity ?? string.Empty))
-                .FirstOrDefault() ?? "White";
-        }
-
-        public void UpdateRarity(IList<BuddyItem> items) {
-            // This will need a custom table, mapping 'yellow' to priority 0 and the like
-            Logger.Debug("Updating item rarities");
-
-            // TODO: Change player item to buddy item
-            string sql = $@"
-                SELECT {DatabaseItemTable.Record} as Record, {DatabaseItemStatTable.TextValue} as Rarity 
-                FROM {DatabaseItemTable.Table} item, {DatabaseItemStatTable.Table} stat
-                WHERE item.{DatabaseItemTable.Id} = stat.{DatabaseItemStatTable.Item}
-                AND {DatabaseItemStatTable.Stat} = 'itemClassification'
-                AND ({DatabaseItemTable.Record} IN (SELECT {BuddyItemsTable.BaseRecord} FROM {BuddyItemsTable.Table} WHERE {BuddyItemsTable.Rarity} IS NULL)
-                    OR {DatabaseItemTable.Record} IN (SELECT {BuddyItemsTable.PrefixRecord} FROM {BuddyItemsTable.Table} WHERE {BuddyItemsTable.Rarity} IS NULL)
-                    OR {DatabaseItemTable.Record} IN (SELECT {BuddyItemsTable.SuffixRecord} FROM {BuddyItemsTable.Table} WHERE {BuddyItemsTable.Rarity} IS NULL)
-                )";
-
-            IList<RarityRow> rows;
-            using (ISession session = SessionCreator.OpenSession()) {
-                rows = session.CreateSQLQuery(sql)
-                    .SetResultTransformer(Transformers.AliasToBean<RarityRow>())
-                    .List<RarityRow>();
-            }
-
-            Logger.Debug("Updating the rarity for buddy items");
-            string updateSql = $"UPDATE {BuddyItemsTable.Table} SET {BuddyItemsTable.Rarity} = :rarity WHERE {BuddyItemsTable.RemoteItemId} = :id";
-            using (ISession session = SessionCreator.OpenSession()) {
-                using (ITransaction transaction = session.BeginTransaction()) {
-                    foreach (var item in items) {
-                        string rarity = GetRarity(item, rows);
-                        session.CreateSQLQuery(updateSql)
-                            .SetParameter("id", item.RemoteItemId)
-                            .SetParameter("rarity", rarity)
-                            .ExecuteUpdate();
-                    }
-
-                    transaction.Commit();
-                }
-            }
-
-            Logger.Debug("Rarities updated");
+            Logger.Debug("Item details updated");
         }
 
         /// <summary>
@@ -494,7 +334,8 @@ namespace IAGrim.Database {
         private BuddyItem ToDomainObject(object ob) {
             object[] obj = (object[]) ob;
             var count = (long) obj[10];
-            var minimumLevel = obj[8] as float? ?? obj[8] as long?;
+            // levelrequirement is a REAL column, so SQLite hands back a boxed double.
+            var minimumLevel = obj[8] != null ? Convert.ToSingle(obj[8]) : 0f;
 
             var id = (string) obj[9];
             return new BuddyItem {
@@ -506,7 +347,7 @@ namespace IAGrim.Database {
                 MateriaRecord = obj[5] as string,
                 Rarity = obj[6] as string,
                 Name = obj[7] as string,
-                MinimumLevel = minimumLevel ?? 0,
+                MinimumLevel = minimumLevel,
                 Stash = obj[11] as string,
                 RemoteItemId = id,
                 Count = (uint) count
@@ -542,16 +383,13 @@ namespace IAGrim.Database {
             }
         }
 
-        public IList<BuddyItem> ListItemsWithMissingRarity() {
-            return ListAll($"WHERE {BuddyItemsTable.Rarity} IS NULL");
-        }
-
-        public IList<BuddyItem> ListItemsWithMissingName() {
-            return ListAll($"WHERE {BuddyItemsTable.Name} IS NULL");
-        }
-
-        public IList<BuddyItem> ListItemsWithMissingLevelRequirement() {
-            return ListAll($"WHERE {BuddyItemsTable.LevelRequirement} IS NULL OR {BuddyItemsTable.LevelRequirement} < 1");
+        /// <summary>
+        /// Items whose name, rarity and level requirement have not been resolved against the local database yet.
+        /// Rarity is always written once an item has been processed, so a processed item drops out of this list.
+        /// </summary>
+        public IList<BuddyItem> ListItemsWithMissingDetails() {
+            // Parenthesised: ListAll() appends the subscription join with AND, which binds tighter than OR.
+            return ListAll($"WHERE ({BuddyItemsTable.Name} IS NULL OR {BuddyItemsTable.Rarity} IS NULL OR {BuddyItemsTable.Rarity} = '')");
         }
 
         public override IList<BuddyItem> ListAll() {
@@ -647,7 +485,7 @@ namespace IAGrim.Database {
             Dictionary<string, object> queryParams = new Dictionary<string, object>();
 
             if (!string.IsNullOrEmpty(query.Wildcard)) {
-                queryFragments.Add($"(BI.{BuddyItemsTable.NameLowercase} LIKE :name OR R.id IN (SELECT replicaitemid FROM replicaitemrow WHERE text LIKE :wildcard))");
+                queryFragments.Add($"(BI.{BuddyItemsTable.NameLowercase} LIKE :name OR R.id IN (SELECT replicaitemid FROM replicaitemrow WHERE IFNULL(textlowercase, text) LIKE :wildcard))");
                 queryParams.Add("wildcard", $"%{query.Wildcard.ToLower()}%");
                 queryParams.Add("name", $"%{query.Wildcard.Replace(' ', '%').ToLowerInvariant()}%");
             }
