@@ -21,6 +21,7 @@ namespace IAGrim.UI.Misc.CEF {
         public UserFeedback(UserFeedbackLevel level, string message, string url) {
             this.Level = level;
             this.Message = message;
+            this.URL = url;
         }
 
         public static UserFeedback FromTag(string tag) {
