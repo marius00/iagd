@@ -6,13 +6,26 @@ using System.Net;
 using System.Text;
 using IAGrim.Backup.Cloud.Dto;
 using IAGrim.Settings;
+using IAGrim.Settings.Dto;
 using IAGrim.Utilities;
 using IAGrim.Utilities.Cloud;
 using log4net;
+using Newtonsoft.Json;
 
 namespace IAGrim.Backup.Cloud.Service {
     class CharacterBackupService {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(CharacterBackupService));
+
+        /// <summary>
+        /// Key used for the shared stash files, which are backed up alongside characters but do not belong to any one of them. Contains a separator, so it cannot collide with a real character name.
+        /// </summary>
+        private const string StashKey = "/stash";
+
+        /// <summary>
+        /// The server throttles to one backup per character per day.
+        /// </summary>
+        private static readonly TimeSpan MinUploadInterval = TimeSpan.FromHours(24);
+
         private readonly SettingsService _settings;
         private readonly AuthService _authService;
         private readonly ActionCooldown _cooldown = new ActionCooldown(1000 * 60 * 10);
@@ -58,51 +71,118 @@ namespace IAGrim.Backup.Cloud.Service {
         }
 
         private void ExecuteInternal() {
-            var lastSync = _settings.GetLocal().LastCharSyncUtc;
-            var highestTimestamp = FileBackup.GetHighestCharacterTimestamp();
-            var characters = FileBackup.ListCharactersNewerThan(lastSync);
+            var backups = _settings.GetLocal().CharacterBackups;
+            var mutated = false;
 
-            bool everythingSucceeded = true;
-            foreach (var gameCharacter in characters) {
-                Logger.Info($"Backup up character {gameCharacter} to the cloud");
-                var filename = Path.Combine(GlobalPaths.CharacterBackupLocation, $"{DateTime.Now.DayOfWeek}-{gameCharacter}.zip");
-                FileBackup.BackupCharacter(filename, gameCharacter); // TODO: IOException
-                
-                var url = $"{Uris.UploadCharacterUrl}?name={WebUtility.UrlEncode(gameCharacter)}";
-                var success = Post(url, filename);
-                if (success) {
-                    Logger.Info($"Character {gameCharacter} successfully backed up to the cloud");
-                }
-                else {
-                    Logger.Info($"An error occurred backing up character {gameCharacter} to the cloud");
-                    everythingSucceeded = false;
-                }
+            foreach (var character in FileBackup.ListCharacters()) {
+                mutated |= Backup(
+                    backups,
+                    key: character,
+                    remoteName: character,
+                    computeHash: () => FileBackup.ComputeCharacterHash(character),
+                    writeArchive: filename => FileBackup.BackupCharacter(filename, character),
+                    archiveName: $"{DateTime.Now.DayOfWeek}-{character}.zip",
+                    description: $"character {character}"
+                );
             }
 
-            if (FileBackup.IsStashFilesNewerThan(lastSync)) {
-                var filename = Path.Combine(GlobalPaths.CharacterBackupLocation, $"{DateTime.Now.DayOfWeek}-common.zip");
-                FileBackup.BackupCommon(filename);
-                var url = $"{Uris.UploadCharacterUrl}?name=StashFiles-{DateTime.Now.DayOfWeek}";
-                var success = Post(url, filename);
-                if (success) {
-                    Logger.Info($"Stash files successfully backed up to the cloud");
-                }
-                else {
-                    Logger.Info($"An error occurred backing up stash files to the cloud");
-                    everythingSucceeded = false;
-                }
+            if (FileBackup.StashFilesExist()) {
+                mutated |= Backup(
+                    backups,
+                    key: StashKey,
+                    remoteName: $"StashFiles-{DateTime.Now.DayOfWeek}",
+                    computeHash: FileBackup.ComputeStashHash,
+                    writeArchive: FileBackup.BackupCommon,
+                    archiveName: $"{DateTime.Now.DayOfWeek}-common.zip",
+                    description: "stash files"
+                );
             }
 
-            if (everythingSucceeded) {
-                Logger.Info($"Character sync complete, updating character sync timestamp");
-                _settings.GetLocal().LastCharSyncUtc = highestTimestamp;
+            if (mutated) {
+                _settings.GetLocal().CharacterBackupsChanged();
             }
         }
 
-        private bool Post(string url, string filename) {
+        /// <summary>
+        /// Backs up one character (or the stash) unless the remote already holds it.
+        /// </summary>
+        /// <returns>Whether the recorded backup state changed.</returns>
+        private bool Backup(
+            Dictionary<string, CharacterBackupState> backups,
+            string key,
+            string remoteName,
+            Func<string> computeHash,
+            Action<string> writeArchive,
+            string archiveName,
+            string description
+        ) {
+            try {
+                backups.TryGetValue(key, out var known);
+
+                var hash = computeHash();
+                if (known != null && known.Hash == hash) {
+                    return false;
+                }
+
+                // Changed, but the server would reject it as a duplicate for today.
+                // Left unrecorded so it is offered again once the window has passed.
+                if (known != null && DateTime.UtcNow - known.UploadedUtc < MinUploadInterval) {
+                    Logger.Debug($"Skipping {description}, already backed up within the last 24 hours");
+                    return false;
+                }
+
+                Logger.Info($"Backing up {description} to the cloud");
+                var filename = Path.Combine(GlobalPaths.CharacterBackupLocation, archiveName);
+                writeArchive(filename);
+
+                var url = $"{Uris.UploadCharacterUrl}?name={WebUtility.UrlEncode(remoteName)}";
+                var status = Post(url, filename);
+
+                switch (status) {
+                    case UploadStatus.Stored:
+                    case UploadStatus.Unchanged:
+                        Logger.Info($"Successfully backed up {description} to the cloud");
+                        backups[key] = new CharacterBackupState { Hash = hash, UploadedUtc = DateTime.UtcNow };
+                        return true;
+
+                    case UploadStatus.Throttled:
+                        // The server already holds a backup for today. Record when, but not
+                        // the hash, so this is retried after the window rather than dropped.
+                        Logger.Info($"Server already holds a backup of {description} for today");
+                        backups[key] = new CharacterBackupState { Hash = known?.Hash ?? string.Empty, UploadedUtc = DateTime.UtcNow };
+                        return true;
+
+                    default:
+                        Logger.Info($"An error occurred backing up {description} to the cloud");
+                        return false;
+                }
+            }
+            catch (IOException ex) {
+                // One unreadable or locked save must not stop the remaining characters.
+                Logger.Warn($"Error creating a backup archive for {description}", ex);
+                return false;
+            }
+            catch (UnauthorizedAccessException ex) {
+                Logger.Warn($"Error creating a backup archive for {description}", ex);
+                return false;
+            }
+        }
+
+        private enum UploadStatus {
+            Failed,
+            Stored,
+            Unchanged,
+            Throttled,
+        }
+
+        private class UploadResponse {
+            public string? Status { get; set; }
+        }
+
+        private UploadStatus Post(string url, string filename) {
             var authProvider = _authService.GetAuthProvider();
             if (authProvider == null) {
-                return false;
+                return UploadStatus.Failed;
             }
 
             try {
@@ -110,21 +190,27 @@ namespace IAGrim.Backup.Cloud.Service {
                     client.Headers.Add("Authorization", authProvider.GetToken());
                     client.Headers.Add("X-Api-User", authProvider.GetUser());
                     byte[] result = client.UploadFile(url, "POST", filename);
-                    var json = Encoding.Default.GetString(result);
+                    var json = Encoding.UTF8.GetString(result);
                     Logger.Debug($"Upload succeeded");
-                    return true;
+
+                    return JsonConvert.DeserializeObject<UploadResponse>(json)?.Status switch {
+                        "unchanged" => UploadStatus.Unchanged,
+                        "throttled" => UploadStatus.Throttled,
+                        _ => UploadStatus.Stored,
+                    };
                 }
+            }
+            catch (JsonException ex) {
+                // The upload itself went through, so treat it as stored.
+                Logger.Warn("Could not parse the upload response", ex);
+                return UploadStatus.Stored;
             }
             catch (WebException ex) {
                 var resp = ex.Response != null ? new StreamReader(ex.Response.GetResponseStream()).ReadToEnd() : string.Empty;
                 Logger.Warn(ex.Message, ex);
                 Logger.Warn(resp);
 
-                if (resp.Contains("The provided file does not appear to be a valid zip file")) {
-                    // TODO: Somehow have to notify dev.. open a help page?
-                }
-                
-                return false;
+                return UploadStatus.Failed;
             }
         }
 

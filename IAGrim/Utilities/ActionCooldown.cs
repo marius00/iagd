@@ -29,10 +29,18 @@ namespace IAGrim.Utilities {
         public bool IsReady => _stopwatch == null || _stopwatch.ElapsedMilliseconds >= _cooldown;
         public bool IsOnCooldown => !IsReady;
 
+        /// <summary>
+        /// The cooldown is armed even when the action throws. Without that, a repeatable
+        /// failure downgrades the cooldown to however fast the caller happens to poll.
+        /// </summary>
         public void ExecuteIfReady(Action a) {
             if (IsReady) {
-                a.Invoke();
-                Reset();
+                try {
+                    a.Invoke();
+                }
+                finally {
+                    Reset();
+                }
             }
         }
 

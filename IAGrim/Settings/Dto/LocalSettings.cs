@@ -33,7 +33,7 @@ namespace IAGrim.Settings.Dto {
         private bool _isGrimDawnParsed;
         private long? _grimDawnLocationLastModified;
         private bool _startMinimized;
-        private DateTime _lastCharSyncUtc;
+        private Dictionary<string, CharacterBackupState>? _characterBackups;
 
         public string? MachineName { get; set; }
 
@@ -267,12 +267,25 @@ namespace IAGrim.Settings.Dto {
             }
         }
 
-        public DateTime LastCharSyncUtc {
-            get => _lastCharSyncUtc;
+        /// <summary>
+        /// What the cloud already holds for each character, keyed by character name
+        /// (the stash uses a reserved key). Replaces the old "everything newer than
+        /// this timestamp" scheme, which re-uploaded unchanged characters because
+        /// Grim Dawn rewrites save files without their contents changing.
+        /// </summary>
+        public Dictionary<string, CharacterBackupState> CharacterBackups {
+            get => _characterBackups ??= new Dictionary<string, CharacterBackupState>();
             set {
-                _lastCharSyncUtc = value;
+                _characterBackups = value;
                 OnMutate?.Invoke(null, EventArgs.Empty);
             }
+        }
+
+        /// <summary>
+        /// Signals that the in-place contents of <see cref="CharacterBackups"/> changed.
+        /// </summary>
+        public void CharacterBackupsChanged() {
+            OnMutate?.Invoke(null, EventArgs.Empty);
         }
 
     }

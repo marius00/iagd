@@ -36,7 +36,7 @@ namespace IAGrim.Backup.Cloud {
             MigrateUrl = $"{host}/migrate";
             BuddyItemsUrl = $"{host}/buddyitems";
             GetBuddyIdUrl = $"{host}/buddyId";
-            UploadCharacterUrl = $"{host}/character/upload";
+            UploadCharacterUrl = $"{host}/character/upload/v2";
             ListCharacterUrl = $"{host}/character";
             DownloadCharacterUrl = $"{host}/character/download";
 
