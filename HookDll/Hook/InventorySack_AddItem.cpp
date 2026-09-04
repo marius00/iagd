@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include <stdlib.h>
+#include <process.h>
 #include "MessageType.h"
 #include <detours.h>
 #include "InventorySack_AddItem.h"

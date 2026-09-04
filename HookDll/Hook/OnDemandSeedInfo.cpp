@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include <stdio.h>
+#include <process.h>
 #include <random>
 #include <stdlib.h>
 #include "MessageType.h"
