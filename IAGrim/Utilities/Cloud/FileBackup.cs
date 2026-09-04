@@ -184,12 +184,8 @@ namespace IAGrim.Utilities.Cloud {
                     continue;
                 }
 
-                var relativePath = f.Replace(GlobalPaths.SavePath, "").Replace(Path.GetFileName(f), "");
-
-                if (relativePath.StartsWith("\\")) {
-                    relativePath = relativePath.Substring(1);
-                }
-                zip.CreateEntryFromFile(f, relativePath +"/"+ f);
+                var relativePath = Path.GetRelativePath(GlobalPaths.SavePath, f);
+                zip.CreateEntryFromFile(f, relativePath);
             }
 
             zip.Comment = $"This backup of {character} was created at {DateTime.Now:G}.";
@@ -274,11 +270,8 @@ namespace IAGrim.Utilities.Cloud {
                 }
 
 
-                var relativePath = f.Replace(GlobalPaths.SavePath, "").Replace(Path.GetFileName(f), "");
-                if (relativePath.StartsWith("\\")) {
-                    relativePath = relativePath.Substring(1);
-                }
-                zip.CreateEntryFromFile(f, relativePath + Path.GetFileName(f));
+                var relativePath = Path.GetRelativePath(GlobalPaths.SavePath, f);
+                zip.CreateEntryFromFile(f, relativePath);
             }
 
             Logger.Info("Backing up items..");
