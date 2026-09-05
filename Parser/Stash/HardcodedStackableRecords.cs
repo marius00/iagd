@@ -46,7 +46,7 @@ namespace IAGrim.Parser.Stash {
             "records/items/crafting/consumables/potion_vitalityresist01.dbr",
             "records/items/crafting/blueprints/other/craft_potionb103.dbr",
             "records/items/crafting/consumables/potion_bleedresist01.dbr",
-            "records/storyelements/questassets/q000_torso.dbr",
+            // "records/storyelements/questassets/q000_torso.dbr", // Gazer Man
             "records/storyelements/rewards/q003_ring_slithring.dbr",
             "records/items/gearaccessories/necklaces/a00_necklace.dbr", // Salt bag
             //"records/storyelementsgdx2/questassets/areag_n.dbr"
