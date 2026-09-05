@@ -2,6 +2,7 @@
 #include <chrono>
 #include <codecvt> // wstring_convert
 #include <windows.h>
+#include <process.h>
 #include <stdlib.h>
 #include <objbase.h>
 #include <fstream>
