@@ -413,6 +413,7 @@ bool InventorySack_AddItem::Persist(
 	const std::vector<GAME::GameTextLine>& gameTextLines)
 {
 	std::wstring fullPath = m_storageFolder + randomFilename();
+	std::wstring fullPathTmp = fullPath + L".tmp";
 
 	// Use std::ofstream (narrow) and convert all wide strings to UTF-8 explicitly.
 	// std::wofstream converts through the system ANSI codepage, which destroys
@@ -420,7 +421,7 @@ bool InventorySack_AddItem::Persist(
 	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> utf8conv;
 
 	std::ofstream stream;
-	stream.open(fullPath, std::ios::binary);
+	stream.open(fullPathTmp, std::ios::binary);
 
 	// Write UTF-8 BOM so readers can detect encoding
 	stream << "\xEF\xBB\xBF";
@@ -447,9 +448,11 @@ bool InventorySack_AddItem::Persist(
 		std::to_wstring(gameTextLines.size()) + L" stat lines)");
 
 	std::ifstream verification;
-	verification.open(fullPath);
+	verification.open(fullPathTmp);
 	if (verification) {
-		return true;
+		verification.close();
+		if (MoveFileW(fullPathTmp.c_str(), fullPath.c_str()))
+			return true;
 	}
 
 	LogToFile(LogLevel::WARNING, L"Error: written CSV file does not exist");

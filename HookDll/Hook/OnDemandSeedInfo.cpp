@@ -187,8 +187,8 @@ ParsedSeedRequest* OnDemandSeedInfo::DeserializeReplicaCsv(std::vector<std::stri
 	item.transmuteRecord = tokens.at(idx++);
 
 	if (isNewDlc) {
-		auto ascendantAffixNameRecord  = tokens.at(idx++);
-		auto ascendantAffix2hNameRecord= tokens.at(idx++);
+		item.ascendant1 = tokens.at(idx++);
+		item.ascendant2 = tokens.at(idx++);
 	}
 
 	std::string s;
@@ -204,7 +204,8 @@ ParsedSeedRequest* OnDemandSeedInfo::DeserializeReplicaCsv(std::vector<std::stri
 	boost::algorithm::trim(item.materiaRecord);
 	boost::algorithm::trim(item.enchantmentRecord);
 	boost::algorithm::trim(item.transmuteRecord);
-	// TODO: !! Trip ascendant records
+	boost::algorithm::trim(item.ascendant1);
+	boost::algorithm::trim(item.ascendant2);
 
 	result->itemReplicaInfo = item;
 
@@ -365,8 +366,9 @@ boost::property_tree::ptree toJson(ParsedSeedRequest obj, std::vector<GAME::Game
 	replica.put("relicSeed", obj.itemReplicaInfo.relicSeed);
 	replica.put("enchantmentRecord", obj.itemReplicaInfo.enchantmentRecord);
 	replica.put("enchantmentSeed", obj.itemReplicaInfo.enchantmentSeed);
+	replica.put("ascendant1", obj.itemReplicaInfo.ascendant1);
+	replica.put("ascendant2", obj.itemReplicaInfo.ascendant2);
 	root.add_child("replica", replica);
-	// TODO: ascendant changes here, not critical, not used by IAGD
 
 
 	boost::property_tree::ptree stats;
