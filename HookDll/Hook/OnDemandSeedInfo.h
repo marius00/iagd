@@ -64,7 +64,6 @@ protected:
 	Engine_Render dll_Engine_Render;
 	static void* __fastcall HookedGameSetDifficultyRampMethod(void* This, int v, bool b);
 	static void* __fastcall Hooked_Engine_Render(void* This);
-	static std::wstring GetModName(GAME::GameInfo* gameInfo);
 	ParsedSeedRequest* ReadReplicaInfo(const std::wstring& filename);
 	ParsedSeedRequest* DeserializeReplicaCsv(std::vector<std::string> tokens);
 	static std::mutex _mutex;

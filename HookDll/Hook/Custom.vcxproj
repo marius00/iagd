@@ -36,6 +36,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseMethodHook.h" />
+    <ClInclude Include="GameContext.h" />
     <ClInclude Include="GrimTypes.h" />
     <ClInclude Include="HookLog.h" />
     <ClInclude Include="Logger.h" />
@@ -55,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseMethodHook.cpp" />
+    <ClCompile Include="GameContext.cpp" />
     <ClCompile Include="GrimTypes.cpp" />
     <ClCompile Include="HookLog.cpp" />
     <ClCompile Include="OnDemandSeedInfo.cpp" />

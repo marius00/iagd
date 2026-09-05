@@ -19,6 +19,7 @@
 #include "Logger.h"
 #include "VTableDispatch.h"
 #include "CrashReporter.h"
+#include "GameContext.h"
 
 
 #define STASH_1 0
@@ -503,17 +504,6 @@ void InventorySack_AddItem::DisplayMessage(std::wstring text, std::wstring body)
 	}
 }
 
-std::wstring InventorySack_AddItem::GetModName(GAME::GameInfo* gameInfo) {
-	std::wstring modName;
-	if (fnGetGameInfoMode(gameInfo) != 1) { // Skip mod name if we're in Crucible, we don't treat that as a mod.
-		fnGetModNameArg(gameInfo, &modName);
-		modName.erase(std::remove(modName.begin(), modName.end(), '\r'), modName.end());
-		modName.erase(std::remove(modName.begin(), modName.end(), '\n'), modName.end());
-	}
-
-	return modName;
-}
-
 /// <summary>
 /// 
 /// </summary>
@@ -598,8 +588,16 @@ bool InventorySack_AddItem::HandleItem(void* stash, GAME::Item* item) {
 		LogToFile(LogLevel::WARNING, L"HandleItem: no character, persisting without stats");
 	}
 
-	std::wstring modName = GetModName(gameInfo);
-	if (Persist(replica, fnGetHardcore(gameInfo), modName, gameTextLines)) {
+	// Resolved here rather than read from the cache: this is the game's own thread, so it is free to
+	// make the call, and the loot path then does not depend on GameEngine::Update having run first.
+	std::wstring modName;
+	bool isHardcore = false;
+	if (!GameContext::Resolve(gameInfo, modName, isHardcore)) {
+		LogToFile(LogLevel::WARNING, L"HandleItem: no game context, cannot tell which queue to persist to");
+		return false;
+	}
+
+	if (Persist(replica, isHardcore, modName, gameTextLines)) {
 		DisplayMessage(L"Item looted", L"By Item Assistant");
 		fnPlayDropSound(item);
 		return true;
@@ -770,9 +768,23 @@ void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int
 			// This fires during exit-to-menu teardown: GameInfo is destroyed while
 			// GameEngine is still ticking. Until recently this path returned without
 			// calling the original Update(), which dropped the game's update tick.
+			//
+			// The world can still report itself alive at this point, so the transition check at the
+			// top of this function has not necessarily fired. Drop the cached mod name here too, or a
+			// polling thread keeps working the departing world's queue folder.
+			GameContext::Invalidate();
 			LogToFile(LogLevel::WARNING,
 				L"GameInfo is null (world tearing down?), skipping IA work this tick. msSinceLastAddItem="
 				+ std::to_wstring(fnMsSinceLastAddItem()));
+			return dll_GameEngine_Update(This, v);
+		}
+
+		// The one place the mod name and hardcore flag are read out of the game. This runs on the
+		// game's own thread, every 30 ticks, whether or not the transfer stash is open, which is what
+		// keeps a current copy available to the two polling threads. A no-op once the world is known.
+		std::wstring modName;
+		bool isHardcore = false;
+		if (!GameContext::Resolve(gameInfo, modName, isHardcore)) {
 			return dll_GameEngine_Update(This, v);
 		}
 
@@ -784,7 +796,7 @@ void* __fastcall InventorySack_AddItem::Hooked_GameEngine_Update(void* This, int
 
 
 				bool success = false;
-				std::wstring targetFolder = GetFolderToMoveTo(GetModName(gameInfo), fnGetHardcore(gameInfo));
+				std::wstring targetFolder = GetFolderToMoveTo(modName, isHardcore);
 				for (auto it = m_depositQueue.begin(); it != m_depositQueue.end(); ++it) {
 					std::wstring targetFile = targetFolder + L"\\" + randomFilename();
 					LogToFile(LogLevel::INFO, L"Handling file " + *it);
@@ -876,43 +888,20 @@ void InventorySack_AddItem::ThreadMain(void*) {
 	LogToFile(LogLevel::INFO, L"IA is running, starting deposit listener..");
 	try {
 		std::set<std::wstring> knownFiles = std::set<std::wstring>();
-		GAME::GameInfo* lastGameInfo = nullptr;
 
 		while (m_isActive) {
 			Sleep(500);
 
-			auto engine = fnGetEngine(true);
-			if (engine == nullptr) {
-				LogToFile(LogLevel::INFO, L"Debug: NoEngine");
+
+			std::wstring modName;
+			bool isHardcore = false;
+			if (!GameContext::TryGet(modName, isHardcore)) {
+				// No world loaded. Nothing can be deposited into one that is not there, and
+				// guessing the folder means reading another character's queue.
 				continue;
 			}
 
-			GAME::GameInfo* gameInfo = fnGetGameInfo(engine);
-			if (gameInfo == nullptr) {
-				LogToFile(LogLevel::INFO, L"GameInfo is null, aborting..");
-				lastGameInfo = nullptr;
-				continue;
-			}
-
-			// Diagnostics: this thread calls into Engine.dll every 500ms with no
-			// synchronisation against the game loop. GetModName() below reads a string
-			// out of this GameInfo. If the pointer is churning around the same time the
-			// world tears down, we are racing its destruction.
-			if (gameInfo != lastGameInfo) {
-				std::wstringstream ss;
-				ss << L"ThreadMain: GameInfo changed " << std::hex << std::showbase
-				   << reinterpret_cast<DWORD_PTR>(lastGameInfo) << L" -> "
-				   << reinterpret_cast<DWORD_PTR>(gameInfo);
-				LogToFile(LogLevel::WARNING, ss.str());
-				lastGameInfo = gameInfo;
-			}
-
-			// GetModName runs Engine.dll's own string assignment against this GameInfo, so if the main thread
-			// is destroying the world at the same moment the fault lands in the game, with no IA frame on the
-			// faulting thread's stack. An "enter" with no matching "leave" in the breadcrumbs is that race.
-			CrashReporter::Note("poll:deposit enter GameInfo", (uint64_t)gameInfo);
-			std::wstring folder = GetFolderToLootFrom(GetModName(gameInfo), fnGetHardcore(gameInfo, true));
-			CrashReporter::Note("poll:deposit leave GameInfo", (uint64_t)gameInfo);
+			std::wstring folder = GetFolderToLootFrom(modName, isHardcore);
 			// LogToFile(std::wstring(L"Looking for files in dir: ") + folder);
 
 			for (auto& entry : boost::make_iterator_range(boost::filesystem::directory_iterator(folder), {})) {

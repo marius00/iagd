@@ -1,6 +1,7 @@
 #include "GrimTypes.h"
 #include "Logger.h"
 #include "CrashReporter.h"
+#include "GameContext.h"
 #include <atomic>
 #include <boost/lexical_cast.hpp>
 #include <algorithm>
@@ -236,6 +237,9 @@ void fnLogWorldStateTransition(GAME::GameEngine* gameEngine, const wchar_t* site
 
 	// Timestamps the exact moment the world deconstructed, so a crash report shows how many milliseconds separated teardown from whatever the hook was doing on other threads.
 	CrashReporter::Note(state == 1 ? "WORLD -> ALIVE" : "WORLD -> DEAD", (uint64_t)gameEngine);
+
+
+	GameContext::Invalidate();
 
 	std::wstringstream ss;
 	ss << L"WORLD STATE " << WorldStateName(previous) << L" -> " << WorldStateName(state)
