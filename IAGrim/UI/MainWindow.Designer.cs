@@ -80,7 +80,7 @@
             // 
             // tabControl1
             // 
-            tabControl1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tabControl1.Dock = DockStyle.Fill;
             tabControl1.Controls.Add(tabPageItems);
             tabControl1.Controls.Add(tabPageOnline);
             tabControl1.Controls.Add(tabPageSettings);
@@ -89,7 +89,7 @@
             tabControl1.Margin = new Padding(0);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(1210, 622);
+            tabControl1.Size = new Size(1210, 625);
             tabControl1.TabIndex = 34;
             // 
             // tabPageItems
