@@ -38,7 +38,8 @@ You need:
 Grim Dawn's Steam app ID is **219990**. You will use that number in every command.
 
 > **Flatpak users:** replace `protontricks-launch` in every command below with
-> `flatpak run --command=protontricks-launch com.github.Matoking.protontricks`.
+> `flatpak run --command=protontricks-launch com.github.Matoking.protontricks`, and plain
+> `protontricks` with `flatpak run com.github.Matoking.protontricks`.
 > You may also need `flatpak override --user --filesystem=/path/to/your/steam/library
 > com.github.Matoking.protontricks` if your games are not in the default location.
 
@@ -59,15 +60,26 @@ protontricks-launch --appid 219990 windowsdesktop-runtime-10.0.x-win-x64.exe
 
 ### 2. The WebView2 runtime
 
-This is what draws the item list. Get the **Evergreen Standalone Installer (x64)** from
-<https://developer.microsoft.com/microsoft-edge/webview2/>, then:
+This is what draws the item list. Get the **Evergreen Bootstrapper** (`MicrosoftEdgeWebview2Setup.exe`) from
+<https://go.microsoft.com/fwlink/p/?LinkId=2124703>.
+
+The bootstrapper checks the Windows version and refuses to install on anything Wine reports by
+default, so tell the prefix to present itself as Windows 7 to the installer and to its updater
+first:
 
 ```bash
-protontricks-launch --appid 219990 MicrosoftEdgeWebView2Setup.exe
+protontricks -c 'wine reg add "HKCU\Software\Wine\AppDefaults\MicrosoftEdgeWebview2Setup.exe" /v Version /t REG_SZ /d win7 /f' 219990
+protontricks -c 'wine reg add "HKCU\Software\Wine\AppDefaults\MicrosoftEdgeUpdate.exe" /v Version /t REG_SZ /d win7 /f' 219990
+```
+
+Then run it:
+
+```bash
+protontricks-launch --appid 219990 MicrosoftEdgeWebview2Setup.exe
 ```
 
 Installing WebView2 on the Linux side, or into a different prefix, does not work. It must go into
-this prefix.
+this prefix — and so must the two commands above.
 
 ### 3. Item Assistant
 
@@ -152,8 +164,9 @@ that you downloaded the *Desktop* runtime for *x64* — the plain runtime does n
 Windows Forms parts Item Assistant needs.
 
 **A message says the WebView2 runtime is missing.**
-Repeat install step 2, using `protontricks-launch`. If you installed WebView2 some other way, it
-went into the wrong place.
+Repeat install step 2, using `protontricks-launch`, and do not skip the two `win7` registry
+commands — without them the bootstrapper exits without installing anything. If you installed
+WebView2 some other way, it went into the wrong place.
 
 **The window opens but the item list stays empty.**
 WebView2 is installed but did not start. The error message names its cache folder — delete that

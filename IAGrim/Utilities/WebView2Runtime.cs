@@ -18,7 +18,7 @@ namespace IAGrim.Utilities {
     internal static class WebView2Runtime {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(WebView2Runtime));
 
-        private const string DownloadPage = "https://developer.microsoft.com/microsoft-edge/webview2/";
+        private const string DownloadPage = "https://go.microsoft.com/fwlink/p/?LinkId=2124703";
 
         private static readonly Lazy<string?> Version = new Lazy<string?>(DetectVersion);
 
@@ -104,18 +104,23 @@ namespace IAGrim.Utilities {
             if (!WineDetector.IsRunningInWine()) {
                 return
                     "Item Assistant needs the Microsoft Edge WebView2 runtime to display your items, and it does not appear to be installed.\n\n" +
-                    "Download the \"Evergreen Standalone Installer\" (x64) from:\n" +
+                    "Download the Evergreen Bootstrapper (MicrosoftEdgeWebview2Setup.exe) from:\n" +
                     DownloadPage + "\n\n" +
                     "Install it, then start Item Assistant again.";
             }
 
             return
                 "Item Assistant needs the Microsoft Edge WebView2 runtime to display your items, and it is not installed in this Wine prefix.\n\n" +
-                "Download the \"Evergreen Standalone Installer\" (x64) from:\n" +
+                "Download the Evergreen Bootstrapper (MicrosoftEdgeWebview2Setup.exe) from:\n" +
                 DownloadPage + "\n\n" +
-                "It has to be installed into the same prefix Item Assistant is running in -- installing it on the Linux side, or into a different prefix, will not work.\n\n" +
+                "On macOS and Linux the installer has configured to install on Windows 7 before it is started, or it fails. Run these first:\n" +
+                "    wine reg add \"HKCU\\Software\\Wine\\AppDefaults\\MicrosoftEdgeWebview2Setup.exe\" /v Version /t REG_SZ /d win7 /f\n" +
+                "    wine reg add \"HKCU\\Software\\Wine\\AppDefaults\\MicrosoftEdgeUpdate.exe\" /v Version /t REG_SZ /d win7 /f\n\n" +
+                "Must be installed into the same prefix as Item Assistant. The two commands above have to be run against that same prefix as well.\n\n" +
                 "If Item Assistant is running in Grim Dawn's own Proton prefix, that is:\n" +
-                "    protontricks-launch --appid 219990 MicrosoftEdgeWebView2Setup.exe\n\n" +
+                "    protontricks -c 'wine reg add \"HKCU\\Software\\Wine\\AppDefaults\\MicrosoftEdgeWebview2Setup.exe\" /v Version /t REG_SZ /d win7 /f' 219990\n" +
+                "    protontricks -c 'wine reg add \"HKCU\\Software\\Wine\\AppDefaults\\MicrosoftEdgeUpdate.exe\" /v Version /t REG_SZ /d win7 /f' 219990\n" +
+                "    protontricks-launch --appid 219990 MicrosoftEdgeWebview2Setup.exe\n\n" +
                 "Install it, then start Item Assistant again.";
         }
     }
