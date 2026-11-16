@@ -14,7 +14,8 @@ namespace IAGrim.Database.Model {
 
         private string? _icon;
         public string Icon {
-            get => (_icon?.Substring(1 + _icon.LastIndexOf("/")) + ".png") ?? string.Empty;
+            // Ordinal char search: the culture-sensitive string overload treats '/' as ignorable under some cultures (eg th-TH) and returns the string length.
+            get => (_icon?.Substring(1 + _icon.LastIndexOf('/')) + ".png") ?? string.Empty;
             set => _icon = value;
         }
     }
